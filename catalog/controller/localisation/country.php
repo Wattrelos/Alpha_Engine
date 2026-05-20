@@ -1,0 +1,45 @@
+<?php
+namespace Opencart\Catalog\Controller\Localisation;
+
+use Alpha\Mappers\CountryMapper;
+use Alpha\Mappers\CollectionToArrayConverter;
+
+/**
+ * Class Country
+ *
+ * @package Opencart\Catalog\Controller\Localisation
+ */
+class Country extends \Opencart\System\Engine\Controller {
+	/**
+	 * Index
+	 *
+	 * @return void
+	 */
+	public function index(): void {
+		$json = [];
+
+		if (isset($this->request->get['country_id'])) {
+			$country_id = (int)$this->request->get['country_id'];
+		} else {
+			$country_id = 0;
+		}
+
+		$country_mapper = new CountryMapper();
+		$country = $country_mapper->getCountry($country_id);
+
+		if ($country) {
+			// Converte a entidade hidratada para array. 
+			// O DAO preenche a coleção 'zones' automaticamente pelo OneToMany.
+			$json = CollectionToArrayConverter::convertEntity($country);
+			
+			// Ajuste de compatibilidade legada: o JS do OpenCart espera a chave 'zone' (singular)
+			if (isset($json['zones'])) {
+				$json['zone'] = $json['zones'];
+				unset($json['zones']);
+			}
+		}
+
+		$this->response->addHeader('Content-Type: application/json');
+		$this->response->setOutput(json_encode($json));
+	}
+}

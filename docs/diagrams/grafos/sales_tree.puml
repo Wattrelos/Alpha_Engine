@@ -1,0 +1,47 @@
+@startuml SalesTree
+skinparam classAttributeIconSize 0
+
+package "Alpha\Model\Domain\Entities" {
+    class Order {
+        - float total
+        - string paymentMethod
+        - DateTime createdAt
+        + getCustomer(): Customer
+        + getProducts(): Collection
+        + getTotals(): Collection
+        + getHistory(): Collection
+    }
+
+    class OrderProduct {
+        - int productId
+        - string name
+        - int quantity
+        - float price
+    }
+
+    class OrderTotal {
+        - string code
+        - string title
+        - float value
+    }
+
+    class OrderHistory {
+        - string comment
+        - bool notify
+    }
+
+    class OrderStatus {
+        - int id
+    }
+}
+
+Order "1" *-- "many" OrderProduct : #[OneToMany]
+Order "1" *-- "many" OrderTotal : #[OneToMany]
+Order "1" *-- "many" OrderHistory : #[OneToMany]
+Order "many" o-- "1" OrderStatus : #[ManyToOne]
+
+note right of Order
+  Agregado central para persistência
+  atômica via OrderMapper.
+end note
+@enduml

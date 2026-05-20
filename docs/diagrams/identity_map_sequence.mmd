@@ -1,0 +1,49 @@
+sequenceDiagram
+    autonumber
+    title Identity Map: Evitando Redundância de Consultas
+    
+    participant Client as Service/Repository
+    participant DAO as DataAccessObject
+    participant Cache as Identity Map (Memory)
+    participant DB as Database
+
+    Note over Client, DB: DESCRIÇÃO: O Identity Map atua como um cache de primeiro nível em memória. Ele garante que cada registro do banco de dados seja carregado apenas uma vez por requisição, retornando sempre a mesma instância de objeto.
+
+    Note over Client, DAO: [Cenário 1: Primeira Requisição do Objeto #1]
+    Client->>DAO: findById(Entity, 1)
+    activate DAO
+    
+    DAO->>Cache: contains(Entity, 1)?
+    activate Cache
+    Cache-->>DAO: false
+    deactivate Cache
+    
+    Note right of DAO: Cache Miss: O objeto ainda não foi carregado nesta requisição.
+    
+    DAO->>DB: SELECT * FROM table WHERE id = 1
+    activate DB
+    DB-->>DAO: record_data
+    deactivate DB
+    
+    DAO->>Cache: set(Entity, 1, instance)
+    Note right of DAO: O DAO hidrata a entidade e a registra no mapa estático de identidade.
+    
+    DAO-->>Client: EntityInstance (#1)
+    deactivate DAO
+
+    Note over Client, DB: --- Ganho de Performance ---
+
+    Note over Client, DAO: [Cenário 2: Segunda Requisição do Objeto #1]
+    Client->>DAO: findById(Entity, 1)
+    activate DAO
+    
+    DAO->>Cache: get(Entity, 1)
+    activate Cache
+    Note right of Cache: Cache Hit: Instância encontrada em memória (Static Registry).
+    Cache-->>DAO: instance
+    deactivate Cache
+    
+    DAO-->>Client: EntityInstance (#1)
+    deactivate DAO
+    
+    Note left of Client: CONSISTÊNCIA: Ambas as chamadas retornam a mesma referência de memória.<br/>A segunda consulta ao banco foi totalmente evitada.

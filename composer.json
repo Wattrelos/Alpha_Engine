@@ -1,0 +1,18 @@
+{
+    "autoload": {
+        "psr-4": {
+            "Alpha\\": "core/"
+        }
+    },
+    "config": {
+        "optimize-autoloader": true,
+        "classmap-authoritative": true,
+        "sort-packages": true
+    },
+    "require": {
+        "twig/twig": "^3.0"
+    },
+    "scripts": {
+        "alpha:evo": "php -r \"require 'vendor/autoload.php'; (new Alpha\\Support\\EvolutionGenerator())->run();\""
+    }
+}

@@ -1,0 +1,41 @@
+sequenceDiagram
+    autonumber
+    title Snapshot Pattern: Proteção contra Alteração de Preços
+        
+    participant Service as CheckoutService
+    participant Catalog as Product (Catalog)
+    participant OP as OrderProduct (Entity)
+    participant DB as Database
+
+    Note over Service, DB: DESCRIÇÃO: Este diagrama detalha como a Alpha Engine "congela" os dados do produto no momento da venda.<br>Isso evita que mudanças futuras no catálogo (como aumento de preços) alterem o histórico de pedidos já realizados.
+
+    Note over Service, Catalog: [Ato da Compra]
+    Service->>Catalog: getPrice(), getName()
+    activate Catalog
+    Catalog-->>Service: float 99.90, "Alpha Pro"
+    deactivate Catalog
+    
+    Note right of Service: O sistema captura o estado atual<br>do catálogo no momento do checkout.
+
+    Service->>OP: setPrice(99.90), setName("Alpha Pro")
+    activate OP
+    Note right of OP: SNAPSHOT: O preço e nome são COPIADOS para a<br>entidade OrderProduct. A partir daqui, o item<br> do pedido é independente do produto original.
+    OP-->>Service: Ready
+    deactivate OP
+
+    Service->>DB: INSERT INTO order_product (price, name) VALUES (99.90, 'Alpha Pro')
+    Note over DB: Persistência física dos dados capturados.
+
+    rect rgb(255, 235, 235)
+        Note over Catalog, DB: --- Evento Futuro: Atualização de Catálogo ---
+        Catalog->>DB: UPDATE product SET price = 149.90
+        Note right of DB: O preço do produto sobe para 149.90 no catálogo.
+    end
+
+    Note over Service, DB: [Consulta ao Histórico de Venda]
+    Service->>DB: SELECT price FROM order_product WHERE id = X
+    activate DB
+    DB-->>Service: 99.90
+    deactivate DB
+
+    Note left of Service: INTEGRIDADE: O pedido preserva o valor de 99.90 (Snapshot),<br/>garantindo a segurança contábil da transação original.

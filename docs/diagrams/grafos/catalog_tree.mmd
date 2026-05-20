@@ -1,0 +1,43 @@
+classDiagram
+    class BaseEntity {
+        <<abstract>>
+        #int id
+    }
+
+    class Product {
+        -string model
+        -float price
+        -int quantity
+        -bool status
+        +getDescriptions() Collection
+        +getManufacturer() Manufacturer
+        +getCategories() Collection
+    }
+
+    class ProductDescription {
+        -int languageId
+        -string name
+        -string description
+    }
+
+    class Category {
+        -int parentId
+        -bool status
+    }
+
+    class Manufacturer {
+        -string name
+        -string image
+    }
+
+    BaseEntity <|-- Product
+    BaseEntity <|-- Category
+    BaseEntity <|-- Manufacturer
+    Product "1" *-- "many" ProductDescription : OneToMany
+    Product "many" o-- "1" Manufacturer : ManyToOne
+    Product "many" -- "many" Category : ManyToMany
+
+    note for BaseEntity "Arquitetura Alpha: Garante que todas as PKs sejam 'id' (Long), evitando conflitos com FKs legadas."
+    note for Category "Hierarquia: Suporta níveis infinitos via parentId. A Alpha Engine utiliza CategoryPath para otimizar a busca de breadcrumbs."
+    note for Product "Agregador: Centraliza o acesso a descrições multi-idioma e vínculos com fabricantes e categorias."
+    note for Product "Mapeamento: PHP 8.4 Attributes (#[Table], #[Column]) automatizam o mapeamento de propriedades para colunas, eliminando SQL manual nos Mappers."

@@ -1,0 +1,18 @@
+classDiagram
+    class DataAccessObject {
+        -PDO connection
+        -int transactionCounter = 0
+        +beginTransaction() bool
+        +commit() bool
+        +rollBack() bool
+        +insert(string table, array data) string
+        +update(string table, array data, string where, array params) int
+        +delete(string table, string where, array params) int
+        +select(string sql, array params) array
+        +lastInsertId() string
+    }
+    note for DataAccessObject "Camada de Abstração Crítica: O DAO simula transações aninhadas para permitir que múltiplos Mappers operem sob o mesmo 'guarda-chuva' transacional do Unit of Work, garantindo atomicidade total."
+    note for transactionCounter "Estado Transacional: Evita 'commits' parciais. O contador garante que apenas a operação 'raiz' (a primeira a abrir a transação) tenha o poder de efetivar o COMMIT real no MySQL."
+    note for beginTransaction "Isolamento: O comando 'START TRANSACTION' do PDO só é enviado ao banco de dados quando o contador sai de 0 para 1. Chamadas subsequentes apenas incrementam o contador."
+    note for commit "Sincronização: O 'COMMIT' físico só ocorre quando o contador retorna a 0. Isso garante que os dados só sejam persistidos se todas as etapas (Pedido, Estoque, Cupons) terminarem com sucesso."
+    note for rollBack "Integridade de Falha: Diferente do commit, o ROLLBACK é absoluto. Qualquer erro em níveis profundos anula a transação inteira imediatamente, prevenindo estados de dados inconsistentes ou órfãos."

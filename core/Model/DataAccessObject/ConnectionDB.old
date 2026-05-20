@@ -1,0 +1,48 @@
+<?php
+
+namespace Alpha\Model\DataAccessObject;
+
+use Opencart\System\Engine\Registry;
+
+/**
+ * ConnectionDB - Versão arquivada que dependia da injeção do Registry/DB do OpenCart.
+ */
+class ConnectionDB
+{
+    private static ?ConnectionDB $instance = null;
+    private static ?Registry $registry = null;
+    private ?\PDO $connection = null;
+
+    private function __construct($db = null)
+    {
+        $dbObject = $db ?? (self::$registry ? self::$registry->get('db') : null);
+        
+        if ($dbObject instanceof \Opencart\System\Library\DB) {
+            // No OpenCart 4, a conexão PDO fica no driver adaptado
+            $this->connection = $dbObject->connection; 
+        }
+    }
+
+    public static function setRegistry(Registry $registry): void
+    {
+        self::$registry = $registry;
+    }
+
+    public static function getRegistry(): ?Registry
+    {
+        return self::$registry;
+    }
+
+    public static function getInstance($db = null): ConnectionDB
+    {
+        if (self::$instance === null) {
+            self::$instance = new self($db);
+        }
+        return self::$instance;
+    }
+
+    public function getConnection(): ?\PDO
+    {
+        return $this->connection;
+    }
+}

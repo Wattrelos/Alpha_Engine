@@ -1,0 +1,41 @@
+@startuml CustomerTree
+skinparam classAttributeIconSize 0
+
+package "Alpha\Model\Domain\Entities" {
+    class Customer {
+        - string email
+        - string firstname
+        - string lastname
+        - bool status
+        + getAddresses(): Collection
+        + getCustomerGroup(): CustomerGroup
+    }
+
+    class Address {
+        - string address1
+        - string city
+        - string postcode
+    }
+
+    class CustomerGroup {
+        - bool approval
+    }
+
+    class Country {
+        - string name
+        - string isoCode2
+    }
+
+    class Zone {
+        - string name
+        - string code
+    }
+}
+
+Customer "1" *-- "many" Address : #[OneToMany] (LAZY)
+Customer "many" o-- "1" CustomerGroup : #[ManyToOne]
+Address "many" o-- "1" Country : #[ManyToOne]
+Address "many" o-- "1" Zone : #[ManyToOne]
+Zone "many" o-- "1" Country : #[ManyToOne]
+
+@enduml

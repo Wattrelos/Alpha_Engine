@@ -1,0 +1,51 @@
+
+document.getElementById('input-payment-postcode').addEventListener('blur', function() {
+	const cep = this.value.replace(/\D/g, ''); // Remove caracteres não numéricos [5]
+
+    if (cep.length === 8) {
+        // Faz a requisição para a API ViaCEP
+        fetch(`https://viacep.com.br/ws/${cep}/json/`)
+            .then(response => response.json())
+            .then(data => {
+                if (!data.erro) {
+                    // Preenche os campos se o CEP existir
+                    document.getElementById('input-payment-address-1').value = data.logradouro;
+                    document.getElementById('input-payment-district').value = data.bairro;
+                    document.getElementById('input-payment-city').value = data.localidade;
+					
+					// Adequar os dados à tabela do Opencart:
+						$.ajax({
+							url: 'index.php?route=account/account/country&country_id=30',
+							dataType: 'json',
+							success: function(json) {
+								if (json['postcode_required'] == '1') {
+									$('input[name=\'postcode\']').parent().parent().addClass('required');
+								} else {
+									$('input[name=\'postcode\']').parent().parent().removeClass('required');
+								}
+								if (json['zone'] && json['zone'] != '') {
+									for (i = 0; i < json['zone'].length; i++) {										
+										if (json['zone'][i]['code'] == data.uf) {
+											document.getElementById('input-payment-zone').value = json['zone'][i]['zone_id'];
+										}
+									}
+								}
+							},
+							error: function(xhr, ajaxOptions, thrownError) {
+								alert(thrownError + "\r\n" + xhr.statusText + "\r\n" + xhr.responseText);
+							}
+						});
+					
+					
+					
+					
+					
+                } else {
+                    alert('CEP não encontrado.');
+                }
+            })
+            .catch(error => console.error('Erro:', error));
+    } else {
+        alert('CEP inválido.');
+    }
+});

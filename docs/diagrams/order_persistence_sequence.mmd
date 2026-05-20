@@ -1,0 +1,46 @@
+sequenceDiagram
+    actor Service as OrderService
+    participant Repo as OrderRepository
+    participant Mapper as OrderMapper
+    participant Entity as Order
+    participant DAO as DataAccessObject
+    participant DB as Database
+
+    Note over Service, DB: O padrão Unit of Work (Unidade de Trabalho) centraliza múltiplas operações de persistência em uma única transação,<br>garantindo que todas tenham sucesso ou que todas sejam desfeitas (rollback) em caso de falha.<br>O Ciclo de Persistência Alpha garante que o Pedido e seus Agregados sejam salvos como uma única unidade atômica.
+
+    Service->>Repo: save(order)
+    activate Repo
+    Repo->>Mapper: persist(order)
+    activate Mapper
+    Note right of Mapper: Unit of Work: O Mapper atua sob o escopo do UoW,<br> que utilizao 'transactionCounter' do DAO para<br>gerenciar o aninhamento da transação.
+    Mapper->>DAO: beginTransaction()
+    activate DAO
+    DAO->>DB: START TRANSACTION
+    deactivate DAO
+    Mapper->>Entity: getId()
+    alt no ID (New Order)
+        Mapper->>DAO: insert('order', data)
+        DAO->>DB: INSERT INTO order...
+        Mapper->>Entity: setId(newId)
+    else has ID (Update)
+        Mapper->>DAO: update('order', data, id)
+        DAO->>DB: UPDATE order SET...
+    end
+    
+    Note over Mapper: Orquestração do Agregado: O UoW garante que Itens e Totais<br>sejam tratados como parte<br>do mesmo registro transacional do Pedido pai.
+    loop for each OrderProduct
+        Mapper->>DAO: insert/update('order_product')
+    end
+    loop for each OrderTotal
+        Mapper->>DAO: insert/update('order_total')
+    end
+    Note over Mapper, DAO: Consistência: Se houver falha em qualquer nível,<br>o UoW dispara o rollBack no DAO,<br>invalidando todo o Ciclo de Persistência.
+    
+    Mapper->>DAO: commit()
+    activate DAO
+    DAO->>DB: COMMIT
+    deactivate DAO
+    Mapper-->>Repo: void
+    deactivate Mapper
+    Repo-->>Service: void
+    deactivate Repo

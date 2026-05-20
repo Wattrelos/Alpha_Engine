@@ -1,0 +1,49 @@
+@startuml CatalogTree
+skinparam classAttributeIconSize 0
+
+package "Alpha\Model\Domain\Entities" {
+    abstract class BaseEntity {
+        # int id
+    }
+
+    class Product {
+        - string model
+        - float price
+        - int quantity
+        - bool status
+        + getDescriptions(): Collection
+        + getManufacturer(): Manufacturer
+        + getCategories(): Collection
+    }
+
+    class ProductDescription {
+        - int languageId
+        - string name
+        - string description
+    }
+
+    class Category {
+        - int parentId
+        - bool status
+    }
+
+    class Manufacturer {
+        - string name
+        - string image
+    }
+
+    class ProductOption {
+        - int optionId
+        - bool required
+    }
+}
+
+BaseEntity <|-- Product
+BaseEntity <|-- Category
+BaseEntity <|-- Manufacturer
+
+Product "1" *-- "many" ProductDescription : #[OneToMany]
+Product "many" o-- "1" Manufacturer : #[ManyToOne]
+Product "many" -- "many" Category : #[ManyToMany]
+Product "1" *-- "many" ProductOption : #[OneToMany]
+@enduml

@@ -1,0 +1,55 @@
+---
+title: "Estratégia de Carregamento: Eager vs Lazy Loading (Pedido Complexo)"
+---
+classDiagram
+    class Order {
+        <<Aggregate Root>>
+        -id: int
+        -total: float
+        +getProducts() EAGER
+        +getTotals() EAGER
+        +getCustomer() EAGER
+        +getHistory() LAZY
+    }
+    note for Order "É a Raiz de Agregado. Seus dados essenciais são carregados<br> imediatamente, e ela orquestra o carregamento de suas<br> entidades filhas e associadas, balanceando performance e completude."
+
+    class OrderProduct {
+        <<Eager Entity>>
+        -name: string
+        -price: float
+    }
+    note for OrderProduct "Carregamento EAGER: Os itens do pedido são cruciais para<br> qualquer visualização ou processamento. São carregados junto com o<br> Pedido principal para garantir a integridade e disponibilidade imediata."
+
+    class OrderTotal {
+        <<Eager Entity>>
+        -title: string
+        -value: float
+    }
+    note for OrderTotal "Carregamento EAGER: Os totais (subtotal, frete, impostos, descontos)<br> são parte integrante do valor financeiro do pedido. São sempre carregados para garantir a consistência dos cálculos."
+
+    class Customer {
+        <<Eager Entity>>
+        -email: string
+        +getAddresses() LAZY
+    }
+    note for Customer "Carregamento EAGER: O cliente associado ao pedido é fundamental<br> para identificação e contexto. Seus dados básicos são carregados<br> para acesso rápido, mas detalhes como endereços são adiados."
+
+    class Address {
+        <<Lazy Entity>>
+        -address1: string
+        -city: string
+    }
+    note for Address "Carregamento LAZY: Um cliente pode ter múltiplos endereços.<br> Eles são carregados sob demanda (apenas quando acessados),<br> evitando consultas desnecessárias ao banco de dados na maioria das operações."
+
+    class OrderHistory {
+        <<Lazy Entity>>
+        -comment: string
+        -dateAdded: DateTime
+    }
+    note for OrderHistory "Carregamento LAZY: O histórico de status de um pedido<br> pode ser extenso. É carregado apenas quando o usuário visualiza os<br> detalhes completos do pedido, otimizando a performance em listagens."
+
+    Order *-- OrderProduct : (Eager)
+    Order *-- OrderTotal : (Eager)
+    Order o-- Customer : (Eager)
+    Order *-- OrderHistory : (Lazy)
+    Customer *-- Address : (Lazy)
