@@ -1,15 +1,14 @@
 <?php
 namespace Opencart\System\Library\Cart;
+
+use Alpha\Mappers\CurrencyMapper;
+
 /**
  * Class Currency
  *
  * @package Opencart\System\Library\Cart
  */
 class Currency {
-	/**
-	 * @var object
-	 */
-	private object $db;
 	/**
 	 * @var object
 	 */
@@ -25,12 +24,16 @@ class Currency {
 	 * @param \Opencart\System\Engine\Registry $registry
 	 */
 	public function __construct(\Opencart\System\Engine\Registry $registry) {
-		$this->db = $registry->get('db');
 		$this->language = $registry->get('language');
 
-		$query = $this->db->query("SELECT * FROM `" . DB_PREFIX . "currency`");
+		// Alpha Engine: Resolução via Mapper Factory no Registry
+		$mapperFactory = $registry->get('mapperFactory');
+		
+		/** @var CurrencyMapper $currencyMapper */
+		$currencyMapper = $mapperFactory->get(CurrencyMapper::class);
+		$results = $currencyMapper->findAllActive();
 
-		foreach ($query->rows as $result) {
+		foreach ($results as $result) {
 			$this->currencies[$result['code']] = [
 				'currency_id'   => $result['id'],
 				'title'         => $result['title'],

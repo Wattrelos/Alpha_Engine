@@ -1,17 +1,13 @@
 <?php
 namespace Opencart\System\Library\Cart;
 
-use Alpha\Mappers\EntityMappers\LengthClassMapper;
+use Alpha\Model\Domain\Repositories\LengthClassRepository;
 /*
  * Class Length
  *
  * @package Opencart\System\Library\Cart
  */
 class Length {
-	/**
-	 * @var object
-	 */
-	private object $db;
 	/**
 	 * @var object
 	 */
@@ -27,18 +23,22 @@ class Length {
 	 * @param \Opencart\System\Engine\Registry $registry
 	 */
 	public function __construct(\Opencart\System\Engine\Registry $registry) {
-		$this->db = $registry->get('db');
 		$this->config = $registry->get('config');
 
-		$mapper = new LengthClassMapper();
-		$results = $mapper->getLengthClasses((int)$this->config->get('config_language_id'));
+		// Alpha Engine: Resolução via Repository Factory no Registry
+		$repositoryFactory = $registry->get('repository');
+		/** @var LengthClassRepository $lengthRepository */
+		$lengthRepository = $repositoryFactory->get(LengthClassRepository::class);
+		$results = $lengthRepository->getAllByCurrentLanguage();
 
 		foreach ($results as $result) {
-			$this->lengths[$result['id']] = [ // Usando 'id' como chave, alinhado com o WeightClassMapper
-				'length_class_id' => $result['id'], // E também para o valor da PK
-				'title'           => $result['title'],
-				'unit'            => $result['unit'],
-				'value'           => $result['value']
+			$descriptions = $result->getDescriptions();
+			$description = !empty($descriptions) ? $descriptions[0] : null;
+			$this->lengths[$result->getId()] = [
+				'length_class_id' => $result->getId(),
+				'title'           => $description ? $description->getTitle() : '',
+				'unit'            => $description ? $description->getUnit() : '',
+				'value'           => $result->getValue()
 			];
 		}
 	}

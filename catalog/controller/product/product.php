@@ -18,16 +18,15 @@ class Product extends BaseController {
 	 * @return ?\Opencart\System\Engine\Action
 	 */
 	public function index(): ?\Opencart\System\Engine\Action {
-		$this->load->language('product/product');
-
 		if (isset($this->request->get['product_id'])) {
 			$product_id = (int)$this->request->get['product_id'];
 		} else {
 			$product_id = 0;
 		}
 
-		// Alpha Engine: Invocação direta do Mapper, ignorando o Model/DB legado
-		$productMapper = new ProductMapper();
+		// Alpha Engine: Injeção do Mapper via BaseController, garantindo instanciamento único (Factory)
+		/** @var ProductMapper $productMapper */
+		$productMapper = $this->getMapper(ProductMapper::class);
 
 		// Alpha Engine: Uma única chamada ao Mapper para obter o Grafo Completo do Produto
 		$product_info = $productMapper->getDetailedProduct(
@@ -38,7 +37,8 @@ class Product extends BaseController {
 		);
 
 		if ($product_info) {
-			$data = array_merge($this->load->language('product/product'), $product_info);
+			$data = $product_info;
+			$this->loadLanguageData('product/product', $data); // Alpha Engine: Unifica traduções automaticamente
 			
 			$this->document->setTitle($data['meta_title']);
 			$this->document->addLink($this->url->link('product/product', 'language=' . $this->config->get('config_language') . '&product_id=' . $product_id), 'canonical');
@@ -50,8 +50,9 @@ class Product extends BaseController {
 				'href' => $this->url->link('common/home', 'language=' . $this->config->get('config_language'))
 			];
 
-			// Alpha Engine: Usando CategoryMapper para hierarquia de Breadcrumbs
-			$categoryMapper = new CategoryMapper();
+			// Alpha Engine: Injeção do Mapper de Categoria via BaseController
+			/** @var CategoryMapper $categoryMapper */
+			$categoryMapper = $this->getMapper(CategoryMapper::class);
 
 			if (isset($this->request->get['path'])) {
 				$path = '';
@@ -106,8 +107,9 @@ class Product extends BaseController {
 				}
 			}
 
-			// Manufacturer
-			$manufacturerMapper = new ManufacturerMapper();
+			// Alpha Engine: Injeção do Mapper de Fabricante via BaseController
+			/** @var ManufacturerMapper $manufacturerMapper */
+			$manufacturerMapper = $this->getMapper(ManufacturerMapper::class);
 
 			if (isset($this->request->get['manufacturer_id'])) {
 				

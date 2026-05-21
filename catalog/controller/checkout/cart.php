@@ -5,6 +5,7 @@ namespace Opencart\Catalog\Controller\Checkout;
  */
 use Alpha\Mappers\EntityMappers\ExtensionMapper;
 use Alpha\Controller\BaseController;
+use Alpha\Mappers\EntityMappers\ProductMapper;
 use Alpha\Model\Domain\Repositories\CartRepository;
 
 /**
@@ -242,10 +243,11 @@ class Cart extends BaseController {
 			$subscription_plan_id = 0;
 		}
 
-		// Product
-		$this->load->model('catalog/product');
-
-		$product_info = $this->model_catalog_product->getProduct($product_id);
+		// Alpha Engine: Injeção do Mapper via PSR-4 para eliminar o loader legado
+		/** @var ProductMapper $productMapper */
+		$productMapper = $this->getMapper(ProductMapper::class);
+		
+		$product_info = $productMapper->getProduct($product_id);
 
 		if ($product_info) {
 			// If variant get master product
@@ -268,7 +270,7 @@ class Cart extends BaseController {
 			}
 
 			// Validate options
-			$product_options = $this->model_catalog_product->getOptions($product_id);
+			$product_options = $productMapper->getOptions($product_id);
 
 			foreach ($product_options as $product_option) {
 				if ($product_option['required'] && empty($option[$product_option['product_option_id']])) {
@@ -279,7 +281,7 @@ class Cart extends BaseController {
 			}
 
 			// Validate subscription products
-			$subscriptions = $this->model_catalog_product->getSubscriptions($product_id);
+			$subscriptions = $productMapper->getSubscriptions($product_id);
 
 			if ($subscriptions && (!$subscription_plan_id || !in_array($subscription_plan_id, array_column($subscriptions, 'subscription_plan_id')))) {
 				$json['error']['subscription'] = $this->language->get('error_subscription');

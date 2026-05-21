@@ -17,6 +17,7 @@
 * **CouponMapper**: Implementação para suportar persistência de cupons via DataAccessObject, permitindo consultas por código e validação de regras.
 * **Sistema de Auditoria**: Entidades `ApiIp`, `Log`, `CustomerActivity` e `ProductReport` integradas ao motor de persistência.
 * **Camada de Cache**: Introdução da `CacheStrategyInterface` e `FilesystemCacheStrategy` baseada em disco com suporte a TTL e Lock de escrita.
+* **CurrencyMapper**: Criação do Mapper na Alpha Engine para isolar as consultas da tabela de moedas, adicionando regra de negócio de negócio via `findAllActive()` para listar e alocar em memória apenas moedas ativas.
 
 ### Modificado (Changed)
 * **Normalização de Banco de Dados**: Padronização de chaves primárias para `id` e chaves estrangeiras para `[tabela]_id` com tipo BIGINT para prevenção de overflow.
@@ -34,6 +35,9 @@
 * **GeoZoneRepository & Mapper**: Extração das consultas SQL de localização geográfica (Geo Zones) de dentro dos serviços de frete, isolando as regras de validação no repositório com suporte a cache.
 * **BaseController (Master Pattern)**: Consolidação do Master Controller em `core/Controller/BaseController.php`, unificando a injeção do `RepositoryFactory` e `MapperFactory`, e introduzindo suporte nativo a respostas JSON.
 * **Cart Controllers**: Refatoração de `checkout/cart.php` e `api/cart.php` para herdarem da `BaseController`, substituindo o uso legado do `loader.php` e instâncias do sistema de carrinho pela injeção pura do `CartRepository`, simplificando drasticamente as respostas JSON.
+* **Product Controller**: Refatoração de `product/product.php` para utilizar a `BaseController`, injetando `ProductMapper`, `CategoryMapper` e `ManufacturerMapper` pela Factory interna em vez de instanciação direta (`new`).
+* **Checkout Controller**: Refatoração do controlador global `checkout/checkout.php` para herdar da `BaseController` e utilizar o `CartRepository` para validação primária de itens antes do processamento.
+* **Home Controller**: Refatoração do controlador da página inicial (`common/home.php`) para utilizar a `BaseController`, e correção do bug de sobrescrita da variável `$data` que impedia a renderização correta dos módulos em destaque e banners.
 * **Lógica de Filtros de Catálogo**: Otimização via subqueries no `CategoryMapper` para extração limpa de filtros de produtos.
 * **Unificação de Carrinho**: Lógica do `CartMapper` agora gerencia transição transparente de `session_id` para `customer_id` e evita duplicidade via hash JSON.
 * **Motor de Checkout**: Refatoração para suporte a transações atômicas via PDO no processamento de pedidos e histórico de estoque.
@@ -73,6 +77,16 @@
 * **CouponRepository**: Implementação do repositório de cupons com suporte ao Snapshot Pattern, centralizando a lógica de validade, limites de uso e integridade histórica de descontos aplicados.
 
 * **VoucherRepository**: Implementação do repositório para gestão de cartões-presente (Vouchers), utilizando leitura do histórico para cálculo rigoroso e seguro do saldo restante.
+
+* **Biblioteca de Moedas (currency.php)**: Refatoração do construtor da biblioteca base do OpenCart. Remoção de SQL acoplado (`SELECT * FROM currency`) em favor da injeção do `CurrencyMapper` resolvido pela `mapperFactory`.
+
+* **Orquestração de Carrinho (CartRepository)**: Centralização do processamento inteligente do carrinho. Hidratação de opções sem loops de banco, cálculo progressivo de preços e isolamento do cálculo de impostos (`getTaxes`) e físico (`getWeight`) utilizando o `WeightClassRepository`.
+
+* **Bibliotecas de Medidas e Moedas**: Limpeza de débitos técnicos legados com a remoção definitiva da injeção de banco de dados (`$this->db`) não utilizada dos arquivos `length.php`, `weight.php` e `currency.php`, consolidando o isolamento de domínio destas classes.
+
+* **API de Carrinho (`api/cart.php`)**: Substituição completa do uso da biblioteca legada pelo `CartRepository`. Injeção de contexto global (Idioma, Loja, Grupo de Cliente) nas chamadas do `ProductMapper` para garantir hidratação precisa de traduções e regras de preço/atacado nas respostas JSON.
+
+* **Configurações Globais (Settings)**: Criação do `SettingMapper` e `SettingRepository` para centralizar a extração das configurações do banco de dados. Implementado Identity Map em memória para garantir que o banco seja consultado apenas 1 vez por requisição, independentemente da quantidade de vezes que as configurações sejam solicitadas. O Model legado `catalog/model/setting/setting.php` foi transformado em Bridge.
 
 ### Corrigido (Fixed)
 * **Ajuste no ProductMapper**: Inclusão explícita da descrição na consulta SQL dentro do Mapper para garantir que ela não fique vazia.

@@ -1,13 +1,24 @@
 <?php
 namespace Opencart\Catalog\Model\Setting;
+
+use Alpha\Model\Domain\Repositories\SettingRepository;
+
 /**
- * Class Setting
+ * Class Setting (Legacy Bridge)
  *
- * Can be called using $this->load->model('setting/setting');
+ * Proxy refatorado para Alpha Engine. Utiliza o SettingRepository para entregar
+ * respostas ultra-rápidas servidas na memória, evitando múltiplos queries SQL legados.
  *
  * @package Opencart\Catalog\Model\Setting
  */
 class Setting extends \Opencart\System\Engine\Model {
+	private SettingRepository $settingRepository;
+
+	public function __construct(\Opencart\System\Engine\Registry $registry) {
+		parent::__construct($registry);
+		$this->settingRepository = $registry->get('repository')->get(SettingRepository::class);
+	}
+
 	/**
 	 * Get Settings
 	 *
@@ -24,9 +35,7 @@ class Setting extends \Opencart\System\Engine\Model {
 	 * $settings = $this->model_setting_setting->getSettings();
 	 */
 	public function getSettings(int $store_id = 0): array {
-		$query = $this->db->query("SELECT * FROM `" . DB_PREFIX . "setting` WHERE `store_id` = '" . (int)$store_id . "' OR `store_id` = '0' ORDER BY `store_id` ASC");
-
-		return $query->rows;
+		return $this->settingRepository->getSettings($store_id);
 	}
 
 	/**
@@ -44,19 +53,7 @@ class Setting extends \Opencart\System\Engine\Model {
 	 * $setting_info = $this->model_setting_setting->getSetting($code, $store_id);
 	 */
 	public function getSetting(string $code, int $store_id = 0): array {
-		$setting_data = [];
-
-		$query = $this->db->query("SELECT * FROM `" . DB_PREFIX . "setting` WHERE `store_id` = '" . (int)$store_id . "' AND `code` = '" . $this->db->escape($code) . "'");
-
-		foreach ($query->rows as $result) {
-			if (!$result['serialized']) {
-				$setting_data[$result['key']] = $result['value'];
-			} else {
-				$setting_data[$result['key']] = $result['value'] ? json_decode($result['value'], true) : [];
-			}
-		}
-
-		return $setting_data;
+		return $this->settingRepository->getSetting($code, $store_id);
 	}
 
 	/**
@@ -74,12 +71,6 @@ class Setting extends \Opencart\System\Engine\Model {
 	 * $value = $this->model_setting_setting->getValue($key, $store_id);
 	 */
 	public function getValue(string $key, int $store_id = 0): string {
-		$query = $this->db->query("SELECT `value` FROM `" . DB_PREFIX . "setting` WHERE `store_id` = '" . (int)$store_id . "' AND `key` = '" . $this->db->escape($key) . "'");
-
-		if ($query->num_rows) {
-			return $query->row['value'];
-		} else {
-			return '';
-		}
+		return $this->settingRepository->getValue($key, $store_id);
 	}
 }

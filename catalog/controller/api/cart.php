@@ -2,6 +2,7 @@
 namespace Opencart\Catalog\Controller\Api;
 
 use Alpha\Controller\BaseController;
+use Alpha\Mappers\EntityMappers\ProductMapper;
 use Alpha\Model\Domain\Repositories\CartRepository;
 
 /**
@@ -28,8 +29,14 @@ class Cart extends BaseController {
 			$products = [];
 		}
 
-		// Product
-		$this->load->model('catalog/product');
+		// Alpha Engine: Injeção do Mapper via PSR-4 (Adeus loader legado!)
+		/** @var ProductMapper $productMapper */
+		$productMapper = $this->getMapper(ProductMapper::class);
+
+		// Contexto Alpha Engine
+		$languageId = (int)$this->config->get('config_language_id');
+		$storeId = (int)$this->config->get('config_store_id');
+		$customerGroupId = isset($this->session->data['customer']) ? (int)$this->session->data['customer']['customer_group_id'] : (int)$this->config->get('config_customer_group_id');
 
 		foreach ($products as $key => $product) {
 			if (isset($product['product_id'])) {
@@ -56,7 +63,8 @@ class Cart extends BaseController {
 				$subscription_plan_id = 0;
 			}
 
-			$product_info = $this->model_catalog_product->getProduct($product_id);
+			// Busca o produto devidamente hidratado com preços e idiomas
+			$product_info = $productMapper->getProduct($product_id, $languageId, $storeId, $customerGroupId);
 
 			if ($product_info) {
 				// Merge variant code with options
@@ -66,7 +74,7 @@ class Cart extends BaseController {
 
 				// Validate that have been sent are part of the product
 				foreach ($option as $product_option_id => $value) {
-					$product_option_info = $this->model_catalog_product->getOption($product_id, (int)$product_option_id);
+					$product_option_info = $productMapper->getOption($product_id, (int)$product_option_id, $languageId);
 
 					if ($product_option_info) {
 						if ($product_option_info['type'] == 'select' || $product_option_info['type'] == 'radio' || $product_option_info['type'] == 'checkbox') {
@@ -77,7 +85,7 @@ class Cart extends BaseController {
 							}
 
 							foreach ($product_option_values as $product_option_value_id) {
-								$product_option_value_info = $this->model_catalog_product->getOptionValue($product_id, $product_option_value_id);
+								$product_option_value_info = $productMapper->getOptionValue($product_id, $product_option_value_id, $languageId);
 
 								if (!$product_option_value_info) {
 									$output['error']['product_' . (int)$key . '_option_' . (int)$product_option_id] = $this->language->get('error_option');
@@ -92,7 +100,7 @@ class Cart extends BaseController {
 				}
 
 				// Validate required options
-				$product_options = $this->model_catalog_product->getOptions($product_id);
+				$product_options = $productMapper->getOptions($product_id, $languageId);
 
 				foreach ($product_options as $product_option) {
 					if ($product_option['required'] && empty($option[$product_option['product_option_id']])) {
@@ -121,7 +129,7 @@ class Cart extends BaseController {
 				}
 
 				// Validate subscription plan
-				$subscriptions = $this->model_catalog_product->getSubscriptions($product['product_id']);
+				$subscriptions = $productMapper->getSubscriptions($product['product_id']);
 
 				if ($subscriptions && (!$subscription_plan_id || !in_array($subscription_plan_id, array_column($subscriptions, 'subscription_plan_id')))) {
 					$output['error']['product_' . (int)$key . '_subscription'] = $this->language->get('error_subscription');
@@ -181,10 +189,16 @@ class Cart extends BaseController {
 			$subscription_plan_id = 0;
 		}
 
-		// Product
-		$this->load->model('catalog/product');
+		// Alpha Engine: Injeção do Mapper
+		/** @var ProductMapper $productMapper */
+		$productMapper = $this->getMapper(ProductMapper::class);
 
-		$product_info = $this->model_catalog_product->getProduct($product_id);
+		// Contexto Alpha Engine
+		$languageId = (int)$this->config->get('config_language_id');
+		$storeId = (int)$this->config->get('config_store_id');
+		$customerGroupId = isset($this->session->data['customer']) ? (int)$this->session->data['customer']['customer_group_id'] : (int)$this->config->get('config_customer_group_id');
+
+		$product_info = $productMapper->getProduct($product_id, $languageId, $storeId, $customerGroupId);
 
 		if ($product_info) {
 			// If variant get master product
@@ -199,7 +213,7 @@ class Cart extends BaseController {
 
 			// Validate that have been sent are part of the product
 			foreach ($option as $product_option_id => $value) {
-				$product_option_info = $this->model_catalog_product->getOption($product_id, $product_option_id);
+				$product_option_info = $productMapper->getOption($product_id, $product_option_id, $languageId);
 
 				if ($product_option_info) {
 					if ($product_option_info['type'] == 'select' || $product_option_info['type'] == 'radio' || $product_option_info['type'] == 'checkbox') {
@@ -210,7 +224,7 @@ class Cart extends BaseController {
 						}
 
 						foreach ($product_option_values as $product_option_value_id) {
-							$product_option_value_info = $this->model_catalog_product->getOptionValue($product_id, $product_option_value_id);
+							$product_option_value_info = $productMapper->getOptionValue($product_id, $product_option_value_id, $languageId);
 
 							if (!$product_option_value_info) {
 								$output['error']['option_' . $product_option_id] = $this->language->get('error_option');
@@ -225,7 +239,7 @@ class Cart extends BaseController {
 			}
 
 			// Validate Options
-			$product_options = $this->model_catalog_product->getOptions($product_id);
+			$product_options = $productMapper->getOptions($product_id, $languageId);
 
 			foreach ($product_options as $product_option) {
 				if ($product_option['required'] && empty($option[$product_option['product_option_id']])) {
@@ -238,7 +252,8 @@ class Cart extends BaseController {
 			// Stock
 			$product_total = 0;
 
-			$products = $this->cart->getProducts();
+			// Utiliza o CartRepository em vez da classe legada
+			$products = $this->getRepository(CartRepository::class)->getProducts();
 
 			foreach ($products as $product_2) {
 				if ($product_2['product_id'] == $product_info['product_id']) {
@@ -251,7 +266,7 @@ class Cart extends BaseController {
 			}
 
 			// Validate subscription plan
-			$subscriptions = $this->model_catalog_product->getSubscriptions($product_id);
+			$subscriptions = $productMapper->getSubscriptions($product_id);
 
 			if ($subscriptions && (!$subscription_plan_id || !in_array($subscription_plan_id, array_column($subscriptions, 'subscription_plan_id')))) {
 				$output['error']['subscription'] = $this->language->get('error_subscription');
@@ -315,7 +330,7 @@ class Cart extends BaseController {
 	 */
 	public function getTotals(): array {
 		$totals = [];
-		$taxes = $this->cart->getTaxes();
+		$taxes = $this->getRepository(CartRepository::class)->getTaxes();
 		$total = 0;
 
 		// Cart

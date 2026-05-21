@@ -1,7 +1,7 @@
 <?php
 namespace Opencart\System\Library\Cart;
 
-use Alpha\Mappers\EntityMappers\WeightClassMapper;
+use Alpha\Model\Domain\Repositories\WeightClassRepository;
 
 /**
  * Class Weight
@@ -9,10 +9,6 @@ use Alpha\Mappers\EntityMappers\WeightClassMapper;
  * @package Opencart\System\Library\Cart
  */
 class Weight {
-	/**
-	 * @var object
-	 */
-	private object $db;
 	/**
 	 * @var object
 	 */
@@ -28,18 +24,22 @@ class Weight {
 	 * @param \Opencart\System\Engine\Registry $registry
 	 */
 	public function __construct(\Opencart\System\Engine\Registry $registry) {
-		$this->db = $registry->get('db');
 		$this->config = $registry->get('config');
 
-		$mapper = new WeightClassMapper();
-		$results = $mapper->getWeightClasses((int)$this->config->get('config_language_id'));
+		// Alpha Engine: Resolução via Repository Factory no Registry
+		$repositoryFactory = $registry->get('repository');
+		/** @var WeightClassRepository $weightRepository */
+		$weightRepository = $repositoryFactory->get(WeightClassRepository::class);
+		$results = $weightRepository->getAllByCurrentLanguage();
 
 		foreach ($results as $result) {
-			$this->weights[$result['id']] = [
-				'weight_class_id' => $result['id'],
-				'title'           => $result['title'],
-				'unit'            => $result['unit'],
-				'value'           => $result['value']
+			$descriptions = $result->getDescriptions();
+			$description = !empty($descriptions) ? $descriptions[0] : null;
+			$this->weights[$result->getId()] = [
+				'weight_class_id' => $result->getId(),
+				'title'           => $description ? $description->getTitle() : '',
+				'unit'            => $description ? $description->getUnit() : '',
+				'value'           => $result->getValue()
 			];
 		}
 	}

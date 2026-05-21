@@ -24,7 +24,7 @@ class Language extends BaseController {
 	public function index(): void {
 		// Language
 		/** @var LanguageMapper $languageMapper */
-		$languageMapper = $this->mapper->get(LanguageMapper::class);
+		$languageMapper = $this->getMapper(LanguageMapper::class);
 		$results = $languageMapper->getLanguages();
 
 		foreach ($results as $result) {

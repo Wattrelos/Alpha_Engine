@@ -78,3 +78,6 @@ O código é apenas uma parte da solução. O conhecimento sobre **por que** uma
 *   **Camada de Controladores (Master Pattern)**:
     *   ✅ `BaseController`: Implementação da classe abstrata em `Alpha\Controller`, automatizando a injeção de dependências (Repositórios e Mappers) e padronizando respostas JSON para API e Frontend.
     *   ✅ `Cart Controllers`: Migração de `api/cart.php` e `checkout/cart.php` para utilizar a `BaseController`, injeção do `CartRepository` e padronização das saídas JSON.
+    *   ✅ `Product Controller`: Migração do `product/product.php` para utilizar a `BaseController`, consumindo as instâncias da `MapperFactory` em vez de instanciar os Mappers manualmente.
+    *   ✅ `Checkout Controller`: Migração do `checkout/checkout.php` para utilizar a `BaseController`, aplicando o `CartRepository` para gerenciamento seguro da sessão de checkout.
+    *   ✅ `Home Controller`: Migração do `common/home.php` para utilizar a `BaseController` com o super método `$this->render()`, injetando automaticamente cabeçalhos e rodapés, e corrigindo montagem da DTO.

@@ -2,7 +2,49 @@
 <div class="stucco4">
   <div id="common-home" class="container">
     <div class="row">{{ column_left }}
-      <div id="content" class="col">{{ content_top }}{{ content_bottom }}</div>
+      <div id="content" class="col">{{ content_top }}
+        
+        {# Alpha Engine: Banner da Home Injetado #}
+        {% if home_banner %}
+          <div class="swiper-viewport mb-4">
+            <div id="carousel-home" class="swiper">
+              <div class="swiper-wrapper">
+                {% for banner in home_banner %}
+                  <div class="swiper-slide text-center">
+                    {% if banner.link %}
+                      <a href="{{ banner.link }}"><img src="{{ banner.image }}" alt="{{ banner.title }}" class="img-fluid" /></a>
+                    {% else %}
+                      <img src="{{ banner.image }}" alt="{{ banner.title }}" class="img-fluid" />
+                    {% endif %}
+                  </div>
+                {% endfor %}
+              </div>
+            </div>
+          </div>
+        {% endif %}
+
+        {# Alpha Engine: Produtos em Destaque Injetados #}
+        {% if featured_products %}
+          <h3>{{ heading_title_featured|default('Destaques') }}</h3>
+          <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-xl-4 mb-4">
+            {% for product in featured_products %}
+              <div class="col">{{ product }}</div>
+            {% endfor %}
+          </div>
+        {% endif %}
+
+        {# Alpha Engine: Produtos Mais Recentes Injetados #}
+        {% if latest_products %}
+          <h3>{{ heading_title_latest|default('Lançamentos') }}</h3>
+          <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-xl-4 mb-4">
+            {% for product in latest_products %}
+              <div class="col">{{ product }}</div>
+            {% endfor %}
+          </div>
+        {% endif %}
+
+        {{ content_bottom }}
+      </div>
       {{ column_right }}</div>
   </div>
 </div>

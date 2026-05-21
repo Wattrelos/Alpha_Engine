@@ -84,14 +84,16 @@ O objetivo não é apenas "fazer funcionar", mas criar uma estrutura onde o cód
 
 
 Padrões de projetos (Patterns) utilizados nessa aplicação:
-1. Factory
-2. DDAO
-3. DTO
-4. Singletom.
-5. Data Mapper.
-6. Template Method.
-7. Observer.
-8. Mediator.
-9. Repository 
+1.  Factory
+2.  DDAO
+3.  DTO
+4.  Singletom
+5.  Data Mapper
+6.  Template Method
+7.  Observer
+8.  Mediator
+9.  Repository
+10. Strategy
+
 ---
 *Nota: Este documento deve ser atualizado ao final de cada ciclo de saneamento para refletir o estado real da engenharia do projeto.*

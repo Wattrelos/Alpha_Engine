@@ -1,23 +1,31 @@
 <?php
 namespace Opencart\Catalog\Controller\Checkout;
+
+use Alpha\Controller\BaseController;
+use Alpha\Model\Domain\Repositories\CartRepository;
+
 /**
  * Class Checkout
  *
  * @package Opencart\Catalog\Controller\Checkout
  */
-class Checkout extends \Opencart\System\Engine\Controller {
+class Checkout extends BaseController {
 	/**
 	 * Index
 	 *
 	 * @return void
 	 */
 	public function index(): void {
+		$cartRepository = $this->getRepository(CartRepository::class);
+		$products = $cartRepository->getProducts();
+
 		// Validate cart to see if it has products and has stock.
-		if (!$this->cart->hasProducts() || (!$this->cart->hasStock() && !$this->config->get('config_stock_checkout')) || !$this->cart->hasMinimum()) {
+		if (empty($products) || (!$this->cart->hasStock() && !$this->config->get('config_stock_checkout')) || !$this->cart->hasMinimum()) {
 			$this->response->redirect($this->url->link('checkout/cart', 'language=' . $this->config->get('config_language'), true));
 		}
 
-		$this->load->language('checkout/checkout');
+		$data = [];
+		$this->loadLanguageData('checkout/checkout', $data); // Alpha Engine: Unifica traduções automaticamente no array $data
 
 		$this->document->setTitle($this->language->get('heading_title'));
 

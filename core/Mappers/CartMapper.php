@@ -2,125 +2,112 @@
 
 namespace Alpha\Mappers;
 
-use Alpha\Model\DataAccessObject\DataAccessObject;
-use Alpha\Model\DataAccessObject\QueryBuilder;
-use Alpha\Model\Domain\Entities\Cart;
+use Opencart\System\Engine\Registry;
 
 /**
- * CartMapper - Gerencia o ciclo de vida do carrinho de compras.
+ * Class CartMapper
  * 
- * Melhoras Alpha Engine:
- * - Gerenciamento de Opções Complexas: Compara hashes de opções para evitar duplicidade.
- * - Persistência via Entidade: Utiliza a entidade Cart e o DAO para salvar dados.
- * - Inteligência de Merge: Facilita a unificação de carrinhos entre sessão e cliente logado.
+ * Gerencia as operações de banco de dados (CRUD) exclusivas da tabela de carrinho,
+ * isolando o SQL da camada de domínio (CartRepository).
  */
-class CartMapper {
-    private DataAccessObject $dao;
+class CartMapper
+{
+    private object $db;
 
-    public function __construct() {
-        $this->dao = new DataAccessObject();
+    public function __construct(Registry $registry)
+    {
+        $this->db = $registry->get('db');
     }
 
     /**
-     * Adiciona um produto ao carrinho com suporte a opções complexas e assinaturas.
+     * Limpa carrinhos abandonados de visitantes baseando-se no tempo de expiração da sessão.
      */
-    public function add(int $product_id, int $quantity, array $options, int $subscription_plan_id, int $customer_id, string $session_id): void {
-        $option_json = json_encode($options);
+    public function deleteExpiredCarts(int $storeId, int $expireSeconds): void
+    {
+        $this->db->query("DELETE FROM `" . DB_PREFIX . "cart` 
+            WHERE `store_id` = '" . (int)$storeId . "' 
+            AND `customer_id` = '0' 
+            AND `date_added` < DATE_SUB(NOW(), INTERVAL " . (int)$expireSeconds . " SECOND)");
+    }
 
-        // 1. Busca se já existe um item idêntico no carrinho
-        $query = (new QueryBuilder())
-            ->from(DB_PREFIX . 'cart')
-            ->where("product_id = ?", [$product_id])
-            ->where("subscription_plan_id = ?", [$subscription_plan_id])
-            ->where("`option` = ?", [$option_json]);
+    /**
+     * Mescla o carrinho salvo do cliente (banco) com os itens que ele 
+     * adicionou na sessão atual (visitante) antes de fazer o login.
+     */
+    public function mergeCustomerCart(int $customerId, string $sessionId, int $storeId): void
+    {
+        // 1. Atualiza o ID da sessão nos itens antigos salvos pelo cliente
+        $this->db->query("UPDATE `" . DB_PREFIX . "cart` 
+            SET `session_id` = '" . $this->db->escape($sessionId) . "', `date_added` = NOW() 
+            WHERE `store_id` = '" . (int)$storeId . "' AND `customer_id` = '" . (int)$customerId . "'");
 
-        if ($customer_id) {
-            $query->where("customer_id = ?", [$customer_id]);
+        // 2. Associa os novos itens adicionados como visitante (customer_id = 0) ao cliente recém-logado
+        $this->db->query("UPDATE `" . DB_PREFIX . "cart` 
+            SET `customer_id` = '" . (int)$customerId . "', `date_added` = NOW() 
+            WHERE `store_id` = '" . (int)$storeId . "' AND `customer_id` = '0' AND `session_id` = '" . $this->db->escape($sessionId) . "'");
+    }
+
+    /**
+     * Busca todos os itens do carrinho com base no contexto (Logado ou Visitante).
+     */
+    public function findAllByContext(int $customerId, string $sessionId, int $storeId): array
+    {
+        if ($customerId) {
+            // Traz apenas itens salvos na conta do cliente
+            $query = $this->db->query("SELECT * FROM `" . DB_PREFIX . "cart` 
+                WHERE `customer_id` = '" . (int)$customerId . "' AND `store_id` = '" . (int)$storeId . "'");
         } else {
-            $query->where("session_id = ?", [$session_id]);
+            // Traz apenas itens da sessão do visitante
+            $query = $this->db->query("SELECT * FROM `" . DB_PREFIX . "cart` 
+                WHERE `customer_id` = '0' AND `session_id` = '" . $this->db->escape($sessionId) . "' AND `store_id` = '" . (int)$storeId . "'");
         }
 
-        $results = $this->dao->executeQuery($query);
+        return $query->rows;
+    }
 
-        if ($results) {
-            // 2. Se existe, apenas incrementa a quantidade via Entidade
-            $cart = new Cart();
-            $cart->setId((int)$results[0]['id']);
-            $this->dao->read($cart);
-            
-            $cart->setQuantity($cart->getQuantity() + $quantity);
-            $this->dao->update($cart);
+    /**
+     * Atualiza a quantidade de um item existente no carrinho.
+     */
+    public function updateQuantity(int $cartId, int $quantity): void
+    {
+        $this->db->query("UPDATE `" . DB_PREFIX . "cart` 
+            SET `quantity` = '" . (int)$quantity . "' 
+            WHERE `cart_id` = '" . (int)$cartId . "'");
+    }
+
+    /**
+     * Remove um item específico do carrinho.
+     */
+    public function delete(int $cartId): void
+    {
+        $this->db->query("DELETE FROM `" . DB_PREFIX . "cart` 
+            WHERE `cart_id` = '" . (int)$cartId . "'");
+    }
+
+    /**
+     * Esvazia completamente o carrinho do usuário atual (usado após a confirmação do pedido).
+     */
+    public function clearByContext(int $customerId, string $sessionId, int $storeId): void
+    {
+        if ($customerId) {
+            $this->db->query("DELETE FROM `" . DB_PREFIX . "cart` 
+                WHERE `customer_id` = '" . (int)$customerId . "' AND `store_id` = '" . (int)$storeId . "'");
         } else {
-            // 3. Se não existe, cria um novo registro
-            $cart = new Cart();
-            $cart->setCustomerId($customer_id)
-                 ->setSessionId($session_id)
-                 ->setProductId($product_id)
-                 ->setSubscriptionPlanId($subscription_plan_id)
-                 ->setOption($option_json)
-                 ->setQuantity($quantity)
-                 ->setDateAdded(date('Y-m-d H:i:s'));
-            
-            $this->dao->create($cart);
+            $this->db->query("DELETE FROM `" . DB_PREFIX . "cart` 
+                WHERE `customer_id` = '0' AND `session_id` = '" . $this->db->escape($sessionId) . "' AND `store_id` = '" . (int)$storeId . "'");
         }
     }
 
     /**
-     * Obtém os itens do carrinho hidratados como Entidades.
-     * @return Cart[]
+     * Insere um novo item no carrinho de forma bruta (inserção limpa).
+     * (Nota: A validação para não duplicar itens e somar a quantidade será tratada pelo Repository)
      */
-    public function getCartItems(int $customer_id, string $session_id): array {
-        $cart = new Cart();
-        if ($customer_id) {
-            $cart->setCustomerId($customer_id);
-        } else {
-            $cart->setSessionId($session_id);
-        }
-
-        return $this->dao->read($cart);
-    }
-
-    /**
-     * Atualiza a quantidade de um registro específico no carrinho.
-     */
-    public function updateQuantity(int $cart_id, int $quantity): void {
-        $cart = new Cart();
-        $cart->setId($cart_id);
-        
-        if ($this->dao->read($cart)) {
-            $cart->setQuantity($quantity);
-            $this->dao->update($cart);
-        }
-    }
-
-    /**
-     * Remove um item e valida a propriedade para segurança.
-     */
-    public function delete(int $cart_id, int $customer_id, string $session_id): void {
-        $cart = new Cart();
-        $cart->setId($cart_id);
-        
-        $results = $this->dao->read($cart);
-        if (!$results) return;
-
-        $item = $results[0];
-        // Validação de segurança: o item pertence a quem está tentando deletar?
-        if (($customer_id && $item->getCustomerId() === $customer_id) || ($item->getSessionId() === $session_id)) {
-            $this->dao->delete($item);
-        }
-    }
-
-    /**
-     * Limpa todo o carrinho de um cliente ou sessão
-     * 
-     * @param int $customer_id
-     * @param string $session_id
-     * @return void
-     */
-    public function clear(int $customer_id, string $session_id): void {
-        $conn = \Alpha\Model\DataAccessObject\ConnectionDB::getInstance()->getConnection();
-        $sql = $customer_id ? "DELETE FROM `" . DB_PREFIX . "cart` WHERE `customer_id` = ?" : "DELETE FROM `" . DB_PREFIX . "cart` WHERE `session_id` = ?";
-        $stmt = $conn->prepare($sql);
-        $stmt->execute([$customer_id ?: $session_id]);
+    public function insert(int $customerId, string $sessionId, int $storeId, int $productId, int $quantity, string $optionHash, int $subscriptionPlanId = 0): void
+    {
+        $this->db->query("INSERT INTO `" . DB_PREFIX . "cart` 
+            SET `customer_id` = '" . (int)$customerId . "', `session_id` = '" . $this->db->escape($sessionId) . "', 
+            `store_id` = '" . (int)$storeId . "', `product_id` = '" . (int)$productId . "', 
+            `subscription_plan_id` = '" . (int)$subscriptionPlanId . "', `option` = '" . $this->db->escape($optionHash) . "', 
+            `quantity` = '" . (int)$quantity . "', `date_added` = NOW()");
     }
 }

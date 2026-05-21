@@ -78,4 +78,21 @@ abstract class BaseController extends Controller
         $languageData = $this->load->language($route);
         $data = array_merge($data, $languageData);
     }
+
+    /**
+     * Método utilitário para renderizar a View.
+     * Injeta automaticamente os componentes globais (Header, Footer, Colunas) 
+     * caso eles já não tenham sido definidos no array de dados.
+     */
+    protected function render(string $route, array $data = []): void
+    {
+        $data['column_left']    = $data['column_left'] ?? $this->load->controller('common/column_left');
+        $data['column_right']   = $data['column_right'] ?? $this->load->controller('common/column_right');
+        $data['content_top']    = $data['content_top'] ?? $this->load->controller('common/content_top');
+        $data['content_bottom'] = $data['content_bottom'] ?? $this->load->controller('common/content_bottom');
+        $data['footer']         = $data['footer'] ?? $this->load->controller('common/footer');
+        $data['header']         = $data['header'] ?? $this->load->controller('common/header');
+
+        $this->response->setOutput($this->load->view($route, $data));
+    }
 }

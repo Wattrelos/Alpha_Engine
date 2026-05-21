@@ -50,13 +50,43 @@ class WeightClassRepository extends AbstractRepository implements BaseRepository
             return $this->cache->get(self::CACHE_KEY_ALL);
         }
 
-        $results = $this->getMapper()->findAll($this->language_id);
+        $results = $this->getMapper()->findAll();
         
         if (!empty($results)) {
             $this->cache->set(self::CACHE_KEY_ALL, $results, 3600);
         }
 
         return $results;
+    }
+
+    /**
+     * Retorna todas as unidades de peso para o idioma atual.
+     *
+     * @return \Alpha\Model\Domain\InterfaceEntity[]
+     */
+    public function getAllByCurrentLanguage(): array
+    {
+        $cacheKey = self::CACHE_KEY_ALL . '.lang.' . $this->language_id;
+
+        if ($this->cache->has($cacheKey)) {
+            return $this->cache->get($cacheKey);
+        }
+
+        $results = $this->getMapper()->getAll($this->language_id);
+
+        if (!empty($results)) {
+            $this->cache->set($cacheKey, $results, 3600);
+        }
+
+        return $results;
+    }
+
+    /**
+     * Busca classes de peso baseado em critérios específicos.
+     */
+    public function findBy(array $criteria, ?array $orderBy = null, ?int $limit = null, ?int $offset = null): array
+    {
+        return $this->getMapper()->findBy($criteria, $orderBy, $limit, $offset);
     }
 
     /**

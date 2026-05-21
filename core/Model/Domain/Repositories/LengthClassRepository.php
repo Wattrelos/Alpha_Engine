@@ -35,6 +35,16 @@ class LengthClassRepository extends AbstractRepository implements BaseRepository
     }
 
     /**
+     * Retorna todas as unidades de comprimento para o idioma atual.
+     *
+     * @return InterfaceEntity[]
+     */
+    public function getAllByCurrentLanguage(): array
+    {
+        return $this->getMapper()->getAll($this->language_id);
+    }
+
+    /**
      * Busca unidades baseado em critérios específicos.
      */
     public function findBy(array $criteria, ?array $orderBy = null, ?int $limit = null, ?int $offset = null): array

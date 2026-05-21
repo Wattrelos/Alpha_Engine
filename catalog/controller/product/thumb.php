@@ -1,5 +1,8 @@
 <?php
 namespace Opencart\Catalog\Controller\Product;
+
+use Alpha\Controller\BaseController;
+
 /**
  * Class Thumb
  *
@@ -19,7 +22,7 @@ namespace Opencart\Catalog\Controller\Product;
  *
  * @package Opencart\Catalog\Controller\Product
  */
-class Thumb extends \Opencart\System\Engine\Controller {
+class Thumb extends BaseController {
 	/**
 	 * Index
 	 *
@@ -28,7 +31,8 @@ class Thumb extends \Opencart\System\Engine\Controller {
 	 * @return string
 	 */
 	public function index(array $data): string {
-		$this->load->language('product/thumb');
+		// Alpha Engine: Carregamento otimizado de idioma injetado direto no array $data
+		$this->loadLanguageData('product/thumb', $data);
 
 		$data['cart'] = $this->url->link('common/cart.info', 'language=' . $this->config->get('config_language'));
 
@@ -38,6 +42,7 @@ class Thumb extends \Opencart\System\Engine\Controller {
 
 		$data['review_status'] = (int)$this->config->get('config_review_status');
 
+		// O template engine do OpenCart é seguro para ser usado na renderização de partials HTML
 		return $this->load->view('product/thumb', $data);
 	}
 }
