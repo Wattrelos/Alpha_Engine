@@ -2,7 +2,7 @@
 
 namespace Alpha\Model\Domain\Repositories;
 
-use Alpha\Mappers\WeightClassMapper;
+use Alpha\Mappers\EntityMappers\WeightClassMapper;
 use Alpha\Model\Domain\Entities\WeightClass;
 use Alpha\Support\Collection;
 

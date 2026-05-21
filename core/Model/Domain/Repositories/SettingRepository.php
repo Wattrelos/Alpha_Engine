@@ -2,9 +2,8 @@
 
 namespace Alpha\Model\Domain\Repositories;
 
-use Opencart\System\Engine\Registry;
 use Alpha\Mappers\EntityMappers\SettingMapper;
-use Alpha\Mappers\MapperFactory;
+use Alpha\Model\Domain\InterfaceEntity;
 
 /**
  * Class SettingRepository
@@ -12,15 +11,14 @@ use Alpha\Mappers\MapperFactory;
  * Centraliza o carregamento das configurações da loja utilizando Cache em Memória.
  * O banco de dados só é consultado 1 vez por requisição (fim de múltiplos SELECTs).
  */
-class SettingRepository
+class SettingRepository extends AbstractRepository implements BaseRepositoryInterface
 {
-    private SettingMapper $settingMapper;
     private array $data = [];
     private bool $isLoaded = false;
 
-    public function __construct(MapperFactory $mapperFactory, Registry $registry)
+    protected function getMapper(): SettingMapper
     {
-        $this->settingMapper = $mapperFactory->get(SettingMapper::class);
+        return $this->mapperFactory->get(SettingMapper::class);
     }
 
     /**
@@ -29,7 +27,7 @@ class SettingRepository
     private function loadAll(): void
     {
         if (!$this->isLoaded) {
-            $this->data = $this->settingMapper->findAll();
+            $this->data = $this->getMapper()->findAll();
             $this->isLoaded = true;
         }
     }
@@ -80,4 +78,10 @@ class SettingRepository
         }
         return '';
     }
+
+    // Implementações obrigatórias da BaseRepositoryInterface
+    public function find(int $id): ?InterfaceEntity { return null; }
+    public function findAll(): array { return $this->data; }
+    public function findBy(array $criteria, ?array $orderBy = null, ?int $limit = null, ?int $offset = null): array { return []; }
+    public function findOneBy(array $criteria): ?InterfaceEntity { return null; }
 }

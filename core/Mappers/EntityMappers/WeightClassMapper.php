@@ -2,18 +2,16 @@
 
 namespace Alpha\Mappers\EntityMappers;
 
-use Alpha\Model\DataAccessObject\DataAccessObject;
+use Alpha\Mappers\BaseMapper;
 use Alpha\Model\DataAccessObject\QueryBuilder;
+use Alpha\Model\Domain\Entities\WeightClass;
+use Alpha\Model\Domain\Entities\WeightClassDescription;
 
 /**
  * Mapper para gerenciar classes de peso (Weight Classes)
  */
-class WeightClassMapper {
-    private DataAccessObject $dao;
-
-    public function __construct() {
-        $this->dao = new DataAccessObject();
-    }
+class WeightClassMapper extends BaseMapper {
+    protected string $tableName = 'weight_class';
 
     /**
      * Alpha Engine: Recupera todas as classes e hidrata as descrições em lote.
@@ -21,7 +19,7 @@ class WeightClassMapper {
     public function findAll(?int $languageId = null): array
     {
         $query = (new QueryBuilder())
-            ->from(DB_PREFIX . 'weight_class', 'wc');
+            ->from($this->getFullTableName(), 'wc');
 
         if ($languageId !== null) {
             $query->leftJoin(DB_PREFIX . 'weight_class_description', 'wcd', 'wc.id = wcd.weight_class_id')
@@ -41,7 +39,7 @@ class WeightClassMapper {
             $id = (int)$row['id'];
 
             if (!isset($mapped[$id])) {
-                $entity = new \Alpha\Model\Domain\Entities\WeightClass();
+                $entity = new WeightClass();
                 $entity->setId($id);
                 $entity->setValue((float)$row['value']);
                 $mapped[$id] = $entity;
@@ -49,7 +47,7 @@ class WeightClassMapper {
             }
 
             if (!empty($row['title'])) {
-                $desc = new \Alpha\Model\Domain\Entities\WeightClassDescription();
+                $desc = new WeightClassDescription();
                 $desc->setLanguageId((int)$row['language_id']);
                 $desc->setTitle($row['title']);
                 $desc->setUnit($row['unit']);
@@ -63,7 +61,7 @@ class WeightClassMapper {
     /**
      * Alpha Engine: Recupera uma classe de peso pelo ID.
      */
-    public function findById(int $id, ?int $languageId = null): ?\Alpha\Model\Domain\Entities\WeightClass
+    public function findById(int $id, ?int $languageId = null): ?WeightClass
     {
         $all = $this->findAll($languageId);
         foreach ($all as $entity) {
@@ -77,7 +75,7 @@ class WeightClassMapper {
     /**
      * Alpha Engine: Recupera uma classe de peso baseada em critérios básicos.
      */
-    public function findOneBy(array $criteria, ?int $languageId = null): ?\Alpha\Model\Domain\Entities\WeightClass
+    public function findOneBy(array $criteria, ?int $languageId = null): ?WeightClass
     {
         $all = $this->findAll($languageId);
         foreach ($all as $entity) {

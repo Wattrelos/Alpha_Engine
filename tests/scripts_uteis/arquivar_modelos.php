@@ -7,6 +7,11 @@
 $baseDir = dirname(__DIR__, 2) . '/catalog/model/';
 
 $modelosPortados = [
+    'design/banner.php',
+    'design/theme.php',
+    'design/translation.php',
+    'setting/setting.php',
+
     // Já renomeados: 
     /*
     'account/address.php',
@@ -22,11 +27,8 @@ $modelosPortados = [
     'checkout/coupon.php'
     'checkout/order.php',
     'checkout/voucher.php',
-    'design/banner.php',
     'design/layout.php',
     'design/seo_url.php',
-    'design/theme.php',
-    'design/translation.php',
     'localisation/currency.php',
     'localisation/geo_zone.php',
     'localisation/language.php',
@@ -37,7 +39,6 @@ $modelosPortados = [
     'localisation/weight_class.php',
     'setting/extension.php',
     'setting/module.php',
-    'setting/setting.php',
     */
 ];
 

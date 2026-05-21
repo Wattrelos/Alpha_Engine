@@ -2,25 +2,24 @@
 
 namespace Alpha\Mappers\EntityMappers;
 
-use Opencart\System\Engine\Registry;
+use Alpha\Mappers\BaseMapper;
+use Alpha\Model\DataAccessObject\QueryBuilder;
 
 /**
  * Class SettingMapper
  * 
- * Gerencia as operações de banco de dados para as configurações da loja.
+ * Gerencia as operações de banco de dados para as configurações da loja (Alpha Engine).
  */
-class SettingMapper
+class SettingMapper extends BaseMapper
 {
-    private object $db;
-
-    public function __construct(Registry $registry)
-    {
-        $this->db = $registry->get('db');
-    }
+    protected string $tableName = 'setting';
 
     public function findAll(): array
     {
-        $query = $this->db->query("SELECT * FROM `" . DB_PREFIX . "setting`");
-        return $query->rows;
+        $query = (new QueryBuilder())
+            ->from($this->getFullTableName())
+            ->select('*');
+
+        return $this->dao->executeQuery($query);
     }
 }

@@ -23,6 +23,10 @@ download/
 vendor/
 composer.lock
 
+# Root:
+.aiexclude
+GEMINI.md
+
 # Environment and IDEs
 .env
 .env.local

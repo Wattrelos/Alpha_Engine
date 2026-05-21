@@ -2,7 +2,7 @@
 
 namespace Alpha\Model\Domain\Repositories;
 
-use Alpha\Mappers\LengthClassMapper;
+use Alpha\Mappers\EntityMappers\LengthClassMapper;
 use Alpha\Model\Domain\InterfaceEntity;
 
 /**

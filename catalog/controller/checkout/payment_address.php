@@ -3,6 +3,8 @@ namespace Opencart\Catalog\Controller\Checkout;
 /**
  * Alpha Engine: Imports
  */
+use Alpha\Controller\BaseController;
+use Alpha\Model\Domain\Repositories\CartRepository;
 use Alpha\Mappers\EntityMappers\AddressMapper;
 use Alpha\Mappers\EntityMappers\CountryMapper;
 use Alpha\Mappers\EntityMappers\ZoneMapper;
@@ -12,16 +14,17 @@ use Alpha\Mappers\CollectionToArrayConverter;
  *
  * @package Opencart\Catalog\Controller\Checkout
  */
-class PaymentAddress extends \Opencart\System\Engine\Controller {
+class PaymentAddress extends BaseController {
 	/**
 	 * Index
 	 *
 	 * @return string
 	 */
 	public function index(): string {
-		$this->load->language('checkout/payment_address');
+		$data = [];
+		$this->loadLanguageData('checkout/payment_address', $data);
 
-		$data['error_upload_size'] = sprintf($this->language->get('error_upload_size'), $this->config->get('config_file_max_size'));
+		$data['error_upload_size'] = sprintf($data['error_upload_size'], $this->config->get('config_file_max_size'));
 		$data['config_file_max_size'] = ((int)$this->config->get('config_file_max_size') * 1024 * 1024);
 
 		$this->session->data['upload_token'] = oc_token(32);
@@ -29,7 +32,8 @@ class PaymentAddress extends \Opencart\System\Engine\Controller {
 		$data['upload'] = $this->url->link('tool/upload', 'language=' . $this->config->get('config_language') . '&upload_token=' . $this->session->data['upload_token']);
 
 		// Address
-		$address_mapper = new AddressMapper();
+		$mapperFactory = $this->registry->get('mapperFactory');
+		$address_mapper = $mapperFactory->get(AddressMapper::class);
 		$data['addresses'] = $address_mapper->getAddresses((int)$this->customer->getId(), (int)$this->config->get('config_language_id'));
 
 		if (isset($this->session->data['payment_address']['address_id'])) {
@@ -41,12 +45,12 @@ class PaymentAddress extends \Opencart\System\Engine\Controller {
 		// Country
 		$data['country_id'] = (int)$this->config->get('config_country_id');
 
-		$country_mapper = new CountryMapper();
+		$country_mapper = $mapperFactory->get(CountryMapper::class);
 		$countries = $country_mapper->getCountries();
 		$data['countries'] = CollectionToArrayConverter::convertCollection($countries);
 
 		// Zone
-		$zone_mapper = new ZoneMapper();
+		$zone_mapper = $mapperFactory->get(ZoneMapper::class);
 		$data['zones'] = $zone_mapper->getZonesByCountryId($data['country_id']);
 
 		// Custom Fields
@@ -74,6 +78,8 @@ class PaymentAddress extends \Opencart\System\Engine\Controller {
 	 */
 	public function save(): void {
 		$this->load->language('checkout/payment_address');
+		$cartRepository = $this->getRepository(CartRepository::class);
+		$mapperFactory = $this->registry->get('mapperFactory');
 
 		$json = [];
 
@@ -93,7 +99,7 @@ class PaymentAddress extends \Opencart\System\Engine\Controller {
 		$post_info = $this->request->post + $required;
 
 		// Validate cart has products and has stock.
-		if (!$this->cart->hasProducts() || (!$this->cart->hasStock() && !$this->config->get('config_stock_checkout')) || !$this->cart->hasMinimum()) {
+		if (empty($cartRepository->getProducts()) || (!$cartRepository->hasStock() && !$this->config->get('config_stock_checkout')) || !$cartRepository->hasMinimum()) {
 			$json['redirect'] = $this->url->link('checkout/cart', 'language=' . $this->config->get('config_language'), true);
 		}
 
@@ -125,7 +131,7 @@ class PaymentAddress extends \Opencart\System\Engine\Controller {
 			}
 
 			// Country
-			$country_mapper = new CountryMapper();
+			$country_mapper = $mapperFactory->get(CountryMapper::class);
 			$country_info = $country_mapper->getCountry((int)$post_info['country_id']);
 
 			if ($country_info && $country_info['postcode_required'] && !oc_validate_length($post_info['postcode'], 2, 10)) {
@@ -137,7 +143,7 @@ class PaymentAddress extends \Opencart\System\Engine\Controller {
 			}
 
 			// Zone
-			$zone_mapper = new ZoneMapper();
+			$zone_mapper = $mapperFactory->get(ZoneMapper::class);
 			$zone_total = $zone_mapper->getTotalZonesByCountryId((int)$post_info['country_id']);
 
 			if ($zone_total && !$post_info['zone_id']) {
@@ -168,7 +174,7 @@ class PaymentAddress extends \Opencart\System\Engine\Controller {
 				$post_info['default'] = 1;
 			}
 
-			$address_mapper = new AddressMapper();
+			$address_mapper = $mapperFactory->get(AddressMapper::class);
 			$json['address_id'] = $address_mapper->save($post_info, (int)$this->customer->getId());
 			$json['addresses'] = $address_mapper->getAddresses((int)$this->customer->getId(), (int)$this->config->get('config_language_id'));
 
@@ -183,8 +189,7 @@ class PaymentAddress extends \Opencart\System\Engine\Controller {
 			unset($this->session->data['payment_methods']);
 		}
 
-		$this->response->addHeader('Content-Type: application/json');
-		$this->response->setOutput(json_encode($json));
+		$this->jsonResponse($json);
 	}
 
 	/**
@@ -194,6 +199,8 @@ class PaymentAddress extends \Opencart\System\Engine\Controller {
 	 */
 	public function address(): void {
 		$this->load->language('checkout/payment_address');
+		$cartRepository = $this->getRepository(CartRepository::class);
+		$mapperFactory = $this->registry->get('mapperFactory');
 
 		$json = [];
 
@@ -208,7 +215,7 @@ class PaymentAddress extends \Opencart\System\Engine\Controller {
 		}
 
 		// Validate cart has products and has stock.
-		if (!$this->cart->hasProducts() || (!$this->cart->hasStock() && !$this->config->get('config_stock_checkout')) || !$this->cart->hasMinimum()) {
+		if (empty($cartRepository->getProducts()) || (!$cartRepository->hasStock() && !$this->config->get('config_stock_checkout')) || !$cartRepository->hasMinimum()) {
 			$json['redirect'] = $this->url->link('checkout/cart', 'language=' . $this->config->get('config_language'), true);
 		}
 
@@ -224,7 +231,7 @@ class PaymentAddress extends \Opencart\System\Engine\Controller {
 
 		if (!$json) {
 			// Payment Address
-			$address_mapper = new AddressMapper();
+			$address_mapper = $mapperFactory->get(AddressMapper::class);
 			$address_info = $address_mapper->getAddress($address_id, (int)$this->config->get('config_language_id'));
 
 			if (!$address_info) {
@@ -250,7 +257,6 @@ class PaymentAddress extends \Opencart\System\Engine\Controller {
 			unset($this->session->data['payment_methods']);
 		}
 
-		$this->response->addHeader('Content-Type: application/json');
-		$this->response->setOutput(json_encode($json));
+		$this->jsonResponse($json);
 	}
 }

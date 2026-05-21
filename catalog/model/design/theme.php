@@ -1,5 +1,8 @@
 <?php
 namespace Opencart\Catalog\Model\Design;
+
+use Alpha\Model\Domain\Repositories\ThemeRepository;
+
 /**
  * Class Theme
  *
@@ -24,8 +27,10 @@ class Theme extends \Opencart\System\Engine\Model {
 	 * $theme_info = $this->model_design_theme->getTheme($route);
 	 */
 	public function getTheme(string $route): array {
-		$query = $this->db->query("SELECT * FROM `" . DB_PREFIX . "theme` WHERE `store_id` = '" . (int)$this->config->get('config_store_id') . "' AND `route` = '" . $this->db->escape((string)$route) . "' AND `status` = '1'");
+        // Alpha Engine: Consome o Repositório de temas que possui Identity Map Nativo
+		$repositoryFactory = $this->registry->get('alpha_repository_factory');
+		$themeRepository = $repositoryFactory->get(ThemeRepository::class);
 
-		return $query->row;
+		return $themeRepository->getTheme($route, (int)$this->config->get('config_store_id')) ?? [];
 	}
 }

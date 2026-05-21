@@ -1,7 +1,7 @@
 <?php
 namespace Opencart\System\Library\Cart;
 
-use Alpha\Mappers\CurrencyMapper;
+use Alpha\Mappers\EntityMappers\CurrencyMapper;
 
 /**
  * Class Currency

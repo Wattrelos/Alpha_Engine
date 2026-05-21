@@ -1,5 +1,9 @@
 <?php
 namespace Opencart\Catalog\Controller\Startup;
+
+use Alpha\Model\Domain\Repositories\SettingRepository;
+use Alpha\Model\Domain\Repositories\StoreRepository;
+
 /**
  * Class Setting
  *
@@ -15,9 +19,10 @@ class Setting extends \Opencart\System\Engine\Controller {
 		$hostname = ($this->request->server['HTTPS'] ? 'https://' : 'http://') . str_replace('www.', '', $this->request->server['HTTP_HOST']) . rtrim(dirname($this->request->server['PHP_SELF']), '/.\\') . '/';
 
 		// Store
-		$this->load->model('setting/store');
+		$repositoryFactory = $this->registry->get('alpha_repository_factory');
+		$storeRepository = $repositoryFactory->get(StoreRepository::class);
 
-		$store_info = $this->model_setting_store->getStoreByHostname($hostname);
+		$store_info = $storeRepository->getStoreByHostname($hostname);
 
 		if (isset($this->request->get['store_id'])) {
 			$this->config->set('config_store_id', (int)$this->request->get['store_id']);
@@ -37,9 +42,10 @@ class Setting extends \Opencart\System\Engine\Controller {
 		}
 
 		// Setting
-		$this->load->model('setting/setting');
+		$repositoryFactory = $this->registry->get('alpha_repository_factory');
+		$settingRepository = $repositoryFactory->get(SettingRepository::class);
 
-		$results = $this->model_setting_setting->getSettings((int)$this->config->get('config_store_id'));
+		$results = $settingRepository->getSettings((int)$this->config->get('config_store_id'));
 
 		foreach ($results as $result) {
 			if (!$result['serialized']) {

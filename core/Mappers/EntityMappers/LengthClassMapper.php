@@ -2,98 +2,90 @@
 
 namespace Alpha\Mappers\EntityMappers;
 
-use Alpha\Model\DataAccessObject\DataAccessObject;
+use Alpha\Mappers\BaseMapper;
 use Alpha\Model\DataAccessObject\QueryBuilder;
+use Alpha\Model\Domain\Entities\LengthClass;
+use Alpha\Model\Domain\Entities\LengthClassDescription;
 
 /**
- * Mapper para gerenciar classes de comprimento (Length Classes)
+ * LengthClassMapper - Gerenciador de persistência para as unidades de medida de comprimento.
+ *
+ * Alpha Engine:
+ * - Padroniza o acesso e hidratação de LengthClass e suas descrições.
+ * - Garante a precisão decimal para os valores de conversão.
  */
-class LengthClassMapper {
-    private DataAccessObject $dao;
-
-    public function __construct() {
-        $this->dao = new DataAccessObject();
-    }
+class LengthClassMapper extends BaseMapper
+{
+    protected string $tableName = 'length_class';
 
     /**
-     * Alpha Engine: Recupera todas as classes e hidrata as descrições em lote.
+     * Busca todas as classes de comprimento para um idioma específico.
      */
-    public function findAll(?int $languageId = null): array
+    public function getAll(int $languageId): array
     {
         $query = (new QueryBuilder())
-            ->from(DB_PREFIX . 'length_class', 'lc');
-
-        if ($languageId !== null) {
-            $query->leftJoin(DB_PREFIX . 'length_class_description', 'lcd', 'lc.id = lcd.length_class_id')
-                  ->where('lcd.language_id = ?', [$languageId])
-                  ->select('lc.id AS id, lc.value, lcd.title, lcd.unit, lcd.language_id');
-        } else {
-            $query->leftJoin(DB_PREFIX . 'length_class_description', 'lcd', 'lc.id = lcd.length_class_id')
-                  ->select('lc.id AS id, lc.value, lcd.title, lcd.unit, lcd.language_id');
-        }
-
+            ->from($this->getFullTableName(), 'lc')
+            ->leftJoin(DB_PREFIX . 'length_class_description', 'lcd', 'lc.length_class_id = lcd.length_class_id')
+            ->where('lcd.language_id = ?', [$languageId])
+            ->select('lc.*', 'lcd.title', 'lcd.unit');
+            
         $results = $this->dao->executeQuery($query);
-        
+
         $entities = [];
-        $mapped = [];
-
-        foreach ($results as $row) {
-            $id = (int)$row['id'];
-
-            if (!isset($mapped[$id])) {
-                $entity = new \Alpha\Model\Domain\Entities\LengthClass();
-                $entity->setId($id);
-                $entity->setValue((float)$row['value']);
-                $mapped[$id] = $entity;
-                $entities[] = $entity;
-            }
-
-            if (!empty($row['title'])) {
-                $desc = new \Alpha\Model\Domain\Entities\LengthClassDescription();
-                $desc->setLanguageId((int)$row['language_id']);
-                $desc->setTitle($row['title']);
-                $desc->setUnit($row['unit']);
-                $mapped[$id]->addDescription($desc);
-            }
+        foreach ($results as $result) {
+            $entities[] = $this->hydrate($result);
         }
-        
+
         return $entities;
     }
 
     /**
-     * Alpha Engine: Recupera uma classe de comprimento pelo ID.
+     * Busca uma classe de comprimento pelo ID.
      */
-    public function findById(int $id, ?int $languageId = null): ?\Alpha\Model\Domain\Entities\LengthClass
+    public function getById(int $id, int $languageId): ?LengthClass
     {
-        $all = $this->findAll($languageId);
-        foreach ($all as $entity) {
-            if ($entity->getId() === $id) {
-                return $entity;
-            }
+        $query = (new QueryBuilder())
+            ->from($this->getFullTableName(), 'lc')
+            ->leftJoin(DB_PREFIX . 'length_class_description', 'lcd', 'lc.length_class_id = lcd.length_class_id')
+            ->where('lc.length_class_id = ?', [$id])
+            ->where('lcd.language_id = ?', [$languageId])
+            ->select('lc.*', 'lcd.title', 'lcd.unit');
+
+        $result = $this->dao->executeQuery($query);
+
+        if (empty($result)) {
+            return null;
         }
-        return null;
+
+        return $this->hydrate($result[0]);
     }
 
     /**
-     * Alpha Engine: Recupera uma classe de comprimento baseada em critérios.
+     * Hidrata a entidade LengthClass e sua descrição.
      */
-    public function findOneBy(array $criteria, ?int $languageId = null): ?\Alpha\Model\Domain\Entities\LengthClass
+    protected function hydrate(array $data): LengthClass
     {
-        $all = $this->findAll($languageId);
-        foreach ($all as $entity) {
-            $match = true;
-            foreach ($criteria as $key => $value) {
-                if ($key === 'id' && $entity->getId() !== $value) {
-                    $match = false;
-                    break;
-                }
-                if ($key === 'value' && $entity->getValue() !== $value) {
-                    $match = false;
-                    break;
-                }
-            }
-            if ($match) return $entity;
-        }
-        return null;
+        $lengthClass = new LengthClass();
+        $lengthClass->setId((int)$data['length_class_id'])
+                    ->setValue((float)$data['value']);
+
+        $description = new LengthClassDescription();
+        $description->setLengthClassId((int)$data['length_class_id'])
+                    ->setLanguageId((int)$data['language_id'])
+                    ->setTitle($data['title'])
+                    ->setUnit($data['unit']);
+
+        $lengthClass->setDescriptions([$description]); // Para este método, apenas uma descrição é hidratada
+
+        // Apontamento Técnico:
+        // O DAO.php se encarregará de carregar todas as descrições via OneToMany
+        // quando a entidade for carregada por um Repository com processAssociations.
+        // Aqui, estamos apenas garantindo que a descrição principal esteja presente.
+
+        return $lengthClass;
     }
+
+    // Métodos para persistência (insert, update, delete) seriam adicionados aqui
+    // se a funcionalidade de gerenciamento de LengthClass fosse necessária.
+    // Por enquanto, focamos na leitura para o motor de cálculo.
 }
