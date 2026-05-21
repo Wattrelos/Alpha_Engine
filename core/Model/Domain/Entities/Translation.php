@@ -1,12 +1,11 @@
 <?php
-
 namespace Alpha\Model\Domain\Entities;
 
 use Alpha\Model\Domain\BaseEntity;
 use Alpha\Model\Domain\Attributes\ManyToOne;
 
 /**
- * Entidade Translation - Gerencia sobreposições de tradução dinâmicas via banco de dados.
+ * Entidade Translation - Representa as traduções sobrepostas no banco de dados.
  */
 class Translation extends BaseEntity
 {
@@ -15,6 +14,7 @@ class Translation extends BaseEntity
     private string $route = '';
     private string $key = '';
     private string $value = '';
+    private string $dateAdded = '';
 
     #[ManyToOne(targetEntity: Store::class, foreignKey: 'storeId')]
     private ?Store $store = null;
@@ -23,10 +23,10 @@ class Translation extends BaseEntity
     private ?Language $language = null;
 
     public function getStoreId(): int { return $this->storeId; }
-    public function setStoreId(int $id): self { $this->storeId = $id; return $this; }
+    public function setStoreId(int $storeId): self { $this->storeId = $storeId; return $this; }
 
     public function getLanguageId(): int { return $this->languageId; }
-    public function setLanguageId(int $id): self { $this->languageId = $id; return $this; }
+    public function setLanguageId(int $languageId): self { $this->languageId = $languageId; return $this; }
 
     public function getRoute(): string { return $this->route; }
     public function setRoute(string $route): self { $this->route = $route; return $this; }
@@ -37,25 +37,12 @@ class Translation extends BaseEntity
     public function getValue(): string { return $this->value; }
     public function setValue(string $value): self { $this->value = $value; return $this; }
 
-    public function getStore(): ?Store
-    {
-        return $this->store;
-    }
+    public function getDateAdded(): string { return $this->dateAdded; }
+    public function setDateAdded(string $dateAdded): self { $this->dateAdded = $dateAdded; return $this; }
 
-    public function setStore(?Store $store): self
-    {
-        $this->store = $store;
-        return $this;
-    }
+    public function getStore(): ?Store { return $this->store; }
+    public function setStore(?Store $store): self { $this->store = $store; return $this; }
 
-    public function getLanguage(): ?Language
-    {
-        return $this->language;
-    }
-
-    public function setLanguage(?Language $language): self
-    {
-        $this->language = $language;
-        return $this;
-    }
+    public function getLanguage(): ?Language { return $this->language; }
+    public function setLanguage(?Language $language): self { $this->language = $language; return $this; }
 }

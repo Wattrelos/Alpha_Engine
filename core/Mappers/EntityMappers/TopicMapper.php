@@ -2,15 +2,18 @@
 
 namespace Alpha\Mappers\EntityMappers;
 
-use Alpha\Mappers\BaseMapper;
+use Alpha\Model\DataAccessObject\DataAccessObject;
 use Alpha\Model\DataAccessObject\QueryBuilder;
 
 /**
  * Mapper para gerenciar a lógica de Tópicos (CMS)
  */
-class TopicMapper extends BaseMapper {
+class TopicMapper {
+    private DataAccessObject $dao;
 
-    protected string $tableName = 'topic';
+    public function __construct() {
+        $this->dao = new DataAccessObject();
+    }
 
     /**
      * Obtém um tópico específico

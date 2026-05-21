@@ -2,9 +2,11 @@
 namespace Opencart\Catalog\Controller\Product;
 
 use Alpha\Controller\BaseController;
-use Alpha\Mappers\EntityMappers\ProductMapper;
-use Alpha\Mappers\EntityMappers\CategoryMapper;
-use Alpha\Mappers\EntityMappers\ManufacturerMapper;
+use Alpha\Model\Domain\Repositories\ProductRepository;
+use Alpha\Model\Domain\Repositories\CategoryRepository;
+use Alpha\Model\Domain\Repositories\ManufacturerRepository;
+use Opencart\Catalog\Controller\Product\Review;
+use Opencart\Catalog\Controller\Product\Related;
 
 /**
  * Class Product
@@ -24,17 +26,12 @@ class Product extends BaseController {
 			$product_id = 0;
 		}
 
-		// Alpha Engine: Injeção do Mapper via BaseController, garantindo instanciamento único (Factory)
-		/** @var ProductMapper $productMapper */
-		$productMapper = $this->getMapper(ProductMapper::class);
+		// Alpha Engine: Utilização do Repositório de Domínio para o Produto
+		/** @var ProductRepository $productRepository */
+		$productRepository = $this->getRepository(ProductRepository::class);
 
-		// Alpha Engine: Uma única chamada ao Mapper para obter o Grafo Completo do Produto
-		$product_info = $productMapper->getDetailedProduct(
-			$product_id,
-			$this->language_id,
-			$this->store_id,
-			(int)$this->config->get('config_customer_group_id')
-		);
+		// Delega a resolução dos contextos (idioma, loja, grupo) para o repositório
+		$product_info = $productRepository->getDetailedProduct($product_id);
 
 		if ($product_info) {
 			$data = $product_info;
@@ -50,9 +47,9 @@ class Product extends BaseController {
 				'href' => $this->url->link('common/home', 'language=' . $this->config->get('config_language'))
 			];
 
-			// Alpha Engine: Injeção do Mapper de Categoria via BaseController
-			/** @var CategoryMapper $categoryMapper */
-			$categoryMapper = $this->getMapper(CategoryMapper::class);
+			// Alpha Engine: Utilização do Repositório de Categoria
+			/** @var CategoryRepository $categoryRepository */
+			$categoryRepository = $this->getRepository(CategoryRepository::class);
 
 			if (isset($this->request->get['path'])) {
 				$path = '';
@@ -68,7 +65,7 @@ class Product extends BaseController {
 						$path .= '_' . $path_id;
 					}
 
-					$category_info = $categoryMapper->getCategory((int)$path_id, $this->language_id, $this->store_id);
+					$category_info = $categoryRepository->getCategory((int)$path_id);
 
 					if ($category_info) {
 						$data['breadcrumbs'][] = [
@@ -79,7 +76,7 @@ class Product extends BaseController {
 				}
 
 				// Set the last category breadcrumb
-				$category_info = $categoryMapper->getCategory($category_id, $this->language_id, $this->store_id);
+				$category_info = $categoryRepository->getCategory($category_id);
 
 				if ($category_info) {
 					$url = '';
@@ -107,9 +104,9 @@ class Product extends BaseController {
 				}
 			}
 
-			// Alpha Engine: Injeção do Mapper de Fabricante via BaseController
-			/** @var ManufacturerMapper $manufacturerMapper */
-			$manufacturerMapper = $this->getMapper(ManufacturerMapper::class);
+			// Alpha Engine: Utilização do Repositório de Fabricante
+			/** @var ManufacturerRepository $manufacturerRepository */
+			$manufacturerRepository = $this->getRepository(ManufacturerRepository::class);
 
 			if (isset($this->request->get['manufacturer_id'])) {
 				
@@ -136,7 +133,7 @@ class Product extends BaseController {
 					$url .= '&limit=' . $this->request->get['limit'];
 				}
 
-				$manufacturer_info = $manufacturerMapper->getManufacturer((int)$this->request->get['manufacturer_id'], $this->store_id);
+				$manufacturer_info = $manufacturerRepository->getManufacturer((int)$this->request->get['manufacturer_id']);
 
 				if ($manufacturer_info) {
 					$data['breadcrumbs'][] = [
@@ -270,7 +267,9 @@ class Product extends BaseController {
 			}
 
 			$data['stock'] = $data['stock_status_text'] ?: $data['quantity'];
-			$data['review'] = $this->load->controller('product/review');
+			
+			// Alpha Engine: Instanciação Loader-Free do Componente de Avaliações
+			$data['review'] = (new Review($this->registry))->index();
 
 			$data['wishlist_add'] = $this->url->link('account/wishlist.add', 'language=' . $this->config->get('config_language'));
 			$data['compare_add'] = $this->url->link('product/compare.add', 'language=' . $this->config->get('config_language'));
@@ -356,9 +355,9 @@ class Product extends BaseController {
 			$data['subscription_plans'] = $data['template_subscriptions'];
 
 			$data['share'] = $this->url->link('product/product', 'language=' . $this->config->get('config_language') . '&product_id=' . $product_id);
-			$data['related'] = $this->load->controller('product/related', [
-				'product_id' => $product_id
-			]);
+			
+			// Alpha Engine: Instanciação Loader-Free do Componente de Produtos Relacionados
+			$data['related'] = (new Related($this->registry))->index(['product_id' => $product_id]);
 
 			$data['tags'] = [];
 			if ($data['tag']) {
@@ -372,15 +371,10 @@ class Product extends BaseController {
 			}
 
 			if ($this->config->get('config_product_report_status')) {
-				$productMapper->addReport((int)$this->request->get['product_id'], $this->store_id, oc_get_ip());
+				$productRepository->addReport((int)$this->request->get['product_id'], oc_get_ip());
 			}
 
 			$data['language'] = $this->config->get('config_language');
-
-			$data['column_left'] = $this->load->controller('common/column_left');
-			$data['column_right'] = $this->load->controller('common/column_right');
-			$data['content_top'] = $this->load->controller('common/content_top');
-			$data['content_bottom'] = $this->load->controller('common/content_bottom');
 
 			// Alpha Engine: render() injeta Header/Footer automaticamente
 			return $this->render('product/product', $data);

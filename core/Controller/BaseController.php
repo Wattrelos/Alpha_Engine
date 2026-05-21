@@ -75,8 +75,36 @@ abstract class BaseController extends Controller
      */
     protected function loadLanguageData(string $route, array &$data = []): void
     {
-        $languageData = $this->load->language($route);
-        $data = array_merge($data, $languageData);
+        // Alpha Engine: Utiliza o objeto Language nativo para carregar as traduções
+        // eliminando completamente a dependência do Loader legado.
+        $languageData = $this->language->load($route);
+        $data = array_merge($data, is_array($languageData) ? $languageData : []);
+    }
+
+    /**
+     * Alpha Engine: Substituto direto para $this->load->config()
+     */
+    protected function loadConfig(string $filename): void
+    {
+        $this->getRepository(\Alpha\Model\Domain\Repositories\ConfigurationRepository::class)->loadFile($filename);
+    }
+
+
+    /**
+     * Alpha Engine: Renderiza os módulos atrelados a uma posição do Layout.
+     * 
+     * @param string $position (ex: 'column_left', 'content_top')
+     * @return array
+     */
+    protected function renderPosition(string $position): array
+    {
+        $modules = [];
+        
+        // TODO: Orquestrar a resolução do Layout ID e buscar os módulos vinculados
+        // através do LayoutRepository. Como o foco atual é a página de Carrinho/Checkout,
+        // retornaremos um array vazio temporariamente para desobstruir a renderização global.
+        
+        return $modules;
     }
 
     /**

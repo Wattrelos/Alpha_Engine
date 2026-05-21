@@ -14,7 +14,7 @@ class PaginationRepository extends AbstractRepository
     {
         $total = (int)($setting['total'] ?? 0);
         $page  = (int)($setting['page'] ?? 1);
-        $limit = (int)($setting['limit'] ?? 10);
+        $limit = max(1, (int)($setting['limit'] ?? 10));
         $url   = str_replace('%7Bpage%7D', '{page}', (string)($setting['url'] ?? ''));
 
         $num_links = 8;

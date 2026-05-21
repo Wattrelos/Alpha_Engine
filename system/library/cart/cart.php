@@ -136,7 +136,7 @@ class Cart {
 	/**
 	 * Has Minimum
 	 */
-	public function hasMinimum() {
+	public function hasMinimum(): bool {
 		return $this->cartRepository->hasMinimum();
 	}
 

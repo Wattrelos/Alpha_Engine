@@ -14,6 +14,21 @@ use Alpha\Model\Domain\InterfaceEntity;
 class ManufacturerRepository extends AbstractRepository implements BaseRepositoryInterface
 {
     /**
+     * Alpha Engine: Recupera os dados hidratados de um Fabricante
+     * 
+     * @param int $manufacturerId
+     * @return array|null
+     */
+    public function getManufacturer(int $manufacturerId): ?array
+    {
+        /** @var \Alpha\Mappers\EntityMappers\ManufacturerMapper $mapper */
+        $mapper = $this->mapperFactory->get(ManufacturerMapper::class);
+        return method_exists($mapper, 'getManufacturer') 
+            ? $mapper->getManufacturer($manufacturerId, $this->store_id) 
+            : null;
+    }
+
+    /**
      * Busca um fabricante pelo seu ID único.
      *
      * @param int $id

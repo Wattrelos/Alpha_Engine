@@ -2,11 +2,13 @@
 namespace Opencart\Catalog\Controller\Product;
 
 use Alpha\Controller\BaseController;
+use Alpha\Model\Domain\Repositories\ProductRepository;
+use Alpha\Model\Domain\Repositories\CategoryRepository;
 
 /**
  * Class Search
  * 
- * Refatorado para Alpha Engine: Utiliza SearchRepository e orquestração via BaseController.
+ * Refatorado para Alpha Engine: Utiliza ProductRepository e orquestração via BaseController.
  */
 class Search extends BaseController {
 	
@@ -35,6 +37,7 @@ class Search extends BaseController {
 
 		$filter_data = [
 			'filter_name'         => $search,
+			'filter_search'       => $search,
 			'filter_tag'          => $tag,
 			'filter_description'  => $description,
 			'filter_category_id'  => $category_id,
@@ -45,19 +48,47 @@ class Search extends BaseController {
 			'limit'               => $limit
 		];
 
-		// Alpha Engine: O repositório centraliza a lógica de filtragem e contagem
-		$searchResponse = $this->searchRepository->getSearchData($filter_data);
+		/** @var ProductRepository $productRepository */
+		$productRepository = $this->getRepository(ProductRepository::class);
 		
+		// Alpha Engine: Usa o ProductRepository para a busca
+		$results = $productRepository->getProducts($filter_data);
+		$product_total = $productRepository->getTotalProducts($filter_data);
+
 		$data['products'] = [];
-		$results = $searchResponse->get('products', []);
 		
 		// Processamento de Thumbs (Responsabilidade do Controller)
 		foreach ($results as $result) {
 			$data['products'][] = $this->load->controller('product/thumb', $result);
 		}
 
+		/** @var CategoryRepository $categoryRepository */
+		$categoryRepository = $this->getRepository(CategoryRepository::class);
+
 		// Configuração do formulário de busca
-		$data['categories']   = $this->searchRepository->getSearchCategories();
+		$data['categories'] = [];
+		$categories_1 = $categoryRepository->getCategories(0);
+		foreach ($categories_1 as $category_1) {
+			$data['categories'][] = [
+				'category_id' => $category_1['id'],
+				'name'        => $category_1['name']
+			];
+			$categories_2 = $categoryRepository->getCategories((int)$category_1['id']);
+			foreach ($categories_2 as $category_2) {
+				$data['categories'][] = [
+					'category_id' => $category_2['id'],
+					'name'        => '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;' . $category_2['name']
+				];
+				$categories_3 = $categoryRepository->getCategories((int)$category_2['id']);
+				foreach ($categories_3 as $category_3) {
+					$data['categories'][] = [
+						'category_id' => $category_3['id'],
+						'name'        => '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;' . $category_3['name']
+					];
+				}
+			}
+		}
+
 		$data['search']       = $search;
 		$data['category_id']  = $category_id;
 		$data['sub_category'] = $sub_category;
@@ -74,8 +105,6 @@ class Search extends BaseController {
 		$data['sorts'] = [];
 		$data['sorts'][] = ['text' => $this->language->get('text_default'), 'value' => 'p.sort_order-ASC', 'href' => $this->url->link('product/search', 'language=' . $this->config->get('config_language') . $url . '&sort=p.sort_order&order=ASC')];
 		$data['sorts'][] = ['text' => $this->language->get('text_name_asc'), 'value' => 'pd.name-ASC', 'href' => $this->url->link('product/search', 'language=' . $this->config->get('config_language') . $url . '&sort=pd.name&order=ASC')];
-
-		$product_total = $searchResponse->get('product_total', 0);
 
 		$data['pagination'] = $this->load->controller('common/pagination', [
 			'total' => $product_total,

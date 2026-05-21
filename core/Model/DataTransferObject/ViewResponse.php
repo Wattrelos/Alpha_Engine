@@ -59,4 +59,12 @@ class ViewResponse extends BaseDTO
     {
         return $this->set('error_warning', $message);
     }
+
+    /**
+     * Retorna o array de dados internos do DTO.
+     */
+    public function getData(): array
+    {
+        return $this->toArray();
+    }
 }

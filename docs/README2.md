@@ -37,6 +37,9 @@ Este log documenta o saneamento das entidades que compõem a vitrine e a estrutu
 10. **Refatoração do ManufacturerRepository**: Consolidação da persistência via `AbstractRepository` e remoção de código repetitivo.
 11. **Refatoração do CategoryRepository**: Eliminação de redundâncias de busca e centralização da lógica de taxonomia recursiva e SEO estruturado.
 12. **Lazy Loading em Categorias**: Refatoração do `getTree` para utilizar `LazyCollection`, otimizando a memória ao carregar menus aninhados.
+13. **Master Pattern em Controladores**: Migração completa dos controladores de `Categoria` e `Busca` para atuar via `BaseController`, consumindo ViewResponses padronizadas e delegando a extração de dados aos Repositórios.
+14. **ViewResponse**: Padronização da resposta DTO para os controladores de catálogo, com suporte fluente e alias `getData()` para facilitar a interoperabilidade com templates.
+
 
 ### 💡 Insights de Persistência
 *   A inclusão explícita de campos de descrição no `ProductMapper` resolve o erro histórico de vitrines vazias.

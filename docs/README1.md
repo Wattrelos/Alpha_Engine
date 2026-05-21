@@ -3,7 +3,18 @@
 
 Este projeto implementa uma camada de engenharia de software moderna sobre o núcleo do OpenCart, focando em separação de responsabilidades, segurança e manutenibilidade.
 
-## 🚀 A "Obra de Arte": Arquitetura Alpha
+## 📍 Status Atual (Checkpoint)
+
+* **Onde paramos (Última Conquista):** 
+  * Criamos os repositórios vitais de infraestrutura (`ConfigurationRepository`, `TranslationRepository`), eliminando a dependência do `loader.php` para configurações e traduções (i18n).
+  * O `AlphaContainer` foi refatorado para usar dicionários $O(1)$, interceptando mais de 25 modelos legados aposentados (`.old`) de forma performática e blindando o OpenCart contra quebras.
+  * Consolidamos a lógica do `CartRepository` (mesclagem de sessões, opções, cálculos de peso e impostos).
+  * Refatoramos os Controladores de **Categoria** e **Busca** para atuarem puramente via `BaseController`, consumindo ViewResponses perfeitamente padronizadas.
+* **Próximo Passo:** Retomar as atividades iniciando a refatoração completa do **Fluxo do Checkout** (`catalog/controller/checkout/checkout.php`). Precisamos preparar a validação, estruturação em `jsonResponse` nativa da Alpha Engine e integrar os passos de pagamento e frete.
+
+---
+
+## � A "Obra de Arte": Arquitetura Alpha
 
 Diferente do OpenCart padrão, onde o SQL fica espalhado pelos Models, este projeto introduz o padrão **Data Mapper**.
 

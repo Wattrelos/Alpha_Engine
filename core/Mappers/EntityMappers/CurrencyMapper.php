@@ -2,55 +2,34 @@
 
 namespace Alpha\Mappers\EntityMappers;
 
-use Alpha\Mappers\BaseMapper;
-use Alpha\Model\Domain\Entities\Currency;
-use Alpha\Model\DataAccessObject\QueryBuilder;
+use Opencart\System\Engine\Registry;
 
 /**
- * CurrencyMapper - Gerencia a persistência e recuperação de moedas (Alpha Engine).
+ * Class CurrencyMapper
+ * 
+ * Implementa o padrão DataAccessObject/Mapper para as Moedas,
+ * centralizando consultas e garantindo reuso e performance (Alpha Engine).
  */
-class CurrencyMapper extends BaseMapper {
+class CurrencyMapper
+{
+    private object $db;
 
-    protected string $entityClass = Currency::class;
-    protected string $tableName = 'currency';
-
-    /**
-     * Recupera todas as moedas ativas.
-     * 
-     * @return array
-     */
-    public function getCurrencies(): array {
-        $builder = (new QueryBuilder())
-            ->from($this->getFullTableName())
-            ->where("status = ?", [1])
-            ->orderBy("title", "ASC")
-            ->select('id'); // Seleciona apenas o ID para hidratar as entidades completas
-
-        $rows = $this->dao->executeQuery($builder);
-        $ids = array_column($rows, 'id');
-
-        return $this->dao->readByIds($this->entityClass, $ids); // Retorna entidades Currency
+    public function __construct(Registry $registry)
+    {
+        $this->db = $registry->get('db');
     }
 
     /**
-     * Recupera uma moeda pelo seu código ISO (ex: 'BRL').
+     * Recupera todas as moedas ativas na loja.
      * 
-     * @param string $code
-     * @return Currency|null
+     * @return array<int, array<string, mixed>>
      */
-    public function getCurrencyByCode(string $code): ?Currency {
-        $builder = (new QueryBuilder())
-            ->from($this->getFullTableName())
-            ->where("code = ?", [$code])
-            ->select('id'); // Seleciona apenas o ID
+    public function findAllActive(): array
+    {
+        // Substitui a chamada direta e sem filtro do OpenCart original.
+        // Adicionado filtro de status para garantir performance e integridade de negócio.
+        $query = $this->db->query("SELECT * FROM `" . DB_PREFIX . "currency` WHERE `status` = '1'");
 
-        $rows = $this->dao->executeQuery($builder);
-        
-        if (!$rows) {
-            return null;
-        }
-
-        $currency = $this->dao->readByIds($this->entityClass, [(int)$rows[0]['id']]); // Hidrata a entidade
-        return $currency ? $currency[0] : null;
+        return $query->rows;
     }
 }

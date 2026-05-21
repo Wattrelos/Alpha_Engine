@@ -55,4 +55,13 @@ class LengthClass extends BaseEntity
         $this->descriptions = $descriptions;
         return $this;
     }
+
+    /**
+     * Adiciona uma única descrição à classe de comprimento.
+     */
+    public function addDescription(LengthClassDescription $description): self
+    {
+        $this->descriptions[] = $description;
+        return $this;
+    }
 }

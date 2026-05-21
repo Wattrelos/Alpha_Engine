@@ -2,77 +2,112 @@
 
 namespace Alpha\Mappers\EntityMappers;
 
-use Alpha\Mappers\BaseMapper;
-use Alpha\Model\DataAccessObject\QueryBuilder;
-use Alpha\Model\Domain\Entities\Cart;
+use Opencart\System\Engine\Registry;
 
 /**
- * CartMapper - Gerencia a persistência de itens do carrinho.
+ * Class CartMapper
  * 
- * Melhoras Alpha Engine:
- * - Persistência Segura: Utiliza QueryBuilder e DAO para operações atômicas.
- * - Busca por Critérios: Implementa findBy para localizar itens por sessão ou cliente.
- * - Tipagem Estrita: Manipulação de entidades Cart hidratadas.
+ * Gerencia as operações de banco de dados (CRUD) exclusivas da tabela de carrinho,
+ * isolando o SQL da camada de domínio (CartRepository).
  */
-class CartMapper extends BaseMapper
+class CartMapper
 {
-    protected string $entityClass = Cart::class;
-    protected string $tableName = 'cart';
+    private object $db;
 
-    public function __construct()
+    public function __construct(Registry $registry)
     {
-        parent::__construct();
+        $this->db = $registry->get('db');
     }
 
     /**
-     * Recupera um item do carrinho pelo ID.
+     * Limpa carrinhos abandonados de visitantes baseando-se no tempo de expiração da sessão.
      */
-    public function findById(int $id): ?Cart
+    public function deleteExpiredCarts(int $storeId, int $expireSeconds): void
     {
-        $cart = new Cart();
-        $cart->setId($id);
-        
-        $results = $this->dao->read($cart);
-        return $results ? $results[0] : null;
+        $this->db->query("DELETE FROM `" . DB_PREFIX . "cart` 
+            WHERE `store_id` = '" . (int)$storeId . "' 
+            AND `customer_id` = '0' 
+            AND `date_added` < DATE_SUB(NOW(), INTERVAL " . (int)$expireSeconds . " SECOND)");
     }
 
     /**
-     * Localiza itens do carrinho com base em critérios (ex: customerId, sessionId).
-     * 
-     * @param array $criteria
-     * @return Cart[]
+     * Mescla o carrinho salvo do cliente (banco) com os itens que ele 
+     * adicionou na sessão atual (visitante) antes de fazer o login.
      */
-    public function findBy(array $criteria): array
+    public function mergeCustomerCart(int $customerId, string $sessionId, int $storeId): void
     {
-        $query = (new QueryBuilder())->from($this->getFullTableName());
-        
-        foreach ($criteria as $key => $value) {
-            // Alpha Engine: Converte camelCase para snake_case para alinhar com o banco
-            $column = $this->dao->convertPascalCaseToSnakeCase($key);
-            $query->where("{$column} = ?", [$value]);
+        // 1. Atualiza o ID da sessão nos itens antigos salvos pelo cliente
+        $this->db->query("UPDATE `" . DB_PREFIX . "cart` 
+            SET `session_id` = '" . $this->db->escape($sessionId) . "', `date_added` = NOW() 
+            WHERE `store_id` = '" . (int)$storeId . "' AND `customer_id` = '" . (int)$customerId . "'");
+
+        // 2. Associa os novos itens adicionados como visitante (customer_id = 0) ao cliente recém-logado
+        $this->db->query("UPDATE `" . DB_PREFIX . "cart` 
+            SET `customer_id` = '" . (int)$customerId . "', `date_added` = NOW() 
+            WHERE `store_id` = '" . (int)$storeId . "' AND `customer_id` = '0' AND `session_id` = '" . $this->db->escape($sessionId) . "'");
+    }
+
+    /**
+     * Busca todos os itens do carrinho com base no contexto (Logado ou Visitante).
+     */
+    public function findAllByContext(int $customerId, string $sessionId, int $storeId): array
+    {
+        if ($customerId) {
+            // Traz apenas itens salvos na conta do cliente
+            $query = $this->db->query("SELECT * FROM `" . DB_PREFIX . "cart` 
+                WHERE `customer_id` = '" . (int)$customerId . "' AND `store_id` = '" . (int)$storeId . "'");
+        } else {
+            // Traz apenas itens da sessão do visitante
+            $query = $this->db->query("SELECT * FROM `" . DB_PREFIX . "cart` 
+                WHERE `customer_id` = '0' AND `session_id` = '" . $this->db->escape($sessionId) . "' AND `store_id` = '" . (int)$storeId . "'");
         }
 
-        $results = $this->dao->executeQuery($query->select('id'));
-        $ids = array_map('intval', array_column($results, 'id'));
-
-        return !empty($ids) ? $this->dao->readByIds($this->entityClass, $ids) : [];
+        return $query->rows;
     }
 
     /**
-     * Salva ou atualiza um item no carrinho.
+     * Atualiza a quantidade de um item existente no carrinho.
      */
-    public function save(Cart $cart): ?int
+    public function updateQuantity(int $cartId, int $quantity): void
     {
-        return ($cart->getId() > 0) ? $this->dao->update($cart) : $this->dao->create($cart);
+        $this->db->query("UPDATE `" . DB_PREFIX . "cart` 
+            SET `quantity` = '" . (int)$quantity . "' 
+            WHERE `cart_id` = '" . (int)$cartId . "'");
     }
 
     /**
-     * Remove um item do carrinho.
+     * Remove um item específico do carrinho.
      */
-    public function delete(Cart $cart): void
+    public function delete(int $cartId): void
     {
-        if ($cart->getId() > 0) {
-            $this->dao->delete($cart);
+        $this->db->query("DELETE FROM `" . DB_PREFIX . "cart` 
+            WHERE `cart_id` = '" . (int)$cartId . "'");
+    }
+
+    /**
+     * Esvazia completamente o carrinho do usuário atual (usado após a confirmação do pedido).
+     */
+    public function clearByContext(int $customerId, string $sessionId, int $storeId): void
+    {
+        if ($customerId) {
+            $this->db->query("DELETE FROM `" . DB_PREFIX . "cart` 
+                WHERE `customer_id` = '" . (int)$customerId . "' AND `store_id` = '" . (int)$storeId . "'");
+        } else {
+            $this->db->query("DELETE FROM `" . DB_PREFIX . "cart` 
+                WHERE `customer_id` = '0' AND `session_id` = '" . $this->db->escape($sessionId) . "' AND `store_id` = '" . (int)$storeId . "'");
         }
+    }
+
+    /**
+     * Insere um novo item no carrinho de forma bruta (inserção limpa).
+     * (Nota: A validação para não duplicar itens e somar a quantidade será tratada pelo Repository)
+     */
+    public function insert(int $customerId, string $sessionId, int $storeId, int $productId, int $quantity, string $optionHash, int $subscriptionPlanId = 0): void
+    {
+        $this->db->query("INSERT INTO `" . DB_PREFIX . "cart` 
+            SET `customer_id` = '" . (int)$customerId . "', `session_id` = '" . $this->db->escape($sessionId) . "', 
+            `store_id` = '" . (int)$storeId . "', `product_id` = '" . (int)$productId . "', 
+            `subscription_plan_id` = '" . (int)$subscriptionPlanId . "', `option` = '" . $this->db->escape($optionHash) . "', 
+            `quantity` = '" . (int)$quantity . "', `date_added` = NOW()");
     }
 }

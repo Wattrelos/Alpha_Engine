@@ -2,35 +2,34 @@
 
 namespace Alpha\Mappers\EntityMappers;
 
-use Alpha\Mappers\BaseMapper;
+use Alpha\Model\DataAccessObject\DataAccessObject;
 use Alpha\Model\DataAccessObject\QueryBuilder;
-use Alpha\Model\Domain\Entities\Country;
 
 /**
  * Mapper para gerenciar a lógica de Países (Countries)
  */
-class CountryMapper extends BaseMapper {
+class CountryMapper {
+    private DataAccessObject $dao;
 
-    protected string $entityClass = Country::class;
-    protected string $tableName = 'country';
+    public function __construct() {
+        $this->dao = new DataAccessObject();
+    }
 
     /**
      * Obtém um país específico pelo ID
      * 
      * @param int $country_id
-     * @return Country|null
+     * @return array
      */
-    public function getCountry(int $country_id): ?Country {
-        $country = new Country();
-        $country->setId($country_id);
-        
-        $results = $this->dao->read($country);
-        return $results ? $results[0] : null;
-    }
+    public function getCountry(int $country_id): array {
+        $query = (new QueryBuilder())
+            ->from(DB_PREFIX . 'country', 'c')
+            ->where("c.id = ?", [$country_id])
+            ->where("c.status = ?", [1])
+            ->select('*');
 
-    public function findById(int $id): ?Country
-    {
-        return $this->getCountry($id);
+        $results = $this->dao->executeQuery($query);
+        return $results ? $results[0] : [];
     }
 
     /**
@@ -39,14 +38,12 @@ class CountryMapper extends BaseMapper {
      * @return array
      */
     public function getCountries(): array {
-        $builder = (new QueryBuilder())
+        $query = (new QueryBuilder())
             ->from(DB_PREFIX . 'country', 'c')
             ->where("c.status = ?", [1])
-            ->select('id');
+            ->orderBy("c.name", "ASC")
+            ->select('*');
 
-        $rows = $this->dao->executeQuery($builder);
-        $ids = array_column($rows, 'id');
-        
-        return $this->dao->readByIds(Country::class, $ids);
+        return $this->dao->executeQuery($query);
     }
 }

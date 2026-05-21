@@ -26,8 +26,8 @@ class Currency {
 	public function __construct(\Opencart\System\Engine\Registry $registry) {
 		$this->language = $registry->get('language');
 
-		// Alpha Engine: Resolução via Mapper Factory no Registry
-		$mapperFactory = $registry->get('mapperFactory');
+		// Alpha Engine: Resolução via Alpha Mapper Factory no Registry
+		$mapperFactory = $registry->get('alpha_mapper_factory');
 		
 		/** @var CurrencyMapper $currencyMapper */
 		$currencyMapper = $mapperFactory->get(CurrencyMapper::class);

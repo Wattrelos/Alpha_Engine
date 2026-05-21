@@ -31,7 +31,10 @@ Este log documenta a fundação técnica, segurança de acesso e utilitários gl
     *   **Cache-Aware Repositories**: Infraestrutura base preparada para injeção de cache em todos os repositórios de domínio.
     *   **Domain Entity Caching**: Implementação de cache de longa duração para entidades de localização e sistema (Language, Currency, TaxClass, TaxRate e TaxRule).
 3.  **AlphaContainer (Legacy Bridge)**: Interceptor de modelos legados que redireciona chamadas para Repositórios modernos, permitindo migração progressiva.
+    *   **$O(1)$ Dictionary Mapping**: Resolução de mais de 25 modelos interceptados via arrays estáticos em milissegundos.
 4.  **Observabilidade**: Sistema de logs de depreciação com rastreamento de IP/Rota para erradicação de débito técnico.
+5.  **Configuration & I18N**: `ConfigurationRepository` e `TranslationRepository` isolam o sistema de configurações e traduções do motor legado, operando 100% via memória injetada no Registry.
+
 
 ## 🖼️ [DESIGN] Motor de Renderização
 

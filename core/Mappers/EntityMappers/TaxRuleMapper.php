@@ -1,7 +1,6 @@
 <?php
 namespace Alpha\Mappers\EntityMappers;
 
-use Alpha\Mappers\BaseMapper;
 use Alpha\Mappers\CollectionToArrayConverter;
 use Alpha\Model\DataAccessObject\DataAccessObject;
 use Alpha\Model\DataAccessObject\QueryBuilder;
@@ -11,13 +10,11 @@ use Alpha\Model\Domain\Entities\TaxRule;
 
 
 
-class TaxRuleMapper extends BaseMapper {
-
-    protected string $entityClass = TaxRule::class;
-    protected string $tableName = 'tax_rule';
+class TaxRuleMapper {
+    private DataAccessObject $dao;
 
     public function __construct() {
-        parent::__construct();
+        $this->dao = new DataAccessObject();
     }
 
     public function getRules(string $based, int $countryId, int $zoneId, int $customerGroupId, array $additionalZones = [], int $page = 1, int $limit = 100): array {

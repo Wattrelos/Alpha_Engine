@@ -2,10 +2,9 @@
 
 namespace Alpha\Mappers\EntityMappers;
 
-use Alpha\Mappers\BaseMapper;
+use Alpha\Model\DataAccessObject\DataAccessObject;
 use Alpha\Model\DataAccessObject\QueryBuilder;
 use Alpha\Model\Domain\Entities\Customer;
-use Alpha\Model\Domain\InterfaceEntity;
 
 /**
  * CustomerMapper - Gerencia a autenticação e persistência de clientes.
@@ -15,21 +14,13 @@ use Alpha\Model\Domain\InterfaceEntity;
  * - Gestão de Auditoria: Métodos para registrar tentativas de login (customer_login).
  * - Tipagem Estrita: Retorna entidades Customer hidratadas via DataAccessObject.
  */
-class CustomerMapper extends BaseMapper
+class CustomerMapper
 {
-    protected string $entityClass = Customer::class;
-    protected string $tableName = 'customer';
+    private DataAccessObject $dao;
 
-    /**
-     * Recupera um cliente específico pelo seu ID (Alpha Engine).
-     */
-    public function findById(int $id): ?Customer
+    public function __construct()
     {
-        $customer = new Customer();
-        $customer->setId($id);
-        
-        $results = $this->dao->read($customer);
-        return $results ? $results[0] : null;
+        $this->dao = new DataAccessObject();
     }
 
     /**
@@ -94,8 +85,8 @@ class CustomerMapper extends BaseMapper
     /**
      * Salva ou atualiza os dados do cliente.
      */
-    public function save(InterfaceEntity $entity): ?int
+    public function save(Customer $customer): ?int
     {
-        return ($entity->getId() > 0) ? $this->dao->update($entity) : $this->dao->create($entity);
+        return ($customer->getId() > 0) ? $this->dao->update($customer) : $this->dao->create($customer);
     }
 }

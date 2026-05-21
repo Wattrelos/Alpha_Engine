@@ -3,6 +3,7 @@ namespace Opencart\Catalog\Controller\Product;
 
 use Alpha\Controller\BaseController;
 use Alpha\Model\DataTransferObject\ViewResponse;
+use Alpha\Model\Domain\Repositories\CategoryRepository;
 
 /**
  * Class Category
@@ -29,8 +30,10 @@ class Category extends BaseController {
 			'path'          => $path
 		];
 
+		$categoryRepository = $this->getRepository(CategoryRepository::class);
+
 		/** @var ViewResponse $response */
-		$response = $this->categoryRepository->getCategoryData($category_id, $filter_data);
+		$response = $categoryRepository->getCategoryData($category_id, $filter_data);
 
 		if (!$response->get('name')) {
 			return new \Opencart\System\Engine\Action('error/not_found');
@@ -42,6 +45,14 @@ class Category extends BaseController {
 		$data['text_compare'] = sprintf($this->language->get('text_compare'), isset($this->session->data['compare']) ? count($this->session->data['compare']) : 0);
 		$data['compare']      = $this->url->link('product/compare', 'language=' . $this->config->get('config_language'));
 		$data['continue']     = $this->url->link('common/home', 'language=' . $this->config->get('config_language'));
+
+		
+		// Processamento de Thumbs (Responsabilidade do Controller)
+		$results = $data['products'] ?? [];
+		$data['products'] = [];
+		foreach ($results as $result) {
+			$data['products'][] = $this->load->controller('product/thumb', $result);
+		}
 
 		// UI: Renderização da Paginação via Controller legado (Bridge)
 		$data['pagination_html'] = $this->load->controller('common/pagination', $data['pagination']);

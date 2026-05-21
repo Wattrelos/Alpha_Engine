@@ -2,63 +2,76 @@
 
 namespace Alpha\Mappers\EntityMappers;
 
-use Alpha\Mappers\BaseMapper;
+use Alpha\Model\DataAccessObject\DataAccessObject;
 use Alpha\Model\DataAccessObject\QueryBuilder;
-use Alpha\Model\Domain\Entities\Manufacturer;
 
 /**
- * ManufacturerMapper - Gerencia a persistência de Fabricantes/Marcas.
- * 
- * Alpha Engine:
- * - Implementa o padrão Data Mapper com Entidades.
- * - Suporte a multi-loja via joins nativos.
- * - Integração com o QueryBuilder para proteção contra SQL Injection.
+ * Mapper para gerenciar a lógica de Fabricantes (Manufacturers)
  */
-class ManufacturerMapper extends BaseMapper
-{
-    protected string $entityClass = Manufacturer::class;
-    protected string $tableName = 'manufacturer';
+class ManufacturerMapper {
+    private DataAccessObject $dao;
 
-    /**
-     * Recupera fabricantes vinculados a uma loja específica.
-     */
-    public function getManufacturers(int $storeId): array
-    {
-        $builder = (new QueryBuilder())
-            ->from(DB_PREFIX . 'manufacturer', 'm')
-            ->join(DB_PREFIX . 'manufacturer_to_store', 'm2s', 'm.id = m2s.manufacturer_id')
-            ->where('m2s.store_id = ?', [$storeId])
-            ->orderBy('m.name', 'ASC')
-            ->select('m.*');
-
-        return $this->dao->executeQuery($builder);
+    public function __construct() {
+        $this->dao = new DataAccessObject();
     }
 
     /**
-     * Obtém os dados de um fabricante validando o vínculo com a loja.
+     * Obtém um fabricante específico
      */
-    public function getManufacturer(int $id, int $storeId): ?array
-    {
-        $builder = (new QueryBuilder())
+    public function getManufacturer(int $manufacturer_id, int $store_id): array {
+        $query = (new QueryBuilder())
             ->from(DB_PREFIX . 'manufacturer', 'm')
-            ->join(DB_PREFIX . 'manufacturer_to_store', 'm2s', 'm.id = m2s.manufacturer_id')
-            ->where('m.id = ?', [$id])
-            ->where('m2s.store_id = ?', [$storeId])
+            ->leftJoin(DB_PREFIX . 'manufacturer_to_store', 'm2s', 'm.id = m2s.manufacturer_id')
+            ->where("m.id = ?", [(int)$manufacturer_id])
+            ->where("m2s.store_id = ?", [$store_id])
             ->select('m.*');
 
-        $results = $this->dao->executeQuery($builder);
-        return $results ? $results[0] : null;
+        $results = $this->dao->executeQuery($query);
+        return $results ? $results[0] : [];
     }
 
     /**
-     * Resolve o layout customizado para o fabricante.
+     * Lista fabricantes com filtros, ordenação e paginação
      */
-    public function getLayoutId(int $manufacturerId, int $storeId): int
-    {
-        $query = "SELECT layout_id FROM " . DB_PREFIX . "manufacturer_to_layout 
-                  WHERE manufacturer_id = " . (int)$manufacturerId . " AND store_id = " . (int)$storeId;
+    public function getManufacturers(array $data, int $store_id): array {
+        $query = (new QueryBuilder())
+            ->from(DB_PREFIX . 'manufacturer', 'm')
+            ->leftJoin(DB_PREFIX . 'manufacturer_to_store', 'm2s', 'm.id = m2s.manufacturer_id')
+            ->where("m2s.store_id = ?", [$store_id]);
+
+        $query->select('m.*');
+
+        // Ordenação
+        $sort_data = ['name', 'sort_order'];
+        $sort = (isset($data['sort']) && in_array($data['sort'], $sort_data)) ? $data['sort'] : 'name';
+        $order = (isset($data['order']) && $data['order'] == 'DESC') ? 'DESC' : 'ASC';
         
-        $result = $this->dao->getConnection()->query($query)->fetch_assoc();
-        return $result ? (int)$result['layout_id'] : 0;
+        $query->orderBy("m." . $sort, $order);
+
+        // Paginação
+        if (isset($data['start']) || isset($data['limit'])) {
+            $limit = (int)($data['limit'] ?? 20);
+            $start = (int)($data['start'] ?? 0);
+            if ($start < 0) $start = 0;
+            if ($limit < 1) $limit = 20;
+            
+            $query->limit($limit)->offset($start);
+        }
+
+        return $this->dao->executeQuery($query);
+    }
+
+    /**
+     * Obtém o layout associado ao fabricante
+     */
+    public function getLayoutId(int $manufacturer_id, int $store_id): int {
+        $query = (new QueryBuilder())
+            ->from(DB_PREFIX . 'manufacturer_to_layout')
+            ->where("manufacturer_id = ?", [(int)$manufacturer_id])
+            ->where("store_id = ?", [(int)$store_id])
+            ->select('layout_id');
+
+        $results = $this->dao->executeQuery($query);
+        return $results ? (int)$results[0]['layout_id'] : 0;
     }
 }

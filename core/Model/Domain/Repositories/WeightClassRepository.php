@@ -28,13 +28,12 @@ class WeightClassRepository extends AbstractRepository implements BaseRepository
     {
         $cacheKey = self::CACHE_KEY_PREFIX . $id;
         
-        if ($this->cache->has($cacheKey)) {
-            return $this->cache->get($cacheKey);
-        }
+        $cached = $this->cache ? $this->cache->get($cacheKey) : null;
+        if ($cached) return $cached;
 
         $weightClass = $this->getMapper()->findById($id, $this->language_id);
 
-        if ($weightClass) {
+        if ($weightClass && $this->cache) {
             $this->cache->set($cacheKey, $weightClass, 3600);
         }
 
@@ -46,13 +45,12 @@ class WeightClassRepository extends AbstractRepository implements BaseRepository
      */
     public function findAll(): array
     {
-        if ($this->cache->has(self::CACHE_KEY_ALL)) {
-            return $this->cache->get(self::CACHE_KEY_ALL);
-        }
+        $cached = $this->cache ? $this->cache->get(self::CACHE_KEY_ALL) : null;
+        if ($cached) return $cached;
 
         $results = $this->getMapper()->findAll();
         
-        if (!empty($results)) {
+        if (!empty($results) && $this->cache) {
             $this->cache->set(self::CACHE_KEY_ALL, $results, 3600);
         }
 
@@ -68,13 +66,12 @@ class WeightClassRepository extends AbstractRepository implements BaseRepository
     {
         $cacheKey = self::CACHE_KEY_ALL . '.lang.' . $this->language_id;
 
-        if ($this->cache->has($cacheKey)) {
-            return $this->cache->get($cacheKey);
-        }
+        $cached = $this->cache ? $this->cache->get($cacheKey) : null;
+        if ($cached) return $cached;
 
-        $results = $this->getMapper()->getAll($this->language_id);
+        $results = $this->getMapper()->findAll($this->language_id);
 
-        if (!empty($results)) {
+        if (!empty($results) && $this->cache) {
             $this->cache->set($cacheKey, $results, 3600);
         }
 

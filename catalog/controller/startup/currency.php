@@ -14,20 +14,18 @@ class Currency extends \Opencart\System\Engine\Controller {
 	public function index(): void {
 		$code = '';
 
-		// Currency
-		$this->load->model('localisation/currency');
-
-		$currencies = $this->model_localisation_currency->getCurrencies();
+		// Alpha Engine: Instancia a biblioteca que já consome a nova arquitetura
+		$this->registry->set('currency', new \Opencart\System\Library\Cart\Currency($this->registry));
 
 		if (isset($this->session->data['currency'])) {
 			$code = $this->session->data['currency'];
 		}
 
-		if (isset($this->request->cookie['currency']) && !array_key_exists($code, $currencies)) {
+		if (isset($this->request->cookie['currency']) && !$this->currency->has($code)) {
 			$code = $this->request->cookie['currency'];
 		}
 
-		if (!array_key_exists($code, $currencies)) {
+		if (!$this->currency->has($code)) {
 			$code = $this->config->get('config_currency');
 		}
 
@@ -45,7 +43,5 @@ class Currency extends \Opencart\System\Engine\Controller {
 
 			setcookie('currency', $code, $option);
 		}
-
-		$this->registry->set('currency', new \Opencart\System\Library\Cart\Currency($this->registry));
 	}
 }

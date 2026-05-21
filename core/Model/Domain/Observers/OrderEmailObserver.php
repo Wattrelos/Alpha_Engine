@@ -1,6 +1,6 @@
 <?php
 
-namespace Alpha\Mappers\Observers;
+namespace Alpha\Model\Domain\Observers;
 
 use Alpha\Model\Domain\Observers\OrderObserverInterface;
 use Alpha\Model\Domain\Entities\Order;

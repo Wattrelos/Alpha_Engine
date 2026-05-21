@@ -2,41 +2,98 @@
 
 namespace Alpha\Mappers\EntityMappers;
 
-use Alpha\Mappers\BaseMapper;
+use Alpha\Model\DataAccessObject\DataAccessObject;
 use Alpha\Model\DataAccessObject\QueryBuilder;
 
 /**
  * Mapper para gerenciar classes de peso (Weight Classes)
  */
-class WeightClassMapper extends BaseMapper {
+class WeightClassMapper {
+    private DataAccessObject $dao;
 
-    protected string $tableName = 'weight_class';
-
-    /**
-     * Obtém uma classe de peso específica por ID e Idioma
-     */
-    public function getWeightClass(int $weight_class_id, int $language_id): array {
-        $query = (new QueryBuilder())
-            ->from(DB_PREFIX . 'weight_class', 'wc')
-            ->leftJoin(DB_PREFIX . 'weight_class_description', 'wcd', 'wc.id = wcd.weight_class_id')
-            ->where("wc.id = ?", [$weight_class_id])
-            ->where("wcd.language_id = ?", [$language_id])
-            ->select('DISTINCT *');
-
-        $results = $this->dao->executeQuery($query);
-        return $results ? $results[0] : [];
+    public function __construct() {
+        $this->dao = new DataAccessObject();
     }
 
     /**
-     * Lista todas as classes de peso para um determinado idioma
+     * Alpha Engine: Recupera todas as classes e hidrata as descrições em lote.
      */
-    public function getWeightClasses(int $language_id): array {
+    public function findAll(?int $languageId = null): array
+    {
         $query = (new QueryBuilder())
-            ->from(DB_PREFIX . 'weight_class', 'wc')
-            ->leftJoin(DB_PREFIX . 'weight_class_description', 'wcd', 'wc.id = wcd.weight_class_id')
-            ->where("wcd.language_id = ?", [$language_id])
-            ->select('*');
+            ->from(DB_PREFIX . 'weight_class', 'wc');
 
-        return $this->dao->executeQuery($query);
+        if ($languageId !== null) {
+            $query->leftJoin(DB_PREFIX . 'weight_class_description', 'wcd', 'wc.id = wcd.weight_class_id')
+                  ->where('wcd.language_id = ?', [$languageId])
+                  ->select('wc.id AS id, wc.value, wcd.title, wcd.unit, wcd.language_id');
+        } else {
+            $query->leftJoin(DB_PREFIX . 'weight_class_description', 'wcd', 'wc.id = wcd.weight_class_id')
+                  ->select('wc.id AS id, wc.value, wcd.title, wcd.unit, wcd.language_id');
+        }
+
+        $results = $this->dao->executeQuery($query);
+        
+        $entities = [];
+        $mapped = [];
+
+        foreach ($results as $row) {
+            $id = (int)$row['id'];
+
+            if (!isset($mapped[$id])) {
+                $entity = new \Alpha\Model\Domain\Entities\WeightClass();
+                $entity->setId($id);
+                $entity->setValue((float)$row['value']);
+                $mapped[$id] = $entity;
+                $entities[] = $entity;
+            }
+
+            if (!empty($row['title'])) {
+                $desc = new \Alpha\Model\Domain\Entities\WeightClassDescription();
+                $desc->setLanguageId((int)$row['language_id']);
+                $desc->setTitle($row['title']);
+                $desc->setUnit($row['unit']);
+                $mapped[$id]->addDescription($desc);
+            }
+        }
+        
+        return $entities;
+    }
+
+    /**
+     * Alpha Engine: Recupera uma classe de peso pelo ID.
+     */
+    public function findById(int $id, ?int $languageId = null): ?\Alpha\Model\Domain\Entities\WeightClass
+    {
+        $all = $this->findAll($languageId);
+        foreach ($all as $entity) {
+            if ($entity->getId() === $id) {
+                return $entity;
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Alpha Engine: Recupera uma classe de peso baseada em critérios básicos.
+     */
+    public function findOneBy(array $criteria, ?int $languageId = null): ?\Alpha\Model\Domain\Entities\WeightClass
+    {
+        $all = $this->findAll($languageId);
+        foreach ($all as $entity) {
+            $match = true;
+            foreach ($criteria as $key => $value) {
+                if ($key === 'id' && $entity->getId() !== $value) {
+                    $match = false;
+                    break;
+                }
+                if ($key === 'value' && $entity->getValue() !== $value) {
+                    $match = false;
+                    break;
+                }
+            }
+            if ($match) return $entity;
+        }
+        return null;
     }
 }

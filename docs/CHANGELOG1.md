@@ -69,27 +69,16 @@
 * **Transactional Subscription Renewal**: Refatoração do motor de recorrência (`Subscription Cron`) para utilizar Mappers na orquestração de pedidos, endereços e sessões.
 * **Medidas Físicas**: Normalização de `WeightClass` e `LengthClass` para cálculos volumétricos de alta precisão.
 * **Módulo Fiscal**: TaxClass, TaxRate e TaxRule agora utilizam tipagem float rigorosa para evitar erros matemáticos em checkout.
-
 * **ShippingMapper**: Refatorado para incluir dependências de `WeightClassRepository` e `LengthClassRepository`, preparando para cálculos de frete volumétrico e de dimensões de alta precisão nos módulos de frete.
-
 * **FlatRateShippingService**: Implementação do serviço moderno de frete fixo, utilizando os repositórios de medidas para normalização e validação de limites físicos (Peso/Dimensão) antes de gerar cotações.
-
 * **CouponRepository**: Implementação do repositório de cupons com suporte ao Snapshot Pattern, centralizando a lógica de validade, limites de uso e integridade histórica de descontos aplicados.
-
 * **VoucherRepository**: Implementação do repositório para gestão de cartões-presente (Vouchers), utilizando leitura do histórico para cálculo rigoroso e seguro do saldo restante.
-
 * **Biblioteca de Moedas (currency.php)**: Refatoração do construtor da biblioteca base do OpenCart. Remoção de SQL acoplado (`SELECT * FROM currency`) em favor da injeção do `CurrencyMapper` resolvido pela `mapperFactory`.
-
 * **Orquestração de Carrinho (CartRepository)**: Centralização do processamento inteligente do carrinho. Hidratação de opções sem loops de banco, cálculo progressivo de preços e isolamento do cálculo de impostos (`getTaxes`) e físico (`getWeight`) utilizando o `WeightClassRepository`.
-
 * **Bibliotecas de Medidas e Moedas**: Limpeza de débitos técnicos legados com a remoção definitiva da injeção de banco de dados (`$this->db`) não utilizada dos arquivos `length.php`, `weight.php` e `currency.php`, consolidando o isolamento de domínio destas classes.
-
 * **API de Carrinho (`api/cart.php`)**: Substituição completa do uso da biblioteca legada pelo `CartRepository`. Injeção de contexto global (Idioma, Loja, Grupo de Cliente) nas chamadas do `ProductMapper` para garantir hidratação precisa de traduções e regras de preço/atacado nas respostas JSON.
-
 * **Configurações Globais (Settings)**: Criação do `SettingMapper` e `SettingRepository` para centralizar a extração das configurações do banco de dados. Implementado Identity Map em memória para garantir que o banco seja consultado apenas 1 vez por requisição, independentemente da quantidade de vezes que as configurações sejam solicitadas. O Model legado `catalog/model/setting/setting.php` foi transformado em Bridge.
-
 * **API de Pedidos (`api/order.php`)**: Transição para a `BaseController` e substituição do acoplamento legado da biblioteca de carrinho (`$this->cart`) pelas validações inteligentes diretas do `CartRepository`. Correção do bug nativo na validação do afiliado (`$thid`).
-
 * **APIs de Checkout (Cliente, Frete, Pagamento, etc.)**: Transição em massa dos controladores `api/customer.php`, `api/shipping_address.php`, `api/payment_method.php`, `api/shipping_method.php`, `api/payment_address.php`, `api/affiliate.php` e `api/subscription.php` para a `BaseController`. Eliminação completa do acoplamento com a biblioteca `$this->cart`, substituída pelo `CartRepository` da Alpha Engine.
 
 ### Corrigido (Fixed)

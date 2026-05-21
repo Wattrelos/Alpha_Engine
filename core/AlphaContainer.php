@@ -30,14 +30,43 @@ class AlphaContainer extends Factory
         $repository_factory = $this->registry->get('alpha_repository_factory');
 
         if ($repository_factory) {
-            // Exemplo: Se pedirem o modelo 'account/customer', entregamos o Repositório migrado
-            // Isso evita a necessidade de modelos "Bridge" em muitos casos.
-            if ($sanitized_route === 'account/customer') {
-                return $repository_factory->get(\Alpha\Model\Domain\Repositories\CustomerRepository::class);
-            }
+            $repositoriesMap = [
+                'account/customer'          => \Alpha\Model\Domain\Repositories\CustomerRepository::class,
+                'account/wishlist'          => \Alpha\Model\Domain\Repositories\WishlistRepository::class,
+                'catalog/category'          => \Alpha\Model\Domain\Repositories\CategoryRepository::class,
+                'catalog/product'           => \Alpha\Model\Domain\Repositories\ProductRepository::class,
+                'catalog/manufacturer'      => \Alpha\Model\Domain\Repositories\ManufacturerRepository::class,
+                'catalog/information'       => \Alpha\Model\Domain\Repositories\InformationRepository::class,
+                'design/banner'             => \Alpha\Model\Domain\Repositories\BannerRepository::class,
+                'design/theme'              => \Alpha\Model\Domain\Repositories\ThemeRepository::class,
+                'design/translation'        => \Alpha\Model\Domain\Repositories\TranslationRepository::class,
+                'design/seo_url'            => \Alpha\Model\Domain\Repositories\SeoUrlRepository::class,
+                'localisation/language'     => \Alpha\Model\Domain\Repositories\LanguageRepository::class,
+                'localisation/weight_class' => \Alpha\Model\Domain\Repositories\WeightClassRepository::class,
+                'localisation/length_class' => \Alpha\Model\Domain\Repositories\LengthClassRepository::class,
+                'localisation/tax_class'    => \Alpha\Model\Domain\Repositories\TaxClassRepository::class,
+                'localisation/tax_rate'     => \Alpha\Model\Domain\Repositories\TaxRateRepository::class,
+                'localisation/tax_rule'     => \Alpha\Model\Domain\Repositories\TaxRuleRepository::class,
+                'setting/setting'           => \Alpha\Model\Domain\Repositories\SettingRepository::class,
+            ];
 
-            if ($sanitized_route === 'catalog/product') {
-                return $repository_factory->get(\Alpha\Model\Domain\Repositories\ProductRepository::class);
+            if (isset($repositoriesMap[$sanitized_route])) {
+                return $repository_factory->get($repositoriesMap[$sanitized_route]);
+            }
+        }
+
+        $mapper_factory = $this->registry->get('alpha_mapper_factory');
+
+        if ($mapper_factory) {
+            $mappersMap = [
+                'setting/extension'     => \Alpha\Mappers\EntityMappers\ExtensionMapper::class,
+                'setting/module'        => \Alpha\Mappers\EntityMappers\ModuleMapper::class,
+                'localisation/currency' => \Alpha\Mappers\EntityMappers\CurrencyMapper::class,
+                'catalog/review'        => \Alpha\Mappers\EntityMappers\ReviewMapper::class,
+            ];
+
+            if (isset($mappersMap[$sanitized_route])) {
+                return $mapper_factory->get($mappersMap[$sanitized_route]);
             }
         }
 
@@ -116,4 +145,18 @@ class AlphaContainer extends Factory
         // Implementar lógica de verificação baseada em nomes de arquivos core/
         return false;
     }
+    public function config(string $route): void
+{
+    // Log de depreciação da Alpha Engine
+    if ($this->registry->get('config')->get('config_error_log')) {
+        $this->registry->get('log')->write(
+            "[Alpha DEPRECATION] Carregamento de Config Legado: '{$route}'"
+        );
+    }
+
+    // Passa o bastão para o repositório Alpha em vez do fluxo nativo
+    $repositoryFactory = $this->registry->get('alpha_repository_factory');
+    $repositoryFactory->get(\Alpha\Model\Domain\Repositories\ConfigurationRepository::class)->loadFile($route);
+}
+
 }

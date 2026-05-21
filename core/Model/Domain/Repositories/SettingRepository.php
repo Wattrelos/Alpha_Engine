@@ -3,7 +3,8 @@
 namespace Alpha\Model\Domain\Repositories;
 
 use Opencart\System\Engine\Registry;
-use Alpha\Mappers\SettingMapper;
+use Alpha\Mappers\EntityMappers\SettingMapper;
+use Alpha\Mappers\MapperFactory;
 
 /**
  * Class SettingRepository
@@ -17,9 +18,8 @@ class SettingRepository
     private array $data = [];
     private bool $isLoaded = false;
 
-    public function __construct(Registry $registry)
+    public function __construct(MapperFactory $mapperFactory, Registry $registry)
     {
-        $mapperFactory = $registry->get('mapperFactory');
         $this->settingMapper = $mapperFactory->get(SettingMapper::class);
     }
 

@@ -20,29 +20,29 @@ class Checkout extends BaseController {
 		$products = $cartRepository->getProducts();
 
 		// Validate cart to see if it has products and has stock.
-		if (empty($products) || (!$this->cart->hasStock() && !$this->config->get('config_stock_checkout')) || !$this->cart->hasMinimum()) {
+		if (empty($products) || (!$cartRepository->hasStock() && !$this->config->get('config_stock_checkout')) || !$cartRepository->hasMinimum()) {
 			$this->response->redirect($this->url->link('checkout/cart', 'language=' . $this->config->get('config_language'), true));
 		}
 
 		$data = [];
 		$this->loadLanguageData('checkout/checkout', $data); // Alpha Engine: Unifica traduções automaticamente no array $data
 
-		$this->document->setTitle($this->language->get('heading_title'));
+		$this->document->setTitle($data['heading_title']);
 
 		$data['breadcrumbs'] = [];
 
 		$data['breadcrumbs'][] = [
-			'text' => $this->language->get('text_home'),
+			'text' => $data['text_home'],
 			'href' => $this->url->link('common/home', 'language=' . $this->config->get('config_language'))
 		];
 
 		$data['breadcrumbs'][] = [
-			'text' => $this->language->get('text_cart'),
+			'text' => $data['text_cart'],
 			'href' => $this->url->link('checkout/cart', 'language=' . $this->config->get('config_language'))
 		];
 
 		$data['breadcrumbs'][] = [
-			'text' => $this->language->get('heading_title'),
+			'text' => $data['heading_title'],
 			'href' => $this->url->link('checkout/checkout', 'language=' . $this->config->get('config_language'))
 		];
 
@@ -58,13 +58,13 @@ class Checkout extends BaseController {
 			$data['payment_address'] = '';
 		}
 
-		if ($this->customer->isLogged() && $this->cart->hasShipping()) {
+		if ($this->customer->isLogged() && $cartRepository->hasShipping()) {
 			$data['shipping_address'] = $this->load->controller('checkout/shipping_address');
 		} else {
 			$data['shipping_address'] = '';
 		}
 
-		if ($this->cart->hasShipping()) {
+		if ($cartRepository->hasShipping()) {
 			$data['shipping_method'] = $this->load->controller('checkout/shipping_method');
 		} else {
 			$data['shipping_method'] = '';
@@ -73,13 +73,6 @@ class Checkout extends BaseController {
 		$data['payment_method'] = $this->load->controller('checkout/payment_method');
 		$data['confirm'] = $this->load->controller('checkout/confirm');
 
-		$data['column_left'] = $this->load->controller('common/column_left');
-		$data['column_right'] = $this->load->controller('common/column_right');
-		$data['content_top'] = $this->load->controller('common/content_top');
-		$data['content_bottom'] = $this->load->controller('common/content_bottom');
-		$data['footer'] = $this->load->controller('common/footer');
-		$data['header'] = $this->load->controller('common/header');
-
-		$this->response->setOutput($this->load->view('checkout/checkout', $data));
+		$this->render('checkout/checkout', $data);
 	}
 }

@@ -1,11 +1,15 @@
 <?php
 namespace Opencart\Catalog\Controller\Event;
+
+use Alpha\Controller\BaseController;
+use Alpha\Model\Domain\Repositories\TranslationRepository;
+
 /**
  * Class Translation
  *
  * @package Opencart\Catalog\Controller\Event
  */
-class Translation extends \Opencart\System\Engine\Controller {
+class Translation extends BaseController {
 	/**
 	 * Index
 	 *
@@ -15,10 +19,10 @@ class Translation extends \Opencart\System\Engine\Controller {
 	 * @return void
 	 */
 	public function index(string &$route, string &$prefix): void {
-		// Translation
-		$this->load->model('design/translation');
+		/** @var TranslationRepository $translationRepository */
+		$translationRepository = $this->getRepository(TranslationRepository::class);
 
-		$results = $this->model_design_translation->getTranslations($route);
+		$results = $translationRepository->getTranslations($route);
 
 		foreach ($results as $result) {
 			if (!$prefix) {

@@ -2,15 +2,18 @@
 
 namespace Alpha\Mappers\EntityMappers;
 
-use Alpha\Mappers\BaseMapper;
+use Alpha\Model\DataAccessObject\DataAccessObject;
 use Alpha\Model\DataAccessObject\QueryBuilder;
 
 /**
  * Mapper para gerenciar as alíquotas de impostos (Tax Rates)
  */
-class TaxRateMapper extends BaseMapper {
+class TaxRateMapper {
+    private DataAccessObject $dao;
 
-    protected string $tableName = 'tax_rate';
+    public function __construct() {
+        $this->dao = new DataAccessObject();
+    }
 
     /**
      * Obtém uma alíquota de imposto específica por ID

@@ -4,6 +4,7 @@ namespace Alpha\Model\Domain\Repositories;
 
 use Alpha\Mappers\EntityMappers\LanguageMapper;
 use Alpha\Model\Domain\InterfaceEntity;
+use Alpha\Mappers\CollectionToArrayConverter;
 
 /**
  * LanguageRepository - Autoridade de Domínio para Idiomas.
@@ -13,6 +14,14 @@ use Alpha\Model\Domain\InterfaceEntity;
  */
 class LanguageRepository extends AbstractRepository implements BaseRepositoryInterface
 {
+    /**
+     * Define o Mapper principal.
+     */
+    protected function getMapper(): LanguageMapper
+    {
+        return $this->mapperFactory->get(LanguageMapper::class);
+    }
+
     /**
      * Busca um idioma pelo seu ID único.
      * 
@@ -27,7 +36,7 @@ class LanguageRepository extends AbstractRepository implements BaseRepositoryInt
             return $this->cache->get($cacheKey);
         }
 
-        $entity = $this->mapperFactory->get(LanguageMapper::class)->findById($id);
+        $entity = $this->getMapper()->findById($id);
 
         if ($entity && $this->cache) {
             $this->cache->set($cacheKey, $entity);
@@ -49,7 +58,7 @@ class LanguageRepository extends AbstractRepository implements BaseRepositoryInt
             return $this->cache->get($cacheKey);
         }
 
-        $entities = $this->mapperFactory->get(LanguageMapper::class)->findAll();
+        $entities = $this->getMapper()->findAll();
 
         if ($this->cache) {
             $this->cache->set($cacheKey, $entities);
@@ -69,7 +78,7 @@ class LanguageRepository extends AbstractRepository implements BaseRepositoryInt
      */
     public function findBy(array $criteria, ?array $orderBy = null, ?int $limit = null, ?int $offset = null): array
     {
-        return $this->mapperFactory->get(LanguageMapper::class)->findBy($criteria, $orderBy, $limit, $offset);
+        return $this->getMapper()->findBy($criteria, $orderBy, $limit, $offset);
     }
 
     /**
@@ -86,7 +95,7 @@ class LanguageRepository extends AbstractRepository implements BaseRepositoryInt
             return $this->cache->get($cacheKey);
         }
 
-        $entity = $this->mapperFactory->get(LanguageMapper::class)->findOneBy($criteria);
+        $entity = $this->getMapper()->findOneBy($criteria);
 
         if ($entity && $this->cache) {
             $this->cache->set($cacheKey, $entity);
@@ -102,5 +111,43 @@ class LanguageRepository extends AbstractRepository implements BaseRepositoryInt
     public function getByCode(string $code): ?InterfaceEntity
     {
         return $this->findOneBy(['code' => $code]);
+    }
+
+    /**
+     * Alpha Engine: Retorna todos os idiomas ativos em formato de array, 
+     * indexados pelo código (ex: 'pt-br').
+     * Método crucial para substituir model_localisation_language->getLanguages()
+     */
+    public function getLanguages(): array
+    {
+        $cacheKey = "language.array.all";
+
+        if ($this->cache && $this->cache->has($cacheKey)) {
+            return $this->cache->get($cacheKey);
+        }
+
+        $languages = [];
+        foreach ($this->findAll() as $entity) {
+            $arrayData = CollectionToArrayConverter::convertEntity($entity);
+            $code = $arrayData['code'] ?? (string)$entity->getId();
+            $languages[$code] = $arrayData;
+        }
+
+        if ($this->cache) {
+            $this->cache->set($cacheKey, $languages);
+        }
+
+        return $languages;
+    }
+
+    /**
+     * Alpha Engine: Carrega um pacote de traduções (substituindo de vez o Loader legado).
+     * 
+     * @param string $route Rota do arquivo de tradução (ex: 'common/header')
+     * @return array
+     */
+    public function loadTranslation(string $route): array
+    {
+        return $this->registry->get('language')->load($route) ?: [];
     }
 }

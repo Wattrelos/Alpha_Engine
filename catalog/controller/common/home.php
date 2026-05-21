@@ -3,6 +3,7 @@ namespace Opencart\Catalog\Controller\Common;
 
 use Alpha\Controller\BaseController;
 use Alpha\Model\Domain\Repositories\HomeRepository;
+use Opencart\Catalog\Controller\Product\Thumb;
 
 class Home extends BaseController {
 	public function index(): void {
@@ -10,7 +11,7 @@ class Home extends BaseController {
         $homeRepository = $this->getRepository(HomeRepository::class);
         $homeData = $homeRepository->getHomeData();
         
-        $data = $homeData->getData();
+        $data = $homeData->toArray();
 
         // Alpha Engine: As meta tags (SEO) devem ser injetadas no objeto Document para o header.twig ler
         $this->document->setTitle($homeData->get('title') ?? $this->config->get('config_meta_title'));
@@ -19,13 +20,14 @@ class Home extends BaseController {
 
         // Alpha Engine: Carrega produtos em destaque via HomeRepository
         // Assumindo que 'module_featured_product_product' é uma string de IDs separados por vírgula
-        $featured_product_ids = explode(',', $this->config->get('module_featured_product_product'));
+        $featured_config = $this->config->get('module_featured_product_product');
+        $featured_product_ids = is_array($featured_config) ? $featured_config : array_filter(explode(',', (string)$featured_config));
         $featured_limit = (int)$this->config->get('module_featured_product_limit') ?: 4;
         $featured_results = $homeRepository->getFeatured($featured_product_ids, $featured_limit);
         
         $data['featured_products'] = [];
         foreach ($featured_results as $result) {
-            $data['featured_products'][] = $this->load->controller('product/thumb', $result);
+            $data['featured_products'][] = (new Thumb($this->registry))->index($result);
         }
 
         // Alpha Engine: Carrega produtos mais recentes via HomeRepository
@@ -34,7 +36,7 @@ class Home extends BaseController {
 
         $data['latest_products'] = [];
         foreach ($latest_results as $result) {
-            $data['latest_products'][] = $this->load->controller('product/thumb', $result);
+            $data['latest_products'][] = (new Thumb($this->registry))->index($result);
         }
 
         // Alpha Engine: Carrega banners da Home via HomeRepository

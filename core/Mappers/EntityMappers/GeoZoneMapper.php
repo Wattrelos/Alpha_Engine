@@ -1,6 +1,6 @@
 <?php
 
-namespace Alpha\Mappers;
+namespace Alpha\Mappers\EntityMappers;
 
 use Alpha\Model\DataAccessObject\QueryBuilder;
 use Alpha\Model\DataAccessObject\DataAccessObject;

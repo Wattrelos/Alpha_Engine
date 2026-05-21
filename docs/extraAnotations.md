@@ -47,6 +47,8 @@ O código é apenas uma parte da solução. O conhecimento sobre **por que** uma
 
 ### 🏗️ Em Andamento
 *   **Repository Pattern Standard**: Estamos formalizando a `BaseRepositoryInterface` e a `AbstractRepository`.
+    *   ✅ `ConfigurationRepository`: Criado como fachada para substituir chamadas de `$this->load->config()`, orquestrando arquivos físicos e a base de dados em injeção direta no Registry nativo.
+    *   ✅ `TranslationRepository`: Criado para gerenciar traduções dinâmicas de banco de dados, utilizando Identity Map em memória para evitar N+1 queries a cada requisição de evento.
     *   ✅ `LanguageRepository`: Refatorado para implementar a interface e utilizar o `LanguageMapper`. Agora suporta `find`, `findAll`, `findBy`, `findOneBy` e o método especializado `getByCode`.
     *   ✅ `ProductRepository`: Refatorado para implementar a interface e utilizar o `ProductMapper`. Implementação completa dos métodos de busca do contrato.
     *   ✅ `CurrencyRepository`: Criado e refatorado para implementar a interface e utilizar o `CurrencyMapper`.
@@ -60,7 +62,7 @@ O código é apenas uma parte da solução. O conhecimento sobre **por que** uma
     *   ✅ `WeightClassRepository`: Refatorado para o padrão BaseRepositoryInterface utilizando o WeightClassMapper e suporte a cache de conversão.
     *   ✅ `OrderMapper`: Refatorado para persistência atômica de Cupons (Snapshot Pattern) via UnitOfWork.
     *   ✅ `OrderRepository`: Criado/Refatorado para encapsular o `OrderMapper` e abstrair a orquestração do `UnitOfWork` (transações e estoque) nos ciclos de venda.
-    *   ✅ `CartRepository`: Criado para encapsular o `CartMapper`, abstraindo a manipulação do carrinho e resolvendo automaticamente a transição do `session_id` para `customer_id`.
+    *   ✅ `CartRepository`: Finalizado. Encapsula o `CartMapper`, abstrai manipulação de opções dinâmicas (+/- preços e pesos), regras de estoque, transição atômica de `session_id` para cliente logado e cálculos fiscais (Taxes/Totals). A antiga biblioteca legada atua apenas como Proxy.
     *   ✅ `CouponRepository`: Implementação com validação de regras de domínio e integração com o histórico de uso (Snapshot).
     *   ✅ `CouponMapper`: Implementado para suportar persistência via DAO e consultas de validade.
     *   ✅ `VoucherRepository`: Implementação para gestão de cartões-presente com cálculo rigoroso de saldo restante via histórico (Snapshot).
@@ -78,6 +80,9 @@ O código é apenas uma parte da solução. O conhecimento sobre **por que** uma
 *   **Camada de Controladores (Master Pattern)**:
     *   ✅ `BaseController`: Implementação da classe abstrata em `Alpha\Controller`, automatizando a injeção de dependências (Repositórios e Mappers) e padronizando respostas JSON para API e Frontend.
     *   ✅ `Cart Controllers`: Migração de `api/cart.php` e `checkout/cart.php` para utilizar a `BaseController`, injeção do `CartRepository` e padronização das saídas JSON.
+    *   ✅ `Category Controller`: Migração completa da `catalog/controller/product/category.php` (e sua lógica visual legada) para consumir o `CategoryRepository`, desobstruindo chamadas estáticas (Loader-Free).
+    *   ✅ `Search Controller`: Migração da `catalog/controller/product/search.php`, transferindo a lógica de filtragem e árvore de categorias para os Repositórios de Domínio correspondentes.
+    *   ✅ `Event Translation`: Migração do manipulador de eventos de tradução (`event/translation.php`) para acionar o Repositório Alpha nativamente, garantindo alta velocidade de I18N.
     *   ✅ `Product Controller`: Migração do `product/product.php` para utilizar a `BaseController`, consumindo as instâncias da `MapperFactory` em vez de instanciar os Mappers manualmente.
-    *   ✅ `Checkout Controller`: Migração do `checkout/checkout.php` para utilizar a `BaseController`, aplicando o `CartRepository` para gerenciamento seguro da sessão de checkout.
+    *   ⏳ `Checkout Controller`: Pendente para a próxima etapa. Reestruturar a orquestração e fluxo de pagamentos para utilizar a `BaseController`.
     *   ✅ `Home Controller`: Migração do `common/home.php` para utilizar a `BaseController` com o super método `$this->render()`, injetando automaticamente cabeçalhos e rodapés, e corrigindo montagem da DTO.

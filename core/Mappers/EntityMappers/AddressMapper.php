@@ -2,12 +2,8 @@
 
 namespace Alpha\Mappers\EntityMappers;
 
-use Alpha\Mappers\BaseMapper;
-
 use Alpha\Model\DataAccessObject\DataAccessObject;
 use Alpha\Model\DataAccessObject\QueryBuilder;
-use Alpha\Model\Domain\Entities\Address;
-use Opencart\System\Library\DB; // Importa a classe DB do OpenCart
 use Alpha\Model\Domain\Entities\AddressFormat;
 
 /**
@@ -18,31 +14,26 @@ use Alpha\Model\Domain\Entities\AddressFormat;
  * - Normalização Geográfica: Consolida nomes de países e zonas em uma única consulta otimizada.
  * - Higienização de Output: Formata o endereço respeitando quebras de linha e padrões postais regionais.
  */
-class AddressMapper extends BaseMapper
+class AddressMapper
 {
-    protected string $entityClass = Address::class;
-    protected string $tableName = 'address';
+    private DataAccessObject $dao;
 
     public function __construct()
     {
-        parent::__construct();
+        $this->dao = new DataAccessObject();
     }
 
     /**
      * Recupera os dados brutos de um endereço, incluindo metadados geográficos e o formato postall.
      */
-    public function getAddress(int $addressId, int $languageId = 2): array // Só temos a linguagem id=2 no banco de dados (a liguagem padrão id=1 foi remofida)
+    public function getAddress(int $addressId): array
     {
         $query = (new QueryBuilder())
             ->from(DB_PREFIX . 'address', 'a')
             ->leftJoin(DB_PREFIX . 'country', 'c', 'a.country_id = c.id')
-            ->leftJoin(DB_PREFIX . 'country_description', 'cd', 'c.id = cd.country_id')
             ->leftJoin(DB_PREFIX . 'zone', 'z', 'a.zone_id = z.id')
-            ->leftJoin(DB_PREFIX . 'zone_description', 'zd', 'z.id = zd.zone_id')
             ->where('a.id = ?', [$addressId])
-            ->where('cd.language_id = ?', [$languageId])
-            ->where('zd.language_id = ?', [$languageId])
-            ->select('a.*', 'cd.name AS country', 'zd.name AS zone', 'z.code AS zone_code', 'c.address_format_id');
+            ->select('a.*', 'c.name AS country', 'z.name AS zone', 'z.code AS zone_code', 'c.address_format_id');
 
         $results = $this->dao->executeQuery($query);
         if (!$results) {
@@ -66,79 +57,6 @@ class AddressMapper extends BaseMapper
         }
 
         return $addressData;
-    }
-
-    /**
-     * Alpha Engine: Recupera todos os endereços de um cliente.
-     * 
-     * @param int $customerId
-     * @param int $languageId
-     * @return array
-     */
-    public function getAddresses(int $customerId, int $languageId = 1): array
-    {
-        $query = (new QueryBuilder())
-            ->from(DB_PREFIX . 'address', 'a')
-            ->leftJoin(DB_PREFIX . 'country', 'c', 'a.country_id = c.id')
-            ->leftJoin(DB_PREFIX . 'country_description', 'cd', 'c.id = cd.country_id')
-            ->leftJoin(DB_PREFIX . 'zone', 'z', 'a.zone_id = z.id')
-            ->leftJoin(DB_PREFIX . 'zone_description', 'zd', 'z.id = zd.zone_id')
-            ->where('a.customer_id = ?', [$customerId])
-            ->where('cd.language_id = ?', [$languageId])
-            ->where('zd.language_id = ?', [$languageId])
-            ->select('a.*', 'cd.name AS country', 'zd.name AS zone', 'z.code AS zone_code', 'c.address_format_id');
-
-        $results = $this->dao->executeQuery($query);
-
-        return $results ?: [];
-    }
-
-    /**
-     * Alpha Engine: Salva um novo endereço e gerencia a vinculação de endereço padrão.
-     * 
-     * @param array $data
-     * @param int $customerId
-     * @return int
-     */
-    public function createAddress(array $data, int $customerId): int
-    {
-        $conn = \Alpha\Model\DataAccessObject\ConnectionDB::getInstance()->getConnection();
-        if (!$conn instanceof \PDO) {
-            throw new \RuntimeException("Erro Alpha Engine: PDO não disponível para criação de endereço.");
-        }
-
-        $sql = "INSERT INTO `" . DB_PREFIX . "address` SET 
-            `customer_id` = ?, 
-            `firstname` = ?, 
-            `lastname` = ?, 
-            `company` = ?, 
-            `address_1` = ?, 
-            `number` = ?,
-            `address_2` = ?, 
-            `neighborhood` = ?,
-            `city` = ?, 
-            `postcode` = ?, 
-            `country_id` = ?, 
-            `zone_id` = ?, 
-            `custom_field` = ?";
-
-        $stmt = $conn->prepare($sql);
-        $stmt->execute([
-            (int)$customerId, $data['firstname'], $data['lastname'], $data['company'],
-            $data['address_1'], $data['number'] ?? '', $data['address_2'], $data['neighborhood'] ?? '',
-            $data['city'], $data['postcode'], (int)$data['country_id'], (int)$data['zone_id'],
-            json_encode($data['custom_field'] ?? [])
-        ]);
-
-        $addressId = (int)$conn->lastInsertId();
-
-        // Alpha Engine: Atualiza o endereço padrão na tabela customer (PK 'id')
-        if (!empty($data['default'])) {
-            $stmt_default = $conn->prepare("UPDATE `" . DB_PREFIX . "customer` SET `address_id` = ? WHERE `id` = ?");
-            $stmt_default->execute([$addressId, (int)$customerId]);
-        }
-
-        return $addressId;
     }
 
     /**

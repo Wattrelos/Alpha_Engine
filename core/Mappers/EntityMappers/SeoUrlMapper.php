@@ -2,7 +2,7 @@
 
 namespace Alpha\Mappers\EntityMappers;
 
-use Alpha\Mappers\BaseMapper;
+use Alpha\Model\DataAccessObject\DataAccessObject;
 use Alpha\Model\DataAccessObject\QueryBuilder;
 use Alpha\Model\Domain\Entities\SeoUrl;
 
@@ -14,9 +14,8 @@ use Alpha\Model\Domain\Entities\SeoUrl;
  * - Integração com DAO: Utiliza o Identity Map para evitar recriação de objetos.
  * - Busca Contextualizada: Considera Store e Language nativamente.
  */
-class SeoUrlMapper extends BaseMapper {
-    protected string $entityClass = SeoUrl::class;
-    protected string $tableName = 'seo_url';
+class SeoUrlMapper {
+    private DataAccessObject $dao;
     
     // Cache de lookup para evitar queries repetitivas na mesma requisição
     private static array $keywordCache = []; // [store_id][language_id][key][value] => keyword

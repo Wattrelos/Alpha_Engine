@@ -26,6 +26,13 @@ class HomeRepository extends AbstractRepository implements BaseRepositoryInterfa
         $homeMapper = $this->mapperFactory->get(HomeMapper::class);
         $metadata = $homeMapper->getHomeMetadata($this->store_id);
 
+        // --- TESTE REAL-TIME DO LOADCONFIG DA ALPHA ENGINE ---
+        // Carrega o arquivo system/config/alpha.php
+        $this->loadConfig('alpha');
+        // Grava no log de erros do OpenCart (system/storage/logs/error.log) para comprovar a injeção na $this->config global
+        $this->registry->get('log')->write('[TESTE ALPHA] ' . $this->config->get('alpha_engine_status'));
+        // ------------------------------------------------------
+
         // Configuração de metadados via Document (Domain Logic)
         $this->document->setTitle($metadata['config_meta_title'] ?? $this->config->get('config_name'));
         $this->document->setDescription($metadata['config_meta_description'] ?? '');

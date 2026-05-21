@@ -47,10 +47,6 @@ class Product extends BaseEntity
     #[OneToMany(targetEntity: ProductAttribute::class, foreignKey: 'productId')]
     private array $attributes = [];
 
-    /** @var ProductSpecial[] */
-    #[OneToMany(targetEntity: ProductSpecial::class, foreignKey: 'productId')]
-    private array $specials = [];
-
     /** @var ProductDiscount[] */
     #[OneToMany(targetEntity: ProductDiscount::class, foreignKey: 'productId')]
     private array $discounts = [];
@@ -111,44 +107,7 @@ class Product extends BaseEntity
     public function getAttributes(): array { return $this->attributes; }
     public function setAttributes(array $a): self { $this->attributes = $a; return $this; }
 
-    /** @return ProductSpecial[] */
-    public function getSpecials(): array { return $this->specials; }
-    public function setSpecials(array $s): self { $this->specials = $s; return $this; }
-
     /** @return ProductDiscount[] */
     public function getDiscounts(): array { return $this->discounts; }
     public function setDiscounts(array $d): self { $this->discounts = $d; return $this; }
-
-    /**
-     * Alpha Engine Helper: Localiza o preço especial ativo para o contexto do cliente.
-     * 
-     * Melhora:
-     * - Automatiza a validação de data (start/end).
-     * - Filtra por Grupo de Cliente.
-     * - Resolve o menor preço disponível (regra de prioridade do OpenCart).
-     */
-    public function getActiveSpecial(int $customerGroupId): float
-    {
-        $today = date('Y-m-d');
-        $cheapestPrice = 0.0;
-
-        foreach ($this->specials as $special) {
-            if ((int)$special->getCustomerGroupId() !== $customerGroupId) {
-                continue;
-            }
-
-            $start = $special->getDateStart();
-            $end = $special->getDateEnd();
-
-            // Validação de período (respeitando o padrão 0000-00-00 do banco legado)
-            if (($start === '0000-00-00' || $start <= $today) && ($end === '0000-00-00' || $end >= $today)) {
-                $price = (float)$special->getPrice();
-                if ($cheapestPrice === 0.0 || $price < $cheapestPrice) {
-                    $cheapestPrice = $price;
-                }
-            }
-        }
-
-        return $cheapestPrice;
-    }
 }

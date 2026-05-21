@@ -3,20 +3,23 @@ namespace Opencart\Catalog\Controller\Checkout;
 /**
  * Alpha Engine: Imports
  */
+use Alpha\Controller\BaseController;
+use Alpha\Model\Domain\Repositories\CartRepository;
 use Alpha\Mappers\EntityMappers\ShippingMapper;
 /**
  * Class ShippingMethod
  *
  * @package Opencart\Catalog\Controller\Checkout
  */
-class ShippingMethod extends \Opencart\System\Engine\Controller {
+class ShippingMethod extends BaseController {
 	/**
 	 * Index
 	 *
 	 * @return string
 	 */
 	public function index(): string {
-		$this->load->language('checkout/shipping_method');
+		$data = [];
+		$this->loadLanguageData('checkout/shipping_method', $data);
 
 		if (isset($this->session->data['shipping_method'])) {
 			$data['shipping_method'] = $this->session->data['shipping_method']['name'];
@@ -38,11 +41,12 @@ class ShippingMethod extends \Opencart\System\Engine\Controller {
 	 */
 	public function quote(): void {
 		$this->load->language('checkout/shipping_method');
+		$cartRepository = $this->getRepository(CartRepository::class);
 
 		$json = [];
 
 		// Validate cart has products and has stock.
-		if (!$this->cart->hasProducts() || (!$this->cart->hasStock() && !$this->config->get('config_stock_checkout')) || !$this->cart->hasMinimum()) {
+		if (empty($cartRepository->getProducts()) || (!$cartRepository->hasStock() && !$this->config->get('config_stock_checkout')) || !$cartRepository->hasMinimum()) {
 			$json['redirect'] = $this->url->link('checkout/cart', 'language=' . $this->config->get('config_language'), true);
 		}
 
@@ -58,14 +62,15 @@ class ShippingMethod extends \Opencart\System\Engine\Controller {
 			}
 
 			// Validate if shipping not required. If not the customer should not have reached this page.
-			if ($this->cart->hasShipping() && !isset($this->session->data['shipping_address']['address_id'])) {
+			if ($cartRepository->hasShipping() && !isset($this->session->data['shipping_address']['address_id'])) {
 				$json['error'] = $this->language->get('error_shipping_address');
 			}
 		}
 
 		if (!$json) {
-			// Alpha Engine: Centralização via ShippingMapper
-			$shipping_mapper = new ShippingMapper();
+			// Alpha Engine: Instanciação nativa do ShippingMapper via Factory
+			$mapperFactory = $this->registry->get('mapperFactory');
+			$shipping_mapper = $mapperFactory->get(ShippingMapper::class);
 			$shipping_methods = $shipping_mapper->getMethods($this->session->data['shipping_address']);
 
 			if ($shipping_methods) {
@@ -75,8 +80,7 @@ class ShippingMethod extends \Opencart\System\Engine\Controller {
 			}
 		}
 
-		$this->response->addHeader('Content-Type: application/json');
-		$this->response->setOutput(json_encode($json));
+		$this->jsonResponse($json);
 	}
 
 	/**
@@ -86,11 +90,12 @@ class ShippingMethod extends \Opencart\System\Engine\Controller {
 	 */
 	public function save(): void {
 		$this->load->language('checkout/shipping_method');
+		$cartRepository = $this->getRepository(CartRepository::class);
 
 		$json = [];
 
 		// Validate cart has products and has stock.
-		if (!$this->cart->hasProducts() || (!$this->cart->hasStock() && !$this->config->get('config_stock_checkout')) || !$this->cart->hasMinimum()) {
+		if (empty($cartRepository->getProducts()) || (!$cartRepository->hasStock() && !$this->config->get('config_stock_checkout')) || !$cartRepository->hasMinimum()) {
 			$json['redirect'] = $this->url->link('checkout/cart', 'language=' . $this->config->get('config_language'), true);
 		}
 
@@ -106,7 +111,7 @@ class ShippingMethod extends \Opencart\System\Engine\Controller {
 			}
 
 			// Validate if shipping not required. If not the customer should not have reached this page.
-			if ($this->cart->hasShipping() && !isset($this->session->data['shipping_address']['address_id'])) {
+			if ($cartRepository->hasShipping() && !isset($this->session->data['shipping_address']['address_id'])) {
 				$json['error'] = $this->language->get('error_shipping_address');
 			}
 
@@ -131,7 +136,6 @@ class ShippingMethod extends \Opencart\System\Engine\Controller {
 			unset($this->session->data['payment_methods']);
 		}
 
-		$this->response->addHeader('Content-Type: application/json');
-		$this->response->setOutput(json_encode($json));
+		$this->jsonResponse($json);
 	}
 }

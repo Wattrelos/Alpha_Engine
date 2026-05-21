@@ -17,10 +17,14 @@ class Footer extends BaseController {
 	 * @return string
 	 */
 	public function index(): string {
-		$footerRepository = $this->repository->get(FooterRepository::class);
+		// Alpha Engine: Utiliza o padrão unificado da BaseController para repositórios
+		$footerRepository = $this->getRepository(FooterRepository::class);
 		$footerData = $footerRepository->getFooterData();
 
 		$data = $footerData->toArray();
+
+		// Alpha Engine: Carregamento unificado das traduções do rodapé
+		$this->loadLanguageData('common/footer', $data);
 
 		// Alpha Engine: Injeção Loader-Free do componente de cookies
 		$data['cookie'] = (new Cookie($this->registry))->index();

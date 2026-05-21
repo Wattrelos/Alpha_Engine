@@ -22,7 +22,10 @@ Explicação técnica sobre o `DataAccessObject` (DAO), abstração de transaç�
 ### 4. Persistência (Mappers & Repositories)
 Fluxo de salvamento e recuperação de dados, incluindo o ciclo de vida de uma entidade do domínio até o banco de dados.
 
-### 5. Guia de Diagramas
+### 5. Serviços de Entrega (Shipping)
+A camada de lógica de negócios e cálculo de frete (Shipping Services) foi **integralmente concluída** e refatorada para a arquitetura Alpha Engine. Foram modernizados e validados os serviços base (`WeightBased`, `FreeShipping` e `FlatRate`), os quais agora operam de forma isolada, consumindo repositórios de domínio para conversão unitária de medidas (peso/dimensão) e checagem nativa de zonas geográficas.
+
+### 6. Guia de Diagramas
 Instruções para visualizar e editar os diagramas PlantUML (`.puml`) localizados na pasta `diagrams/`.
 
 ---

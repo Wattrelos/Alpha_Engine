@@ -11,9 +11,14 @@ class Menu extends BaseController {
 	 * @return string
 	 */
 	public function index(): string {
-		$menuRepository = $this->repository->get(MenuRepository::class);
-		$menuData = $menuRepository->getMenuData();
-		
-		return $this->render('common/menu', $menuData->toArray());
+		// Alpha Engine: O MenuRepository cuida da hidratação recursiva e do Cache
+		/** @var MenuRepository $menuRepository */
+		$menuRepository = $this->getRepository(MenuRepository::class);
+
+		// Injeta a string HTML renderizada do menu na variável aguardada pelo Twig
+		$data['categorias'] = $menuRepository->getMenuHtml();
+
+		// Renderiza o template common/menu.twig
+		return $this->render('common/menu', $data);
 	}
 }

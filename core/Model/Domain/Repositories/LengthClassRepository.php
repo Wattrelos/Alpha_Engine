@@ -2,7 +2,7 @@
 
 namespace Alpha\Model\Domain\Repositories;
 
-use Alpha\Mappers\EntityMappers\LengthClassMapper;
+use Alpha\Mappers\LengthClassMapper;
 use Alpha\Model\Domain\InterfaceEntity;
 
 /**
@@ -13,6 +13,9 @@ use Alpha\Model\Domain\InterfaceEntity;
  */
 class LengthClassRepository extends AbstractRepository implements BaseRepositoryInterface
 {
+    private const CACHE_KEY_ALL = 'length_class.all';
+    private const CACHE_KEY_PREFIX = 'length_class.id.';
+
     /**
      * Busca uma unidade de comprimento pelo seu ID único.
      *
@@ -21,7 +24,14 @@ class LengthClassRepository extends AbstractRepository implements BaseRepository
      */
     public function find(int $id): ?InterfaceEntity
     {
-        return $this->getMapper()->findById($id);
+        $cacheKey = self::CACHE_KEY_PREFIX . $id;
+        
+        $cached = $this->cache ? $this->cache->get($cacheKey) : null;
+        if ($cached) return $cached;
+
+        $entity = $this->getMapper()->findById($id);
+        if ($entity && $this->cache) $this->cache->set($cacheKey, $entity, 3600);
+        return $entity;
     }
 
     /**
@@ -31,7 +41,14 @@ class LengthClassRepository extends AbstractRepository implements BaseRepository
      */
     public function findAll(): array
     {
-        return $this->getMapper()->findAll();
+        $cacheKey = self::CACHE_KEY_ALL;
+        
+        $cached = $this->cache ? $this->cache->get($cacheKey) : null;
+        if ($cached) return $cached;
+
+        $entities = $this->getMapper()->findAll();
+        if (!empty($entities) && $this->cache) $this->cache->set($cacheKey, $entities, 3600);
+        return $entities;
     }
 
     /**
@@ -41,7 +58,14 @@ class LengthClassRepository extends AbstractRepository implements BaseRepository
      */
     public function getAllByCurrentLanguage(): array
     {
-        return $this->getMapper()->getAll($this->language_id);
+        $cacheKey = self::CACHE_KEY_ALL . '.lang.' . $this->language_id;
+
+        $cached = $this->cache ? $this->cache->get($cacheKey) : null;
+        if ($cached) return $cached;
+
+        $results = $this->getMapper()->findAll($this->language_id);
+        if (!empty($results) && $this->cache) $this->cache->set($cacheKey, $results, 3600);
+        return $results;
     }
 
     /**

@@ -36,6 +36,8 @@ Este log documenta a migração do motor financeiro e da gestão de dados de cli
 4.  **Subscription Snapshot**: Congelamento de preços e termos no momento da contratação da assinatura, protegendo a integridade contratual.
 5.  **Cart Resilience**: Lógica de adição de produtos com opções complexas unificada via hash JSON, evitando duplicidade de itens.
 6.  **Voucher Engine**: Normalização monetária rigorosa para créditos de presente e resgate seguro.
+7.  **CartRepository Finalizado**: O repositório agora orquestra isoladamente o processamento iterativo de opções (+/- preços e pesos), mesclagem de sessões atômicas no banco de dados e delegação tributária (Taxes).
+
 
 ### 💡 Insights de Checkout
 *   A transição transparente de `session_id` para `customer_id` no login garante que o visitante não perca o carrinho.

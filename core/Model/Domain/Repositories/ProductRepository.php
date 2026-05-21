@@ -14,6 +14,59 @@ use Alpha\Model\Domain\InterfaceEntity;
 class ProductRepository extends AbstractRepository implements BaseRepositoryInterface
 {
     /**
+     * Alpha Engine: Recupera o Grafo Completo do Produto (Detalhes)
+     * 
+     * @param int $productId
+     * @return array|null
+     */
+    public function getDetailedProduct(int $productId): ?array
+    {
+        $customerGroupId = $this->customer->isLogged() 
+            ? (int)$this->customer->getGroupId() 
+            : (int)$this->config->get('config_customer_group_id');
+
+        /** @var \Alpha\Mappers\EntityMappers\ProductMapper $mapper */
+        $mapper = $this->mapperFactory->get(ProductMapper::class);
+        return $mapper->getDetailedProduct($productId, $this->language_id, $this->store_id, $customerGroupId);
+    }
+
+    /**
+     * Alpha Engine: Registra visualização de produto.
+     */
+    public function addReport(int $productId, string $ip): void
+    {
+        /** @var \Alpha\Mappers\EntityMappers\ProductMapper $mapper */
+        $mapper = $this->mapperFactory->get(ProductMapper::class);
+        if (method_exists($mapper, 'addReport')) {
+            $mapper->addReport($productId, $this->store_id, $ip);
+        }
+    }
+
+    /**
+     * Alpha Engine: Recupera produtos com filtros aplicados.
+     */
+    public function getProducts(array $filterData): array
+    {
+        $customerGroupId = $this->customer->isLogged() 
+            ? (int)$this->customer->getGroupId() 
+            : (int)$this->config->get('config_customer_group_id');
+
+        /** @var \Alpha\Mappers\EntityMappers\ProductMapper $mapper */
+        $mapper = $this->mapperFactory->get(ProductMapper::class);
+        return $mapper->getProducts($filterData, $this->language_id, $this->store_id, $customerGroupId);
+    }
+
+    /**
+     * Alpha Engine: Conta o total de produtos para paginação.
+     */
+    public function getTotalProducts(array $filterData): int
+    {
+        /** @var \Alpha\Mappers\EntityMappers\ProductMapper $mapper */
+        $mapper = $this->mapperFactory->get(ProductMapper::class);
+        return $mapper->getTotalProducts($filterData, $this->language_id, $this->store_id);
+    }
+
+    /**
      * @param int $id
      * @return InterfaceEntity|null
      */

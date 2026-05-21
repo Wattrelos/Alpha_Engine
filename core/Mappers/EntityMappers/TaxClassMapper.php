@@ -2,15 +2,18 @@
 
 namespace Alpha\Mappers\EntityMappers;
 
-use Alpha\Mappers\BaseMapper;
+use Alpha\Model\DataAccessObject\DataAccessObject;
 use Alpha\Model\DataAccessObject\QueryBuilder;
 
 /**
  * Mapper para gerenciar classes de impostos (Tax Classes)
  */
-class TaxClassMapper extends BaseMapper {
+class TaxClassMapper {
+    private DataAccessObject $dao;
 
-    protected string $tableName = 'tax_class';
+    public function __construct() {
+        $this->dao = new DataAccessObject();
+    }
 
     /**
      * Obtém uma classe de imposto específica por ID

@@ -39,6 +39,27 @@ abstract class AbstractRepository
     }
 
     /**
+     * Alpha Engine: Carrega traduções diretamente através do objeto Language nativo,
+     * eliminando a dependência do Loader legado ($this->load->language).
+     * 
+     * @param string $route Rota do arquivo de idioma (ex: 'common/header')
+     * @return array
+     */
+    protected function loadLanguage(string $route): array
+    {
+        return $this->registry->get('language')->load($route) ?: [];
+    }
+    /**
+     * Alpha Engine: Substituto direto para $this->load->config()
+     */
+    protected function loadConfig(string $filename): void
+    {
+        $factory = $this->registry->get('alpha_repository_factory');
+        $factory->get(ConfigurationRepository::class)->loadFile($filename);
+    }
+
+
+    /**
      * Permite acesso transparente aos serviços do OpenCart e shorthands comuns.
      */
     public function __get(string $key): mixed

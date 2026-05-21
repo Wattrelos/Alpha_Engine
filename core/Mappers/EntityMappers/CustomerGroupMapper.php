@@ -2,15 +2,18 @@
 
 namespace Alpha\Mappers\EntityMappers;
 
-use Alpha\Mappers\BaseMapper;
+use Alpha\Model\DataAccessObject\DataAccessObject;
 use Alpha\Model\DataAccessObject\QueryBuilder;
 
 /**
  * Mapper para gerenciar grupos de clientes e suas regras
  */
-class CustomerGroupMapper extends BaseMapper {
+class CustomerGroupMapper {
+    private DataAccessObject $dao;
 
-    protected string $tableName = 'customer_group';
+    public function __construct() {
+        $this->dao = new DataAccessObject();
+    }
 
     /**
      * Obtém um grupo de cliente específico
