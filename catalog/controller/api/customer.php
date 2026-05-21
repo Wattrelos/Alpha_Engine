@@ -1,5 +1,8 @@
 <?php
 namespace Opencart\catalog\Controller\Api;
+
+use Alpha\Controller\BaseController;
+
 /**
  * Class Customer
  *
@@ -7,7 +10,7 @@ namespace Opencart\catalog\Controller\Api;
  *
  * @package Opencart\Catalog\Controller\Api
  */
-class Customer extends \Opencart\System\Engine\Controller {
+class Customer extends BaseController {
 	/**
 	 * Index
 	 *

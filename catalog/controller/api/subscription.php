@@ -1,5 +1,9 @@
 <?php
 namespace Opencart\Catalog\Controller\Api;
+
+use Alpha\Controller\BaseController;
+use Alpha\Model\Domain\Repositories\CartRepository;
+
 /**
  * Class Subscription
  *
@@ -7,7 +11,7 @@ namespace Opencart\Catalog\Controller\Api;
  *
  * @package Opencart\Catalog\Controller\Api
  */
-class Subscription extends \Opencart\System\Engine\Controller {
+class Subscription extends BaseController {
 	/**
 	 * Index
 	 *
@@ -223,7 +227,7 @@ class Subscription extends \Opencart\System\Engine\Controller {
 		$output = $this->load->controller('api/payment_method');
 
 		$output['products'] = $this->load->controller('api/cart.getProducts');
-		$output['shipping_required'] = $this->cart->hasShipping();
+		$output['shipping_required'] = $this->getRepository(CartRepository::class)->hasShipping();
 
 		return $output;
 	}
@@ -246,7 +250,7 @@ class Subscription extends \Opencart\System\Engine\Controller {
 		$this->load->controller('api/payment_method');
 
 		$output['products'] = $this->load->controller('api/cart.getProducts');
-		$output['shipping_required'] = $this->cart->hasShipping();
+		$output['shipping_required'] = $this->getRepository(CartRepository::class)->hasShipping();
 
 		return $output;
 	}
@@ -271,7 +275,7 @@ class Subscription extends \Opencart\System\Engine\Controller {
 		$output = $this->load->controller('api/cart.addProduct');
 
 		$output['products'] = $this->load->controller('api/cart.getProducts');
-		$output['shipping_required'] = $this->cart->hasShipping();
+		$output['shipping_required'] = $this->getRepository(CartRepository::class)->hasShipping();
 
 		return $output;
 	}
@@ -308,6 +312,8 @@ class Subscription extends \Opencart\System\Engine\Controller {
 
 		$this->load->language('sale/subscription');
 
+		$cartRepository = $this->getRepository(CartRepository::class);
+
 		// 1. Validate customer data exists
 		if (!isset($this->session->data['customer'])) {
 			$output['error']['customer'] = $this->language->get('error_customer');
@@ -323,12 +329,12 @@ class Subscription extends \Opencart\System\Engine\Controller {
 		}
 
 		// 2. Validate cart has products.
-		if (!$this->cart->hasProducts()) {
+		if (!$cartRepository->hasProducts()) {
 			$output['error']['product'] = $this->language->get('error_product');
 		}
 
 		// 3. Validate cart has products and has stock
-		if ((!$this->cart->hasStock() && !$this->config->get('config_stock_checkout')) || !$this->cart->hasMinimum()) {
+		if ((!$cartRepository->hasStock() && !$this->config->get('config_stock_checkout')) || !$cartRepository->hasMinimum()) {
 			$output['error']['product'] = $this->language->get('error_stock');
 		}
 
@@ -338,7 +344,7 @@ class Subscription extends \Opencart\System\Engine\Controller {
 		}
 
 		// 5. Validate shipping address and method if required
-		if ($this->cart->hasShipping()) {
+		if ($cartRepository->hasShipping()) {
 			// Shipping Address
 			if (!isset($this->session->data['shipping_address'])) {
 				$output['error']['shipping_address'] = $this->language->get('error_shipping_address');
@@ -362,7 +368,7 @@ class Subscription extends \Opencart\System\Engine\Controller {
 			// Subscription
 			$subscription_product_data = [];
 
-			$products = $this->cart->getSubscriptions();
+			$products = $cartRepository->getSubscriptions();
 
 			foreach ($products as $product) {
 				$subscription_product_data[] = [
@@ -398,7 +404,7 @@ class Subscription extends \Opencart\System\Engine\Controller {
 		}
 
 		$output['products'] = $this->load->controller('api/cart.getProducts');
-		$output['shipping_required'] = $this->cart->hasShipping();
+		$output['shipping_required'] = $cartRepository->hasShipping();
 
 		return $output;
 	}

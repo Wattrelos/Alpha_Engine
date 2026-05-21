@@ -1,6 +1,6 @@
 # OpenCart Sensitive Files
-config.php
-admin/config.php
+# config.php
+# admin/config.php
 
 # Storage and Caches
 system/storage/cache/*

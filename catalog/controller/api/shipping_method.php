@@ -1,5 +1,9 @@
 <?php
 namespace Opencart\catalog\controller\api;
+
+use Alpha\Controller\BaseController;
+use Alpha\Model\Domain\Repositories\CartRepository;
+
 /**
  * Class Shipping Method
  *
@@ -7,7 +11,7 @@ namespace Opencart\catalog\controller\api;
  *
  * @package Opencart\Catalog\Controller\Api
  */
-class ShippingMethod extends \Opencart\System\Engine\Controller {
+class ShippingMethod extends BaseController {
 	/**
 	 * Index
 	 *
@@ -20,7 +24,7 @@ class ShippingMethod extends \Opencart\System\Engine\Controller {
 
 		$post_info = $this->request->post;
 
-		if ($this->cart->hasShipping()) {
+		if ($this->getRepository(CartRepository::class)->hasShipping()) {
 			// 1. Validate customer data exists
 			if (!isset($this->session->data['customer'])) {
 				$output['error'] = $this->language->get('error_customer');
@@ -81,7 +85,7 @@ class ShippingMethod extends \Opencart\System\Engine\Controller {
 		}
 
 		// 2. Validate shipping if required
-		if ($this->cart->hasShipping()) {
+		if ($this->getRepository(CartRepository::class)->hasShipping()) {
 			if (!isset($this->session->data['shipping_address'])) {
 				$output['error'] = $this->language->get('error_shipping_address');
 			}

@@ -1,5 +1,9 @@
 <?php
 namespace Opencart\catalog\controller\api;
+
+use Alpha\Controller\BaseController;
+use Alpha\Model\Domain\Repositories\CartRepository;
+
 /**
  * Class Shipping Address
  *
@@ -7,7 +11,7 @@ namespace Opencart\catalog\controller\api;
  *
  * @package Opencart\Catalog\Controller\Api
  */
-class ShippingAddress extends \Opencart\System\Engine\Controller {
+class ShippingAddress extends BaseController {
 	/**
 	 * Index
 	 *
@@ -18,7 +22,7 @@ class ShippingAddress extends \Opencart\System\Engine\Controller {
 
 		$output = [];
 
-		if ($this->cart->hasShipping()) {
+		if ($this->getRepository(CartRepository::class)->hasShipping()) {
 			// Add keys for missing post vars
 			$required = [
 				'shipping_firstname'    => '',

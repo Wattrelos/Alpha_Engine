@@ -1,5 +1,9 @@
 <?php
 namespace Opencart\catalog\controller\api;
+
+use Alpha\Controller\BaseController;
+use Alpha\Model\Domain\Repositories\CartRepository;
+
 /**
  * Class Payment Method
  *
@@ -7,7 +11,7 @@ namespace Opencart\catalog\controller\api;
  *
  * @package Opencart\Catalog\Controller\Api
  */
-class PaymentMethod extends \Opencart\System\Engine\Controller {
+class PaymentMethod extends BaseController {
 	/**
 	 * Index
 	 *
@@ -25,18 +29,20 @@ class PaymentMethod extends \Opencart\System\Engine\Controller {
 
 		$post_info = $this->request->post + $required;
 
+		$cartRepository = $this->getRepository(CartRepository::class);
+
 		// 1. Validate customer data exists
 		if (!isset($this->session->data['customer'])) {
 			$output['error'] = $this->language->get('error_customer');
 		}
 
 		// 2. Validate cart has products
-		if (!$this->cart->hasProducts()) {
+		if (!$cartRepository->hasProducts()) {
 			$output['error'] = $this->language->get('error_product');
 		}
 
 		// 3. Validate shipping address and method if required
-		if ($this->cart->hasShipping()) {
+		if ($cartRepository->hasShipping()) {
 			if (!isset($this->session->data['shipping_address'])) {
 				$output['error'] = $this->language->get('error_shipping_address');
 			}
@@ -73,18 +79,20 @@ class PaymentMethod extends \Opencart\System\Engine\Controller {
 
 		$output = [];
 
+		$cartRepository = $this->getRepository(CartRepository::class);
+
 		// 1. Validate customer data exists
 		if (!isset($this->session->data['customer'])) {
 			$output['error'] = $this->language->get('error_customer');
 		}
 
 		// 2. Validate cart has products
-		if (!$this->cart->hasProducts()) {
+		if (!$cartRepository->hasProducts()) {
 			$output['error'] = $this->language->get('error_product');
 		}
 
 		// 3. Validate shipping address and method if required
-		if ($this->cart->hasShipping()) {
+		if ($cartRepository->hasShipping()) {
 			if (!isset($this->session->data['shipping_address'])) {
 				$output['error'] = $this->language->get('error_shipping_address');
 			}

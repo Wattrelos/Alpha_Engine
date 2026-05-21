@@ -1,0 +1,25 @@
+# =========================================================================
+# CONFIGURAÇÃO DE EXCLUSÃO DO GEMINI CODE ASSIST (.aiexclude)
+# =========================================================================
+
+# 1. Ignorar pastas pesadas e dependências que poluem a IA
+/vendor/
+/node_modules/
+/admin/
+
+# 2. Ignorar arquivos de configuração local e credenciais sensíveis
+.env
+.env.*
+*.local
+local.properties
+
+# 3. Ignorar pastas de recursos não relevantes no dia a dia
+# (Dica: Remova o "#" abaixo se quiser liberar temporariamente para o Gemini ler)
+/diagrams/
+
+# 4. Ignorar arquivos temporários, logs e builds automáticos
+/storage/logs/
+/storage/framework/
+*.log
+/dist/
+/build/

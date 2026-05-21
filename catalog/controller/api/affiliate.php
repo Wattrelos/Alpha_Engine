@@ -1,5 +1,8 @@
 <?php
 namespace Opencart\catalog\controller\api;
+
+use Alpha\Controller\BaseController;
+
 /**
  * Class Affiliate
  *
@@ -7,7 +10,7 @@ namespace Opencart\catalog\controller\api;
  *
  * @package Opencart\Catalog\Controller\Api\Sale
  */
-class Affiliate extends \Opencart\System\Engine\Controller {
+class Affiliate extends BaseController {
 	/**
 	 * Index
 	 *

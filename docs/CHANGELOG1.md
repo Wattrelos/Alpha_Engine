@@ -88,6 +88,10 @@
 
 * **Configurações Globais (Settings)**: Criação do `SettingMapper` e `SettingRepository` para centralizar a extração das configurações do banco de dados. Implementado Identity Map em memória para garantir que o banco seja consultado apenas 1 vez por requisição, independentemente da quantidade de vezes que as configurações sejam solicitadas. O Model legado `catalog/model/setting/setting.php` foi transformado em Bridge.
 
+* **API de Pedidos (`api/order.php`)**: Transição para a `BaseController` e substituição do acoplamento legado da biblioteca de carrinho (`$this->cart`) pelas validações inteligentes diretas do `CartRepository`. Correção do bug nativo na validação do afiliado (`$thid`).
+
+* **APIs de Checkout (Cliente, Frete, Pagamento, etc.)**: Transição em massa dos controladores `api/customer.php`, `api/shipping_address.php`, `api/payment_method.php`, `api/shipping_method.php`, `api/payment_address.php`, `api/affiliate.php` e `api/subscription.php` para a `BaseController`. Eliminação completa do acoplamento com a biblioteca `$this->cart`, substituída pelo `CartRepository` da Alpha Engine.
+
 ### Corrigido (Fixed)
 * **Ajuste no ProductMapper**: Inclusão explícita da descrição na consulta SQL dentro do Mapper para garantir que ela não fique vazia.
 * **Correção no Controlador Featured**: Adicionado o operador de coalescência nula (`?? ''`) e um cast para `(int)` no comprimento para evitar problemas de tipo.

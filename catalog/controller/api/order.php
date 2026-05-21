@@ -1,5 +1,9 @@
 <?php
 namespace Opencart\Catalog\Controller\Api;
+
+use Alpha\Controller\BaseController;
+use Alpha\Model\Domain\Repositories\CartRepository;
+
 /**
  * Class Order
  *
@@ -7,7 +11,7 @@ namespace Opencart\Catalog\Controller\Api;
  *
  * @package Opencart\Catalog\Controller\Api
  */
-class Order extends \Opencart\System\Engine\Controller {
+class Order extends BaseController {
 	/**
 	 * Index
 	 *
@@ -155,7 +159,7 @@ class Order extends \Opencart\System\Engine\Controller {
 
 		$output['products'] = $this->load->controller('api/cart.getProducts');
 		$output['totals'] = $this->load->controller('api/cart.getTotals');
-		$output['shipping_required'] = $this->cart->hasShipping();
+		$output['shipping_required'] = $this->getRepository(CartRepository::class)->hasShipping();
 
 		return $output;
 	}
@@ -212,7 +216,7 @@ class Order extends \Opencart\System\Engine\Controller {
 
 		$output['products'] = $this->load->controller('api/cart.getProducts');
 		$output['totals'] = $this->load->controller('api/cart.getTotals');
-		$output['shipping_required'] = $this->cart->hasShipping();
+		$output['shipping_required'] = $this->getRepository(CartRepository::class)->hasShipping();
 
 		return $output;
 	}
@@ -254,7 +258,7 @@ class Order extends \Opencart\System\Engine\Controller {
 
 		$output['products'] = $this->load->controller('api/cart.getProducts');
 		$output['totals'] = $this->load->controller('api/cart.getTotals');
-		$output['shipping_required'] = $this->cart->hasShipping();
+		$output['shipping_required'] = $this->getRepository(CartRepository::class)->hasShipping();
 
 		return $output;
 	}
@@ -296,7 +300,7 @@ class Order extends \Opencart\System\Engine\Controller {
 
 		$output['products'] = $this->load->controller('api/cart.getProducts');
 		$output['totals'] = $this->load->controller('api/cart.getTotals');
-		$output['shipping_required'] = $this->cart->hasShipping();
+		$output['shipping_required'] = $this->getRepository(CartRepository::class)->hasShipping();
 
 		return $output;
 	}
@@ -334,7 +338,7 @@ class Order extends \Opencart\System\Engine\Controller {
 
 		$output['products'] = $this->load->controller('api/cart.getProducts');
 		$output['totals'] = $this->load->controller('api/cart.getTotals');
-		$output['shipping_required'] = $this->cart->hasShipping();
+		$output['shipping_required'] = $this->getRepository(CartRepository::class)->hasShipping();
 
 		return $output;
 	}
@@ -373,18 +377,20 @@ class Order extends \Opencart\System\Engine\Controller {
 
 		$output = [];
 
+		$cartRepository = $this->getRepository(CartRepository::class);
+
 		// 1. Validate customer data exists
 		if (!isset($this->session->data['customer'])) {
 			$output['error']['customer'] = $this->language->get('error_customer');
 		}
 
 		// 2. Validate cart has products.
-		if (!$this->cart->hasProducts()) {
+		if (!$cartRepository->hasProducts()) {
 			$output['error']['product'] = $this->language->get('error_product');
 		}
 
 		// 3. Validate cart has products and has stock
-		if ((!$this->cart->hasStock() && !$this->config->get('config_stock_checkout')) || !$this->cart->hasMinimum()) {
+		if ((!$cartRepository->hasStock() && !$this->config->get('config_stock_checkout')) || !$cartRepository->hasMinimum()) {
 			$output['error']['product'] = $this->language->get('error_stock');
 		}
 
@@ -394,7 +400,7 @@ class Order extends \Opencart\System\Engine\Controller {
 		}
 
 		// 5. Validate shipping address and method if required
-		if ($this->cart->hasShipping()) {
+		if ($cartRepository->hasShipping()) {
 			// Shipping Address
 			if (!isset($this->session->data['shipping_address'])) {
 				$output['error']['shipping_address'] = $this->language->get('error_shipping_address');
@@ -415,7 +421,8 @@ class Order extends \Opencart\System\Engine\Controller {
 		}
 
 		// 7. Validate affiliate if set
-		if (isset($thid->request->post['affiliate_id']) && !isset($this->session->data['affiliate_id'])) {
+		// Alpha Engine: Corrigido bug nativo ($thid -> $this)
+		if (isset($this->request->post['affiliate_id']) && !isset($this->session->data['affiliate_id'])) {
 			$output['error']['affiliate'] = $this->language->get('error_affiliate');
 		}
 
@@ -543,7 +550,7 @@ class Order extends \Opencart\System\Engine\Controller {
 			// Products
 			$order_data['products'] = [];
 
-			$products = $this->cart->getProducts();
+			$products = $cartRepository->getProducts();
 
 			foreach ($products as $product) {
 				$subscription_data = [];
@@ -571,7 +578,7 @@ class Order extends \Opencart\System\Engine\Controller {
 
 			// Order Totals
 			$totals = [];
-			$taxes = $this->cart->getTaxes();
+			$taxes = $cartRepository->getTaxes();
 			$total = 0;
 
 			// Cart
@@ -593,7 +600,7 @@ class Order extends \Opencart\System\Engine\Controller {
 			$order_data['tracking'] = '';
 
 			if (isset($this->session->data['affiliate_id'])) {
-				$subtotal = $this->cart->getSubTotal();
+				$subtotal = $cartRepository->getSubTotal();
 
 				// Affiliate
 				$this->load->model('account/affiliate');
@@ -678,7 +685,7 @@ class Order extends \Opencart\System\Engine\Controller {
 
 		$output['products'] = $this->load->controller('api/cart.getProducts');
 		$output['totals'] = $this->load->controller('api/cart.getTotals');
-		$output['shipping_required'] = $this->cart->hasShipping();
+		$output['shipping_required'] = $cartRepository->hasShipping();
 
 		return $output;
 	}
