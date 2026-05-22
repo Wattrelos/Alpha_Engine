@@ -122,15 +122,9 @@ class OrderMapper
         }
 
         $pagination = $this->dao->paginate($builder, $page, $limit);
-        
-        $orders = [];
-        foreach ($pagination['data'] as $row) {
-            $order = $this->getOrder((int)$row['id']);
-            if ($order) {
-                $orders[] = $order;
-            }
-        }
 
-        return $orders;
+        // Alpha Engine Optimization: Resolve a hidratação de todos os pedidos em lote, evitando N+1 queries.
+        $ids = array_column($pagination['data'], 'id');
+        return !empty($ids) ? $this->dao->readByIds(Order::class, array_map('intval', $ids)) : [];
     }
 }

@@ -39,7 +39,7 @@ class CartRepository extends AbstractRepository implements BaseRepositoryInterfa
     public function initializeContext(): void
     {
         if ($this->customer->isLogged() && $this->getSessionId()) {
-            $this->getMapper()->updateSessionToCustomer($this->getSessionId(), $this->getCustomerId());
+            $this->getMapper()->mergeCartOnLogin($this->getCustomerId(), $this->getSessionId(), $this->store_id);
         }
     }
 
@@ -53,12 +53,13 @@ class CartRepository extends AbstractRepository implements BaseRepositoryInterfa
         // Na Alpha Engine, garantimos que as opções virem um hash JSON para comparação exata no banco
         $optionData = !empty($option) ? json_encode($option) : '';
 
-        $mapper->addItem(
+        $mapper->addItem( // O Repository deve validar se o item já existe e somar a quantidade
             $this->getCustomerId(),
             $this->getSessionId(),
+            $this->store_id,
             $productId,
             $quantity,
-            $optionData,
+            $optionData, // TODO: Implementar lógica de verificação de item existente
             $subscriptionPlanId
         );
 
@@ -102,7 +103,7 @@ class CartRepository extends AbstractRepository implements BaseRepositoryInterfa
      */
     public function clear(): void
     {
-        $this->getMapper()->clearItems($this->getCustomerId(), $this->getSessionId());
+        $this->getMapper()->clearItems($this->getCustomerId(), $this->getSessionId(), $this->store_id);
         $this->data = [];
         $this->isLoaded = true;
     }
@@ -117,8 +118,22 @@ class CartRepository extends AbstractRepository implements BaseRepositoryInterfa
             return $this->data;
         }
 
-        $cartItems = $this->getMapper()->getItems($this->getCustomerId(), $this->getSessionId());
+        $cartItems = $this->getMapper()->getItems($this->getCustomerId(), $this->getSessionId(), $this->store_id);
         
+        if (!$cartItems) {
+            $this->isLoaded = true;
+            $this->data = [];
+            return [];
+        }
+
+        // Alpha Engine: Fim do N+1 Query! Carregamos todos os produtos de uma vez.
+        $product_ids = array_column($cartItems, 'product_id');
+
+        /** @var ProductMapper $productMapper */
+        $productMapper = $this->mapperFactory->get(ProductMapper::class);
+        $productDataMap = $productMapper->getProductsByIds($product_ids, $this->language_id, $this->store_id, $this->getCustomerId());
+        $productMap = array_column($productDataMap, null, 'id');
+
         $products = [];
         
         /** @var ProductMapper $productMapper */
@@ -131,14 +146,9 @@ class CartRepository extends AbstractRepository implements BaseRepositoryInterfa
         }
 
         foreach ($cartItems as $item) {
-            // O ProductMapper traz o array com os cálculos brutos preparados
-            $productInfo = $productMapper->getProduct(
-                (int)$item['product_id'], 
-                $this->language_id, 
-                $this->store_id, 
-                $customerGroupId
-            );
-
+            // Busca o produto no mapa em memória (O(1)) em vez de consultar o banco
+            $productInfo = $productMap[$item['product_id']] ?? null;
+            
             if ($productInfo) {
                 $price = (float)$productInfo['price'];
                 $points = (int)$productInfo['points'];

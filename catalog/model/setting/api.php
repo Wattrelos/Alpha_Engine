@@ -1,5 +1,8 @@
 <?php
 namespace Opencart\Catalog\Model\Setting;
+
+use Alpha\Model\Domain\Repositories\ApiSessionRepository;
+
 /**
  * Class Api
  *
@@ -23,9 +26,8 @@ class Api extends \Opencart\System\Engine\Model {
 	 * $api_info = $this->model_setting_api->login($username, $key);
 	 */
 	public function login(string $username, string $key): array {
-		$query = $this->db->query("SELECT * FROM `" . DB_PREFIX . "api` `a` LEFT JOIN `" . DB_PREFIX . "api_ip` `ai` ON (`a`.`api_id` = `ai`.`api_id`) WHERE `a`.`username` = '" . $this->db->escape($username) . "' AND `a`.`key` = '" . $this->db->escape($key) . "'");
-
-		return $query->row;
+		$repository = $this->registry->get('alpha_repository_factory')->get(ApiSessionRepository::class);
+		return $repository->login($username, $key);
 	}
 
 	/**
@@ -42,9 +44,8 @@ class Api extends \Opencart\System\Engine\Model {
 	 * $api_info = $this->model_setting_api->getApiByToken($token);
 	 */
 	public function getApiByToken(string $token): array {
-		$query = $this->db->query("SELECT DISTINCT * FROM `" . DB_PREFIX . "api` `a` LEFT JOIN `" . DB_PREFIX . "api_session` `as` ON (`a`.`api_id` = `as`.`api_id`) LEFT JOIN `" . DB_PREFIX . "api_ip` `ai` ON (`a`.`api_id` = `ai`.`api_id`) WHERE `a`.`status` = '1' AND `as`.`session_id` = '" . $this->db->escape($token) . "' AND `ai`.`ip` = '" . $this->db->escape(oc_get_ip()) . "'");
-
-		return $query->row;
+		$repository = $this->registry->get('alpha_repository_factory')->get(ApiSessionRepository::class);
+		return $repository->getApiByToken($token, oc_get_ip());
 	}
 
 	/**
@@ -63,9 +64,8 @@ class Api extends \Opencart\System\Engine\Model {
 	 * $api_sessions = $this->model_setting_api->getSessions($api_id);
 	 */
 	public function getSessions(int $api_id): array {
-		$query = $this->db->query("SELECT * FROM `" . DB_PREFIX . "api_session` WHERE TIMESTAMPADD(HOUR, 1, `date_modified`) < NOW() AND `api_id` = '" . (int)$api_id . "'");
-
-		return $query->rows;
+		$repository = $this->registry->get('alpha_repository_factory')->get(ApiSessionRepository::class);
+		return $repository->getSessions($api_id);
 	}
 
 	/**
@@ -84,9 +84,9 @@ class Api extends \Opencart\System\Engine\Model {
 	 * $this->model_setting_api->deleteSessions($api_id);
 	 */
 	public function deleteSessions(int $api_id): array {
-		$query = $this->db->query("SELECT * FROM `" . DB_PREFIX . "api_session` WHERE TIMESTAMPADD(HOUR, 1, `date_modified`) < NOW() AND `api_id` = '" . (int)$api_id . "'");
-
-		return $query->rows;
+		$repository = $this->registry->get('alpha_repository_factory')->get(ApiSessionRepository::class);
+		// Preserva o comportamento do OpenCart, que estranhamente faz SELECT em vez de DELETE neste método
+		return $repository->getSessions($api_id);
 	}
 
 	/**
@@ -103,8 +103,8 @@ class Api extends \Opencart\System\Engine\Model {
 	 * $this->model_setting_api->updateSession($api_session_id);
 	 */
 	public function updateSession(string $api_session_id): void {
-		// keep the session alive
-		$this->db->query("UPDATE `" . DB_PREFIX . "api_session` SET `date_modified` = NOW() WHERE `api_session_id` = '" . (int)$api_session_id . "'");
+		$repository = $this->registry->get('alpha_repository_factory')->get(ApiSessionRepository::class);
+		$repository->updateSession($api_session_id);
 	}
 
 	/**
@@ -119,6 +119,7 @@ class Api extends \Opencart\System\Engine\Model {
 	 * $this->model_setting_api->cleanSessions();
 	 */
 	public function cleanSessions(): void {
-		$this->db->query("DELETE FROM `" . DB_PREFIX . "api_session` WHERE TIMESTAMPADD(HOUR, 1, `date_modified`) < NOW()");
+		$repository = $this->registry->get('alpha_repository_factory')->get(ApiSessionRepository::class);
+		$repository->cleanSessions();
 	}
 }

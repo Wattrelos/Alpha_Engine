@@ -1,5 +1,8 @@
 <?php
 namespace Opencart\Catalog\Model\Setting;
+
+use Alpha\Model\Domain\Repositories\CronRepository;
+
 /**
  * Class Cron
  *
@@ -24,7 +27,8 @@ class Cron extends \Opencart\System\Engine\Model {
 	 * $this->model_setting_cron->editCron($cron_id);
 	 */
 	public function editCron(int $cron_id): void {
-		$this->db->query("UPDATE `" . DB_PREFIX . "cron` SET `date_modified` = NOW() WHERE `cron_id` = '" . (int)$cron_id . "'");
+		$repository = $this->registry->get('alpha_repository_factory')->get(CronRepository::class);
+		$repository->editCron($cron_id);
 	}
 
 	/**
@@ -44,7 +48,8 @@ class Cron extends \Opencart\System\Engine\Model {
 	 * $this->model_setting_cron->editStatus($cron_id, $status);
 	 */
 	public function editStatus(int $cron_id, bool $status): void {
-		$this->db->query("UPDATE `" . DB_PREFIX . "cron` SET `status` = '" . (bool)$status . "' WHERE `cron_id` = '" . (int)$cron_id . "'");
+		$repository = $this->registry->get('alpha_repository_factory')->get(CronRepository::class);
+		$repository->editStatus($cron_id, $status);
 	}
 
 	/**
@@ -63,9 +68,8 @@ class Cron extends \Opencart\System\Engine\Model {
 	 * $cron_info = $this->model_setting_cron->getCron($cron_id);
 	 */
 	public function getCron(int $cron_id): array {
-		$query = $this->db->query("SELECT DISTINCT * FROM `" . DB_PREFIX . "cron` WHERE `cron_id` = '" . (int)$cron_id . "'");
-
-		return $query->row;
+		$repository = $this->registry->get('alpha_repository_factory')->get(CronRepository::class);
+		return $repository->getCron($cron_id);
 	}
 
 	/**
@@ -82,9 +86,8 @@ class Cron extends \Opencart\System\Engine\Model {
 	 * $cron_info = $this->model_setting_cron->getCronByCode($code);
 	 */
 	public function getCronByCode(string $code): array {
-		$query = $this->db->query("SELECT DISTINCT * FROM `" . DB_PREFIX . "cron` WHERE `code` = '" . $this->db->escape($code) . "' LIMIT 1");
-
-		return $query->row;
+		$repository = $this->registry->get('alpha_repository_factory')->get(CronRepository::class);
+		return $repository->getCronByCode($code);
 	}
 
 	/**
@@ -101,9 +104,8 @@ class Cron extends \Opencart\System\Engine\Model {
 	 * $results = $this->model_setting_cron->getCrons();
 	 */
 	public function getCrons(): array {
-		$query = $this->db->query("SELECT * FROM `" . DB_PREFIX . "cron` ORDER BY `date_modified` DESC");
-
-		return $query->rows;
+		$repository = $this->registry->get('alpha_repository_factory')->get(CronRepository::class);
+		return $repository->getCrons();
 	}
 
 	/**
@@ -120,8 +122,7 @@ class Cron extends \Opencart\System\Engine\Model {
 	 * $cron_total = $this->model_setting_cron->getTotalCrons();
 	 */
 	public function getTotalCrons(): int {
-		$query = $this->db->query("SELECT COUNT(*) AS `total` FROM `" . DB_PREFIX . "cron`");
-
-		return (int)$query->row['total'];
+		$repository = $this->registry->get('alpha_repository_factory')->get(CronRepository::class);
+		return $repository->getTotalCrons();
 	}
 }

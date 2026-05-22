@@ -73,7 +73,25 @@ class SessionMapper extends BaseMapper // Alterado de AbstractMapper para BaseMa
      */
     public function getSession(string $token): ?Session
     {
-        return $this->findOneBy(['sessionToken' => $token]);
+        $query = (new QueryBuilder())
+            ->from($this->getFullTableName())
+            ->where("session_token = ?", [$token])
+            ->select('id', 'LENGTH(data) AS size')
+            ->limit(1);
+
+        $results = $this->dao->executeQuery($query);
+
+        if (!$results) return null;
+
+        // Alpha Engine Failsafe: Evita "Memory Exhausted" no PDO bloqueando sessões corrompidas.
+        // Se o tamanho do blob ultrapassar ~5MB, a sessão é considerada lixo e destruída.
+        if ((int)$results[0]['size'] > 5000000) {
+            $this->deleteByToken($token);
+            return null;
+        }
+
+        $sessions = $this->dao->readByIds($this->entityClass, [(int)$results[0]['id']]);
+        return $sessions ? $sessions[0] : null;
     }
 
     /**
@@ -81,8 +99,23 @@ class SessionMapper extends BaseMapper // Alterado de AbstractMapper para BaseMa
      */
     public function findOneBy(array $criteria): ?Session
     {
-        $results = $this->search($criteria);
-        return $results ? $results[0] : null;
+        // Blindagem Alpha: Previne Memory Leak forçando busca controlada por LIMIT 1
+        $query = (new QueryBuilder())
+            ->from($this->getFullTableName())
+            ->select('id')
+            ->limit(1);
+
+        foreach ($criteria as $key => $value) {
+            $column = strtolower(preg_replace('/(?<!^)([A-Z])/', '_$1', $key));
+            $query->where("`$column` = ?", [$value]);
+        }
+
+        $results = $this->dao->executeQuery($query);
+
+        if (!$results) return null;
+
+        $sessions = $this->dao->readByIds($this->entityClass, [(int)$results[0]['id']]);
+        return $sessions ? $sessions[0] : null;
     }
 
     /**

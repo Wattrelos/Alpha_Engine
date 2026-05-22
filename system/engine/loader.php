@@ -142,7 +142,8 @@ class Loader {
 		}
 
 		// Initialize the class
-		if ($object instanceof \Opencart\System\Engine\Model) {
+		// Alpha Engine: Permite instâncias de Repositórios e Mappers, além de Models legados
+		if (is_object($object) && !$object instanceof \Exception) {
 			$this->registry->set('fallback_' . $key, $object);
 		} else {
 			throw new \Exception('Error: Could not load model ' . $route . '!');
@@ -330,7 +331,8 @@ class Loader {
 				$object = $this->registry->get($key);
 			}
 
-			if ($object instanceof \Opencart\System\Engine\Model) {
+			// Alpha Engine: Permite instâncias de Repositórios e Mappers, além de Models legados
+			if (is_object($object) && !$object instanceof \Exception) {
 				$this->registry->set($key, $object);
 			} else {
 				// If action cannot be executed, we return an error object.

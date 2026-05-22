@@ -11,8 +11,10 @@ use Alpha\Model\Domain\Attributes\ManyToOne;
 class Theme extends BaseEntity
 {
     private int $storeId = 0;
-    private string $theme = '';
     private string $route = '';
+    private string $code = '';
+    private bool $status = false;
+    private string $dateAdded = '';
 
     #[ManyToOne(targetEntity: Store::class, foreignKey: 'storeId')]
     private ?Store $store = null;
@@ -20,11 +22,17 @@ class Theme extends BaseEntity
     public function getStoreId(): int { return $this->storeId; }
     public function setStoreId(int $id): self { $this->storeId = $id; return $this; }
 
-    public function getTheme(): string { return $this->theme; }
-    public function setTheme(string $theme): self { $this->theme = $theme; return $this; }
-
     public function getRoute(): string { return $this->route; }
     public function setRoute(string $route): self { $this->route = $route; return $this; }
+
+    public function getCode(): string { return $this->code; }
+    public function setCode(string $code): self { $this->code = $code; return $this; }
+
+    public function getStatus(): bool { return $this->status; }
+    public function setStatus(bool $status): self { $this->status = $status; return $this; }
+
+    public function getDateAdded(): string { return $this->dateAdded; }
+    public function setDateAdded(string $dateAdded): self { $this->dateAdded = $dateAdded; return $this; }
 
     public function getStore(): ?Store
     {

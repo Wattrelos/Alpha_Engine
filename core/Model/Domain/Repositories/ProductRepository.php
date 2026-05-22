@@ -19,7 +19,7 @@ class ProductRepository extends AbstractRepository implements BaseRepositoryInte
      * @param int $productId
      * @return array|null
      */
-    public function getDetailedProduct(int $productId): ?array
+    public function getProduct(int $productId): ?array
     {
         $customerGroupId = $this->customer->isLogged() 
             ? (int)$this->customer->getGroupId() 
@@ -27,7 +27,7 @@ class ProductRepository extends AbstractRepository implements BaseRepositoryInte
 
         /** @var \Alpha\Mappers\EntityMappers\ProductMapper $mapper */
         $mapper = $this->mapperFactory->get(ProductMapper::class);
-        return $mapper->getDetailedProduct($productId, $this->language_id, $this->store_id, $customerGroupId);
+        return $mapper->getProduct($productId, $this->language_id, $this->store_id, $customerGroupId);
     }
 
     /**

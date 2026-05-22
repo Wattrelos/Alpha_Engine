@@ -6,7 +6,11 @@ namespace Opencart\Catalog\Controller\Event;
  * @package Opencart\Catalog\Controller\Event
  */
 class Language extends \Opencart\System\Engine\Controller {
-	/**
+
+	// Alpha Engine: Stack de backups real para evitar Memory Leak via JSON aninhado
+	private static array $backupStack = [];
+
+	/**	 
 	 * Index
 	 *
 	 * Dump all the language vars into the template.
@@ -18,6 +22,8 @@ class Language extends \Opencart\System\Engine\Controller {
 	 *
 	 * @return void
 	 */
+
+	
 	public function index(string &$route, array &$args): void {
 		foreach ($this->language->all() as $key => $value) {
 			if (!isset($args[$key])) {
@@ -42,7 +48,8 @@ class Language extends \Opencart\System\Engine\Controller {
 		$data = $this->language->all();
 
 		if ($data) {
-			$this->language->set('backup', json_encode($data));
+			// Alpha Engine: Armazena no stack estático em vez de gerar strings JSON exponenciais
+			self::$backupStack[] = $data;
 		}
 	}
 
@@ -60,7 +67,8 @@ class Language extends \Opencart\System\Engine\Controller {
 	 * @return void
 	 */
 	public function after(string &$route, array &$args, &$output): void {
-		$data = json_decode($this->language->get('backup'), true);
+		// Alpha Engine: Recupera o último estado salvo
+		$data = array_pop(self::$backupStack);
 
 		if (is_array($data)) {
 			$this->language->clear();

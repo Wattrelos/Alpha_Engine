@@ -53,7 +53,11 @@ function resultToData($data, &$visited = []) {
 
         // Prioriza DTOs que possuem o método toArray() (como ViewResponse ou ProductShowcaseDTO)
         if (method_exists($data, 'toArray')) {
-            $result += $data->toArray();
+            // Alpha Engine: Passa os dados do array pela mesma função para garantir que 
+            // objetos aninhados (como subcategorias) passem pelo filtro de referência circular!
+            foreach ($data->toArray() as $k => $v) {
+                $result[$k] = resultToData($v, $visited);
+            }
         } else {
             // Fallback para reflexão de métodos Getter
             foreach (get_class_methods($data) as $method) {
@@ -84,6 +88,11 @@ try {
     if (!$repoName) {
         throw new \Exception("Parâmetro 'repo' é obrigatório. Ex: ?repo=Address&id=16");
     }
+
+        // Alpha Engine: Garante o FQCN (Fully Qualified Class Name) para o RepositoryFactory
+        if (!str_contains($repoName, '\\')) {
+            $repoName = 'Alpha\\Model\\Domain\\Repositories\\' . $repoName;
+        }
 
     // 2. Setup do Registry para satisfazer as dependências do AbstractRepository
     $registry = new Registry();
@@ -137,7 +146,11 @@ try {
     $output = null;
 
     if ($method && method_exists($repository, $method)) {
-        $output = $repository->$method($id ?: null);
+        if (isset($_GET['id'])) {
+            $output = $repository->$method($id);
+        } else {
+            $output = $repository->$method();
+        }
     } elseif ($id > 0) {
         $output = $repository->find($id);
     } else {

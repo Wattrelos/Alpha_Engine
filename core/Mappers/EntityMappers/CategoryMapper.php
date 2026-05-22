@@ -5,7 +5,7 @@ namespace Alpha\Mappers\EntityMappers;
 use Alpha\Model\DataAccessObject\DataAccessObject;
 use Alpha\Model\DataAccessObject\QueryBuilder;
 use Alpha\Model\Domain\Entities\Category;
-use Alpha\Mappers\EntityMappers$1;
+use Alpha\Mappers\EntityMappers;
 
 /**
  * CategoryMapper - Gerencia a persistência e a hierarquia de categorias.
@@ -107,7 +107,7 @@ class CategoryMapper
     /**
      * Lista subcategorias de um nível específico.
      */
-    public function getSubCategories(int $parentId, int $languageId, int $storeId): array
+    public function getSubCategories(int $parentId, int $languageId, int $storeId, bool $top = false): array
     {
         $builder = (new QueryBuilder())
             ->from(DB_PREFIX . 'category', 'c')
@@ -116,8 +116,13 @@ class CategoryMapper
             ->where('c.parent_id = ?', [$parentId])
             ->where('cd.language_id = ?', [$languageId])
             ->where('c2s.store_id = ?', [$storeId])
-            ->where('c.status = 1')
-            ->orderBy('c.sort_order', 'ASC')
+            ->where('c.status = 1');
+
+        if ($top) {
+            $builder->where('c.top = 1');
+        }
+
+        $builder->orderBy('c.sort_order', 'ASC')
             ->select('c.id', 'c.parent_id', 'cd.name', 'c.image', 'c.sort_order');
 
         return $this->dao->executeQuery($builder);

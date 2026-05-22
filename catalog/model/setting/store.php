@@ -1,5 +1,8 @@
 <?php
 namespace Opencart\Catalog\Model\Setting;
+
+use Alpha\Model\Domain\Repositories\StoreRepository;
+
 /**
  * Class Store
  *
@@ -24,9 +27,8 @@ class Store extends \Opencart\System\Engine\Model {
 	 * $store_info = $this->model_setting_store->getStore($store_id);
 	 */
 	public function getStore(int $store_id): array {
-		$query = $this->db->query("SELECT DISTINCT * FROM `" . DB_PREFIX . "store` WHERE `store_id` = '" . (int)$store_id . "'");
-
-		return $query->row;
+		$repository = $this->registry->get('alpha_repository_factory')->get(StoreRepository::class);
+		return $repository->getStore($store_id);
 	}
 
 	/**
@@ -43,9 +45,8 @@ class Store extends \Opencart\System\Engine\Model {
 	 * $store_info = $this->model_setting_store->getStoreByHostname($url);
 	 */
 	public function getStoreByHostname(string $url): array {
-		$query = $this->db->query("SELECT * FROM `" . DB_PREFIX . "store` WHERE REPLACE(`url`, 'www.', '') = '" . $this->db->escape($url) . "'");
-
-		return $query->row;
+		$repository = $this->registry->get('alpha_repository_factory')->get(StoreRepository::class);
+		return $repository->getStoreByHostname($url);
 	}
 
 	/**
@@ -62,21 +63,8 @@ class Store extends \Opencart\System\Engine\Model {
 	 * $stores = $this->model_setting_store->getStores();
 	 */
 	public function getStores(): array {
-		$sql = "SELECT * FROM `" . DB_PREFIX . "store` ORDER BY `url`";
-
-		$key = md5($sql);
-
-		$store_data = $this->cache->get('store.' . $key);
-
-		if (!$store_data) {
-			$query = $this->db->query($sql);
-
-			$store_data = $query->rows;
-
-			$this->cache->set('store.' . $key, $store_data);
-		}
-
-		return $store_data;
+		$repository = $this->registry->get('alpha_repository_factory')->get(StoreRepository::class);
+		return $repository->getStores();
 	}
 
 	/**

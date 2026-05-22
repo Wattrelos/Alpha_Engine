@@ -5,9 +5,9 @@ namespace Opencart\Catalog\Controller\Checkout;
  */
 use Alpha\Controller\BaseController;
 use Alpha\Model\Domain\Repositories\CartRepository;
-use Alpha\Mappers\EntityMappers\AddressMapper;
-use Alpha\Mappers\EntityMappers\CountryMapper;
-use Alpha\Mappers\EntityMappers\ZoneMapper;
+use Alpha\Model\Domain\Repositories\AddressRepository;
+use Alpha\Model\Domain\Repositories\CountryRepository;
+use Alpha\Model\Domain\Repositories\ZoneRepository;
 use Alpha\Mappers\CollectionToArrayConverter;
 /**
  * Class ShippingAddress
@@ -33,9 +33,8 @@ class ShippingAddress extends BaseController {
 		$data['upload'] = $this->url->link('tool/upload', 'language=' . $this->config->get('config_language') . '&upload_token=' . $this->session->data['upload_token']);
 
 		// Address
-		$mapperFactory = $this->registry->get('mapperFactory');
-		$address_mapper = $mapperFactory->get(AddressMapper::class);
-		$data['addresses'] = $address_mapper->getAddresses((int)$this->customer->getId(), (int)$this->config->get('config_language_id'));
+		$addressRepository = $this->getRepository(AddressRepository::class);
+		$data['addresses'] = $addressRepository->getAddresses((int)$this->customer->getId(), (int)$this->config->get('config_language_id'));
 
 		if (isset($this->session->data['shipping_address']['address_id'])) {
 			$data['address_id'] = $this->session->data['shipping_address']['address_id'];
@@ -54,13 +53,13 @@ class ShippingAddress extends BaseController {
 		}
 
 		// Country
-		$country_mapper = $mapperFactory->get(CountryMapper::class);
-		$countries = $country_mapper->getCountries();
+		$countryRepository = $this->getRepository(CountryRepository::class);
+		$countries = $countryRepository->getCountries();
 		$data['countries'] = CollectionToArrayConverter::convertCollection($countries);
 
 		// Zone
-		$zone_mapper = $mapperFactory->get(ZoneMapper::class);
-		$data['zones'] = $zone_mapper->getZonesByCountryId($data['country_id']);
+		$zoneRepository = $this->getRepository(ZoneRepository::class);
+		$data['zones'] = $zoneRepository->getZonesByCountryId($data['country_id']);
 
 		// Custom Fields
 		$data['custom_fields'] = [];
@@ -88,7 +87,6 @@ class ShippingAddress extends BaseController {
 	public function save(): void {
 		$this->load->language('checkout/shipping_address');
 		$cartRepository = $this->getRepository(CartRepository::class);
-		$mapperFactory = $this->registry->get('mapperFactory');
 
 		$json = [];
 
@@ -142,8 +140,8 @@ class ShippingAddress extends BaseController {
 			}
 
 			// Country
-			$country_mapper = $mapperFactory->get(CountryMapper::class);
-			$country_info = $country_mapper->getCountry((int)$post_info['country_id']);
+			$countryRepository = $this->getRepository(CountryRepository::class);
+			$country_info = $countryRepository->getCountry((int)$post_info['country_id']);
 
 			if ($country_info && $country_info['postcode_required'] && !oc_validate_length($post_info['postcode'], 2, 10)) {
 				$json['error']['postcode'] = $this->language->get('error_postcode');
@@ -154,8 +152,8 @@ class ShippingAddress extends BaseController {
 			}
 
 			// Zone
-			$zone_mapper = $mapperFactory->get(ZoneMapper::class);
-			$zone_total = $zone_mapper->getTotalZonesByCountryId((int)$post_info['country_id']);
+			$zoneRepository = $this->getRepository(ZoneRepository::class);
+			$zone_total = $zoneRepository->getTotalZonesByCountryId((int)$post_info['country_id']);
 
 			if ($zone_total && !$post_info['zone_id']) {
 				$json['error']['zone'] = $this->language->get('error_zone');
@@ -185,11 +183,11 @@ class ShippingAddress extends BaseController {
 				$post_info['default'] = 1;
 			}
 
-			$address_mapper = $mapperFactory->get(AddressMapper::class);
-			$json['address_id'] = $address_mapper->save($post_info, (int)$this->customer->getId());
-			$json['addresses'] = $address_mapper->getAddresses((int)$this->customer->getId(), (int)$this->config->get('config_language_id'));
+			$addressRepository = $this->getRepository(AddressRepository::class);
+			$json['address_id'] = $addressRepository->save($post_info, (int)$this->customer->getId());
+			$json['addresses'] = $addressRepository->getAddresses((int)$this->customer->getId(), (int)$this->config->get('config_language_id'));
 
-			$this->session->data['shipping_address'] = $address_mapper->getAddress($json['address_id'], (int)$this->config->get('config_language_id'));
+			$this->session->data['shipping_address'] = $addressRepository->getAddress($json['address_id'], (int)$this->config->get('config_language_id'));
 
 			$json['success'] = $this->language->get('text_success');
 
@@ -211,7 +209,6 @@ class ShippingAddress extends BaseController {
 	public function address(): void {
 		$this->load->language('checkout/shipping_address');
 		$cartRepository = $this->getRepository(CartRepository::class);
-		$mapperFactory = $this->registry->get('mapperFactory');
 
 		$json = [];
 
@@ -238,8 +235,8 @@ class ShippingAddress extends BaseController {
 
 		if (!$json) {
 			// Shipping Address
-			$address_mapper = $mapperFactory->get(AddressMapper::class);
-			$address_info = $address_mapper->getAddress($address_id, (int)$this->config->get('config_language_id'));
+			$addressRepository = $this->getRepository(AddressRepository::class);
+			$address_info = $addressRepository->getAddress($address_id, (int)$this->config->get('config_language_id'));
 
 			if (!$address_info) {
 				$json['error'] = $this->language->get('error_address');

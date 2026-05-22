@@ -1,5 +1,8 @@
 <?php
 namespace Opencart\Catalog\Model\Setting;
+
+use Alpha\Model\Domain\Repositories\StartupRepository;
+
 /**
  * Class Startup
  *
@@ -22,8 +25,7 @@ class Startup extends \Opencart\System\Engine\Model {
 	 * $startups = $this->model_setting_startup->getStartups();
 	 */
 	public function getStartups(): array {
-		$query = $this->db->query("SELECT * FROM `" . DB_PREFIX . "startup` WHERE `status` = '1' ORDER BY `sort_order` ASC");
-
-		return $query->rows;
+		$repository = $this->registry->get('alpha_repository_factory')->get(StartupRepository::class);
+		return $repository->getStartups();
 	}
 }

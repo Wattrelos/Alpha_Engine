@@ -34,13 +34,11 @@ class ConnectionDB
             // Ex: "mysql:host=localhost;dbname=gwj2;charset=utf8mb4"
             // Montando o DSN
             $dsn = "mysql:host=" . DB_HOSTNAME . ";dbname=" . DB_DATABASE . ";port=" . DB_PORT . ";charset=utf8mb4";
-            $this->connection = new PDO($dsn, DB_USERNAME, DB_PASSWORD);
-
-            // Configura o PDO para lançar exceções em caso de erros
-            $this->connection->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-            // Configura o PDO para retornar resultados como array associativo por padrão
-            $this->connection->setAttribute(PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_ASSOC);
-            // Configura o charset para UTF-8
+            $this->connection = new PDO($dsn, DB_USERNAME, DB_PASSWORD, [
+                PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
+                PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
+                PDO::MYSQL_ATTR_USE_BUFFERED_QUERY => true
+            ]);
             $this->connection->exec("SET NAMES 'utf8mb4'");
 
         } catch (PDOException $e) {

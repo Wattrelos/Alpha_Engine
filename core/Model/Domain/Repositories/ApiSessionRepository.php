@@ -3,6 +3,7 @@
 namespace Alpha\Model\Domain\Repositories;
 
 use Alpha\Model\Domain\Entities\ApiSession;
+use Alpha\Mappers\EntityMappers\ApiSessionMapper;
 
 /**
  * ApiSessionRepository - Orquestra o ciclo de vida das sessões de API.
@@ -12,9 +13,49 @@ class ApiSessionRepository extends AbstractRepository
     /**
      * Define o Mapper principal para segurança de API.
      */
-    protected function getMapper()
+    protected function getMapper(): ApiSessionMapper
     {
-        return $this->mapperFactory->get('Security/ApiSession');
+        return $this->mapperFactory->get(ApiSessionMapper::class);
+    }
+
+    /**
+     * Delega a autenticação de API baseada em usuário e chave.
+     */
+    public function login(string $username, string $key): array
+    {
+        return $this->getMapper()->login($username, $key);
+    }
+
+    /**
+     * Delega a validação de token e IP da sessão da API.
+     */
+    public function getApiByToken(string $token, string $ip): array
+    {
+        return $this->getMapper()->getApiByToken($token, $ip);
+    }
+
+    /**
+     * Recupera sessões ativas da API baseada na validade.
+     */
+    public function getSessions(int $api_id): array
+    {
+        return $this->getMapper()->getSessions($api_id);
+    }
+
+    /**
+     * Mantém a sessão ativa atualizando o timestamp.
+     */
+    public function updateSession(string $api_session_id): void
+    {
+        $this->getMapper()->updateSession($api_session_id);
+    }
+
+    /**
+     * Limpa permanentemente as sessões inativas (Garbage Collection).
+     */
+    public function cleanSessions(): void
+    {
+        $this->getMapper()->cleanSessions();
     }
 
     /**

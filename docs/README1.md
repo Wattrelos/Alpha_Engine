@@ -10,7 +10,15 @@ Este projeto implementa uma camada de engenharia de software moderna sobre o nú
   * O `AlphaContainer` foi refatorado para usar dicionários $O(1)$, interceptando mais de 25 modelos legados aposentados (`.old`) de forma performática e blindando o OpenCart contra quebras.
   * Consolidamos a lógica do `CartRepository` (mesclagem de sessões, opções, cálculos de peso e impostos).
   * Refatoramos os Controladores de **Categoria** e **Busca** para atuarem puramente via `BaseController`, consumindo ViewResponses perfeitamente padronizadas.
-* **Próximo Passo:** Retomar as atividades iniciando a refatoração completa do **Fluxo do Checkout** (`catalog/controller/checkout/checkout.php`). Precisamos preparar a validação, estruturação em `jsonResponse` nativa da Alpha Engine e integrar os passos de pagamento e frete.
+  * Concluímos a blindagem dos modelos de configuração legados em `catalog/model/setting/` (`api`, `cron`, `event`, `extension`, `startup`, `store`), transformando-os em Proxies que delegam o acesso a dados de forma segura e cacheada para os novos Repositórios e Mappers da Alpha Engine.
+  * **Resolução de Memory Leaks Nativos:** Consertamos o vazamento de memória do sistema de eventos de Idioma (`language.php`) trocando JSONs recursivos por Pilhas (Stacks) de arrays nativos.
+  * **Alpha Failsafe nas Sessões:** Implementamos um escudo no `SessionMapper` e otimizamos o `ConnectionDB` (PDO) para evitar travamentos de servidor (Erro 500 / Erro 2014) causados por sessões corrompidas e superlotadas.
+  * **Defuse do Anti-Pattern de Chaves Estrangeiras:** O `DataAccessObject` (DAO) foi ensinado a ignorar Chaves Estrangeiras zeradas (`0`), convertendo-as para `null` nas entidades, protegendo o Padrão de Domínio sem quebrar o painel de administração legado.
+  * **Otimização de N+1 Queries:** Refatoramos a busca do Menu e dos Pedidos para utilizarem o método `readByIds` (Batch Loading), evitando milhares de consultas repetidas.
+  * **Testes Unitários:** O framework de testes via JSON foi atualizado para suportar o namespace FQCN (`Alpha\Model\...`) e processar `LazyCollections` com proteção total contra referências circulares em árvores (ex: subcategorias).
+  * Avançamos na refatoração do **Fluxo de Checkout** (etapas de endereço de frete, endereço de pagamento, registro e métodos de entrega) migrando para a arquitetura `BaseController` e consumindo nativamente os Repositórios de Domínio (`AddressRepository`, `CountryRepository`, `CartRepository`, etc.).
+* **Status Atual:** **Projeto Pausado (Milestone Atingido).** A infraestrutura core da Alpha Engine está consolidada e a base do fluxo de compra foi modernizada. O projeto está sendo fechado temporariamente para o início de um novo ciclo em outro projeto.
+* **Próximos Passos (Retomada):** Quando o projeto for reaberto, o foco será finalizar as etapas restantes do checkout (`payment_method`, e confirm final) e integrar definitivamente os módulos de gateway de pagamento na nova arquitetura transacional.
 
 ---
 
@@ -32,6 +40,7 @@ Diferente do OpenCart padrão, onde o SQL fica espalhado pelos Models, este proj
 *   [Vendas, Checkout e Clientes](README3.md) - Transações, pagamentos e relacionamento.
 *   [Segurança, Sistema e Infraestrutura](README4.md) - Core, banco de dados e performance.
 *   [Diretrizes e Convenções](extraAnotations.md) - Regras de ouro e filosofia Alpha.
+*   Débitos Técnicos e Anti-Patterns - Registro das armadilhas do legado.
 
 ## 🛠️ Progresso da Refatoração
 *Estado de normalização das classes de domínio:*

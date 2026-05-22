@@ -1,5 +1,8 @@
 <?php
 namespace Opencart\Catalog\Model\Setting;
+
+use Alpha\Model\Domain\Repositories\EventRepository;
+
 /**
  * Class Event
  *
@@ -22,8 +25,7 @@ class Event extends \Opencart\System\Engine\Model {
 	 * $results = $this->model_setting_event->getEvents();
 	 */
 	public function getEvents(): array {
-		$query = $this->db->query("SELECT * FROM `" . DB_PREFIX . "event` WHERE `status` = '1' ORDER BY `sort_order` ASC");
-
-		return $query->rows;
+		$repository = $this->registry->get('alpha_repository_factory')->get(EventRepository::class);
+		return $repository->getEvents();
 	}
 }

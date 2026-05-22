@@ -2,7 +2,8 @@
 
 namespace Alpha\Mappers\EntityMappers;
 
-use Opencart\System\Engine\Registry;
+use Alpha\Mappers\BaseMapper;
+use Alpha\Model\DataAccessObject\QueryBuilder;
 
 /**
  * Class CartMapper
@@ -10,104 +11,143 @@ use Opencart\System\Engine\Registry;
  * Gerencia as operações de banco de dados (CRUD) exclusivas da tabela de carrinho,
  * isolando o SQL da camada de domínio (CartRepository).
  */
-class CartMapper
+class CartMapper extends BaseMapper
 {
-    private object $db;
-
-    public function __construct(Registry $registry)
-    {
-        $this->db = $registry->get('db');
-    }
+    protected string $tableName = 'cart';
 
     /**
      * Limpa carrinhos abandonados de visitantes baseando-se no tempo de expiração da sessão.
      */
-    public function deleteExpiredCarts(int $storeId, int $expireSeconds): void
+    public function deleteExpired(int $storeId, int $expireSeconds): void
     {
-        $this->db->query("DELETE FROM `" . DB_PREFIX . "cart` 
-            WHERE `store_id` = '" . (int)$storeId . "' 
-            AND `customer_id` = '0' 
-            AND `date_added` < DATE_SUB(NOW(), INTERVAL " . (int)$expireSeconds . " SECOND)");
+        $query = (new QueryBuilder())
+            ->delete($this->getFullTableName())
+            ->where('store_id = ?', [$storeId])
+            ->where('customer_id = ?', [0])
+            ->where('date_added < DATE_SUB(NOW(), INTERVAL ? SECOND)', [$expireSeconds]);
+
+        $this->dao->execute($query);
     }
 
     /**
      * Mescla o carrinho salvo do cliente (banco) com os itens que ele 
      * adicionou na sessão atual (visitante) antes de fazer o login.
      */
-    public function mergeCustomerCart(int $customerId, string $sessionId, int $storeId): void
+    public function mergeCartOnLogin(int $customerId, string $sessionId, int $storeId): void
     {
         // 1. Atualiza o ID da sessão nos itens antigos salvos pelo cliente
-        $this->db->query("UPDATE `" . DB_PREFIX . "cart` 
-            SET `session_id` = '" . $this->db->escape($sessionId) . "', `date_added` = NOW() 
-            WHERE `store_id` = '" . (int)$storeId . "' AND `customer_id` = '" . (int)$customerId . "'");
+        $query1 = (new QueryBuilder())
+            ->update($this->getFullTableName())
+            ->set('session_id', $sessionId)
+            ->where('store_id = ?', [$storeId])
+            ->where('customer_id = ?', [$customerId]);
+        $this->dao->execute($query1);
 
         // 2. Associa os novos itens adicionados como visitante (customer_id = 0) ao cliente recém-logado
-        $this->db->query("UPDATE `" . DB_PREFIX . "cart` 
-            SET `customer_id` = '" . (int)$customerId . "', `date_added` = NOW() 
-            WHERE `store_id` = '" . (int)$storeId . "' AND `customer_id` = '0' AND `session_id` = '" . $this->db->escape($sessionId) . "'");
+        $query2 = (new QueryBuilder())
+            ->update($this->getFullTableName())
+            ->set('customer_id', $customerId)
+            ->where('store_id = ?', [$storeId])
+            ->where('customer_id = ?', [0])
+            ->where('session_id = ?', [$sessionId]);
+        $this->dao->execute($query2);
     }
 
     /**
      * Busca todos os itens do carrinho com base no contexto (Logado ou Visitante).
      */
-    public function findAllByContext(int $customerId, string $sessionId, int $storeId): array
+    public function getItems(int $customerId, string $sessionId, int $storeId): array
     {
+        $query = (new QueryBuilder())
+            ->from($this->getFullTableName())
+            ->where('store_id = ?', [$storeId]);
+
         if ($customerId) {
-            // Traz apenas itens salvos na conta do cliente
-            $query = $this->db->query("SELECT * FROM `" . DB_PREFIX . "cart` 
-                WHERE `customer_id` = '" . (int)$customerId . "' AND `store_id` = '" . (int)$storeId . "'");
+            $query->where('customer_id = ?', [$customerId]);
         } else {
-            // Traz apenas itens da sessão do visitante
-            $query = $this->db->query("SELECT * FROM `" . DB_PREFIX . "cart` 
-                WHERE `customer_id` = '0' AND `session_id` = '" . $this->db->escape($sessionId) . "' AND `store_id` = '" . (int)$storeId . "'");
+            $query->where('customer_id = ?', [0])
+                  ->where('session_id = ?', [$sessionId]);
         }
 
-        return $query->rows;
+        return $this->dao->executeQuery($query);
     }
 
     /**
      * Atualiza a quantidade de um item existente no carrinho.
      */
-    public function updateQuantity(int $cartId, int $quantity): void
+    public function updateItem(int $cartId, int $quantity, int $customerId, string $sessionId): void
     {
-        $this->db->query("UPDATE `" . DB_PREFIX . "cart` 
-            SET `quantity` = '" . (int)$quantity . "' 
-            WHERE `cart_id` = '" . (int)$cartId . "'");
+        $query = (new QueryBuilder())
+            ->update($this->getFullTableName())
+            ->set('quantity', $quantity)
+            ->where('cart_id = ?', [$cartId]); // Mantendo cart_id para compatibilidade
+
+        if ($customerId) {
+            $query->where('customer_id = ?', [$customerId]);
+        } else {
+            $query->where('session_id = ?', [$sessionId]);
+        }
+
+        $this->dao->execute($query);
     }
 
     /**
      * Remove um item específico do carrinho.
      */
-    public function delete(int $cartId): void
+    public function removeItem(int $cartId, int $customerId, string $sessionId): void
     {
-        $this->db->query("DELETE FROM `" . DB_PREFIX . "cart` 
-            WHERE `cart_id` = '" . (int)$cartId . "'");
+        $query = (new QueryBuilder())
+            ->delete($this->getFullTableName())
+            ->where('cart_id = ?', [$cartId]);
+
+        if ($customerId) {
+            $query->where('customer_id = ?', [$customerId]);
+        } else {
+            $query->where('session_id = ?', [$sessionId]);
+        }
+
+        $this->dao->execute($query);
     }
 
     /**
      * Esvazia completamente o carrinho do usuário atual (usado após a confirmação do pedido).
      */
-    public function clearByContext(int $customerId, string $sessionId, int $storeId): void
+    public function clearItems(int $customerId, string $sessionId, int $storeId): void
     {
+        $query = (new QueryBuilder())
+            ->delete($this->getFullTableName())
+            ->where('store_id = ?', [$storeId]);
+
         if ($customerId) {
-            $this->db->query("DELETE FROM `" . DB_PREFIX . "cart` 
-                WHERE `customer_id` = '" . (int)$customerId . "' AND `store_id` = '" . (int)$storeId . "'");
+            $query->where('customer_id = ?', [$customerId]);
         } else {
-            $this->db->query("DELETE FROM `" . DB_PREFIX . "cart` 
-                WHERE `customer_id` = '0' AND `session_id` = '" . $this->db->escape($sessionId) . "' AND `store_id` = '" . (int)$storeId . "'");
+            $query->where('customer_id = ?', [0])
+                  ->where('session_id = ?', [$sessionId]);
         }
+
+        $this->dao->execute($query);
     }
 
     /**
      * Insere um novo item no carrinho de forma bruta (inserção limpa).
      * (Nota: A validação para não duplicar itens e somar a quantidade será tratada pelo Repository)
      */
-    public function insert(int $customerId, string $sessionId, int $storeId, int $productId, int $quantity, string $optionHash, int $subscriptionPlanId = 0): void
+    public function addItem(int $customerId, string $sessionId, int $storeId, int $productId, int $quantity, string $optionHash, int $subscriptionPlanId = 0): void
     {
-        $this->db->query("INSERT INTO `" . DB_PREFIX . "cart` 
-            SET `customer_id` = '" . (int)$customerId . "', `session_id` = '" . $this->db->escape($sessionId) . "', 
-            `store_id` = '" . (int)$storeId . "', `product_id` = '" . (int)$productId . "', 
-            `subscription_plan_id` = '" . (int)$subscriptionPlanId . "', `option` = '" . $this->db->escape($optionHash) . "', 
-            `quantity` = '" . (int)$quantity . "', `date_added` = NOW()");
+        // Como o QueryBuilder ainda não suporta INSERT, usamos o DAO para criar a entidade.
+        // Esta é a forma mais segura e alinhada à arquitetura Alpha.
+        $cart = new \Alpha\Model\Domain\Entities\Cart();
+        $cart->setApiId(0) // Assumindo API padrão
+             ->setCustomerId($customerId)
+             ->setSessionId($sessionId)
+             ->setProductId($productId)
+             ->setSubscriptionPlanId($subscriptionPlanId)
+             ->setOption($optionHash)
+             ->setQuantity($quantity)
+             ->setDateAdded(date('Y-m-d H:i:s'));
+        
+        // O DAO irá converter o objeto em um INSERT seguro.
+        // Nota: A tabela 'cart' precisa ter as colunas correspondentes à entidade.
+        $this->dao->create($cart);
     }
 }

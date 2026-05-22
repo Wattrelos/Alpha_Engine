@@ -15,6 +15,20 @@ class StoreMapper extends BaseMapper
     protected string $tableName = 'store';
 
     /**
+     * Obtém os dados de uma loja específica pelo ID.
+     */
+    public function getStore(int $store_id): array
+    {
+        $query = (new QueryBuilder())
+            ->from($this->getFullTableName())
+            ->where("`store_id` = ?", [$store_id])
+            ->select('DISTINCT *');
+
+        $result = $this->dao->executeQuery($query);
+        return $result[0] ?? [];
+    }
+
+    /**
      * Obtém os dados de uma loja com base no seu hostname (URL ou SSL).
      */
     public function getStoreByHostname(string $hostname): ?array
@@ -26,5 +40,28 @@ class StoreMapper extends BaseMapper
 
         $result = $this->dao->executeQuery($query);
         return $result[0] ?? null;
+    }
+
+    /**
+     * Obtém todas as lojas cadastradas e implementa cache em memória.
+     */
+    public function getStores(): array
+    {
+        $cache_key = 'store.all';
+        $cache = $this->registry ? $this->registry->get('cache') : null;
+        
+        $store_data = $cache ? $cache->get($cache_key) : null;
+
+        if (!$store_data) {
+            $query = (new QueryBuilder())
+                ->from($this->getFullTableName())
+                ->orderBy("`url`", "ASC")
+                ->select('*');
+
+            $store_data = $this->dao->executeQuery($query);
+            if ($cache) $cache->set($cache_key, $store_data);
+        }
+
+        return $store_data;
     }
 }

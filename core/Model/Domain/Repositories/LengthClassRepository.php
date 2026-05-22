@@ -88,6 +88,33 @@ class LengthClassRepository extends AbstractRepository implements BaseRepository
     }
 
     /**
+     * Realiza a conversão de valores entre diferentes unidades de comprimento.
+     * 
+     * @param float $value O valor a ser convertido.
+     * @param int $from_length_class_id ID da unidade de origem.
+     * @param int $to_length_class_id ID da unidade de destino.
+     * @return float Valor convertido.
+     */
+    public function convert(float $value, int $from_length_class_id, int $to_length_class_id): float
+    {
+        if ($from_length_class_id == $to_length_class_id) {
+            return $value;
+        }
+
+        $from = $this->find($from_length_class_id);
+        $to = $this->find($to_length_class_id);
+
+        if (!$from || !$to) {
+            return $value;
+        }
+
+        $fromValue = $from->getValue() > 0 ? $from->getValue() : 1;
+        $toValue = $to->getValue();
+
+        return $value * ($toValue / $fromValue);
+    }
+
+    /**
      * Define o Mapper principal para a classe (requerido por AbstractRepository).
      */
     protected function getMapper()

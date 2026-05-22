@@ -57,8 +57,12 @@ class HomeRepository extends AbstractRepository implements BaseRepositoryInterfa
         /** @var ProductMapper $productMapper */
         $productMapper = $this->getMapper();
 
+        $customerGroupId = $this->customer->isLogged() 
+            ? (int)$this->customer->getGroupId() 
+            : (int)$this->config->get('config_customer_group_id');
+
         // Alpha Engine: Utilizamos o método especializado do Mapper para carregar e normalizar os produtos
-        return $productMapper->getProductsByIds($product_ids, $this->language_id, $this->store_id);
+        return $productMapper->getProductsByIds($product_ids, $this->language_id, $this->store_id, $customerGroupId);
     }
 
     public function getLatest(int $limit): array {
@@ -72,7 +76,11 @@ class HomeRepository extends AbstractRepository implements BaseRepositoryInterfa
             'limit' => $limit
         ];
 
-        return $productMapper->getProducts($filterData, $this->language_id, $this->store_id);
+        $customerGroupId = $this->customer->isLogged() 
+            ? (int)$this->customer->getGroupId() 
+            : (int)$this->config->get('config_customer_group_id');
+
+        return $productMapper->getProducts($filterData, $this->language_id, $this->store_id, $customerGroupId);
     }
 
     /**

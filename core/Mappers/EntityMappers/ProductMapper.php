@@ -2,20 +2,18 @@
 
 namespace Alpha\Mappers\EntityMappers;
 
-use Alpha\Model\DataAccessObject\DataAccessObject;
+use Alpha\Mappers\BaseMapper;
 use Alpha\Model\DataAccessObject\QueryBuilder;
 use Alpha\Model\Domain\Entities\ProductReport;
-use Alpha\Mappers\EntityMappers$1;
+use Alpha\Model\Domain\Entities\Product;
 
 /**
  * Mapper para gerenciar a complexa lógica de Produtos
  */
-class ProductMapper {
-    private DataAccessObject $dao;
+class ProductMapper extends BaseMapper {
 
-    public function __construct() {
-        $this->dao = new DataAccessObject();
-    }
+    protected string $tableName = 'product';
+    protected string $entityClass = Product::class;
 
     /**
      * Gera as subqueries de preço (desconto, especial, etc)
@@ -53,7 +51,7 @@ class ProductMapper {
         $product = $results[0];
         
         // Resolve SEO URL para produto único
-        $seoMapper = new SeoUrlMapper();
+        $seoMapper = new SeoUrlMapper($this->registry);
         $keyword = $seoMapper->getKeywordByQuery('product_id', (string)$product_id, $store_id, $language_id);
         $product['href'] = $keyword ?: 'index.php?route=product/product&product_id=' . $product_id;
 
@@ -129,7 +127,7 @@ class ProductMapper {
         // Alpha Engine Optimization: Resolve slugs em lote para a listagem
         if ($results) {
             $productIds = array_column($results, 'id');
-            $seoMapper = new SeoUrlMapper();
+            $seoMapper = new SeoUrlMapper($this->registry);
             $seoMapper->primeCache($productIds, 'product_id', $store_id, $language_id);
 
             foreach ($results as &$result) {
@@ -137,6 +135,45 @@ class ProductMapper {
                 $keyword = $seoMapper->getKeywordByQuery('product_id', (string)$productId, $store_id, $language_id);
                 
                 // Injeta o link amigável ou rota padrão
+                $result['href'] = $keyword ?: 'index.php?route=product/product&product_id=' . $productId;
+            }
+        }
+
+        return $results;
+    }
+
+    /**
+     * Obtém produtos específicos por uma lista de IDs (Batch Load).
+     * Utilizado pela HomeRepository para carregar vitrines evitando N+1 queries.
+     */
+    public function getProductsByIds(array $product_ids, int $language_id, int $store_id, int $customer_group_id = 0): array {
+        if (empty($product_ids)) return [];
+        
+        $stmt = $this->getPriceStatements($customer_group_id);
+        $placeholders = implode(',', array_fill(0, count($product_ids), '?'));
+        
+        $query = (new QueryBuilder())
+            ->from(DB_PREFIX . 'product_to_store', 'p2s')
+            ->leftJoin(DB_PREFIX . 'product', 'p', 'p.id = p2s.product_id')
+            ->leftJoin(DB_PREFIX . 'product_description', 'pd', 'p.id = pd.product_id')
+            ->where("p.id IN ($placeholders)", $product_ids)
+            ->where("p.status = ?", [1])
+            ->where("p.date_available <= NOW()")
+            ->where("p2s.store_id = ?", [$store_id])
+            ->where("pd.language_id = ?", [$language_id])
+            ->select('p.*', 'pd.name', 'pd.description', 'p.image', $stmt['discount'], $stmt['special'], $stmt['reward'], $stmt['review']);
+
+        $results = $this->dao->executeQuery($query);
+
+        // Alpha Engine: Resolve slugs em lote para os destaques
+        if ($results) {
+            $seoMapper = new SeoUrlMapper($this->registry);
+            $seoMapper->primeCache($product_ids, 'product_id', $store_id, $language_id);
+
+            foreach ($results as &$result) {
+                $productId = (int)$result['id'];
+                $keyword = $seoMapper->getKeywordByQuery('product_id', (string)$productId, $store_id, $language_id);
+                
                 $result['href'] = $keyword ?: 'index.php?route=product/product&product_id=' . $productId;
             }
         }
@@ -238,7 +275,7 @@ class ProductMapper {
         // Resolve slugs para produtos relacionados
         if ($results) {
             $productIds = array_column($results, 'id');
-            $seoMapper = new SeoUrlMapper();
+            $seoMapper = new SeoUrlMapper($this->registry);
             $seoMapper->primeCache($productIds, 'product_id', $store_id, $language_id);
 
             foreach ($results as &$result) {

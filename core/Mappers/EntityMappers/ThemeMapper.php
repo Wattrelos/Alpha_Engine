@@ -17,14 +17,17 @@ class ThemeMapper extends BaseMapper
     /**
      * Busca as informações de tema baseadas na rota e na loja ativa.
      */
-    public function getTheme(string $route, int $storeId): ?array
+    public function getTheme(string $route, string $theme): ?array
     {
+        // Alpha Engine: Pega o Store ID de forma dinâmica pelo contexto global da loja
+        $storeId = $this->registry ? (int)$this->registry->get('config')->get('config_store_id') : 0;
+
         $query = (new QueryBuilder())
             ->select('*')
             ->from($this->getFullTableName())
-            ->where('store_id', '=', $storeId)
-            ->where('route', '=', $route)
-            ->where('status', '=', 1);
+            ->where('store_id = ?', [$storeId])
+            ->where('route = ?', [$route])
+            ->where('status = ?', [1]);
 
         $result = $this->dao->executeQuery($query);
 

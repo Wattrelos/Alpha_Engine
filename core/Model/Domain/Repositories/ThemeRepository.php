@@ -12,7 +12,7 @@ use Alpha\Mappers\EntityMappers\ThemeMapper;
  */
 class ThemeRepository extends AbstractRepository
 {
-    private array $cache = [];
+    private array $themeCache = [];
 
     protected function getMapper(): ThemeMapper
     {
@@ -22,14 +22,14 @@ class ThemeRepository extends AbstractRepository
     /**
      * Retorna a configuração do tema baseada na rota da loja.
      */
-    public function getTheme(string $route, int $storeId): ?array
+    public function getTheme(string $route, string $theme): ?array
     {
-        $cacheKey = $storeId . '_' . $route;
+        $cacheKey = $theme . '_' . $route;
 
-        if (!array_key_exists($cacheKey, $this->cache)) {
-            $this->cache[$cacheKey] = $this->getMapper()->getTheme($route, $storeId);
+        if (!array_key_exists($cacheKey, $this->themeCache)) {
+            $this->themeCache[$cacheKey] = $this->getMapper()->getTheme($route, $theme);
         }
 
-        return $this->cache[$cacheKey];
+        return $this->themeCache[$cacheKey];
     }
 }

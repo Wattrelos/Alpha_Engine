@@ -1,5 +1,8 @@
 <?php
 namespace Opencart\Catalog\Model\Setting;
+
+use Alpha\Model\Domain\Repositories\ExtensionRepository;
+
 /**
  * Class Extension
  *
@@ -22,9 +25,8 @@ class Extension extends \Opencart\System\Engine\Model {
 	 * $extensions = $this->model_setting_extension->getExtensions();
 	 */
 	public function getExtensions(): array {
-		$query = $this->db->query("SELECT DISTINCT `extension` FROM `" . DB_PREFIX . "extension`");
-
-		return $query->rows;
+		$repository = $this->registry->get('alpha_repository_factory')->get(ExtensionRepository::class);
+		return $repository->getDistinctExtensions();
 	}
 
 	/**
@@ -41,9 +43,20 @@ class Extension extends \Opencart\System\Engine\Model {
 	 * $extensions = $this->model_setting_extension->getExtensionsByType($type);
 	 */
 	public function getExtensionsByType(string $type): array {
-		$query = $this->db->query("SELECT * FROM `" . DB_PREFIX . "extension` WHERE `type` = '" . $this->db->escape($type) . "'");
-
-		return $query->rows;
+		$repository = $this->registry->get('alpha_repository_factory')->get(ExtensionRepository::class);
+		$entities = $repository->getExtensionsByType($type);
+		
+		$rows = [];
+		foreach ($entities as $entity) {
+			$rows[] = [
+				'extension_id' => $entity->getId(),
+				'extension'    => $entity->getExtension(),
+				'type'         => $entity->getType(),
+				'code'         => $entity->getCode()
+			];
+		}
+		
+		return $rows;
 	}
 
 	/**
@@ -61,8 +74,18 @@ class Extension extends \Opencart\System\Engine\Model {
 	 * $extension_info = $this->model_setting_extension->getExtensionByCode($type, $code);
 	 */
 	public function getExtensionByCode(string $type, string $code): array {
-		$query = $this->db->query("SELECT * FROM `" . DB_PREFIX . "extension` WHERE `type` = '" . $this->db->escape($type) . "' AND `code` = '" . $this->db->escape($code) . "'");
-
-		return $query->row;
+		$repository = $this->registry->get('alpha_repository_factory')->get(ExtensionRepository::class);
+		$entity = $repository->getExtensionByCode($type, $code);
+		
+		if ($entity) {
+			return [
+				'extension_id' => $entity->getId(),
+				'extension'    => $entity->getExtension(),
+				'type'         => $entity->getType(),
+				'code'         => $entity->getCode()
+			];
+		}
+		
+		return [];
 	}
 }

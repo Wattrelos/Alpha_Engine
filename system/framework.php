@@ -63,7 +63,13 @@ set_error_handler(function(int $code, string $message, string $file, int $line) 
 	if ($config->get('error_display')) {
 		echo '<b>' . $error . '</b>: ' . $message . ' in <b>' . $file . '</b> on line <b>' . $line . '</b>';
 	} else {
-		header('Location: ' . $config->get('error_page'));
+		$error_page = $config->get('error_page');
+		if (!empty($error_page)) {
+			header('Location: ' . $error_page);
+		} else {
+			http_response_code(500);
+			echo '<b>Erro Fatal do Sistema:</b> Ocorreu uma exceção e o redirecionamento de erro falhou. Ative o error_display ou verifique os logs de erro recém-gerados.';
+		}
 		exit();
 	}
 
@@ -88,14 +94,25 @@ set_exception_handler(function(\Throwable $e) use ($log, $config): void {
 		$output .= 'Function: ' . $trace['function'] . "\n\n";
 	}
 
-	if ($config->get('error_log')) {
-		$log->write(trim($output));
+	// Blindagem Alpha: Impede que falha de permissão no arquivo de log derrube o tratador de erros
+	try {
+		if ($config && $config->get('error_log') && $log) {
+			$log->write(trim($output));
+		}
+	} catch (\Throwable $logError) {
+		// Falha silenciosa na escrita do arquivo. Deixa o fluxo seguir para mostrar na tela.
 	}
 
 	if ($config->get('error_display')) {
 		echo $output;
 	} else {
-		header('Location: ' . $config->get('error_page'));
+		$error_page = $config->get('error_page');
+		if (!empty($error_page)) {
+			header('Location: ' . $error_page);
+		} else {
+			http_response_code(500);
+			echo '<b>Erro Fatal do Sistema:</b> Ocorreu uma exceção. Verifique os logs de erro ou ative o display_errors.';
+		}
 		exit();
 	}
 });

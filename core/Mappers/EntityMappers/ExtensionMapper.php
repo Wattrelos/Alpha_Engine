@@ -61,6 +61,66 @@ class ExtensionMapper extends BaseMapper
         return $extensions;
     }
 
+    /**
+     * Alpha Engine (Legacy Bridge): Recupera todas as extensões.
+     * 
+     * Essencial para compatibilidade com módulos da comunidade que chamam
+     * $this->model_setting_extension->getExtensions().
+     * Retorna array bruto em vez de Entidades para evitar quebra de Array Access.
+     * 
+     * @return array
+     */
+    public function getExtensions(): array
+    {
+        $cache_key = 'extension.all';
+        $extensions = $this->cache ? $this->cache->get($cache_key) : null;
+
+        if ($extensions !== null) {
+            return $extensions;
+        }
+
+        $query = (new QueryBuilder())
+            ->from($this->getFullTableName())
+            ->select('*');
+
+        $results = $this->dao->executeQuery($query);
+
+        if ($this->cache) {
+            $this->cache->set($cache_key, $results);
+        }
+
+        return $results;
+    }
+
+    /**
+     * Alpha Engine: Recupera nomes de extensões distintas.
+     * Mantém a compatibilidade de listagem legada.
+     */
+    public function getDistinctExtensions(): array
+    {
+        $query = (new QueryBuilder())
+            ->from($this->getFullTableName())
+            ->select('DISTINCT `extension`');
+
+        return $this->dao->executeQuery($query);
+    }
+
+    /**
+     * Alpha Engine: Recupera uma extensão específica pelo tipo e código.
+     */
+    public function getExtensionByCode(string $type, string $code): ?Extension
+    {
+        $query = (new QueryBuilder())
+            ->from($this->getFullTableName())
+            ->where("`type` = ?", [$type])
+            ->where("`code` = ?", [$code])
+            ->select('id');
+
+        $results = $this->dao->executeQuery($query);
+        
+        return $results ? $this->findById((int)$results[0]['id']) : null;
+    }
+
     public function findById(int $id): ?Extension
     {
         $extension = new Extension();

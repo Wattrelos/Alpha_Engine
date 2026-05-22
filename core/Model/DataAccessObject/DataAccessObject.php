@@ -1,13 +1,5 @@
 <?php
 namespace Alpha\Model\DataAccessObject;
-/*
-Principais mudanças na tradução:
-Reflection API: O PHP possui uma API de reflexão muito robusta (ReflectionClass, ReflectionMethod). Diferente do Java, acessamos o nome da classe via get_class($entity) e extraímos metadados com as classes de reflexão.
-Attributes (PHP 8): No lugar de anotações @OneToMany do Java, o PHP utiliza atributos nativos #[OneToMany]. O DAO acima está preparado para ler esses atributos se eles estiverem presentes nas propriedades das suas entidades.
-match expression: Utilizei o match no método convertToTargetType, que é a forma idiomática e segura de fazer conversões de tipo no PHP moderno.
-Tipagem Estrita: O código faz uso de mixed, ?int, string e outros Type Hints para garantir que o PHP 8.4 se comporte de forma previsível.
-PDO para Transações: O gerenciamento de transações usa beginTransaction, commit e rollBack do objeto PDO, garantindo a atomicidade na persistência da hierarquia de classes.
-*/
 
 use PDO;
 use Exception;
@@ -18,7 +10,6 @@ use ReflectionProperty;
 use Alpha\Model\DataAccessObject\ConnectionDB;
 use Alpha\Model\Domain\InterfaceEntity;
 use Alpha\Model\DataAccessObject\QueryBuilder;
-
 
 /**
  * Refere-se a DataAccessObject.java
@@ -45,6 +36,17 @@ class DataAccessObject
         $stmt->execute($builder->getParams());
         return $stmt->fetchAll(\PDO::FETCH_ASSOC);
     }
+
+    /**
+     * Alpha Engine: Executa comandos de escrita (DELETE, UPDATE, INSERT) de forma atômica
+     * através do QueryBuilder, retornando o status de sucesso da operação.
+     */
+    public function execute(QueryBuilder $builder): bool {
+        $conn = ConnectionDB::getInstance()->getConnection();
+        $stmt = $conn->prepare($builder->getSQL());
+        return $stmt->execute($builder->getParams());
+    }
+
     /**
      * Executa a query de contagem e retorna o total absoluto de linhas
      */
@@ -84,7 +86,6 @@ class DataAccessObject
             if ($managedTransaction) {
                 $conn->commit();
             }
-            echo "Transação concluída com sucesso!\n";
             return $lastId;
 
         } catch (Exception $e) {
@@ -374,6 +375,13 @@ class DataAccessObject
                 if ($value !== null) {
                     if ($paramType && is_subclass_of($paramType, InterfaceEntity::class)) {
                         $childId = (int)$value;
+
+                        // Alpha Engine: Defuse do Anti-Pattern "FK = 0" do OpenCart.
+                        // Se o ID estrangeiro for 0, consideramos que a relação não existe (ex: categoria raiz).
+                        if ($childId === 0) {
+                            continue;
+                        }
+
                         $childInstance = $this->getFromIdentityMap($paramType, $childId);
 
                         if (!$childInstance) {
@@ -534,11 +542,6 @@ class DataAccessObject
         return strtolower(preg_replace('/(?<!^)([A-Z]|(?<=[a-zA-Z])[0-9])/', '_$1', $name));
     }
 
-    private function convertSnakeCaseToPascalCase(string $name): string
-    {
-        return str_replace('_', '', ucwords($name, '_'));
-    }
-
     private function buildWhereClause(InterfaceEntity $entity): string
     {
         $where = [];
@@ -675,7 +678,8 @@ class DataAccessObject
                 $sql = "SELECT `$fkChild` FROM `$tableLink` WHERE `$fkParent` = ?";
                 $stmt = $conn->prepare($sql);
                 $stmt->execute([$instance->getId()]);
-                
+                $stmt->fetchAll(\PDO::FETCH_ASSOC);
+
                 // Para cada ID encontrado na tabela pivot, poderíamos carregar a entidade (omitido por brevidade)
             }
         }
