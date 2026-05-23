@@ -19,9 +19,14 @@ class ProductMapper extends BaseMapper {
      * Gera as subqueries de preço (desconto, especial, etc)
      */
     private function getPriceStatements(int $customer_group_id): array {
+        // Alpha Engine: SQL Optimization (Defuse do Full Table Scan).
+        // Substituímos NOW() (DATETIME) por uma string estática de DATE gerada no PHP.
+        // Isso evita que o MySQL faça conversão de tipos em tempo de execução e permite o uso de Índices!
+        $today = date('Y-m-d');
+
         return [
-            'discount' => "(SELECT (CASE WHEN `pd2`.`type` = 'P' THEN (`p`.`price` - (`p`.`price` * (`pd2`.`price` / 100))) WHEN `pd2`.`type` = 'S' THEN (`p`.`price` - `pd2`.`price`) ELSE `pd2`.`price` END) FROM `" . DB_PREFIX . "product_discount` `pd2` WHERE `pd2`.`product_id` = `p`.`id` AND `pd2`.`customer_group_id` = '" . $customer_group_id . "' AND `pd2`.`quantity` = '1' AND `pd2`.`special` = '0' AND ((`pd2`.`date_start` = '0000-00-00' OR `pd2`.`date_start` < NOW()) AND (`pd2`.`date_end` = '0000-00-00' OR `pd2`.`date_end` > NOW())) ORDER BY `pd2`.`priority` ASC, `pd2`.`price` ASC LIMIT 1) AS `discount` ",
-            'special'  => "(SELECT (CASE WHEN `ps`.`type` = 'P' THEN (`p`.`price` - (`p`.`price` * (`ps`.`price` / 100))) WHEN `ps`.`type` = 'S' THEN (`p`.`price` - `ps`.`price`) ELSE `ps`.`price` END) FROM `" . DB_PREFIX . "product_discount` `ps` WHERE `ps`.`product_id` = `p`.`id` AND `ps`.`customer_group_id` = '" . $customer_group_id . "' AND `ps`.`quantity` = '1' AND `ps`.`special` = '1' AND ((`ps`.`date_start` = '0000-00-00' OR `ps`.`date_start` < NOW()) AND (`ps`.`date_end` = '0000-00-00' OR `ps`.`date_end` > NOW())) ORDER BY `ps`.`priority` ASC, `ps`.`price` ASC LIMIT 1) AS `special` ",
+            'discount' => "(SELECT (CASE WHEN `pd2`.`type` = 'P' THEN (`p`.`price` - (`p`.`price` * (`pd2`.`price` / 100))) WHEN `pd2`.`type` = 'S' THEN (`p`.`price` - `pd2`.`price`) ELSE `pd2`.`price` END) FROM `" . DB_PREFIX . "product_discount` `pd2` WHERE `pd2`.`product_id` = `p`.`id` AND `pd2`.`customer_group_id` = '" . $customer_group_id . "' AND `pd2`.`quantity` = '1' AND `pd2`.`special` = '0' AND ((`pd2`.`date_start` = '0000-00-00' OR `pd2`.`date_start` <= '{$today}') AND (`pd2`.`date_end` = '0000-00-00' OR `pd2`.`date_end` >= '{$today}')) ORDER BY `pd2`.`priority` ASC, `pd2`.`price` ASC LIMIT 1) AS `discount` ",
+            'special'  => "(SELECT (CASE WHEN `ps`.`type` = 'P' THEN (`p`.`price` - (`p`.`price` * (`ps`.`price` / 100))) WHEN `ps`.`type` = 'S' THEN (`p`.`price` - `ps`.`price`) ELSE `ps`.`price` END) FROM `" . DB_PREFIX . "product_discount` `ps` WHERE `ps`.`product_id` = `p`.`id` AND `ps`.`customer_group_id` = '" . $customer_group_id . "' AND `ps`.`quantity` = '1' AND `ps`.`special` = '1' AND ((`ps`.`date_start` = '0000-00-00' OR `ps`.`date_start` <= '{$today}') AND (`ps`.`date_end` = '0000-00-00' OR `ps`.`date_end` >= '{$today}')) ORDER BY `ps`.`priority` ASC, `ps`.`price` ASC LIMIT 1) AS `special` ",
             'reward'   => "(SELECT `pr`.`points` FROM `" . DB_PREFIX . "product_reward` `pr` WHERE `pr`.`product_id` = `p`.`id` AND `pr`.`customer_group_id` = '" . $customer_group_id . "') AS `reward` ",
             'review'   => "(SELECT COUNT(*) FROM `" . DB_PREFIX . "review` `r` WHERE `r`.`product_id` = `p`.`id` AND `r`.`status` = '1' GROUP BY `r`.`product_id`) AS `reviews` "
         ];
@@ -39,7 +44,7 @@ class ProductMapper extends BaseMapper {
             ->leftJoin(DB_PREFIX . 'product_description', 'pd', 'p.id = pd.product_id')
             ->where("p.id = ?", [$product_id])
             ->where("p.status = ?", [1])
-            ->where("p.date_available <= NOW()")
+            ->where("p.date_available <= ?", [date('Y-m-d')])
             ->where("p2s.store_id = ?", [$store_id])
             ->where("pd.language_id = ?", [$language_id])
             ->select('p.*', 'pd.name', 'pd.description', 'p.image', $stmt['discount'], $stmt['special'], $stmt['reward'], $stmt['review']);
@@ -51,8 +56,9 @@ class ProductMapper extends BaseMapper {
         $product = $results[0];
         
         // Resolve SEO URL para produto único
-        $seoMapper = new SeoUrlMapper($this->registry);
-        $keyword = $seoMapper->getKeywordByQuery('product_id', (string)$product_id, $store_id, $language_id);
+        /** @var \Alpha\Model\Domain\Repositories\SeoUrlRepository $seoRepository */
+        $seoRepository = $this->registry->get('alpha_repository_factory')->get(\Alpha\Model\Domain\Repositories\SeoUrlRepository::class);
+        $keyword = $seoRepository->getKeywordByQuery('product_id', (string)$product_id, $store_id, $language_id);
         $product['href'] = $keyword ?: 'index.php?route=product/product&product_id=' . $product_id;
 
         return $product;
@@ -94,7 +100,7 @@ class ProductMapper extends BaseMapper {
               ->leftJoin(DB_PREFIX . 'product_description', 'pd', 'p.id = pd.product_id')
               ->where("p2s.store_id = ?", [$store_id])
               ->where("p.status = ?", [1])
-              ->where("p.date_available <= NOW()")
+              ->where("p.date_available <= ?", [date('Y-m-d')])
               ->where("pd.language_id = ?", [$language_id])
               ->where("p.quantity > 0");
 
@@ -127,12 +133,13 @@ class ProductMapper extends BaseMapper {
         // Alpha Engine Optimization: Resolve slugs em lote para a listagem
         if ($results) {
             $productIds = array_column($results, 'id');
-            $seoMapper = new SeoUrlMapper($this->registry);
-            $seoMapper->primeCache($productIds, 'product_id', $store_id, $language_id);
+            /** @var \Alpha\Model\Domain\Repositories\SeoUrlRepository $seoRepository */
+            $seoRepository = $this->registry->get('alpha_repository_factory')->get(\Alpha\Model\Domain\Repositories\SeoUrlRepository::class);
+            $seoRepository->primeCache($productIds, 'product_id', $store_id, $language_id);
 
             foreach ($results as &$result) {
                 $productId = (int)$result['id'];
-                $keyword = $seoMapper->getKeywordByQuery('product_id', (string)$productId, $store_id, $language_id);
+                $keyword = $seoRepository->getKeywordByQuery('product_id', (string)$productId, $store_id, $language_id);
                 
                 // Injeta o link amigável ou rota padrão
                 $result['href'] = $keyword ?: 'index.php?route=product/product&product_id=' . $productId;
@@ -158,7 +165,7 @@ class ProductMapper extends BaseMapper {
             ->leftJoin(DB_PREFIX . 'product_description', 'pd', 'p.id = pd.product_id')
             ->where("p.id IN ($placeholders)", $product_ids)
             ->where("p.status = ?", [1])
-            ->where("p.date_available <= NOW()")
+            ->where("p.date_available <= ?", [date('Y-m-d')])
             ->where("p2s.store_id = ?", [$store_id])
             ->where("pd.language_id = ?", [$language_id])
             ->select('p.*', 'pd.name', 'pd.description', 'p.image', $stmt['discount'], $stmt['special'], $stmt['reward'], $stmt['review']);
@@ -167,12 +174,13 @@ class ProductMapper extends BaseMapper {
 
         // Alpha Engine: Resolve slugs em lote para os destaques
         if ($results) {
-            $seoMapper = new SeoUrlMapper($this->registry);
-            $seoMapper->primeCache($product_ids, 'product_id', $store_id, $language_id);
+            /** @var \Alpha\Model\Domain\Repositories\SeoUrlRepository $seoRepository */
+            $seoRepository = $this->registry->get('alpha_repository_factory')->get(\Alpha\Model\Domain\Repositories\SeoUrlRepository::class);
+            $seoRepository->primeCache($product_ids, 'product_id', $store_id, $language_id);
 
             foreach ($results as &$result) {
                 $productId = (int)$result['id'];
-                $keyword = $seoMapper->getKeywordByQuery('product_id', (string)$productId, $store_id, $language_id);
+                $keyword = $seoRepository->getKeywordByQuery('product_id', (string)$productId, $store_id, $language_id);
                 
                 $result['href'] = $keyword ?: 'index.php?route=product/product&product_id=' . $productId;
             }
@@ -204,7 +212,7 @@ class ProductMapper extends BaseMapper {
               ->leftJoin(DB_PREFIX . 'product_description', 'pd', 'p.id = pd.product_id')
               ->where("p2s.store_id = ?", [$store_id])
               ->where("p.status = ?", [1])
-              ->where("p.date_available <= NOW()")
+              ->where("p.date_available <= ?", [date('Y-m-d')])
               ->where("pd.language_id = ?", [$language_id])
               ->where("p.quantity > 0");
 
@@ -262,7 +270,7 @@ class ProductMapper extends BaseMapper {
             ->where('p2s.store_id = ?', [$store_id])
             ->where('pd.language_id = ?', [$language_id])
             ->where('p.status = 1')
-            ->where('p.date_available <= NOW()')
+            ->where('p.date_available <= ?', [date('Y-m-d')])
             ->select(
                 'p.*', 
                 'pd.name', 
@@ -275,12 +283,13 @@ class ProductMapper extends BaseMapper {
         // Resolve slugs para produtos relacionados
         if ($results) {
             $productIds = array_column($results, 'id');
-            $seoMapper = new SeoUrlMapper($this->registry);
-            $seoMapper->primeCache($productIds, 'product_id', $store_id, $language_id);
+            /** @var \Alpha\Model\Domain\Repositories\SeoUrlRepository $seoRepository */
+            $seoRepository = $this->registry->get('alpha_repository_factory')->get(\Alpha\Model\Domain\Repositories\SeoUrlRepository::class);
+            $seoRepository->primeCache($productIds, 'product_id', $store_id, $language_id);
 
             foreach ($results as &$result) {
                 $productId = (int)$result['id'];
-                $keyword = $seoMapper->getKeywordByQuery('product_id', (string)$productId, $store_id, $language_id);
+                $keyword = $seoRepository->getKeywordByQuery('product_id', (string)$productId, $store_id, $language_id);
                 
                 $result['href'] = $keyword ?: 'index.php?route=product/product&product_id=' . $productId;
             }
@@ -373,13 +382,15 @@ class ProductMapper extends BaseMapper {
      * Obtém a tabela de descontos progressivos (por quantidade) do produto
      */
     public function getDiscounts(int $product_id, int $customer_group_id): array {
+        $today = date('Y-m-d');
+
         $query = (new QueryBuilder())
             ->from(DB_PREFIX . 'product_discount', 'pd')
             ->leftJoin(DB_PREFIX . 'product', 'p', 'p.id = pd.product_id')
             ->where('pd.product_id = ?', [$product_id])
             ->where('pd.customer_group_id = ?', [$customer_group_id])
             ->where('pd.quantity > ?', [1])
-            ->where("((pd.date_start = '0000-00-00' OR pd.date_start < NOW()) AND (pd.date_end = '0000-00-00' OR pd.date_end > NOW()))", [])
+            ->where("((pd.date_start = '0000-00-00' OR pd.date_start <= ?) AND (pd.date_end = '0000-00-00' OR pd.date_end >= ?))", [$today, $today])
             ->orderBy('pd.quantity', 'ASC')
             ->orderBy('pd.priority', 'ASC')
             ->orderBy('pd.price', 'ASC')

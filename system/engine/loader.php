@@ -135,6 +135,27 @@ class Loader {
 		// Create a new key to store the model obj
 		$key = 'model_' . str_replace('/', '_', $route);
 
+		// Alpha Engine FIX: Blindagem contra Recriação de Proxy
+		// Se o modelo já foi instanciado e tem um proxy no registro, retorna imediatamente!
+		if ($this->registry->has($key)) {
+			return;
+		}
+
+		// Alpha Engine: Model Loop Trap (Depurador de Sobrecarga de Proxy)
+		static $model_loop_trap = [];
+		$model_loop_trap[$route] = ($model_loop_trap[$route] ?? 0) + 1;
+		
+		if ($model_loop_trap[$route] == 50) {
+			$traces = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS, 5);
+			$caller = $traces[1] ?? [];
+			$file = isset($caller['file']) ? $caller['file'] : 'desconhecido';
+			$line = $caller['line'] ?? 'desconhecida';
+			file_put_contents(DIR_LOGS . 'model_proxy_trap.log', "\n[GARGALO] O model '{$route}' foi carregado {$model_loop_trap[$route]} vezes! Originado em: {$file} na linha {$line}\n", FILE_APPEND);
+		}
+		if ($model_loop_trap[$route] > 100) {
+			throw new \Exception("Alpha Engine Trap: O model '{$route}' entrou em loop (mais de 100 chamadas). Verifique logs/model_proxy_trap.log para encontrar o arquivo culpado.");
+		}
+
 		if (!$this->registry->has('fallback_' . $key)) {
 			$object = $this->factory->model($route);
 		} else {

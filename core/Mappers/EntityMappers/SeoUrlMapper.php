@@ -111,4 +111,48 @@ class SeoUrlMapper {
             self::$keywordCache[$store_id][$language_id][$key][$row['value']] = $row['keyword'];
         }
     }
+
+    /**
+     * Obtém um array de URLs em lote mapeado por valor => keyword.
+     */
+    public function getUrlsByValues(array $values, string $key, int $store_id, int $language_id): array {
+        if (empty($values)) return [];
+
+        $placeholders = implode(',', array_fill(0, count($values), '?'));
+        $query = (new QueryBuilder())
+            ->from(DB_PREFIX . 'seo_url')
+            ->where("`key` = ?", [$key])
+            ->where("`value` IN ($placeholders)", $values)
+            ->where("store_id = ?", [$store_id])
+            ->where("language_id = ?", [$language_id])
+            ->select('value', 'keyword');
+
+        $results = $this->dao->executeQuery($query);
+        $mapped = [];
+        foreach ($results as $row) {
+            $mapped[$row['value']] = $row['keyword'];
+        }
+        return $mapped;
+    }
+
+    /**
+     * Encontra a string de query interna ('key=value') para um slug específico.
+     */
+    public function getQueryByKeyword(string $keyword, int $store_id, int $language_id): string {
+        $seoUrl = $this->getSeoUrlByKeyword($keyword, $store_id, $language_id);
+        
+        if ($seoUrl && method_exists($seoUrl, 'getKey') && method_exists($seoUrl, 'getValue')) {
+            return $seoUrl->getKey() . '=' . $seoUrl->getValue();
+        }
+        
+        $query = (new QueryBuilder())
+            ->from(DB_PREFIX . 'seo_url')
+            ->where("keyword = ?", [$keyword])
+            ->where("store_id = ?", [$store_id])
+            ->where("language_id = ?", [$language_id])
+            ->select('`key`', '`value`');
+
+        $results = $this->dao->executeQuery($query);
+        return $results ? $results[0]['key'] . '=' . $results[0]['value'] : '';
+    }
 }

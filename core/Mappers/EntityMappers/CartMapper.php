@@ -4,6 +4,7 @@ namespace Alpha\Mappers\EntityMappers;
 
 use Alpha\Mappers\BaseMapper;
 use Alpha\Model\DataAccessObject\QueryBuilder;
+use Opencart\System\Engine\Registry;
 
 /**
  * Class CartMapper
@@ -14,6 +15,7 @@ use Alpha\Model\DataAccessObject\QueryBuilder;
 class CartMapper extends BaseMapper
 {
     protected string $tableName = 'cart';
+    protected string $entityClass = \Alpha\Model\Domain\Entities\Cart::class;
 
     /**
      * Limpa carrinhos abandonados de visitantes baseando-se no tempo de expiração da sessão.
@@ -140,6 +142,7 @@ class CartMapper extends BaseMapper
         $cart->setApiId(0) // Assumindo API padrão
              ->setCustomerId($customerId)
              ->setSessionId($sessionId)
+             ->setStoreId($storeId)
              ->setProductId($productId)
              ->setSubscriptionPlanId($subscriptionPlanId)
              ->setOption($optionHash)

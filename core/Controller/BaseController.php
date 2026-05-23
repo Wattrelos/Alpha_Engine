@@ -27,6 +27,23 @@ abstract class BaseController extends Controller
         // Auto-resolução do contexto ativo da loja
         $this->storeId = (int)$this->config->get('config_store_id');
         $this->languageId = (int)$this->config->get('config_language_id');
+
+        // Alpha Engine: Injeção do LayoutRepository global (prometido para o Header)
+        if (!$this->registry->has('layout')) {
+            if (class_exists(\Alpha\Model\Domain\Repositories\LayoutRepository::class)) {
+                $this->registry->set('layout', $this->getRepository(\Alpha\Model\Domain\Repositories\LayoutRepository::class));
+            } else {
+                // Mock fallback para desobstruir o layout e não quebrar a página enquanto a classe não existe
+                $this->registry->set('layout', new class($this->registry->get('document')) {
+                    private $document;
+                    public function __construct($document) { $this->document = $document; }
+                    public function getModulesByRoute(string $route, string $type): array { return []; }
+                    public function getStylesByRoute(string $route, $document = null): array { return $document ? $document->getStyles() : ($this->document ? $this->document->getStyles() : []); }
+                    public function getScriptsByRoute(string $route, string $position = 'header', $document = null): array { return $document ? $document->getScripts($position) : ($this->document ? $this->document->getScripts($position) : []); }
+                    public function getLinksByRoute(string $route, $document = null): array { return $document ? $document->getLinks() : ($this->document ? $this->document->getLinks() : []); }
+                });
+            }
+        }
     }
 
     /**
@@ -69,16 +86,20 @@ abstract class BaseController extends Controller
         $this->response->setOutput(json_encode($data));
     }
 
-    /**
-     * Carrega as chaves de tradução de um arquivo de linguagem
-     * e faz o merge automático no array de dados do Controller.
+     /**
+     * Alpha Engine: Carrega o arquivo de tradução da rota e injeta automaticamente
+     * todas as variáveis (ex: text_home, text_login) no array fornecido.
+     * 
+     * O uso do '&' (referência) garante que o array original seja modificado,
+     * eliminando a necessidade de repetição de código nos controladores.
      */
-    protected function loadLanguageData(string $route, array &$data = []): void
+    protected function loadLanguageData(string $route, array &$data): void
     {
-        // Alpha Engine: Utiliza o objeto Language nativo para carregar as traduções
-        // eliminando completamente a dependência do Loader legado.
-        $languageData = $this->language->load($route);
-        $data = array_merge($data, is_array($languageData) ? $languageData : []);
+        $this->load->language($route);
+        
+        foreach ($this->language->all() as $key => $value) {
+            $data[$key] = $value;
+        }
     }
 
     /**
@@ -98,13 +119,10 @@ abstract class BaseController extends Controller
      */
     protected function renderPosition(string $position): array
     {
-        $modules = [];
+        $route = (string)($this->request->get['route'] ?? $this->config->get('action_default'));
+        $layoutModules = $this->registry->get('layout')->getModulesForRoute($route);
         
-        // TODO: Orquestrar a resolução do Layout ID e buscar os módulos vinculados
-        // através do LayoutRepository. Como o foco atual é a página de Carrinho/Checkout,
-        // retornaremos um array vazio temporariamente para desobstruir a renderização global.
-        
-        return $modules;
+        return $layoutModules[$position] ?? [];
     }
 
     /**
@@ -114,12 +132,12 @@ abstract class BaseController extends Controller
      */
     protected function render(string $route, array $data = []): void
     {
-        $data['column_left']    = $data['column_left'] ?? $this->load->controller('common/column_left');
-        $data['column_right']   = $data['column_right'] ?? $this->load->controller('common/column_right');
-        $data['content_top']    = $data['content_top'] ?? $this->load->controller('common/content_top');
-        $data['content_bottom'] = $data['content_bottom'] ?? $this->load->controller('common/content_bottom');
-        $data['footer']         = $data['footer'] ?? $this->load->controller('common/footer');
-        $data['header']         = $data['header'] ?? $this->load->controller('common/header');
+        $data['column_left']    = $data['column_left'] ?? (new \Opencart\Catalog\Controller\Common\ColumnLeft($this->registry))->index();
+        $data['column_right']   = $data['column_right'] ?? (new \Opencart\Catalog\Controller\Common\ColumnRight($this->registry))->index();
+        $data['content_top']    = $data['content_top'] ?? (new \Opencart\Catalog\Controller\Common\ContentTop($this->registry))->index();
+        $data['content_bottom'] = $data['content_bottom'] ?? (new \Opencart\Catalog\Controller\Common\ContentBottom($this->registry))->index();
+        $data['footer']         = $data['footer'] ?? (new \Opencart\Catalog\Controller\Common\Footer($this->registry))->index();
+        $data['header']         = $data['header'] ?? (new \Opencart\Catalog\Controller\Common\Header($this->registry))->index();
 
         $this->response->setOutput($this->load->view($route, $data));
     }

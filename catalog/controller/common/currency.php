@@ -19,15 +19,14 @@ class Currency extends BaseController {
 	 * @return string
 	 */
 	public function index(): string {
-		$currencyRepository = $this->repository->get(CurrencyRepository::class);
+		$currencyRepository = $this->getRepository(CurrencyRepository::class);
 		$currencyData = $currencyRepository->getCurrencyDisplayData();
 
 		$data = $currencyData->toArray();
-		$data['action'] = $this->url->link('common/currency.save', 'language=' . $this->config->get('config_language'));
 
 		$data['redirect'] = $currencyRepository->getRedirectUrl($this->request->get);
 
-		return $this->render('common/currency', $data);
+		return $this->load->view('common/currency', $data);
 	}
 
 	/**
@@ -39,16 +38,20 @@ class Currency extends BaseController {
 		$json = [];
 
 		$required = [
-			'code'     => '',
+			'code'     => (string)($this->request->post['code'] ?? ''),
 			'redirect' => ''
 		];
 
 		$post_info = $this->request->post + $required;
 
-		$currencyRepository = $this->repository->get(CurrencyRepository::class);
+		$currencyRepository = $this->getRepository(CurrencyRepository::class);
 
-		if (!$currencyRepository->updateCurrency($post_info['code'])) {
+		if (!$currencyRepository->isValid($post_info['code'])) {
 			$json['error'] = $this->language->get('error_currency');
+		}
+
+		if (!$json) {
+			$currencyRepository->setCurrencyContext($post_info['code']);
 			$json['redirect'] = $currencyRepository->processSaveRedirect($post_info['redirect'], $post_info['code']);
 		}
 

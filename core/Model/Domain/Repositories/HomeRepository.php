@@ -2,7 +2,6 @@
 namespace Alpha\Model\Domain\Repositories;
 
 use Alpha\Mappers\EntityMappers\HomeMapper;
-use Alpha\Mappers\EntityMappers\BannerMapper;
 use Alpha\Mappers\EntityMappers\ProductMapper;
 use Alpha\Support\Collection;
 use Alpha\Model\Domain\InterfaceEntity;
@@ -43,52 +42,6 @@ class HomeRepository extends AbstractRepository implements BaseRepositoryInterfa
             'description' => $this->document->getDescription(),
             'keywords'    => $this->document->getKeywords()
         ]);
-    }
-
-    /**
-     * Recupera produtos em destaque utilizando Batch Loading
-     * Resolve o problema de N+1 queries para imagens e preços especiais
-     */
-    public function getFeatured(array $product_ids, int $limit): array {
-        if (empty($product_ids)) return [];
-        
-        $product_ids = array_slice($product_ids, 0, $limit);
-        
-        /** @var ProductMapper $productMapper */
-        $productMapper = $this->getMapper();
-
-        $customerGroupId = $this->customer->isLogged() 
-            ? (int)$this->customer->getGroupId() 
-            : (int)$this->config->get('config_customer_group_id');
-
-        // Alpha Engine: Utilizamos o método especializado do Mapper para carregar e normalizar os produtos
-        return $productMapper->getProductsByIds($product_ids, $this->language_id, $this->store_id, $customerGroupId);
-    }
-
-    public function getLatest(int $limit): array {
-        /** @var ProductMapper $productMapper */
-        $productMapper = $this->getMapper();
-
-        $filterData = [
-            'sort'  => 'p.date_added',
-            'order' => 'DESC',
-            'start' => 0,
-            'limit' => $limit
-        ];
-
-        $customerGroupId = $this->customer->isLogged() 
-            ? (int)$this->customer->getGroupId() 
-            : (int)$this->config->get('config_customer_group_id');
-
-        return $productMapper->getProducts($filterData, $this->language_id, $this->store_id, $customerGroupId);
-    }
-
-    /**
-     * Ampliação: Método para resolver layouts de banners da Home
-     */
-    public function getHomeBanners(int $banner_id): ?object {
-        $bannerMapper = $this->mapperFactory->get(BannerMapper::class);
-        return $bannerMapper->findById($banner_id);
     }
 
     // Implementações obrigatórias da BaseRepositoryInterface

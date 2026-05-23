@@ -4,6 +4,7 @@ namespace Alpha\Model\Domain\Repositories;
 
 use Alpha\Mappers\EntityMappers\CategoryMapper;
 use Alpha\Model\Domain\InterfaceEntity;
+use Alpha\Model\Domain\Repositories\SeoUrlRepository;
 
 /**
  * CategoryRepository - Repositório central para dados de Categorias
@@ -40,7 +41,68 @@ class CategoryRepository extends AbstractRepository implements BaseRepositoryInt
         
         return $mapper->getSubCategories($parentId, $this->language_id, $this->store_id);
     }
-        /**
+
+    /**
+     * Alpha Engine: Renderiza a árvore recursiva de categorias em HTML (Zero-Twig).
+     * Com Batch Loading + Prime Cache, o menu cai de ~50 queries para apenas 2.
+     */
+    public function getMenuHtml(): string
+    {
+        /** @var CategoryMapper $mapper */
+        $mapper = $this->mapperFactory->get(CategoryMapper::class);
+        
+        // 1. Busca TODAS as categorias ativas de uma vez, já ordenadas (Fim do N+1 no BD)
+        $flatCategories = $mapper->getAllCategories($this->language_id, $this->store_id);
+
+        if (empty($flatCategories)) {
+            return '<ul class="dropdown-menu-recursive"><li><a href="#" class="nav-link">Nenhuma categoria encontrada</a></li></ul>';
+        }
+
+        // 2. Prime Cache de SEO: Pré-carrega TODAS as URLs Amigáveis para a RAM!
+        $categoryIds = array_column($flatCategories, 'id');
+        $seoUrlRepository = $this->registry->get('alpha_repository_factory')->get(SeoUrlRepository::class);
+        $seoUrlRepository->primeCache($categoryIds, 'category_id', $this->store_id, $this->language_id);
+
+        // 3. Constrói a árvore de dependência relacional no PHP (Complexidade O(N))
+        $tree = [];
+        foreach ($flatCategories as $cat) {
+            $tree[$cat['parent_id']][] = $cat;
+        }
+
+        return $this->buildHtmlTree($tree, 0, '', clone $seoUrlRepository);
+    }
+
+    private function buildHtmlTree(array &$tree, int $parentId, string $path, SeoUrlRepository $seoUrlRepository): string
+    {
+        if (!isset($tree[$parentId])) return '';
+
+        // Classes alinhadas exatamente com o seu 'personalizada.css'
+        $ulClass = ($parentId === 0) ? 'dropdown-menu-recursive' : 'submenu';
+        $html = '<ul class="' . $ulClass . '">';
+
+        foreach ($tree[$parentId] as $category) {
+            $catId = (int)$category['id'];
+            $newPath = $path === '' ? (string)$catId : $path . '_' . $catId;
+            
+            // Resolução de URL relâmpago via Memória (Zero Queries Adicionais)
+            $keyword = $seoUrlRepository->getKeywordByQuery('category_id', (string)$catId, $this->store_id, $this->language_id);
+            $href = $keyword ?: $this->url->link('product/category', 'language=' . $this->config->get('config_language') . '&path=' . $newPath);
+
+            $html .= '<li>';
+            $html .= '<a href="' . $href . '">' . htmlspecialchars($category['name'], ENT_QUOTES, 'UTF-8') . '</a>';
+
+            if (isset($tree[$catId])) {
+                $html .= $this->buildHtmlTree($tree, $catId, $newPath, $seoUrlRepository);
+            }
+
+            $html .= '</li>';
+        }
+
+        $html .= '</ul>';
+        return $html;
+    }
+
+    /**
      * Alpha Engine: Orquestra a inteligência de negócios e formatação da Categoria.
      * Consolida dados, subcategorias e carrega produtos via Data Mapper.
      */

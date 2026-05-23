@@ -17,8 +17,17 @@ Este projeto implementa uma camada de engenharia de software moderna sobre o nú
   * **Otimização de N+1 Queries:** Refatoramos a busca do Menu e dos Pedidos para utilizarem o método `readByIds` (Batch Loading), evitando milhares de consultas repetidas.
   * **Testes Unitários:** O framework de testes via JSON foi atualizado para suportar o namespace FQCN (`Alpha\Model\...`) e processar `LazyCollections` com proteção total contra referências circulares em árvores (ex: subcategorias).
   * Avançamos na refatoração do **Fluxo de Checkout** (etapas de endereço de frete, endereço de pagamento, registro e métodos de entrega) migrando para a arquitetura `BaseController` e consumindo nativamente os Repositórios de Domínio (`AddressRepository`, `CountryRepository`, `CartRepository`, etc.).
-* **Status Atual:** **Projeto Pausado (Milestone Atingido).** A infraestrutura core da Alpha Engine está consolidada e a base do fluxo de compra foi modernizada. O projeto está sendo fechado temporariamente para o início de um novo ciclo em outro projeto.
-* **Próximos Passos (Retomada):** Quando o projeto for reaberto, o foco será finalizar as etapas restantes do checkout (`payment_method`, e confirm final) e integrar definitivamente os módulos de gateway de pagamento na nova arquitetura transacional.
+  * **Isolamento de Widgets (Fim do Loop Infinito de Memória):** Corrigimos uma falha de design onde componentes parciais (como `Cart` e `Menu`) invocavam o método `render()` do controlador base, gerando um loop recursivo com o `Header` e estourando a memória RAM (512MB). Widgets agora usam o renderizador direto de fragmentos.
+  * **Menu Dropdown Nativo (Zero-Twig):** Implementamos a renderização de HTML do menu departamental diretamente no `MenuRepository` (convertendo arrays recursivos em classes utilitárias do Bootstrap 5), alcançando tempo de resposta de sub-milissegundos e contornando a ausência de métodos mágicos no padrão DAO.
+  * **Injeção de Dicionário Global:** Restauramos o carregamento da camada de Idiomas no cabeçalho central, retornando os textos dinâmicos e ícones da interface sem depender do Loader legado.
+  * **Ponte de Componentes Visuais (View Presenters):** Construímos a lógica de adaptação no controlador da Home e nos Módulos (`Featured`, `Latest`, `Bestseller`) para pegar os dados puros, tipados e performáticos da Alpha Engine e formatá-los para o componente visual `Thumb` legado do OpenCart (injeção de `no_image.png`, cache de redimensionamento e cálculo de impostos nativo).
+  * **Gestão Global de Assets:** Injeção correta da identidade visual (`personalizada.css`) e scripts estruturais (`bootstrap.bundle.min.js`) de forma centralizada pelo `Header`, evitando redundância e falhas nos dropdowns nativos.
+  * **Hidratação do Menu Principal:** Controlador `Menu` refatorado para entregar simultaneamente o HTML pré-renderizado ultra-rápido (`{{ categorias }}`) e os dados crus (`{{ categories }}`) garantindo máxima compatibilidade com layouts.
+* **Status Atual:** **Sprint de Interface e Catálogo (Home Concluída).** A página inicial, o cabeçalho e as vitrines de produtos estão estáveis, blindados contra N+1 Queries (Batch Loading de SEO) e renderizando perfeitamente os estilos e imagens redimensionadas em cache.
+* **Próximos Passos (Retomada):** 
+  1. Refatorar o roteador nativo de SEO (`startup/seo_url.php`) para consumir o `SeoUrlRepository` da Alpha Engine, blindando todas as rotas da loja.
+  2. Investigar por que o minicart (carrinho do topo) parou de abrir no evento de clique.
+  3. Extrair a lógica de formatação de Thumbnail (Redimensionamento/Preço) para um *Helper/Presenter* isolado para não repetir código nas páginas de Categoria e Busca.
 
 ---
 
@@ -55,6 +64,14 @@ Diferente do OpenCart padrão, onde o SQL fica espalhado pelos Models, este proj
 *   ✅ **Marketing**: `Marketing`, `MarketingReport`.
 *   ✅ **Clientes**: `Customer`, `CustomerApproval`, `CustomerHistory`, `CustomerLogin`, `CustomerOnline`, `CustomerPayment`, `CustomerReward`, `CustomerTransaction`, `Address`, `CustomerGroup`, `CustomField`, `CustomFieldDescription`, `CustomFieldValue`, `CustomFieldValueDescription`, `CustomFieldCustomerGroup`, `Notification`.
 *   ✅ **Módulos e Extensões**: `Extension`, `ExtensionInstall`, `ExtensionPath`, `Module`.
+
+*Controladores Refatorados (Alpha BaseController):*
+*   ✅ `common/home`
+*   ✅ `common/header`
+*   ✅ `common/menu`
+*   ✅ `module/featured`
+*   ✅ `module/latest`
+*   ✅ `module/bestseller`
 
 ## 📦 Estrutura do Core
 

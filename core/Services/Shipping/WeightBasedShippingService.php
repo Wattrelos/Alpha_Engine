@@ -56,41 +56,44 @@ class WeightBasedShippingService
         $geoZones = $this->geoZoneRepository->getGeoZones();
 
         foreach ($geoZones as $result) {
-            if ($config->get('shipping_weight_' . $result['geo_zone_id'] . '_status')) {
-                
-                // Alpha Engine: Valida a cobertura do endereço para esta Geo Zone
-                if ($this->geoZoneRepository->isAddressInGeoZone((int)$result['geo_zone_id'], $address)) {
-                    $cost = '';
-                    
-                    // Extrai a configuração de faixas. Ex: "5:10.00, 7:12.00"
-                    $rates = explode(',', $config->get('shipping_weight_' . $result['geo_zone_id'] . '_rate'));
+            // Clean Code: Ignora rapidamente se a zona não estiver com frete habilitado
+            if (!$config->get('shipping_weight_' . $result['geo_zone_id'] . '_status')) {
+                continue;
+            }
+            
+            // Clean Code: O(1) graças ao Cache em Memória que recém implementamos no GeoZoneRepository
+            if (!$this->geoZoneRepository->isAddressInGeoZone((int)$result['geo_zone_id'], $address)) {
+                continue;
+            }
 
-                    foreach ($rates as $rate) {
-                        $data = explode(':', $rate);
+            $cost = '';
+            
+            // Extrai a configuração de faixas. Ex: "5:10.00, 7:12.00"
+            $rates = explode(',', $config->get('shipping_weight_' . $result['geo_zone_id'] . '_rate'));
 
-                        // Compara o peso normalizado do carrinho com o limite superior da faixa atual
-                        if (isset($data[0]) && $data[0] >= $normalizedWeight) {
-                            if (isset($data[1])) {
-                                $cost = $data[1];
-                            }
-                            break; // Interrompe após encontrar a faixa correta
-                        }
+            foreach ($rates as $rate) {
+                $data = explode(':', $rate);
+
+                // Compara o peso normalizado do carrinho com o limite superior da faixa atual
+                if (isset($data[0]) && $data[0] >= $normalizedWeight) {
+                    if (isset($data[1])) {
+                        $cost = $data[1];
                     }
-
-                    // Se um custo foi estabelecido, adiciona esta zona geográfica como opção de frete
-                    if ((string)$cost != '') {
-                        // Instancia a classe de formatação do motor antigo para exibir "Frete por Peso (10kg)"
-                        $weightText = $this->registry->get('weight')->format($normalizedWeight, $storeWeightClassId);
-                        
-                        $quote_data['weight_' . $result['geo_zone_id']] = [
-                            'code'         => 'weight.weight_' . $result['geo_zone_id'],
-                            'title'        => $result['name'] . '  (' . $language->get('text_weight') . ' ' . $weightText . ')',
-                            'cost'         => $cost,
-                            'tax_class_id' => $config->get('shipping_weight_tax_class_id'),
-                            'text'         => $currency->format($this->registry->get('tax')->calculate($cost, $config->get('shipping_weight_tax_class_id'), $config->get('config_tax')), $session->data['currency'])
-                        ];
-                    }
+                    break; // Interrompe após encontrar a faixa correta
                 }
+            }
+
+            // Se um custo foi estabelecido, adiciona esta zona geográfica como opção de frete
+            if ((string)$cost != '') {
+                $weightText = $this->registry->get('weight')->format($normalizedWeight, $storeWeightClassId);
+                
+                $quote_data['weight_' . $result['geo_zone_id']] = [
+                    'code'         => 'weight.weight_' . $result['geo_zone_id'],
+                    'title'        => $result['name'] . '  (' . $language->get('text_weight') . ' ' . $weightText . ')',
+                    'cost'         => $cost,
+                    'tax_class_id' => $config->get('shipping_weight_tax_class_id'),
+                    'text'         => $currency->format($this->registry->get('tax')->calculate($cost, $config->get('shipping_weight_tax_class_id'), $config->get('config_tax')), $session->data['currency'])
+                ];
             }
         }
 

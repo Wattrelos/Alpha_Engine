@@ -2,7 +2,7 @@
 
 namespace Alpha\Model\Domain\Repositories;
 
-use Alpha\Mappers\SeoUrlMapper;
+use Alpha\Mappers\EntityMappers\SeoUrlMapper;
 use Alpha\Model\Domain\InterfaceEntity;
 
 /**
@@ -28,43 +28,54 @@ class SeoUrlRepository extends AbstractRepository implements BaseRepositoryInter
      * Carrega em lote as URLs amigáveis para uma lista de queries.
      * Previne o problema de N+1 queries na geração de listagens de produtos e categorias.
      */
-    public function primeCache(array $queries, int $storeId, int $languageId): void
+    public function primeCache(array $values, string $key, int $storeId, int $languageId): void
     {
-        if (empty($queries)) {
+        if (empty($values)) {
             return;
         }
 
-        $uncachedQueries = [];
-        $cacheKeyBase = "seo_url_{$storeId}_{$languageId}_";
+        $uncachedValues = [];
+        $cacheKeyBase = "seo_url_{$storeId}_{$languageId}_{$key}_";
 
         // 1. Verifica memória local e Cache Físico primeiro
-        foreach ($queries as $query) {
-            if (isset($this->urlCache[$query])) {
+        foreach ($values as $value) {
+            $cacheHash = $key . '=' . $value;
+            
+            if (isset($this->urlCache[$cacheHash])) {
                 continue;
             }
 
-            $cacheKey = $cacheKeyBase . md5($query);
+            $cacheKey = $cacheKeyBase . md5($value);
             if ($this->cache !== null && $this->cache->has($cacheKey)) {
-                $this->urlCache[$query] = $this->cache->get($cacheKey);
+                $this->urlCache[$cacheHash] = $this->cache->get($cacheKey);
             } else {
-                $uncachedQueries[] = $query;
+                $uncachedValues[] = $value;
             }
         }
 
-        if (empty($uncachedQueries)) {
+        if (empty($uncachedValues)) {
             return;
         }
 
         // 2. Busca no banco de dados via Mapper apenas o que não estava em cache
-        $results = $this->getMapper()->getUrlsByQueries($uncachedQueries, $storeId, $languageId);
+        $results = [];
+        if (method_exists($this->getMapper(), 'getUrlsByValues')) {
+            // O Mapper deve retornar um array mapeando [$value => $keyword]
+            $res = $this->getMapper()->getUrlsByValues($uncachedValues, $key, $storeId, $languageId);
+            if (is_array($res)) {
+                $results = $res;
+            }
+        }
 
         // 3. Popula a memória e o Cache Físico
-        foreach ($uncachedQueries as $query) {
-            $keyword = $results[$query] ?? ''; // Fallback para vazio se não existir
-            $this->urlCache[$query] = $keyword;
+        foreach ($uncachedValues as $value) {
+            // A MÁGICA ACONTECE AQUI: Guarda a string vazia para evitar N+1
+            $keyword = $results[$value] ?? ''; 
+            $cacheHash = $key . '=' . $value;
+            $this->urlCache[$cacheHash] = $keyword;
 
             if ($this->cache !== null) {
-                $cacheKey = $cacheKeyBase . md5($query);
+                $cacheKey = $cacheKeyBase . md5($value);
                 // Salva por tempo longo, URLs amigáveis não mudam com frequência (24h)
                 $this->cache->set($cacheKey, $keyword, 86400);
             }
@@ -74,24 +85,26 @@ class SeoUrlRepository extends AbstractRepository implements BaseRepositoryInter
     /**
      * Resolve uma query interna para a URL amigável (slug).
      */
-    public function getKeywordByQuery(string $query, int $storeId, int $languageId): string
+    public function getKeywordByQuery(string $key, string $value, int $storeId, int $languageId): string
     {
+        $cacheHash = $key . '=' . $value;
+        
         // Se já está no primeCache, retorna direto
-        if (isset($this->urlCache[$query])) {
-            return $this->urlCache[$query];
+        if (isset($this->urlCache[$cacheHash])) {
+            return $this->urlCache[$cacheHash];
         }
 
-        $cacheKey = "seo_url_{$storeId}_{$languageId}_" . md5($query);
+        $cacheKey = "seo_url_{$storeId}_{$languageId}_{$key}_" . md5($value);
 
         if ($this->cache !== null && $this->cache->has($cacheKey)) {
             $keyword = $this->cache->get($cacheKey);
-            $this->urlCache[$query] = $keyword;
+            $this->urlCache[$cacheHash] = $keyword;
             return $keyword;
         }
 
-        $keyword = $this->getMapper()->getKeywordByQuery($query, $storeId, $languageId);
+        $keyword = $this->getMapper()->getKeywordByQuery($key, $value, $storeId, $languageId);
         
-        $this->urlCache[$query] = $keyword;
+        $this->urlCache[$cacheHash] = $keyword;
         
         if ($this->cache !== null) {
             $this->cache->set($cacheKey, $keyword, 86400);

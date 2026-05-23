@@ -2,48 +2,35 @@
 
 namespace Alpha\Mappers\EntityMappers;
 
-use Alpha\Model\DataAccessObject\DataAccessObject;
-use Alpha\Model\DataAccessObject\QueryBuilder;
+use Alpha\Mappers\BaseMapper;
+use Alpha\Model\Domain\Entities\Country;
 
 /**
  * Mapper para gerenciar a lógica de Países (Countries)
+ * Refatorado (Alpha Engine): Estende BaseMapper para hidratação automática.
  */
-class CountryMapper {
-    private DataAccessObject $dao;
-
-    public function __construct() {
-        $this->dao = new DataAccessObject();
-    }
+class CountryMapper extends BaseMapper {
+    
+    protected string $tableName = 'country';
+    protected string $entityClass = Country::class;
 
     /**
      * Obtém um país específico pelo ID
      * 
      * @param int $country_id
-     * @return array
+     * @return Country|null
      */
-    public function getCountry(int $country_id): array {
-        $query = (new QueryBuilder())
-            ->from(DB_PREFIX . 'country', 'c')
-            ->where("c.id = ?", [$country_id])
-            ->where("c.status = ?", [1])
-            ->select('*');
-
-        $results = $this->dao->executeQuery($query);
-        return $results ? $results[0] : [];
+    public function getCountry(int $country_id): ?Country {
+        $country = $this->findById($country_id);
+        return ($country && $country->getStatus()) ? $country : null;
     }
 
     /**
      * Lista todos os países ativos
      * 
-     * @return array
+     * @return Country[]
      */
     public function getCountries(): array {
-        $query = (new QueryBuilder())
-            ->from(DB_PREFIX . 'country', 'c')
-            ->where("c.status = ?", [1])
-            ->orderBy("c.name", "ASC")
-            ->select('*');
-
-        return $this->dao->executeQuery($query);
+        return $this->search(['status' => 1], ['name' => 'ASC']);
     }
 }

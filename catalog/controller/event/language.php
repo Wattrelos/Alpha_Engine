@@ -1,79 +1,26 @@
 <?php
 namespace Opencart\Catalog\Controller\Event;
-/**
- * Class Language
- *
- * @package Opencart\Catalog\Controller\Event
- */
-class Language extends \Opencart\System\Engine\Controller {
 
-	// Alpha Engine: Stack de backups real para evitar Memory Leak via JSON aninhado
+class Language extends \Opencart\System\Engine\Controller {
+	
+	// Alpha Engine Failsafe: Pilha em memória para evitar JSON Explosion
 	private static array $backupStack = [];
 
-	/**	 
-	 * Index
-	 *
-	 * Dump all the language vars into the template.
-	 *
-	 * view/ * /before
-	 *
-	 * @param string                $route
-	 * @param array<string, string> $args
-	 *
-	 * @return void
-	 */
-
-	
-	public function index(string &$route, array &$args): void {
-		foreach ($this->language->all() as $key => $value) {
-			if (!isset($args[$key])) {
-				$args[$key] = $value;
-			}
-		}
-	}
-
-	/**
-	 * Before
-	 *
-	 * 1. Before controller load store all current loaded language data
-	 *
-	 * controller/ * /before
-	 *
-	 * @param string            $route
-	 * @param array<int, mixed> $args
-	 *
-	 * @return void
-	 */
 	public function before(string &$route, array &$args): void {
-		$data = $this->language->all();
-
-		if ($data) {
-			// Alpha Engine: Armazena no stack estático em vez de gerar strings JSON exponenciais
-			self::$backupStack[] = $data;
-		}
+		// Salvamos o array inteiro usando ponteiros de memória RAM (custo zero de bytes)
+		self::$backupStack[] = $this->language->all();
+		
+		$this->language->load($route);
 	}
 
-	/**
-	 * After
-	 *
-	 * 2. After controller load restore old language data
-	 *
-	 * controller/ * /after
-	 *
-	 * @param string            $route
-	 * @param array<int, mixed> $args
-	 * @param mixed             $output
-	 *
-	 * @return void
-	 */
-	public function after(string &$route, array &$args, &$output): void {
-		// Alpha Engine: Recupera o último estado salvo
-		$data = array_pop(self::$backupStack);
-
-		if (is_array($data)) {
+	public function after(string &$route, array &$args, mixed &$output): void {
+		if (!empty(self::$backupStack)) {
+			$backup = array_pop(self::$backupStack);
+			
 			$this->language->clear();
-
-			foreach ($data as $key => $value) {
+			
+			// Restaura o estado anterior instantaneamente
+			foreach ($backup as $key => $value) {
 				$this->language->set($key, $value);
 			}
 		}

@@ -27,6 +27,19 @@ class SessionMapper extends BaseMapper // Alterado de AbstractMapper para BaseMa
      */
     public function getActiveSessionData(string $token, string $now): ?string
     {
+        // Alpha Engine Failsafe: Intercepta sessões corrompidas (> 5MB) antes de estourar a memória
+        $checkQuery = (new QueryBuilder())
+            ->from(DB_PREFIX . 'session')
+            ->where("session_token = ?", [$token])
+            ->select('LENGTH(data) AS size')
+            ->limit(1);
+            
+        $check = $this->dao->executeQuery($checkQuery);
+        if ($check && (int)$check[0]['size'] > 5000000) {
+            $this->deleteByToken($token);
+            return null;
+        }
+
         $query = (new QueryBuilder())
             ->from(DB_PREFIX . 'session')
             ->where("session_token = ?", [$token])
@@ -102,7 +115,7 @@ class SessionMapper extends BaseMapper // Alterado de AbstractMapper para BaseMa
         // Blindagem Alpha: Previne Memory Leak forçando busca controlada por LIMIT 1
         $query = (new QueryBuilder())
             ->from($this->getFullTableName())
-            ->select('id')
+            ->select('id', 'LENGTH(data) AS size')
             ->limit(1);
 
         foreach ($criteria as $key => $value) {
@@ -113,6 +126,12 @@ class SessionMapper extends BaseMapper // Alterado de AbstractMapper para BaseMa
         $results = $this->dao->executeQuery($query);
 
         if (!$results) return null;
+
+        // Alpha Engine Failsafe: Evita carregar sessões monstruosas no Identity Map
+        if ((int)$results[0]['size'] > 5000000) {
+            $this->dao->execute((new QueryBuilder())->delete($this->getFullTableName())->where("id = ?", [$results[0]['id']]));
+            return null;
+        }
 
         $sessions = $this->dao->readByIds($this->entityClass, [(int)$results[0]['id']]);
         return $sessions ? $sessions[0] : null;

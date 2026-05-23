@@ -46,7 +46,9 @@ class Event {
 		$this->data[] = [
 			'trigger'  => $trigger,
 			'action'   => $action,
-			'priority' => $priority
+			'priority' => $priority,
+			// Alpha Engine: Pré-compilação da Regex para evitar sobrecarga de CPU no trigger
+			'regex'    => '/^' . str_replace(['\*', '\?'], ['.*', '.'], preg_quote($trigger, '/')) . '/'
 		];
 
 		$sort_order = [];
@@ -67,10 +69,25 @@ class Event {
 	 * @return mixed
 	 */
 	public function trigger(string $event, array $args = []) {
-		foreach ($this->data as $value) {
-			if (preg_match('/^' . str_replace(['\*', '\?'], ['.*', '.'], preg_quote($value['trigger'], '/')) . '/', $event)) {
-				$value['action']->execute($this->registry, $args);
+		// Alpha Engine: Event Loop / Recursion Trap
+		static $event_recursion_depth = [];
+		$event_recursion_depth[$event] = ($event_recursion_depth[$event] ?? 0) + 1;
+		
+		if ($event_recursion_depth[$event] > 30) {
+			throw new \Exception("Alpha Engine Trap: O evento '{$event}' entrou em recursão infinita (mais de 30 loops). Verifique as extensões ativas.");
+		}
+
+		try {
+			foreach ($this->data as $value) {
+				// Alpha Engine: Usa a regex pré-compilada para economizar operações de string massivas
+				$pattern = $value['regex'] ?? '/^' . str_replace(['\*', '\?'], ['.*', '.'], preg_quote($value['trigger'], '/')) . '/';
+				
+				if (preg_match($pattern, $event)) {
+					$value['action']->execute($this->registry, $args);
+				}
 			}
+		} finally {
+			$event_recursion_depth[$event]--;
 		}
 
 		return '';

@@ -14,11 +14,15 @@ class SettingMapper extends BaseMapper
 {
     protected string $tableName = 'setting';
 
-    public function findAll(): array
+    /**
+     * Busca configurações da loja padrão (0) e da loja atual, já ordenadas.
+     */
+    public function findByStoreId(int $storeId): array
     {
         $query = (new QueryBuilder())
             ->from($this->getFullTableName())
-            ->select('*');
+            ->where("store_id = 0 OR store_id = ?", [$storeId])
+            ->orderBy('store_id', 'ASC');
 
         return $this->dao->executeQuery($query);
     }

@@ -26,7 +26,14 @@ class Cart extends BaseController {
 		// Alpha Engine: O Repositório agora orquestra o processamento Loader-Free de sub-componentes
 		$data['modules'] = $cartRepository->getTotalModules($cartData);
 
-		return $this->render('common/cart', $data);
+		// Alpha Engine: Carrega o dicionário para as chaves text_items, text_no_results, etc.
+		$this->loadLanguageData('common/cart', $data);
+
+		// Alpha Engine: Define a rota de re-renderização via AJAX usada pelo common.js
+		$data['list'] = $this->url->link('common/cart|info', 'language=' . $this->config->get('config_language'));
+
+		// Widgets parciais usam load->view diretamente para não invocar o Header novamente (Loop Infinito)
+		return $this->load->view('common/cart', $data);
 	}
 
 	/**

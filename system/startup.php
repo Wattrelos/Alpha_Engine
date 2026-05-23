@@ -2,6 +2,10 @@
 // Error Reporting
 error_reporting(E_ALL);
 
+// Alpha Engine Failsafe: Força a alocação de memória necessária ignorando configs globais do Apache
+ini_set('memory_limit', '512M');
+ini_set('max_execution_time', '120');
+
 // Check Version
 if (version_compare(PHP_VERSION, '8.0', '<')) {
 	exit('PHP8.0+ Required');

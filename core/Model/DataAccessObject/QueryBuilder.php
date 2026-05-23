@@ -142,7 +142,6 @@ class QueryBuilder {
             $sql .= " OFFSET " . $this->offset;
         }
         
-          
         return $sql;  
     }  
     

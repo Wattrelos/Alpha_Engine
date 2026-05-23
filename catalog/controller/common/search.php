@@ -11,9 +11,9 @@ class Search extends BaseController {
 	 * @return string
 	 */
 	public function index(): string {
-		$searchRepository = $this->repository->get(SearchRepository::class);
+		$searchRepository = $this->getRepository(SearchRepository::class);
 		$searchData = $searchRepository->getSearchDisplayData();
 
-		return $this->render('common/search', $searchData->toArray());
+		return $this->load->view('common/search', $searchData->toArray());
 	}
 }

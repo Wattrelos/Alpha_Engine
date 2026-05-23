@@ -19,14 +19,14 @@ class Language extends BaseController {
 	 * @return string
 	 */
 	public function index(): string {
-		$languageRepository = $this->repository->get(LanguageRepository::class);
+		$languageRepository = $this->getRepository(LanguageRepository::class);
 		$languageData = $languageRepository->getLanguageDisplayData();
 		
 		$data = $languageData->toArray();
 		// Alpha Engine: Redirect URL agora é o único parâmetro contextual extra
 		$data['redirect'] = $languageRepository->getRedirectUrl($this->request->get);
 
-		return $this->render('common/language', $data);
+		return $this->load->view('common/language', $data);
 	}
 
 	/**
@@ -44,7 +44,7 @@ class Language extends BaseController {
 
 		$post_info = $this->request->post + $required;
 
-		$languageRepository = $this->repository->get(LanguageRepository::class);
+		$languageRepository = $this->getRepository(LanguageRepository::class);
 		
 		if (!$languageRepository->isValid($post_info['code'])) {
 			$json['error'] = $this->language->get('error_language');

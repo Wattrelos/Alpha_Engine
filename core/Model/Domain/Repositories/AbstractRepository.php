@@ -17,6 +17,7 @@ abstract class AbstractRepository
     protected MapperFactory $mapperFactory;
     protected Registry $registry;
     protected ?CacheStrategyInterface $cache = null;
+    protected string $mapperClass = ''; // Definido nas classes filhas para uso genérico do getIndexData
 
     /**
      * @param MapperFactory $mapperFactory
@@ -71,5 +72,17 @@ abstract class AbstractRepository
             return (int)$this->registry->get('config')->get('config_language_id');
         }
         return $this->registry->get($key);
+    }
+
+    /**
+     * Implementação padrão para index. 
+     * Pode ser sobrescrito nas classes filhas para lógicas complexas de paginação.
+     */
+    public function getIndexData(array $filters = []): array
+    {
+        if ($this->mapperClass) {
+            return $this->mapperFactory->get($this->mapperClass)->findBy($filters);
+        }
+        return [];
     }
 }

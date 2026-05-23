@@ -36,4 +36,9 @@ interface MapperInterface
      * Busca entidades baseada em filtros associativos.
      */
     public function search(array $filters): array;
+
+    /**
+     * Busca entidades de forma paginada.
+     */
+    public function paginate(array $filters, int $page = 1, int $limit = 10, ?array $orderBy = null): array;
 }

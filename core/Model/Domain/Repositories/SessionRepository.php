@@ -117,7 +117,7 @@ class SessionRepository extends AbstractRepository implements BaseRepositoryInte
     }
 
     public function findBy(array $criteria, ?array $orderBy = null, ?int $limit = null, ?int $offset = null): array {
-        return $this->getMapper()->search($criteria);
+        return $this->getMapper()->search($criteria, $orderBy, $limit, $offset);
     }
 
     public function findOneBy(array $criteria): ?InterfaceEntity {

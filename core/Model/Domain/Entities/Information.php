@@ -15,7 +15,6 @@ use Alpha\Model\Domain\Attributes\OneToMany;
  */
 class Information extends BaseEntity
 {
-    private int $bottom = 0;
     private int $sortOrder = 0;
     private bool $status = true;
 
@@ -36,17 +35,6 @@ class Information extends BaseEntity
      */
     #[OneToMany(targetEntity: InformationToStore::class, mappedBy: "information", foreignKey: "informationId")]
     private array $informationToStores = [];
-
-    public function getBottom(): int
-    {
-        return $this->bottom;
-    }
-
-    public function setBottom(int $value): self
-    {
-        $this->bottom = $value;
-        return $this;
-    }
 
     public function getSortOrder(): int
     {

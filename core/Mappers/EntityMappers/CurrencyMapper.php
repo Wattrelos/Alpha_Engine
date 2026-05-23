@@ -2,7 +2,8 @@
 
 namespace Alpha\Mappers\EntityMappers;
 
-use Opencart\System\Engine\Registry;
+use Alpha\Mappers\BaseMapper;
+use Alpha\Model\DataAccessObject\QueryBuilder;
 
 /**
  * Class CurrencyMapper
@@ -10,14 +11,9 @@ use Opencart\System\Engine\Registry;
  * Implementa o padrão DataAccessObject/Mapper para as Moedas,
  * centralizando consultas e garantindo reuso e performance (Alpha Engine).
  */
-class CurrencyMapper
+class CurrencyMapper extends BaseMapper
 {
-    private object $db;
-
-    public function __construct(Registry $registry)
-    {
-        $this->db = $registry->get('db');
-    }
+    protected string $tableName = 'currency';
 
     /**
      * Recupera todas as moedas ativas na loja.
@@ -26,10 +22,20 @@ class CurrencyMapper
      */
     public function findAllActive(): array
     {
+        // Alpha Engine: Memoization Cache (Evita consultas duplicadas na mesma requisição)
+        static $cache = null;
+        if ($cache !== null) {
+            return $cache;
+        }
+
         // Substitui a chamada direta e sem filtro do OpenCart original.
         // Adicionado filtro de status para garantir performance e integridade de negócio.
-        $query = $this->db->query("SELECT * FROM `" . DB_PREFIX . "currency` WHERE `status` = '1'");
-
-        return $query->rows;
+        $query = (new QueryBuilder())
+            ->from($this->getFullTableName())
+            ->where("`status` = ?", ['1'])
+            ->select('*');
+            
+        $cache = $this->dao->executeQuery($query);
+        return $cache;
     }
 }

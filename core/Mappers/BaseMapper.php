@@ -109,7 +109,7 @@ abstract class BaseMapper implements MapperInterface
      * Implementação genérica de busca por filtros.
      * Suporta igualdade simples ou busca parcial se o valor contiver '%'.
      */
-    public function search(array $filters): array
+    public function search(array $filters, ?array $orderBy = null, ?int $limit = null, ?int $offset = null): array
     {
         $query = (new QueryBuilder())->from($this->getFullTableName());
 
@@ -123,6 +123,20 @@ abstract class BaseMapper implements MapperInterface
             }
         }
 
+        if ($orderBy !== null) {
+            foreach ($orderBy as $column => $direction) {
+                $query->orderBy($this->camelToSnake($column), strtoupper($direction));
+            }
+        }
+
+        if ($limit !== null) {
+            $query->limit($limit);
+        }
+
+        if ($offset !== null) {
+            $query->offset($offset);
+        }
+
         $rows = $this->dao->executeQuery($query);
         $entities = [];
         
@@ -131,6 +145,44 @@ abstract class BaseMapper implements MapperInterface
         }
         
         return $entities;
+    }
+
+    /**
+     * Implementação genérica de busca paginada.
+     * Retorna os resultados hidratados, contagem total de registros e total de páginas.
+     */
+    public function paginate(array $filters, int $page = 1, int $limit = 10, ?array $orderBy = null): array
+    {
+        $query = (new QueryBuilder())->from($this->getFullTableName());
+
+        foreach ($filters as $key => $value) {
+            $column = $this->camelToSnake($key);
+            
+            if (is_string($value) && str_contains($value, '%')) {
+                $query->where("{$column} LIKE ?", [$value]);
+            } else {
+                $query->where("{$column} = ?", [$value]);
+            }
+        }
+
+        if ($orderBy !== null) {
+            foreach ($orderBy as $column => $direction) {
+                $query->orderBy($this->camelToSnake($column), strtoupper($direction));
+            }
+        }
+
+        $result = $this->dao->paginate($query, $page, $limit);
+        
+        $entities = [];
+        foreach ($result['data'] as $row) {
+            $entities[] = $this->mapRowToEntity($row);
+        }
+        
+        return [
+            'data'        => $entities,
+            'total'       => $result['total'],
+            'total_pages' => (int)ceil($result['total'] / $limit)
+        ];
     }
 
     /**
@@ -157,11 +209,12 @@ abstract class BaseMapper implements MapperInterface
             if (!empty($manyToOneAttr)) {
                 $attrInstance = $manyToOneAttr[0]->newInstance();
                 $foreignKey = $attrInstance->foreignKey;
+                $dbForeignKey = $this->camelToSnake($foreignKey);
                 
-                if (isset($row[$foreignKey]) && $row[$foreignKey] > 0) {
+                if (isset($row[$dbForeignKey]) && $row[$dbForeignKey] > 0) {
                     // Implementação de Lazy Loading via Proxy
                     $targetClass = $attrInstance->targetEntity;
-                    $proxy = ProxyFactory::createProxy($targetClass, (int)$row[$foreignKey], function($id) use ($targetClass) {
+                    $proxy = ProxyFactory::createProxy($targetClass, (int)$row[$dbForeignKey], function($id) use ($targetClass) {
                         // Lógica de carregamento tardio: resolve a tabela do alvo
                         $targetMapper = $this->resolveMapperFor($targetClass);
                         return ConnectionDB::getInstance()->queryOne(

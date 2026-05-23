@@ -9,9 +9,9 @@ class GeoZoneMapper
 {
     private DataAccessObject $dao;
 
-    public function __construct(DataAccessObject $dao)
+    public function __construct()
     {
-        $this->dao = $dao;
+        $this->dao = new DataAccessObject();
     }
 
     public function findAll(): array
@@ -24,16 +24,19 @@ class GeoZoneMapper
         return $this->dao->executeQuery($builder);
     }
 
-    public function checkAddressInZone(int $geoZoneId, int $countryId, int $zoneId): bool
+    /**
+     * Alpha Engine: Batch Loading de Zonas Geográficas (Fim do N+1 em fretes e impostos)
+     * Retorna todos os IDs de Geo Zones aos quais este endereço pertence de uma só vez.
+     */
+    public function getValidGeoZoneIdsForAddress(int $countryId, int $zoneId): array
     {
         $builder = (new QueryBuilder())
             ->from(DB_PREFIX . 'zone_to_geo_zone')
-            ->where('geo_zone_id = ? AND country_id = ? AND (zone_id = ? OR zone_id = 0)', [$geoZoneId, $countryId, $zoneId])
-            ->select('zone_to_geo_zone_id')
-            ->limit(1);
+            ->where('country_id = ? AND (zone_id = ? OR zone_id = 0)', [$countryId, $zoneId])
+            ->select('geo_zone_id');
 
         $result = $this->dao->executeQuery($builder);
 
-        return !empty($result);
+        return array_map('intval', array_column($result, 'geo_zone_id'));
     }
 }

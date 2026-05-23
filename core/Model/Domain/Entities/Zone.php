@@ -14,7 +14,6 @@ use Alpha\Model\Domain\Attributes\ManyToOne;
  */
 class Zone extends BaseEntity
 {
-    private int $countryId = 0;
     private string $name = '';
     private string $code = '';
     private bool $status = true;
@@ -24,12 +23,15 @@ class Zone extends BaseEntity
 
     public function getCountryId(): int
     {
-        return $this->countryId;
+        return $this->country ? (int)$this->country->getId() : 0;
     }
 
-    public function setCountryId(int $countryId): self
+    public function setCountryId(int $id): self
     {
-        $this->countryId = $countryId;
+        if (!$this->country) {
+            $this->country = new Country();
+        }
+        $this->country->setId($id);
         return $this;
     }
 

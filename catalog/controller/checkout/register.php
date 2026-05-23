@@ -123,7 +123,7 @@ class Register extends \Opencart\System\Engine\Controller {
 
 		// Zone
 		$zone_mapper = new ZoneMapper();
-		$data['payment_zones'] = $zone_mapper->getZonesByCountryId($data['payment_country_id']);
+		$data['payment_zones'] = CollectionToArrayConverter::convertCollection($zone_mapper->getZonesByCountryId($data['payment_country_id']));
 
 		if (isset($this->session->data['shipping_address']['address_id'])) {
 			$data['shipping_firstname']    = $this->session->data['shipping_address']['firstname'];
@@ -172,7 +172,7 @@ class Register extends \Opencart\System\Engine\Controller {
 		if ($data['payment_country_id'] == $data['shipping_country_id']) {
 			$data['shipping_zones'] = $data['payment_zones'];
 		} else {
-			$data['shipping_zones'] = $zone_mapper->getZonesByCountryId($data['shipping_country_id']);
+			$data['shipping_zones'] = CollectionToArrayConverter::convertCollection($zone_mapper->getZonesByCountryId($data['shipping_country_id']));
 		}
 
 		// Custom Fields
@@ -339,7 +339,7 @@ class Register extends \Opencart\System\Engine\Controller {
 				$country_mapper = new CountryMapper();
 				$payment_country_info = $country_mapper->getCountry((int)$post_info['payment_country_id']);
 
-				if ($payment_country_info && $payment_country_info['postcode_required'] && !oc_validate_length($post_info['payment_postcode'], 2, 10)) {
+				if ($payment_country_info && $payment_country_info->getPostcodeRequired() && !oc_validate_length($post_info['payment_postcode'], 2, 10)) {
 					$json['error']['payment_postcode'] = $this->language->get('error_postcode');
 				}
 
@@ -391,7 +391,7 @@ class Register extends \Opencart\System\Engine\Controller {
 				$country_mapper = new CountryMapper();
 				$shipping_country_info = $country_mapper->getCountry((int)$post_info['shipping_country_id']);
 
-				if ($shipping_country_info && $shipping_country_info['postcode_required'] && !oc_validate_length($post_info['shipping_postcode'], 2, 10)) {
+				if ($shipping_country_info && $shipping_country_info->getPostcodeRequired() && !oc_validate_length($post_info['shipping_postcode'], 2, 10)) {
 					$json['error']['shipping_postcode'] = $this->language->get('error_postcode');
 				}
 

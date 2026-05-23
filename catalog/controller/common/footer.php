@@ -31,6 +31,6 @@ class Footer extends BaseController {
 
 		// TODO: Adicionar resolução de módulos de rodapé dinâmicos se necessário
 		
-		return $this->render('common/footer', $data);
+		return $this->load->view('common/footer', $data);
 	}
 }

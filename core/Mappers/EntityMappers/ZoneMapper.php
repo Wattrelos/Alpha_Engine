@@ -2,51 +2,41 @@
 
 namespace Alpha\Mappers\EntityMappers;
 
-use Alpha\Model\DataAccessObject\DataAccessObject;
+use Alpha\Mappers\BaseMapper;
 use Alpha\Model\DataAccessObject\QueryBuilder;
+use Alpha\Model\Domain\Entities\Zone;
 
 /**
  * Mapper para gerenciar a lógica de Zonas/Estados (Zones)
+ * Refatorado (Alpha Engine): Estende BaseMapper para hidratação automática.
  */
-class ZoneMapper {
-    private DataAccessObject $dao;
-
-    public function __construct() {
-        $this->dao = new DataAccessObject();
-    }
+class ZoneMapper extends BaseMapper {
+    
+    protected string $tableName = 'zone';
+    protected string $entityClass = Zone::class;
 
     /**
      * Obtém uma zona específica pelo ID
      * 
      * @param int $zone_id
-     * @return array
+     * @return Zone|null
      */
-    public function getZone(int $zone_id): array {
-        $query = (new QueryBuilder())
-            ->from(DB_PREFIX . 'zone', 'z')
-            ->where("z.id = ?", [$zone_id])
-            ->where("z.status = ?", [1])
-            ->select('*');
-
-        $results = $this->dao->executeQuery($query);
-        return $results ? $results[0] : [];
+    public function getZone(int $zone_id): ?Zone {
+        $zone = $this->findById($zone_id);
+        return ($zone && $zone->getStatus()) ? $zone : null;
     }
 
     /**
      * Lista todas as zonas de um país específico
      * 
      * @param int $country_id
-     * @return array
+     * @return Zone[]
      */
     public function getZonesByCountryId(int $country_id): array {
-        $query = (new QueryBuilder())
-            ->from(DB_PREFIX . 'zone', 'z')
-            ->where("z.country_id = ?", [$country_id])
-            ->where("z.status = ?", [1])
-            ->orderBy("z.name", "ASC")
-            ->select('*');
-
-        return $this->dao->executeQuery($query);
+        return $this->search(
+            ['countryId' => $country_id, 'status' => 1],
+            ['name' => 'ASC']
+        );
     }
 
     /**

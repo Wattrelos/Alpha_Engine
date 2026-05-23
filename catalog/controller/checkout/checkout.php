@@ -3,6 +3,12 @@ namespace Opencart\Catalog\Controller\Checkout;
 
 use Alpha\Controller\BaseController;
 use Alpha\Model\Domain\Repositories\CartRepository;
+use Opencart\Catalog\Controller\Checkout\Register;
+use Opencart\Catalog\Controller\Checkout\PaymentAddress;
+use Opencart\Catalog\Controller\Checkout\ShippingAddress;
+use Opencart\Catalog\Controller\Checkout\ShippingMethod;
+use Opencart\Catalog\Controller\Checkout\PaymentMethod;
+use Opencart\Catalog\Controller\Checkout\Confirm;
 
 /**
  * Class Checkout
@@ -47,31 +53,32 @@ class Checkout extends BaseController {
 		];
 
 		if (!$this->customer->isLogged()) {
-			$data['register'] = $this->load->controller('checkout/register');
+			$data['register'] = (new Register($this->registry))->index();
 		} else {
 			$data['register'] = '';
 		}
 
 		if ($this->customer->isLogged() && $this->config->get('config_checkout_payment_address')) {
-			$data['payment_address'] = $this->load->controller('checkout/payment_address');
+			$data['payment_address'] = (new PaymentAddress($this->registry))->index();
 		} else {
 			$data['payment_address'] = '';
 		}
 
 		if ($this->customer->isLogged() && $cartRepository->hasShipping()) {
-			$data['shipping_address'] = $this->load->controller('checkout/shipping_address');
+			$data['shipping_address'] = (new ShippingAddress($this->registry))->index();
 		} else {
 			$data['shipping_address'] = '';
 		}
 
 		if ($cartRepository->hasShipping()) {
-			$data['shipping_method'] = $this->load->controller('checkout/shipping_method');
+			$data['shipping_method'] = (new ShippingMethod($this->registry))->index();
 		} else {
 			$data['shipping_method'] = '';
 		}
 
-		$data['payment_method'] = $this->load->controller('checkout/payment_method');
-		$data['confirm'] = $this->load->controller('checkout/confirm');
+		// Alpha Engine: Injeção Loader-Free dos sub-controladores
+		$data['payment_method'] = (new PaymentMethod($this->registry))->index();
+		$data['confirm']        = (new Confirm($this->registry))->index();
 
 		$this->render('checkout/checkout', $data);
 	}

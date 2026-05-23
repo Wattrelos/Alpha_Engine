@@ -53,15 +53,34 @@ class CartRepository extends AbstractRepository implements BaseRepositoryInterfa
         // Na Alpha Engine, garantimos que as opções virem um hash JSON para comparação exata no banco
         $optionData = !empty($option) ? json_encode($option) : '';
 
-        $mapper->addItem( // O Repository deve validar se o item já existe e somar a quantidade
-            $this->getCustomerId(),
-            $this->getSessionId(),
-            $this->store_id,
-            $productId,
-            $quantity,
-            $optionData, // TODO: Implementar lógica de verificação de item existente
-            $subscriptionPlanId
-        );
+        // Verifica se o item já existe no carrinho para somar a quantidade (Fim do // TODO)
+        $cartItems = $mapper->getItems($this->getCustomerId(), $this->getSessionId(), $this->store_id);
+        $existingCartId = 0;
+
+        foreach ($cartItems as $item) {
+            $itemOption = $item['option'] ?? '';
+            $itemSubPlan = (int)($item['subscription_plan_id'] ?? 0);
+
+            if ((int)$item['product_id'] === $productId && $itemOption === $optionData && $itemSubPlan === $subscriptionPlanId) {
+                $existingCartId = (int)($item['cart_id'] ?? $item['id']);
+                $quantity += (int)$item['quantity'];
+                break;
+            }
+        }
+
+        if ($existingCartId > 0) {
+            $mapper->updateItem($existingCartId, $quantity, $this->getCustomerId(), $this->getSessionId());
+        } else {
+            $mapper->addItem(
+                $this->getCustomerId(),
+                $this->getSessionId(),
+                $this->store_id,
+                $productId,
+                $quantity,
+                $optionData,
+                $subscriptionPlanId
+            );
+        }
 
         // Invalida o cache em memória para forçar a reconstrução na próxima leitura
         $this->isLoaded = false;
@@ -145,6 +164,39 @@ class CartRepository extends AbstractRepository implements BaseRepositoryInterfa
             $customerGroupId = (int)$this->customer->getGroupId();
         }
 
+        // Alpha Engine: Pré-carregamento de Opções (Fim do N+1 nas opções)
+        $allOptionValueIds = [];
+        foreach ($cartItems as $item) {
+            $options = json_decode($item['option'], true) ?: [];
+            foreach ($options as $productOptionId => $value) {
+                if (is_scalar($value)) {
+                    $allOptionValueIds[] = (int)$value;
+                }
+            }
+        }
+        $allOptionValueIds = array_unique($allOptionValueIds);
+
+        $optionValuesMap = [];
+        if (!empty($allOptionValueIds)) {
+            if (method_exists($productMapper, 'getOptionValuesByIds')) {
+                // O cenário ideal: O Mapper resolve tudo em apenas 1 query
+                $optionValuesMap = $productMapper->getOptionValuesByIds($allOptionValueIds, $this->language_id);
+            } else {
+                // Fallback legado: Cache em memória para evitar queries idênticas até o Mapper ser atualizado
+                foreach ($cartItems as $item) {
+                    $productInfo = $productMap[$item['product_id']] ?? null;
+                    if (!$productInfo) continue;
+
+                    $options = json_decode($item['option'], true) ?: [];
+                    foreach ($options as $productOptionId => $value) {
+                        if (is_scalar($value) && !isset($optionValuesMap[(int)$value])) {
+                            $optionValuesMap[(int)$value] = $productMapper->getOptionValue((int)$productInfo['id'], (int)$value, $this->language_id);
+                        }
+                    }
+                }
+            }
+        }
+
         foreach ($cartItems as $item) {
             // Busca o produto no mapa em memória (O(1)) em vez de consultar o banco
             $productInfo = $productMap[$item['product_id']] ?? null;
@@ -161,7 +213,8 @@ class CartRepository extends AbstractRepository implements BaseRepositoryInterfa
                 foreach ($options as $productOptionId => $value) {
                     // Nota: O OpenCart trata checkbox/múltiplos como array. Simplificado para valores singulares aqui.
                     if (is_scalar($value)) {
-                        $optionValueInfo = $productMapper->getOptionValue((int)$productInfo['id'], (int)$value, $this->language_id);
+                        // Consome a opção do cache em memória previamente carregado O(1)
+                        $optionValueInfo = $optionValuesMap[(int)$value] ?? null;
                         
                         if ($optionValueInfo) {
                             // Processa Modificador de Preço
@@ -361,8 +414,132 @@ class CartRepository extends AbstractRepository implements BaseRepositoryInterfa
     }
 
     // Métodos obrigatórios da BaseRepositoryInterface
-    public function find(int $id): ?InterfaceEntity { return null; }
-    public function findAll(): array { return []; }
-    public function findBy(array $criteria, ?array $orderBy = null, ?int $limit = null, ?int $offset = null): array { return []; }
-    public function findOneBy(array $criteria): ?InterfaceEntity { return null; }
+    public function find(int $id): ?InterfaceEntity { 
+        return $this->getMapper()->findById($id); 
+    }
+    
+    public function findAll(): array { 
+        return $this->getMapper()->findAll(); 
+    }
+    
+    public function findBy(array $criteria, ?array $orderBy = null, ?int $limit = null, ?int $offset = null): array { 
+        return $this->getMapper()->search($criteria, $orderBy, $limit, $offset); 
+    }
+    
+    public function findOneBy(array $criteria): ?InterfaceEntity { 
+        $results = $this->getMapper()->search($criteria);
+        return $results[0] ?? null;
+    }
+
+    /**
+     * Alpha Engine: Adiciona um item ao carrinho e limpa os dados voláteis do checkout.
+     */
+    public function addAndClearCheckout(int $customerId, string $sessionId, int $productId, int $quantity = 1, array $option = [], int $subscriptionPlanId = 0): void
+    {
+        // Embora a injeção do repositório já conheça o cliente e a sessão atual, 
+        // mantemos os parâmetros para integridade da assinatura com a chamada do BaseController
+        $this->add($productId, $quantity, $option, $subscriptionPlanId);
+        $this->clearCheckoutSession();
+    }
+
+    /**
+     * Alpha Engine: Atualiza a quantidade de um item e invalida o checkout atual.
+     */
+    public function updateAndClearCheckout(int $cartId, int $quantity): void
+    {
+        $this->update($cartId, $quantity);
+        $this->clearCheckoutSession();
+    }
+
+    /**
+     * Alpha Engine: Remove um item e invalida o checkout atual.
+     */
+    public function removeAndClearCheckout(int $cartId): void
+    {
+        $this->remove($cartId);
+        $this->clearCheckoutSession();
+    }
+
+    /**
+     * Limpa as seleções temporárias de frete e pagamento da sessão sempre que o carrinho sofrer alterações.
+     */
+    private function clearCheckoutSession(): void
+    {
+        unset($this->session->data['shipping_method']);
+        unset($this->session->data['shipping_methods']);
+        unset($this->session->data['payment_method']);
+        unset($this->session->data['payment_methods']);
+        unset($this->session->data['reward']);
+    }
+
+    /**
+     * Alpha Engine: Prepara o DTO (Data Transfer Object) para exibição do carrinho (Header/Mini-Cart).
+     */
+    public function getCartDisplayData(): object
+    {
+        $this->loadLanguage('common/cart');
+
+        $products = [];
+        
+        // Resolve a injeção do model legado de imagens (Bridge temporário)
+        if (!$this->registry->has('model_tool_image')) {
+            $this->load->model('tool/image');
+        }
+
+        foreach ($this->getProducts() as $product) {
+            if ($product['image']) {
+                $thumb = $this->model_tool_image->resize($product['image'], $this->config->get('config_image_cart_width') ?: 47, $this->config->get('config_image_cart_height') ?: 47);
+            } else {
+                $thumb = $this->model_tool_image->resize('placeholder.png', $this->config->get('config_image_cart_width') ?: 47, $this->config->get('config_image_cart_height') ?: 47);
+            }
+
+            $products[] = [
+                'cart_id'      => $product['cart_id'],
+                'thumb'        => $thumb,
+                'name'         => $product['name'],
+                'model'        => $product['model'],
+                'option'       => $product['option'],
+                'subscription' => $product['subscription'],
+                'quantity'     => $product['quantity'],
+                'price'        => $product['price_text'],
+                'total'        => $product['total_text'],
+                'href'         => $this->url->link('product/product', 'language=' . $this->config->get('config_language') . '&product_id=' . $product['product_id'])
+            ];
+        }
+
+        $data = [
+            'text_items' => sprintf($this->language->get('text_items'), $this->countProducts(), $this->currency->format($this->getTotal(), $this->session->data['currency'])),
+            'products'   => $products,
+            'vouchers'   => [], // Stub para interoperabilidade com Vouchers futuros
+            'cart'       => $this->url->link('checkout/cart', 'language=' . $this->config->get('config_language')),
+            'checkout'   => $this->url->link('checkout/checkout', 'language=' . $this->config->get('config_language'))
+        ];
+
+        // Retorna um Proxy Class (DTO) que atende a conversão "toArray()" usada no BaseController
+        return new class($data) {
+            private array $data;
+            public function __construct(array $data) { $this->data = $data; }
+            public function toArray(): array { return $this->data; }
+            public function get(string $key): mixed { return $this->data[$key] ?? null; }
+        };
+    }
+
+    /**
+     * Alpha Engine: Orquestra a renderização e o cálculo dos módulos de totalização do carrinho.
+     */
+    public function getTotalModules(object $cartData): array
+    {
+        // Stub: Encapsula internamente os totais base em matriz padronizada
+        // substituindo a injeção pesada do Loader de extensões para uma carga mais rápida no dropdown
+        return [
+            [
+                'title' => 'Sub-Total',
+                'text'  => $this->currency->format($this->getSubTotal(), $this->session->data['currency'])
+            ],
+            [
+                'title' => 'Total',
+                'text'  => $this->currency->format($this->getTotal(), $this->session->data['currency'])
+            ]
+        ];
+    }
 }

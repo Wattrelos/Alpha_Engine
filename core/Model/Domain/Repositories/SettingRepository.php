@@ -15,6 +15,7 @@ class SettingRepository extends AbstractRepository implements BaseRepositoryInte
 {
     private array $data = [];
     private bool $isLoaded = false;
+    private int $loadedStoreId = -1;
 
     protected function getMapper(): SettingMapper
     {
@@ -22,38 +23,28 @@ class SettingRepository extends AbstractRepository implements BaseRepositoryInte
     }
 
     /**
-     * Carrega as configurações via Mapper apenas se não estiverem na memória.
+     * Carrega as configurações da loja atual (e da default) via Mapper apenas 1 vez.
      */
-    private function loadAll(): void
+    private function loadForStore(int $storeId): void
     {
-        if (!$this->isLoaded) {
-            $this->data = $this->getMapper()->findAll();
+        if (!$this->isLoaded || $this->loadedStoreId !== $storeId) {
+            $this->data = $this->getMapper()->findByStoreId($storeId);
             $this->isLoaded = true;
+            $this->loadedStoreId = $storeId;
         }
     }
 
     public function getSettings(int $storeId = 0): array
     {
-        $this->loadAll();
-        $result = [];
-
-        foreach ($this->data as $row) {
-            if ((int)$row['store_id'] === 0 || (int)$row['store_id'] === $storeId) {
-                $result[] = $row;
-            }
-        }
-
-        // Emula o `ORDER BY store_id ASC` para garantir sobreposição correta
-        usort($result, function($a, $b) {
-            return (int)$a['store_id'] <=> (int)$b['store_id'];
-        });
-
-        return $result;
+        $this->loadForStore($storeId);
+        
+        // O banco de dados já cuidou da filtragem e da ordenação correta.
+        return $this->data;
     }
 
     public function getSetting(string $code, int $storeId = 0): array
     {
-        $this->loadAll();
+        $this->loadForStore($storeId);
         $settingData = [];
 
         foreach ($this->data as $row) {
@@ -70,7 +61,7 @@ class SettingRepository extends AbstractRepository implements BaseRepositoryInte
 
     public function getValue(string $key, int $storeId = 0): string
     {
-        $this->loadAll();
+        $this->loadForStore($storeId);
         foreach ($this->data as $row) {
             if ((int)$row['store_id'] === $storeId && $row['key'] === $key) {
                 return (string)$row['value'];

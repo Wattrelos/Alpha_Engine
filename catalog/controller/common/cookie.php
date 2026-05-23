@@ -18,11 +18,11 @@ class Cookie extends BaseController {
 	 * @return string
 	 */
 	public function index(): string {
-		$cookieRepository = $this->repository->get(CookieRepository::class);
+		$cookieRepository = $this->getRepository(CookieRepository::class);
 		$cookieData = $cookieRepository->getCookieDisplayData();
 
 		if ($cookieData) {
-			return $this->render('common/cookie', $cookieData->toArray());
+			return $this->load->view('common/cookie', $cookieData->toArray());
 		}
 
 		return '';
@@ -34,12 +34,12 @@ class Cookie extends BaseController {
 	 * @return void
 	 */
 	public function confirm(): void {
-		$this->loadLanguage('common/cookie');
+		$this->language->load('common/cookie');
 
 		$json = [];
 		$agree = (string)($this->request->get['agree'] ?? '0');
 
-		$cookieRepository = $this->repository->get(CookieRepository::class);
+		$cookieRepository = $this->getRepository(CookieRepository::class);
 
 		if ($cookieRepository->confirmPolicy($agree)) {
 			$json['success'] = $this->language->get('text_success');

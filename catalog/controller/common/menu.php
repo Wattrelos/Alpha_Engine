@@ -2,23 +2,24 @@
 namespace Opencart\Catalog\Controller\Common;
 
 use Alpha\Controller\BaseController;
-use Alpha\Model\Domain\Repositories\MenuRepository;
+use Alpha\Model\Domain\Repositories\CategoryRepository;
 
 class Menu extends BaseController {
-	/**
-	 * Index
-	 *
-	 * @return string
-	 */
 	public function index(): string {
-		// Alpha Engine: O MenuRepository cuida da hidratação recursiva e do Cache
-		/** @var MenuRepository $menuRepository */
-		$menuRepository = $this->getRepository(MenuRepository::class);
+		// Carrega as traduções padrão do menu (como text_all, text_category)
+		$this->load->language('common/menu');
+		$data['text_category'] = $this->language->get('text_category');
+		$data['text_all'] = $this->language->get('text_all');
 
-		// Injeta a string HTML renderizada do menu na variável aguardada pelo Twig
-		$data['categorias'] = $menuRepository->getMenuHtml();
+		// Injeta o repositório da Alpha Engine
+		$categoryRepository = $this->getRepository(CategoryRepository::class);
 
-		// Renderiza o template common/menu.twig
-		return $this->render('common/menu', $data);
+		// 1. Injeta o HTML processado super rápido na variável {{ categorias }}
+		$data['categorias'] = $categoryRepository->getMenuHtml();
+
+		// 2. (Fallback) Mantém o array vazio para evitar quebra no laço Twig legado, se houver
+		$data['categories'] = [];
+
+		return $this->load->view('common/menu', $data);
 	}
 }

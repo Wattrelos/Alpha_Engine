@@ -43,9 +43,8 @@
 
 
 .menu-container {
-    display: flex;    
+    display: inline-flex; /* Combina as duas regras anteriores para não anular o flexbox */
     position: relative;   /* Permite posicionar o menu dropdown abaixo do botão */
-    display: inline-block; /* Mantém o botão e menu juntos */
     font-family: Arial, Helvetica, sans-serif;
     /* font-size: medium; */
 
@@ -149,7 +148,7 @@
 
 .search-bar input {
   width: 100%;
-  padding: 0.4 1.5em;
+  padding: 0.4em 1.5em; /* Unidade de medida corrigida para evitar quebra de leitura do CSS */
 }
 /*
 .search-bar button {
@@ -278,4 +277,3 @@
 .input-container.valid .checkmark {
     display: inline; /* Mostra o ícone */
 }
-
