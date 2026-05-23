@@ -38,18 +38,13 @@ class Cart extends BaseController {
 			'href' => $this->url->link('checkout/cart', 'language=' . $this->config->get('config_language'))
 		];
 
-		$data['list'] = $this->load->controller('checkout/cart.getList');
+		// Alpha Engine: Fim do overhead do Loader para métodos da mesma classe
+		$data['list'] = $this->getList();
 
 		$data['language'] = $this->config->get('config_language');
 
-		$data['column_left'] = $this->load->controller('common/column_left');
-		$data['column_right'] = $this->load->controller('common/column_right');
-		$data['content_top'] = $this->load->controller('common/content_top');
-		$data['content_bottom'] = $this->load->controller('common/content_bottom');
-		$data['footer'] = $this->load->controller('common/footer');
-		$data['header'] = $this->load->controller('common/header');
-
-		$this->response->setOutput($this->load->view('checkout/cart', $data));
+		// Alpha Engine: O BaseController já orquestra os Layouts e gerencia o Response automaticamente (Void)
+		$this->render('checkout/cart', $data);
 	}
 
 	/**
@@ -58,7 +53,7 @@ class Cart extends BaseController {
 	 * @return void
 	 */
 	public function list(): void {
-		$this->load->language('checkout/cart');
+		$this->loadLanguage('checkout/cart');
 
 		$this->response->setOutput($this->getList());
 	}
@@ -69,126 +64,17 @@ class Cart extends BaseController {
 	 * @return string
 	 */
 	public function getList(): string {
-		if (isset($this->session->data['error'])) {
-			$data['error_warning'] = $this->session->data['error'];
-
-			unset($this->session->data['error']);
-		} else {
-			$data['error_warning'] = '';
-		}
-
-		if (!$this->cart->hasStock() && (!$this->config->get('config_stock_checkout') || $this->config->get('config_stock_warning'))) {
-			$data['error_stock'] = $this->language->get('error_stock');
-		} else {
-			$data['error_stock'] = '';
-		}
-
-		if (isset($this->session->data['success'])) {
-			$data['success'] = $this->session->data['success'];
-
-			unset($this->session->data['success']);
-		} else {
-			$data['success'] = '';
-		}
-
-		if ($this->config->get('config_customer_price') && !$this->customer->isLogged()) {
-			$data['attention'] = sprintf($this->language->get('text_login'), $this->url->link('account/login', 'language=' . $this->config->get('config_language')), $this->url->link('account/register', 'language=' . $this->config->get('config_language')));
-		} else {
-			$data['attention'] = '';
-		}
-
-		if ($this->config->get('config_cart_weight')) {
-			$data['weight'] = $this->weight->format($this->cart->getWeight(), $this->config->get('config_weight_class_id'), $this->language->get('decimal_point'), $this->language->get('thousand_point'));
-		} else {
-			$data['weight'] = '';
-		}
-
-		$data['edit'] = $this->url->link('checkout/cart.edit', 'language=' . $this->config->get('config_language'));
-
-		// Display prices
-		if ($this->customer->isLogged() || !$this->config->get('config_customer_price')) {
-			$price_status = true;
-		} else {
-			$price_status = false;
-		}
-
-		// Image
-		$this->load->model('tool/image');
-
-		// Upload
-		$this->load->model('tool/upload');
-
-		// Cart
-		$data['products'] = [];
-
+		/** @var CartRepository $cartRepository */
 		$cartRepository = $this->getRepository(CartRepository::class);
-		$products = $cartRepository->getProducts();
-
-		foreach ($products as $product) {
-			if ($product['option']) {
-				foreach ($product['option'] as $key => $option) {
-					if ($option['type'] != 'file') {
-						$value = $option['value'];
-					} else {
-						$upload_info = $this->model_tool_upload->getUploadByCode($option['value']);
-
-						if ($upload_info) {
-							$value = $upload_info['name'];
-						} else {
-							$value = '';
-						}
-					}
-
-					$product['option'][$key]['value'] = (oc_strlen($value) > 20 ? oc_substr($value, 0, 20) . '..' : $value);
-				}
-			}
-
-			$subscription = '';
-
-			if ($product['subscription'] && $price_status) {
-				if ($product['subscription']['trial_status']) {
-					$subscription .= sprintf($this->language->get('text_subscription_trial'), $product['subscription']['trial_price_text'], $product['subscription']['trial_cycle'], $product['subscription']['trial_frequency'], $product['subscription']['trial_duration']);
-				}
-
-				if ($product['subscription']['duration']) {
-					$subscription .= sprintf($this->language->get('text_subscription_duration'), $product['subscription']['price_text'], $product['subscription']['cycle'], $product['subscription']['frequency'], $product['subscription']['duration']);
-				} else {
-					$subscription .= sprintf($this->language->get('text_subscription_cancel'), $product['subscription']['price_text'], $product['subscription']['cycle'], $product['subscription']['frequency']);
-				}
-			}
-
-			$data['products'][] = [
-				'thumb'        => $this->model_tool_image->resize($product['image'], $this->config->get('config_image_cart_width'), $this->config->get('config_image_cart_height')),
-				'subscription' => $subscription,
-				'stock'        => $product['stock_status'] ? true : !(!$this->config->get('config_stock_checkout') || $this->config->get('config_stock_warning')),
-				'minimum'      => !$product['minimum_status'] ? sprintf($this->language->get('error_minimum'), $product['minimum']) : 0,
-				'price'        => $price_status ? $product['price_text'] : '',
-				'total'        => $price_status ? $product['total_text'] : '',
-				'href'         => $this->url->link('product/product', 'language=' . $this->config->get('config_language') . '&product_id=' . $product['product_id']),
-				'remove'       => $this->url->link('checkout/cart.remove', 'language=' . $this->config->get('config_language') . '&key=' . $product['cart_id'])
-			] + $product;
-		}
-
-		$data['totals'] = [];
-
-		$totals = [];
-		$taxes = $this->cart->getTaxes();
-		$total = 0;
-
-		// Display prices
-		if ($this->customer->isLogged() || !$this->config->get('config_customer_price')) {
-			$this->load->model('checkout/cart'); // Mantido apenas para resolver módulos totais legados
-			($this->model_checkout_cart->getTotals)($totals, $taxes, $total);
-
-			foreach ($totals as $result) {
-				$data['totals'][] = ['text' => $price_status ? $this->currency->format($result['value'], $this->session->data['currency']) : ''] + $result;
-			}
-		}
-
+		
+		// Alpha Engine: O DTO gerado encapsula validação, formatação de imagens e alertas da sessão.
+		$response = $cartRepository->getCartListDisplayData();
+		
+		$data = $response->getData();
 		$data['modules'] = [];
 
-		// Alpha Engine: Utilização do Mapper em substituição ao model legado setting/extension
-		$extensionMapper = $this->getMapper(ExtensionMapper::class);
+		/** @var \Alpha\Mappers\EntityMappers\ExtensionMapper $extensionMapper */
+		$extensionMapper = $this->getMapper(\Alpha\Mappers\EntityMappers\ExtensionMapper::class);
 		$extensions = $extensionMapper->getExtensionsByType('total');
 
 		foreach ($extensions as $extension) {
@@ -197,13 +83,6 @@ class Cart extends BaseController {
 			if (!$result instanceof \Exception) {
 				$data['modules'][] = $result;
 			}
-		}
-
-		if ($products) {
-			$data['continue'] = $this->url->link('common/home', 'language=' . $this->config->get('config_language'));
-			$data['checkout'] = $this->url->link('checkout/checkout', 'language=' . $this->config->get('config_language'));
-		} else {
-			$data['continue'] = $this->url->link('common/home', 'language=' . $this->config->get('config_language'));
 		}
 
 		return $this->load->view('checkout/cart_list', $data);
@@ -215,43 +94,23 @@ class Cart extends BaseController {
 	 * @return void
 	 */
 	public function add(): void {
-		$this->load->language('checkout/cart');
+		$this->loadLanguage('checkout/cart');
 
 		$json = [];
 
-		if (isset($this->request->post['product_id'])) {
-			$product_id = (int)$this->request->post['product_id'];
-		} else {
-			$product_id = 0;
-		}
-
-		if (isset($this->request->post['quantity'])) {
-			$quantity = (int)$this->request->post['quantity'];
-		} else {
-			$quantity = 1;
-		}
-
-		if (isset($this->request->post['option'])) {
-			$option = array_filter((array)$this->request->post['option']);
-		} else {
-			$option = [];
-		}
-
-		if (isset($this->request->post['subscription_plan_id'])) {
-			$subscription_plan_id = (int)$this->request->post['subscription_plan_id'];
-		} else {
-			$subscription_plan_id = 0;
-		}
-
-		// Alpha Engine: Injeção do Mapper via PSR-4 para eliminar o loader legado
-		/** @var ProductMapper $productMapper */
-		$productMapper = $this->getMapper(ProductMapper::class);
+		$product_id = (int)($this->request->post['product_id'] ?? 0);
+		$quantity   = (int)($this->request->post['quantity'] ?? 1);
+		$option     = array_filter((array)($this->request->post['option'] ?? []));
+		$subscription_plan_id = (int)($this->request->post['subscription_plan_id'] ?? 0);
 		
-		$product_info = $productMapper->getProduct($product_id);
+		// Alpha Engine: Acessamos o Repository (Domain) para hidratação automática em vez do Mapper
+		/** @var \Alpha\Model\Domain\Repositories\ProductRepository $productRepository */
+		$productRepository = $this->getRepository(\Alpha\Model\Domain\Repositories\ProductRepository::class);
+		$product_info = $productRepository->getProduct($product_id);
 
 		if ($product_info) {
 			// If variant get master product
-			if ($product_info['master_id']) {
+			if (!empty($product_info['master_id'])) {
 				$product_id = $product_info['master_id'];
 			}
 
@@ -263,14 +122,16 @@ class Cart extends BaseController {
 			}
 
 			// Merge variant code with options
-			foreach ($product_info['variant'] as $key => $value) {
-				if (array_key_exists($key, $override)) {
-					$option[$key] = $value;
+			if (!empty($product_info['variant']) && is_array($product_info['variant'])) {
+				foreach ($product_info['variant'] as $key => $value) {
+					if (array_key_exists($key, $override)) {
+						$option[$key] = $value;
+					}
 				}
 			}
 
 			// Validate options
-			$product_options = $productMapper->getOptions($product_id);
+			$product_options = $productRepository->getOptions($product_id);
 
 			foreach ($product_options as $product_option) {
 				if ($product_option['required'] && empty($option[$product_option['product_option_id']])) {
@@ -281,7 +142,7 @@ class Cart extends BaseController {
 			}
 
 			// Validate subscription products
-			$subscriptions = $productMapper->getSubscriptions($product_id);
+			$subscriptions = $productRepository->getSubscriptions($product_id);
 
 			if ($subscriptions && (!$subscription_plan_id || !in_array($subscription_plan_id, array_column($subscriptions, 'subscription_plan_id')))) {
 				$json['error']['subscription'] = $this->language->get('error_subscription');
@@ -291,15 +152,20 @@ class Cart extends BaseController {
 		}
 
 		if (!$json) {
-			$this->getRepository(CartRepository::class)->add($product_id, $quantity, $option, $subscription_plan_id);
+			/** @var CartRepository $cartRepository */
+			$cartRepository = $this->getRepository(CartRepository::class);
+			
+			// Alpha Engine: Orquestração e limpeza de sessão isolados no domínio
+			$cartRepository->addAndClearCheckout(
+				(int)$this->customer->getId(),
+				$this->session->getId(),
+				$product_id, 
+				$quantity, 
+				$option, 
+				$subscription_plan_id
+			);
 
 			$json['success'] = sprintf($this->language->get('text_success'), $this->url->link('product/product', 'language=' . $this->config->get('config_language') . '&product_id=' . $product_id), $product_info['name'], $this->url->link('checkout/cart', 'language=' . $this->config->get('config_language')));
-
-			// Unset all shipping and payment methods
-			unset($this->session->data['shipping_method']);
-			unset($this->session->data['shipping_methods']);
-			unset($this->session->data['payment_method']);
-			unset($this->session->data['payment_methods']);
 		} else {
 			$json['redirect'] = $this->url->link('product/product', 'language=' . $this->config->get('config_language') . '&product_id=' . $product_id, true);
 		}
@@ -313,37 +179,24 @@ class Cart extends BaseController {
 	 * @return void
 	 */
 	public function edit(): void {
-		$this->load->language('checkout/cart');
+		$this->loadLanguage('checkout/cart');
 
 		$json = [];
 
-		if (isset($this->request->post['key'])) {
-			$key = (int)$this->request->post['key'];
-		} else {
-			$key = 0;
-		}
+		$key = (int)($this->request->post['key'] ?? 0);
+		$quantity = (int)($this->request->post['quantity'] ?? 1);
 
-		if (isset($this->request->post['quantity'])) {
-			$quantity = (int)$this->request->post['quantity'];
-		} else {
-			$quantity = 1;
-		}
-
-		// Handles single item update
+		/** @var CartRepository $cartRepository */
 		$cartRepository = $this->getRepository(CartRepository::class);
-		$cartRepository->update($key, $quantity);
+		
+		// Alpha Engine: Repository aplica a alteração e limpa módulos dependentes
+		$cartRepository->updateAndClearCheckout($key, $quantity);
 
-		if (!empty($cartRepository->getProducts())) {
+		if ($cartRepository->hasProducts()) {
 			$json['success'] = $this->language->get('text_edit');
 		} else {
 			$json['redirect'] = $this->url->link('checkout/cart', 'language=' . $this->config->get('config_language'), true);
 		}
-
-		unset($this->session->data['shipping_method']);
-		unset($this->session->data['shipping_methods']);
-		unset($this->session->data['payment_method']);
-		unset($this->session->data['payment_methods']);
-		unset($this->session->data['reward']);
 
 		$this->jsonResponse($json);
 	}
@@ -354,31 +207,23 @@ class Cart extends BaseController {
 	 * @return void
 	 */
 	public function remove(): void {
-		$this->load->language('checkout/cart');
+		$this->loadLanguage('checkout/cart');
 
 		$json = [];
 
-		if (isset($this->request->get['key'])) {
-			$key = (int)$this->request->get['key'];
-		} else {
-			$key = 0;
-		}
+		$key = (int)($this->request->post['key'] ?? $this->request->get['key'] ?? 0);
 
-		// Remove
+		/** @var CartRepository $cartRepository */
 		$cartRepository = $this->getRepository(CartRepository::class);
-		$cartRepository->remove($key);
+		
+		// Alpha Engine: Remoção segura pelo repositório
+		$cartRepository->removeAndClearCheckout($key);
 
-		if (!empty($cartRepository->getProducts())) {
+		if ($cartRepository->hasProducts()) {
 			$json['success'] = $this->language->get('text_remove');
 		} else {
 			$json['redirect'] = $this->url->link('checkout/cart', 'language=' . $this->config->get('config_language'), true);
 		}
-
-		unset($this->session->data['shipping_method']);
-		unset($this->session->data['shipping_methods']);
-		unset($this->session->data['payment_method']);
-		unset($this->session->data['payment_methods']);
-		unset($this->session->data['reward']);
 
 		$this->jsonResponse($json);
 	}

@@ -1,5 +1,8 @@
 <?php
 namespace Opencart\Catalog\Controller\Startup;
+
+use Alpha\Model\Domain\Repositories\SeoUrlRepository;
+
 /**
  * Class SeoUrl
  *
@@ -21,7 +24,10 @@ class SeoUrl extends \Opencart\System\Engine\Controller {
 		if ($this->config->get('config_seo_url')) {
 			$this->url->addRewrite($this);
 
-			$this->load->model('design/seo_url');
+			/** @var SeoUrlRepository $seoUrlRepository */
+			$seoUrlRepository = $this->registry->get('alpha_repository_factory')->get(SeoUrlRepository::class);
+			$store_id = (int)$this->config->get('config_store_id');
+			$language_id = (int)$this->config->get('config_language_id');
 
 			// Decode URL
 			if (isset($this->request->get['_route_'])) {
@@ -33,12 +39,15 @@ class SeoUrl extends \Opencart\System\Engine\Controller {
 				}
 
 				foreach ($parts as $key => $value) {
-					$seo_url_info = $this->model_design_seo_url->getSeoUrlByKeyword($value);
+					// Alpha Engine: Resolve o slug para a query string interna correspondente (ex: "product_id=123")
+					$query_string = $seoUrlRepository->getQueryByKeyword($value, $store_id, $language_id);
 
-					if ($seo_url_info) {
-						$this->request->get[$seo_url_info['key']] = html_entity_decode($seo_url_info['value'], ENT_QUOTES, 'UTF-8');
-
-						unset($parts[$key]);
+					if ($query_string) {
+						$pair = explode('=', $query_string);
+						if (isset($pair[0]) && isset($pair[1])) {
+							$this->request->get[$pair[0]] = html_entity_decode($pair[1], ENT_QUOTES, 'UTF-8');
+							unset($parts[$key]);
+						}
 					}
 				}
 
@@ -68,13 +77,13 @@ class SeoUrl extends \Opencart\System\Engine\Controller {
 		// Build the url
 		$url = '';
 
-		if ($url_info['scheme']) {
+		if (isset($url_info['scheme'])) {
 			$url .= $url_info['scheme'];
 		}
 
 		$url .= '://';
 
-		if ($url_info['host']) {
+		if (isset($url_info['host'])) {
 			$url .= $url_info['host'];
 		}
 
@@ -82,15 +91,22 @@ class SeoUrl extends \Opencart\System\Engine\Controller {
 			$url .= ':' . $url_info['port'];
 		}
 
-		parse_str($url_info['query'], $query);
+		$query = [];
+		$parts = [];
+		if (isset($url_info['query'])) {
+			parse_str($url_info['query'], $query);
+			$parts = explode('&', $url_info['query']);
+		}
 
 		$language_id = $this->config->get('config_language_id');
 
 		// Start changing the URL query into a path
 		$paths = [];
 
-		// Parse the query into its separate parts
-		$parts = explode('&', $url_info['query']);
+
+		/** @var SeoUrlRepository $seoUrlRepository */
+		$seoUrlRepository = $this->registry->get('alpha_repository_factory')->get(SeoUrlRepository::class);
+		$store_id = (int)$this->config->get('config_store_id');
 
 		foreach ($parts as $part) {
 			$pair = explode('=', $part);
@@ -108,7 +124,17 @@ class SeoUrl extends \Opencart\System\Engine\Controller {
 			$index = $key . '=' . $value;
 
 			if (!isset($this->data[$language_id][$index])) {
-				$this->data[$language_id][$index] = $this->model_design_seo_url->getSeoUrlByKeyValue((string)$key, (string)$value);
+				// Alpha Engine: Resolução de alta performance via Repositório (Identity Map -> Cache Físico -> DAO)
+				$keyword = $seoUrlRepository->getKeywordByQuery($key, $value, $store_id, $language_id);
+				
+				if ($keyword) {
+					$this->data[$language_id][$index] = [
+						'keyword'    => $keyword,
+						'sort_order' => count($paths)
+					];
+				} else {
+					$this->data[$language_id][$index] = false;
+				}
 			}
 
 			if ($this->data[$language_id][$index]) {
@@ -127,7 +153,7 @@ class SeoUrl extends \Opencart\System\Engine\Controller {
 		array_multisort($sort_order, SORT_ASC, $paths);
 
 		// Build the path
-		$url .= str_replace('/index.php', '', $url_info['path']);
+		$url .= str_replace('/index.php', '', $url_info['path'] ?? '');
 
 		foreach ($paths as $result) {
 			$url .= '/' . $result['keyword'];

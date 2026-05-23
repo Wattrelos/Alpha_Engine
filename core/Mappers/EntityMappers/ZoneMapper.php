@@ -47,7 +47,7 @@ class ZoneMapper extends BaseMapper {
      */
     public function getTotalZonesByCountryId(int $country_id): int {
         $query = (new QueryBuilder())
-            ->from(DB_PREFIX . 'zone', 'z')
+            ->from(DB_PREFIX . $this->tableName, 'z')
             ->where("z.country_id = ?", [$country_id])
             ->where("z.status = ?", [1]);
 

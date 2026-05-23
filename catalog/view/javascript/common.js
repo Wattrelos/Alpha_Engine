@@ -98,6 +98,12 @@ $(document).on('submit', 'form', function (e) {
         var method = $(button).attr('formmethod') || $(form).attr('method') || 'post';
         var enctype = $(button).attr('formenctype') || $(form).attr('enctype') || 'application/x-www-form-urlencoded';
 
+        // Alpha Engine: Previne crash do JavaScript caso o desenvolvedor esqueça de colocar o atributo 'action' no formulário
+        if (typeof action === 'undefined' || action === false || action === '') {
+            console.error('Alpha Engine Error: Formulário disparou requisição AJAX, mas não possui o atributo "action" ou "formaction".', form);
+            return false; // Interrompe silenciosamente sem quebrar o resto do JS da página
+        }
+
         console.log(e);
         console.log(element);
         console.log('action ' + action);

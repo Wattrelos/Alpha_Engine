@@ -118,13 +118,22 @@ class SeoUrlRepository extends AbstractRepository implements BaseRepositoryInter
      */
     public function getQueryByKeyword(string $keyword, int $storeId, int $languageId): string
     {
+        $cacheHash = 'reverse_' . $keyword;
+        
+        if (isset($this->urlCache[$cacheHash])) {
+            return $this->urlCache[$cacheHash];
+        }
+
         $cacheKey = "seo_query_{$storeId}_{$languageId}_" . md5($keyword);
 
         if ($this->cache !== null && $this->cache->has($cacheKey)) {
-            return $this->cache->get($cacheKey);
+            $query = $this->cache->get($cacheKey);
+            $this->urlCache[$cacheHash] = $query;
+            return $query;
         }
 
         $query = $this->getMapper()->getQueryByKeyword($keyword, $storeId, $languageId);
+        $this->urlCache[$cacheHash] = $query;
 
         if ($this->cache !== null) {
             $this->cache->set($cacheKey, $query, 86400);

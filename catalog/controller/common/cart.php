@@ -18,16 +18,30 @@ class Cart extends BaseController {
 	 * @return string
 	 */
 	public function index(): string {
+		$data = [];
+		
+		// Alpha Engine: Carrega o dicionário PRIMEIRO para obter chaves estáticas como text_no_results, text_cart, etc.
+		$this->loadLanguageData('common/cart', $data);
+
 		// Alpha Engine: Injeção do repositório de domínio
 		$cartRepository = $this->repository->get(CartRepository::class);
 		$cartData = $cartRepository->getCartDisplayData();
-		$data = $cartData->toArray();
+		
+		// Alpha Engine: Sobrescreve as variáveis de idioma cruas (ex: %s) com as strings dinâmicas formatadas do DTO
+		$data = array_merge($data, $cartData->toArray());
 
-		// Alpha Engine: O Repositório agora orquestra o processamento Loader-Free de sub-componentes
-		$data['modules'] = $cartRepository->getTotalModules($cartData);
-
-		// Alpha Engine: Carrega o dicionário para as chaves text_items, text_no_results, etc.
-		$this->loadLanguageData('common/cart', $data);
+		// Alpha Engine: Renderização de Totais centralizada (Exatamente igual ao checkout/cart)
+		$totals = [];
+		$taxes = $cartRepository->getTaxes();
+		$total = 0;
+		
+		if ($this->customer->isLogged() || !$this->config->get('config_customer_price')) {
+		    $cartRepository->getTotals($totals, $taxes, $total);
+		}
+		
+		foreach ($totals as $result) {
+		    $data['totals'][] = ['title' => $result['title'], 'text' => $this->currency->format($result['value'], $this->session->data['currency'])];
+		}
 
 		// Alpha Engine: Define a rota de re-renderização via AJAX usada pelo common.js
 		$data['list'] = $this->url->link('common/cart|info', 'language=' . $this->config->get('config_language'));
@@ -54,7 +68,7 @@ class Cart extends BaseController {
 		$this->language->load('checkout/cart');
 
 		$json = [];
-		$cart_id = (int)($this->request->post['key'] ?? 0);
+		$cart_id = (int)($this->request->post['key'] ?? $this->request->get['key'] ?? 0);
 
 		$cartRepository = $this->repository->get(CartRepository::class);
 		

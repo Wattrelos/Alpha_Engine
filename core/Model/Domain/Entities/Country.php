@@ -28,6 +28,12 @@ class Country extends BaseEntity
     #[OneToMany(targetEntity: Zone::class, mappedBy: "country", foreignKey: "countryId")]
     private array $zones = [];
 
+    /**
+     * @var CountryDescription[]
+     */
+    #[OneToMany(targetEntity: CountryDescription::class, mappedBy: "country", foreignKey: "countryId")]
+    private array $descriptions = [];
+
     public function getName(): string
     {
         return $this->name;
@@ -111,6 +117,26 @@ class Country extends BaseEntity
     public function setZones(array $zones): self
     {
         $this->zones = $zones;
+        return $this;
+    }
+
+    /**
+     * Retorna as traduções do país.
+     * @return CountryDescription[]
+     */
+    public function getDescriptions(): array
+    {
+        return $this->descriptions;
+    }
+
+    /**
+     * Define a coleção de traduções.
+     * @param CountryDescription[] $descriptions
+     * @return self
+     */
+    public function setDescriptions(array $descriptions): self
+    {
+        $this->descriptions = $descriptions;
         return $this;
     }
 }

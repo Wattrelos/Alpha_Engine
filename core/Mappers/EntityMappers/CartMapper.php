@@ -82,7 +82,7 @@ class CartMapper extends BaseMapper
         $query = (new QueryBuilder())
             ->update($this->getFullTableName())
             ->set('quantity', $quantity)
-            ->where('cart_id = ?', [$cartId]); // Mantendo cart_id para compatibilidade
+            ->where('id = ?', [$cartId]); // Alpha Engine: PK padronizada como id
 
         if ($customerId) {
             $query->where('customer_id = ?', [$customerId]);
@@ -100,7 +100,7 @@ class CartMapper extends BaseMapper
     {
         $query = (new QueryBuilder())
             ->delete($this->getFullTableName())
-            ->where('cart_id = ?', [$cartId]);
+            ->where('id = ?', [$cartId]);
 
         if ($customerId) {
             $query->where('customer_id = ?', [$customerId]);
@@ -136,21 +136,19 @@ class CartMapper extends BaseMapper
      */
     public function addItem(int $customerId, string $sessionId, int $storeId, int $productId, int $quantity, string $optionHash, int $subscriptionPlanId = 0): void
     {
-        // Como o QueryBuilder ainda não suporta INSERT, usamos o DAO para criar a entidade.
-        // Esta é a forma mais segura e alinhada à arquitetura Alpha.
-        $cart = new \Alpha\Model\Domain\Entities\Cart();
-        $cart->setApiId(0) // Assumindo API padrão
-             ->setCustomerId($customerId)
-             ->setSessionId($sessionId)
-             ->setStoreId($storeId)
-             ->setProductId($productId)
-             ->setSubscriptionPlanId($subscriptionPlanId)
-             ->setOption($optionHash)
-             ->setQuantity($quantity)
-             ->setDateAdded(date('Y-m-d H:i:s'));
-        
-        // O DAO irá converter o objeto em um INSERT seguro.
-        // Nota: A tabela 'cart' precisa ter as colunas correspondentes à entidade.
-        $this->dao->create($cart);
+        // Alpha Engine: Como a entidade Cart pode estar desatualizada (sem setStoreId), 
+        // executamos a inserção de forma atômica via PDO para máxima performance e segurança.
+        $conn = \Alpha\Model\DataAccessObject\ConnectionDB::getInstance()->getConnection();
+        $sql = "INSERT INTO `" . $this->getFullTableName() . "` (`customer_id`, `session_id`, `store_id`, `product_id`, `subscription_plan_id`, `option`, `quantity`, `date_added`) VALUES (?, ?, ?, ?, ?, ?, ?, NOW())";
+        $stmt = $conn->prepare($sql);
+        $stmt->execute([
+            $customerId,
+            $sessionId,
+            $storeId,
+            $productId,
+            $subscriptionPlanId,
+            $optionHash,
+            $quantity
+        ]);
     }
 }

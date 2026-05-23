@@ -115,7 +115,7 @@ class ProductMapper extends BaseMapper {
         }
 
         if (!empty($data['filter_category_id'])) {
-             $query->where($data['filter_sub_category'] ? "cp.path_id = ?" : "p2c.category_id = ?", [$data['filter_category_id']]);
+             $query->where(!empty($data['filter_sub_category']) ? "cp.path_id = ?" : "p2c.category_id = ?", [$data['filter_category_id']]);
         }
 
         // Select e Ordenação
@@ -217,7 +217,7 @@ class ProductMapper extends BaseMapper {
               ->where("p.quantity > 0");
 
         if (!empty($data['filter_category_id'])) {
-            $query->where($data['filter_sub_category'] ? "cp.path_id = ?" : "p2c.category_id = ?", [$data['filter_category_id']]);
+            $query->where(!empty($data['filter_sub_category']) ? "cp.path_id = ?" : "p2c.category_id = ?", [$data['filter_category_id']]);
         }
 
         if (!empty($data['filter_manufacturer_id'])) {
@@ -353,29 +353,84 @@ class ProductMapper extends BaseMapper {
             ->select('po.*', 'po.id AS product_option_id', 'od.name', 'o.type', 'o.sort_order');
 
         $rows = $this->dao->executeQuery($query);
-        $data = [];
-
-        foreach ($rows as $row) {
-            $data[] = $row + ['product_option_value' => $this->getOptionValues($product_id, (int)$row['product_option_id'], $language_id)];
+        
+        if (empty($rows)) {
+            return [];
         }
-        return $data;
-    }
 
-    /**
-     * Auxiliar para carregar os valores de uma opção específica
-     */
-    private function getOptionValues(int $product_id, int $product_option_id, int $language_id): array {
-        $query = (new QueryBuilder())
+        // Alpha Engine: Batch Loading para eliminar N+1 Queries nos valores das opções
+        $productOptionIds = array_column($rows, 'product_option_id');
+        $placeholders = implode(',', array_fill(0, count($productOptionIds), '?'));
+
+        $queryValues = (new QueryBuilder())
             ->from(DB_PREFIX . 'product_option_value', 'pov')
             ->leftJoin(DB_PREFIX . 'option_value', 'ov', 'pov.option_value_id = ov.id')
             ->leftJoin(DB_PREFIX . 'option_value_description', 'ovd', 'ov.id = ovd.option_value_id')
             ->where('pov.product_id = ?', [$product_id])
-            ->where('pov.product_option_id = ?', [$product_option_id])
+            ->where("pov.product_option_id IN ($placeholders)", $productOptionIds)
             ->where('ovd.language_id = ?', [$language_id])
             ->orderBy('ov.sort_order', 'ASC')
             ->select('pov.*', 'pov.id AS product_option_value_id', 'ovd.name', 'ov.image', 'ov.sort_order');
 
-        return $this->dao->executeQuery($query);
+        $values = $this->dao->executeQuery($queryValues);
+
+        // Indexação em memória O(1)
+        $valuesGrouped = [];
+        foreach ($values as $value) {
+            $valuesGrouped[$value['product_option_id']][] = $value;
+        }
+
+        $data = [];
+        foreach ($rows as $row) {
+            $optionId = $row['product_option_id'];
+            $data[] = $row + ['product_option_value' => $valuesGrouped[$optionId] ?? []];
+        }
+        
+        return $data;
+    }
+
+    /**
+     * Alpha Engine: Carrega valores de opções selecionadas em lote (Batch Loading).
+     * Vital para o CartRepository calcular preços finais sem causar N+1 Queries no Carrinho.
+     */
+    public function getOptionValuesByIds(array $product_option_value_ids, int $language_id): array {
+        if (empty($product_option_value_ids)) return [];
+        
+        $placeholders = implode(',', array_fill(0, count($product_option_value_ids), '?'));
+        
+        $query = (new QueryBuilder())
+            ->from(DB_PREFIX . 'product_option_value', 'pov')
+            ->leftJoin(DB_PREFIX . 'option_value_description', 'ovd', 'pov.option_value_id = ovd.option_value_id')
+            ->leftJoin(DB_PREFIX . 'product_option', 'po', 'pov.product_option_id = po.id')
+            ->leftJoin(DB_PREFIX . 'option_description', 'od', 'po.option_id = od.option_id')
+            ->where("pov.id IN ($placeholders)", $product_option_value_ids)
+            ->where('ovd.language_id = ?', [$language_id])
+            ->where('od.language_id = ?', [$language_id])
+            ->select(
+                'pov.*', 
+                'pov.id AS product_option_value_id', 
+                'ovd.name AS option_value_name',
+                'po.option_id',
+                'od.name AS option_name'
+            );
+            
+        $results = $this->dao->executeQuery($query);
+        
+        // Retorna indexado pelo ID do valor da opção para facilitar o mapeamento no CartRepository
+        $indexed = [];
+        foreach ($results as $result) {
+            $indexed[$result['product_option_value_id']] = $result;
+        }
+        
+        return $indexed;
+    }
+
+    /**
+     * Fallback de segurança legado para buscar uma opção única
+     */
+    public function getOptionValue(int $product_id, int $product_option_value_id, int $language_id): array {
+        $result = $this->getOptionValuesByIds([$product_option_value_id], $language_id);
+        return !empty($result) ? reset($result) : [];
     }
 
     /**

@@ -2,21 +2,19 @@
 
 namespace Alpha\Mappers\EntityMappers;
 
-use Alpha\Model\DataAccessObject\DataAccessObject;
+use Alpha\Mappers\BaseMapper;
 use Alpha\Model\DataAccessObject\QueryBuilder;
 
 /**
  * Mapper para gerenciar a lógica de Páginas de Informação (Institucional)
+ * 
+ * Alpha Engine: Estende BaseMapper para herdar DAO, Registry e Cache.
  */
-class InformationMapper {
-    private DataAccessObject $dao;
-
-    public function __construct() {
-        $this->dao = new DataAccessObject();
-    }
+class InformationMapper extends BaseMapper {
+    protected string $tableName = 'information';
 
     /**
-     * Obtém uma página de informação específica
+     * Obtém uma página de informação específica otimizada via SQL (Store, Language e Status)
      */
     public function getInformation(int $information_id, int $language_id, int $store_id): array {
         static $cache = [];
@@ -41,7 +39,7 @@ class InformationMapper {
     }
 
     /**
-     * Lista todas as páginas de informação ativas
+     * Lista todas as páginas de informação ativas (Menu Footer/Sitemap)
      */
     public function getInformations(int $language_id, int $store_id): array {
         // Alpha Engine: Memoization Cache (Evita gargalo de N+1 Queries no SEO/Menus)

@@ -5,6 +5,7 @@ namespace Alpha\Model\Domain\Repositories;
 use Alpha\Mappers\EntityMappers\CartMapper;
 use Alpha\Mappers\EntityMappers\ProductMapper;
 use Alpha\Model\Domain\InterfaceEntity;
+use Alpha\Model\DataTransferObject\ViewResponse;
 
 /**
  * CartRepository - Orquestra a lógica de negócios do Carrinho de Compras.
@@ -481,17 +482,11 @@ class CartRepository extends AbstractRepository implements BaseRepositoryInterfa
 
         $products = [];
         
-        // Resolve a injeção do model legado de imagens (Bridge temporário)
-        if (!$this->registry->has('model_tool_image')) {
-            $this->load->model('tool/image');
-        }
+        // Alpha Engine: Utiliza o novo Presenter para processamento padronizado de imagens
+        $imagePresenter = new \Alpha\Support\Presenters\ImagePresenter($this->registry);
 
         foreach ($this->getProducts() as $product) {
-            if ($product['image']) {
-                $thumb = $this->model_tool_image->resize($product['image'], $this->config->get('config_image_cart_width') ?: 47, $this->config->get('config_image_cart_height') ?: 47);
-            } else {
-                $thumb = $this->model_tool_image->resize('placeholder.png', $this->config->get('config_image_cart_width') ?: 47, $this->config->get('config_image_cart_height') ?: 47);
-            }
+            $thumb = $imagePresenter->resize($product['image'], (int)$this->config->get('config_image_cart_width') ?: 47, (int)$this->config->get('config_image_cart_height') ?: 47);
 
             $products[] = [
                 'cart_id'      => $product['cart_id'],
@@ -525,21 +520,138 @@ class CartRepository extends AbstractRepository implements BaseRepositoryInterfa
     }
 
     /**
-     * Alpha Engine: Orquestra a renderização e o cálculo dos módulos de totalização do carrinho.
+     * Alpha Engine: Consolida o DTO completo para a listagem assíncrona do Carrinho.
+     * Centraliza a formatação de opções, alertas de estoque e links (ViewResponse).
      */
-    public function getTotalModules(object $cartData): array
+    public function getCartListDisplayData(): ViewResponse
     {
-        // Stub: Encapsula internamente os totais base em matriz padronizada
-        // substituindo a injeção pesada do Loader de extensões para uma carga mais rápida no dropdown
-        return [
-            [
-                'title' => 'Sub-Total',
-                'text'  => $this->currency->format($this->getSubTotal(), $this->session->data['currency'])
-            ],
-            [
-                'title' => 'Total',
-                'text'  => $this->currency->format($this->getTotal(), $this->session->data['currency'])
-            ]
-        ];
+        $this->loadLanguage('checkout/cart');
+
+        $data = [];
+
+        $data['error_warning'] = $this->session->data['error'] ?? '';
+        unset($this->session->data['error']);
+
+        $data['success'] = $this->session->data['success'] ?? '';
+        unset($this->session->data['success']);
+
+        if (!$this->hasStock() && (!$this->config->get('config_stock_checkout') || $this->config->get('config_stock_warning'))) {
+            $data['error_stock'] = $this->language->get('error_stock');
+        } else {
+            $data['error_stock'] = '';
+        }
+
+        if ($this->config->get('config_customer_price') && !$this->customer->isLogged()) {
+            $data['attention'] = sprintf($this->language->get('text_login'), $this->url->link('account/login', 'language=' . $this->config->get('config_language')), $this->url->link('account/register', 'language=' . $this->config->get('config_language')));
+        } else {
+            $data['attention'] = '';
+        }
+
+        if ($this->config->get('config_cart_weight')) {
+            $data['weight'] = $this->weight->format($this->getWeight(), $this->config->get('config_weight_class_id'), $this->language->get('decimal_point'), $this->language->get('thousand_point'));
+        } else {
+            $data['weight'] = '';
+        }
+
+        $data['edit'] = $this->url->link('checkout/cart.edit', 'language=' . $this->config->get('config_language'));
+
+        $price_status = $this->customer->isLogged() || !$this->config->get('config_customer_price');
+
+        $data['products'] = [];
+        $imagePresenter = new \Alpha\Support\Presenters\ImagePresenter($this->registry);
+
+        foreach ($this->getProducts() as $product) {
+            $optionData = [];
+            if (!empty($product['option'])) {
+                foreach ($product['option'] as $option) {
+                    $value = (string)($option['value'] ?? '');
+                    $optionData[] = [
+                        'name'  => $option['name'],
+                        'value' => (oc_strlen($value) > 20 ? oc_substr($value, 0, 20) . '..' : $value)
+                    ];
+                }
+            }
+
+            $data['products'][] = [
+                'cart_id'      => $product['cart_id'],
+                'thumb'        => $imagePresenter->resize($product['image'], (int)$this->config->get('config_image_cart_width') ?: 47, (int)$this->config->get('config_image_cart_height') ?: 47),
+                'name'         => $product['name'],
+                'model'        => $product['model'],
+                'option'       => $optionData,
+                'subscription' => $product['subscription'] ?? '',
+                'quantity'     => $product['quantity'],
+                'stock'        => $product['stock_status'] ? true : !(!$this->config->get('config_stock_checkout') || $this->config->get('config_stock_warning')),
+                'minimum'      => !$product['minimum_status'] ? sprintf($this->language->get('error_minimum'), $product['minimum']) : 0,
+                'price'        => $price_status ? $product['price_text'] : '',
+                'total'        => $price_status ? $product['total_text'] : '',
+                'href'         => $this->url->link('product/product', 'language=' . $this->config->get('config_language') . '&product_id=' . $product['product_id']),
+                'remove'       => $this->url->link('checkout/cart.remove', 'language=' . $this->config->get('config_language') . '&key=' . $product['cart_id'])
+            ];
+        }
+
+        $data['totals'] = [];
+        if ($price_status) {
+            $totals = [];
+            $taxes = $this->getTaxes();
+            $total = 0;
+            $this->getTotals($totals, $taxes, $total);
+            foreach ($totals as $result) {
+                $data['totals'][] = [
+                    'title' => $result['title'],
+                    'text'  => $this->currency->format($result['value'], $this->session->data['currency'])
+                ] + $result;
+            }
+        }
+
+        if ($this->hasProducts()) {
+            $data['continue'] = $this->url->link('common/home', 'language=' . $this->config->get('config_language'));
+            $data['checkout'] = $this->url->link('checkout/checkout', 'language=' . $this->config->get('config_language'));
+        } else {
+            $data['continue'] = $this->url->link('common/home', 'language=' . $this->config->get('config_language'));
+        }
+
+        return new ViewResponse($data);
+    }
+
+    /**
+     * Alpha Engine: Orquestra a renderização e o cálculo dos módulos de totalização do carrinho.
+     * Substitui completamente o model legado checkout/cart.php
+     */
+    public function getTotals(array &$totals, array &$taxes, float &$total): void
+    {
+        /** @var \Alpha\Mappers\EntityMappers\ExtensionMapper $extensionMapper */
+        $extensionMapper = $this->mapperFactory->get(\Alpha\Mappers\EntityMappers\ExtensionMapper::class);
+        
+        // Fim do N+1: Busca as extensões do tipo 'total' no banco através do DAO
+        $results = $extensionMapper->getExtensionsByType('total');
+
+        $sort_order = [];
+        foreach ($results as $key => $value) {
+            $sort_order[$key] = $this->config->get('total_' . $value['code'] . '_sort_order');
+        }
+
+        // Ordena as extensões (Sub-Total -> Frete -> Cupom -> Impostos -> Total)
+        array_multisort($sort_order, SORT_ASC, $results);
+
+        foreach ($results as $result) {
+            if ($this->config->get('total_' . $result['code'] . '_status')) {
+                
+                // Carrega a extensão legada como bridge (até refatorarmos cada uma)
+                $file = DIR_EXTENSION . $result['extension'] . '/catalog/model/total/' . $result['code'] . '.php';
+                if (is_file($file)) {
+                    $this->load->model('extension/' . $result['extension'] . '/total/' . $result['code']);
+                    
+                    // Evoca a função getTotal nativamente
+                    ($this->{'model_extension_' . $result['extension'] . '_total_' . $result['code']}->getTotal)($totals, $taxes, $total);
+                }
+            }
+        }
+
+        // Alpha Engine: Reordenação final baseada no sort_order interno injetado pelas próprias extensões
+        $sort_order = [];
+        foreach ($totals as $key => $value) {
+            $sort_order[$key] = $value['sort_order'];
+        }
+        array_multisort($sort_order, SORT_ASC, $totals);
     }
 }

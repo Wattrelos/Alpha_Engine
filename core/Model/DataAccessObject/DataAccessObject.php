@@ -33,7 +33,7 @@ class DataAccessObject
     public function executeQuery(QueryBuilder $builder): array {      
         
         // Depurador recorrente. Comente, porém não apage ---------------------------------------------------------------------------------------
-        
+        /*
         // Alpha Engine: Debugger Ultra-Leve (Crash-Proof & Memory Safe)
         
         $logFile = DIR_LOGS . 'queries.php';
@@ -72,7 +72,7 @@ class DataAccessObject
         
         // Usamos error_log (unbuffered) para forçar a gravação instantânea no disco, mesmo se a linha abaixo der OOM
         error_log("[" . date('Y-m-d H:i:s') . "] " . $runnableSql . "\n", 3, $logFile);
-        
+        */
         // ------------------------------------------------------------------------------------------------------------------------------------------
 
         $conn = ConnectionDB::getInstance()->getConnection();        
@@ -93,7 +93,7 @@ class DataAccessObject
                 }
             }
 
-            error_log("  -> [RETORNO] Tempo: {$executionTime}ms | Linhas: {$rowCount} | Amostra: " . json_encode($sample) . "\n", 3, $logFile);
+            // error_log("  -> [RETORNO] Tempo: {$executionTime}ms | Linhas: {$rowCount} | Amostra: " . json_encode($sample) . "\n", 3, $logFile);
             return $results;
         } catch (\PDOException $e) {
             error_log("  -> [ERRO SQL] " . $e->getMessage() . "\n", 3, $logFile);

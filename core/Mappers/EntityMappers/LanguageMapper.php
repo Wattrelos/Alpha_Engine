@@ -14,18 +14,12 @@ class LanguageMapper extends BaseMapper
     protected string $entityClass = Language::class;
     protected string $tableName = 'language';
 
-    public function __construct($registry = null)
-    {
-        parent::__construct($registry);
-    }
-
     /**
      * Recupera um idioma específico pelo ID.
      */
     public function getLanguage(int $language_id): ?Language
     {
-        $results = $this->dao->readByIds(Language::class, [$language_id]);
-        return $results ? $results[0] : null;
+        return $this->findById($language_id);
     }
 
     /**
@@ -33,13 +27,7 @@ class LanguageMapper extends BaseMapper
      */
     public function getLanguageByCode(string $code): ?Language
     {
-        $builder = (new QueryBuilder())
-            ->from(DB_PREFIX . 'language')
-            ->where("code = ?", [$code])
-            ->select('id');
-
-        $rows = $this->dao->executeQuery($builder);
-        return $rows ? $this->getLanguage((int)$rows[0]['id']) : null;
+        return $this->findOneBy(['code' => $code]);
     }
 
     /**
@@ -49,15 +37,6 @@ class LanguageMapper extends BaseMapper
      */
     public function getLanguages(): array
     {
-        $builder = (new QueryBuilder())
-            ->from(DB_PREFIX . 'language')
-            ->where("status = ?", [1])
-            ->orderBy("sort_order", "ASC")
-            ->select('id');
-
-        $rows = $this->dao->executeQuery($builder);
-        $ids = array_column($rows, 'id');
-
-        return $this->dao->readByIds(Language::class, $ids);
+        return $this->search(['status' => 1], ['sort_order' => 'ASC']);
     }
 }

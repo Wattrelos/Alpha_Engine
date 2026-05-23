@@ -23,11 +23,16 @@ Este projeto implementa uma camada de engenharia de software moderna sobre o nú
   * **Ponte de Componentes Visuais (View Presenters):** Construímos a lógica de adaptação no controlador da Home e nos Módulos (`Featured`, `Latest`, `Bestseller`) para pegar os dados puros, tipados e performáticos da Alpha Engine e formatá-los para o componente visual `Thumb` legado do OpenCart (injeção de `no_image.png`, cache de redimensionamento e cálculo de impostos nativo).
   * **Gestão Global de Assets:** Injeção correta da identidade visual (`personalizada.css`) e scripts estruturais (`bootstrap.bundle.min.js`) de forma centralizada pelo `Header`, evitando redundância e falhas nos dropdowns nativos.
   * **Hidratação do Menu Principal:** Controlador `Menu` refatorado para entregar simultaneamente o HTML pré-renderizado ultra-rápido (`{{ categorias }}`) e os dados crus (`{{ categories }}`) garantindo máxima compatibilidade com layouts.
-* **Status Atual:** **Sprint de Interface e Catálogo (Home Concluída).** A página inicial, o cabeçalho e as vitrines de produtos estão estáveis, blindados contra N+1 Queries (Batch Loading de SEO) e renderizando perfeitamente os estilos e imagens redimensionadas em cache.
+  * **Refatoração Fluida de Layout (Bootstrap 5):** Reestruturação do rodapé (`footer.twig`) para usar grid responsiva moderna (`col-12 col-sm-6 col-md`), eliminando quebras no mobile e adaptando-se automaticamente a remoção de colunas.
+  * **Failsafe Global de AJAX (`common.js`):** Inclusão de um interceptador inteligente que previne "crashes" de tela (JavaScript Fatal Errors) caso formulários tentem ser enviados sem atributo `action`, permitindo log limpo para os desenvolvedores.
+  * **Limpeza de Anti-Patterns no Carrinho (`cart.php`):** Substituição de dezenas de validações verbosas (`if(isset(...))`) pelo operador moderno Null Coalescing (`??`). Adequação do carrinho para consumir o `ProductRepository` (Domain) ao invés do Mapper, resolvendo automaticamente o idioma e a loja e corrigindo falhas de hidratação.
+  * **Completude do DTO de Produtos (`ProductRepository`):** Injeção nativa das rotas de adição ao carrinho, lista de desejos e comparação (`cart_add`, etc.) diretamente na geração da Thumb, reabilitando a função de "Comprar" na página inicial e nas vitrines com comunicação direta à Alpha Engine.
+  * **Home Loader-Free:** Adaptação do controlador `common/home` para utilizar injeção direta de DTOs via repositório, populando nativamente as vitrines de Lançamentos e Destaques sem depender de módulos engessados e N+1 Queries.
+* **Status Atual:** **Sprint de Interface, Catálogo e Integração do Carrinho.** A página inicial, o cabeçalho e as vitrines de produtos estão estáveis, blindados contra N+1 Queries e renderizando perfeitamente. O ciclo de adição ao carrinho de compras via AJAX foi restaurado na nova arquitetura e com validação de dados limpa.
 * **Próximos Passos (Retomada):** 
-  1. Refatorar o roteador nativo de SEO (`startup/seo_url.php`) para consumir o `SeoUrlRepository` da Alpha Engine, blindando todas as rotas da loja.
-  2. Investigar por que o minicart (carrinho do topo) parou de abrir no evento de clique.
-  3. Extrair a lógica de formatação de Thumbnail (Redimensionamento/Preço) para um *Helper/Presenter* isolado para não repetir código nas páginas de Categoria e Busca.
+  1. Investigar por que o minicart (carrinho do topo) parou de abrir no evento de clique (resolução de dropdown do Bootstrap ou z-index).
+  2. Estender a modernização Loader-Free (limpeza de anti-patterns e uso de DTOs) para as páginas de **Categoria** e **Busca de Produtos**.
+  3. Refatorar o roteador nativo de SEO (`startup/seo_url.php`) para consumir o `SeoUrlRepository` da Alpha Engine, blindando e cacheando as rotas amigáveis da loja.
 
 ---
 

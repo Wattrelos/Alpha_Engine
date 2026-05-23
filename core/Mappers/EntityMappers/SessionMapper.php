@@ -29,7 +29,7 @@ class SessionMapper extends BaseMapper // Alterado de AbstractMapper para BaseMa
     {
         // Alpha Engine Failsafe: Intercepta sessões corrompidas (> 5MB) antes de estourar a memória
         $checkQuery = (new QueryBuilder())
-            ->from(DB_PREFIX . 'session')
+            ->from($this->getFullTableName())
             ->where("session_token = ?", [$token])
             ->select('LENGTH(data) AS size')
             ->limit(1);
@@ -41,7 +41,7 @@ class SessionMapper extends BaseMapper // Alterado de AbstractMapper para BaseMa
         }
 
         $query = (new QueryBuilder())
-            ->from(DB_PREFIX . 'session')
+            ->from($this->getFullTableName())
             ->where("session_token = ?", [$token])
             ->where("expire_at > ?", [$now])
             ->select('data')

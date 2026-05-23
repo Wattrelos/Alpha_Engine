@@ -64,7 +64,9 @@ class Product extends BaseController {
 			$data['language'] = $this->config->get('config_language');
 
 			// Alpha Engine: render() injeta Header/Footer automaticamente
-			return $this->render('product/product', $data);
+			$this->render('product/product', $data);
+			
+			return null;
 		} else {
 			return new \Opencart\System\Engine\Action('error/not_found');
 		}

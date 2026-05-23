@@ -1,8 +1,8 @@
 <?php
 namespace Opencart\Catalog\Controller\Localisation;
 
-use Alpha\Mappers\CountryMapper;
-use Alpha\Mappers\CollectionToArrayConverter;
+use Alpha\Model\Domain\Repositories\CountryRepository;
+use Alpha\Model\Domain\Repositories\ZoneRepository;
 
 /**
  * Class Country
@@ -17,25 +17,21 @@ class Country extends \Opencart\System\Engine\Controller {
 	 */
 	public function index(): void {
 		$json = [];
+		$country_id = (int)($this->request->get['country_id'] ?? 0);
 
-		if (isset($this->request->get['country_id'])) {
-			$country_id = (int)$this->request->get['country_id'];
-		} else {
-			$country_id = 0;
-		}
-
-		$country_mapper = new CountryMapper();
-		$country = $country_mapper->getCountry($country_id);
-
-		if ($country) {
-			// Converte a entidade hidratada para array. 
-			// O DAO preenche a coleção 'zones' automaticamente pelo OneToMany.
-			$json = CollectionToArrayConverter::convertEntity($country);
+		if ($country_id) {
+			/** @var CountryRepository $countryRepo */
+			$countryRepo = $this->registry->get('alpha_repository_factory')->get(CountryRepository::class);
 			
-			// Ajuste de compatibilidade legada: o JS do OpenCart espera a chave 'zone' (singular)
-			if (isset($json['zones'])) {
-				$json['zone'] = $json['zones'];
-				unset($json['zones']);
+			// Retorna o DTO Legado perfeitamente formatado (Status como inteiro 0/1, Nomes Traduzidos)
+			$json = $countryRepo->getCountry($country_id);
+
+			if ($json) {
+				/** @var ZoneRepository $zoneRepo */
+				$zoneRepo = $this->registry->get('alpha_repository_factory')->get(ZoneRepository::class);
+				
+				// Associa a coleção de estados traduzidos diretamente na chave singular 'zone'
+				$json['zone'] = $zoneRepo->getZonesByCountryId($country_id);
 			}
 		}
 

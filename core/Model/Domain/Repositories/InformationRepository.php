@@ -4,6 +4,7 @@ namespace Alpha\Model\Domain\Repositories;
 
 use Alpha\Mappers\EntityMappers\InformationMapper;
 use Alpha\Model\Domain\InterfaceEntity;
+use Alpha\Model\DataTransferObject\ViewResponse;
 use Alpha\Support\Collection;
 
 /**
@@ -108,5 +109,41 @@ class InformationRepository extends AbstractRepository implements BaseRepository
         }
 
         return null;
+    }
+
+    /**
+     * Alpha Engine: Prepara o DTO (ViewResponse) completo para a página de informação.
+     * Resolve Breadcrumbs, decodificação HTML e metadados.
+     * 
+     * @param int $informationId
+     * @return ViewResponse|null
+     */
+    public function getInformationDisplayData(int $informationId): ?ViewResponse
+    {
+        /** @var InformationMapper $mapper */
+        $mapper = $this->getMapper();
+        
+        // A consulta SQL do Mapper já garante o idioma correto, a loja correta e o status ativo.
+        $information = $mapper->getInformation($informationId, $this->language_id, $this->store_id);
+
+        if (!$information) {
+            return null;
+        }
+
+        $data = $information;
+        $data['description'] = html_entity_decode($data['description'], ENT_QUOTES, 'UTF-8');
+
+        // Construção limpa dos Breadcrumbs na camada de domínio
+        $data['breadcrumbs'] = [];
+        $data['breadcrumbs'][] = [
+            'text' => $this->language->get('text_home') ?? 'Home',
+            'href' => $this->url->link('common/home', 'language=' . $this->config->get('config_language'))
+        ];
+        $data['breadcrumbs'][] = [
+            'text' => $data['title'],
+            'href' => $this->url->link('information/information', 'language=' . $this->config->get('config_language') . '&information_id=' . $informationId)
+        ];
+
+        return new ViewResponse($data);
     }
 }

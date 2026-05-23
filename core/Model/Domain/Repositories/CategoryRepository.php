@@ -25,7 +25,21 @@ class CategoryRepository extends AbstractRepository implements BaseRepositoryInt
         /** @var CategoryMapper $mapper */
         $mapper = $this->mapperFactory->get(CategoryMapper::class);
         
-        return $mapper->getCategory($categoryId, $this->language_id, $this->store_id);
+        $category = $mapper->getCategory($categoryId, $this->language_id, $this->store_id);
+
+        if (!$category) {
+            return null;
+        }
+
+        return [
+            'category_id'      => $category['id'] ?? $categoryId,
+            'name'             => $category['name'] ?? '',
+            'description'      => $category['description'] ?? '',
+            'meta_title'       => $category['meta_title'] ?? '',
+            'meta_description' => $category['meta_description'] ?? '',
+            'meta_keyword'     => $category['meta_keyword'] ?? '',
+            'image'            => $category['image'] ?? '',
+        ];
     }
 
     /**
@@ -131,6 +145,17 @@ class CategoryRepository extends AbstractRepository implements BaseRepositoryInt
 
         $data['description'] = html_entity_decode($categoryInfo['description'], ENT_QUOTES, 'UTF-8');
 
+        // 3.5 Breadcrumbs Alpha Engine: Usando a tabela category_path
+        $data['breadcrumbs'] = [];
+        $data['breadcrumbs'][] = [
+            'text' => $this->language->get('text_home') ?: 'Home',
+            'href' => $this->url->link('common/home', 'language=' . $this->config->get('config_language'))
+        ];
+        $breadcrumbs = $this->mapperFactory->get(\Alpha\Mappers\EntityMappers\CategoryMapper::class)->getBreadcrumbs($categoryId, $this->language_id, $this->store_id);
+        foreach ($breadcrumbs as $crumb) {
+            $data['breadcrumbs'][] = ['text' => $crumb['name'], 'href' => $crumb['href']];
+        }
+
         // 4. Subcategorias
         $data['categories'] = [];
         $subcategories = $this->getCategories($categoryId);
@@ -172,6 +197,66 @@ class CategoryRepository extends AbstractRepository implements BaseRepositoryInt
             'limit' => $filterData['limit'],
             'url'   => $this->url->link('product/category', 'language=' . $this->config->get('config_language') . '&path=' . $filterData['path'] . $url . '&page={page}')
         ];
+
+        // URL base para os selects de ordenação e limite
+        $baseUrl = '';
+        if (isset($filterData['filter_filter'])) $baseUrl .= '&filter=' . $filterData['filter_filter'];
+
+        // Limits
+        $data['limits'] = [];
+        $limits = array_unique([$this->config->get('config_pagination_catalog') ?: 10, 25, 50, 75, 100]);
+        sort($limits);
+        foreach($limits as $value) {
+            $data['limits'][] = [
+                'text'  => $value,
+                'value' => $value,
+                'href'  => $this->url->link('product/category', 'language=' . $this->config->get('config_language') . '&path=' . $filterData['path'] . $baseUrl . '&limit=' . $value)
+            ];
+        }
+
+        // Sorts
+        $urlWithLimit = $baseUrl . '&limit=' . $filterData['limit'];
+        $data['sorts'] = [];
+        $data['sorts'][] = [
+            'text'  => $this->language->get('text_default') ?: 'Padrão',
+            'value' => 'p.sort_order-ASC',
+            'href'  => $this->url->link('product/category', 'language=' . $this->config->get('config_language') . '&path=' . $filterData['path'] . '&sort=p.sort_order&order=ASC' . $urlWithLimit)
+        ];
+        $data['sorts'][] = [
+            'text'  => $this->language->get('text_name_asc') ?: 'Nome (A - Z)',
+            'value' => 'pd.name-ASC',
+            'href'  => $this->url->link('product/category', 'language=' . $this->config->get('config_language') . '&path=' . $filterData['path'] . '&sort=pd.name&order=ASC' . $urlWithLimit)
+        ];
+        $data['sorts'][] = [
+            'text'  => $this->language->get('text_name_desc') ?: 'Nome (Z - A)',
+            'value' => 'pd.name-DESC',
+            'href'  => $this->url->link('product/category', 'language=' . $this->config->get('config_language') . '&path=' . $filterData['path'] . '&sort=pd.name&order=DESC' . $urlWithLimit)
+        ];
+        $data['sorts'][] = [
+            'text'  => $this->language->get('text_price_asc') ?: 'Preço (Menor > Maior)',
+            'value' => 'p.price-ASC',
+            'href'  => $this->url->link('product/category', 'language=' . $this->config->get('config_language') . '&path=' . $filterData['path'] . '&sort=p.price&order=ASC' . $urlWithLimit)
+        ];
+        $data['sorts'][] = [
+            'text'  => $this->language->get('text_price_desc') ?: 'Preço (Maior > Menor)',
+            'value' => 'p.price-DESC',
+            'href'  => $this->url->link('product/category', 'language=' . $this->config->get('config_language') . '&path=' . $filterData['path'] . '&sort=p.price&order=DESC' . $urlWithLimit)
+        ];
+        $data['sorts'][] = [
+            'text'  => $this->language->get('text_model_asc') ?: 'Modelo (A - Z)',
+            'value' => 'p.model-ASC',
+            'href'  => $this->url->link('product/category', 'language=' . $this->config->get('config_language') . '&path=' . $filterData['path'] . '&sort=p.model&order=ASC' . $urlWithLimit)
+        ];
+        $data['sorts'][] = [
+            'text'  => $this->language->get('text_model_desc') ?: 'Modelo (Z - A)',
+            'value' => 'p.model-DESC',
+            'href'  => $this->url->link('product/category', 'language=' . $this->config->get('config_language') . '&path=' . $filterData['path'] . '&sort=p.model&order=DESC' . $urlWithLimit)
+        ];
+
+        // Current filters for view
+        $data['sort']  = $filterData['sort'];
+        $data['order'] = $filterData['order'];
+        $data['limit'] = $filterData['limit'];
 
         return new \Alpha\Model\DataTransferObject\ViewResponse($data);
     }

@@ -1,9 +1,10 @@
 </main>
 <footer>
   <div class="container">
-    <div class="row">
+    {# Grid moderna do Bootstrap 5: Ocupa 100% no mobile, 50% em tablets (sm) e divide igualmente no desktop (md) #}
+    <div class="row mt-4">
       {% if informations or blog %}
-        <div class="col-sm-3">
+        <div class="col-12 col-sm-6 col-md mb-4 mb-md-0">
           <h5>{{ text_information }}</h5>
           <ul class="list-unstyled">
             {% if blog %}
@@ -15,7 +16,7 @@
           </ul>
         </div>
       {% endif %}
-      <div class="col-sm-3">
+      <div class="col-12 col-sm-6 col-md mb-4 mb-md-0">
         <h5>{{ text_service }}</h5>
         <ul class="list-unstyled">
           <li><a href="{{ contact }}">{{ text_contact }}</a></li>
@@ -26,7 +27,7 @@
           <li><a href="{{ sitemap }}">{{ text_sitemap }}</a></li>
         </ul>
       </div>
-      <div class="col-sm-3">
+      <div class="col-12 col-sm-6 col-md mb-4 mb-md-0">
         <h5>{{ text_extra }}</h5>
         <ul class="list-unstyled">
           <li><a href="{{ manufacturer }}">{{ text_manufacturer }}</a></li>
@@ -36,7 +37,7 @@
           <li><a href="{{ special }}">{{ text_special }}</a></li>
         </ul>
       </div>
-      <div class="col-sm-3">
+      <div class="col-12 col-sm-6 col-md mb-4 mb-md-0">
         <h5>{{ text_account }}</h5>
         <ul class="list-unstyled">
           <li><a href="{{ account }}">{{ text_account }}</a></li>
@@ -55,8 +56,10 @@ Please donate via PayPal to donate@opencart.com
 </footer>
 </div>
 {{ cookie }}
-<script src="{{ bootstrap }}" type="text/javascript"></script>
+{# Alpha Engine: O Bootstrap já foi carregado no Header para garantir o funcionamento do Minicart #}
+{# <script src="{{ bootstrap }}" type="text/javascript"></script> #}
 {% for script in scripts %}
-  <script src="{{ script.href }}" type="text/javascript"></script>
+  {# Alpha Engine: Previne bugs caso o script venha como String em vez de Array #}
+  <script src="{{ script.href ? script.href : script }}" type="text/javascript"></script>
 {% endfor %}
 </body></html>

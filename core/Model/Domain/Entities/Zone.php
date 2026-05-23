@@ -3,6 +3,7 @@ namespace Alpha\Model\Domain\Entities;
 
 use Alpha\Model\Domain\BaseEntity;
 use Alpha\Model\Domain\Attributes\ManyToOne;
+use Alpha\Model\Domain\Attributes\OneToMany;
 
 /**
  * Entidade Zone - Representa estados, províncias ou regiões.
@@ -17,6 +18,12 @@ class Zone extends BaseEntity
     private string $name = '';
     private string $code = '';
     private bool $status = true;
+
+    /**
+     * @var ZoneDescription[]
+     */
+    #[OneToMany(targetEntity: ZoneDescription::class, mappedBy: "zone", foreignKey: "zoneId")]
+    private array $descriptions = [];
 
     #[ManyToOne(targetEntity: Country::class, foreignKey: 'countryId')]
     private ?Country $country = null;
@@ -84,4 +91,15 @@ class Zone extends BaseEntity
         $this->country = $country;
         return $this;
     }
+
+    public function getDescriptions(): array
+    {
+        return $this->descriptions;
+    }
+        public function setDescriptions(array $descriptions): self
+    {
+        $this->descriptions = $descriptions;
+        return $this;
+    }
+
 }

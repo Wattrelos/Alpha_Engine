@@ -27,7 +27,7 @@ class CategoryMapper
     /**
      * Obtém uma categoria específica hidratada.
      */
-    public function getCategory(int $categoryId, int $languageId, int $storeId): ?Category
+    public function getCategory(int $categoryId, int $languageId, int $storeId): ?array
     {
         $builder = (new QueryBuilder())
             ->from(DB_PREFIX . 'category', 'c')
@@ -37,21 +37,11 @@ class CategoryMapper
             ->where('cd.language_id = ?', [$languageId])
             ->where('c2s.store_id = ?', [$storeId])
             ->where('c.status = 1')
-            ->select('c.*', 'cd.name', 'cd.description', 'cd.meta_title');
+            ->select('c.*', 'cd.name', 'cd.description', 'cd.meta_title', 'cd.meta_description', 'cd.meta_keyword');
 
         $results = $this->dao->executeQuery($builder);
         
-        if (!$results) {
-            return null;
-        }
-
-        // Usamos o DAO para converter o resultado bruto em uma entidade tipada
-        $category = new Category();
-        $category->setId((int)$results[0]['id']);
-        // O DAO preencherá as propriedades via Reflection
-        $this->dao->read($category); 
-
-        return $category;
+        return $results ? $results[0] : null;
     }
 
     /**
