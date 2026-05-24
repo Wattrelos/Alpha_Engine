@@ -6,10 +6,10 @@ use Alpha\Model\Domain\Repositories\CategoryRepository;
 
 class Menu extends BaseController {
 	public function index(): string {
-		// Carrega as traduções padrão do menu (como text_all, text_category)
-		$this->load->language('common/menu');
-		$data['text_category'] = $this->language->get('text_category');
-		$data['text_all'] = $this->language->get('text_all');
+		$data = [];
+
+		// Alpha Engine: Carregamento unificado de traduções
+		$this->loadLanguageData('common/menu', $data);
 
 		// Injeta o repositório da Alpha Engine
 		$categoryRepository = $this->getRepository(CategoryRepository::class);

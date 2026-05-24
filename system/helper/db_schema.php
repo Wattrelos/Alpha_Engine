@@ -6530,7 +6530,7 @@ function oc_db_schema() {
 		'name'  => 'session',
 		'field' => [
 			[
-				'name' => 'id',
+				'name' => 'id', // Coluna personalizada para corrigir o erro de quando a PK era string session;
 				'type'           => 'int(11)',
 				'auto_increment' => true
 			],

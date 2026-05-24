@@ -56,17 +56,17 @@ class SessionMapper extends BaseMapper // Alterado de AbstractMapper para BaseMa
      * Persiste os dados da sessão via token.
      * Utilizado pelo driver de sessão para operações rápidas de I/O.
      */
-    public function saveSession(string $token, string $data, string $expireDate, string $userAgent, string $ip): void
+    public function saveSession(string $token, string $data, string $expireDate): void
     {
         // Alpha Engine: Embora o QueryBuilder construa a query, para operações atômicas 
         // como ON DUPLICATE KEY UPDATE, mantemos a execução via DAO para garantir logs e segurança.
         $sql = "INSERT INTO " . $this->getFullTableName() . " 
                 (`session_token`, `data`, `expire_at`, `user_agent`, `ip`) 
-                VALUES (?, ?, ?, ?, ?) 
-                ON DUPLICATE KEY UPDATE `data` = VALUES(`data`), `expire_at` = VALUES(`expire_at`), `user_agent` = VALUES(`user_agent`), `ip` = VALUES(`ip`)";
+                VALUES (?, ?, ?, '', '') 
+                ON DUPLICATE KEY UPDATE `data` = VALUES(`data`), `expire_at` = VALUES(`expire_at`)";
 
         $stmt = $this->db->prepare($sql);
-        $stmt->execute([$token, $data, $expireDate, $userAgent, $ip]);
+        $stmt->execute([$token, $data, $expireDate]);
     }
 
     /**

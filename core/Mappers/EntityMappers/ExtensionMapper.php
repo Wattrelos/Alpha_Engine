@@ -18,7 +18,7 @@ class ExtensionMapper extends BaseMapper
 
     protected Cache $cache;
 
-    public function __construct(Registry $registry = null) // Adiciona valor padrão para compatibilidade
+    public function __construct(?Registry $registry = null) // Alpha Engine: Correção PHP 8.4 explícito nullable
     {
         parent::__construct($registry);
 

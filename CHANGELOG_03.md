@@ -1,4 +1,22 @@
-## 🧠 O Que Mudou e Por Que?
+
+---
+
+### Alpha Engine: Refatoração do Fluxo de Informação (CMS)
+**Data:** [Data Atual]
+**O que foi feito:**
+- Migração do controller `information.php` para utilizar a `BaseController`, transformando-o num verdadeiro *Skinny Controller*.
+- Implementação do método `getInformationDisplayData` no `InformationRepository`, transferindo toda a construção do DTO, formatação de HTML (`html_entity_decode`) e resolução de Breadcrumbs para a camada de Domínio.
+- `InformationMapper` atualizado para estender `BaseMapper`, herdando a injeção nativa de banco de dados, mas mantendo a consulta SQL altamente otimizada que resolve Multi-store, Status e Language diretamente no banco.
+**Benefícios:** Código drasticamente reduzido no controller, eliminação de laços `foreach` de hidratação manual, menor acoplamento e suporte automático ao renderizador de layouts unificado da Alpha Engine.
+
+---
+
+### Alpha Engine: Refatoração do Fluxo de Carrinho (Cart)
+**Data:** [Data Atual]
+**O que foi feito:**
+- Migração de lógica de exibição de `checkout/cart.php` para utilizar a `BaseController`, transformando-o num verdadeiro *Skinny Controller*.
+- Implementação do método `getCartDisplayData` no `CartRepository`, extraindo loops, checagens de peso, verificações de sessão e hidratação de produtos da visão.
+**Benefícios:** Enorme redução do tamanho do controller; reuso imediato das lógicas de validação de produtos do carrinho (evita duplicação entre minicart, api e página de cart principal); simplificação da leitura utilizando o pattern DTO (`ViewResponse`).## 🧠 O Que Mudou e Por Que?
 1. **Aceleração da Vitrine (getOptions)**: Ao invés de 1 Query de Opções + X Queries de Valores, agora fazemos exatamente 2 consultas, independente de o produto ter 1 ou 100 opções variadas. Os dados são mesclados na memória do servidor, tirando uma carga enorme do MySQL.
 2. **Nova Rota O(1) do Carrinho (getOptionValuesByIds)**: O CartRepository manda um array com todos os IDs de modificadores que o cliente comprou, e o banco devolve tudo de uma vez. Note que fiz o método já devolver os dados indexados pelo próprio ID da opção ($indexed[$result['product_option_value_id']]), o que torna a matemática no PHP quase instantânea e elimina a necessidade de array_search complexos.
 3. **Mapeamento Transparente**: O prefixador pov.* garante a captura automática do price_prefix (+, -, *, /) e do weight_prefix, conectando as tabelas e unificando option_name com option_value_name.
@@ -77,4 +95,24 @@
 - Migração do controller `information.php` para utilizar a `BaseController`, transformando-o num verdadeiro *Skinny Controller*.
 - Implementação do método `getInformationDisplayData` no `InformationRepository`, transferindo toda a construção do DTO, formatação de HTML (`html_entity_decode`) e resolução de Breadcrumbs para a camada de Domínio.
 - `InformationMapper` atualizado para estender `BaseMapper`, herdando a injeção nativa de banco de dados, mas mantendo a consulta SQL altamente otimizada que resolve Multi-store, Status e Language diretamente no banco.
-**Benefícios:** Código drasticamente reduzido no controller, eliminação de laços `foreach` de hidratação manual, menor acoplamento e suporte automático ao renderizador de layouts unificado da Alpha Engine.
+**Benefícios:** Código drasticamente reduzido no controller, eliminação de laços `foreach` de hidratação manual, menor acoplamento e suporte automático ao renderizador de layouts unificado da Alpha Engine.## 🌍 Orquestração Automática de Associações (Países, Zonas e Descrições)
+**Data:** [Data Atual]
+
+**O que foi feito:**
+- Criação do `CountryRepository` na camada de Domínio, eliminando de vez a necessidade do modelo legado `localisation/country`.
+- Mapeamento no `AlphaContainer` para que todos os acessos legados sejam injetados via Repository Pattern.
+- Verificação da integridade do ORM (`DataAccessObject`): Como a Entidade `Country` agora possui o atributo `#[OneToMany]` para Zonas e Descrições, o simples ato do Mapper instanciar um `Country` engatilha o `processAssociations` no ORM, buscando automaticamente os arrays dependentes em um fluxo otimizado.
+
+**Benefícios Técnicos:**
+1. **Desacoplamento Rigoroso**: O repositório e o mapper não contêm nenhuma linha de `JOIN` manual para descrições. As estruturas de relacionamento são completamente invisíveis, definidas apenas por regras estruturais da Entidade PHP 8.4.
+2. **Identity Map e O(1) Performance**: Com a camada de cache persistente implantada no Repositório, as requisições constantes de listagem de países e resolução de checkout/frete ocorrem com taxa zero de queries SQL após a primeira carga.
+3. **Segurança de Tipos Estrita**: Com coleções padronizadas, métodos como `getName()` do país ou as repetições sobre as zonas vão beneficiar-se dos analisadores estáticos da Alpha Engine, reduzindo crashes não mapeados.
+
+---
+
+## 📄 Criação da Entidade CountryDescription
+**Data:** [Data Atual]
+
+**O que foi feito:**
+- Implementação da entidade `CountryDescription`, garantindo que as propriedades `$countryId`, `$languageId` e `$name` estejam corretamente tipadas.
+- Mapeamento exato do método `setCountryId()` para casar perfeitamente com a configuração `foreignKey: "countryId"` declarada no atributo `#[OneToMany]` da Entidade `Country`. Isso assegura a hidratação bidirecional (via ORM DataAccessObject) sem "mágica" oculta.

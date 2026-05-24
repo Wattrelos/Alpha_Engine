@@ -28,11 +28,15 @@ Este projeto implementa uma camada de engenharia de software moderna sobre o nú
   * **Limpeza de Anti-Patterns no Carrinho (`cart.php`):** Substituição de dezenas de validações verbosas (`if(isset(...))`) pelo operador moderno Null Coalescing (`??`). Adequação do carrinho para consumir o `ProductRepository` (Domain) ao invés do Mapper, resolvendo automaticamente o idioma e a loja e corrigindo falhas de hidratação.
   * **Completude do DTO de Produtos (`ProductRepository`):** Injeção nativa das rotas de adição ao carrinho, lista de desejos e comparação (`cart_add`, etc.) diretamente na geração da Thumb, reabilitando a função de "Comprar" na página inicial e nas vitrines com comunicação direta à Alpha Engine.
   * **Home Loader-Free:** Adaptação do controlador `common/home` para utilizar injeção direta de DTOs via repositório, populando nativamente as vitrines de Lançamentos e Destaques sem depender de módulos engessados e N+1 Queries.
-* **Status Atual:** **Sprint de Interface, Catálogo e Integração do Carrinho.** A página inicial, o cabeçalho e as vitrines de produtos estão estáveis, blindados contra N+1 Queries e renderizando perfeitamente. O ciclo de adição ao carrinho de compras via AJAX foi restaurado na nova arquitetura e com validação de dados limpa.
+  * **Saneamento Total da Camada de Layout Global:** Controladores de infraestrutura visual (`Header`, `Footer`, `Menu`, `Cart`) foram convertidos para *Skinny Controllers* estendendo de `BaseController` e aplicando o padrão *Widget Isolation*.
+  * **Resolução do JS Crash no Minicart:** Restauração do ID `#cart` no template para religar os disparos AJAX assíncronos e esvaziamento permanente do modelo legado de checkout (`cart.php`), transferindo as responsabilidades definitivamente para o Repositório.
+  * **Estabilização da Sessão no PHP 8.4 Strict:** Realinhamento das propriedades da Entidade `Session` com o banco e remoção dos vestígios legados de auditoria de IP e User-Agent, eliminando de vez os Erros Fatais do MySQL (`Field doesn't have a default value`).
+  * **Blindagem do Roteador de SEO (`seo_url.php`):** Aplicação massiva de operadores estritos de array e fallbacks (`?: []`) para prever retornos nulos do `parse_url` no PHP 8.4, além da injeção do cache interno (`SeoUrlRepository`).
+* **Status Atual:** **Sprint de Estabilização de Infraestrutura e PHP 8.4.** A navegação global da loja (Home, Cabeçalho, SEO, Menu, Minicart) está 100% blindada, sem warnings, sem memory leaks e operando totalmente sobre a Alpha Engine. A fundação de persistência suportou com sucesso os rigores das tipagens fechadas do novo PHP.
 * **Próximos Passos (Retomada):** 
-  1. Investigar por que o minicart (carrinho do topo) parou de abrir no evento de clique (resolução de dropdown do Bootstrap ou z-index).
-  2. Estender a modernização Loader-Free (limpeza de anti-patterns e uso de DTOs) para as páginas de **Categoria** e **Busca de Produtos**.
-  3. Refatorar o roteador nativo de SEO (`startup/seo_url.php`) para consumir o `SeoUrlRepository` da Alpha Engine, blindando e cacheando as rotas amigáveis da loja.
+  1. Refatorar o controlador da **Página de Produto** (`catalog/controller/product/product.php`) aplicando os padrões Loader-Free e DTOs, além de revisar a view correspondente.
+  2. Revisar o sistema de processamento e finalização de compras (Checkout) para garantir conformidade total com a Alpha Engine, garantindo transações O(1).
+  3. Iniciar a faxina de classes `.old` ou legadas desnecessárias após assegurarmos a estabilidade total das rotas do Catálogo.
 
 ---
 

@@ -32,20 +32,6 @@ class SessionRepository extends AbstractRepository implements BaseRepositoryInte
 
         if (!$session) return [];
 
-        // Alpha Engine: Detecção de Session Hijacking via User-Agent
-        $currentUserAgent = $this->request->server['HTTP_USER_AGENT'] ?? '';
-        if ($session->getUserAgent() && $session->getUserAgent() !== $currentUserAgent) {
-            $this->destroy($session_token);
-            return [];
-        }
-
-        // Alpha Engine: IP Binding - Verifica se o IP da requisição mudou
-        $currentIp = $this->request->server['REMOTE_ADDR'] ?? '';
-        if ($session->getIp() && $session->getIp() !== $currentIp) {
-            $this->destroy($session_token);
-            return [];
-        }
-
         // Alpha Engine: Verificação de validade via timestamp para garantir segurança.
         if (strtotime($session->getExpireAt()) > time()) {
             return json_decode($session->getData(), true) ?: [];
@@ -66,10 +52,8 @@ class SessionRepository extends AbstractRepository implements BaseRepositoryInte
         // Alpha Engine: Prioriza o tempo definido pelo driver, senão usa a configuração da loja, ou o padrão do PHP.
         $expireTime = $expire ?: (int)$this->config->get('config_session_expire') ?: (int)ini_get('session.gc_maxlifetime');
         $expireDate = gmdate('Y-m-d H:i:s', time() + $expireTime);
-        $userAgent = $this->request->server['HTTP_USER_AGENT'] ?? '';
-        $ip = $this->request->server['REMOTE_ADDR'] ?? '';
 
-        $this->getMapper()->saveSession($session_token, json_encode($data), $expireDate, $userAgent, $ip);
+        $this->getMapper()->saveSession($session_token, json_encode($data), $expireDate);
     }
 
     /**

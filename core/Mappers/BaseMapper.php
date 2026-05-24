@@ -17,7 +17,8 @@ abstract class BaseMapper implements MapperInterface
     protected \PDO $db; 
     protected ?Registry $registry = null;
     protected string $entityClass = '';
-    protected string $tableName;
+    protected string $tableName = '';
+    protected string $table = ''; // Bridge de compatibilidade para mappers antigos
     protected string $primaryKey = 'id';
     protected DataAccessObject $dao;
 
@@ -48,7 +49,8 @@ abstract class BaseMapper implements MapperInterface
      */
     protected function getFullTableName(): string
     {
-        return DB_PREFIX . $this->tableName;
+        $name = $this->tableName ?: $this->table;
+        return DB_PREFIX . $name;
     }
 
     /**

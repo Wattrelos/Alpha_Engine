@@ -12,18 +12,30 @@ use Alpha\Model\Domain\BaseEntity;
  */
 class Session extends BaseEntity
 {
-    private string $tokenSession = '';
+    private string $sessionToken = '';
+    private int $customerId = 0;
     private string $data = '';
-    private string $expire = '';
+    private string $expireAt = '';
 
-    public function getTokenSession(): string
+    public function getSessionToken(): string
     {
-        return $this->tokenSession;
+        return $this->sessionToken;
     }
 
-    public function setTokenSession(string $tokenSession): self
+    public function setSessionToken(string $sessionToken): self
     {
-        $this->tokenSession = $tokenSession;
+        $this->sessionToken = $sessionToken;
+        return $this;
+    }
+
+    public function getCustomerId(): int
+    {
+        return $this->customerId;
+    }
+
+    public function setCustomerId(int $customerId): self
+    {
+        $this->customerId = $customerId;
         return $this;
     }
 
@@ -38,14 +50,14 @@ class Session extends BaseEntity
         return $this;
     }
 
-    public function getExpire(): string
+    public function getExpireAt(): string
     {
-        return $this->expire;
+        return $this->expireAt;
     }
 
-    public function setExpire(string $expire): self
+    public function setExpireAt(string $expireAt): self
     {
-        $this->expire = $expire;
+        $this->expireAt = $expireAt;
         return $this;
     }
 }

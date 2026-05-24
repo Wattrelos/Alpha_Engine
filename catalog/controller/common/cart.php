@@ -24,7 +24,7 @@ class Cart extends BaseController {
 		$this->loadLanguageData('common/cart', $data);
 
 		// Alpha Engine: Injeção do repositório de domínio
-		$cartRepository = $this->repository->get(CartRepository::class);
+		$cartRepository = $this->getRepository(CartRepository::class);
 		$cartData = $cartRepository->getCartDisplayData();
 		
 		// Alpha Engine: Sobrescreve as variáveis de idioma cruas (ex: %s) com as strings dinâmicas formatadas do DTO
@@ -65,12 +65,12 @@ class Cart extends BaseController {
 	 * @return void
 	 */
 	public function remove(): void {
-		$this->language->load('checkout/cart');
+		$this->load->language('checkout/cart');
 
 		$json = [];
 		$cart_id = (int)($this->request->post['key'] ?? $this->request->get['key'] ?? 0);
 
-		$cartRepository = $this->repository->get(CartRepository::class);
+		$cartRepository = $this->getRepository(CartRepository::class);
 		
 		// Alpha Engine: Encapsulamento da remoção e limpeza de estado (Session) no Repositório
 		$cartRepository->removeAndClearCheckout($cart_id);
@@ -86,33 +86,23 @@ class Cart extends BaseController {
      * @return void
      */
     public function add(): void {
-        $this->language->load('checkout/cart');
+        $this->load->language('checkout/cart');
 
         $json = [];
 
-        // Validate product ID and quantity
         $product_id = (int)($this->request->post['product_id'] ?? 0);
         $quantity = (int)($this->request->post['quantity'] ?? 1);
         $option = $this->request->post['option'] ?? [];
         $subscription_plan_id = (int)($this->request->post['subscription_plan_id'] ?? 0);
 
-        if (!$product_id) {
-            $json['error']['product'] = $this->language->get('error_product_id_missing'); // Assuming this language key exists
-        }
+        $cartRepository = $this->getRepository(CartRepository::class);
 
-        if ($quantity <= 0) {
-            $json['error']['quantity'] = $this->language->get('error_quantity_invalid'); // Assuming this language key exists
-        }
+        // Alpha Engine: Validação de regras de negócio delegada ao Domínio (Skinny Controller)
+        $errors = $cartRepository->validateAddition($product_id, $quantity, $option, $subscription_plan_id);
 
-        // TODO: Adicionar validação de opções de produto (se obrigatórias)
-        // Exemplo:
-        // $product_info = $this->mapper->get(ProductMapper::class)->getProduct($product_id, $this->language_id, (int)$this->config->get('config_store_id'));
-        // if ($product_info && $product_info->getRequiredOptions() && empty($option)) {
-        //     $json['error']['option'] = $this->language->get('error_required_option');
-        // }
-
-        if (!$json) {
-            $cartRepository = $this->repository->get(CartRepository::class);
+        if (!empty($errors)) {
+            $json['error'] = $errors;
+        } else {
 
             // Alpha Engine: Adição e limpeza de checkout atômicas via Repository
             $cartRepository->addAndClearCheckout(
@@ -124,7 +114,7 @@ class Cart extends BaseController {
                 $subscription_plan_id
             );
 
-            $json['success'] = sprintf($this->language->get('text_success_add'), $this->url->link('checkout/cart', 'language=' . $this->config->get('config_language'))); // Assuming this language key exists
+            $json['success'] = sprintf($this->language->get('text_success_add'), $this->url->link('checkout/cart', 'language=' . $this->config->get('config_language')));
         }
 
         $this->jsonResponse($json);
@@ -136,21 +126,19 @@ class Cart extends BaseController {
 	 * @return void
 	 */
 	public function edit(): void {
-		$this->language->load('checkout/cart');
+		$this->load->language('checkout/cart');
 
 		$json = [];
 
 		$cart_id = (int)($this->request->post['key'] ?? 0);
 		$quantity = (int)($this->request->post['quantity'] ?? 1);
 
-		if (!$json) {
-			$cartRepository = $this->repository->get(CartRepository::class);
+		$cartRepository = $this->getRepository(CartRepository::class);
 			
-			// Alpha Engine: Atualização centralizada com invalidação de checkout
-			$cartRepository->updateAndClearCheckout($cart_id, $quantity);
+		// Alpha Engine: Atualização centralizada com invalidação de checkout
+		$cartRepository->updateAndClearCheckout($cart_id, $quantity);
 
-			$json['success'] = $this->language->get('text_edit');
-		}
+		$json['success'] = $this->language->get('text_edit');
 
 		$this->jsonResponse($json);
 	}

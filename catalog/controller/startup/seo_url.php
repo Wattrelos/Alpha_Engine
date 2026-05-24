@@ -1,14 +1,15 @@
 <?php
 namespace Opencart\Catalog\Controller\Startup;
 
+use Alpha\Controller\BaseController;
 use Alpha\Model\Domain\Repositories\SeoUrlRepository;
 
 /**
- * Class SeoUrl
+ * Class SeoUrl (Alpha Engine Modernized)
  *
  * @package Opencart\Catalog\Controller\Startup
  */
-class SeoUrl extends \Opencart\System\Engine\Controller {
+class SeoUrl extends BaseController {
 	/**
 	 * @var array<string, string>
 	 */
@@ -24,23 +25,22 @@ class SeoUrl extends \Opencart\System\Engine\Controller {
 		if ($this->config->get('config_seo_url')) {
 			$this->url->addRewrite($this);
 
-			/** @var SeoUrlRepository $seoUrlRepository */
-			$seoUrlRepository = $this->registry->get('alpha_repository_factory')->get(SeoUrlRepository::class);
-			$store_id = (int)$this->config->get('config_store_id');
-			$language_id = (int)$this->config->get('config_language_id');
+			// Alpha Engine: Injeção fluida do repositório nativo do domínio
+			$seoUrlRepository = $this->getRepository(SeoUrlRepository::class);
 
 			// Decode URL
 			if (isset($this->request->get['_route_'])) {
-				$parts = explode('/', $this->request->get['_route_']);
+				// Cast explícito de string para segurança estrita
+				$parts = explode('/', (string)$this->request->get['_route_']);
 
 				// remove any empty arrays from trailing
-				if (oc_strlen(end($parts)) == 0) {
+				if (!empty($parts) && end($parts) === '') {
 					array_pop($parts);
 				}
 
 				foreach ($parts as $key => $value) {
 					// Alpha Engine: Resolve o slug para a query string interna correspondente (ex: "product_id=123")
-					$query_string = $seoUrlRepository->getQueryByKeyword($value, $store_id, $language_id);
+					$query_string = $seoUrlRepository->getQueryByKeyword($value, $this->storeId, $this->languageId);
 
 					if ($query_string) {
 						$pair = explode('=', $query_string);
@@ -69,44 +69,40 @@ class SeoUrl extends \Opencart\System\Engine\Controller {
 	 *
 	 * @param string $link
 	 *
-	 * @return string
+	 * @return string	 
 	 */
 	public function rewrite(string $link): string {
-		$url_info = parse_url(str_replace('&amp;', '&', $link));
+		// Alpha Engine: Prevenção rigorosa PHP 8.4 contra retornos false do parse_url
+		$url_info = parse_url(str_replace('&amp;', '&', $link)) ?: [];
 
 		// Build the url
 		$url = '';
 
-		if (isset($url_info['scheme'])) {
-			$url .= $url_info['scheme'];
+		if (!empty($url_info['scheme'])) {
+			$url .= $url_info['scheme'] . '://';
+		} elseif (!empty($url_info['host'])) {
+			$url .= '//';
 		}
 
-		$url .= '://';
-
-		if (isset($url_info['host'])) {
+		if (!empty($url_info['host'])) {
 			$url .= $url_info['host'];
 		}
 
-		if (isset($url_info['port'])) {
+		if (!empty($url_info['port'])) {
 			$url .= ':' . $url_info['port'];
 		}
 
 		$query = [];
 		$parts = [];
-		if (isset($url_info['query'])) {
+		if (!empty($url_info['query'])) {
 			parse_str($url_info['query'], $query);
 			$parts = explode('&', $url_info['query']);
 		}
 
-		$language_id = $this->config->get('config_language_id');
-
 		// Start changing the URL query into a path
 		$paths = [];
 
-
-		/** @var SeoUrlRepository $seoUrlRepository */
-		$seoUrlRepository = $this->registry->get('alpha_repository_factory')->get(SeoUrlRepository::class);
-		$store_id = (int)$this->config->get('config_store_id');
+		$seoUrlRepository = $this->getRepository(SeoUrlRepository::class);
 
 		foreach ($parts as $part) {
 			$pair = explode('=', $part);
@@ -123,22 +119,22 @@ class SeoUrl extends \Opencart\System\Engine\Controller {
 
 			$index = $key . '=' . $value;
 
-			if (!isset($this->data[$language_id][$index])) {
+			if (!isset($this->data[$this->languageId][$index])) {
 				// Alpha Engine: Resolução de alta performance via Repositório (Identity Map -> Cache Físico -> DAO)
-				$keyword = $seoUrlRepository->getKeywordByQuery($key, $value, $store_id, $language_id);
+				$keyword = $seoUrlRepository->getKeywordByQuery($key, $value, $this->storeId, $this->languageId);
 				
 				if ($keyword) {
-					$this->data[$language_id][$index] = [
+					$this->data[$this->languageId][$index] = [
 						'keyword'    => $keyword,
 						'sort_order' => count($paths)
 					];
 				} else {
-					$this->data[$language_id][$index] = false;
+					$this->data[$this->languageId][$index] = false;
 				}
 			}
 
-			if ($this->data[$language_id][$index]) {
-				$paths[] = $this->data[$language_id][$index];
+			if (!empty($this->data[$this->languageId][$index])) {
+				$paths[] = $this->data[$this->languageId][$index];
 
 				unset($query[$key]);
 			}
