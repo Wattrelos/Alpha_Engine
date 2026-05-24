@@ -12,32 +12,18 @@ use Alpha\Model\Domain\BaseEntity;
  */
 class Session extends BaseEntity
 {
-    private int $customerId = 0;
-    private string $sessionToken = '';
+    private string $tokenSession = '';
     private string $data = '';
-    private string $expireAt = '';
-    private string $userAgent = '';
-    private string $ip = '';
+    private string $expire = '';
 
-    public function getCustomerId(): int
+    public function getTokenSession(): string
     {
-        return $this->customerId;
+        return $this->tokenSession;
     }
 
-    public function setCustomerId(int $customerId): self
+    public function setTokenSession(string $tokenSession): self
     {
-        $this->customerId = $customerId;
-        return $this;
-    }
-
-    public function getSessionToken(): string
-    {
-        return $this->sessionToken;
-    }
-
-    public function setSessionToken(string $sessionToken): self
-    {
-        $this->sessionToken = $sessionToken;
+        $this->tokenSession = $tokenSession;
         return $this;
     }
 
@@ -52,36 +38,14 @@ class Session extends BaseEntity
         return $this;
     }
 
-    public function getExpireAt(): string
+    public function getExpire(): string
     {
-        return $this->expireAt;
+        return $this->expire;
     }
 
-    public function setExpireAt(string $expireAt): self
+    public function setExpire(string $expire): self
     {
-        $this->expireAt = $expireAt;
-        return $this;
-    }
-
-    public function getUserAgent(): string
-    {
-        return $this->userAgent;
-    }
-
-    public function setUserAgent(string $userAgent): self
-    {
-        $this->userAgent = $userAgent;
-        return $this;
-    }
-
-    public function getIp(): string
-    {
-        return $this->ip;
-    }
-
-    public function setIp(string $ip): self
-    {
-        $this->ip = $ip;
+        $this->expire = $expire;
         return $this;
     }
 }

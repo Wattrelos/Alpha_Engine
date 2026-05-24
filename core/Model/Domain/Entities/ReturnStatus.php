@@ -12,11 +12,23 @@ namespace Alpha\Model\Domain\Entities;
  */
 class ReturnStatus extends BaseEntity
 {
+    private int $returnStatusId = 0;
     private string $name = '';
     private int $languageId = 0;
 
     #[ManyToOne(targetEntity: Language::class, foreignKey: 'languageId')]
     private ?Language $language = null;
+
+    public function getReturnStatusId(): int
+    {
+        return $this->returnStatusId;
+    }
+
+    public function setReturnStatusId(int $returnStatusId): self
+    {
+        $this->returnStatusId = $returnStatusId;
+        return $this;
+    }
 
     public function getName(): string
     {

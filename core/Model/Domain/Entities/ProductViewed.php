@@ -10,22 +10,7 @@ use Alpha\Model\Domain\BaseEntity;
  */
 class ProductViewed extends BaseEntity
 {
-    private int $productId = 0;
     private int $viewed = 0;
-
-    #[ManyToOne(targetEntity: Product::class, foreignKey: 'productId')]
-    private ?Product $product = null;
-
-    public function getProductId(): int
-    {
-        return $this->productId;
-    }
-
-    public function setProductId(int $productId): self
-    {
-        $this->productId = $productId;
-        return $this;
-    }
 
     public function getViewed(): int
     {
@@ -35,17 +20,6 @@ class ProductViewed extends BaseEntity
     public function setViewed(int $viewed): self
     {
         $this->viewed = $viewed;
-        return $this;
-    }
-
-    public function getProduct(): ?Product
-    {
-        return $this->product;
-    }
-
-    public function setProduct(?Product $product): self
-    {
-        $this->product = $product;
         return $this;
     }
 }

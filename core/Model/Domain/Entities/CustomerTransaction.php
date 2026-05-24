@@ -3,42 +3,36 @@
 namespace Alpha\Model\Domain\Entities;
 
 use Alpha\Model\Domain\BaseEntity;
-use DateTimeImmutable;
 use Alpha\Model\Domain\Attributes\ManyToOne;
 
 /**
  * Entidade CustomerTransaction
- * Créditos e débitos financeiros na conta do cliente (Saldo).
+ * Representa o histórico de movimentações financeiras (Saldo/Créditos em Loja) de um cliente.
  * 
  * @Table(name="customer_transaction")
  */
 class CustomerTransaction extends BaseEntity
 {
+    private int $customerId = 0;
     private int $orderId = 0;
     private string $description = '';
-    private float $amount = 0.0000;
-    private ?DateTimeImmutable $dateAdded = null;
+    private float $amount = 0.0;
+    private string $dateAdded = '';
 
     #[ManyToOne(targetEntity: Customer::class, foreignKey: 'customerId')]
     private ?Customer $customer = null;
 
-    /**
-     * Apontamentos Técnicos:
-     * 1. Precisão Financeira: O campo 'amount' é float para suportar centavos no saldo.
-     * 2. Auditoria: Fundamental para processos de estorno ou créditos de bonificação.
-     */
+    #[ManyToOne(targetEntity: Order::class, foreignKey: 'orderId')]
+    private ?Order $order = null;
 
     public function getCustomerId(): int
     {
-        return $this->customer ? (int)$this->customer->getId() : 0;
+        return $this->customerId;
     }
 
     public function setCustomerId(int $customerId): self
     {
-        if (!$this->customer) {
-            $this->customer = new Customer();
-        }
-        $this->customer->setId($customerId);
+        $this->customerId = $customerId;
         return $this;
     }
 
@@ -75,19 +69,20 @@ class CustomerTransaction extends BaseEntity
         return $this;
     }
 
-    public function getDateAdded(): ?DateTimeImmutable
+    public function getDateAdded(): string
     {
         return $this->dateAdded;
     }
 
-    public function setDateAdded(?DateTimeImmutable $dateAdded): self
+    public function setDateAdded(string $dateAdded): self
     {
         $this->dateAdded = $dateAdded;
         return $this;
     }
 
-    public function getCustomer(): ?Customer
-    {
-        return $this->customer;
-    }
+    public function getCustomer(): ?Customer { return $this->customer; }
+    public function setCustomer(?Customer $customer): self { clone $this->customer = $customer; return $this; }
+
+    public function getOrder(): ?Order { return $this->order; }
+    public function setOrder(?Order $order): self { clone $this->order = $order; return $this; }
 }

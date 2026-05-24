@@ -5,14 +5,9 @@ namespace Alpha\Model\Domain\DTOs;
 /**
  * HeaderDataDTO - Objeto de transferência de dados para o cabeçalho.
  */
-class HeaderDataDTO
+class HeaderDataDTO implements \JsonSerializable
 {
-    private array $data;
-
-    public function __construct(array $data)
-    {
-        $this->data = $data;
-    }
+    public function __construct(private readonly array $data = []) {}
 
     public function toArray(): array
     {
@@ -22,5 +17,10 @@ class HeaderDataDTO
     public function get(string $key, mixed $default = null): mixed
     {
         return $this->data[$key] ?? $default;
+    }
+
+    public function jsonSerialize(): mixed
+    {
+        return $this->toArray();
     }
 }

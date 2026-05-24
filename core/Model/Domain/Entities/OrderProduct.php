@@ -18,12 +18,14 @@ class OrderProduct extends BaseEntity
 {
     private int $orderId = 0;
     private int $productId = 0;
+    private int $masterId = 0;
     private string $name = '';
     private string $model = '';
     private int $quantity = 0;
     private float $price = 0.0000;
     private float $total = 0.0000;
     private float $tax = 0.0000;
+    private int $reward = 0;
 
     #[ManyToOne(targetEntity: Order::class, foreignKey: 'orderId')]
     private ?Order $order = null;
@@ -40,6 +42,9 @@ class OrderProduct extends BaseEntity
     public function getProductId(): int { return $this->productId; }
     public function setProductId(int $id): self { $this->productId = $id; return $this; }
 
+    public function getMasterId(): int { return $this->masterId; }
+    public function setMasterId(int $masterId): self { $this->masterId = $masterId; return $this; }
+
     public function getName(): string { return $this->name; }
     public function setName(string $name): self { $this->name = $name; return $this; }
 
@@ -51,6 +56,12 @@ class OrderProduct extends BaseEntity
 
     public function getTotal(): float { return $this->total; }
     public function setTotal(float $total): self { $this->total = $total; return $this; }
+
+    public function getTax(): float { return $this->tax; }
+    public function setTax(float $tax): self { $this->tax = $tax; return $this; }
+
+    public function getReward(): int { return $this->reward; }
+    public function setReward(int $reward): self { $this->reward = $reward; return $this; }
 
     public function getOrder(): ?Order { return $this->order; }
     public function setOrder(?Order $order): self { $this->order = $order; return $this; }

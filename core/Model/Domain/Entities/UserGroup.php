@@ -6,25 +6,14 @@ use Alpha\Model\Domain\BaseEntity;
 
 /**
  * Entidade UserGroup
- * Define grupos de permissões para usuários administrativos.
+ * Define perfis e permissões de acesso ao painel de administração.
  * 
  * @Table(name="user_group")
  */
 class UserGroup extends BaseEntity
 {
     private string $name = '';
-    private array $permission = [];
-
-    #[OneToMany(targetEntity: User::class, foreignKey: 'userGroupId')]
-    private array $users = [];
-
-    /**
-     * Apontamentos Técnicos:
-     * 1. Gestão de Permissões: O campo 'permission' é tipado como array para facilitar a manipulação
-     *    de acessos (access/modify) diretamente na lógica de negócio.
-     * 2. Integridade de Acesso: A coleção 'users' permite auditar rapidamente quais administradores
-     *    pertencem a um determinado nível de privilégio.
-     */
+    private string $permission = '';
 
     public function getName(): string
     {
@@ -37,26 +26,16 @@ class UserGroup extends BaseEntity
         return $this;
     }
 
-    public function getPermission(): array
+    public function getPermission(): string
     {
         return $this->permission;
     }
 
-    public function setPermission(array $permission): self
+    public function setPermission(string $permission): self
     {
         $this->permission = $permission;
         return $this;
     }
 
-    /** @return User[] */
-    public function getUsers(): array
-    {
-        return $this->users;
-    }
-
-    public function setUsers(array $users): self
-    {
-        $this->users = $users;
-        return $this;
-    }
+    public function getPermissionArray(): array { return json_decode($this->permission, true) ?: []; }
 }

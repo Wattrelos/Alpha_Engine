@@ -8,19 +8,16 @@ use Alpha\Model\Domain\Attributes\OneToMany;
  * Entidade SubscriptionPlan - Define as regras de faturamento recorrente.
  * 
  * Melhoras aplicadas (Alpha Engine):
- * - Precisão Financeira: Preços tratados como float para cálculos exatos de checkout.
  * - Gestão de Ciclos: Propriedades de frequência e duração tipadas como int para lógica de cron.
  * - Suporte a Trial: Campos específicos para períodos de teste integrados à lógica principal.
  * - Multi-idioma: Relacionamento OneToMany configurado para carregar nomes e descrições do plano.
  */
 class SubscriptionPlan extends BaseEntity
 {
-    private float $trialPrice = 0.0;
     private string $trialFrequency = '';
     private int $trialCycle = 0;
     private int $trialDuration = 0;
     private bool $trialStatus = false;
-    private float $price = 0.0;
     private string $frequency = '';
     private int $cycle = 0;
     private int $duration = 0;
@@ -29,9 +26,6 @@ class SubscriptionPlan extends BaseEntity
 
     #[OneToMany(targetEntity: SubscriptionPlanDescription::class, foreignKey: 'subscriptionPlanId')]
     private array $descriptions = [];
-
-    public function getTrialPrice(): float { return $this->trialPrice; }
-    public function setTrialPrice(float $value): self { $this->trialPrice = $value; return $this; }
 
     public function getTrialFrequency(): string { return $this->trialFrequency; }
     public function setTrialFrequency(string $value): self { $this->trialFrequency = $value; return $this; }
@@ -44,9 +38,6 @@ class SubscriptionPlan extends BaseEntity
 
     public function isTrialStatus(): bool { return $this->trialStatus; }
     public function setTrialStatus(bool $value): self { $this->trialStatus = $value; return $this; }
-
-    public function getPrice(): float { return $this->price; }
-    public function setPrice(float $value): self { $this->price = $value; return $this; }
 
     public function getFrequency(): string { return $this->frequency; }
     public function setFrequency(string $value): self { $this->frequency = $value; return $this; }

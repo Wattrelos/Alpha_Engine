@@ -11,30 +11,30 @@ use Alpha\Model\Domain\Attributes\ManyToOne;
  * Melhoras aplicadas (Alpha Engine):
  * - Roteamento de Extensões: Facilita o autoloading e a localização de controllers/views de terceiros.
  * - Tipagem PHP 8.4: IDs e caminhos tipados.
- * - Relacionamentos: #[ManyToOne] para vincular à entidade Extension pai.
+ * - Relacionamentos: #[ManyToOne] para vincular à entidade ExtensionInstall pai.
  */
 class ExtensionPath extends BaseEntity
 {
-    private int $extensionId = 0;
+    private int $extensionInstallId = 0;
     private string $path = '';
 
-    #[ManyToOne(targetEntity: Extension::class, foreignKey: 'extensionId')]
-    private ?Extension $extension = null;
+    #[ManyToOne(targetEntity: ExtensionInstall::class, foreignKey: 'extensionInstallId')]
+    private ?ExtensionInstall $extensionInstall = null;
 
-    public function getExtensionId(): int { return $this->extensionId; }
-    public function setExtensionId(int $id): self { $this->extensionId = $id; return $this; }
+    public function getExtensionInstallId(): int { return $this->extensionInstallId; }
+    public function setExtensionInstallId(int $id): self { $this->extensionInstallId = $id; return $this; }
 
     public function getPath(): string { return $this->path; }
     public function setPath(string $path): self { $this->path = $path; return $this; }
 
-    public function getExtension(): ?Extension
+    public function getExtensionInstall(): ?ExtensionInstall
     {
-        return $this->extension;
+        return $this->extensionInstall;
     }
 
-    public function setExtension(?Extension $extension): self
+    public function setExtensionInstall(?ExtensionInstall $extensionInstall): self
     {
-        $this->extension = $extension;
+        $this->extensionInstall = $extensionInstall;
         return $this;
     }
 }

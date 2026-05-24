@@ -2,6 +2,7 @@
 namespace Alpha\Model\Domain\Entities;
 
 use Alpha\Model\Domain\BaseEntity;
+use Alpha\Model\Domain\Attributes\ManyToOne;
 
 // @ORM\Entity
 /* @ORM\Table(
@@ -12,66 +13,63 @@ use Alpha\Model\Domain\BaseEntity;
 class CustomerAffiliateReport extends BaseEntity
 {
 
-    // @ORM\Column(type="string", length=40, nullable=false)
-    private $ip;
-    // @ORM\Column(type="string", length=2, nullable=false)
-    private $country;
-    // @ORM\Column(type="date", nullable=false)
-    private $dateAdded;
-// Corrigido! Exemplo ------------------------------------------------------------------------------------------
-    // @ORM\ManyToOne(targetEntity=\Customer::class, inversedBy="customerAffiliateReports")
-    // @ORM\JoinColumn(name="customer_id", referencedColumnName="id", nullable=false, onDelete="restrict")
-    private $customer;
-// Corrigido! Exemplo ------------------------------------------------------------------------------------------
+   /**
+     * Entidade CustomerAffiliateReport - Relatórios de cliques e tráfego de afiliados.
+     * 
+     * Melhoras aplicadas (Alpha Engine):
+     * - Refatoração Completa: Remoção do lixo legado (Anotações do Doctrine).
+     * - Tipagem Estrita: Propriedades fortemente tipadas para PHP 8.4.
+     * - Relacionamentos: #[ManyToOne] para resolver os IDs de Cliente e Loja sem joins manuais.
+     */
 
-    // @ORM\ManyToOne(targetEntity=\Store::class, inversedBy="CustomerAffiliateReports")
-    // @ORM\JoinColumn(name="storeId", referencedColumnName="storeId", nullable=false, onDelete="restrict")
-    // private $Store;
+    private int $customerId = 0;
+    private int $storeId = 0;
+    private string $ip = '';
+    private string $country = '';
+    private string $dateAdded = '';
 
+    #[ManyToOne(targetEntity: Customer::class, foreignKey: 'customerId')]
+    private ?Customer $customer = null;
 
-    public function getIp()
+    #[ManyToOne(targetEntity: Store::class, foreignKey: 'storeId')]
+    private ?Store $store = null;
+
+    public function getCustomerId(): int { return $this->customerId; }
+    public function setCustomerId(int $customerId): self { $this->customerId = $customerId; return $this; }
+
+    public function getStoreId(): int { return $this->storeId; }
+    public function setStoreId(int $storeId): self { $this->storeId = $storeId; return $this; }
+
+    public function getIp(): string { return $this->ip; }
+    public function setIp(string $ip): self { $this->ip = $ip; return $this; }
+
+    public function getCountry(): string { return $this->country; }
+    public function setCountry(string $country): self { $this->country = $country; return $this; }
+
+    public function getDateAdded(): string { return $this->dateAdded; }
+    public function setDateAdded(string $dateAdded): self { $this->dateAdded = $dateAdded; return $this; }
+
+    public function getCustomer(): ?Customer
     {
-        return $this->ip;
+        return $this->customer;
     }
-    public function setIp($value)
+
+    public function setCustomer(?Customer $customer): self
     {
-        $this->ip = $value;
+        $this->customer = $customer;
         return $this;
     }
-    public function getCountry()
+
+    public function getStore(): ?Store
     {
-        return $this->country;
+        return $this->store;
     }
-    public function setCountry($value)
+
+    public function setStore(?Store $store): self
     {
-        $this->country = $value;
+        $this->store = $store;
         return $this;
     }
-    public function getDateAdded()
-    {
-        return $this->dateAdded;
-    }
-    public function setDateAdded($value)
-    {
-        $this->dateAdded = $value;
-        return $this;
-    }
-    public function getCustomer()
-    {
-        return $this->Customer;
-    }
-    public function setCustomer($value)
-    {
-        $this->Customer = $value;
-        return $this;
-    }
-    public function getStore()
-    {
-        return $this->Store;
-    }
-    public function setStore($value)
-    {
-        $this->Store = $value;
-        return $this;
-    }
+
+   
 }

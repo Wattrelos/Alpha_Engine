@@ -90,7 +90,8 @@ class CollectionToArrayConverter
     {
         return match (true) {
             $value instanceof InterfaceEntity => self::convertEntity($value, $visited),
-            is_array($value) => self::convertCollection($value, $visited),
+            is_iterable($value) => self::convertCollection(is_array($value) ? $value : iterator_to_array($value), $visited),
+            $value instanceof \JsonSerializable => $value->jsonSerialize(),
             default => $value,
         };
     }

@@ -149,21 +149,25 @@ class CartRepository extends AbstractRepository implements BaseRepositoryInterfa
         // Alpha Engine: Fim do N+1 Query! Carregamos todos os produtos de uma vez.
         $product_ids = array_column($cartItems, 'product_id');
 
+        // Configurações de contexto da Alpha Engine para preços B2B / Varejo
+        $customerGroupId = (int)$this->config->get('config_customer_group_id');
+        if ($this->customer->isLogged()) {
+            $customerGroupId = (int)$this->customer->getGroupId();
+        }
+
+        /** @var \Alpha\Model\Domain\Repositories\PriceRepository $priceRepo */
+        $priceRepo = $this->registry->get('alpha_repository_factory')->get(\Alpha\Model\Domain\Repositories\PriceRepository::class);
+        $priceStatements = $priceRepo->getPriceStatements($customerGroupId);
+
         /** @var ProductMapper $productMapper */
         $productMapper = $this->mapperFactory->get(ProductMapper::class);
-        $productDataMap = $productMapper->getProductsByIds($product_ids, $this->language_id, $this->store_id, $this->getCustomerId());
+        $productDataMap = $productMapper->getProductsByIds($product_ids, $this->language_id, $this->store_id, $customerGroupId, $priceStatements);
         $productMap = array_column($productDataMap, null, 'id');
 
         $products = [];
         
         /** @var ProductMapper $productMapper */
         $productMapper = $this->mapperFactory->get(ProductMapper::class);
-        
-        // Configurações de contexto da Alpha Engine para preços B2B / Varejo
-        $customerGroupId = (int)$this->config->get('config_customer_group_id');
-        if ($this->customer->isLogged()) {
-            $customerGroupId = (int)$this->customer->getGroupId();
-        }
 
         // Alpha Engine: Pré-carregamento de Opções (Fim do N+1 nas opções)
         $allOptionValueIds = [];
@@ -177,26 +181,14 @@ class CartRepository extends AbstractRepository implements BaseRepositoryInterfa
         }
         $allOptionValueIds = array_unique($allOptionValueIds);
 
-        $optionValuesMap = [];
-        if (!empty($allOptionValueIds)) {
-            if (method_exists($productMapper, 'getOptionValuesByIds')) {
-                // O cenário ideal: O Mapper resolve tudo em apenas 1 query
-                $optionValuesMap = $productMapper->getOptionValuesByIds($allOptionValueIds, $this->language_id);
-            } else {
-                // Fallback legado: Cache em memória para evitar queries idênticas até o Mapper ser atualizado
-                foreach ($cartItems as $item) {
-                    $productInfo = $productMap[$item['product_id']] ?? null;
-                    if (!$productInfo) continue;
+        // Alpha Engine: Consumo Inteligente O(1) das Opções e Descontos via Repositórios de Domínio
+        $repositoryFactory = $this->registry->get('alpha_repository_factory');
+        $optionRepo = $repositoryFactory->get(\Alpha\Model\Domain\Repositories\ProductOptionValueRepository::class);
+        $discountRepo = $repositoryFactory->get(\Alpha\Model\Domain\Repositories\ProductDiscountRepository::class);
 
-                    $options = json_decode($item['option'], true) ?: [];
-                    foreach ($options as $productOptionId => $value) {
-                        if (is_scalar($value) && !isset($optionValuesMap[(int)$value])) {
-                            $optionValuesMap[(int)$value] = $productMapper->getOptionValue((int)$productInfo['id'], (int)$value, $this->language_id);
-                        }
-                    }
-                }
-            }
-        }
+        $optionValuesEntities = $optionRepo->getOptionValuesByIds($allOptionValueIds);
+        // Mantém o Mapper legado em memória apenas para a extração do Nome da Opção Traduzida (Visual)
+        $legacyOptionValuesMap = !empty($allOptionValueIds) ? $productMapper->getOptionValuesByIds($allOptionValueIds, $this->language_id) : [];
 
         foreach ($cartItems as $item) {
             // Busca o produto no mapa em memória (O(1)) em vez de consultar o banco
@@ -207,42 +199,56 @@ class CartRepository extends AbstractRepository implements BaseRepositoryInterfa
                 $points = (int)$productInfo['points'];
                 $weight = (float)$productInfo['weight'];
                 
-                // Processamento de Opções Dinâmicas (Fim do // TODO)
                 $optionData = [];
                 $options = json_decode($item['option'], true) ?: [];
                 
                 foreach ($options as $productOptionId => $value) {
-                    // Nota: O OpenCart trata checkbox/múltiplos como array. Simplificado para valores singulares aqui.
                     if (is_scalar($value)) {
-                        // Consome a opção do cache em memória previamente carregado O(1)
-                        $optionValueInfo = $optionValuesMap[(int)$value] ?? null;
+                        /** @var \Alpha\Model\Domain\Entities\ProductOptionValue $optionEntity */
+                        $optionEntity = $optionValuesEntities[(int)$value] ?? null;
+                        $legacyOptionInfo = $legacyOptionValuesMap[(int)$value] ?? null;
                         
-                        if ($optionValueInfo) {
+                        if ($optionEntity) {
                             // Processa Modificador de Preço
-                            if ($optionValueInfo['price_prefix'] === '+') {
-                                $price += (float)$optionValueInfo['price'];
-                            } elseif ($optionValueInfo['price_prefix'] === '-') {
-                                $price -= (float)$optionValueInfo['price'];
+                            if ($optionEntity->getPricePrefix() === '+') {
+                                $price += (float)$optionEntity->getPrice();
+                            } elseif ($optionEntity->getPricePrefix() === '-') {
+                                $price -= (float)$optionEntity->getPrice();
                             }
                             
                             // Processa Modificador de Peso
-                            if ($optionValueInfo['weight_prefix'] === '+') {
-                                $weight += (float)$optionValueInfo['weight'];
-                            } elseif ($optionValueInfo['weight_prefix'] === '-') {
-                                $weight -= (float)$optionValueInfo['weight'];
+                            if ($optionEntity->getWeightPrefix() === '+') {
+                                $weight += (float)$optionEntity->getWeight();
+                            } elseif ($optionEntity->getWeightPrefix() === '-') {
+                                $weight -= (float)$optionEntity->getWeight();
                             }
                             
                             // Mantemos os metadados da opção para a view
-                            $optionData[] = ['name' => $optionValueInfo['name'], 'value' => $optionValueInfo['name']];
+                            $optionData[] = [
+                                'name'  => $legacyOptionInfo['option_name'] ?? 'Option',
+                                'value' => $legacyOptionInfo['option_value_name'] ?? (string)$optionEntity->getId()
+                            ];
                         }
                     }
                 }
 
-                // Isolamento das regras de prioridade de descontos da Alpha Engine
+                // Alpha Engine: Cálculo de Descontos Progressivos estritos (Cruza a Quantidade Real no Carrinho)
+                $activeDiscounts = $discountRepo->getActiveDiscounts($productInfo['id'], $customerGroupId);
+                $discountPrice = null;
+
+                foreach ($activeDiscounts as $discount) {
+                    // O(1) filter pela quantidade exata atualizada no carrinho
+                    if ($item['quantity'] >= $discount->getQuantity()) {
+                        if ($discountPrice === null || $discount->getPrice() < $discountPrice) {
+                            $discountPrice = $discount->getPrice();
+                        }
+                    }
+                }
+
                 if ((float)$productInfo['special']) {
                     $price = (float)$productInfo['special'];
-                } elseif ((float)$productInfo['discount']) {
-                    $price = (float)$productInfo['discount'];
+                } elseif ($discountPrice !== null) {
+                    $price = (float)$discountPrice;
                 }
 
                 // Formatação final do produto protegendo a interface legada
@@ -474,6 +480,22 @@ class CartRepository extends AbstractRepository implements BaseRepositoryInterfa
     }
 
     /**
+     * Alpha Engine: Prepara o DTO da página inteira do Carrinho (Breadcrumbs, Título).
+     */
+    public function getCartPageData(): ViewResponse
+    {
+        $this->loadLanguage('checkout/cart');
+        $this->document->setTitle($this->language->get('heading_title'));
+
+        $data['breadcrumbs'] = [];
+        $data['breadcrumbs'][] = ['text' => $this->language->get('text_home'), 'href' => $this->url->link('common/home', 'language=' . $this->config->get('config_language'))];
+        $data['breadcrumbs'][] = ['text' => $this->language->get('heading_title'), 'href' => $this->url->link('checkout/cart', 'language=' . $this->config->get('config_language'))];
+        $data['language'] = $this->config->get('config_language');
+
+        return new ViewResponse($data);
+    }
+
+    /**
      * Alpha Engine: Prepara o DTO (Data Transfer Object) para exibição do carrinho (Header/Mini-Cart).
      */
     public function getCartDisplayData(): object
@@ -603,6 +625,10 @@ class CartRepository extends AbstractRepository implements BaseRepositoryInterfa
             }
         }
 
+        /** @var \Alpha\Mappers\EntityMappers\ExtensionMapper $extensionMapper */
+        $extensionMapper = $this->mapperFactory->get(\Alpha\Mappers\EntityMappers\ExtensionMapper::class);
+        $data['total_extensions'] = $extensionMapper->getExtensionsByType('total');
+
         if ($this->hasProducts()) {
             $data['continue'] = $this->url->link('common/home', 'language=' . $this->config->get('config_language'));
             $data['checkout'] = $this->url->link('checkout/checkout', 'language=' . $this->config->get('config_language'));
@@ -653,5 +679,60 @@ class CartRepository extends AbstractRepository implements BaseRepositoryInterfa
             $sort_order[$key] = $value['sort_order'];
         }
         array_multisort($sort_order, SORT_ASC, $totals);
+    }
+
+    /**
+     * Alpha Engine: Valida as regras de negócio para adicionar um item ao carrinho.
+     */
+    public function validateAddition(int $productId, array $option, int $subscriptionPlanId): array
+    {
+        $this->loadLanguage('checkout/cart');
+        $result = ['error' => []];
+
+        /** @var \Alpha\Model\Domain\Repositories\ProductRepository $productRepository */
+        $productRepository = $this->registry->get('alpha_repository_factory')->get(\Alpha\Model\Domain\Repositories\ProductRepository::class);
+        $product_info = $productRepository->getProduct($productId);
+
+        if (!$product_info) {
+            $result['error']['warning'] = $this->language->get('error_product');
+            return $result;
+        }
+
+        $result['product_name'] = $product_info['name'];
+
+        if (!empty($product_info['master_id'])) {
+            $productId = $product_info['master_id'];
+        }
+
+        $override = $product_info['override']['variant'] ?? [];
+
+        if (!empty($product_info['variant']) && is_array($product_info['variant'])) {
+            foreach ($product_info['variant'] as $key => $value) {
+                if (array_key_exists($key, $override)) {
+                    $option[$key] = $value;
+                }
+            }
+        }
+
+        $result['option_data'] = $option;
+
+        foreach ($productRepository->getOptions($productId) as $product_option) {
+            if ($product_option['required'] && empty($option[$product_option['product_option_id']])) {
+                $result['error']['option_' . $product_option['product_option_id']] = sprintf($this->language->get('error_required'), $product_option['name']);
+            } elseif (($product_option['type'] == 'text') && !empty($product_option['validation']) && !oc_validate_regex($option[$product_option['product_option_id']], $product_option['validation'])) {
+                $result['error']['option_' . $product_option['product_option_id']] = sprintf($this->language->get('error_regex'), $product_option['name']);
+            }
+        }
+
+        $subscriptions = $productRepository->getSubscriptions($productId);
+        if ($subscriptions && (!$subscriptionPlanId || !in_array($subscriptionPlanId, array_column($subscriptions, 'subscription_plan_id')))) {
+            $result['error']['subscription'] = $this->language->get('error_subscription');
+        }
+
+        if (!empty($result['error'])) {
+            $result['redirect'] = $this->url->link('product/product', 'language=' . $this->config->get('config_language') . '&product_id=' . $productId, true);
+        }
+
+        return $result;
     }
 }

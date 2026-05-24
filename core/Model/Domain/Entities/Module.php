@@ -5,28 +5,25 @@ namespace Alpha\Model\Domain\Entities;
 use Alpha\Model\Domain\BaseEntity;
 
 /**
- * Entidade Module - Define instâncias de módulos instalados com configurações específicas.
+ * Entidade Module
+ * Armazena instâncias de configurações isoladas para as Extensões/Módulos (ex: "Banner Home").
+ * 
+ * @Table(name="module")
  */
 class Module extends BaseEntity
 {
     private string $name = '';
     private string $code = '';
-    private string $setting = '';
+    private string $setting = ''; // JSON codificado
 
     public function getName(): string { return $this->name; }
-    public function setName(string $name): self { $this->name = $name; return $this; }
+    public function setName(string $val): self { $this->name = $val; return $this; }
 
     public function getCode(): string { return $this->code; }
-    public function setCode(string $code): self { $this->code = $code; return $this; }
+    public function setCode(string $val): self { $this->code = $val; return $this; }
 
-    public function getSetting(): string
-    {
-        return $this->setting;
-    }
-
-    public function setSetting(string $setting): self
-    {
-        $this->setting = $setting;
-        return $this;
-    }
+    public function getSetting(): string { return $this->setting; }
+    public function setSetting(string $val): self { $this->setting = $val; return $this; }
+    
+    public function getSettingArray(): array { return json_decode($this->setting, true) ?: []; }
 }

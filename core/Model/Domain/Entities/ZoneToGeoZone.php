@@ -9,8 +9,6 @@ use Alpha\Model\Domain\Attributes\ManyToOne;
  */
 class ZoneToGeoZone extends BaseEntity
 {
-    private string $dateAdded = '';
-
     #[ManyToOne(targetEntity: Country::class, foreignKey: 'countryId')]
     private ?Country $country = null;
 
@@ -49,9 +47,6 @@ class ZoneToGeoZone extends BaseEntity
         $this->geoZone->setId($id); 
         return $this; 
     }
-
-    public function getDateAdded(): string { return $this->dateAdded; }
-    public function setDateAdded(string $date): self { $this->dateAdded = $date; return $this; }
 
     public function getCountry(): ?Country { return $this->country; }
     public function setCountry(?Country $country): self { $this->country = $country; return $this; }

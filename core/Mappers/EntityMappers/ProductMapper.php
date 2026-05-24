@@ -16,28 +16,9 @@ class ProductMapper extends BaseMapper {
     protected string $entityClass = Product::class;
 
     /**
-     * Gera as subqueries de preço (desconto, especial, etc)
-     */
-    private function getPriceStatements(int $customer_group_id): array {
-        // Alpha Engine: SQL Optimization (Defuse do Full Table Scan).
-        // Substituímos NOW() (DATETIME) por uma string estática de DATE gerada no PHP.
-        // Isso evita que o MySQL faça conversão de tipos em tempo de execução e permite o uso de Índices!
-        $today = date('Y-m-d');
-
-        return [
-            'discount' => "(SELECT (CASE WHEN `pd2`.`type` = 'P' THEN (`p`.`price` - (`p`.`price` * (`pd2`.`price` / 100))) WHEN `pd2`.`type` = 'S' THEN (`p`.`price` - `pd2`.`price`) ELSE `pd2`.`price` END) FROM `" . DB_PREFIX . "product_discount` `pd2` WHERE `pd2`.`product_id` = `p`.`id` AND `pd2`.`customer_group_id` = '" . $customer_group_id . "' AND `pd2`.`quantity` = '1' AND `pd2`.`special` = '0' AND ((`pd2`.`date_start` = '0000-00-00' OR `pd2`.`date_start` <= '{$today}') AND (`pd2`.`date_end` = '0000-00-00' OR `pd2`.`date_end` >= '{$today}')) ORDER BY `pd2`.`priority` ASC, `pd2`.`price` ASC LIMIT 1) AS `discount` ",
-            'special'  => "(SELECT (CASE WHEN `ps`.`type` = 'P' THEN (`p`.`price` - (`p`.`price` * (`ps`.`price` / 100))) WHEN `ps`.`type` = 'S' THEN (`p`.`price` - `ps`.`price`) ELSE `ps`.`price` END) FROM `" . DB_PREFIX . "product_discount` `ps` WHERE `ps`.`product_id` = `p`.`id` AND `ps`.`customer_group_id` = '" . $customer_group_id . "' AND `ps`.`quantity` = '1' AND `ps`.`special` = '1' AND ((`ps`.`date_start` = '0000-00-00' OR `ps`.`date_start` <= '{$today}') AND (`ps`.`date_end` = '0000-00-00' OR `ps`.`date_end` >= '{$today}')) ORDER BY `ps`.`priority` ASC, `ps`.`price` ASC LIMIT 1) AS `special` ",
-            'reward'   => "(SELECT `pr`.`points` FROM `" . DB_PREFIX . "product_reward` `pr` WHERE `pr`.`product_id` = `p`.`id` AND `pr`.`customer_group_id` = '" . $customer_group_id . "') AS `reward` ",
-            'review'   => "(SELECT COUNT(*) FROM `" . DB_PREFIX . "review` `r` WHERE `r`.`product_id` = `p`.`id` AND `r`.`status` = '1' GROUP BY `r`.`product_id`) AS `reviews` "
-        ];
-    }
-
-    /**
      * Obtém um produto específico
      */
-    public function getProduct(int $product_id, int $language_id, int $store_id, int $customer_group_id): array {
-        $stmt = $this->getPriceStatements($customer_group_id);
-        
+    public function getProduct(int $product_id, int $language_id, int $store_id, int $customer_group_id, array $priceStatements = []): array {
         $query = (new QueryBuilder())
             ->from(DB_PREFIX . 'product_to_store', 'p2s')
             ->leftJoin(DB_PREFIX . 'product', 'p', 'p.id = p2s.product_id')
@@ -47,7 +28,11 @@ class ProductMapper extends BaseMapper {
             ->where("p.date_available <= ?", [date('Y-m-d')])
             ->where("p2s.store_id = ?", [$store_id])
             ->where("pd.language_id = ?", [$language_id])
-            ->select('p.*', 'pd.name', 'pd.description', 'p.image', $stmt['discount'], $stmt['special'], $stmt['reward'], $stmt['review']);
+            ->select('p.*', 'pd.name', 'pd.description', 'p.image');
+            
+        if (!empty($priceStatements)) {
+            $query->select(...array_values($priceStatements));
+        }
 
         $results = $this->dao->executeQuery($query);
         
@@ -77,8 +62,7 @@ class ProductMapper extends BaseMapper {
     /**
      * Lista produtos com filtros dinâmicos
      */
-    public function getProducts(array $data, int $language_id, int $store_id, int $customer_group_id): array {
-        $stmt = $this->getPriceStatements($customer_group_id);
+    public function getProducts(array $data, int $language_id, int $store_id, int $customer_group_id, array $priceStatements = []): array {
         $query = new QueryBuilder();
 
         // Construção dinâmica da base (FROM)
@@ -119,8 +103,11 @@ class ProductMapper extends BaseMapper {
         }
 
         // Select e Ordenação
-        $query->select('p.*', 'pd.name', 'pd.description', 'p.image', $stmt['discount'], $stmt['special'], $stmt['reward'], $stmt['review'])
-              ->groupBy('p.id');
+        $query->select('p.*', 'pd.name', 'pd.description', 'p.image');
+        if (!empty($priceStatements)) {
+            $query->select(...array_values($priceStatements));
+        }
+        $query->groupBy('p.id');
 
         // Paginação
         $limit = (int)($data['limit'] ?? 20);
@@ -153,10 +140,9 @@ class ProductMapper extends BaseMapper {
      * Obtém produtos específicos por uma lista de IDs (Batch Load).
      * Utilizado pela HomeRepository para carregar vitrines evitando N+1 queries.
      */
-    public function getProductsByIds(array $product_ids, int $language_id, int $store_id, int $customer_group_id = 0): array {
+    public function getProductsByIds(array $product_ids, int $language_id, int $store_id, int $customer_group_id = 0, array $priceStatements = []): array {
         if (empty($product_ids)) return [];
         
-        $stmt = $this->getPriceStatements($customer_group_id);
         $placeholders = implode(',', array_fill(0, count($product_ids), '?'));
         
         $query = (new QueryBuilder())
@@ -168,7 +154,11 @@ class ProductMapper extends BaseMapper {
             ->where("p.date_available <= ?", [date('Y-m-d')])
             ->where("p2s.store_id = ?", [$store_id])
             ->where("pd.language_id = ?", [$language_id])
-            ->select('p.*', 'pd.name', 'pd.description', 'p.image', $stmt['discount'], $stmt['special'], $stmt['reward'], $stmt['review']);
+            ->select('p.*', 'pd.name', 'pd.description', 'p.image');
+            
+        if (!empty($priceStatements)) {
+            $query->select(...array_values($priceStatements));
+        }
 
         $results = $this->dao->executeQuery($query);
 
@@ -257,8 +247,7 @@ class ProductMapper extends BaseMapper {
     /**
      * Obtém produtos relacionados hidratados com preços e avaliações
      */
-    public function getRelated(int $product_id, int $language_id, int $store_id, int $customer_group_id): array {
-        $stmt = $this->getPriceStatements($customer_group_id);
+    public function getRelated(int $product_id, int $language_id, int $store_id, int $customer_group_id, array $priceStatements = []): array {
 
         $query = (new QueryBuilder())
             ->from(DB_PREFIX . 'product_related', 'pr')
@@ -274,9 +263,12 @@ class ProductMapper extends BaseMapper {
             ->select(
                 'p.*', 
                 'pd.name', 
-                'p.image', 
-                $stmt['discount'], $stmt['special'], $stmt['reward'], $stmt['review']
+                'p.image'
             );
+            
+        if (!empty($priceStatements)) {
+            $query->select(...array_values($priceStatements));
+        }
 
         $results = $this->dao->executeQuery($query);
 

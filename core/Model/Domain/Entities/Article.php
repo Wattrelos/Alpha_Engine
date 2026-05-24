@@ -15,8 +15,9 @@ use Alpha\Model\Domain\Attributes\OneToMany;
  */
 class Article extends BaseEntity
 {
-    private string $image = '';
-    private int $sortOrder = 0;
+    private int $topicId = 0;
+    private string $author = '';
+    private int $rating = 0;
     private bool $status = true;
     private string $dateAdded = '';
     private string $dateModified = '';
@@ -27,25 +28,36 @@ class Article extends BaseEntity
     #[OneToMany(targetEntity: ArticleDescription::class, mappedBy: "article", foreignKey: "articleId")]
     private array $descriptions = [];
 
-    public function getImage(): string
+    public function getTopicId(): int
     {
-        return $this->image;
+        return $this->topicId;
     }
 
-    public function setImage(string $image): self
+    public function setTopicId(int $topicId): self
     {
-        $this->image = $image;
+        $this->topicId = $topicId;
         return $this;
     }
 
-    public function getSortOrder(): int
+    public function getAuthor(): string
     {
-        return $this->sortOrder;
+        return $this->author;
     }
 
-    public function setSortOrder(int $sortOrder): self
+    public function setAuthor(string $author): self
     {
-        $this->sortOrder = $sortOrder;
+        $this->author = $author;
+        return $this;
+    }
+
+    public function getRating(): int
+    {
+        return $this->rating;
+    }
+
+    public function setRating(int $rating): self
+    {
+        $this->rating = $rating;
         return $this;
     }
 

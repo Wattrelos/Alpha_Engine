@@ -22,26 +22,13 @@ class Cart extends BaseController {
 	 * @return void
 	 */
 	public function index(): void {
-		$this->load->language('checkout/cart');
-
-		$this->document->setTitle($this->language->get('heading_title'));
-
-		$data['breadcrumbs'] = [];
-
-		$data['breadcrumbs'][] = [
-			'text' => $this->language->get('text_home'),
-			'href' => $this->url->link('common/home', 'language=' . $this->config->get('config_language'))
-		];
-
-		$data['breadcrumbs'][] = [
-			'text' => $this->language->get('heading_title'),
-			'href' => $this->url->link('checkout/cart', 'language=' . $this->config->get('config_language'))
-		];
+		/** @var CartRepository $cartRepository */
+		$cartRepository = $this->getRepository(CartRepository::class);
+		$response = $cartRepository->getCartPageData();
+		$data = $response->getData();
 
 		// Alpha Engine: Fim do overhead do Loader para métodos da mesma classe
 		$data['list'] = $this->getList();
-
-		$data['language'] = $this->config->get('config_language');
 
 		// Alpha Engine: O BaseController já orquestra os Layouts e gerencia o Response automaticamente (Void)
 		$this->render('checkout/cart', $data);
@@ -73,17 +60,14 @@ class Cart extends BaseController {
 		$data = $response->getData();
 		$data['modules'] = [];
 
-		/** @var \Alpha\Mappers\EntityMappers\ExtensionMapper $extensionMapper */
-		$extensionMapper = $this->getMapper(\Alpha\Mappers\EntityMappers\ExtensionMapper::class);
-		$extensions = $extensionMapper->getExtensionsByType('total');
-
-		foreach ($extensions as $extension) {
+		foreach ($data['total_extensions'] ?? [] as $extension) {
 			$result = $this->load->controller('extension/' . $extension['extension'] . '/checkout/' . $extension['code']);
 
 			if (!$result instanceof \Exception) {
 				$data['modules'][] = $result;
 			}
 		}
+		unset($data['total_extensions']);
 
 		return $this->load->view('checkout/cart_list', $data);
 	}
@@ -103,71 +87,33 @@ class Cart extends BaseController {
 		$option     = array_filter((array)($this->request->post['option'] ?? []));
 		$subscription_plan_id = (int)($this->request->post['subscription_plan_id'] ?? 0);
 		
-		// Alpha Engine: Acessamos o Repository (Domain) para hidratação automática em vez do Mapper
-		/** @var \Alpha\Model\Domain\Repositories\ProductRepository $productRepository */
-		$productRepository = $this->getRepository(\Alpha\Model\Domain\Repositories\ProductRepository::class);
-		$product_info = $productRepository->getProduct($product_id);
+		/** @var CartRepository $cartRepository */
+		$cartRepository = $this->getRepository(CartRepository::class);
+		
+		// Alpha Engine: Validação integral isolada no domínio
+		$validation = $cartRepository->validateAddition($product_id, $option, $subscription_plan_id);
 
-		if ($product_info) {
-			// If variant get master product
-			if (!empty($product_info['master_id'])) {
-				$product_id = $product_info['master_id'];
-			}
-
-			// Only use values in the override
-			if (isset($product_info['override']['variant'])) {
-				$override = $product_info['override']['variant'];
-			} else {
-				$override = [];
-			}
-
-			// Merge variant code with options
-			if (!empty($product_info['variant']) && is_array($product_info['variant'])) {
-				foreach ($product_info['variant'] as $key => $value) {
-					if (array_key_exists($key, $override)) {
-						$option[$key] = $value;
-					}
-				}
-			}
-
-			// Validate options
-			$product_options = $productRepository->getOptions($product_id);
-
-			foreach ($product_options as $product_option) {
-				if ($product_option['required'] && empty($option[$product_option['product_option_id']])) {
-					$json['error']['option_' . $product_option['product_option_id']] = sprintf($this->language->get('error_required'), $product_option['name']);
-				} elseif (($product_option['type'] == 'text') && !empty($product_option['validation']) && !oc_validate_regex($option[$product_option['product_option_id']], $product_option['validation'])) {
-					$json['error']['option_' . $product_option['product_option_id']] = sprintf($this->language->get('error_regex'), $product_option['name']);
-				}
-			}
-
-			// Validate subscription products
-			$subscriptions = $productRepository->getSubscriptions($product_id);
-
-			if ($subscriptions && (!$subscription_plan_id || !in_array($subscription_plan_id, array_column($subscriptions, 'subscription_plan_id')))) {
-				$json['error']['subscription'] = $this->language->get('error_subscription');
+		if (!empty($validation['error'])) {
+			$json['error'] = $validation['error'];
+			if (isset($validation['redirect'])) {
+				$json['redirect'] = $validation['redirect'];
 			}
 		} else {
-			$json['error']['warning'] = $this->language->get('error_product');
-		}
-
-		if (!$json) {
-			/** @var CartRepository $cartRepository */
-			$cartRepository = $this->getRepository(CartRepository::class);
-			
-			// Alpha Engine: Orquestração e limpeza de sessão isolados no domínio
 			$cartRepository->addAndClearCheckout(
 				(int)$this->customer->getId(),
 				$this->session->getId(),
 				$product_id, 
 				$quantity, 
-				$option, 
+				$validation['option_data'] ?? $option, 
 				$subscription_plan_id
 			);
 
-			$json['success'] = sprintf($this->language->get('text_success'), $this->url->link('product/product', 'language=' . $this->config->get('config_language') . '&product_id=' . $product_id), $product_info['name'], $this->url->link('checkout/cart', 'language=' . $this->config->get('config_language')));
-		} else {
-			$json['redirect'] = $this->url->link('product/product', 'language=' . $this->config->get('config_language') . '&product_id=' . $product_id, true);
+			$json['success'] = sprintf(
+				$this->language->get('text_success'), 
+				$this->url->link('product/product', 'language=' . $this->config->get('config_language') . '&product_id=' . $product_id), 
+				$validation['product_name'], 
+				$this->url->link('checkout/cart', 'language=' . $this->config->get('config_language'))
+			);
 		}
 
 		$this->jsonResponse($json);

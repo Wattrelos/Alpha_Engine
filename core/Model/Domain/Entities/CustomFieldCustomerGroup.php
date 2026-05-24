@@ -5,37 +5,46 @@ namespace Alpha\Model\Domain\Entities;
 use Alpha\Model\Domain\BaseEntity;
 use Alpha\Model\Domain\Attributes\ManyToOne;
 
-/**
- * Entidade CustomFieldCustomerGroup - Define se um campo é obrigatório para um grupo de clientes.
- * 
- * Melhoras aplicadas (Alpha Engine):
- * - Regras de Negócio: Permite que campos sejam opcionais para B2C mas obrigatórios para B2B.
- * - Mapeamento Relacional: #[ManyToOne] para vincular ao CustomField e CustomerGroup.
- */
 class CustomFieldCustomerGroup extends BaseEntity
 {
-    private int $customFieldId = 0;
-    private int $customerGroupId = 0;
-    private bool $required = false;
-
-    #[ManyToOne(targetEntity: CustomField::class, foreignKey: 'customFieldId')]
+    #[ManyToOne(targetEntity: CustomField::class)]
     private ?CustomField $customField = null;
 
-    #[ManyToOne(targetEntity: CustomerGroup::class, foreignKey: 'customerGroupId')]
+    #[ManyToOne(targetEntity: CustomerGroup::class)]
     private ?CustomerGroup $customerGroup = null;
 
-    public function getCustomFieldId(): int { return $this->customFieldId; }
-    public function setCustomFieldId(int $id): self { $this->customFieldId = $id; return $this; }
+    private bool $required = false;
 
-    public function getCustomerGroupId(): int { return $this->customerGroupId; }
-    public function setCustomerGroupId(int $id): self { $this->customerGroupId = $id; return $this; }
+    public function getCustomField(): ?CustomField
+    {
+        return $this->customField;
+    }
 
-    public function isRequired(): bool { return $this->required; }
-    public function setRequired(bool $required): self { $this->required = $required; return $this; }
+    public function setCustomField(?CustomField $customField): self
+    {
+        $this->customField = $customField;
+        return $this;
+    }
 
-    public function getCustomField(): ?CustomField { return $this->customField; }
-    public function setCustomField(?CustomField $field): self { $this->customField = $field; return $this; }
+    public function getCustomerGroup(): ?CustomerGroup
+    {
+        return $this->customerGroup;
+    }
 
-    public function getCustomerGroup(): ?CustomerGroup { return $this->customerGroup; }
-    public function setCustomerGroup(?CustomerGroup $group): self { $this->customerGroup = $group; return $this; }
+    public function setCustomerGroup(?CustomerGroup $customerGroup): self
+    {
+        $this->customerGroup = $customerGroup;
+        return $this;
+    }
+
+    public function getRequired(): bool
+    {
+        return $this->required;
+    }
+
+    public function setRequired(bool $required): self
+    {
+        $this->required = $required;
+        return $this;
+    }
 }

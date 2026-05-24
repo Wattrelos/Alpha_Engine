@@ -5,14 +5,9 @@ namespace Alpha\Model\Domain\DTOs;
 /**
  * CookieDataDTO - Transporta dados para o aviso de cookies.
  */
-class CookieDataDTO
+class CookieDataDTO implements \JsonSerializable
 {
-    private array $data;
-
-    public function __construct(array $data)
-    {
-        $this->data = $data;
-    }
+    public function __construct(private readonly array $data = []) {}
 
     public function toArray(): array
     {
@@ -22,5 +17,10 @@ class CookieDataDTO
     public function get(string $key, mixed $default = null): mixed
     {
         return $this->data[$key] ?? $default;
+    }
+
+    public function jsonSerialize(): mixed
+    {
+        return $this->toArray();
     }
 }

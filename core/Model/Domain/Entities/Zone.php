@@ -15,7 +15,6 @@ use Alpha\Model\Domain\Attributes\OneToMany;
  */
 class Zone extends BaseEntity
 {
-    private string $name = '';
     private string $code = '';
     private bool $status = true;
 
@@ -39,17 +38,6 @@ class Zone extends BaseEntity
             $this->country = new Country();
         }
         $this->country->setId($id);
-        return $this;
-    }
-
-    public function getName(): string
-    {
-        return $this->name;
-    }
-
-    public function setName(string $name): self
-    {
-        $this->name = $name;
         return $this;
     }
 

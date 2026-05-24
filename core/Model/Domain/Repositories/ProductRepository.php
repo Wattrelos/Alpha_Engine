@@ -33,9 +33,13 @@ class ProductRepository extends AbstractRepository implements BaseRepositoryInte
             return $this->cache->get($cacheKey);
         }
 
+        /** @var \Alpha\Model\Domain\Repositories\PriceRepository $priceRepo */
+        $priceRepo = $this->registry->get('alpha_repository_factory')->get(PriceRepository::class);
+        $priceStatements = $priceRepo->getPriceStatements($customerGroupId);
+
         /** @var \Alpha\Mappers\EntityMappers\ProductMapper $mapper */
         $mapper = $this->mapperFactory->get(ProductMapper::class);
-        $product = $mapper->getProduct($productId, $this->language_id, $this->store_id, $customerGroupId);
+        $product = $mapper->getProduct($productId, $this->language_id, $this->store_id, $customerGroupId, $priceStatements);
         
         if ($product && $this->cache !== null) {
             // TTL Curto (5 min) devido à volatilidade de estoque e preço
@@ -375,9 +379,13 @@ class ProductRepository extends AbstractRepository implements BaseRepositoryInte
             ? (int)$this->customer->getGroupId() 
             : (int)$this->config->get('config_customer_group_id');
 
+        /** @var \Alpha\Model\Domain\Repositories\PriceRepository $priceRepo */
+        $priceRepo = $this->registry->get('alpha_repository_factory')->get(PriceRepository::class);
+        $priceStatements = $priceRepo->getPriceStatements($customerGroupId);
+
         /** @var \Alpha\Mappers\EntityMappers\ProductMapper $mapper */
         $mapper = $this->mapperFactory->get(ProductMapper::class);
-        return $mapper->getProducts($filterData, $this->language_id, $this->store_id, $customerGroupId);
+        return $mapper->getProducts($filterData, $this->language_id, $this->store_id, $customerGroupId, $priceStatements);
     }
 
     /**

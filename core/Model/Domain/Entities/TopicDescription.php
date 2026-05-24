@@ -19,6 +19,10 @@ class TopicDescription extends BaseEntity
     private int $languageId = 0;
     private string $name = '';
     private string $description = '';
+    private string $image = '';
+    private string $metaTitle = '';
+    private string $metaDescription = '';
+    private string $metaKeyword = '';
 
     #[ManyToOne(targetEntity: Topic::class, foreignKey: 'topicId')]
     private ?Topic $topic = null;
@@ -67,6 +71,50 @@ class TopicDescription extends BaseEntity
     public function setDescription(string $description): self
     {
         $this->description = $description;
+        return $this;
+    }
+
+    public function getImage(): string
+    {
+        return $this->image;
+    }
+
+    public function setImage(string $image): self
+    {
+        $this->image = $image;
+        return $this;
+    }
+
+    public function getMetaTitle(): string
+    {
+        return $this->metaTitle;
+    }
+
+    public function setMetaTitle(string $metaTitle): self
+    {
+        $this->metaTitle = $metaTitle;
+        return $this;
+    }
+
+    public function getMetaDescription(): string
+    {
+        return $this->metaDescription;
+    }
+
+    public function setMetaDescription(string $metaDescription): self
+    {
+        $this->metaDescription = $metaDescription;
+        return $this;
+    }
+
+    public function getMetaKeyword(): string
+    {
+        return $this->metaKeyword;
+    }
+
+    public function setMetaKeyword(string $metaKeyword): self
+    {
+        $this->metaKeyword = $metaKeyword;
         return $this;
     }
 

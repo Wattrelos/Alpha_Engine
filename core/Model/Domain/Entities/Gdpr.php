@@ -11,13 +11,13 @@ use Alpha\Model\Domain\Attributes\ManyToOne;
  * Melhoras aplicadas (Alpha Engine):
  * - Compliance de Dados: Rastreio de ações de privacidade (exclusão, exportação).
  * - Tipagem PHP 8.4: Uso de bool para status e strings para auditoria temporal.
- * - Relacionamentos: #[ManyToOne] para vincular à Loja, Idioma e Cliente.
+ * - Relacionamentos: #[ManyToOne] para vincular à Loja e Idioma.
  */
 class Gdpr extends BaseEntity
 {
     private int $storeId = 0;
     private int $languageId = 0;
-    private int $customerId = 0;
+    private string $code = '';
     private string $email = '';
     private string $action = '';
     private bool $status = false;
@@ -29,17 +29,14 @@ class Gdpr extends BaseEntity
     #[ManyToOne(targetEntity: Language::class, foreignKey: 'languageId')]
     private ?Language $language = null;
 
-    #[ManyToOne(targetEntity: Customer::class, foreignKey: 'customerId')]
-    private ?Customer $customer = null;
-
     public function getStoreId(): int { return $this->storeId; }
     public function setStoreId(int $id): self { $this->storeId = $id; return $this; }
 
     public function getLanguageId(): int { return $this->languageId; }
     public function setLanguageId(int $id): self { $this->languageId = $id; return $this; }
 
-    public function getCustomerId(): int { return $this->customerId; }
-    public function setCustomerId(int $id): self { $this->customerId = $id; return $this; }
+    public function getCode(): string { return $this->code; }
+    public function setCode(string $code): self { $this->code = $code; return $this; }
 
     public function getEmail(): string { return $this->email; }
     public function setEmail(string $email): self { $this->email = $email; return $this; }
@@ -48,7 +45,7 @@ class Gdpr extends BaseEntity
     public function setAction(string $action): self { $this->action = $action; return $this; }
 
     public function isStatus(): bool { return $this->status; }
-    public function setStatus(bool $status): self { $this->status = $status; return $this; }
+    public function setStatus(bool|int $status): self { $this->status = (bool)$status; return $this; }
 
     public function getDateAdded(): string { return $this->dateAdded; }
     public function setDateAdded(string $date): self { $this->dateAdded = $date; return $this; }
@@ -66,11 +63,4 @@ class Gdpr extends BaseEntity
     }
 
     public function setLanguage(?Language $language): self { $this->language = $language; return $this; }
-
-    public function getCustomer(): ?Customer
-    {
-        return $this->customer;
-    }
-
-    public function setCustomer(?Customer $customer): self { $this->customer = $customer; return $this; }
 }

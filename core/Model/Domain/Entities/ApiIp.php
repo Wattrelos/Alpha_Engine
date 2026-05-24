@@ -1,20 +1,19 @@
 <?php
+
 namespace Alpha\Model\Domain\Entities;
 
-use Alpha\Model\Domain\Attributes\ManyToOne;
 use Alpha\Model\Domain\BaseEntity;
+use Alpha\Model\Domain\Attributes\ManyToOne;
 
 /**
- * Entidade ApiIp - Whitelist de IPs autorizados para cada chave de API.
+ * Entidade ApiIp
+ * Representa um endereço IP autorizado a consumir uma credencial de API (Whitelist).
  * 
- * Melhoras aplicadas (Alpha Engine):
- * - Segurança de Rede: Campo 'ip' tipado para garantir validações exatas de endereços IPv4/IPv6.
- * - Correção de Nomenclatura: Propriedade de relacionamento corrigida de 'stockStatus' para 'api'.
- * - Injeção Relacional: Atributo #[ManyToOne] para vinculação automática com a entidade Api proprietária.
- * - PHP 8.4 Readiness: Uso de tipos nativos e interface fluida.
+ * @Table(name="api_ip")
  */
 class ApiIp extends BaseEntity
 {
+    private int $apiId = 0;
     private string $ip = '';
 
     #[ManyToOne(targetEntity: Api::class, foreignKey: 'apiId')]
@@ -22,15 +21,12 @@ class ApiIp extends BaseEntity
 
     public function getApiId(): int
     {
-        return $this->api ? (int)$this->api->getId() : 0;
+        return $this->apiId;
     }
 
     public function setApiId(int $apiId): self
     {
-        if (!$this->api) {
-            $this->api = new Api();
-        }
-        $this->api->setId($apiId);
+        $this->apiId = $apiId;
         return $this;
     }
 
@@ -45,20 +41,8 @@ class ApiIp extends BaseEntity
         return $this;
     }
 
-    /**
-     * Retorna o objeto Api associado a este IP.
-     */
-    public function getApi(): ?Api
-    {
-        return $this->api;
-    }
-
-    /**
-     * Injeta o objeto Api associado.
-     */
-    public function setApi(?Api $api): self
-    {
-        $this->api = $api;
-        return $this;
+    public function getApi(): ?Api { return $this->api; }
+    public function setApi(?Api $api): self { 
+        $this->api = $api; return $this; 
     }
 }

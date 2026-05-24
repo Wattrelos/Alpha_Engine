@@ -17,15 +17,36 @@ class Product extends BaseEntity
 {
     private string $model = '';
     private string $sku = '';
+    private string $upc = '';
+    private string $ean = '';
+    private string $jan = '';
+    private string $isbn = '';
+    private string $mpn = '';
+    private string $location = '';
+    private string $variant = '';
+    private string $override = '';
     private float $price = 0.0;
     private int $quantity = 0;
     private int $stockStatusId = 0;
     private string $image = '';
     private int $manufacturerId = 0;
+    private bool $shipping = true;
+    private int $points = 0;
     private int $taxClassId = 0;
+    private string $dateAvailable = '';
+    private float $weight = 0.0;
+    private int $weightClassId = 0;
+    private float $length = 0.0;
+    private float $width = 0.0;
+    private float $height = 0.0;
+    private int $lengthClassId = 0;
+    private bool $subtract = true;
+    private int $minimum = 1;
+    private int $rating = 0;
     private bool $status = true;
     private int $sortOrder = 0;
     private string $dateAdded = '';
+    private string $dateModified = '';
     private ?int $masterId = null;
 
     #[ManyToOne(targetEntity: Manufacturer::class, foreignKey: 'manufacturerId')]
@@ -58,6 +79,30 @@ class Product extends BaseEntity
     public function getSku(): string { return $this->sku; }
     public function setSku(string $sku): self { $this->sku = $sku; return $this; }
 
+    public function getUpc(): string { return $this->upc; }
+    public function setUpc(string $upc): self { $this->upc = $upc; return $this; }
+
+    public function getEan(): string { return $this->ean; }
+    public function setEan(string $ean): self { $this->ean = $ean; return $this; }
+
+    public function getJan(): string { return $this->jan; }
+    public function setJan(string $jan): self { $this->jan = $jan; return $this; }
+
+    public function getIsbn(): string { return $this->isbn; }
+    public function setIsbn(string $isbn): self { $this->isbn = $isbn; return $this; }
+
+    public function getMpn(): string { return $this->mpn; }
+    public function setMpn(string $mpn): self { $this->mpn = $mpn; return $this; }
+
+    public function getLocation(): string { return $this->location; }
+    public function setLocation(string $location): self { $this->location = $location; return $this; }
+
+    public function getVariant(): string { return $this->variant; }
+    public function setVariant(string $variant): self { $this->variant = $variant; return $this; }
+
+    public function getOverride(): string { return $this->override; }
+    public function setOverride(string $override): self { $this->override = $override; return $this; }
+
     public function getPrice(): float { return $this->price; }
     public function setPrice(float $price): self { $this->price = $price; return $this; }
 
@@ -73,10 +118,46 @@ class Product extends BaseEntity
     public function getManufacturerId(): int { return $this->manufacturerId; }
     public function setManufacturerId(int $id): self { $this->manufacturerId = $id; return $this; }
 
+    public function isShipping(): bool { return $this->shipping; }
+    public function setShipping(bool|int $shipping): self { $this->shipping = (bool)$shipping; return $this; }
+
+    public function getPoints(): int { return $this->points; }
+    public function setPoints(int $points): self { $this->points = $points; return $this; }
+
     public function getTaxClassId(): int { return $this->taxClassId; }
     public function setTaxClassId(int $id): self { $this->taxClassId = $id; return $this; }
 
-    public function getStatus(): bool { return $this->status; }
+    public function getDateAvailable(): string { return $this->dateAvailable; }
+    public function setDateAvailable(string $dateAvailable): self { $this->dateAvailable = $dateAvailable; return $this; }
+
+    public function getWeight(): float { return $this->weight; }
+    public function setWeight(float $weight): self { $this->weight = $weight; return $this; }
+
+    public function getWeightClassId(): int { return $this->weightClassId; }
+    public function setWeightClassId(int $weightClassId): self { $this->weightClassId = $weightClassId; return $this; }
+
+    public function getLength(): float { return $this->length; }
+    public function setLength(float $length): self { $this->length = $length; return $this; }
+
+    public function getWidth(): float { return $this->width; }
+    public function setWidth(float $width): self { $this->width = $width; return $this; }
+
+    public function getHeight(): float { return $this->height; }
+    public function setHeight(float $height): self { $this->height = $height; return $this; }
+
+    public function getLengthClassId(): int { return $this->lengthClassId; }
+    public function setLengthClassId(int $lengthClassId): self { $this->lengthClassId = $lengthClassId; return $this; }
+
+    public function isSubtract(): bool { return $this->subtract; }
+    public function setSubtract(bool|int $subtract): self { $this->subtract = (bool)$subtract; return $this; }
+
+    public function getMinimum(): int { return $this->minimum; }
+    public function setMinimum(int $minimum): self { $this->minimum = $minimum; return $this; }
+
+    public function getRating(): int { return $this->rating; }
+    public function setRating(int $rating): self { $this->rating = $rating; return $this; }
+
+    public function isStatus(): bool { return $this->status; }
     public function setStatus(bool|int $status): self { $this->status = (bool)$status; return $this; }
 
     public function getSortOrder(): int { return $this->sortOrder; }
@@ -84,6 +165,9 @@ class Product extends BaseEntity
 
     public function getDateAdded(): string { return $this->dateAdded; }
     public function setDateAdded(string $date): self { $this->dateAdded = $date; return $this; }
+
+    public function getDateModified(): string { return $this->dateModified; }
+    public function setDateModified(string $dateModified): self { $this->dateModified = $dateModified; return $this; }
 
     public function getMasterId(): ?int { return $this->masterId; }
     public function setMasterId(?int $id): self { $this->masterId = $id; return $this; }

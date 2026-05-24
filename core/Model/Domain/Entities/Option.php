@@ -16,6 +16,7 @@ class Option extends BaseEntity
 {
     private string $type = '';
     private int $sortOrder = 0;
+    private string $validation = '';
 
     /**
      * @var OptionDescription[]
@@ -48,6 +49,17 @@ class Option extends BaseEntity
     public function setSortOrder(int $sortOrder): self
     {
         $this->sortOrder = $sortOrder;
+        return $this;
+    }
+
+    public function getValidation(): string
+    {
+        return $this->validation;
+    }
+
+    public function setValidation(string $validation): self
+    {
+        $this->validation = $validation;
         return $this;
     }
 

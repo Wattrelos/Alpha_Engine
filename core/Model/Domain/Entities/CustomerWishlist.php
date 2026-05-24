@@ -17,6 +17,7 @@ class CustomerWishlist extends BaseEntity
 {
     private int $customerId = 0;
     private int $productId = 0;
+    private int $storeId = 0;
     private string $dateAdded = '';
 
     #[ManyToOne(targetEntity: Customer::class, foreignKey: 'customerId')]
@@ -24,6 +25,9 @@ class CustomerWishlist extends BaseEntity
 
     #[ManyToOne(targetEntity: Product::class, foreignKey: 'productId')]
     private ?Product $product = null;
+
+    #[ManyToOne(targetEntity: Store::class, foreignKey: 'storeId')]
+    private ?Store $store = null;
 
     public function getCustomerId(): int
     {
@@ -44,6 +48,17 @@ class CustomerWishlist extends BaseEntity
     public function setProductId(int $productId): self
     {
         $this->productId = $productId;
+        return $this;
+    }
+
+    public function getStoreId(): int
+    {
+        return $this->storeId;
+    }
+
+    public function setStoreId(int $storeId): self
+    {
+        $this->storeId = $storeId;
         return $this;
     }
 
@@ -77,6 +92,17 @@ class CustomerWishlist extends BaseEntity
     public function setProduct(?Product $product): self
     {
         $this->product = $product;
+        return $this;
+    }
+
+    public function getStore(): ?Store
+    {
+        return $this->store;
+    }
+
+    public function setStore(?Store $store): self
+    {
+        $this->store = $store;
         return $this;
     }
 }

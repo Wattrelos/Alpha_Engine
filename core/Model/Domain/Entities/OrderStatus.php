@@ -1,24 +1,49 @@
 <?php
+
 namespace Alpha\Model\Domain\Entities;
 
 use Alpha\Model\Domain\BaseEntity;
-use Alpha\Model\Domain\Attributes\OneToMany;
 
 /**
- * Entidade OrderStatus - Define os estados possíveis de um pedido (ex: Pendente, Pago, Enviado).
+ * Entidade OrderStatus
+ * Dicionário localizado dos estados de um pedido (Pendente, Processando, Completo).
  * 
- * Melhoras aplicadas (Alpha Engine):
- * - Normalização de Tradução: Mapeamento OneToMany para carregar nomes de status em múltiplos idiomas.
- * - Integridade de Fluxo: Centraliza a lógica de estados que o motor de checkout utiliza para disparar e-mails e baixar estoque.
+ * @Table(name="order_status")
  */
 class OrderStatus extends BaseEntity
 {
-    /**
-     * @var OrderStatusDescription[]
-     */
-    #[OneToMany(targetEntity: OrderStatusDescription::class, mappedBy: "orderStatus", foreignKey: "orderStatusId")]
-    private array $descriptions = [];
+    private int $orderStatusId = 0;
+    private int $languageId = 0;
+    private string $name = '';
 
-    public function getDescriptions(): array { return $this->descriptions; }
-    public function setDescriptions(array $descriptions): self { $this->descriptions = $descriptions; return $this; }
+    #[ManyToOne(targetEntity: Language::class, foreignKey: 'languageId')]
+    private ?Language $language = null;
+
+    public function getOrderStatusId(): int
+    {
+        return $this->orderStatusId;
+    }
+
+    public function setOrderStatusId(int $orderStatusId): self
+    {
+        $this->orderStatusId = $orderStatusId;
+        return $this;
+    }
+
+    public function getLanguageId(): int
+    {
+        return $this->languageId;
+    }
+
+    public function setLanguageId(int $languageId): self
+    {
+        $this->languageId = $languageId;
+        return $this;
+    }
+
+    public function getName(): string { return $this->name; }
+    public function setName(string $name): self { $this->name = $name; return $this; }
+
+    public function getLanguage(): ?Language { return $this->language; }
+    public function setLanguage(?Language $language): self { $this->language = $language; return $this; }
 }

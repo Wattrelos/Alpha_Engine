@@ -14,15 +14,16 @@ class Customer extends BaseEntity
     private string $lastname = '';
     private string $email = '';
     private string $telephone = '';
+    private string $password = '';
     private string $customField = '';
     private bool $newsletter = false;
+    private string $ip = '';
     private bool $status = true;
     private bool $safe = false;
+    private bool $commenter = false;
+    private string $token = '';
+    private string $code = '';
     private string $dateAdded = '';
-
-    // Campos customizados para o mercado brasileiro (Alpha Engine)
-    private string $cpfCnpj = '';
-    private string $personType = '';
 
     // Associações Muitos-para-Um
 
@@ -88,21 +89,12 @@ class Customer extends BaseEntity
         return $this;
     }
 
-    public function getCpfCnpj(): string {
-        return $this->cpfCnpj;
+    public function getPassword(): string {
+        return $this->password;
     }
 
-    public function setCpfCnpj(string $cpfCnpj): self {
-        $this->cpfCnpj = $cpfCnpj;
-        return $this;
-    }
-
-    public function getPersonType(): string {
-        return $this->personType;
-    }
-
-    public function setPersonType(string $personType): self {
-        $this->personType = $personType;
+    public function setPassword(string $password): self {
+        $this->password = $password;
         return $this;
     }
 
@@ -124,6 +116,15 @@ class Customer extends BaseEntity
         return $this;
     }
 
+    public function getIp(): string {
+        return $this->ip;
+    }
+
+    public function setIp(string $ip): self {
+        $this->ip = $ip;
+        return $this;
+    }
+
     public function isStatus(): bool {
         return $this->status;
     }
@@ -139,6 +140,33 @@ class Customer extends BaseEntity
 
     public function setSafe(bool $safe): self {
         $this->safe = $safe;
+        return $this;
+    }
+
+    public function isCommenter(): bool {
+        return $this->commenter;
+    }
+
+    public function setCommenter(bool|int $commenter): self {
+        $this->commenter = (bool)$commenter;
+        return $this;
+    }
+
+    public function getToken(): string {
+        return $this->token;
+    }
+
+    public function setToken(string $token): self {
+        $this->token = $token;
+        return $this;
+    }
+
+    public function getCode(): string {
+        return $this->code;
+    }
+
+    public function setCode(string $code): self {
+        $this->code = $code;
         return $this;
     }
 

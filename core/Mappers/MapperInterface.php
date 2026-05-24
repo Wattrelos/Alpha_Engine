@@ -41,4 +41,10 @@ interface MapperInterface
      * Busca entidades de forma paginada.
      */
     public function paginate(array $filters, int $page = 1, int $limit = 10, ?array $orderBy = null): array;
+
+    /**
+     * Limpa o cache local estático (Identity Map) do ORM.
+     * Essencial para rotinas pesadas em lote (Batch/Cron) para prevenir estouro de RAM.
+     */
+    public function clearIdentityMap(): void;
 }

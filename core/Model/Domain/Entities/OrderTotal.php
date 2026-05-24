@@ -16,6 +16,7 @@ use Alpha\Model\Domain\Attributes\ManyToOne;
 class OrderTotal extends BaseEntity
 {
     private string $code = '';
+    private string $extension = '';
     private string $title = '';
     private float $value = 0.0000;
     private int $sortOrder = 0;
@@ -33,6 +34,9 @@ class OrderTotal extends BaseEntity
 
     public function getCode(): string { return $this->code; }
     public function setCode(string $code): self { $this->code = $code; return $this; }
+
+    public function getExtension(): string { return $this->extension; }
+    public function setExtension(string $extension): self { $this->extension = $extension; return $this; }
 
     public function getTitle(): string { return $this->title; }
     public function setTitle(string $title): self { $this->title = $title; return $this; }

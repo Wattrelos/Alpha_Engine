@@ -3,10 +3,8 @@ namespace Alpha\Mappers;
 
 use Alpha\Model\DataAccessObject\ConnectionDB;
 use Alpha\Model\DataAccessObject\DataAccessObject;
-use Alpha\Model\DataAccessObject\ProxyFactory;
 use Alpha\Model\DataAccessObject\QueryBuilder;
 use Alpha\Model\Domain\InterfaceEntity;
-use Alpha\Model\Domain\Attributes\ManyToOne;
 use Opencart\System\Engine\Registry;
 use ReflectionClass;
 
@@ -86,7 +84,7 @@ abstract class BaseMapper implements MapperInterface
         $stmt->execute(['id' => $id]);
         $row = $stmt->fetch();
 
-        return $row ? $this->mapRowToEntity($row) : null;
+        return $row ? $this->dao->hydrate($this->entityClass, $row) : null;
     }
 
     /**
@@ -100,7 +98,7 @@ abstract class BaseMapper implements MapperInterface
 
         $entities = [];
         foreach ($rows as $row) {
-            $entities[] = $this->mapRowToEntity($row);
+            $entities[] = $this->dao->hydrate($this->entityClass, $row);
         }
         return $entities;
     }
@@ -141,7 +139,7 @@ abstract class BaseMapper implements MapperInterface
         $entities = [];
         
         foreach ($rows as $row) {
-            $entities[] = $this->mapRowToEntity($row);
+            $entities[] = $this->dao->hydrate($this->entityClass, $row);
         }
         
         return $entities;
@@ -175,7 +173,7 @@ abstract class BaseMapper implements MapperInterface
         
         $entities = [];
         foreach ($result['data'] as $row) {
-            $entities[] = $this->mapRowToEntity($row);
+            $entities[] = $this->dao->hydrate($this->entityClass, $row);
         }
         
         return [
@@ -185,72 +183,17 @@ abstract class BaseMapper implements MapperInterface
         ];
     }
 
-    /**
-     * Converte um array do banco (row) em uma instância da Entidade.
-     * Lida com propriedades simples e associações ManyToOne (Lazy Loading).
-     */
-    protected function mapRowToEntity(array $row): InterfaceEntity
-    {
-        $reflection = new ReflectionClass($this->entityClass);
-        $entity = $reflection->newInstance();
-
-        // Define o ID (herdado de BaseEntity)
-        if (isset($row[$this->primaryKey])) {
-            $entity->setId((int)$row[$this->primaryKey]);
-        }
-
-        foreach ($reflection->getProperties() as $property) {
-            $propertyName = $property->getName();
-            $columnName = $this->camelToSnake($propertyName);
-
-            // Verifica se a propriedade possui o atributo ManyToOne
-            $manyToOneAttr = $property->getAttributes(ManyToOne::class);
-            
-            if (!empty($manyToOneAttr)) {
-                $attrInstance = $manyToOneAttr[0]->newInstance();
-                $foreignKey = $attrInstance->foreignKey;
-                $dbForeignKey = $this->camelToSnake($foreignKey);
-                
-                if (isset($row[$dbForeignKey]) && $row[$dbForeignKey] > 0) {
-                    // Implementação de Lazy Loading via Proxy
-                    $targetClass = $attrInstance->targetEntity;
-                    $proxy = ProxyFactory::createProxy($targetClass, (int)$row[$dbForeignKey], function($id) use ($targetClass) {
-                        // Lógica de carregamento tardio: resolve a tabela do alvo
-                        $targetMapper = $this->resolveMapperFor($targetClass);
-                        return ConnectionDB::getInstance()->queryOne(
-                            "SELECT * FROM " . DB_PREFIX . $targetMapper->tableName . " WHERE id = ?", 
-                            [$id]
-                        );
-                    });
-                    
-                    $property->setAccessible(true);
-                    $property->setValue($entity, $proxy);
-                }
-                continue;
-            }
-
-            // Hidratação de campos simples
-            if (array_key_exists($columnName, $row)) {
-                $method = 'set' . ucfirst($propertyName);
-                if (method_exists($entity, $method)) {
-                    $entity->$method($row[$columnName]);
-                }
-            }
-        }
-
-        return $entity;
-    }
-
     protected function camelToSnake(string $input): string
     {
         return strtolower(preg_replace('/(?<!^)([A-Z])/', '_$1', $input));
     }
 
-    private function resolveMapperFor(string $entityClass): object
+    /**
+     * Limpa o cache estático de entidades do Motor ORM.
+     * Evita erro "Out of Memory" durante fluxos de longa duração (Ex: Importação de tabelas).
+     */
+    public function clearIdentityMap(): void
     {
-        $className = str_replace('Alpha\\Model\\Domain\\Entities\\', '', $entityClass);
-        // Alpha Engine: Agora os mappers de entidade residem no sub-namespace EntityMappers
-        $mapperName = "\\Alpha\\Mappers\\EntityMappers\\" . $className . "Mapper";
-        return new $mapperName();
+        DataAccessObject::clearIdentityMap();
     }
 }

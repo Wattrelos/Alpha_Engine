@@ -7,12 +7,8 @@ namespace Alpha\Model\Domain\DTOs;
  * Objeto de Transferência de Dados para persistência de pedidos na Alpha Engine.
  * Centraliza a estrutura de dados necessária para criar um registro de Order.
  */
-class OrderDataDTO {
-    private array $data;
-
-    public function __construct(array $data) {
-        $this->data = $data;
-    }
+class OrderDataDTO implements \JsonSerializable {
+    public function __construct(private readonly array $data = []) {}
 
     /**
      * Recupera um valor específico do DTO ou um fallback.
@@ -36,5 +32,10 @@ class OrderDataDTO {
                !empty($this->data['products']) && 
                isset($this->data['total']) &&
                !empty($this->data['payment_code']);
+    }
+
+    public function jsonSerialize(): mixed
+    {
+        return $this->toArray();
     }
 }

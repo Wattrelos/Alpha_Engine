@@ -11,10 +11,16 @@ Visão geral da estrutura de pastas em `core/`, separação de camadas e princí
 
 ### 2. Modelos de Domínio e Entidades
 Detalhamento das árvores de agregação e grafos de objetos:
-*   **Catálogo:** Produtos, Categorias e Fabricantes. ([Ver Diagrama](docs/diagrams/catalog_tree.mmd))
-*   **Vendas:** Estrutura de Pedidos e Carrinho. ([Ver Diagrama](docs/diagrams/sales_tree.mmd))
-*   **Clientes:** Gestão de perfis e endereçamento. ([Ver Diagrama](docs/diagrams/customer_tree.mmd))
-*   **Fluxo de Persistência:** Sequência de salvamento. ([Ver Diagrama](docs/diagrams/order_persistence_sequence.mmd))
+*   ✅ **Catálogo**: `Product`, `Category`, `CategoryPath`, `CategoryToLayout`, `Manufacturer`, `ManufacturerToLayout`, `Information`, `StockStatus`, `Review`, `Download`, `DownloadDescription`, `DownloadReport`.
+*   ✅ **CMS (Blog)**: `Article`, `Topic`.
+*   ✅ **Design**: `Banner`, `Theme`, `Translation`.
+*   ✅ **SEO**: `SeoUrl`.
+*   ✅ **Vendas/Checkout**: `Cart`, `SubscriptionPlan`, `Subscription`, `SubscriptionHistory`, `SubscriptionStatus`, `Order`, `Coupon`, `CouponCategory`, `CouponHistory`, `CouponProduct`, `OrderReturn`, `ReturnAction`, `ReturnReason`.
+*   ✅ **Sistema/Localização**: `Setting`, `WeightClass`, `LengthClass`, `LengthClassDescription`, `TaxClass`, `TaxRate`, `TaxRule`, `TaxRateToCustomerGroup`, `Session`, `Startup`, `AddressFormat`, `Cron`, `Event`, `Gdpr`, `Location`, `Notification`, `Upload`.
+*   ✅ **Segurança e Auditoria**: `User`, `UserGroup`, `UserLogin`, `OrderOption`, `Api`, `Statistics`, `Gdpr`.
+*   ✅ **Marketing**: `Marketing`, `MarketingReport`.
+*   ✅ **Clientes**: `Customer`, `CustomerApproval`, `CustomerHistory`, `CustomerLogin`, `CustomerOnline`, `CustomerReward`, `CustomerTransaction`, `Address`, `CustomerGroup`, `CustomField`, `CustomFieldDescription`, `CustomFieldValue`, `CustomFieldValueDescription`, `CustomFieldCustomerGroup`, `Notification`.
+*   ✅ **Módulos e Extensões**: `Extension`, `ExtensionInstall`, `ExtensionPath`, `Module`.
 
 ### 3. Infraestrutura e Banco de Dados
 Explicação técnica sobre o `DataAccessObject` (DAO), abstração de transações aninhadas e segurança com PDO. (Ver Diagrama)

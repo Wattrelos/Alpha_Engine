@@ -16,8 +16,6 @@ class Language extends BaseEntity
     private string $name = '';
     private string $code = '';
     private string $locale = '';
-    private string $image = '';
-    private string $directory = '';
     private string $extension = '';
     private int $sortOrder = 0;
     private bool $status = true;
@@ -30,12 +28,6 @@ class Language extends BaseEntity
 
     public function getLocale(): string { return $this->locale; }
     public function setLocale(string $locale): self { $this->locale = $locale; return $this; }
-
-    public function getImage(): string { return $this->image; }
-    public function setImage(string $image): self { $this->image = $image; return $this; }
-
-    public function getDirectory(): string { return $this->directory; }
-    public function setDirectory(string $directory): self { $this->directory = $directory; return $this; }
 
     public function getExtension(): string { return $this->extension; }
     public function setExtension(string $extension): self { $this->extension = $extension; return $this; }

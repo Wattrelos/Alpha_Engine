@@ -1,31 +1,56 @@
 <?php
+
 namespace Alpha\Model\Domain\Entities;
 
- use Alpha\Model\Domain\BaseEntity;
- use Alpha\Model\Domain\Attributes\ManyToOne;
+use Alpha\Model\Domain\BaseEntity;
+use Alpha\Model\Domain\Attributes\ManyToOne;
 
-/**
- * Entidade ProductSubscription
- * Define preços de assinatura para produtos vinculados a planos.
- * 
- * @Table(name="product_subscription")
- */
 class ProductSubscription extends BaseEntity
 {
-    private int $productId = 0;
-    private int $subscriptionPlanId = 0;
-    private int $customerGroupId = 0;
-    private float $trialPrice = 0.0000;
-    private float $price = 0.0000;
-
-    #[ManyToOne(targetEntity: Product::class, foreignKey: 'productId')]
+    #[ManyToOne(targetEntity: Product::class)]
     private ?Product $product = null;
 
-    #[ManyToOne(targetEntity: SubscriptionPlan::class, foreignKey: 'subscriptionPlanId')]
+    #[ManyToOne(targetEntity: SubscriptionPlan::class)]
     private ?SubscriptionPlan $subscriptionPlan = null;
 
-    #[ManyToOne(targetEntity: CustomerGroup::class, foreignKey: 'customerGroupId')]
+    #[ManyToOne(targetEntity: CustomerGroup::class)]
     private ?CustomerGroup $customerGroup = null;
+
+    private float $trialPrice = 0.0;
+    private float $price = 0.0;
+
+    public function getProduct(): ?Product
+    {
+        return $this->product;
+    }
+
+    public function setProduct(?Product $product): self
+    {
+        $this->product = $product;
+        return $this;
+    }
+
+    public function getSubscriptionPlan(): ?SubscriptionPlan
+    {
+        return $this->subscriptionPlan;
+    }
+
+    public function setSubscriptionPlan(?SubscriptionPlan $subscriptionPlan): self
+    {
+        $this->subscriptionPlan = $subscriptionPlan;
+        return $this;
+    }
+
+    public function getCustomerGroup(): ?CustomerGroup
+    {
+        return $this->customerGroup;
+    }
+
+    public function setCustomerGroup(?CustomerGroup $customerGroup): self
+    {
+        $this->customerGroup = $customerGroup;
+        return $this;
+    }
 
     public function getTrialPrice(): float
     {
@@ -47,48 +72,5 @@ class ProductSubscription extends BaseEntity
     {
         $this->price = $price;
         return $this;
-    }
-
-    public function getProductId(): int
-    {
-        return $this->productId;
-    }
-
-    public function setProductId(int $productId): self
-    {
-        $this->productId = $productId;
-        return $this;
-    }
-
-    public function getSubscriptionPlanId(): int
-    {
-        return $this->subscriptionPlanId;
-    }
-
-    public function setSubscriptionPlanId(int $subscriptionPlanId): self
-    {
-        $this->subscriptionPlanId = $subscriptionPlanId;
-        return $this;
-    }
-
-    public function getCustomerGroupId(): int
-    {
-        return $this->customerGroupId;
-    }
-
-    public function setCustomerGroupId(int $customerGroupId): self
-    {
-        $this->customerGroupId = $customerGroupId;
-        return $this;
-    }
-
-    public function getProduct(): ?Product
-    {
-        return $this->product;
-    }
-
-    public function getSubscriptionPlan(): ?SubscriptionPlan
-    {
-        return $this->subscriptionPlan;
     }
 }

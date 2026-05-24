@@ -19,18 +19,18 @@ class ReturnHistory extends BaseEntity
     private string $comment = '';
     private string $dateAdded = '';
 
-    #[ManyToOne(targetEntity: OrderReturn::class, foreignKey: 'orderReturnId')]
+    #[ManyToOne(targetEntity: OrderReturn::class, foreignKey: 'returnId')]
     private ?OrderReturn $orderReturn = null;
 
     #[ManyToOne(targetEntity: ReturnStatus::class, foreignKey: 'returnStatusId')]
     private ?ReturnStatus $returnStatus = null;
 
-    public function getOrderReturnId(): int 
+    public function getReturnId(): int 
     { 
         return $this->orderReturn ? (int)$this->orderReturn->getId() : 0; 
     }
     
-    public function setOrderReturnId(int $id): self 
+    public function setReturnId(int $id): self 
     { 
         if (!$this->orderReturn) $this->orderReturn = new OrderReturn();
         $this->orderReturn->setId($id); 

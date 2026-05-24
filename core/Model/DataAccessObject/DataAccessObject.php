@@ -27,6 +27,15 @@ class DataAccessObject
         $this->tablePrefix = (DB_PREFIX ?? 'table_');
         
     }
+
+    /**
+     * Alpha Engine: Previne Memory Leaks em Daemons e Cron Jobs.
+     * Limpa o Identity Map estático para permitir que o Garbage Collector do PHP libere a RAM.
+     */
+    public static function clearIdentityMap(): void {
+        self::$identityMap = [];
+    }
+
     /**
      * Executa a estrutura gerada pelo QueryBuilder
      */
@@ -179,7 +188,7 @@ class DataAccessObject
 
         foreach ($methods as $method) {
             $name = $method->getName();
-            if (str_starts_with($name, 'get') && $name !== 'getClass' && $method->getNumberOfParameters() === 0) {
+            if ($this->isGetter($method)) {
                 
                 // Em PHP, verificamos se o retorno seria um array (coleção)
                 // Como PHP não tem tipos genéricos fortes em runtime para arrays, 
@@ -190,7 +199,8 @@ class DataAccessObject
                 
                 if (is_array($value)) continue;
 
-                $colName = $this->convertPascalCaseToSnakeCase(substr($name, 3));
+                $prefixLength = str_starts_with($name, 'is') ? 2 : 3;
+                $colName = $this->convertPascalCaseToSnakeCase(substr($name, $prefixLength));
 
                 if ($value instanceof InterfaceEntity) {
                     $colName .= "_id";
@@ -349,6 +359,30 @@ class DataAccessObject
     }
 
     /**
+     * Alpha Engine: Hidrata um array bruto de banco de dados para uma Entidade rica,
+     * respeitando estritamente o Identity Map, Associações e Lazy Loading.
+     * Centraliza a construção para paginate(), search(), findAll() e findById() dos Mappers.
+     */
+    public function hydrate(string $className, array $row): InterfaceEntity
+    {
+        $id = (int)($row['id'] ?? 0);
+        $instance = $this->getFromIdentityMap($className, $id);
+
+        if (!$instance) {
+            $reflection = new ReflectionClass($className);
+            $instance = $reflection->newInstance();
+            $instance->setId($id);
+            $this->addToIdentityMap($instance);
+            
+            $conn = ConnectionDB::getInstance()->getConnection();
+            $this->fillEntityRecursively($instance, $className, $row, $conn);
+            $this->processAssociations($instance, $conn);
+        }
+        
+        return $instance;
+    }
+
+    /**
      * Carrega múltiplas entidades de uma vez por seus IDs.
      * Reduz o overhead de múltiplas chamadas ao banco para listagens.
      */
@@ -449,9 +483,21 @@ class DataAccessObject
                         $childInstance = $this->getFromIdentityMap($paramType, $childId);
 
                         if (!$childInstance) {
-                            $childInstance = (new ReflectionClass($paramType))->newInstance();
-                            $childInstance->setId($childId);
-                            $this->readEntityComplete($childInstance, $conn);
+                            // Alpha Engine: Injeta o Proxy nativo de ManyToOne para Lazy Loading (Deep Hydration).
+                            $childInstance = ProxyFactory::createProxy($paramType, $childId, function($proxy, $id) use ($paramType) {
+                                $tableName = $this->tablePrefix . $this->convertPascalCaseToSnakeCase((new ReflectionClass($paramType))->getShortName());
+                                $conn = ConnectionDB::getInstance()->getConnection();
+                                $stmt = $conn->prepare("SELECT * FROM `$tableName` WHERE id = ?");
+                                $stmt->execute([$id]);
+                                $row = $stmt->fetch(\PDO::FETCH_ASSOC);
+                                
+                                if ($row) {
+                                    $this->fillEntityRecursively($proxy, $paramType, $row, $conn);
+                                    $this->processAssociations($proxy, $conn);
+                                }
+                            });
+                            
+                            $this->addToIdentityMap($childInstance); // Mantém a integridade referencial mesmo no proxy
                         }
                         $method->invoke($instance, $childInstance);
                     } else {
@@ -539,14 +585,15 @@ class DataAccessObject
 
         foreach ($reflection->getMethods(ReflectionMethod::IS_PUBLIC) as $method) {
             $name = $method->getName();
-            if (str_starts_with($name, 'get') && $name !== 'getClass' && $method->getNumberOfParameters() === 0) {
+            if ($this->isGetter($method)) {
                 if ($name === 'getId') continue;
 
                 $value = $method->invoke($entity);
                 if (is_array($value)) continue;
 
                 if ($value !== null) {
-                    $colName = $this->convertPascalCaseToSnakeCase(substr($name, 3));
+                    $prefixLength = str_starts_with($name, 'is') ? 2 : 3;
+                    $colName = $this->convertPascalCaseToSnakeCase(substr($name, $prefixLength));
                     if ($value instanceof InterfaceEntity) {
                         $colName .= "_id";
                         $value = $value->getId();

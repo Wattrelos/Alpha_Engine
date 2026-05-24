@@ -5,7 +5,7 @@ $root = str_replace('\\', '/', realpath(__DIR__)) . '/';
 define('APPLICATION', 'Catalog');
 
 // HTTP
-define('HTTP_SERVER', 'http://' . $_SERVER['HTTP_HOST'] . '/');
+define('HTTP_SERVER', 'http://' . ($_SERVER['HTTP_HOST'] ?? 'localhost') . '/');
 
 // DIR
 define('DIR_OPENCART', $root);

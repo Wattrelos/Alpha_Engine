@@ -80,3 +80,84 @@
 - `LanguageMapper`: Remoção completa de `QueryBuilder` manuais e execuções diretas de array/SQL. Os métodos `getLanguage`, `getLanguageByCode` e `getLanguages` agora delegam 100% da carga para a herança do `BaseMapper` (`findById`, `findOneBy`, `search`), garantindo uso estrito da hidratação ORM.
 - `CurrencyMapper`: Adição da definição obrigatória `$entityClass` para suportar buscas de Entidades futuras, e remoção de uma lógica legada de "Static Cache" (`static $cache = null;`). 
 **Benefícios:** Mappers devem ser "estúpidos" e transparentes, limitando-se a traduzir entidades para o banco. O cacheamento passa a ser responsabilidade exclusiva do Repository (`LanguageRepository` e `CurrencyRepository`), isolando corretamente a camada de persistência e a lógica de domínio.
+
+---
+
+### Alpha Engine: Implementação dos Mappers ProductOption e ProductOptionValue
+**Data:** [Data Atual]
+**O que foi feito:**
+- Criação das classes `ProductOptionMapper` e `ProductOptionValueMapper` no namespace `Alpha\Mappers\EntityMappers`.
+- Extensão da classe `BaseMapper` para herdar o comportamento CRUD padronizado e a integração com o `DataAccessObject` (DAO).
+- Configuração das propriedades estritas `$table` e `$entityClass` apontando para as respectivas tabelas e entidades de domínio.
+**Benefícios:** Integração total da gestão de variações de produtos com o motor ORM da Alpha Engine. A herança do `BaseMapper` garante que a extração e a hidratação das opções de produto e seus valores (ex: tamanhos, cores, e seus acréscimos de preço) ocorram de forma padronizada e previsível, alimentando corretamente os Repositórios sem a necessidade de reescrever consultas SQL manuais.
+
+---
+
+### Alpha Engine: Criação dos Repositórios de Opções de Produto
+**Data:** [Data Atual]
+**O que foi feito:**
+- Criação de `ProductOptionRepository` e `ProductOptionValueRepository` na camada de Domínio (`Alpha\Model\Domain\Repositories`).
+- Implementação do método `getByProductId` para buscar as variações principais (ex: "Cor", "Tamanho") associadas ao produto.
+- Implementação estratégica do método `getOptionValuesByIds(array $ids)` retornando instâncias estritas de `ProductOptionValue` **indexadas por seus próprios IDs**.
+**Benefícios:** Desacoplamento inteligente. Como as entidades já trafegam via `Identity Map` através do `findById`, processar as opções que o cliente escolheu no carrinho (usando o `getOptionValuesByIds`) garante complexidade $O(1)$. Isso remove a responsabilidade de "array_search" ou múltiplos foreachs dentro do `CartRepository`, tornando os cálculos de imposto, acréscimo de peso e descontos automáticos e infalíveis matematicamente.
+
+---
+
+### Alpha Engine: Implementação de Mappers e Repositórios para ProductDiscount e ProductImage
+**Data:** [Data Atual]
+**O que foi feito:**
+- Criação das classes `ProductDiscountMapper` e `ProductImageMapper` abstraindo persistência através da classe `BaseMapper`.
+- Criação de `ProductDiscountRepository` e `ProductImageRepository` com métodos para recuperar dados vinculados ao `productId`.
+- Implementação do método especializado `getActiveDiscounts` focado em cruzar o ID do Produto com o Grupo do Cliente.
+**Benefícios:** Consistência e previsibilidade no motor de catálogo e precificação. Com a lógica de descontos por grupo orquestrada pelo repositório, libertamos o Controller de buscas complexas e garantimos que os cálculos no carrinho operem sempre através de entidades estritamente tipadas do domínio.
+
+---
+
+### Alpha Engine: Refatoração O(1) do CartRepository (Fim da Regra Legada)
+**Data:** [Data Atual]
+**O que foi feito:**
+- Injeção direta de `ProductOptionValueRepository` e `ProductDiscountRepository` dentro do `CartRepository::getProducts()`.
+- O bloco estático de "Fallback Legado" (que executava queries dentro de loop `foreach`) foi desidratado e inteiramente substituído pela busca inteligente `getOptionValuesByIds` com complexidade $O(1)$.
+- Delegação estrita do recálculo de preço progressivo para a memória: cruzamento atômico da propriedade `$item['quantity']` com a coleção de `ProductDiscount` extraída do banco.
+**Benefícios:** Performance incomparável e precisão financeira extrema. O OpenCart legado frequentemente falhava ao tentar aplicar descontos progressivos (desconto ativado ao colocar "x" unidades no carrinho), pois o modelo atômico antigo muitas vezes baseava-se em quantidade "1" por ser uma query pré-compilada. Agora, as entidades do Domínio avaliam em tempo real o que o usuário escolheu e aplicam modificadores de imposto, desconto e peso através de Objetos seguros (`ProductOptionValue` e `ProductDiscount`).
+
+---
+
+### Alpha Engine: Criação do PriceRepository e Desacoplamento do ProductMapper
+**Data:** [Data Atual]
+**O que foi feito:**
+- Extração da lógica estrita de "Subqueries de Preço" (`getPriceStatements`) de dentro do `ProductMapper` para o recém-criado `PriceRepository`.
+- Atualização das chamadas do `ProductMapper` (`getProduct`, `getProducts`, `getProductsByIds`, `getRelated`) para injetarem dinamicamente as queries vindas do repositório através do parâmetro opcional `$priceStatements`.
+- Correção de um bug crítico no `CartRepository`, que estava enviando erroneamente o ID do cliente (`$this->getCustomerId()`) no lugar do ID do Grupo de Clientes (`$customerGroupId`) para a função `getProductsByIds`, impedindo que os descontos B2B/B2C fossem aplicados na base da listagem.
+**Benefícios:** Consistência no Domain-Driven Design (DDD). O DataMapper volta a focar estritamente na persistência e extração de tabelas, enquanto toda a lógica de precificação — e como o motor de descontos deve ser montado no SQL — passa a morar em um "Domain Service" (`PriceRepository`). Isso garante que futuras mecânicas financeiras da Alpha Engine sejam adicionadas de forma plug-and-play sem sujar o Model.
+
+---
+
+### Alpha Engine: Skinny Controller no Fluxo do Carrinho (Cart)
+**Data:** [Data Atual]
+**O que foi feito:**
+- Desidratação severa do controlador de carrinho (`catalog/controller/checkout/cart.php`), reduzindo seu tamanho e complexidade ciclomática.
+- Criação do método `getCartPageData` no `CartRepository` para orquestrar a carga de títulos e Breadcrumbs globais da visão do carrinho.
+- Refatoração do método `$cartRepository->getCartListDisplayData()` para incluir a extração do Mapper de Extensões do tipo "Total" diretamente no ViewResponse, eliminando chamadas repetitivas de banco no Controller.
+- Criação do `validateAddition` no Repository, extraindo quase 60 linhas de regras de negócio estritas de produto (validação de variantes, campos de texto Regex, opções obrigatórias e assinaturas) para o domínio da Alpha Engine.
+**Benefícios:** Limpeza absoluta e máxima testabilidade. O Controller agora atua de forma pura: apenas capta as intenções POST do usuário e as redireciona para a Alpha Engine. A validação de itens no carrinho não está mais algemada ao contexto web, permitindo que a mesma lógica `validateAddition` seja reaproveitada futuramente num endpoint de API Mobile (App) sem reescrever uma linha sequer.
+
+---
+
+### Alpha Engine: Criação de Entidades para Autorização e Tokens de Usuário e Cliente
+**Data:** [Data Atual]
+**O que foi feito:**
+- Foram criadas as classes de Domínio para representar os mecanismos de persistência e segurança de sessão: `CustomerAuthorize`, `CustomerToken`, `UserAuthorize` e `UserToken`.
+- Mapeamento dos relacionamentos bidirecionais (atributo `#[ManyToOne]`) garantindo que cada token ou autorização mantenha o contexto da entidade pai associada (`Customer` ou `User`).
+- Inicialização de propriedades primitivas com valores estritos (`int = 0`, `string = ''`, `bool = false`) prevenindo `Fatal Error: Uninitialized Property` na hidratação pela Engine.
+**Benefícios:** Consistência com o Data Access Object (DAO) e a camada de segurança. Agora os métodos de recuperação de senha e autorização persistente (manter conectado) poderão ser manuseados pelo Doctrine/UnitOfWork e Repository Patterns garantindo a integridade dos dados de IPs, User Agents e Datas de Expiração sem quebrar nas buscas de ORM.
+
+---
+
+### Alpha Engine: Repositórios e Mappers de Segurança (Auth/Tokens)
+**Data:** [Data Atual]
+**O que foi feito:**
+- Criação dos Mappers: `CustomerAuthorizeMapper`, `CustomerTokenMapper`, `UserAuthorizeMapper` e `UserTokenMapper` abstraindo diretamente as tabelas do schema nativo para as novas classes de entidade da Alpha Engine.
+- Criação dos Repositórios correspondentes herdando `AbstractRepository`.
+- Implementação de métodos utilitários de Domínio voltados à segurança: `findByToken($token)`, `findByCode($code)` para validações, e `clearTokensForCustomer()` / `clearTokensForUser()` para reset atômico após troca de senha bem-sucedida.
+**Benefícios:** Desacoplamento absoluto da camada de autenticação. Agora, *Controllers* relacionados a Login, Registro ou Redefinição de Senha não interagem com query builders do OpenCart. Basta injetar as intenções através dos métodos concisos de persistência e validação da Alpha Engine, fechando brechas de retenção de tokens zumbis através do `clearTokens`.

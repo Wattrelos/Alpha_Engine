@@ -18,9 +18,10 @@ class CustomerAffiliate extends BaseEntity
     private string $company = '';
     private string $website = '';
     private string $tracking = '';
+    private float $balance = 0.0000;
     private float $commission = 0.00;
     private string $tax = '';
-    private string $payment = '';
+    private string $paymentMethod = '';
     private string $cheque = '';
     private string $paypal = '';
     private string $bankName = '';
@@ -32,16 +33,8 @@ class CustomerAffiliate extends BaseEntity
     private bool $status = true;
     private string $dateAdded = '';
 
-    #[ManyToOne(targetEntity: Customer::class, foreignKey: 'customerId')]
+    #[ManyToOne(targetEntity: Customer::class, foreignKey: 'id')]
     private ?Customer $customer = null;
-
-    public function getCustomerId(): int { return $this->customer ? (int)$this->customer->getId() : 0; }
-    public function setCustomerId(int $id): self { 
-        if (!$this->customer) {
-            $this->customer = new Customer();
-        }
-        $this->customer->setId($id); return $this; 
-    }
 
     public function getCompany(): string { return $this->company; }
     public function setCompany(string $value): self { $this->company = $value; return $this; }
@@ -52,14 +45,17 @@ class CustomerAffiliate extends BaseEntity
     public function getTracking(): string { return $this->tracking; }
     public function setTracking(string $value): self { $this->tracking = $value; return $this; }
 
+    public function getBalance(): float { return $this->balance; }
+    public function setBalance(float $value): self { $this->balance = $value; return $this; }
+
     public function getCommission(): float { return $this->commission; }
     public function setCommission(float $value): self { $this->commission = $value; return $this; }
 
     public function getTax(): string { return $this->tax; }
     public function setTax(string $value): self { $this->tax = $value; return $this; }
 
-    public function getPayment(): string { return $this->payment; }
-    public function setPayment(string $value): self { $this->payment = $value; return $this; }
+    public function getPaymentMethod(): string { return $this->paymentMethod; }
+    public function setPaymentMethod(string $value): self { $this->paymentMethod = $value; return $this; }
 
     public function getCheque(): string { return $this->cheque; }
     public function setCheque(string $value): self { $this->cheque = $value; return $this; }

@@ -16,7 +16,6 @@ class Location extends BaseEntity
     private string $name = '';
     private string $address = '';
     private string $telephone = '';
-    private string $fax = '';
     private string $geocode = '';
     private string $image = '';
     private string $open = '';
@@ -30,9 +29,6 @@ class Location extends BaseEntity
 
     public function getTelephone(): string { return $this->telephone; }
     public function setTelephone(string $telephone): self { $this->telephone = $telephone; return $this; }
-
-    public function getFax(): string { return $this->fax; }
-    public function setFax(string $fax): self { $this->fax = $fax; return $this; }
 
     public function getGeocode(): string { return $this->geocode; }
     public function setGeocode(string $geocode): self { $this->geocode = $geocode; return $this; }

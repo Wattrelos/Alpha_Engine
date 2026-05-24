@@ -16,17 +16,28 @@ use Alpha\Model\Domain\Attributes\ManyToOne;
 class DownloadReport extends BaseEntity
 {
     private int $downloadId = 0;
+    private int $storeId = 0;
     private string $ip = '';
+    private string $country = '';
     private string $dateAdded = '';
 
     #[ManyToOne(targetEntity: Download::class, foreignKey: 'downloadId')]
     private ?Download $download = null;
 
+    #[ManyToOne(targetEntity: Store::class, foreignKey: 'storeId')]
+    private ?Store $store = null;
+
     public function getDownloadId(): int { return $this->downloadId; }
     public function setDownloadId(int $id): self { $this->downloadId = $id; return $this; }
 
+    public function getStoreId(): int { return $this->storeId; }
+    public function setStoreId(int $id): self { $this->storeId = $id; return $this; }
+
     public function getIp(): string { return $this->ip; }
     public function setIp(string $ip): self { $this->ip = $ip; return $this; }
+
+    public function getCountry(): string { return $this->country; }
+    public function setCountry(string $country): self { $this->country = $country; return $this; }
 
     public function getDateAdded(): string
     {
@@ -41,4 +52,11 @@ class DownloadReport extends BaseEntity
     }
 
     public function setDownload(?Download $download): self { $this->download = $download; return $this; }
+
+    public function getStore(): ?Store
+    {
+        return $this->store;
+    }
+
+    public function setStore(?Store $store): self { $this->store = $store; return $this; }
 }

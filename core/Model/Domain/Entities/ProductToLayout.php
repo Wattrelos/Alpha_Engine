@@ -1,62 +1,20 @@
 <?php
+
 namespace Alpha\Model\Domain\Entities;
 
- use Alpha\Model\Domain\BaseEntity;
- use Alpha\Model\Domain\Attributes\ManyToOne;
+use Alpha\Model\Domain\BaseEntity;
+use Alpha\Model\Domain\Attributes\ManyToOne;
 
-/**
- * Entidade ProductToLayout
- * Define layouts customizados por produto e por loja.
- * 
- * @Table(name="product_to_layout")
- */
 class ProductToLayout extends BaseEntity
 {
-    private int $productId = 0;
-    private int $storeId = 0;
-    private int $layoutId = 0;
-
-    #[ManyToOne(targetEntity: Product::class, foreignKey: 'productId')]
+    #[ManyToOne(targetEntity: Product::class)]
     private ?Product $product = null;
 
-    #[ManyToOne(targetEntity: Store::class, foreignKey: 'storeId')]
+    #[ManyToOne(targetEntity: Store::class)]
     private ?Store $store = null;
 
-    #[ManyToOne(targetEntity: Layout::class, foreignKey: 'layoutId')]
+    #[ManyToOne(targetEntity: Layout::class)]
     private ?Layout $layout = null;
-
-    public function getProductId(): int
-    {
-        return $this->productId;
-    }
-
-    public function setProductId(int $productId): self
-    {
-        $this->productId = $productId;
-        return $this;
-    }
-
-    public function getStoreId(): int
-    {
-        return $this->storeId;
-    }
-
-    public function setStoreId(int $storeId): self
-    {
-        $this->storeId = $storeId;
-        return $this;
-    }
-
-    public function getLayoutId(): int
-    {
-        return $this->layoutId;
-    }
-
-    public function setLayoutId(int $layoutId): self
-    {
-        $this->layoutId = $layoutId;
-        return $this;
-    }
 
     public function getProduct(): ?Product
     {

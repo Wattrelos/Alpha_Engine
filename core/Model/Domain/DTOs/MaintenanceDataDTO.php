@@ -2,9 +2,9 @@
 
 namespace Alpha\Model\Domain\DTOs;
 
-class MaintenanceDataDTO
+class MaintenanceDataDTO implements \JsonSerializable
 {
-    public function __construct(private array $data) {}
+    public function __construct(private readonly array $data = []) {}
 
     public function toArray(): array
     {
@@ -14,5 +14,10 @@ class MaintenanceDataDTO
     public function getTitle(): string
     {
         return $this->data['heading_title'] ?? '';
+    }
+
+    public function jsonSerialize(): mixed
+    {
+        return $this->toArray();
     }
 }

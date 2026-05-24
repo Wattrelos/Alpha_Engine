@@ -16,8 +16,6 @@ class GeoZone extends BaseEntity
 {
     private string $name = '';
     private string $description = '';
-    private string $dateAdded = '';
-    private string $dateModified = '';
 
     #[OneToMany(targetEntity: ZoneToGeoZone::class, foreignKey: 'geoZoneId')]
     private array $zones = [];
@@ -27,12 +25,6 @@ class GeoZone extends BaseEntity
 
     public function getDescription(): string { return $this->description; }
     public function setDescription(string $description): self { $this->description = $description; return $this; }
-
-    public function getDateAdded(): string { return $this->dateAdded; }
-    public function setDateAdded(string $dateAdded): self { $this->dateAdded = $dateAdded; return $this; }
-
-    public function getDateModified(): string { return $this->dateModified; }
-    public function setDateModified(string $dateModified): self { $this->dateModified = $dateModified; return $this; }
 
     /** @return ZoneToGeoZone[] */
     public function getZones(): array { return $this->zones; }

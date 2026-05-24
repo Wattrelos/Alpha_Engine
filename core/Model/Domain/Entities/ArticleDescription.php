@@ -15,8 +15,10 @@ use Alpha\Model\Domain\Attributes\ManyToOne;
  */
 class ArticleDescription extends BaseEntity
 {
-    private string $title = '';
+    private string $name = '';
     private string $description = '';
+    private string $image = '';
+    private string $tag = '';
     private string $metaTitle = '';
     private string $metaDescription = '';
     private string $metaKeyword = '';
@@ -55,14 +57,36 @@ class ArticleDescription extends BaseEntity
         return $this;
     }
 
-    public function getTitle(): string
+    public function getName(): string
     {
-        return $this->title;
+        return $this->name;
     }
 
-    public function setTitle(string $title): self
+    public function setName(string $name): self
     {
-        $this->title = $title;
+        $this->name = $name;
+        return $this;
+    }
+
+    public function getImage(): string
+    {
+        return $this->image;
+    }
+
+    public function setImage(string $image): self
+    {
+        $this->image = $image;
+        return $this;
+    }
+
+    public function getTag(): string
+    {
+        return $this->tag;
+    }
+
+    public function setTag(string $tag): self
+    {
+        $this->tag = $tag;
         return $this;
     }
 

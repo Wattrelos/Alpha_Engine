@@ -14,11 +14,23 @@ use Alpha\Model\Domain\Attributes\ManyToOne;
  */
 class StockStatus extends BaseEntity
 {
+    private int $stockStatusId = 0;
     private int $languageId = 0;
     private string $name = '';
 
     #[ManyToOne(targetEntity: Language::class, foreignKey: 'languageId')]
     private ?Language $language = null;
+
+    public function getStockStatusId(): int
+    {
+        return $this->stockStatusId;
+    }
+
+    public function setStockStatusId(int $stockStatusId): self
+    {
+        $this->stockStatusId = $stockStatusId;
+        return $this;
+    }
 
     public function getLanguageId(): int
     {

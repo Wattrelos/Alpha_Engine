@@ -1,18 +1,14 @@
 <?php
+
 namespace Alpha\Model\Domain\Entities;
 
- use Alpha\Model\Domain\BaseEntity;
- use Alpha\Model\Domain\Attributes\ManyToOne;
+use Alpha\Model\Domain\BaseEntity;
 
 /**
- * Entidade OrderOption - Snapshot das opções selecionadas em um produto de pedido.
+ * Entidade OrderOption
+ * Registra as opções/variações selecionadas de um produto dentro de um pedido (ex: Cor: Azul, Tamanho: M).
  * 
  * @Table(name="order_option")
- * 
- * Melhoras aplicadas (Alpha Engine):
- * - Persistência de Snapshot: Armazena o nome e o valor da opção no momento da compra.
- * - Tipagem Estrita: Garante que os IDs de referência e metadados sejam processados corretamente.
- * - Integridade Relacional: Vínculos ManyToOne para reconstruir a árvore do pedido e o produto original.
  */
 class OrderOption extends BaseEntity
 {
@@ -29,12 +25,6 @@ class OrderOption extends BaseEntity
 
     #[ManyToOne(targetEntity: OrderProduct::class, foreignKey: 'orderProductId')]
     private ?OrderProduct $orderProduct = null;
-
-    #[ManyToOne(targetEntity: ProductOption::class, foreignKey: 'productOptionId')]
-    private ?ProductOption $productOption = null;
-
-    #[ManyToOne(targetEntity: ProductOptionValue::class, foreignKey: 'productOptionValueId')]
-    private ?ProductOptionValue $productOptionValue = null;
 
     public function getOrderId(): int
     {
@@ -80,80 +70,22 @@ class OrderOption extends BaseEntity
         return $this;
     }
 
-    public function getName(): string
-    {
-        return $this->name;
+    public function getName(): string { return $this->name; }
+    public function setName(string $name): self { $this->name = $name; return $this; }
+
+    public function getValue(): string { return $this->value; }
+    public function setValue(string $value): self { $this->value = $value; return $this; }
+
+    public function getType(): string { return $this->type; }
+    public function setType(string $type): self { $this->type = $type; return $this; }
+
+    public function getOrder(): ?Order { return $this->order; }
+    public function setOrder(?Order $order): self { 
+        $this->order = $order; return $this; 
     }
 
-    public function setName(string $name): self
-    {
-        $this->name = $name;
-        return $this;
-    }
-
-    public function getValue(): string
-    {
-        return $this->value;
-    }
-
-    public function setValue(string $value): self
-    {
-        $this->value = $value;
-        return $this;
-    }
-
-    public function getType(): string
-    {
-        return $this->type;
-    }
-
-    public function setType(string $type): self
-    {
-        $this->type = $type;
-        return $this;
-    }
-
-    public function getOrder(): ?Order
-    {
-        return $this->order;
-    }
-
-    public function setOrder(?Order $order): self
-    {
-        $this->order = $order;
-        return $this;
-    }
-
-    public function getOrderProduct(): ?OrderProduct
-    {
-        return $this->orderProduct;
-    }
-
-    public function setOrderProduct(?OrderProduct $orderProduct): self
-    {
-        $this->orderProduct = $orderProduct;
-        return $this;
-    }
-
-    public function getProductOption(): ?ProductOption
-    {
-        return $this->productOption;
-    }
-
-    public function setProductOption(?ProductOption $productOption): self
-    {
-        $this->productOption = $productOption;
-        return $this;
-    }
-
-    public function getProductOptionValue(): ?ProductOptionValue
-    {
-        return $this->productOptionValue;
-    }
-
-    public function setProductOptionValue(?ProductOptionValue $productOptionValue): self
-    {
-        $this->productOptionValue = $productOptionValue;
-        return $this;
+    public function getOrderProduct(): ?OrderProduct { return $this->orderProduct; }
+    public function setOrderProduct(?OrderProduct $orderProduct): self { 
+        $this->orderProduct = $orderProduct; return $this; 
     }
 }

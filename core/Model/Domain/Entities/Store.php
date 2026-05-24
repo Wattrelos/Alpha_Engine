@@ -16,7 +16,6 @@ class Store extends BaseEntity
 {
     private string $name = '';
     private string $url = '';
-    private string $ssl = '';
 
     public function getName(): string
     {
@@ -37,17 +36,6 @@ class Store extends BaseEntity
     public function setUrl(string $url): self
     {
         $this->url = $url;
-        return $this;
-    }
-
-    public function getSsl(): string
-    {
-        return $this->ssl;
-    }
-
-    public function setSsl(string $ssl): self
-    {
-        $this->ssl = $ssl;
         return $this;
     }
 }

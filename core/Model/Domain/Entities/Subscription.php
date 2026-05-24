@@ -15,19 +15,27 @@ use Alpha\Model\Domain\Attributes\ManyToOne;
  */
 class Subscription extends BaseEntity
 {
-    private int $orderProductId = 0;
-    private string $name = '';
-    private string $model = '';
-    private int $quantity = 0;
+    private int $storeId = 0;
+    private int $paymentAddressId = 0;
+    private string $paymentMethod = '';
+    private int $shippingAddressId = 0;
+    private string $shippingMethod = '';
     private float $trialPrice = 0.0;
+    private float $trialTax = 0.0;
     private string $trialFrequency = '';
     private int $trialCycle = 0;
     private int $trialDuration = 0;
+    private int $trialRemaining = 0;
     private bool $trialStatus = false;
     private float $price = 0.0;
+    private float $tax = 0.0;
     private string $frequency = '';
     private int $cycle = 0;
     private int $duration = 0;
+    private int $remaining = 0;
+    private string $dateNext = '';
+    private string $language = '';
+    private string $currency = '';
     private int $subscriptionStatusId = 0;
     private string $comment = '';
     private string $dateAdded = '';
@@ -38,9 +46,6 @@ class Subscription extends BaseEntity
 
     #[ManyToOne(targetEntity: Customer::class, foreignKey: 'customerId')]
     private ?Customer $customer = null;
-
-    #[ManyToOne(targetEntity: Product::class, foreignKey: 'productId')]
-    private ?Product $product = null;
 
     #[ManyToOne(targetEntity: SubscriptionPlan::class, foreignKey: 'subscriptionPlanId')]
     private ?SubscriptionPlan $subscriptionPlan = null;
@@ -53,8 +58,20 @@ class Subscription extends BaseEntity
         return $this; 
     }
 
-    public function getOrderProductId(): int { return $this->orderProductId; }
-    public function setOrderProductId(int $value): self { $this->orderProductId = $value; return $this; }
+    public function getStoreId(): int { return $this->storeId; }
+    public function setStoreId(int $value): self { $this->storeId = $value; return $this; }
+
+    public function getPaymentAddressId(): int { return $this->paymentAddressId; }
+    public function setPaymentAddressId(int $value): self { $this->paymentAddressId = $value; return $this; }
+
+    public function getPaymentMethod(): string { return $this->paymentMethod; }
+    public function setPaymentMethod(string $value): self { $this->paymentMethod = $value; return $this; }
+
+    public function getShippingAddressId(): int { return $this->shippingAddressId; }
+    public function setShippingAddressId(int $value): self { $this->shippingAddressId = $value; return $this; }
+
+    public function getShippingMethod(): string { return $this->shippingMethod; }
+    public function setShippingMethod(string $value): self { $this->shippingMethod = $value; return $this; }
 
     public function getCustomerId(): int { return $this->customer ? (int)$this->customer->getId() : 0; }
     public function setCustomerId(int $value): self 
@@ -76,25 +93,11 @@ class Subscription extends BaseEntity
         return $this; 
     }
 
-    public function getProductId(): int { return $this->product ? (int)$this->product->getId() : 0; }
-    public function setProductId(int $value): self 
-    { 
-        if (!$this->product) $this->product = new Product();
-        $this->product->setId($value); 
-        return $this; 
-    }
-
-    public function getName(): string { return $this->name; }
-    public function setName(string $value): self { $this->name = $value; return $this; }
-
-    public function getModel(): string { return $this->model; }
-    public function setModel(string $value): self { $this->model = $value; return $this; }
-
-    public function getQuantity(): int { return $this->quantity; }
-    public function setQuantity(int $value): self { $this->quantity = $value; return $this; }
-
     public function getTrialPrice(): float { return $this->trialPrice; }
     public function setTrialPrice(float $value): self { $this->trialPrice = $value; return $this; }
+
+    public function getTrialTax(): float { return $this->trialTax; }
+    public function setTrialTax(float $value): self { $this->trialTax = $value; return $this; }
 
     public function getTrialFrequency(): string { return $this->trialFrequency; }
     public function setTrialFrequency(string $value): self { $this->trialFrequency = $value; return $this; }
@@ -105,11 +108,17 @@ class Subscription extends BaseEntity
     public function getTrialDuration(): int { return $this->trialDuration; }
     public function setTrialDuration(int $value): self { $this->trialDuration = $value; return $this; }
 
+    public function getTrialRemaining(): int { return $this->trialRemaining; }
+    public function setTrialRemaining(int $value): self { $this->trialRemaining = $value; return $this; }
+
     public function isTrialStatus(): bool { return $this->trialStatus; }
-    public function setTrialStatus(bool $value): self { $this->trialStatus = $value; return $this; }
+    public function setTrialStatus(bool|int $value): self { $this->trialStatus = (bool)$value; return $this; }
 
     public function getPrice(): float { return $this->price; }
     public function setPrice(float $value): self { $this->price = $value; return $this; }
+
+    public function getTax(): float { return $this->tax; }
+    public function setTax(float $value): self { $this->tax = $value; return $this; }
 
     public function getFrequency(): string { return $this->frequency; }
     public function setFrequency(string $value): self { $this->frequency = $value; return $this; }
@@ -119,6 +128,18 @@ class Subscription extends BaseEntity
 
     public function getDuration(): int { return $this->duration; }
     public function setDuration(int $value): self { $this->duration = $value; return $this; }
+
+    public function getRemaining(): int { return $this->remaining; }
+    public function setRemaining(int $value): self { $this->remaining = $value; return $this; }
+
+    public function getDateNext(): string { return $this->dateNext; }
+    public function setDateNext(string $value): self { $this->dateNext = $value; return $this; }
+
+    public function getLanguage(): string { return $this->language; }
+    public function setLanguage(string $value): self { $this->language = $value; return $this; }
+
+    public function getCurrency(): string { return $this->currency; }
+    public function setCurrency(string $value): self { $this->currency = $value; return $this; }
 
     public function getSubscriptionStatusId(): int { return $this->subscriptionStatusId; }
     public function setSubscriptionStatusId(int $value): self { $this->subscriptionStatusId = $value; return $this; }
@@ -139,9 +160,6 @@ class Subscription extends BaseEntity
 
     public function getCustomer(): ?Customer { return $this->customer; }
     public function setCustomer(?Customer $customer): self { $this->customer = $customer; return $this; }
-
-    public function getProduct(): ?Product { return $this->product; }
-    public function setProduct(?Product $product): self { $this->product = $product; return $this; }
 
     public function getSubscriptionPlan(): ?SubscriptionPlan { return $this->subscriptionPlan; }
     public function setSubscriptionPlan(?SubscriptionPlan $plan): self { $this->subscriptionPlan = $plan; return $this; }
