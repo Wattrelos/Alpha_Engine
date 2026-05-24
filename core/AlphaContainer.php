@@ -32,6 +32,7 @@ class AlphaContainer extends Factory
         if ($repository_factory) {
             $repositoriesMap = [
                 'account/customer'          => \Alpha\Model\Domain\Repositories\CustomerRepository::class,
+                'account/customer_group'    => \Alpha\Model\Domain\Repositories\CustomerGroupRepository::class,
                 'account/wishlist'          => \Alpha\Model\Domain\Repositories\WishlistRepository::class,
                 'catalog/category'          => \Alpha\Model\Domain\Repositories\CategoryRepository::class,
                 'catalog/product'           => \Alpha\Model\Domain\Repositories\ProductRepository::class,

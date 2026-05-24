@@ -34,9 +34,9 @@ class Product extends BaseController {
 			$this->loadLanguageData('product/product', $data); // Alpha Engine: Unifica traduções automaticamente
 			
 			// Assets e SEO (Responsabilidade restrita do Controller)
-			$this->document->setTitle($data['meta_title']);
-			$this->document->setDescription($data['meta_description']);
-			$this->document->setKeywords($data['meta_keyword']);
+			$this->document->setTitle($data['meta_title'] ?: $data['name']);
+			$this->document->setDescription($data['meta_description'] ?? '');
+			$this->document->setKeywords($data['meta_keyword'] ?? '');
 			$this->document->addLink($this->url->link('product/product', 'language=' . $this->config->get('config_language') . '&product_id=' . $product_id), 'canonical');
 			$this->document->addScript('catalog/view/javascript/jquery/magnific/jquery.magnific-popup.min.js');
 			$this->document->addStyle('catalog/view/javascript/jquery/magnific/magnific-popup.css');

@@ -85,7 +85,13 @@ class CountryRepository extends AbstractRepository implements BaseRepositoryInte
      */
     public function getCountries(): array
     {
-        return array_map(fn($c) => $this->toLegacyDTO($c), $this->findAll());
+        $countries = array_map(fn($c) => $this->toLegacyDTO($c), $this->findAll());
+        
+        // Alpha Engine: Ordenação alfabética processada em PHP para isolar o
+        // DTO de colunas obsoletas da tabela principal (ex: name que migrou para description).
+        usort($countries, fn($a, $b) => strcasecmp($a['name'] ?? '', $b['name'] ?? ''));
+        
+        return $countries;
     }
 
     /**
@@ -116,7 +122,8 @@ class CountryRepository extends AbstractRepository implements BaseRepositoryInte
             'name'              => $name,
             'iso_code_2'        => method_exists($country, 'getIsoCode2') ? $country->getIsoCode2() : '',
             'iso_code_3'        => method_exists($country, 'getIsoCode3') ? $country->getIsoCode3() : '',
-            'address_format'    => method_exists($country, 'getAddressFormat') ? $country->getAddressFormat() : '',
+            'address_format'    => '',
+            'address_format_id' => method_exists($country, 'getAddressFormatId') ? $country->getAddressFormatId() : 0,
             'postcode_required' => method_exists($country, 'getPostcodeRequired') ? (int)$country->getPostcodeRequired() : 0,
             'status'            => method_exists($country, 'getStatus') ? (int)$country->getStatus() : 0,
         ];

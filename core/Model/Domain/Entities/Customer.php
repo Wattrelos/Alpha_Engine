@@ -10,6 +10,9 @@ use Alpha\Model\Domain\Attributes\OneToMany;
  */
 class Customer extends BaseEntity
 {
+    private int $customerGroupId = 0;
+    private int $storeId = 0;
+    private int $languageId = 0;
     private string $firstname = '';
     private string $lastname = '';
     private string $email = '';
@@ -52,6 +55,33 @@ class Customer extends BaseEntity
     }
 
     // Getters e Setters
+
+    public function getCustomerGroupId(): int {
+        return $this->customerGroupId;
+    }
+
+    public function setCustomerGroupId(int $customerGroupId): self {
+        $this->customerGroupId = $customerGroupId;
+        return $this;
+    }
+
+    public function getStoreId(): int {
+        return $this->storeId;
+    }
+
+    public function setStoreId(int $storeId): self {
+        $this->storeId = $storeId;
+        return $this;
+    }
+
+    public function getLanguageId(): int {
+        return $this->languageId;
+    }
+
+    public function setLanguageId(int $languageId): self {
+        $this->languageId = $languageId;
+        return $this;
+    }
 
     public function getFirstname(): string {
         return $this->firstname;

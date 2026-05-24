@@ -1,52 +1,45 @@
 <?php
-
 namespace Alpha\Mappers\EntityMappers;
 
-use Alpha\Model\DataAccessObject\DataAccessObject;
+use Alpha\Mappers\BaseMapper;
 use Alpha\Model\DataAccessObject\QueryBuilder;
 
 /**
- * Mapper para gerenciar grupos de clientes e suas regras
+ * Class CustomerGroupMapper
+ * 
+ * Gerencia a persistência e recuperação de grupos de clientes.
+ * Atua como camada de acesso a dados isolando o SQL da aplicação.
  */
-class CustomerGroupMapper {
-    private DataAccessObject $dao;
-
-    public function __construct() {
-        $this->dao = new DataAccessObject();
-    }
+class CustomerGroupMapper extends BaseMapper {
+    
+    protected string $tableName = 'customer_group';
+    protected string $entityClass = \Alpha\Model\Domain\Entities\CustomerGroup::class;
 
     /**
-     * Obtém um grupo de cliente específico
-     * 
-     * @param int $customer_group_id
-     * @param int $language_id
-     * @return array
+     * Extrai todos os grupos de clientes disponíveis junto com a tradução.
      */
-    public function getCustomerGroup(int $customer_group_id, int $language_id): array {
+    public function getCustomerGroups(int $languageId): array {
         $query = (new QueryBuilder())
-            ->from(DB_PREFIX . 'customer_group', 'cg')
+            ->from($this->getFullTableName(), 'cg')
             ->leftJoin(DB_PREFIX . 'customer_group_description', 'cgd', 'cg.id = cgd.customer_group_id')
-            ->where("cg.id = ?", [$customer_group_id])
-            ->where("cgd.language_id = ?", [$language_id])
-            ->select('DISTINCT *');
-
-        $results = $this->dao->executeQuery($query);
-        return $results ? $results[0] : [];
-    }
-
-    /**
-     * Lista todos os grupos de clientes disponíveis
-     * 
-     * @param int $language_id
-     * @return array
-     */
-    public function getCustomerGroups(int $language_id): array {
-        $query = (new QueryBuilder())
-            ->from(DB_PREFIX . 'customer_group', 'cg')
-            ->leftJoin(DB_PREFIX . 'customer_group_description', 'cgd', 'cg.id = cgd.customer_group_id')
-            ->where("cgd.language_id = ?", [$language_id])
-            ->orderBy("cg.sort_order", "ASC");
+            ->where('cgd.language_id = ?', [$languageId])
+            ->orderBy('cg.sort_order', 'ASC')
+            ->orderBy('cgd.name', 'ASC');
 
         return $this->dao->executeQuery($query);
+    }
+
+    /**
+     * Extrai os dados de um grupo de clientes específico com base no idioma.
+     */
+    public function getCustomerGroup(int $customerGroupId, int $languageId): array {
+        $query = (new QueryBuilder())
+            ->select('DISTINCT *')
+            ->from($this->getFullTableName(), 'cg')
+            ->leftJoin(DB_PREFIX . 'customer_group_description', 'cgd', 'cg.id = cgd.customer_group_id')
+            ->where('cg.id = ? AND cgd.language_id = ?', [$customerGroupId, $languageId]);
+
+        $results = $this->dao->executeQuery($query);
+        return $results[0] ?? [];
     }
 }

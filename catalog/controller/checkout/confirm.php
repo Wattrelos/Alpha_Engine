@@ -2,6 +2,8 @@
 namespace Opencart\Catalog\Controller\Checkout;
 
 use Alpha\Controller\BaseController;
+use Alpha\Model\Domain\Repositories\CartRepository;
+use Alpha\Model\Domain\Repositories\OrderRepository;
 
 /**
  * Class Confirm
@@ -9,6 +11,15 @@ use Alpha\Controller\BaseController;
  * Refatorado para Alpha Engine: Orquestra a exibição final e a confirmação transacional do pedido.
  */
 class Confirm extends BaseController {
+	private CartRepository $cartRepository;
+	private OrderRepository $orderRepository;
+
+	public function __construct(\Opencart\System\Engine\Registry $registry) {
+		parent::__construct($registry);
+		$factory = $this->registry->get('alpha_repository_factory');
+		$this->cartRepository = $factory->get(CartRepository::class);
+		$this->orderRepository = $factory->get(OrderRepository::class);
+	}
 
 	/**
 	 * Exibe o resumo final do pedido (Carrinho, Endereços, Totais).
@@ -33,7 +44,7 @@ class Confirm extends BaseController {
 		}
 
 		$totals = [];
-		$taxes = $this->cart->getTaxes();
+		$taxes = $this->cartRepository->getTaxes();
 		$total = 0;
 
 		$this->cartRepository->getTotals($totals, $taxes, $total);
@@ -48,7 +59,7 @@ class Confirm extends BaseController {
 
 		// Alpha Engine: O método render já injeta Header/Footer se necessário, 
 		// mas aqui retornamos apenas o HTML da tabela para o Ajax do checkout.
-		return $this->load->view('checkout/confirm', $data);
+		return $this->getTemplate('checkout/confirm', $data);
 	}
 
 	/**
@@ -70,7 +81,7 @@ class Confirm extends BaseController {
 			$this->orderRepository->confirm($order_id, $order_status_id, 'Pedido confirmado via checkout Alpha Engine', true);
 
 			// 3. Limpeza de estado após sucesso
-			$this->cart->clear();
+			$this->cartRepository->clear();
 			unset($this->session->data['shipping_method'], $this->session->data['shipping_methods']);
 			unset($this->session->data['payment_method'], $this->session->data['payment_methods']);
 			unset($this->session->data['guest'], $this->session->data['comment'], $this->session->data['order_id']);

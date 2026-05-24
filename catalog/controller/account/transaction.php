@@ -1,11 +1,14 @@
 <?php
 namespace Opencart\Catalog\Controller\Account;
+
+use Alpha\Controller\BaseController;
+
 /**
  * Class Transaction
  *
  * @package Opencart\Catalog\Controller\Account
  */
-class Transaction extends \Opencart\System\Engine\Controller {
+class Transaction extends BaseController {
 	/**
 	 * Index
 	 *
@@ -20,7 +23,7 @@ class Transaction extends \Opencart\System\Engine\Controller {
 			$page = 1;
 		}
 
-		if (!$this->load->controller('account/login.validate')) {
+		if (!$this->customer->isLogged()) {
 			$this->session->data['redirect'] = $this->url->link('account/transaction', 'language=' . $this->config->get('config_language'));
 
 			$this->response->redirect($this->url->link('account/login', 'language=' . $this->config->get('config_language'), true));
@@ -85,13 +88,7 @@ class Transaction extends \Opencart\System\Engine\Controller {
 
 		$data['continue'] = $this->url->link('account/account', 'language=' . $this->config->get('config_language') . '&customer_token=' . $this->session->data['customer_token']);
 
-		$data['column_left'] = $this->load->controller('common/column_left');
-		$data['column_right'] = $this->load->controller('common/column_right');
-		$data['content_top'] = $this->load->controller('common/content_top');
-		$data['content_bottom'] = $this->load->controller('common/content_bottom');
-		$data['footer'] = $this->load->controller('common/footer');
-		$data['header'] = $this->load->controller('common/header');
-
-		$this->response->setOutput($this->load->view('account/transaction', $data));
+		// Alpha Engine: Renderização envelopada
+		$this->render('account/transaction', $data);
 	}
 }

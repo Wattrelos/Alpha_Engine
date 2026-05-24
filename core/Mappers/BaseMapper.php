@@ -112,6 +112,7 @@ abstract class BaseMapper implements MapperInterface
     public function search(array $filters, ?array $orderBy = null, ?int $limit = null, ?int $offset = null): array
     {
         $query = (new QueryBuilder())->from($this->getFullTableName());
+        $query->select('*');
 
         foreach ($filters as $key => $value) {
             $column = $this->camelToSnake($key);
@@ -154,6 +155,7 @@ abstract class BaseMapper implements MapperInterface
     public function paginate(array $filters, int $page = 1, int $limit = 10, ?array $orderBy = null): array
     {
         $query = (new QueryBuilder())->from($this->getFullTableName());
+        $query->select('*');
 
         foreach ($filters as $key => $value) {
             $column = $this->camelToSnake($key);

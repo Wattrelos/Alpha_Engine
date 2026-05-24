@@ -72,7 +72,7 @@ class ZoneRepository extends AbstractRepository implements BaseRepositoryInterfa
         }
 
         // Busca utilizando a camada de persistência abstrata
-        $zones = $this->getMapper()->findBy(['country_id' => $countryId], ['name' => 'ASC']);
+        $zones = $this->getMapper()->findBy(['country_id' => $countryId]);
 
         if ($this->cache !== null) {
             $this->cache->set($cacheKey, $zones, 86400);
@@ -95,7 +95,11 @@ class ZoneRepository extends AbstractRepository implements BaseRepositoryInterfa
      */
     public function getZonesByCountryId(int $country_id): array
     {
-        return array_map(fn($z) => $this->toLegacyDTO($z), $this->findByCountryId($country_id));
+        $zones = array_map(fn($z) => $this->toLegacyDTO($z), $this->findByCountryId($country_id));
+        
+        usort($zones, fn($a, $b) => strcasecmp($a['name'] ?? '', $b['name'] ?? ''));
+        
+        return $zones;
     }
 
     /**
@@ -103,7 +107,11 @@ class ZoneRepository extends AbstractRepository implements BaseRepositoryInterfa
      */
     public function getZones(): array
     {
-        return array_map(fn($z) => $this->toLegacyDTO($z), $this->findAll());
+        $zones = array_map(fn($z) => $this->toLegacyDTO($z), $this->findAll());
+        
+        usort($zones, fn($a, $b) => strcasecmp($a['name'] ?? '', $b['name'] ?? ''));
+        
+        return $zones;
     }
 
     /**

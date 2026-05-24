@@ -23,12 +23,24 @@ class ProductMapper extends BaseMapper {
             ->from(DB_PREFIX . 'product_to_store', 'p2s')
             ->leftJoin(DB_PREFIX . 'product', 'p', 'p.id = p2s.product_id')
             ->leftJoin(DB_PREFIX . 'product_description', 'pd', 'p.id = pd.product_id')
+            ->leftJoin(DB_PREFIX . 'manufacturer', 'm', 'p.manufacturer_id = m.id')
             ->where("p.id = ?", [$product_id])
             ->where("p.status = ?", [1])
             ->where("p.date_available <= ?", [date('Y-m-d')])
             ->where("p2s.store_id = ?", [$store_id])
             ->where("pd.language_id = ?", [$language_id])
-            ->select('p.*', 'pd.name', 'pd.description', 'p.image');
+            ->select(
+                'p.*', 
+                'pd.name', 
+                'pd.description', 
+                'pd.meta_title', 
+                'pd.meta_description', 
+                'pd.meta_keyword', 
+                'pd.tag', 
+                'p.image', 
+                'm.name AS manufacturer', 
+                '(SELECT COUNT(*) FROM ' . DB_PREFIX . 'review r WHERE r.product_id = p.id AND r.status = 1) AS reviews'
+            );
             
         if (!empty($priceStatements)) {
             $query->select(...array_values($priceStatements));
@@ -103,7 +115,7 @@ class ProductMapper extends BaseMapper {
         }
 
         // Select e Ordenação
-        $query->select('p.*', 'pd.name', 'pd.description', 'p.image');
+        $query->select('p.*', 'pd.name', 'pd.description', 'p.image', '(SELECT COUNT(*) FROM ' . DB_PREFIX . 'review r WHERE r.product_id = p.id AND r.status = 1) AS reviews');
         if (!empty($priceStatements)) {
             $query->select(...array_values($priceStatements));
         }
@@ -154,7 +166,7 @@ class ProductMapper extends BaseMapper {
             ->where("p.date_available <= ?", [date('Y-m-d')])
             ->where("p2s.store_id = ?", [$store_id])
             ->where("pd.language_id = ?", [$language_id])
-            ->select('p.*', 'pd.name', 'pd.description', 'p.image');
+            ->select('p.*', 'pd.name', 'pd.description', 'p.image', '(SELECT COUNT(*) FROM ' . DB_PREFIX . 'review r WHERE r.product_id = p.id AND r.status = 1) AS reviews');
             
         if (!empty($priceStatements)) {
             $query->select(...array_values($priceStatements));
@@ -263,7 +275,8 @@ class ProductMapper extends BaseMapper {
             ->select(
                 'p.*', 
                 'pd.name', 
-                'p.image'
+                'p.image',
+                '(SELECT COUNT(*) FROM ' . DB_PREFIX . 'review r WHERE r.product_id = p.id AND r.status = 1) AS reviews'
             );
             
         if (!empty($priceStatements)) {
@@ -437,7 +450,7 @@ class ProductMapper extends BaseMapper {
             ->where('pd.product_id = ?', [$product_id])
             ->where('pd.customer_group_id = ?', [$customer_group_id])
             ->where('pd.quantity > ?', [1])
-            ->where("((pd.date_start = '0000-00-00' OR pd.date_start <= ?) AND (pd.date_end = '0000-00-00' OR pd.date_end >= ?))", [$today, $today])
+            ->where("((pd.date_start IS NULL OR pd.date_start = '0000-00-00' OR pd.date_start <= ?) AND (pd.date_end IS NULL OR pd.date_end = '0000-00-00' OR pd.date_end >= ?))", [$today, $today])
             ->orderBy('pd.quantity', 'ASC')
             ->orderBy('pd.priority', 'ASC')
             ->orderBy('pd.price', 'ASC')
@@ -465,5 +478,21 @@ class ProductMapper extends BaseMapper {
                ->setDateAdded(date('Y-m-d H:i:s'));
 
         $this->dao->create($report);
+    }
+
+    /**
+     * Obtém os planos de assinatura do produto
+     */
+    public function getSubscriptions(int $product_id, int $language_id): array {
+        $query = (new QueryBuilder())
+            ->from(DB_PREFIX . 'product_subscription', 'ps')
+            ->leftJoin(DB_PREFIX . 'subscription_plan', 'sp', 'ps.subscription_plan_id = sp.id')
+            ->leftJoin(DB_PREFIX . 'subscription_plan_description', 'spd', 'sp.id = spd.subscription_plan_id')
+            ->where('ps.product_id = ?', [$product_id])
+            ->where('spd.language_id = ?', [$language_id])
+            ->where('sp.status = ?', [1])
+            ->select('ps.*', 'sp.frequency', 'sp.duration', 'sp.cycle', 'sp.trial_status', 'sp.trial_frequency', 'sp.trial_duration', 'sp.trial_cycle', 'spd.name');
+
+        return $this->dao->executeQuery($query);
     }
 }

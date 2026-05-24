@@ -1,11 +1,14 @@
 <?php
 namespace Opencart\Catalog\Controller\Account;
+
+use Alpha\Controller\BaseController;
+
 /**
  * Class Newsletter
  *
  * @package Opencart\Catalog\Controller\Account
  */
-class Newsletter extends \Opencart\System\Engine\Controller {
+class Newsletter extends BaseController {
 	/**
 	 * Index
 	 *
@@ -14,7 +17,7 @@ class Newsletter extends \Opencart\System\Engine\Controller {
 	public function index(): void {
 		$this->load->language('account/newsletter');
 
-		if (!$this->load->controller('account/login.validate')) {
+		if (!$this->customer->isLogged()) {
 			$this->session->data['redirect'] = $this->url->link('account/newsletter', 'language=' . $this->config->get('config_language'));
 
 			$this->response->redirect($this->url->link('account/login', 'language=' . $this->config->get('config_language'), true));
@@ -44,14 +47,7 @@ class Newsletter extends \Opencart\System\Engine\Controller {
 
 		$data['newsletter'] = $this->customer->getNewsletter();
 
-		$data['column_left'] = $this->load->controller('common/column_left');
-		$data['column_right'] = $this->load->controller('common/column_right');
-		$data['content_top'] = $this->load->controller('common/content_top');
-		$data['content_bottom'] = $this->load->controller('common/content_bottom');
-		$data['footer'] = $this->load->controller('common/footer');
-		$data['header'] = $this->load->controller('common/header');
-
-		$this->response->setOutput($this->load->view('account/newsletter', $data));
+		$this->render('account/newsletter', $data);
 	}
 
 	/**
@@ -64,7 +60,7 @@ class Newsletter extends \Opencart\System\Engine\Controller {
 
 		$json = [];
 
-		if (!$this->load->controller('account/login.validate')) {
+		if (!$this->customer->isLogged()) {
 			$this->session->data['redirect'] = $this->url->link('account/newsletter', 'language=' . $this->config->get('config_language'));
 
 			$json['redirect'] = $this->url->link('account/login', 'language=' . $this->config->get('config_language'), true);
@@ -79,7 +75,6 @@ class Newsletter extends \Opencart\System\Engine\Controller {
 			$json['success'] = $this->language->get('text_success');
 		}
 
-		$this->response->addHeader('Content-Type: application/json');
-		$this->response->setOutput(json_encode($json));
+		$this->jsonResponse($json);
 	}
 }

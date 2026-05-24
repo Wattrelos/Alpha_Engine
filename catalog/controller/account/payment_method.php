@@ -1,11 +1,14 @@
 <?php
 namespace Opencart\Catalog\Controller\Account;
+
+use Alpha\Controller\BaseController;
+
 /**
  * Class Payment Method
  *
  * @package Opencart\Catalog\Controller\Account
  */
-class PaymentMethod extends \Opencart\System\Engine\Controller {
+class PaymentMethod extends BaseController {
 	/**
 	 * Index
 	 *
@@ -14,7 +17,7 @@ class PaymentMethod extends \Opencart\System\Engine\Controller {
 	public function index(): void {
 		$this->load->language('account/payment_method');
 
-		if (!$this->load->controller('account/login.validate')) {
+		if (!$this->customer->isLogged()) {
 			$this->session->data['redirect'] = $this->url->link('account/payment_method', 'language=' . $this->config->get('config_language'));
 
 			$this->response->redirect($this->url->link('account/login', 'language=' . $this->config->get('config_language'), true));
@@ -53,14 +56,7 @@ class PaymentMethod extends \Opencart\System\Engine\Controller {
 
 		$data['customer_token'] = $this->session->data['customer_token'];
 
-		$data['column_left'] = $this->load->controller('common/column_left');
-		$data['column_right'] = $this->load->controller('common/column_right');
-		$data['content_top'] = $this->load->controller('common/content_top');
-		$data['content_bottom'] = $this->load->controller('common/content_bottom');
-		$data['footer'] = $this->load->controller('common/footer');
-		$data['header'] = $this->load->controller('common/header');
-
-		$this->response->setOutput($this->load->view('account/payment_method', $data));
+		$this->render('account/payment_method', $data);
 	}
 
 	/**
@@ -71,7 +67,7 @@ class PaymentMethod extends \Opencart\System\Engine\Controller {
 	public function list(): void {
 		$this->load->language('account/payment_method');
 
-		if (!$this->load->controller('account/login.validate')) {
+		if (!$this->customer->isLogged()) {
 			$this->session->data['redirect'] = $this->url->link('account/payment_method', 'language=' . $this->config->get('config_language'));
 
 			$this->response->redirect($this->url->link('account/login', 'language=' . $this->config->get('config_language'), true));
@@ -86,7 +82,7 @@ class PaymentMethod extends \Opencart\System\Engine\Controller {
 	 * @return string
 	 */
 	protected function getList(): string {
-		if (!$this->load->controller('account/login.validate')) {
+		if (!$this->customer->isLogged()) {
 			$this->session->data['redirect'] = $this->url->link('account/payment_method', 'language=' . $this->config->get('config_language'));
 
 			$this->response->redirect($this->url->link('account/login', 'language=' . $this->config->get('config_language'), true));
@@ -109,6 +105,6 @@ class PaymentMethod extends \Opencart\System\Engine\Controller {
 			}
 		}
 
-		return $this->load->view('account/payment_method_list', $data);
+		return $this->getTemplate('account/payment_method_list', $data);
 	}
 }

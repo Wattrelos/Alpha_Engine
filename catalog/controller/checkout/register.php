@@ -5,12 +5,11 @@ namespace Opencart\Catalog\Controller\Checkout;
  *
  * Alpha Engine: Modernização do fluxo de registro e checkout.
  */
-use Alpha\Mappers\EntityMappers\CustomerMapper;
-use Alpha\Mappers\EntityMappers\CustomerGroupMapper;
-use Alpha\Mappers\EntityMappers\CountryMapper;
-use Alpha\Mappers\EntityMappers\ZoneMapper;
-use Alpha\Mappers\EntityMappers\InformationMapper;
-use Alpha\Mappers\CollectionToArrayConverter;
+use Alpha\Model\Domain\Repositories\CustomerGroupRepository;
+use Alpha\Model\Domain\Repositories\CountryRepository;
+use Alpha\Model\Domain\Repositories\ZoneRepository;
+use Alpha\Model\Domain\Repositories\InformationRepository;
+use Alpha\Model\Domain\Repositories\CustomFieldRepository;
 use Alpha\Model\DataAccessObject\UnitOfWork;
 use Alpha\Model\Domain\Entities\Customer;
 
@@ -52,8 +51,8 @@ class Register extends \Opencart\System\Engine\Controller {
 		$data['customer_groups'] = [];
 
 		if (is_array($this->config->get('config_customer_group_display'))) {
-			$customer_group_mapper = new CustomerGroupMapper();
-			$customer_groups = $customer_group_mapper->getCustomerGroups((int)$this->config->get('config_language_id'));
+			$customerGroupRepository = $this->registry->get('alpha_repository_factory')->get(CustomerGroupRepository::class);
+			$customer_groups = $customerGroupRepository->getCustomerGroups((int)$this->config->get('config_language_id'));
 
 			foreach ($customer_groups as $customer_group) {
 				if (in_array($customer_group['id'], (array)$this->config->get('config_customer_group_display'))) {
@@ -117,13 +116,12 @@ class Register extends \Opencart\System\Engine\Controller {
 		}
 
 		// Country
-		$country_mapper = new CountryMapper();
-		$countries = $country_mapper->getCountries();
-		$data['countries'] = CollectionToArrayConverter::convertCollection($countries);
+		$countryRepository = $this->registry->get('alpha_repository_factory')->get(CountryRepository::class);
+		$data['countries'] = $countryRepository->getCountries();
 
 		// Zone
-		$zone_mapper = new ZoneMapper();
-		$data['payment_zones'] = CollectionToArrayConverter::convertCollection($zone_mapper->getZonesByCountryId($data['payment_country_id']));
+		$zoneRepository = $this->registry->get('alpha_repository_factory')->get(ZoneRepository::class);
+		$data['payment_zones'] = $zoneRepository->getZonesByCountryId($data['payment_country_id']);
 
 		if (isset($this->session->data['shipping_address']['address_id'])) {
 			$data['shipping_firstname']    = $this->session->data['shipping_address']['firstname'];
@@ -172,13 +170,12 @@ class Register extends \Opencart\System\Engine\Controller {
 		if ($data['payment_country_id'] == $data['shipping_country_id']) {
 			$data['shipping_zones'] = $data['payment_zones'];
 		} else {
-			$data['shipping_zones'] = CollectionToArrayConverter::convertCollection($zone_mapper->getZonesByCountryId($data['shipping_country_id']));
+			$data['shipping_zones'] = $zoneRepository->getZonesByCountryId($data['shipping_country_id']);
 		}
 
 		// Custom Fields
-		$this->load->model('account/custom_field');
-
-		$data['custom_fields'] = $this->model_account_custom_field->getCustomFields();
+		$customFieldRepository = $this->registry->get('alpha_repository_factory')->get(CustomFieldRepository::class);
+		$data['custom_fields'] = $customFieldRepository->getCustomFields();
 
 		// Captcha
 		$this->load->model('checkout/payment_method'); // Placeholder for extension loading logic if needed, but we use ExtensionMapper if refactored
@@ -193,12 +190,8 @@ class Register extends \Opencart\System\Engine\Controller {
 		}
 
 		// Information
-		$information_mapper = new InformationMapper();
-		$information_info = $information_mapper->getInformation(
-			(int)$this->config->get('config_account_id'),
-			(int)$this->config->get('config_language_id'),
-			(int)$this->config->get('config_store_id')
-		);
+		$informationRepository = $this->registry->get('alpha_repository_factory')->get(InformationRepository::class);
+		$information_info = $informationRepository->getInformation((int)$this->config->get('config_account_id'));
 
 		if ($information_info) {
 			$data['text_agree'] = sprintf($this->language->get('text_agree'), $this->url->link('information/information.info', 'language=' . $this->config->get('config_language') . '&information_id=' . $this->config->get('config_account_id')), $information_info['title']);
@@ -257,13 +250,23 @@ class Register extends \Opencart\System\Engine\Controller {
 
 		$post_info = $this->request->post + $required;
 
+		$repoFactory = $this->registry->get('alpha_repository_factory');
+		$cartRepository = $repoFactory->get(\Alpha\Model\Domain\Repositories\CartRepository::class);
+		$customerRepository = $repoFactory->get(\Alpha\Model\Domain\Repositories\CustomerRepository::class);
+		$countryRepository = $repoFactory->get(\Alpha\Model\Domain\Repositories\CountryRepository::class);
+		$zoneRepository = $repoFactory->get(\Alpha\Model\Domain\Repositories\ZoneRepository::class);
+		$addressRepository = $repoFactory->get(\Alpha\Model\Domain\Repositories\AddressRepository::class);
+		$customFieldRepository = $repoFactory->get(CustomFieldRepository::class);
+		$informationRepository = $repoFactory->get(InformationRepository::class);
+		$customerGroupRepository = $repoFactory->get(CustomerGroupRepository::class);
+
 		// Force account requires subscript or is a downloadable product.
-		if ($this->cart->hasDownload() || $this->cart->hasSubscription() || !$this->config->get('config_checkout_guest')) {
+		if ($cartRepository->hasDownload() || $cartRepository->hasSubscription() || !$this->config->get('config_checkout_guest')) {
 			$post_info['account'] = 1;
 		}
 
 		// Validate cart has products and has stock.
-		if (!$this->cart->hasProducts() || (!$this->cart->hasStock() && !$this->config->get('config_stock_checkout')) || !$this->cart->hasMinimum()) {
+		if (empty($cartRepository->getProducts()) || (!$cartRepository->hasStock() && !$this->config->get('config_stock_checkout')) || !$cartRepository->hasMinimum()) {
 			$json['redirect'] = $this->url->link('checkout/cart', 'language=' . $this->config->get('config_language'), true);
 		}
 
@@ -277,11 +280,10 @@ class Register extends \Opencart\System\Engine\Controller {
 			if ($post_info['customer_group_id']) {
 				$customer_group_id = (int)$post_info['customer_group_id'];
 			} else {
-				$customer_group_id = (int)$post_info('config_customer_group_id');
+				$customer_group_id = (int)$this->config->get('config_customer_group_id');
 			}
 
-			$customer_group_mapper = new CustomerGroupMapper();
-			$customer_group_info = $customer_group_mapper->getCustomerGroup($customer_group_id, (int)$this->config->get('config_language_id'));
+			$customer_group_info = $customerGroupRepository->getCustomerGroup($customer_group_id, (int)$this->config->get('config_language_id'));
 
 			if (!$customer_group_info || !in_array($customer_group_id, (array)$this->config->get('config_customer_group_display'))) {
 				$json['error']['warning'] = $this->language->get('error_customer_group');
@@ -300,8 +302,7 @@ class Register extends \Opencart\System\Engine\Controller {
 			}
 
 			// Customer
-			$customer_mapper = new CustomerMapper();
-			$customer_info = $customer_mapper->getCustomerByEmail($post_info['email']);
+			$customer_info = $customerRepository->findByEmail($post_info['email']);
 
 			if ($post_info['account'] && $customer_info) {
 				$json['error']['warning'] = $this->language->get('error_exists');
@@ -312,9 +313,7 @@ class Register extends \Opencart\System\Engine\Controller {
 			}
 
 			// Custom field validation
-			$this->load->model('account/custom_field');
-
-			$custom_fields = $this->model_account_custom_field->getCustomFields($customer_group_id);
+			$custom_fields = $customFieldRepository->getCustomFields($customer_group_id);
 
 			foreach ($custom_fields as $custom_field) {
 				if ($custom_field['location'] == 'account') {
@@ -336,10 +335,9 @@ class Register extends \Opencart\System\Engine\Controller {
 				}
 
 				// Country
-				$country_mapper = new CountryMapper();
-				$payment_country_info = $country_mapper->getCountry((int)$post_info['payment_country_id']);
+				$payment_country_info = $countryRepository->getCountry((int)$post_info['payment_country_id']);
 
-				if ($payment_country_info && $payment_country_info->getPostcodeRequired() && !oc_validate_length($post_info['payment_postcode'], 2, 10)) {
+				if ($payment_country_info && $payment_country_info['postcode_required'] && !oc_validate_length($post_info['payment_postcode'], 2, 10)) {
 					$json['error']['payment_postcode'] = $this->language->get('error_postcode');
 				}
 
@@ -348,8 +346,7 @@ class Register extends \Opencart\System\Engine\Controller {
 				}
 
 				// Zone
-				$zone_mapper = new ZoneMapper();
-				$zone_total = $zone_mapper->getTotalZonesByCountryId((int)$post_info['payment_country_id']);
+				$zone_total = $zoneRepository->getTotalZonesByCountryId((int)$post_info['payment_country_id']);
 
 				if ($zone_total && !$post_info['payment_zone_id']) {
 					$json['error']['payment_zone'] = $this->language->get('error_zone');
@@ -367,7 +364,7 @@ class Register extends \Opencart\System\Engine\Controller {
 				}
 			}
 
-			if ($this->cart->hasShipping() && !$post_info['address_match']) {
+			if ($cartRepository->hasShipping() && !$post_info['address_match']) {
 				// If payment address not required we need to use the firstname and lastname from the account.
 				if ($this->config->get('config_checkout_payment_address')) {
 					if (!oc_validate_length($post_info['shipping_firstname'], 1, 32)) {
@@ -388,10 +385,9 @@ class Register extends \Opencart\System\Engine\Controller {
 				}
 
 				// Country
-				$country_mapper = new CountryMapper();
-				$shipping_country_info = $country_mapper->getCountry((int)$post_info['shipping_country_id']);
+				$shipping_country_info = $countryRepository->getCountry((int)$post_info['shipping_country_id']);
 
-				if ($shipping_country_info && $shipping_country_info->getPostcodeRequired() && !oc_validate_length($post_info['shipping_postcode'], 2, 10)) {
+				if ($shipping_country_info && $shipping_country_info['postcode_required'] && !oc_validate_length($post_info['shipping_postcode'], 2, 10)) {
 					$json['error']['shipping_postcode'] = $this->language->get('error_postcode');
 				}
 
@@ -400,8 +396,7 @@ class Register extends \Opencart\System\Engine\Controller {
 				}
 
 				// Zone
-				$zone_mapper = new ZoneMapper();
-				$zone_total = $zone_mapper->getTotalZonesByCountryId((int)$post_info['shipping_country_id']);
+				$zone_total = $zoneRepository->getTotalZonesByCountryId((int)$post_info['shipping_country_id']);
 
 				if ($zone_total && !$post_info['shipping_zone_id']) {
 					$json['error']['shipping_zone'] = $this->language->get('error_zone');
@@ -450,12 +445,7 @@ class Register extends \Opencart\System\Engine\Controller {
 				}
 
 				// Agree to terms
-				$information_mapper = new InformationMapper();
-				$information_info = $information_mapper->getInformation(
-					(int)$this->config->get('config_account_id'),
-					(int)$this->config->get('config_language_id'),
-					(int)$this->config->get('config_store_id')
-				);
+				$information_info = $informationRepository->getInformation((int)$this->config->get('config_account_id'));
 				
 				if ($information_info && !$post_info['agree']) {
 					$json['error']['warning'] = sprintf($this->language->get('error_agree'), $information_info['title']);
@@ -480,8 +470,6 @@ class Register extends \Opencart\System\Engine\Controller {
 
 		if (!$json) {
 			$uow = new UnitOfWork();
-			$customer_mapper = new CustomerMapper();
-			$address_mapper = new AddressMapper();
 
 			// Preparar dados do cliente para a sessão
 			$customer_data = [
@@ -506,15 +494,15 @@ class Register extends \Opencart\System\Engine\Controller {
 						->setLastname($post_info['lastname'])
 						->setEmail($post_info['email'])
 						->setTelephone($post_info['telephone'])
-						->setCpfCnpj($post_info['cpf_cnpj'])
-						->setPersonType($post_info['persontype'])
 						->setCustomField($customer_data['custom_field'])
 						->setCustomerGroupId((int)$customer_group_id)
+						->setStoreId((int)$this->config->get('config_store_id'))
+						->setLanguageId((int)$this->config->get('config_language_id'))
 						->setPassword(password_hash(html_entity_decode($post_info['password'], ENT_QUOTES, 'UTF-8'), PASSWORD_DEFAULT))
 						->setStatus(true)
 						->setSafe(true);
 
-					$customer_data['customer_id'] = $customer_mapper->save($customer);
+					$customer_data['customer_id'] = $customerRepository->save($customer);
 				}
 
 				// Endereço de Pagamento
@@ -537,10 +525,10 @@ class Register extends \Opencart\System\Engine\Controller {
 
 					// Persistir endereço se for conta nova
 					if ($post_info['account']) {
-						$payment_address_data['address_id'] = $address_mapper->save($payment_address_data, $customer_data['customer_id']);
+						$payment_address_data['address_id'] = $addressRepository->save($payment_address_data, $customer_data['customer_id']);
 					}
 
-					$this->session->data['payment_address'] = $address_mapper->getAddress($payment_address_data['address_id'] ?? 0, (int)$this->config->get('config_language_id'));
+					$this->session->data['payment_address'] = $addressRepository->getAddress($payment_address_data['address_id'] ?? 0, (int)$this->config->get('config_language_id'));
 				}
 
 				// Endereço de Entrega
@@ -564,10 +552,10 @@ class Register extends \Opencart\System\Engine\Controller {
 
 						// Persistir endereço se for conta nova
 						if ($post_info['account']) {
-							$shipping_address_data['address_id'] = $address_mapper->save($shipping_address_data, $customer_data['customer_id']);
+							$shipping_address_data['address_id'] = $addressRepository->save($shipping_address_data, $customer_data['customer_id']);
 						}
 
-						$this->session->data['shipping_address'] = $address_mapper->getAddress($shipping_address_data['address_id'] ?? 0, (int)$this->config->get('config_language_id'));
+						$this->session->data['shipping_address'] = $addressRepository->getAddress($shipping_address_data['address_id'] ?? 0, (int)$this->config->get('config_language_id'));
 					} else {
 						// Se for o mesmo endereço de pagamento
 						$this->session->data['shipping_address'] = $this->session->data['payment_address'];
@@ -589,7 +577,7 @@ class Register extends \Opencart\System\Engine\Controller {
 					}
 
 					// Limpar tentativas de login
-					$customer_mapper->deleteLoginAttempts($post_info['email']);
+					$customerRepository->resetLoginAttempts($post_info['email']);
 				} else {
 					$json['redirect'] = $this->url->link('account/success', 'language=' . $this->config->get('config_language'), true);
 				}
@@ -607,7 +595,6 @@ class Register extends \Opencart\System\Engine\Controller {
 			}
 		}
 
-		$this->response->addHeader('Content-Type: application/json');
-		$this->response->setOutput(json_encode($json));
+		$this->jsonResponse($json);
 	}
 }

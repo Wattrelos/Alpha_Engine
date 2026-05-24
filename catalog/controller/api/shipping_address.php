@@ -3,6 +3,9 @@ namespace Opencart\catalog\controller\api;
 
 use Alpha\Controller\BaseController;
 use Alpha\Model\Domain\Repositories\CartRepository;
+use Alpha\Model\Domain\Repositories\CountryRepository;
+use Alpha\Model\Domain\Repositories\ZoneRepository;
+use Alpha\Model\Domain\Repositories\CustomFieldRepository;
 
 /**
  * Class Shipping Address
@@ -57,9 +60,8 @@ class ShippingAddress extends BaseController {
 			}
 
 			// Country
-			$this->load->model('localisation/country');
-
-			$country_info = $this->model_localisation_country->getCountry((int)$post_info['shipping_country_id']);
+			$countryRepository = $this->getRepository(CountryRepository::class);
+			$country_info = $countryRepository->getCountry((int)$post_info['shipping_country_id']);
 
 			if ($country_info && $country_info['postcode_required'] && !oc_validate_length($post_info['shipping_postcode'], 2, 10)) {
 				$output['error']['shipping_postcode'] = $this->language->get('error_postcode');
@@ -70,18 +72,16 @@ class ShippingAddress extends BaseController {
 			}
 
 			// Zone
-			$this->load->model('localisation/zone');
-
-			$zone_total = $this->model_localisation_zone->getTotalZonesByCountryId((int)$post_info['shipping_country_id']);
+			$zoneRepository = $this->getRepository(ZoneRepository::class);
+			$zone_total = count($zoneRepository->getZonesByCountryId((int)$post_info['shipping_country_id']));
 
 			if ($zone_total && !$post_info['shipping_zone_id']) {
 				$output['error']['shipping_zone'] = $this->language->get('error_zone');
 			}
 
 			// Custom field validation
-			$this->load->model('account/custom_field');
-
-			$custom_fields = $this->model_account_custom_field->getCustomFields((int)$this->config->get('config_customer_group_id'));
+			$customFieldRepository = $this->getRepository(CustomFieldRepository::class);
+			$custom_fields = $customFieldRepository->getCustomFields((int)$this->config->get('config_customer_group_id'));
 
 			foreach ($custom_fields as $custom_field) {
 				if ($custom_field['location'] == 'address') {
@@ -101,29 +101,16 @@ class ShippingAddress extends BaseController {
 				$country = $country_info['name'];
 				$iso_code_2 = $country_info['iso_code_2'];
 				$iso_code_3 = $country_info['iso_code_3'];
-				$address_format_id = $country_info['address_format_id'];
+				$address_format = $country_info['address_format'] ?? '';
 			} else {
 				$country = '';
 				$iso_code_2 = '';
 				$iso_code_3 = '';
-				$address_format_id = 0;
-			}
-
-			// Address Format
-			$this->load->model('localisation/address_format');
-
-			$address_format_info = $this->model_localisation_address_format->getAddressFormat($address_format_id);
-
-			if ($address_format_info) {
-				$address_format = $address_format_info['address_format'];
-			} else {
 				$address_format = '';
 			}
 
 			// Zone
-			$this->load->model('localisation/zone');
-
-			$zone_info = $this->model_localisation_zone->getZone($post_info['shipping_zone_id']);
+			$zone_info = $zoneRepository->getZone((int)$post_info['shipping_zone_id']);
 
 			if ($zone_info) {
 				$zone = $zone_info['name'];

@@ -1,25 +1,36 @@
 <?php
 namespace Opencart\Catalog\Controller\Account;
+
+use Alpha\Controller\BaseController;
+use Alpha\Model\Domain\Repositories\CustomerRepository;
+use Alpha\Model\Domain\Repositories\CustomFieldRepository;
+
 /**
- * Class Edit
- *
- * @package Opencart\Catalog\Controller\Account
+ * Edit Controller - Modernizado para Alpha Engine.
  */
-class Edit extends \Opencart\System\Engine\Controller {
+class Edit extends BaseController {
+	private CustomerRepository $customerRepository;
+	private CustomFieldRepository $customFieldRepository;
+
+	public function __construct(\Opencart\System\Engine\Registry $registry) {
+		parent::__construct($registry);
+		$this->customerRepository = $this->registry->get('alpha_repository_factory')->get(CustomerRepository::class);
+		$this->customFieldRepository = $this->registry->get('alpha_repository_factory')->get(CustomFieldRepository::class);
+	}
+
 	/**
 	 * Index
 	 *
 	 * @return void
 	 */
 	public function index(): void {
-		$this->load->language('account/edit');
-
-		if (!$this->load->controller('account/login.validate')) {
+		if (!$this->customer->isLogged()) {
 			$this->session->data['redirect'] = $this->url->link('account/edit', 'language=' . $this->config->get('config_language'));
 
 			$this->response->redirect($this->url->link('account/login', 'language=' . $this->config->get('config_language'), true));
 		}
 
+		$this->load->language('account/edit');
 		$this->document->setTitle($this->language->get('heading_title'));
 
 		$data['breadcrumbs'] = [];
@@ -51,24 +62,20 @@ class Edit extends \Opencart\System\Engine\Controller {
 
 		$data['upload'] = $this->url->link('tool/upload', 'language=' . $this->config->get('config_language') . '&upload_token=' . $this->session->data['upload_token']);
 
-		// Customer
-		$this->load->model('account/customer');
+		// Alpha Engine: Entidade Cliente do Domínio
+		$customer = $this->customerRepository->find($this->customer->getId());
 
-		$customer_info = $this->model_account_customer->getCustomer($this->customer->getId());
-
-		$data['firstname'] = $customer_info['firstname'];
-		$data['lastname'] = $customer_info['lastname'];
-		$data['email'] = $customer_info['email'];
-		$data['telephone'] = $customer_info['telephone'];
-		$data['cpf_cnpj'] = $customer_info['cpf_cnpj'];
-		$data['persontype'] = $customer_info['persontype'];
+		$data['firstname'] = $customer ? $customer->getFirstname() : $this->customer->getFirstName();
+		$data['lastname'] = $customer ? $customer->getLastname() : $this->customer->getLastName();
+		$data['email'] = $customer ? $customer->getEmail() : $this->customer->getEmail();
+		$data['telephone'] = $customer ? $customer->getTelephone() : $this->customer->getTelephone();
+		$data['cpf_cnpj'] = $customer ? $customer->getCpfCnpj() : '';
+		$data['persontype'] = $customer ? $customer->getPersontype() : 'F';
 
 		// Custom Fields
 		$data['custom_fields'] = [];
 
-		$this->load->model('account/custom_field');
-
-		$custom_fields = $this->model_account_custom_field->getCustomFields($this->customer->getGroupId());
+		$custom_fields = $this->customFieldRepository->getCustomFields($this->customer->getGroupId());
 
 		foreach ($custom_fields as $custom_field) {
 			if ($custom_field['location'] == 'account') {
@@ -76,20 +83,14 @@ class Edit extends \Opencart\System\Engine\Controller {
 			}
 		}
 
-		$data['account_custom_field'] = $customer_info['custom_field'];
+		$data['account_custom_field'] = $customer ? $customer->getCustomFieldArray() : ($this->session->data['customer']['custom_field'] ?? []);
 
 		$data['back'] = $this->url->link('account/account', 'language=' . $this->config->get('config_language') . '&customer_token=' . $this->session->data['customer_token']);
 
 		$data['language'] = $this->config->get('config_language');
 
-		$data['column_left'] = $this->load->controller('common/column_left');
-		$data['column_right'] = $this->load->controller('common/column_right');
-		$data['content_top'] = $this->load->controller('common/content_top');
-		$data['content_bottom'] = $this->load->controller('common/content_bottom');
-		$data['footer'] = $this->load->controller('common/footer');
-		$data['header'] = $this->load->controller('common/header');
-
-		$this->response->setOutput($this->load->view('account/edit', $data));
+		// Alpha Engine: Renderização Otimizada via BaseController
+		$this->render('account/edit', $data);
 	}
 
 	/**
@@ -102,66 +103,60 @@ class Edit extends \Opencart\System\Engine\Controller {
 
 		$json = [];
 
-		$required = [
-			'firstname' => '',
-			'lastname'  => '',
-			'email'     => '',
-			'telephone' => '',
-			'cpf_cnpj' => '',
-			'persontype' => ''
-		];
-
-		$post_info = $this->request->post + $required;
-
-		if (!$this->load->controller('account/login.validate')) {
-			$this->session->data['redirect'] = $this->url->link('account/edit', 'language=' . $this->config->get('config_language'));
-
+		if (!$this->customer->isLogged()) {
 			$json['redirect'] = $this->url->link('account/login', 'language=' . $this->config->get('config_language'), true);
 		}
 
 		if (!$json) {
-			if (!oc_validate_length($post_info['firstname'], 1, 32)) {
-				$json['error']['firstname'] = $this->language->get('error_firstname');
-			}
+			$required = [
+				'firstname' => '',
+				'lastname'  => '',
+				'email'     => '',
+				'telephone' => '',
+				'cpf_cnpj'  => '',
+				'persontype'=> ''
+			];
+			$post_info = $this->request->post + $required;
 
-			if (!oc_validate_length($post_info['lastname'], 1, 32)) {
-				$json['error']['lastname'] = $this->language->get('error_lastname');
-			}
-
-			if (!oc_validate_email($post_info['email'])) {
-				$json['error']['email'] = $this->language->get('error_email');
-			}
-
-			// Customer
-			$this->load->model('account/customer');
-
-			if (($this->customer->getEmail() != $post_info['email']) && $this->model_account_customer->getTotalCustomersByEmail($post_info['email'])) {
-				$json['error']['warning'] = $this->language->get('error_exists');
-			}
-
-			if ($this->config->get('config_telephone_required') && !oc_validate_length($post_info['telephone'], 3, 32)) {
-				$json['error']['telephone'] = $this->language->get('error_telephone');
-			}
-
+			// Alpha Engine: Validações injetadas pelo Repositório
+			$errors = $this->customerRepository->validateEditData($post_info, $this->customer->getId());
+			
 			// Custom field validation
-			$this->load->model('account/custom_field');
-
-			$custom_fields = $this->model_account_custom_field->getCustomFields($this->customer->getGroupId());
+			$custom_fields = $this->customFieldRepository->getCustomFields($this->customer->getGroupId());
 
 			foreach ($custom_fields as $custom_field) {
 				if ($custom_field['location'] == 'account') {
 					if ($custom_field['required'] && empty($post_info['custom_field'][$custom_field['custom_field_id']])) {
-						$json['error']['custom_field_' . $custom_field['custom_field_id']] = sprintf($this->language->get('error_custom_field'), $custom_field['name']);
+						$errors['custom_field_' . $custom_field['custom_field_id']] = sprintf($this->language->get('error_custom_field'), $custom_field['name']);
 					} elseif ($custom_field['type'] == 'text' && !empty($custom_field['validation']) && !oc_validate_regex($post_info['custom_field'][$custom_field['custom_field_id']], $custom_field['validation'])) {
-						$json['error']['custom_field_' . $custom_field['custom_field_id']] = sprintf($this->language->get('error_regex'), $custom_field['name']);
+						$errors['custom_field_' . $custom_field['custom_field_id']] = sprintf($this->language->get('error_regex'), $custom_field['name']);
 					}
 				}
+			}
+			
+			if ($errors) {
+				$json['error'] = $errors;
 			}
 		}
 
 		if (!$json) {
-			// Update customer in db
-			$this->model_account_customer->editCustomer($this->customer->getId(), $post_info);
+			// Update customer in db via Domain
+			$customer = $this->customerRepository->find($this->customer->getId());
+			
+			if ($customer) {
+				$customer->setFirstname($post_info['firstname'])
+						 ->setLastname($post_info['lastname'])
+						 ->setEmail($post_info['email'])
+						 ->setTelephone($post_info['telephone'])
+						 ->setCpfCnpj($post_info['cpf_cnpj'])
+						 ->setPersontype($post_info['persontype']);
+				
+				if (isset($post_info['custom_field'])) {
+					$customer->setCustomFieldArray($post_info['custom_field']);
+				}
+				
+				$this->customerRepository->updateProfile($customer);
+			}
 
 			$json['success'] = $this->language->get('text_success');
 
@@ -184,7 +179,6 @@ class Edit extends \Opencart\System\Engine\Controller {
 			unset($this->session->data['payment_methods']);
 		}
 
-		$this->response->addHeader('Content-Type: application/json');
-		$this->response->setOutput(json_encode($json));
+		$this->jsonResponse($json);
 	}
 }

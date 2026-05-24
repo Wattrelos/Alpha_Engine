@@ -31,6 +31,6 @@ class CountryMapper extends BaseMapper {
      * @return Country[]
      */
     public function getCountries(): array {
-        return $this->search(['status' => 1], ['name' => 'ASC']);
+        return $this->search(['status' => 1]);
     }
 }

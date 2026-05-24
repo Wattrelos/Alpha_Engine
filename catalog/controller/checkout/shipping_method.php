@@ -12,6 +12,15 @@ use Alpha\Mappers\EntityMappers\ShippingMapper;
  * @package Opencart\Catalog\Controller\Checkout
  */
 class ShippingMethod extends BaseController {
+	private CartRepository $cartRepository;
+	private ShippingMapper $shippingMapper;
+
+	public function __construct(\Opencart\System\Engine\Registry $registry) {
+		parent::__construct($registry);
+		$this->cartRepository = $this->registry->get('alpha_repository_factory')->get(CartRepository::class);
+		$this->shippingMapper = $this->registry->get('mapperFactory')->get(ShippingMapper::class);
+	}
+
 	/**
 	 * Index
 	 *
@@ -31,7 +40,7 @@ class ShippingMethod extends BaseController {
 
 		$data['language'] = $this->config->get('config_language');
 
-		return $this->load->view('checkout/shipping_method', $data);
+		return $this->getTemplate('checkout/shipping_method', $data);
 	}
 
 	/**
@@ -41,18 +50,16 @@ class ShippingMethod extends BaseController {
 	 */
 	public function quote(): void {
 		$this->load->language('checkout/shipping_method');
-		$cartRepository = $this->getRepository(CartRepository::class);
 
 		$json = [];
 
 		// Validate cart has products and has stock.
-		if (empty($cartRepository->getProducts()) || (!$cartRepository->hasStock() && !$this->config->get('config_stock_checkout')) || !$cartRepository->hasMinimum()) {
+		if (empty($this->cartRepository->getProducts()) || (!$this->cartRepository->hasStock() && !$this->config->get('config_stock_checkout')) || !$this->cartRepository->hasMinimum()) {
 			$json['redirect'] = $this->url->link('checkout/cart', 'language=' . $this->config->get('config_language'), true);
 		}
 
 		if (!$json) {
-			// Validate if customer data is set
-			if (!isset($this->session->data['customer'])) {
+			if (!$this->customer->isLogged()) {
 				$json['error'] = $this->language->get('error_customer');
 			}
 
@@ -62,16 +69,14 @@ class ShippingMethod extends BaseController {
 			}
 
 			// Validate if shipping not required. If not the customer should not have reached this page.
-			if ($cartRepository->hasShipping() && !isset($this->session->data['shipping_address']['address_id'])) {
+			if ($this->cartRepository->hasShipping() && !isset($this->session->data['shipping_address']['address_id'])) {
 				$json['error'] = $this->language->get('error_shipping_address');
 			}
 		}
 
 		if (!$json) {
 			// Alpha Engine: Instanciação nativa do ShippingMapper via Factory
-			$mapperFactory = $this->registry->get('mapperFactory');
-			$shipping_mapper = $mapperFactory->get(ShippingMapper::class);
-			$shipping_methods = $shipping_mapper->getMethods($this->session->data['shipping_address']);
+			$shipping_methods = $this->shippingMapper->getMethods($this->session->data['shipping_address']);
 
 			if ($shipping_methods) {
 				$json['shipping_methods'] = $this->session->data['shipping_methods'] = $shipping_methods;
@@ -90,18 +95,16 @@ class ShippingMethod extends BaseController {
 	 */
 	public function save(): void {
 		$this->load->language('checkout/shipping_method');
-		$cartRepository = $this->getRepository(CartRepository::class);
 
 		$json = [];
 
 		// Validate cart has products and has stock.
-		if (empty($cartRepository->getProducts()) || (!$cartRepository->hasStock() && !$this->config->get('config_stock_checkout')) || !$cartRepository->hasMinimum()) {
+		if (empty($this->cartRepository->getProducts()) || (!$this->cartRepository->hasStock() && !$this->config->get('config_stock_checkout')) || !$this->cartRepository->hasMinimum()) {
 			$json['redirect'] = $this->url->link('checkout/cart', 'language=' . $this->config->get('config_language'), true);
 		}
 
 		if (!$json) {
-			// Validate if customer is logged in or customer session data is not set
-			if (!isset($this->session->data['customer'])) {
+			if (!$this->customer->isLogged()) {
 				$json['error'] = $this->language->get('error_customer');
 			}
 
@@ -111,7 +114,7 @@ class ShippingMethod extends BaseController {
 			}
 
 			// Validate if shipping not required. If not the customer should not have reached this page.
-			if ($cartRepository->hasShipping() && !isset($this->session->data['shipping_address']['address_id'])) {
+			if ($this->cartRepository->hasShipping() && !isset($this->session->data['shipping_address']['address_id'])) {
 				$json['error'] = $this->language->get('error_shipping_address');
 			}
 

@@ -93,22 +93,22 @@ class ProductRepository extends AbstractRepository implements BaseRepositoryInte
         }
 
         // Formatação de Preços e Impostos
-        $data['price_raw']   = $data['price'];
-        $data['special_raw'] = $data['special'];
+        $data['price_raw']   = $data['price'] ?? 0.0;
+        $data['special_raw'] = $data['special'] ?? false;
         
         $data['price'] = false;
         $data['special'] = false;
         $data['tax'] = false;
 
         if ($this->customer->isLogged() || !$this->config->get('config_customer_price')) {
-            $data['price'] = $this->currency->format($this->tax->calculate($data['price_raw'], $data['tax_class_id'], $this->config->get('config_tax')), $this->session->data['currency']);
+            $data['price'] = $this->currency->format($this->tax->calculate($data['price_raw'], $data['tax_class_id'] ?? 0, $this->config->get('config_tax')), $this->session->data['currency']);
             
             if ((float)$data['special_raw']) {
-                $data['special'] = $this->currency->format($this->tax->calculate($data['special_raw'], $data['tax_class_id'], $this->config->get('config_tax')), $this->session->data['currency']);
+                $data['special'] = $this->currency->format($this->tax->calculate($data['special_raw'], $data['tax_class_id'] ?? 0, $this->config->get('config_tax')), $this->session->data['currency']);
             }
 
             if ($this->config->get('config_tax')) {
-                $data['tax'] = $this->currency->format((float)$data['special_raw'] ? $data['special_raw'] : $data['price_raw'], $this->session->data['currency']);
+                $data['tax'] = $this->currency->format((float)$data['special_raw'] ? (float)$data['special_raw'] : (float)$data['price_raw'], $this->session->data['currency']);
             }
         }
 
@@ -118,7 +118,7 @@ class ProductRepository extends AbstractRepository implements BaseRepositoryInte
             foreach ($mapper->getDiscounts($productId, $customerGroupId) as $discount) {
                 $data['discounts'][] = [
                     'quantity' => $discount['quantity'],
-                    'price'    => $this->currency->format($this->tax->calculate($discount['price'], $data['tax_class_id'], $this->config->get('config_tax')), $this->session->data['currency'])
+                    'price'    => $this->currency->format($this->tax->calculate($discount['price'], $data['tax_class_id'] ?? 0, $this->config->get('config_tax')), $this->session->data['currency'])
                 ] + $discount;
             }
         }
@@ -131,7 +131,7 @@ class ProductRepository extends AbstractRepository implements BaseRepositoryInte
                 if (!$option_value['subtract'] || ($option_value['quantity'] > 0)) {
                     $price = false;
                     if ((($this->config->get('config_customer_price') && $this->customer->isLogged()) || !$this->config->get('config_customer_price')) && (float)$option_value['price']) {
-                        $price = $this->currency->format($this->tax->calculate($option_value['price'], $data['tax_class_id'], $this->config->get('config_tax')), $this->session->data['currency']);
+                        $price = $this->currency->format($this->tax->calculate($option_value['price'], $data['tax_class_id'] ?? 0, $this->config->get('config_tax')), $this->session->data['currency']);
                     }
                     
                     $product_option_value_data[] = [
@@ -165,14 +165,14 @@ class ProductRepository extends AbstractRepository implements BaseRepositoryInte
             }
         }
 
-        // Assinaturas (Placeholder Interoperável)
-        $data['subscription_plans'] = [];
+        // Assinaturas
+        $data['subscription_plans'] = $this->getSubscriptions($productId);
 
         // Textos Dinâmicos Base
         $this->loadLanguage('product/product');
         $data['heading_title'] = $data['name'];
         $data['stock'] = $data['stock_status_text'] ?? ($data['quantity'] > 0 ? $this->language->get('text_instock') : $this->language->get('text_out_of_stock'));
-        $data['text_minimum'] = sprintf($this->language->get('text_minimum'), $data['minimum'] ?? 1);
+        $data['text_minimum'] = sprintf($this->language->get('text_minimum'), (!empty($data['minimum']) && $data['minimum'] > 0) ? $data['minimum'] : 1);
         $data['text_login'] = sprintf($this->language->get('text_login'), $this->url->link('account/login', 'language=' . $this->config->get('config_language')), $this->url->link('account/register', 'language=' . $this->config->get('config_language')));
         $data['text_reviews'] = sprintf($this->language->get('text_reviews'), (int)($data['reviews'] ?? 0));
 
@@ -301,7 +301,7 @@ class ProductRepository extends AbstractRepository implements BaseRepositoryInte
         $mapper = $this->mapperFactory->get(ProductMapper::class);
         
         if (method_exists($mapper, 'getSubscriptions')) {
-            return $mapper->getSubscriptions($productId);
+            return $mapper->getSubscriptions($productId, $this->language_id);
         }
         return [];
     }
@@ -320,14 +320,14 @@ class ProductRepository extends AbstractRepository implements BaseRepositoryInte
         $tax = false;
 
         if ($this->customer->isLogged() || !$this->config->get('config_customer_price')) {
-            $price = $this->currency->format($this->tax->calculate($result['price'], $result['tax_class_id'], $this->config->get('config_tax')), $this->session->data['currency']);
+            $price = $this->currency->format($this->tax->calculate($result['price'] ?? 0, $result['tax_class_id'] ?? 0, $this->config->get('config_tax')), $this->session->data['currency']);
             
-            if ((float)$result['special']) {
-                $special = $this->currency->format($this->tax->calculate($result['special'], $result['tax_class_id'], $this->config->get('config_tax')), $this->session->data['currency']);
+            if (!empty($result['special']) && (float)$result['special']) {
+                $special = $this->currency->format($this->tax->calculate($result['special'], $result['tax_class_id'] ?? 0, $this->config->get('config_tax')), $this->session->data['currency']);
             }
 
             if ($this->config->get('config_tax')) {
-                $tax = $this->currency->format((float)$result['special'] ? $result['special'] : $result['price'], $this->session->data['currency']);
+                $tax = $this->currency->format(!empty($result['special']) && (float)$result['special'] ? (float)$result['special'] : (float)($result['price'] ?? 0), $this->session->data['currency']);
             }
         }
 
@@ -344,7 +344,7 @@ class ProductRepository extends AbstractRepository implements BaseRepositoryInte
             'price'           => $price,
             'special'         => $special,
             'tax'             => $tax,
-            'minimum'         => $result['minimum'] > 0 ? $result['minimum'] : 1,
+            'minimum'         => (!empty($result['minimum']) && $result['minimum'] > 0) ? $result['minimum'] : 1,
             'rating'          => (int)($result['rating'] ?? $result['reviews'] ?? 0),
             'href'            => $result['href'] ?? $this->url->link('product/product', 'language=' . $this->config->get('config_language') . '&product_id=' . $result['id']),
             'text_tax'        => $this->language->get('text_tax'),

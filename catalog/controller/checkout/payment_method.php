@@ -1,23 +1,45 @@
 <?php
 namespace Opencart\Catalog\Controller\Checkout;
+
 /**
  * Alpha Engine: Imports
  */
+use Alpha\Controller\BaseController;
+use Alpha\Model\Domain\Repositories\CartRepository;
+use Alpha\Model\Domain\Repositories\OrderRepository;
 use Alpha\Mappers\EntityMappers\PaymentMapper;
-use Alpha\Mappers\EntityMappers\InformationMapper;
+use Alpha\Model\Domain\Repositories\InformationRepository;
+
 /**
  * Class PaymentMethod
  *
  * @package Opencart\Catalog\Controller\Checkout
  */
-class PaymentMethod extends \Opencart\System\Engine\Controller {
+class PaymentMethod extends BaseController {
+	private CartRepository $cartRepository;
+	private OrderRepository $orderRepository;
+	private PaymentMapper $paymentMapper;
+	private InformationRepository $informationRepository;
+
+	public function __construct(\Opencart\System\Engine\Registry $registry) {
+		parent::__construct($registry);
+		$repositoryFactory = $this->registry->get('alpha_repository_factory');
+		$this->cartRepository = $repositoryFactory->get(CartRepository::class);
+		$this->orderRepository = $repositoryFactory->get(OrderRepository::class);
+		$this->informationRepository = $repositoryFactory->get(InformationRepository::class);
+		
+		$mapperFactory = $this->registry->get('alpha_mapper_factory');
+		$this->paymentMapper = $mapperFactory->get(PaymentMapper::class);
+	}
+
 	/**
 	 * Index
 	 *
 	 * @return string
 	 */
 	public function index(): string {
-		$this->load->language('checkout/payment_method');
+		$data = [];
+		$this->loadLanguageData('checkout/payment_method', $data);
 
 		if (isset($this->session->data['payment_method'])) {
 			$data['payment_method'] = $this->session->data['payment_method']['name'];
@@ -40,22 +62,17 @@ class PaymentMethod extends \Opencart\System\Engine\Controller {
 		}
 
 		// Information
-		$information_mapper = new InformationMapper();
-		$information_info = $information_mapper->getInformation(
-			(int)$this->config->get('config_checkout_id'),
-			(int)$this->config->get('config_language_id'),
-			(int)$this->config->get('config_store_id')
-		);
+		$information_info = $this->informationRepository->getInformation((int)$this->config->get('config_checkout_id'));
 
 		if ($information_info) {
-			$data['text_agree'] = sprintf($this->language->get('text_agree'), $this->url->link('information/information.info', 'language=' . $this->config->get('config_language') . '&information_id=' . $this->config->get('config_checkout_id')), $information_info['title']);
+			$data['text_agree'] = sprintf($data['text_agree'] ?? $this->language->get('text_agree'), $this->url->link('information/information.info', 'language=' . $this->config->get('config_language') . '&information_id=' . $this->config->get('config_checkout_id')), $information_info['title']);
 		} else {
 			$data['text_agree'] = '';
 		}
 
 		$data['language'] = $this->config->get('config_language');
 
-		return $this->load->view('checkout/payment_method', $data);
+		return $this->getTemplate('checkout/payment_method', $data);
 	}
 
 	/**
@@ -69,7 +86,7 @@ class PaymentMethod extends \Opencart\System\Engine\Controller {
 		$json = [];
 
 		// Validate cart has products and has stock.
-		if (!$this->cart->hasProducts() || (!$this->cart->hasStock() && !$this->config->get('config_stock_checkout')) || !$this->cart->hasMinimum()) {
+		if (empty($this->cartRepository->getProducts()) || (!$this->cartRepository->hasStock() && !$this->config->get('config_stock_checkout')) || !$this->cartRepository->hasMinimum()) {
 			$json['redirect'] = $this->url->link('checkout/cart', 'language=' . $this->config->get('config_language'), true);
 		}
 
@@ -84,7 +101,7 @@ class PaymentMethod extends \Opencart\System\Engine\Controller {
 			}
 
 			// Validate shipping
-			if ($this->cart->hasShipping()) {
+			if ($this->cartRepository->hasShipping()) {
 				// Validate shipping address
 				if (!isset($this->session->data['shipping_address']['address_id'])) {
 					$json['error'] = $this->language->get('error_shipping_address');
@@ -107,8 +124,7 @@ class PaymentMethod extends \Opencart\System\Engine\Controller {
 			}
 
 			// Alpha Engine: Centralização via PaymentMapper
-			$payment_mapper = new PaymentMapper();
-			$payment_methods = $payment_mapper->getMethods($payment_address);
+			$payment_methods = $this->paymentMapper->getMethods($payment_address);
 
 			if ($payment_methods) {
 				$json['payment_methods'] = $this->session->data['payment_methods'] = $payment_methods;
@@ -117,8 +133,7 @@ class PaymentMethod extends \Opencart\System\Engine\Controller {
 			}
 		}
 
-		$this->response->addHeader('Content-Type: application/json');
-		$this->response->setOutput(json_encode($json));
+		$this->jsonResponse($json);
 	}
 
 	/**
@@ -132,7 +147,7 @@ class PaymentMethod extends \Opencart\System\Engine\Controller {
 		$json = [];
 
 		// Validate cart has products and has stock.
-		if (!$this->cart->hasProducts() || (!$this->cart->hasStock() && !$this->config->get('config_stock_checkout')) || !$this->cart->hasMinimum()) {
+		if (empty($this->cartRepository->getProducts()) || (!$this->cartRepository->hasStock() && !$this->config->get('config_stock_checkout')) || !$this->cartRepository->hasMinimum()) {
 			$json['redirect'] = $this->url->link('checkout/cart', 'language=' . $this->config->get('config_language'), true);
 		}
 
@@ -143,7 +158,7 @@ class PaymentMethod extends \Opencart\System\Engine\Controller {
 			}
 
 			// Validate shipping
-			if ($this->cart->hasShipping()) {
+			if ($this->cartRepository->hasShipping()) {
 				// Validate shipping address
 				if (!isset($this->session->data['shipping_address']['address_id'])) {
 					$json['error'] = $this->language->get('error_shipping_address');
@@ -173,8 +188,7 @@ class PaymentMethod extends \Opencart\System\Engine\Controller {
 			$json['success'] = $this->language->get('text_success');
 		}
 
-		$this->response->addHeader('Content-Type: application/json');
-		$this->response->setOutput(json_encode($json));
+		$this->jsonResponse($json);
 	}
 
 	/**
@@ -184,7 +198,6 @@ class PaymentMethod extends \Opencart\System\Engine\Controller {
 	 */
 	public function comment(): void {
 		$this->load->language('checkout/payment_method');
-		$this->load->model('checkout/order');
 
 		$json = [];
 
@@ -200,7 +213,7 @@ class PaymentMethod extends \Opencart\System\Engine\Controller {
 			$comment = '';
 		}
 
-		$order_info = $this->model_checkout_order->getOrder($order_id);
+		$order_info = $this->orderRepository->find($order_id);
 
 		if (!$order_info) {
 			$json['error'] = $this->language->get('error_order');
@@ -209,13 +222,12 @@ class PaymentMethod extends \Opencart\System\Engine\Controller {
 		if (!$json) {
 			$this->session->data['comment'] = $comment;
 
-			$this->model_checkout_order->editComment($order_id, $comment);
+			$this->orderRepository->editComment($order_id, $comment);
 
 			$json['success'] = $this->language->get('text_comment');
 		}
 
-		$this->response->addHeader('Content-Type: application/json');
-		$this->response->setOutput(json_encode($json));
+		$this->jsonResponse($json);
 	}
 
 	/**
@@ -234,7 +246,6 @@ class PaymentMethod extends \Opencart\System\Engine\Controller {
 			unset($this->session->data['agree']);
 		}
 
-		$this->response->addHeader('Content-Type: application/json');
-		$this->response->setOutput(json_encode($json));
+		$this->jsonResponse($json);
 	}
 }

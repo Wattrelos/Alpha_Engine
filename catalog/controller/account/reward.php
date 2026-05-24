@@ -1,11 +1,12 @@
 <?php
 namespace Opencart\Catalog\Controller\Account;
+
+use Alpha\Controller\BaseController;
+
 /**
- * Class Reward
- *
- * @package Opencart\Catalog\Controller\Account
+ * Reward Controller - Modernizado para Alpha Engine.
  */
-class Reward extends \Opencart\System\Engine\Controller {
+class Reward extends BaseController {
 	/**
 	 * Index
 	 *
@@ -20,7 +21,7 @@ class Reward extends \Opencart\System\Engine\Controller {
 			$page = 1;
 		}
 
-		if (!$this->load->controller('account/login.validate')) {
+		if (!$this->customer->isLogged()) {
 			$this->session->data['redirect'] = $this->url->link('account/reward', 'language=' . $this->config->get('config_language'));
 
 			$this->response->redirect($this->url->link('account/login', 'language=' . $this->config->get('config_language'), true));
@@ -83,13 +84,7 @@ class Reward extends \Opencart\System\Engine\Controller {
 
 		$data['continue'] = $this->url->link('account/account', 'language=' . $this->config->get('config_language') . '&customer_token=' . $this->session->data['customer_token']);
 
-		$data['column_left'] = $this->load->controller('common/column_left');
-		$data['column_right'] = $this->load->controller('common/column_right');
-		$data['content_top'] = $this->load->controller('common/content_top');
-		$data['content_bottom'] = $this->load->controller('common/content_bottom');
-		$data['footer'] = $this->load->controller('common/footer');
-		$data['header'] = $this->load->controller('common/header');
-
-		$this->response->setOutput($this->load->view('account/reward', $data));
+		// Alpha Engine: Renderização envelopada
+		$this->render('account/reward', $data);
 	}
 }

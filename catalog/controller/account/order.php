@@ -1,11 +1,12 @@
 <?php
 namespace Opencart\Catalog\Controller\Account;
+
+use Alpha\Controller\BaseController;
+
 /**
- * Class Order
- *
- * @package Opencart\Catalog\Controller\Account
+ * Order Controller - Modernizado para Alpha Engine.
  */
-class Order extends \Opencart\System\Engine\Controller {
+class Order extends BaseController {
 	/**
 	 * Index
 	 *
@@ -20,7 +21,7 @@ class Order extends \Opencart\System\Engine\Controller {
 			$page = 1;
 		}
 
-		if (!$this->load->controller('account/login.validate')) {
+		if (!$this->customer->isLogged()) {
 			$this->session->data['redirect'] = $this->url->link('account/order', 'language=' . $this->config->get('config_language'));
 
 			$this->response->redirect($this->url->link('account/login', 'language=' . $this->config->get('config_language'), true));
@@ -94,14 +95,8 @@ class Order extends \Opencart\System\Engine\Controller {
 
 		$data['continue'] = $this->url->link('account/account', 'language=' . $this->config->get('config_language') . '&customer_token=' . $this->session->data['customer_token']);
 
-		$data['column_left'] = $this->load->controller('common/column_left');
-		$data['column_right'] = $this->load->controller('common/column_right');
-		$data['content_top'] = $this->load->controller('common/content_top');
-		$data['content_bottom'] = $this->load->controller('common/content_bottom');
-		$data['footer'] = $this->load->controller('common/footer');
-		$data['header'] = $this->load->controller('common/header');
-
-		$this->response->setOutput($this->load->view('account/order_list', $data));
+		// Alpha Engine: Renderização envelopada
+		$this->render('account/order_list', $data);
 	}
 
 	/**
@@ -118,7 +113,7 @@ class Order extends \Opencart\System\Engine\Controller {
 			$order_id = 0;
 		}
 
-		if (!$this->load->controller('account/login.validate')) {
+		if (!$this->customer->isLogged()) {
 			$this->session->data['redirect'] = $this->url->link('account/order', 'language=' . $this->config->get('config_language'));
 
 			$this->response->redirect($this->url->link('account/login', 'language=' . $this->config->get('config_language'), true));
@@ -387,15 +382,8 @@ class Order extends \Opencart\System\Engine\Controller {
 
 			$data['continue'] = $this->url->link('account/order', 'language=' . $this->config->get('config_language') . '&customer_token=' . $this->session->data['customer_token']);
 
-			$data['column_left'] = $this->load->controller('common/column_left');
-			$data['column_right'] = $this->load->controller('common/column_right');
-			$data['content_top'] = $this->load->controller('common/content_top');
-			$data['content_bottom'] = $this->load->controller('common/content_bottom');
-			$data['footer'] = $this->load->controller('common/footer');
-			$data['header'] = $this->load->controller('common/header');
-
-			$this->response->setOutput($this->load->view('account/order_info', $data));
-
+			// Alpha Engine: Renderização envelopada
+			$this->render('account/order_info', $data);
 			return null;
 		} else {
 			return new \Opencart\System\Engine\Action('error/not_found');
@@ -410,7 +398,7 @@ class Order extends \Opencart\System\Engine\Controller {
 	public function history(): void {
 		$this->load->language('account/order');
 
-		if (!$this->load->controller('account/login.validate')) {
+		if (!$this->customer->isLogged()) {
 			$this->session->data['redirect'] = $this->url->link('account/order', 'language=' . $this->config->get('config_language'));
 
 			$this->response->redirect($this->url->link('account/login', 'language=' . $this->config->get('config_language'), true));
@@ -439,7 +427,7 @@ class Order extends \Opencart\System\Engine\Controller {
 
 		$limit = 10;
 
-		if (!$this->load->controller('account/login.validate')) {
+		if (!$this->customer->isLogged()) {
 			return '';
 		}
 
@@ -474,6 +462,7 @@ class Order extends \Opencart\System\Engine\Controller {
 
 		$data['results'] = sprintf($this->language->get('text_pagination'), ($history_total) ? (($page - 1) * $limit) + 1 : 0, ((($page - 1) * $limit) > ($history_total - $limit)) ? $history_total : ((($page - 1) * $limit) + $limit), $history_total, ceil($history_total / $limit));
 
-		return $this->load->view('account/order_history', $data);
+		// Alpha Engine: Utilização de getTemplate para resgatar a string do parcial
+		return $this->getTemplate('account/order_history', $data);
 	}
 }

@@ -5,7 +5,7 @@ Este log documenta a fundação técnica, segurança de acesso e utilitários gl
 
 ## 🔐 [SECURITY] Sessões e Acesso
 
-1.  **Surrogate Keys (Web & API)**: Migração para PKs numéricas (`id`) e isolamento de hashes em `session_token`.
+1.  **Surrogate Keys (Web & API)**: Migração para PKs numéricas (`id`) e isolamento de hashes em `token_session`.
 2.  **API Session Unification**: Isola o identificador de banco do identificador de transporte (Token), com índices de alta performance ($O(1)$).
 3.  **GDPR Compliance**: Ciclo de vida automatizado para expiração de dados e deleção atômica de contas de clientes.
 4.  **Request Metadata Security**: Implementação do `RequestHelper` para prevenir ataques de *Open Redirect* e validar origem de tráfego.

@@ -76,6 +76,16 @@ class Address extends BaseEntity
     public function getCustomField(): string { return $this->customField; }
     public function setCustomField(string $val): self { $this->customField = $val; return $this; }
 
+    public function getCustomFieldArray(): array {
+        $decoded = json_decode($this->customField, true);
+        return is_array($decoded) ? $decoded : [];
+    }
+
+    public function setCustomFieldArray(array $val): self {
+        $this->customField = json_encode($val);
+        return $this;
+    }
+
     public function isDefault(): bool { return $this->default; }
     public function setDefault(bool $val): self { $this->default = $val; return $this; }
 

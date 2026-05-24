@@ -37,7 +37,7 @@ try {
     
     // Tenta buscar a linguagem com ID 1 (geralmente en-gb no OpenCart)
     // NOTA: Se o seu repositório base usa findById, altere find(1) para findById(1)
-    $language = $languageRepo->find(2); // Não há linguagem com id = 1 no banco de dados (deletada), somente i=2
+    $language = $languageRepo->find(2); // Observação: Restaurei id = 1 no banco de dados, pois é a linguagem padrão.
 
     if ($language) {
         echo "✅ Leitura bem-sucedida usando o Alpha Engine ORM!\n";

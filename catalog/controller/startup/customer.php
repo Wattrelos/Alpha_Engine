@@ -15,7 +15,7 @@ class Customer extends \Opencart\System\Engine\Controller {
 		$this->registry->set('customer', new \Opencart\System\Library\Cart\Customer($this->registry));
 
 		// Customer Group
-		if (isset($this->session->data['customer'])) {
+		if (isset($this->session->data['customer']['customer_group_id'])) {
 			$this->config->set('config_customer_group_id', $this->session->data['customer']['customer_group_id']);
 		} elseif ($this->customer->isLogged()) {
 			// Logged in customers

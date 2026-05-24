@@ -18,7 +18,7 @@ class Cart extends BaseEntity
 {
     private int $storeId = 0;
     private int $customerId = 0;
-    private string $sessionToken = '';
+    private string $tokenSession = '';
     private int $productId = 0;
     private int $subscriptionPlanId = 0;
     private string $option = '[]';
@@ -33,8 +33,8 @@ class Cart extends BaseEntity
     public function getCustomerId(): int { return $this->customerId; }
     public function setCustomerId(int $customerId): self { $this->customerId = $customerId; return $this; }
 
-    public function getSessionToken(): string { return $this->sessionToken; }
-    public function setSessionToken(string $sessionToken): self { $this->sessionToken = $sessionToken; return $this; }
+    public function getTokenSession(): string { return $this->tokenSession; }
+    public function setTokenSession(string $tokenSession): self { $this->tokenSession = $tokenSession; return $this; }
 
     public function getProductId(): int { return $this->productId; }
     public function setProductId(int $productId): self { $this->productId = $productId; return $this; }

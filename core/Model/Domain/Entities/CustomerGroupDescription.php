@@ -9,6 +9,8 @@ use Alpha\Model\Domain\Attributes\ManyToOne;
  */
 class CustomerGroupDescription extends BaseEntity
 {
+    private int $customerGroupId = 0;
+    private int $languageId = 0;
     private string $name = '';
     private string $description = '';
 
@@ -18,25 +20,11 @@ class CustomerGroupDescription extends BaseEntity
     #[ManyToOne(targetEntity: Language::class, foreignKey: 'languageId')]
     private ?Language $language = null;
 
-    public function getCustomerGroupId(): int 
-    { 
-        return $this->customerGroup ? (int)$this->customerGroup->getId() : 0; 
-    }
-    
-    public function setCustomerGroupId(int $id): self 
-    { 
-        if (!$this->customerGroup) {
-            $this->customerGroup = new CustomerGroup();
-        }
-        $this->customerGroup->setId($id);
-        return $this; 
-    }
+    public function getCustomerGroupId(): int { return $this->customerGroupId; }
+    public function setCustomerGroupId(int $customerGroupId): self { $this->customerGroupId = $customerGroupId; return $this; }
 
-    public function getLanguageId(): int { return $this->language ? (int)$this->language->getId() : 0; }
-    public function setLanguageId(int $id): self { 
-        if (!$this->language) $this->language = new Language();
-        $this->language->setId($id); return $this; 
-    }
+    public function getLanguageId(): int { return $this->languageId; }
+    public function setLanguageId(int $languageId): self { $this->languageId = $languageId; return $this; }
 
     public function getName(): string { return $this->name; }
     public function setName(string $name): self { $this->name = $name; return $this; }

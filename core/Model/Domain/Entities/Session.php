@@ -8,34 +8,23 @@ use Alpha\Model\Domain\BaseEntity;
  * Session Entity - Alpha Engine
  * 
  * Representa o estado persistente de uma sessão no sistema.
- * Utiliza Surrogate Keys (id) e isola o identificador de transporte (sessionToken).
+ * Utiliza Surrogate Keys (id) e isola o identificador de transporte (tokenSession).
  */
 class Session extends BaseEntity
 {
-    private string $sessionToken = '';
-    private int $customerId = 0;
+    // Observação: id agora é uma Surrogate Key de session.
+    private string $tokenSession = '';
     private string $data = '';
-    private string $expireAt = '';
+    private string $expire = '';
 
-    public function getSessionToken(): string
+    public function getTokenSession(): string
     {
-        return $this->sessionToken;
+        return $this->tokenSession;
     }
 
-    public function setSessionToken(string $sessionToken): self
+    public function setTokenSession(string $tokenSession): self
     {
-        $this->sessionToken = $sessionToken;
-        return $this;
-    }
-
-    public function getCustomerId(): int
-    {
-        return $this->customerId;
-    }
-
-    public function setCustomerId(int $customerId): self
-    {
-        $this->customerId = $customerId;
+        $this->tokenSession = $tokenSession;
         return $this;
     }
 
@@ -50,14 +39,14 @@ class Session extends BaseEntity
         return $this;
     }
 
-    public function getExpireAt(): string
+    public function getExpire(): string
     {
-        return $this->expireAt;
+        return $this->expire;
     }
 
-    public function setExpireAt(string $expireAt): self
+    public function setExpire(string $expire): self
     {
-        $this->expireAt = $expireAt;
+        $this->expire = $expire;
         return $this;
     }
 }

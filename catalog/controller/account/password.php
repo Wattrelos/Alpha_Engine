@@ -1,25 +1,33 @@
 <?php
 namespace Opencart\Catalog\Controller\Account;
+
+use Alpha\Controller\BaseController;
+use Alpha\Model\Domain\Repositories\CustomerRepository;
+
 /**
- * Class Password
- *
- * @package Opencart\Catalog\Controller\Account
+ * Password Controller - Modernizado para Alpha Engine.
  */
-class Password extends \Opencart\System\Engine\Controller {
+class Password extends BaseController {
+	private CustomerRepository $customerRepository;
+
+	public function __construct(\Opencart\System\Engine\Registry $registry) {
+		parent::__construct($registry);
+		$this->customerRepository = $this->registry->get('alpha_repository_factory')->get(CustomerRepository::class);
+	}
+
 	/**
 	 * Index
 	 *
 	 * @return void
 	 */
 	public function index(): void {
-		$this->load->language('account/password');
-
-		if (!$this->load->controller('account/login.validate')) {
+		if (!$this->customer->isLogged()) {
 			$this->session->data['redirect'] = $this->url->link('account/order', 'language=' . $this->config->get('config_language'));
 
 			$this->response->redirect($this->url->link('account/login', 'language=' . $this->config->get('config_language'), true));
 		}
 
+		$this->load->language('account/password');
 		$this->document->setTitle($this->language->get('heading_title'));
 
 		$data['breadcrumbs'] = [];
@@ -42,14 +50,7 @@ class Password extends \Opencart\System\Engine\Controller {
 		$data['save'] = $this->url->link('account/password.save', 'language=' . $this->config->get('config_language') . '&customer_token=' . $this->session->data['customer_token']);
 		$data['back'] = $this->url->link('account/account', 'language=' . $this->config->get('config_language') . '&customer_token=' . $this->session->data['customer_token']);
 
-		$data['column_left'] = $this->load->controller('common/column_left');
-		$data['column_right'] = $this->load->controller('common/column_right');
-		$data['content_top'] = $this->load->controller('common/content_top');
-		$data['content_bottom'] = $this->load->controller('common/content_bottom');
-		$data['footer'] = $this->load->controller('common/footer');
-		$data['header'] = $this->load->controller('common/header');
-
-		$this->response->setOutput($this->load->view('account/password', $data));
+		$this->render('account/password', $data);
 	}
 
 	/**
@@ -62,9 +63,7 @@ class Password extends \Opencart\System\Engine\Controller {
 
 		$json = [];
 
-		if (!$this->load->controller('account/login.validate')) {
-			$this->session->data['redirect'] = $this->url->link('account/password', 'language=' . $this->config->get('config_language'));
-
+		if (!$this->customer->isLogged()) {
 			$json['redirect'] = $this->url->link('account/login', 'language=' . $this->config->get('config_language'), true);
 		}
 
@@ -76,48 +75,19 @@ class Password extends \Opencart\System\Engine\Controller {
 
 			$post_info = $this->request->post + $required;
 
-			$password = html_entity_decode($post_info['password'], ENT_QUOTES, 'UTF-8');
-
-			if (!oc_validate_length($password, (int)$this->config->get('config_password_length'), 40)) {
-				$json['error']['password'] = sprintf($this->language->get('error_password_length'), $this->config->get('config_password_length'));
-			}
-
-			$required = [];
-
-			if ($this->config->get('config_password_uppercase') && !preg_match('/[A-Z]/', $password)) {
-				$required[] = $this->language->get('error_password_uppercase');
-			}
-
-			if ($this->config->get('config_password_lowercase') && !preg_match('/[a-z]/', $password)) {
-				$required[] = $this->language->get('error_password_lowercase');
-			}
-
-			if ($this->config->get('config_password_number') && !preg_match('/[0-9]/', $password)) {
-				$required[] = $this->language->get('error_password_number');
-			}
-
-			if ($this->config->get('config_password_symbol') && !preg_match('/[^a-zA-Z0-9]/', $password)) {
-				$required[] = $this->language->get('error_password_symbol');
-			}
-
-			if ($required) {
-				$json['error']['password'] = sprintf($this->language->get('error_password'), implode(', ', $required), $this->config->get('config_password_length'));
-			}
-
-			if ($post_info['confirm'] != $post_info['password']) {
-				$json['error']['confirm'] = $this->language->get('error_confirm');
+			// Alpha Engine: Validações de Força e Padrão delegadas ao Domínio
+			$errors = $this->customerRepository->validatePasswordData($post_info);
+			if ($errors) {
+				$json['error'] = $errors;
 			}
 		}
 
 		if (!$json) {
-			$this->load->model('account/customer');
-
-			$this->model_account_customer->editPassword($this->customer->getEmail(), $post_info['password']);
+			$this->customerRepository->updatePassword($this->customer->getId(), $this->request->post['password']);
 
 			$json['success'] = $this->language->get('text_success');
 		}
 
-		$this->response->addHeader('Content-Type: application/json');
-		$this->response->setOutput(json_encode($json));
+		$this->jsonResponse($json);
 	}
 }

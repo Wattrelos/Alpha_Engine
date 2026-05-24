@@ -14,8 +14,8 @@ class Address extends BaseController {
 
     public function __construct(\Opencart\System\Engine\Registry $registry) {
         parent::__construct($registry);
-        $repositoryFactory = new RepositoryFactory($this->mapper, $registry);
-        $this->addressRepository = $repositoryFactory->get(AddressRepository::class);
+        // Alpha Engine: Corrigida a injeção via Factory global para evitar quebra de Reflection
+        $this->addressRepository = $this->registry->get('alpha_repository_factory')->get(AddressRepository::class);
     }
 
 	/**

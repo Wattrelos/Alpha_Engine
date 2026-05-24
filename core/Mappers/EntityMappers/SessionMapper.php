@@ -11,7 +11,7 @@ use Alpha\Model\Domain\Entities\Session;
  * SessionMapper - Alpha Engine
  * 
  * Gerencia a persistência de sessões utilizando a nova estrutura de surrogate key.
- * Isola a lógica de SQL e mapeia o token único (session_token) para a entidade Session.
+ * Isola a lógica de SQL e mapeia o token único (token_session) para a entidade Session.
  */
 class SessionMapper extends BaseMapper // Alterado de AbstractMapper para BaseMapper
 {
@@ -30,7 +30,7 @@ class SessionMapper extends BaseMapper // Alterado de AbstractMapper para BaseMa
         // Alpha Engine Failsafe: Intercepta sessões corrompidas (> 5MB) antes de estourar a memória
         $checkQuery = (new QueryBuilder())
             ->from($this->getFullTableName())
-            ->where("session_token = ?", [$token])
+            ->where("token_session = ?", [$token])
             ->select('LENGTH(data) AS size')
             ->limit(1);
             
@@ -42,7 +42,7 @@ class SessionMapper extends BaseMapper // Alterado de AbstractMapper para BaseMa
 
         $query = (new QueryBuilder())
             ->from($this->getFullTableName())
-            ->where("session_token = ?", [$token])
+            ->where("token_session = ?", [$token])
             ->where("expire_at > ?", [$now])
             ->select('data')
             ->limit(1);
@@ -60,23 +60,24 @@ class SessionMapper extends BaseMapper // Alterado de AbstractMapper para BaseMa
     {
         // Alpha Engine: Embora o QueryBuilder construa a query, para operações atômicas 
         // como ON DUPLICATE KEY UPDATE, mantemos a execução via DAO para garantir logs e segurança.
-        $sql = "INSERT INTO " . $this->getFullTableName() . " 
-                (`session_token`, `data`, `expire_at`, `user_agent`, `ip`) 
-                VALUES (?, ?, ?, '', '') 
+        $sql = "INSERT IGNORE INTO " . $this->getFullTableName() . " 
+                (`token_session`, `data`, `expire_at`) 
+                VALUES (?, ?, ?) 
                 ON DUPLICATE KEY UPDATE `data` = VALUES(`data`), `expire_at` = VALUES(`expire_at`)";
 
-        $stmt = $this->db->prepare($sql);
+        $conn = ConnectionDB::getInstance()->getConnection();
+        $stmt = $conn->prepare($sql);
         $stmt->execute([$token, $data, $expireDate]);
     }
 
     /**
-     * Remove uma sessão pelo seu token único (session_token).
+     * Remove uma sessão pelo seu token único (token_session).
      */
     public function deleteByToken(string $token): void
     {
         $query = (new QueryBuilder())
             ->delete($this->getFullTableName())
-            ->where("session_token = ?", [$token]);
+            ->where("token_session = ?", [$token]);
 
         $this->dao->execute($query);
     }
@@ -88,7 +89,7 @@ class SessionMapper extends BaseMapper // Alterado de AbstractMapper para BaseMa
     {
         $query = (new QueryBuilder())
             ->from($this->getFullTableName())
-            ->where("session_token = ?", [$token])
+            ->where("token_session = ?", [$token])
             ->select('id', 'LENGTH(data) AS size')
             ->limit(1);
 
@@ -149,18 +150,5 @@ class SessionMapper extends BaseMapper // Alterado de AbstractMapper para BaseMa
             ->where("expire_at < ?", [gmdate('Y-m-d H:i:s')]);
 
         return (int)$this->dao->execute($query);
-    }
-
-    /**
-     * Atualiza o customer_id vinculado a um token.
-     */
-    public function updateCustomerId(string $token, int $customerId): void
-    {
-        $query = (new QueryBuilder())
-            ->update($this->getFullTableName())
-            ->set("customer_id", $customerId)
-            ->where("session_token = ?", [$token]);
-
-        $this->dao->execute($query);
     }
 }

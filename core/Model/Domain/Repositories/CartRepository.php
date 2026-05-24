@@ -184,6 +184,7 @@ class CartRepository extends AbstractRepository implements BaseRepositoryInterfa
         // Alpha Engine: Consumo Inteligente O(1) das Opções e Descontos via Repositórios de Domínio
         $repositoryFactory = $this->registry->get('alpha_repository_factory');
         $optionRepo = $repositoryFactory->get(\Alpha\Model\Domain\Repositories\ProductOptionValueRepository::class);
+        $productRepo = $repositoryFactory->get(\Alpha\Model\Domain\Repositories\ProductRepository::class);
         $discountRepo = $repositoryFactory->get(\Alpha\Model\Domain\Repositories\ProductDiscountRepository::class);
 
         $optionValuesEntities = $optionRepo->getOptionValuesByIds($allOptionValueIds);
@@ -251,6 +252,19 @@ class CartRepository extends AbstractRepository implements BaseRepositoryInterfa
                     $price = (float)$discountPrice;
                 }
 
+                // Resolução do Nome do Plano de Assinatura
+                $subscriptionName = '';
+                $subscriptionPlanId = (int)($item['subscription_plan_id'] ?? 0);
+                if ($subscriptionPlanId > 0) {
+                    $subscriptions = $productRepo->getSubscriptions($productInfo['id']);
+                    foreach ($subscriptions as $sub) {
+                        if ((int)$sub['subscription_plan_id'] === $subscriptionPlanId) {
+                            $subscriptionName = $sub['name'];
+                            break;
+                        }
+                    }
+                }
+
                 // Formatação final do produto protegendo a interface legada
                 $products[] = [
                     'cart_id'               => $item['cart_id'] ?? $item['id'], // Interoperabilidade para chaves renomeadas
@@ -260,7 +274,7 @@ class CartRepository extends AbstractRepository implements BaseRepositoryInterfa
                     'shipping'              => $productInfo['shipping'],
                     'image'                 => $productInfo['image'],
                     'option'                => $optionData,
-                    'subscription'          => '',
+                    'subscription'          => $subscriptionName,
                     'quantity'              => $item['quantity'],
                     'minimum'               => $productInfo['minimum'] ?: 1,
                     'minimum_status'        => $item['quantity'] >= ($productInfo['minimum'] ?: 1),
@@ -332,11 +346,17 @@ class CartRepository extends AbstractRepository implements BaseRepositoryInterfa
     }
 
     /**
-     * Retorna as assinaturas no carrinho (stub temporário).
+     * Retorna os produtos do carrinho que possuem assinatura ativa.
      */
     public function getSubscriptions(): array
     {
-        return [];
+        $subscription_data = [];
+        foreach ($this->getProducts() as $product) {
+            if (!empty($product['subscription'])) {
+                $subscription_data[] = $product;
+            }
+        }
+        return $subscription_data;
     }
 
     /**
@@ -382,6 +402,11 @@ class CartRepository extends AbstractRepository implements BaseRepositoryInterfa
 
     public function hasSubscription(): bool
     {
+        foreach ($this->getProducts() as $product) {
+            if (!empty($product['subscription'])) {
+                return true;
+            }
+        }
         return false;
     }
 

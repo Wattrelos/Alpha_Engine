@@ -16,15 +16,20 @@ use Alpha\Model\Domain\Repositories\CartRepository;
  * @package Opencart\Catalog\Controller\Checkout
  */
 class Cart extends BaseController {
+	private CartRepository $cartRepository;
+
+	public function __construct(\Opencart\System\Engine\Registry $registry) {
+		parent::__construct($registry);
+		$this->cartRepository = $this->registry->get('alpha_repository_factory')->get(CartRepository::class);
+	}
+
 	/**
 	 * Index
 	 *
 	 * @return void
 	 */
 	public function index(): void {
-		/** @var CartRepository $cartRepository */
-		$cartRepository = $this->getRepository(CartRepository::class);
-		$response = $cartRepository->getCartPageData();
+		$response = $this->cartRepository->getCartPageData();
 		$data = $response->getData();
 
 		// Alpha Engine: Fim do overhead do Loader para métodos da mesma classe
@@ -51,11 +56,8 @@ class Cart extends BaseController {
 	 * @return string
 	 */
 	public function getList(): string {
-		/** @var CartRepository $cartRepository */
-		$cartRepository = $this->getRepository(CartRepository::class);
-		
 		// Alpha Engine: O DTO gerado encapsula validação, formatação de imagens e alertas da sessão.
-		$response = $cartRepository->getCartListDisplayData();
+		$response = $this->cartRepository->getCartListDisplayData();
 		
 		$data = $response->getData();
 		$data['modules'] = [];
@@ -69,7 +71,7 @@ class Cart extends BaseController {
 		}
 		unset($data['total_extensions']);
 
-		return $this->load->view('checkout/cart_list', $data);
+		return $this->getTemplate('checkout/cart_list', $data);
 	}
 
 	/**
@@ -87,11 +89,8 @@ class Cart extends BaseController {
 		$option     = array_filter((array)($this->request->post['option'] ?? []));
 		$subscription_plan_id = (int)($this->request->post['subscription_plan_id'] ?? 0);
 		
-		/** @var CartRepository $cartRepository */
-		$cartRepository = $this->getRepository(CartRepository::class);
-		
 		// Alpha Engine: Validação integral isolada no domínio
-		$validation = $cartRepository->validateAddition($product_id, $option, $subscription_plan_id);
+		$validation = $this->cartRepository->validateAddition($product_id, $option, $subscription_plan_id);
 
 		if (!empty($validation['error'])) {
 			$json['error'] = $validation['error'];
@@ -99,7 +98,7 @@ class Cart extends BaseController {
 				$json['redirect'] = $validation['redirect'];
 			}
 		} else {
-			$cartRepository->addAndClearCheckout(
+			$this->cartRepository->addAndClearCheckout(
 				(int)$this->customer->getId(),
 				$this->session->getId(),
 				$product_id, 
@@ -132,13 +131,10 @@ class Cart extends BaseController {
 		$key = (int)($this->request->post['key'] ?? 0);
 		$quantity = (int)($this->request->post['quantity'] ?? 1);
 
-		/** @var CartRepository $cartRepository */
-		$cartRepository = $this->getRepository(CartRepository::class);
-		
 		// Alpha Engine: Repository aplica a alteração e limpa módulos dependentes
-		$cartRepository->updateAndClearCheckout($key, $quantity);
+		$this->cartRepository->updateAndClearCheckout($key, $quantity);
 
-		if ($cartRepository->hasProducts()) {
+		if ($this->cartRepository->hasProducts()) {
 			$json['success'] = $this->language->get('text_edit');
 		} else {
 			$json['redirect'] = $this->url->link('checkout/cart', 'language=' . $this->config->get('config_language'), true);
@@ -159,13 +155,10 @@ class Cart extends BaseController {
 
 		$key = (int)($this->request->post['key'] ?? $this->request->get['key'] ?? 0);
 
-		/** @var CartRepository $cartRepository */
-		$cartRepository = $this->getRepository(CartRepository::class);
-		
 		// Alpha Engine: Remoção segura pelo repositório
-		$cartRepository->removeAndClearCheckout($key);
+		$this->cartRepository->removeAndClearCheckout($key);
 
-		if ($cartRepository->hasProducts()) {
+		if ($this->cartRepository->hasProducts()) {
 			$json['success'] = $this->language->get('text_remove');
 		} else {
 			$json['redirect'] = $this->url->link('checkout/cart', 'language=' . $this->config->get('config_language'), true);

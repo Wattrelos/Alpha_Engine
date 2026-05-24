@@ -2,7 +2,7 @@
 
 namespace Alpha\Mappers\EntityMappers;
 
-use Alpha\Model\DataAccessObject\DataAccessObject;
+use Alpha\Mappers\BaseMapper;
 use Alpha\Model\DataAccessObject\QueryBuilder;
 use Alpha\Model\Domain\Entities\Customer;
 
@@ -10,40 +10,33 @@ use Alpha\Model\Domain\Entities\Customer;
  * CustomerMapper - Gerencia a autenticação e persistência de clientes.
  * 
  * Melhoras Alpha Engine:
- * - Autenticação Segura: Busca por e-mail utilizando Prepared Statements.
+ * - Herança do BaseMapper para uso nativo do DataAccessObject.
+ * - Autenticação Segura: Busca por e-mail centralizada usando o findOneBy().
  * - Gestão de Auditoria: Métodos para registrar tentativas de login (customer_login).
- * - Tipagem Estrita: Retorna entidades Customer hidratadas via DataAccessObject.
  */
-class CustomerMapper
+class CustomerMapper extends BaseMapper
 {
-    private DataAccessObject $dao;
-
-    public function __construct()
-    {
-        $this->dao = new DataAccessObject();
-    }
+    protected string $table = 'customer';
+    protected string $entityClass = Customer::class;
 
     /**
      * Localiza um cliente pelo e-mail.
      */
-    public function getCustomerByEmail(string $email): ?Customer
+    public function findByEmail(string $email): ?Customer
     {
-        $query = (new QueryBuilder())
-            ->from(DB_PREFIX . 'customer')
-            ->where("LCASE(email) = ?", [strtolower($email)])
-            ->select('id');
+        return $this->findOneBy(['email' => strtolower($email)]);
+    }
 
-        $results = $this->dao->executeQuery($query);
-        
-        if (!$results) {
-            return null;
+    /**
+     * Persiste (Salva ou Atualiza) um cliente no banco de dados.
+     */
+    public function save(Customer $customer): int
+    {
+        if ($customer->getId() > 0) {
+            $this->dao->update($customer);
+            return $customer->getId();
         }
-
-        $customer = new Customer();
-        $customer->setId((int)$results[0]['id']);
-        
-        $hydrated = $this->dao->read($customer);
-        return $hydrated ? $hydrated[0] : null;
+        return $this->dao->create($customer);
     }
 
     /**
@@ -80,13 +73,5 @@ class CustomerMapper
         $conn = \Alpha\Model\DataAccessObject\ConnectionDB::getInstance()->getConnection();
         $stmt = $conn->prepare("DELETE FROM `" . DB_PREFIX . "customer_login` WHERE LCASE(email) = ?");
         $stmt->execute([strtolower($email)]);
-    }
-
-    /**
-     * Salva ou atualiza os dados do cliente.
-     */
-    public function save(Customer $customer): ?int
-    {
-        return ($customer->getId() > 0) ? $this->dao->update($customer) : $this->dao->create($customer);
     }
 }

@@ -8,11 +8,11 @@ use Opencart\System\Engine\Action;
 use Alpha\Mappers\EntityMappers\ApiSessionMapper;
 
 /**
- * ApiAuthMiddleware - Valida a autenticação de requisições de API via session_token.
+ * ApiAuthMiddleware - Valida a autenticação de requisições de API via token_session.
  * 
  * Melhoras Alpha Engine:
  * - Desacoplamento: Remove a necessidade de queries manuais nos controladores.
- * - Segurança: Valida o session_token e o IP de origem utilizando o ApiSessionMapper.
+ * - Segurança: Valida o token_session e o IP de origem utilizando o ApiSessionMapper.
  * - Contextualização: Injeta a entidade ApiSession validada no Registry para uso posterior.
  */
 class ApiAuthMiddleware implements MiddlewareInterface

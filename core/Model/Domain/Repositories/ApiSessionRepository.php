@@ -63,7 +63,7 @@ class ApiSessionRepository extends AbstractRepository
      */
     public function getByToken(string $token): ?ApiSession
     {
-        return $this->findOneBy(['sessionToken' => $token]);
+        return $this->findOneBy(['tokenSession' => $token]);
     }
 
     /**
@@ -74,7 +74,7 @@ class ApiSessionRepository extends AbstractRepository
         $session = $this->getByToken($token) ?? new ApiSession();
         
         $session->setApiId($api_id)
-                ->setSessionToken($token)
+                ->setTokenSession($token)
                 ->setIp($ip);
 
         if (!$session->getId()) {

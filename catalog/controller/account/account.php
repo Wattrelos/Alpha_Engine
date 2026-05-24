@@ -2,7 +2,7 @@
 namespace Opencart\Catalog\Controller\Account;
 
 use Alpha\Controller\BaseController;
-use Alpha\Mappers\CustomerAffiliateMapper;
+use Alpha\Model\Domain\Repositories\CustomerAffiliateRepository;
 
 /**
  * Class Account
@@ -10,15 +10,22 @@ use Alpha\Mappers\CustomerAffiliateMapper;
  * @package Opencart\Catalog\Controller\Account
  */
 class Account extends BaseController {
+	private CustomerAffiliateRepository $affiliateRepository;
+
+	public function __construct(\Opencart\System\Engine\Registry $registry) {
+		parent::__construct($registry);
+		$this->affiliateRepository = $this->registry->get('alpha_repository_factory')->get(CustomerAffiliateRepository::class);
+	}
+
 	/**
 	 * Index
 	 *
 	 * @return void
 	 */
 	public function index(): void {
-		$this->loadLanguage('account/account');
+		$this->load->language('account/account');
 
-		if (!$this->load->controller('account/login.validate')) {
+		if (!$this->customer->isLogged()) {
 			$this->session->data['redirect'] = $this->url->link('account/account', 'language=' . $this->config->get('config_language'));
 
 			$this->response->redirect($this->url->link('account/login', 'language=' . $this->config->get('config_language'), true));
@@ -69,8 +76,8 @@ class Account extends BaseController {
 		if ($this->config->get('config_affiliate_status')) {
 			$data['affiliate'] = $this->url->link('account/affiliate', 'language=' . $this->config->get('config_language') . '&customer_token=' . $this->session->data['customer_token']);
 
-			// Alpha Engine: Uso do Data Mapper em vez do model legado
-			$affiliate_info = $this->mapper->get(CustomerAffiliateMapper::class)->findByCustomerId($this->customer->getId());
+			// Alpha Engine: Uso do Repository em vez da camada de Mapper direta
+			$affiliate_info = $this->affiliateRepository->findOneBy(['customer_id' => $this->customer->getId()]);
 
 			if ($affiliate_info) {
 				$data['tracking'] = $this->url->link('account/tracking', 'language=' . $this->config->get('config_language') . '&customer_token=' . $this->session->data['customer_token']);

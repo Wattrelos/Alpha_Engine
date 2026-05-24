@@ -1,11 +1,14 @@
 <?php
 namespace Opencart\Catalog\Controller\Account;
+
+use Alpha\Controller\BaseController;
+
 /**
  * Class Affiliate
  *
  * @package Opencart\Catalog\Controller\Account
  */
-class Affiliate extends \Opencart\System\Engine\Controller {
+class Affiliate extends BaseController {
 	/**
 	 * Index
 	 *
@@ -14,7 +17,7 @@ class Affiliate extends \Opencart\System\Engine\Controller {
 	public function index(): void {
 		$this->load->language('account/affiliate');
 
-		if (!$this->load->controller('account/login.validate')) {
+		if (!$this->customer->isLogged()) {
 			$this->customer->logout();
 
 			$this->session->data['redirect'] = $this->url->link('account/affiliate', 'language=' . $this->config->get('config_language'));
@@ -160,14 +163,7 @@ class Affiliate extends \Opencart\System\Engine\Controller {
 
 		$data['language'] = $this->config->get('config_language');
 
-		$data['column_left'] = $this->load->controller('common/column_left');
-		$data['column_right'] = $this->load->controller('common/column_right');
-		$data['content_top'] = $this->load->controller('common/content_top');
-		$data['content_bottom'] = $this->load->controller('common/content_bottom');
-		$data['footer'] = $this->load->controller('common/footer');
-		$data['header'] = $this->load->controller('common/header');
-
-		$this->response->setOutput($this->load->view('account/affiliate', $data));
+		$this->render('account/affiliate', $data);
 	}
 
 	/**
@@ -180,7 +176,7 @@ class Affiliate extends \Opencart\System\Engine\Controller {
 
 		$json = [];
 
-		if (!$this->load->controller('account/login.validate')) {
+		if (!$this->customer->isLogged()) {
 			$this->session->data['redirect'] = $this->url->link('account/affiliate', 'language=' . $this->config->get('config_language'));
 
 			$json['redirect'] = $this->url->link('account/login', 'language=' . $this->config->get('config_language'), true);
@@ -265,7 +261,6 @@ class Affiliate extends \Opencart\System\Engine\Controller {
 			$json['redirect'] = $this->url->link('account/account', 'language=' . $this->config->get('config_language') . '&customer_token=' . $this->session->data['customer_token'], true);
 		}
 
-		$this->response->addHeader('Content-Type: application/json');
-		$this->response->setOutput(json_encode($json));
+		$this->jsonResponse($json);
 	}
 }

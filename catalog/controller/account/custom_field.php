@@ -1,11 +1,15 @@
 <?php
 namespace Opencart\Catalog\Controller\Account;
+
+use Alpha\Controller\BaseController;
+use Alpha\Model\Domain\Repositories\CustomFieldRepository;
+
 /**
  * Class Custom Field
  *
  * @package Opencart\Catalog\Controller\Account
  */
-class CustomField extends \Opencart\System\Engine\Controller {
+class CustomField extends BaseController {
 	/**
 	 * Index
 	 *
@@ -19,9 +23,10 @@ class CustomField extends \Opencart\System\Engine\Controller {
 			$customer_group_id = (int)$this->config->get('config_customer_group_id');
 		}
 
-		$this->load->model('account/custom_field');
+		/** @var CustomFieldRepository $repository */
+		$repository = $this->getRepository(CustomFieldRepository::class);
 
 		$this->response->addHeader('Content-Type: application/json');
-		$this->response->setOutput(json_encode($this->model_account_custom_field->getCustomFields($customer_group_id)));
+		$this->response->setOutput(json_encode($repository->getCustomFields($customer_group_id)));
 	}
 }

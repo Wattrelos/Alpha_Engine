@@ -1098,7 +1098,7 @@ function oc_db_schema() {
 				'default' => '0'
 			],
 			[
-				'name' => 'session_token',
+				'name' => 'token_session',
 				'type' => 'varchar(32)'
 			],
 			[
@@ -1146,9 +1146,9 @@ function oc_db_schema() {
 				'field' => 'customer_id'
 			],
 			[
-				'key'   => 'session_token',
+				'key'   => 'token_session',
 				'table' => 'session',
-				'field' => 'session_token'
+				'field' => 'token_session'
 			],
 			[
 				'key'   => 'product_id',
@@ -1166,7 +1166,7 @@ function oc_db_schema() {
 				'name' => 'cart_id',
 				'key'  => [
 					'customer_id',
-					'session_token',
+					'token_session',
 					'product_id',
 					'subscription_plan_id'
 				]
@@ -6530,12 +6530,12 @@ function oc_db_schema() {
 		'name'  => 'session',
 		'field' => [
 			[
-				'name' => 'id', // Coluna personalizada para corrigir o erro de quando a PK era string session;
+				'name' => 'id', // Coluna personalizada (Surrogate Key) para corrigir o erro de quando a PK era string session;
 				'type'           => 'int(11)',
 				'auto_increment' => true
 			],
 			[
-				'name' => 'token_session',
+				'name' => 'token_session', // Coluna personalizada. (Antiga chave PK)
 				'type' => 'varchar(32)'
 			],
 			[

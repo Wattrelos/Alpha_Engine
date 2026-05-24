@@ -28,13 +28,11 @@ class SessionRepository extends AbstractRepository implements BaseRepositoryInte
      */
     public function read(string $session_token): array
     {
-        $session = $this->getMapper()->getSession($session_token);
+        $now = gmdate('Y-m-d H:i:s');
+        $data = $this->getMapper()->getActiveSessionData($session_token, $now);
 
-        if (!$session) return [];
-
-        // Alpha Engine: Verificação de validade via timestamp para garantir segurança.
-        if (strtotime($session->getExpireAt()) > time()) {
-            return json_decode($session->getData(), true) ?: [];
+        if ($data) {
+            return json_decode($data, true) ?: [];
         }
 
         return [];
@@ -70,23 +68,6 @@ class SessionRepository extends AbstractRepository implements BaseRepositoryInte
     public function gc(): void
     {
         $this->getMapper()->deleteExpired();
-    }
-
-    /**
-     * Atalho para vincular customer_id.
-     */
-    public function setCustomerId(string $token, int $customerId): void
-    {
-        $this->getMapper()->updateCustomerId($token, $customerId);
-    }
-
-    /**
-     * Obtém o customer_id da sessão ativa.
-     */
-    public function getCustomerId(string $token): int
-    {
-        $session = $this->getMapper()->getSession($token);
-        return $session ? $session->getCustomerId() : 0;
     }
 
     /**

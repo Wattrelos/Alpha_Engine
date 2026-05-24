@@ -112,6 +112,16 @@ class InformationRepository extends AbstractRepository implements BaseRepository
     }
 
     /**
+     * Legacy Bridge: Compatibilidade com Controladores Legados.
+     * Retorna a página de informação formatada como Array bruto.
+     */
+    public function getInformation(int $informationId): array
+    {
+        $information = $this->getMapper()->getInformation($informationId, $this->language_id, $this->store_id);
+        return $information ?: [];
+    }
+
+    /**
      * Alpha Engine: Prepara o DTO (ViewResponse) completo para a página de informação.
      * Resolve Breadcrumbs, decodificação HTML e metadados.
      * 
@@ -145,5 +155,35 @@ class InformationRepository extends AbstractRepository implements BaseRepository
         ];
 
         return new ViewResponse($data);
+    }
+
+    // BaseRepositoryInterface bindings
+
+    /**
+     * Busca uma entidade pelo seu ID principal.
+     */
+    public function find(int $id): ?InterfaceEntity {
+        return $this->getMapper()->findById($id);
+    }
+
+    /**
+     * Retorna todas as entidades deste domínio.
+     */
+    public function findAll(): array {
+        return $this->getMapper()->findAll();
+    }
+
+    /**
+     * Busca entidades através de critérios específicos.
+     */
+    public function findBy(array $criteria, ?array $orderBy = null, ?int $limit = null, ?int $offset = null): array {
+        return $this->getMapper()->findBy($criteria, $orderBy, $limit, $offset);
+    }
+
+    /**
+     * Retorna a primeira entidade que satisfaça o critério informado.
+     */
+    public function findOneBy(array $criteria): ?InterfaceEntity {
+        return $this->getMapper()->findOneBy($criteria);
     }
 }

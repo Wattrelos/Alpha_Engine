@@ -2,6 +2,7 @@
 namespace Opencart\catalog\Controller\Api;
 
 use Alpha\Controller\BaseController;
+use Alpha\Model\Domain\Repositories\CustomerRepository;
 
 /**
  * Class Customer
@@ -37,9 +38,8 @@ class Customer extends BaseController {
 
 		// Customer
 		if ($post_info['customer_id']) {
-			$this->load->model('account/customer');
-
-			$customer_info = $this->model_account_customer->getCustomer($post_info['customer_id']);
+			$customerRepository = $this->getRepository(CustomerRepository::class);
+			$customer_info = $customerRepository->find((int)$post_info['customer_id']);
 
 			if (!$customer_info) {
 				$output['error']['warning'] = $this->language->get('error_customer');
@@ -75,6 +75,14 @@ class Customer extends BaseController {
 
 		if ($this->config->get('config_telephone_required') && !oc_validate_length($post_info['telephone'], 3, 32)) {
 			$output['error']['telephone'] = $this->language->get('error_telephone');
+		}
+
+		if (!empty($post_info['cpf_cnpj']) && !oc_validate_length($post_info['cpf_cnpj'], 11, 14)) {
+			$output['error']['cpf_cnpj'] = $this->language->get('error_cpf_cnpj') ?? 'O CPF/CNPJ deve conter entre 11 e 14 caracteres!';
+		}
+
+		if (!in_array($post_info['persontype'], ['F', 'J', ''])) {
+			$output['error']['persontype'] = $this->language->get('error_persontype') ?? 'Tipo de pessoa inválido!';
 		}
 
 		// Custom field validation

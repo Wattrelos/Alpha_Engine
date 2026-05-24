@@ -1,11 +1,14 @@
 <?php
 namespace Opencart\Catalog\Controller\Account;
+
+use Alpha\Controller\BaseController;
+
 /**
  * Class Returns
  *
  * @package Opencart\Catalog\Controller\Account
  */
-class Returns extends \Opencart\System\Engine\Controller {
+class Returns extends BaseController {
 	/**
 	 * Index
 	 *
@@ -20,7 +23,7 @@ class Returns extends \Opencart\System\Engine\Controller {
 			$page = 1;
 		}
 
-		if (!$this->load->controller('account/login.validate')) {
+		if (!$this->customer->isLogged()) {
 			$this->session->data['redirect'] = $this->url->link('account/returns', 'language=' . $this->config->get('config_language'));
 
 			$this->response->redirect($this->url->link('account/login', 'language=' . $this->config->get('config_language'), true));
@@ -79,14 +82,7 @@ class Returns extends \Opencart\System\Engine\Controller {
 
 		$data['continue'] = $this->url->link('account/account', 'language=' . $this->config->get('config_language') . '&customer_token=' . $this->session->data['customer_token']);
 
-		$data['column_left'] = $this->load->controller('common/column_left');
-		$data['column_right'] = $this->load->controller('common/column_right');
-		$data['content_top'] = $this->load->controller('common/content_top');
-		$data['content_bottom'] = $this->load->controller('common/content_bottom');
-		$data['footer'] = $this->load->controller('common/footer');
-		$data['header'] = $this->load->controller('common/header');
-
-		$this->response->setOutput($this->load->view('account/returns_list', $data));
+		$this->render('account/returns_list', $data);
 	}
 
 	/**
@@ -103,7 +99,7 @@ class Returns extends \Opencart\System\Engine\Controller {
 			$return_id = 0;
 		}
 
-		if (!$this->load->controller('account/login.validate')) {
+		if (!$this->customer->isLogged()) {
 			$this->session->data['redirect'] = $this->url->link('account/returns.info', 'language=' . $this->config->get('config_language') . '&customer_token=' . $this->session->data['customer_token']);
 
 			$this->response->redirect($this->url->link('account/login', 'language=' . $this->config->get('config_language'), true));
@@ -168,14 +164,7 @@ class Returns extends \Opencart\System\Engine\Controller {
 
 			$data['continue'] = $this->url->link('account/returns', 'language=' . $this->config->get('config_language') . $url . '&customer_token=' . $this->session->data['customer_token']);
 
-			$data['column_left'] = $this->load->controller('common/column_left');
-			$data['column_right'] = $this->load->controller('common/column_right');
-			$data['content_top'] = $this->load->controller('common/content_top');
-			$data['content_bottom'] = $this->load->controller('common/content_bottom');
-			$data['footer'] = $this->load->controller('common/footer');
-			$data['header'] = $this->load->controller('common/header');
-
-			$this->response->setOutput($this->load->view('account/returns_info', $data));
+			$this->render('account/returns_info', $data);
 		} else {
 			return new \Opencart\System\Engine\Action('error/not_found');
 		}
@@ -314,14 +303,7 @@ class Returns extends \Opencart\System\Engine\Controller {
 
 		$data['back'] = $this->url->link('account/account', 'language=' . $this->config->get('config_language') . (isset($this->session->data['customer_token']) ? '&customer_token=' . $this->session->data['customer_token'] : ''));
 
-		$data['column_left'] = $this->load->controller('common/column_left');
-		$data['column_right'] = $this->load->controller('common/column_right');
-		$data['content_top'] = $this->load->controller('common/content_top');
-		$data['content_bottom'] = $this->load->controller('common/content_bottom');
-		$data['footer'] = $this->load->controller('common/footer');
-		$data['header'] = $this->load->controller('common/header');
-
-		$this->response->setOutput($this->load->view('account/returns_form', $data));
+		$this->render('account/returns_form', $data);
 	}
 
 	/**
@@ -421,8 +403,7 @@ class Returns extends \Opencart\System\Engine\Controller {
 			$json['redirect'] = $this->url->link('account/returns.success', 'language=' . $this->config->get('config_language'), true);
 		}
 
-		$this->response->addHeader('Content-Type: application/json');
-		$this->response->setOutput(json_encode($json));
+		$this->jsonResponse($json);
 	}
 
 	/**
@@ -449,14 +430,7 @@ class Returns extends \Opencart\System\Engine\Controller {
 
 		$data['continue'] = $this->url->link('common/home', 'language=' . $this->config->get('config_language'));
 
-		$data['column_left'] = $this->load->controller('common/column_left');
-		$data['column_right'] = $this->load->controller('common/column_right');
-		$data['content_top'] = $this->load->controller('common/content_top');
-		$data['content_bottom'] = $this->load->controller('common/content_bottom');
-		$data['footer'] = $this->load->controller('common/footer');
-		$data['header'] = $this->load->controller('common/header');
-
-		$this->response->setOutput($this->load->view('common/success', $data));
+		$this->render('common/success', $data);
 	}
 
 	/**
@@ -467,7 +441,7 @@ class Returns extends \Opencart\System\Engine\Controller {
 	public function history(): void {
 		$this->load->language('account/return');
 
-		if (!$this->load->controller('account/login.validate')) {
+		if (!$this->customer->isLogged()) {
 			$this->session->data['redirect'] = $this->url->link('account/returns', 'language=' . $this->config->get('config_language'));
 
 			$this->response->redirect($this->url->link('account/login', 'language=' . $this->config->get('config_language'), true));
@@ -496,7 +470,7 @@ class Returns extends \Opencart\System\Engine\Controller {
 
 		$limit = 10;
 
-		if (!$this->load->controller('account/login.validate')) {
+		if (!$this->customer->isLogged()) {
 			return '';
 		}
 
@@ -524,6 +498,6 @@ class Returns extends \Opencart\System\Engine\Controller {
 
 		$data['results'] = sprintf($this->language->get('text_pagination'), ($return_total) ? (($page - 1) * $limit) + 1 : 0, ((($page - 1) * $limit) > ($return_total - $limit)) ? $return_total : ((($page - 1) * $limit) + $limit), $return_total, ceil($return_total / $limit));
 
-		return $this->load->view('account/returns_history', $data);
+		return $this->getTemplate('account/returns_history', $data);
 	}
 }

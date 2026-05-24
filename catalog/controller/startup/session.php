@@ -18,21 +18,14 @@ class Session extends \Opencart\System\Engine\Controller {
 		$this->registry->set('session', $session);
 
 		// API
-		if (isset($this->request->get['route']) && substr((string)$this->request->get['route'], 0, 4) == 'api/' && isset($this->request->get['api_token'])) {
-			$this->load->model('setting/api');
-
-			$this->model_setting_api->cleanSessions();
-
-			// Make sure the IP is allowed
-			$api_info = $this->model_setting_api->getApiByToken($this->request->get['api_token']);
-
-			if ($api_info) {
-				$this->session->start($this->request->get['api_token']);
-
-				$this->model_setting_api->updateSession($api_info['api_session_id']);
+		$route = (string)($this->request->get['route'] ?? '');
+		if (str_starts_with($route, 'api/')) {
+			$apiToken = (string)($this->request->get['api_token'] ?? $this->request->post['api_token'] ?? '');
+			if ($apiToken) {
+				$session->start($apiToken);
 			}
 
-			return;
+			return; // A validação de segurança e IP agora é delegada ao ApiAuthMiddleware
 		}
 
 		/*

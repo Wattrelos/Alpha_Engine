@@ -34,8 +34,7 @@ class ZoneMapper extends BaseMapper {
      */
     public function getZonesByCountryId(int $country_id): array {
         return $this->search(
-            ['countryId' => $country_id, 'status' => 1],
-            ['name' => 'ASC']
+            ['countryId' => $country_id, 'status' => 1]
         );
     }
 

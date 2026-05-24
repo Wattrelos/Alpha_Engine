@@ -1,11 +1,14 @@
 <?php
 namespace Opencart\Catalog\Controller\Account;
+
+use Alpha\Controller\BaseController;
+
 /**
  * Class Subscription
  *
  * @package Opencart\Catalog\Controller\Account
  */
-class Subscription extends \Opencart\System\Engine\Controller {
+class Subscription extends BaseController {
 	/**
 	 * Index
 	 *
@@ -20,7 +23,7 @@ class Subscription extends \Opencart\System\Engine\Controller {
 			$page = 1;
 		}
 
-		if (!$this->load->controller('account/login.validate')) {
+		if (!$this->customer->isLogged()) {
 			$this->session->data['redirect'] = $this->url->link('account/subscription', 'language=' . $this->config->get('config_language'));
 
 			$this->response->redirect($this->url->link('account/login', 'language=' . $this->config->get('config_language'), true));
@@ -119,14 +122,7 @@ class Subscription extends \Opencart\System\Engine\Controller {
 
 		$data['continue'] = $this->url->link('account/account', 'language=' . $this->config->get('config_language') . '&customer_token=' . $this->session->data['customer_token']);
 
-		$data['column_left'] = $this->load->controller('common/column_left');
-		$data['column_right'] = $this->load->controller('common/column_right');
-		$data['content_top'] = $this->load->controller('common/content_top');
-		$data['content_bottom'] = $this->load->controller('common/content_bottom');
-		$data['footer'] = $this->load->controller('common/footer');
-		$data['header'] = $this->load->controller('common/header');
-
-		$this->response->setOutput($this->load->view('account/subscription_list', $data));
+		$this->render('account/subscription_list', $data);
 	}
 
 	/**
@@ -143,7 +139,7 @@ class Subscription extends \Opencart\System\Engine\Controller {
 			$subscription_id = 0;
 		}
 
-		if (!$this->load->controller('account/login.validate')) {
+		if (!$this->customer->isLogged()) {
 			$this->session->data['redirect'] = $this->url->link('account/subscription', 'language=' . $this->config->get('config_language'));
 
 			$this->response->redirect($this->url->link('account/login', 'language=' . $this->config->get('config_language'), true));
@@ -398,14 +394,7 @@ class Subscription extends \Opencart\System\Engine\Controller {
 
 			$data['customer_token'] = $this->session->data['customer_token'];
 
-			$data['column_left'] = $this->load->controller('common/column_left');
-			$data['column_right'] = $this->load->controller('common/column_right');
-			$data['content_top'] = $this->load->controller('common/content_top');
-			$data['content_bottom'] = $this->load->controller('common/content_bottom');
-			$data['footer'] = $this->load->controller('common/footer');
-			$data['header'] = $this->load->controller('common/header');
-
-			$this->response->setOutput($this->load->view('account/subscription_info', $data));
+			$this->render('account/subscription_info', $data);
 		} else {
 			return new \Opencart\System\Engine\Action('error/not_found');
 		}
@@ -429,7 +418,7 @@ class Subscription extends \Opencart\System\Engine\Controller {
 			$subscription_id = 0;
 		}
 
-		if (!$this->load->controller('account/login.validate')) {
+		if (!$this->customer->isLogged()) {
 			$this->session->data['redirect'] = $this->url->link('account/subscription', 'language=' . $this->config->get('config_language'));
 
 			$json['redirect'] = $this->url->link('account/login', 'language=' . $this->config->get('config_language'), true);
@@ -463,8 +452,7 @@ class Subscription extends \Opencart\System\Engine\Controller {
 			$json['success'] = $this->language->get('text_success');
 		}
 
-		$this->response->addHeader('Content-Type: application/json');
-		$this->response->setOutput(json_encode($json));
+		$this->jsonResponse($json);
 	}
 
 	/**
@@ -475,7 +463,7 @@ class Subscription extends \Opencart\System\Engine\Controller {
 	public function history(): void {
 		$this->load->language('account/subscription');
 
-		if (!$this->load->controller('account/login.validate')) {
+		if (!$this->customer->isLogged()) {
 			$this->session->data['redirect'] = $this->url->link('account/subscription', 'language=' . $this->config->get('config_language'));
 
 			$this->response->redirect($this->url->link('account/login', 'language=' . $this->config->get('config_language'), true));
@@ -504,7 +492,7 @@ class Subscription extends \Opencart\System\Engine\Controller {
 
 		$limit = 10;
 
-		if (!$this->load->controller('account/login.validate')) {
+		if (!$this->customer->isLogged()) {
 			return '';
 		}
 
@@ -533,7 +521,7 @@ class Subscription extends \Opencart\System\Engine\Controller {
 
 		$data['results'] = sprintf($this->language->get('text_pagination'), ($subscription_total) ? (($page - 1) * $limit) + 1 : 0, ((($page - 1) * $limit) > ($subscription_total - $limit)) ? $subscription_total : ((($page - 1) * $limit) + $limit), $subscription_total, ceil($subscription_total / $limit));
 
-		return $this->load->view('account/subscription_history', $data);
+		return $this->getTemplate('account/subscription_history', $data);
 	}
 
 	/**
@@ -544,7 +532,7 @@ class Subscription extends \Opencart\System\Engine\Controller {
 	public function order(): void {
 		$this->load->language('account/subscription');
 
-		if (!$this->load->controller('account/login.validate')) {
+		if (!$this->customer->isLogged()) {
 			$this->session->data['redirect'] = $this->url->link('account/subscription', 'language=' . $this->config->get('config_language'));
 
 			$this->response->redirect($this->url->link('account/login', 'language=' . $this->config->get('config_language'), true));
@@ -571,7 +559,7 @@ class Subscription extends \Opencart\System\Engine\Controller {
 			$page = 1;
 		}
 
-		if (!$this->load->controller('account/login.validate')) {
+		if (!$this->customer->isLogged()) {
 			return '';
 		}
 
@@ -603,6 +591,6 @@ class Subscription extends \Opencart\System\Engine\Controller {
 
 		$data['results'] = sprintf($this->language->get('text_pagination'), ($order_total) ? (($page - 1) * $limit) + 1 : 0, ((($page - 1) * $limit) > ($order_total - $limit)) ? $order_total : ((($page - 1) * $limit) + $limit), $order_total, ceil($order_total / $limit));
 
-		return $this->load->view('account/subscription_order', $data);
+		return $this->getTemplate('account/subscription_order', $data);
 	}
 }

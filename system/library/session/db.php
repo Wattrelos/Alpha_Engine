@@ -2,14 +2,11 @@
 /*
 CREATE TABLE IF NOT EXISTS `session` (
   `id` INT(11) NOT NULL AUTO_INCREMENT,
-  `session_token` varchar(32) NOT NULL,
-  `customer_id` int(11) NOT NULL DEFAULT '0',
+  `token_session` varchar(32) NOT NULL,
   `data` text NOT NULL,
-  `expire_at` datetime NOT NULL,
-  `user_agent` varchar(255) NOT NULL,
-  `ip` varchar(40) NOT NULL,
+  `expire` datetime NOT NULL,
   PRIMARY KEY (`id`),
-  UNIQUE KEY `session_token` (`session_token`)
+  UNIQUE KEY `token_session` (`token_session`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 */
 namespace Opencart\System\Library\Session;

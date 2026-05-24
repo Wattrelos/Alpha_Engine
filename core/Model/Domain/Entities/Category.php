@@ -9,7 +9,6 @@ use Alpha\Model\Domain\Attributes\OneToMany;
  * 
  * Melhoras aplicadas (Alpha Engine):
  * - Gestão Hierárquica: Preparada para suporte a categorias pai/filho com integridade de tipos.
- * - Performance de UI: Campos 'top' e 'column' tipados como bool/int para controle preciso de menus megamenu.
  * - Relacionamentos Dinâmicos: #[OneToMany] ativa o carregamento em cascata de descrições, filtros e vínculos com lojas.
  * - Auditoria: Propriedades de data tratadas como strings para compatibilidade com o motor de datas do banco de dados.
  */

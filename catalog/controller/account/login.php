@@ -1,7 +1,7 @@
 <?php
 namespace Opencart\Catalog\Controller\Account;
 
-use Alpha\Mappers\CustomerMapper;
+use Alpha\Model\Domain\Repositories\CustomerRepository;
 
 class Login extends \Opencart\System\Engine\Controller {
 	public function index(): void {
@@ -14,22 +14,22 @@ class Login extends \Opencart\System\Engine\Controller {
 		$json = [];
 
 		if (isset($this->request->post['email']) && isset($this->request->post['password'])) {
-			$customerMapper = new CustomerMapper();
+			$customerRepository = $this->registry->get('alpha_repository_factory')->get(CustomerRepository::class);
 			
 			// 1. Check brute force
-			$login_attempts = $customerMapper->getLoginAttempts($this->request->post['email']);
+			$login_attempts = $customerRepository->getLoginAttempts($this->request->post['email']);
 
 			if ($login_attempts >= (int)$this->config->get('config_login_attempts')) {
 				$json['error']['warning'] = $this->language->get('error_attempts');
 			}
 
 			if (!$json) {
-				// 2. Direct Mapper Invocation
-				$customer = $customerMapper->getCustomerByEmail($this->request->post['email']);
+				// 2. Repository Invocation
+				$customer = $customerRepository->findByEmail($this->request->post['email']);
 
 				if ($customer && $customer->isStatus() && password_verify($this->request->post['password'], $customer->getPassword())) {
 					// Login bem-sucedido
-					$customerMapper->deleteLoginAttempts($customer->getEmail());
+					$customerRepository->deleteLoginAttempts($customer->getEmail());
 					
 					// Inicia a sessão no objeto Customer do OpenCart (System Library)
 					$this->customer->login($customer->getEmail(), $this->request->post['password']);
@@ -38,7 +38,7 @@ class Login extends \Opencart\System\Engine\Controller {
 				} else {
 					$json['error']['warning'] = $this->language->get('error_login');
 
-					$customerMapper->addLoginAttempt($this->request->post['email'], oc_get_ip());
+					$customerRepository->addLoginAttempt($this->request->post['email'], oc_get_ip());
 				}
 			}
 		}

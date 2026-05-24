@@ -1,18 +1,21 @@
 <?php
 namespace Opencart\Catalog\Controller\Account;
+
+use Alpha\Controller\BaseController;
+
 /**
  * Class Tracking
  *
  * @package Opencart\Catalog\Controller\Account
  */
-class Tracking extends \Opencart\System\Engine\Controller {
+class Tracking extends BaseController {
 	/**
 	 * Index
 	 *
 	 * @return void
 	 */
 	public function index(): void {
-		if (!$this->load->controller('account/login.validate')) {
+		if (!$this->customer->isLogged()) {
 			$this->session->data['redirect'] = $this->url->link('account/tracking', 'language=' . $this->config->get('config_language'));
 
 			$this->response->redirect($this->url->link('account/login', 'language=' . $this->config->get('config_language'), true));
@@ -62,14 +65,7 @@ class Tracking extends \Opencart\System\Engine\Controller {
 
 		$data['customer_token'] = $this->session->data['customer_token'];
 
-		$data['column_left'] = $this->load->controller('common/column_left');
-		$data['column_right'] = $this->load->controller('common/column_right');
-		$data['content_top'] = $this->load->controller('common/content_top');
-		$data['content_bottom'] = $this->load->controller('common/content_bottom');
-		$data['footer'] = $this->load->controller('common/footer');
-		$data['header'] = $this->load->controller('common/header');
-
-		$this->response->setOutput($this->load->view('account/tracking', $data));
+		$this->render('account/tracking', $data);
 	}
 
 	/**
@@ -92,7 +88,7 @@ class Tracking extends \Opencart\System\Engine\Controller {
 			$tracking = '';
 		}
 
-		if (!$this->load->controller('account/login.validate')) {
+		if (!$this->customer->isLogged()) {
 			$this->session->data['redirect'] = $this->url->link('account/password', 'language=' . $this->config->get('config_language'));
 
 			$json['redirect'] = $this->url->link('account/login', 'language=' . $this->config->get('config_language'), true);
@@ -118,7 +114,6 @@ class Tracking extends \Opencart\System\Engine\Controller {
 			}
 		}
 
-		$this->response->addHeader('Content-Type: application/json');
-		$this->response->setOutput(json_encode($json));
+		$this->jsonResponse($json);
 	}
 }

@@ -16,17 +16,21 @@ use Opencart\Catalog\Controller\Checkout\Confirm;
  * @package Opencart\Catalog\Controller\Checkout
  */
 class Checkout extends BaseController {
+	private CartRepository $cartRepository;
+
+	public function __construct(\Opencart\System\Engine\Registry $registry) {
+		parent::__construct($registry);
+		$this->cartRepository = $this->registry->get('alpha_repository_factory')->get(CartRepository::class);
+	}
+
 	/**
 	 * Index
 	 *
-	 * @return void
+	 * @return \Opencart\System\Engine\Action|null
 	 */
-	public function index(): void {
-		$cartRepository = $this->getRepository(CartRepository::class);
-		$products = $cartRepository->getProducts();
-
+	public function index(): ?\Opencart\System\Engine\Action {
 		// Validate cart to see if it has products and has stock.
-		if (empty($products) || (!$cartRepository->hasStock() && !$this->config->get('config_stock_checkout')) || !$cartRepository->hasMinimum()) {
+		if (!$this->cartRepository->hasProducts() || (!$this->cartRepository->hasStock() && !$this->config->get('config_stock_checkout')) || !$this->cartRepository->hasMinimum()) {
 			$this->response->redirect($this->url->link('checkout/cart', 'language=' . $this->config->get('config_language'), true));
 		}
 
@@ -64,13 +68,13 @@ class Checkout extends BaseController {
 			$data['payment_address'] = '';
 		}
 
-		if ($this->customer->isLogged() && $cartRepository->hasShipping()) {
+		if ($this->customer->isLogged() && $this->cartRepository->hasShipping()) {
 			$data['shipping_address'] = (new ShippingAddress($this->registry))->index();
 		} else {
 			$data['shipping_address'] = '';
 		}
 
-		if ($cartRepository->hasShipping()) {
+		if ($this->cartRepository->hasShipping()) {
 			$data['shipping_method'] = (new ShippingMethod($this->registry))->index();
 		} else {
 			$data['shipping_method'] = '';
@@ -81,5 +85,7 @@ class Checkout extends BaseController {
 		$data['confirm']        = (new Confirm($this->registry))->index();
 
 		$this->render('checkout/checkout', $data);
+
+		return null;
 	}
 }

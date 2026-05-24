@@ -5,16 +5,32 @@ namespace Opencart\Catalog\Controller\Checkout;
  */
 use Alpha\Controller\BaseController;
 use Alpha\Model\Domain\Repositories\CartRepository;
-use Alpha\Mappers\EntityMappers\AddressMapper;
-use Alpha\Mappers\EntityMappers\CountryMapper;
-use Alpha\Mappers\EntityMappers\ZoneMapper;
-use Alpha\Mappers\CollectionToArrayConverter;
+use Alpha\Model\Domain\Repositories\AddressRepository;
+use Alpha\Model\Domain\Repositories\CountryRepository;
+use Alpha\Model\Domain\Repositories\ZoneRepository;
+use Alpha\Model\Domain\Repositories\CustomFieldRepository;
 /**
  * Class PaymentAddress
  *
  * @package Opencart\Catalog\Controller\Checkout
  */
 class PaymentAddress extends BaseController {
+	private CartRepository $cartRepository;
+	private AddressRepository $addressRepository;
+	private CountryRepository $countryRepository;
+	private ZoneRepository $zoneRepository;
+	private CustomFieldRepository $customFieldRepository;
+
+	public function __construct(\Opencart\System\Engine\Registry $registry) {
+		parent::__construct($registry);
+		$repoFactory = $this->registry->get('alpha_repository_factory');
+		$this->cartRepository = $repoFactory->get(CartRepository::class);
+		$this->addressRepository = $repoFactory->get(AddressRepository::class);
+		$this->countryRepository = $repoFactory->get(CountryRepository::class);
+		$this->zoneRepository = $repoFactory->get(ZoneRepository::class);
+		$this->customFieldRepository = $repoFactory->get(CustomFieldRepository::class);
+	}
+
 	/**
 	 * Index
 	 *
@@ -32,9 +48,7 @@ class PaymentAddress extends BaseController {
 		$data['upload'] = $this->url->link('tool/upload', 'language=' . $this->config->get('config_language') . '&upload_token=' . $this->session->data['upload_token']);
 
 		// Address
-		$mapperFactory = $this->registry->get('mapperFactory');
-		$address_mapper = $mapperFactory->get(AddressMapper::class);
-		$data['addresses'] = $address_mapper->getAddresses((int)$this->customer->getId(), (int)$this->config->get('config_language_id'));
+		$data['addresses'] = $this->addressRepository->getAddresses((int)$this->customer->getId(), (int)$this->config->get('config_language_id'));
 
 		if (isset($this->session->data['payment_address']['address_id'])) {
 			$data['address_id'] = $this->session->data['payment_address']['address_id'];
@@ -45,20 +59,15 @@ class PaymentAddress extends BaseController {
 		// Country
 		$data['country_id'] = (int)$this->config->get('config_country_id');
 
-		$country_mapper = $mapperFactory->get(CountryMapper::class);
-		$countries = $country_mapper->getCountries();
-		$data['countries'] = CollectionToArrayConverter::convertCollection($countries);
+		$data['countries'] = $this->countryRepository->getCountries();
 
 		// Zone
-		$zone_mapper = $mapperFactory->get(ZoneMapper::class);
-		$data['zones'] = $zone_mapper->getZonesByCountryId($data['country_id']);
+		$data['zones'] = $this->zoneRepository->getZonesByCountryId($data['country_id']);
 
 		// Custom Fields
 		$data['custom_fields'] = [];
 
-		$this->load->model('account/custom_field');
-
-		$custom_fields = $this->model_account_custom_field->getCustomFields($this->customer->getGroupId());
+		$custom_fields = $this->customFieldRepository->getCustomFields($this->customer->getGroupId());
 
 		foreach ($custom_fields as $custom_field) {
 			if ($custom_field['location'] == 'address') {
@@ -68,7 +77,7 @@ class PaymentAddress extends BaseController {
 
 		$data['language'] = $this->config->get('config_language');
 
-		return $this->load->view('checkout/payment_address', $data);
+		return $this->getTemplate('checkout/payment_address', $data);
 	}
 
 	/**
@@ -78,8 +87,6 @@ class PaymentAddress extends BaseController {
 	 */
 	public function save(): void {
 		$this->load->language('checkout/payment_address');
-		$cartRepository = $this->getRepository(CartRepository::class);
-		$mapperFactory = $this->registry->get('mapperFactory');
 
 		$json = [];
 
@@ -99,12 +106,12 @@ class PaymentAddress extends BaseController {
 		$post_info = $this->request->post + $required;
 
 		// Validate cart has products and has stock.
-		if (empty($cartRepository->getProducts()) || (!$cartRepository->hasStock() && !$this->config->get('config_stock_checkout')) || !$cartRepository->hasMinimum()) {
+		if (!$this->cartRepository->hasProducts() || (!$this->cartRepository->hasStock() && !$this->config->get('config_stock_checkout')) || !$this->cartRepository->hasMinimum()) {
 			$json['redirect'] = $this->url->link('checkout/cart', 'language=' . $this->config->get('config_language'), true);
 		}
 
 		// Validate if customer is logged in or customer session data is not set
-		if (!$this->customer->isLogged() || !isset($this->session->data['customer'])) {
+		if (!$this->customer->isLogged()) {
 			$json['redirect'] = $this->url->link('account/login', 'language=' . $this->config->get('config_language'), true);
 		}
 
@@ -131,8 +138,7 @@ class PaymentAddress extends BaseController {
 			}
 
 			// Country
-			$country_mapper = $mapperFactory->get(CountryMapper::class);
-			$country_info = $country_mapper->getCountry((int)$post_info['country_id']);
+			$country_info = $this->countryRepository->getCountry((int)$post_info['country_id']);
 
 			if ($country_info && $country_info['postcode_required'] && !oc_validate_length($post_info['postcode'], 2, 10)) {
 				$json['error']['postcode'] = $this->language->get('error_postcode');
@@ -143,17 +149,14 @@ class PaymentAddress extends BaseController {
 			}
 
 			// Zone
-			$zone_mapper = $mapperFactory->get(ZoneMapper::class);
-			$zone_total = $zone_mapper->getTotalZonesByCountryId((int)$post_info['country_id']);
+			$zone_total = $this->zoneRepository->getTotalZonesByCountryId((int)$post_info['country_id']);
 
 			if ($zone_total && !$post_info['zone_id']) {
 				$json['error']['zone'] = $this->language->get('error_zone');
 			}
 
 			// Custom field validation
-			$this->load->model('account/custom_field');
-
-			$custom_fields = $this->model_account_custom_field->getCustomFields($this->customer->getGroupId());
+			$custom_fields = $this->customFieldRepository->getCustomFields($this->customer->getGroupId());
 
 			foreach ($custom_fields as $custom_field) {
 				if ($custom_field['location'] == 'address') {
@@ -174,11 +177,10 @@ class PaymentAddress extends BaseController {
 				$post_info['default'] = 1;
 			}
 
-			$address_mapper = $mapperFactory->get(AddressMapper::class);
-			$json['address_id'] = $address_mapper->save($post_info, (int)$this->customer->getId());
-			$json['addresses'] = $address_mapper->getAddresses((int)$this->customer->getId(), (int)$this->config->get('config_language_id'));
+			$json['address_id'] = $this->addressRepository->save($post_info, (int)$this->customer->getId());
+			$json['addresses'] = $this->addressRepository->getAddresses((int)$this->customer->getId(), (int)$this->config->get('config_language_id'));
 
-			$this->session->data['payment_address'] = $address_mapper->getAddress($json['address_id'], (int)$this->config->get('config_language_id'));
+			$this->session->data['payment_address'] = $this->addressRepository->getAddress($json['address_id'], (int)$this->config->get('config_language_id'));
 
 			$json['success'] = $this->language->get('text_success');
 
@@ -199,8 +201,6 @@ class PaymentAddress extends BaseController {
 	 */
 	public function address(): void {
 		$this->load->language('checkout/payment_address');
-		$cartRepository = $this->getRepository(CartRepository::class);
-		$mapperFactory = $this->registry->get('mapperFactory');
 
 		$json = [];
 
@@ -210,17 +210,13 @@ class PaymentAddress extends BaseController {
 			$address_id = 0;
 		}
 
-		if (!isset($this->session->data['customer'])) {
-			$json['redirect'] = $this->url->link('checkout/cart', 'language=' . $this->config->get('config_language'), true);
-		}
-
 		// Validate cart has products and has stock.
-		if (empty($cartRepository->getProducts()) || (!$cartRepository->hasStock() && !$this->config->get('config_stock_checkout')) || !$cartRepository->hasMinimum()) {
+		if (!$this->cartRepository->hasProducts() || (!$this->cartRepository->hasStock() && !$this->config->get('config_stock_checkout')) || !$this->cartRepository->hasMinimum()) {
 			$json['redirect'] = $this->url->link('checkout/cart', 'language=' . $this->config->get('config_language'), true);
 		}
 
 		// Validate if customer is logged in or customer session data is not set
-		if (!$this->customer->isLogged() || !isset($this->session->data['customer'])) {
+		if (!$this->customer->isLogged()) {
 			$json['redirect'] = $this->url->link('account/login', 'language=' . $this->config->get('config_language'), true);
 		}
 
@@ -231,8 +227,7 @@ class PaymentAddress extends BaseController {
 
 		if (!$json) {
 			// Payment Address
-			$address_mapper = $mapperFactory->get(AddressMapper::class);
-			$address_info = $address_mapper->getAddress($address_id, (int)$this->config->get('config_language_id'));
+			$address_info = $this->addressRepository->getAddress($address_id, (int)$this->config->get('config_language_id'));
 
 			if (!$address_info) {
 				$json['error'] = $this->language->get('error_address');

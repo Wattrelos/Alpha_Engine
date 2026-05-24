@@ -2,6 +2,9 @@
 namespace Opencart\catalog\controller\api;
 
 use Alpha\Controller\BaseController;
+use Alpha\Model\Domain\Repositories\CountryRepository;
+use Alpha\Model\Domain\Repositories\ZoneRepository;
+use Alpha\Model\Domain\Repositories\AddressRepository;
 
 /**
  * Class Payment Address
@@ -53,9 +56,8 @@ class PaymentAddress extends BaseController {
 		}
 
 		// Country
-		$this->load->model('localisation/country');
-
-		$country_info = $this->model_localisation_country->getCountry((int)$post_info['payment_country_id']);
+		$countryRepository = $this->getRepository(CountryRepository::class);
+		$country_info = $countryRepository->getCountry((int)$post_info['payment_country_id']);
 
 		if ($country_info && $country_info['postcode_required'] && !oc_validate_length((string)$post_info['payment_postcode'], 2, 10)) {
 			$output['error']['payment_postcode'] = $this->language->get('error_postcode');
@@ -66,9 +68,8 @@ class PaymentAddress extends BaseController {
 		}
 
 		// Zone
-		$this->load->model('localisation/zone');
-
-		$zone_total = $this->model_localisation_zone->getTotalZonesByCountryId((int)$post_info['payment_country_id']);
+		$zoneRepository = $this->getRepository(ZoneRepository::class);
+		$zone_total = count($zoneRepository->getZonesByCountryId((int)$post_info['payment_country_id']));
 
 		if ($zone_total && !$post_info['payment_zone_id']) {
 			$output['error']['payment_zone'] = $this->language->get('error_zone');
@@ -94,29 +95,16 @@ class PaymentAddress extends BaseController {
 				$country = $country_info['name'];
 				$iso_code_2 = $country_info['iso_code_2'];
 				$iso_code_3 = $country_info['iso_code_3'];
-				$address_format_id = $country_info['address_format_id'];
+				$address_format = $country_info['address_format'] ?? '';
 			} else {
 				$country = '';
 				$iso_code_2 = '';
 				$iso_code_3 = '';
-				$address_format_id = 0;
-			}
-
-			// Address Format
-			$this->load->model('localisation/address_format');
-
-			$address_format_info = $this->model_localisation_address_format->getAddressFormat($address_format_id);
-
-			if ($address_format_info) {
-				$address_format = $address_format_info['address_format'];
-			} else {
 				$address_format = '';
 			}
 
 			// Zone
-			$this->load->model('localisation/zone');
-
-			$zone_info = $this->model_localisation_zone->getZone($post_info['payment_zone_id']);
+			$zone_info = $zoneRepository->getZone((int)$post_info['payment_zone_id']);
 
 			if ($zone_info) {
 				$zone = $zone_info['name'];
@@ -169,11 +157,10 @@ class PaymentAddress extends BaseController {
 			$address_id = 0;
 		}
 
-		$this->load->model('account/address');
+		$addressRepository = $this->getRepository(AddressRepository::class);
+		$address_info = $addressRepository->getAddress($address_id);
 
-		$address_info = $this->model_account_address->getAddress($this->customer->getId(), $address_id);
-
-		if (!$address_info) {
+		if (!$address_info || $address_info['customer_id'] != $this->customer->getId()) {
 			$output['error'] = $this->language->get('error_address');
 		}
 

@@ -97,7 +97,7 @@ class CategoryMapper
     /**
      * Lista subcategorias de um nível específico.
      */
-    public function getSubCategories(int $parentId, int $languageId, int $storeId, bool $top = false): array
+    public function getSubCategories(int $parentId, int $languageId, int $storeId): array
     {
         $builder = (new QueryBuilder())
             ->from(DB_PREFIX . 'category', 'c')
@@ -107,10 +107,6 @@ class CategoryMapper
             ->where('cd.language_id = ?', [$languageId])
             ->where('c2s.store_id = ?', [$storeId])
             ->where('c.status = 1');
-
-        if ($top) {
-            $builder->where('c.top = 1');
-        }
 
         $builder->orderBy('c.sort_order', 'ASC')
             ->select('c.id', 'c.parent_id', 'cd.name', 'c.image', 'c.sort_order');

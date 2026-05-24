@@ -8,13 +8,29 @@ use Alpha\Model\Domain\Repositories\CartRepository;
 use Alpha\Model\Domain\Repositories\AddressRepository;
 use Alpha\Model\Domain\Repositories\CountryRepository;
 use Alpha\Model\Domain\Repositories\ZoneRepository;
-use Alpha\Mappers\CollectionToArrayConverter;
+use Alpha\Model\Domain\Repositories\CustomFieldRepository;
 /**
  * Class ShippingAddress
  *
  * @package Opencart\Catalog\Controller\Checkout
  */
 class ShippingAddress extends BaseController {
+	private CartRepository $cartRepository;
+	private AddressRepository $addressRepository;
+	private CountryRepository $countryRepository;
+	private ZoneRepository $zoneRepository;
+	private CustomFieldRepository $customFieldRepository;
+
+	public function __construct(\Opencart\System\Engine\Registry $registry) {
+		parent::__construct($registry);
+		$factory = $this->registry->get('alpha_repository_factory');
+		$this->cartRepository = $factory->get(CartRepository::class);
+		$this->addressRepository = $factory->get(AddressRepository::class);
+		$this->countryRepository = $factory->get(CountryRepository::class);
+		$this->zoneRepository = $factory->get(ZoneRepository::class);
+		$this->customFieldRepository = $factory->get(CustomFieldRepository::class);
+	}
+
 	/**
 	 * Index
 	 *
@@ -33,8 +49,7 @@ class ShippingAddress extends BaseController {
 		$data['upload'] = $this->url->link('tool/upload', 'language=' . $this->config->get('config_language') . '&upload_token=' . $this->session->data['upload_token']);
 
 		// Address
-		$addressRepository = $this->getRepository(AddressRepository::class);
-		$data['addresses'] = $addressRepository->getAddresses((int)$this->customer->getId(), (int)$this->config->get('config_language_id'));
+		$data['addresses'] = $this->addressRepository->getAddresses((int)$this->customer->getId(), (int)$this->config->get('config_language_id'));
 
 		if (isset($this->session->data['shipping_address']['address_id'])) {
 			$data['address_id'] = $this->session->data['shipping_address']['address_id'];
@@ -53,20 +68,15 @@ class ShippingAddress extends BaseController {
 		}
 
 		// Country
-		$countryRepository = $this->getRepository(CountryRepository::class);
-		$countries = $countryRepository->getCountries();
-		$data['countries'] = CollectionToArrayConverter::convertCollection($countries);
+		$data['countries'] = $this->countryRepository->getCountries();
 
 		// Zone
-		$zoneRepository = $this->getRepository(ZoneRepository::class);
-		$data['zones'] = $zoneRepository->getZonesByCountryId($data['country_id']);
+		$data['zones'] = $this->zoneRepository->getZonesByCountryId($data['country_id']);
 
 		// Custom Fields
 		$data['custom_fields'] = [];
 
-		$this->load->model('account/custom_field');
-
-		$custom_fields = $this->model_account_custom_field->getCustomFields($this->customer->getGroupId());
+		$custom_fields = $this->customFieldRepository->getCustomFields($this->customer->getGroupId());
 
 		foreach ($custom_fields as $custom_field) {
 			if ($custom_field['location'] == 'address') {
@@ -76,7 +86,7 @@ class ShippingAddress extends BaseController {
 
 		$data['language'] = $this->config->get('config_language');
 
-		return $this->load->view('checkout/shipping_address', $data);
+		return $this->getTemplate('checkout/shipping_address', $data);
 	}
 
 	/**
@@ -86,7 +96,6 @@ class ShippingAddress extends BaseController {
 	 */
 	public function save(): void {
 		$this->load->language('checkout/shipping_address');
-		$cartRepository = $this->getRepository(CartRepository::class);
 
 		$json = [];
 
@@ -108,17 +117,17 @@ class ShippingAddress extends BaseController {
 		$post_info = $this->request->post + $required;
 
 		// Validate cart has products and has stock.
-		if (empty($cartRepository->getProducts()) || (!$cartRepository->hasStock() && !$this->config->get('config_stock_checkout')) || !$cartRepository->hasMinimum()) {
+		if (!$this->cartRepository->hasProducts() || (!$this->cartRepository->hasStock() && !$this->config->get('config_stock_checkout')) || !$this->cartRepository->hasMinimum()) {
 			$json['redirect'] = $this->url->link('checkout/cart', 'language=' . $this->config->get('config_language'), true);
 		}
 
 		// Validate if customer is logged in or customer session data is not set
-		if (!$this->customer->isLogged() || !isset($this->session->data['customer'])) {
+		if (!$this->customer->isLogged()) {
 			$json['redirect'] = $this->url->link('account/login', 'language=' . $this->config->get('config_language'), true);
 		}
 
 		// Validate if shipping not required
-		if (!$cartRepository->hasShipping()) {
+		if (!$this->cartRepository->hasShipping()) {
 			$json['redirect'] = $this->url->link('checkout/cart', 'language=' . $this->config->get('config_language'), true);
 		}
 
@@ -140,8 +149,7 @@ class ShippingAddress extends BaseController {
 			}
 
 			// Country
-			$countryRepository = $this->getRepository(CountryRepository::class);
-			$country_info = $countryRepository->getCountry((int)$post_info['country_id']);
+			$country_info = $this->countryRepository->getCountry((int)$post_info['country_id']);
 
 			if ($country_info && $country_info['postcode_required'] && !oc_validate_length($post_info['postcode'], 2, 10)) {
 				$json['error']['postcode'] = $this->language->get('error_postcode');
@@ -152,17 +160,14 @@ class ShippingAddress extends BaseController {
 			}
 
 			// Zone
-			$zoneRepository = $this->getRepository(ZoneRepository::class);
-			$zone_total = $zoneRepository->getTotalZonesByCountryId((int)$post_info['country_id']);
+			$zone_total = $this->zoneRepository->getTotalZonesByCountryId((int)$post_info['country_id']);
 
 			if ($zone_total && !$post_info['zone_id']) {
 				$json['error']['zone'] = $this->language->get('error_zone');
 			}
 
 			// Custom field validation
-			$this->load->model('account/custom_field');
-
-			$custom_fields = $this->model_account_custom_field->getCustomFields($this->customer->getGroupId());
+			$custom_fields = $this->customFieldRepository->getCustomFields($this->customer->getGroupId());
 
 			foreach ($custom_fields as $custom_field) {
 				if ($custom_field['location'] == 'address') {
@@ -183,11 +188,10 @@ class ShippingAddress extends BaseController {
 				$post_info['default'] = 1;
 			}
 
-			$addressRepository = $this->getRepository(AddressRepository::class);
-			$json['address_id'] = $addressRepository->save($post_info, (int)$this->customer->getId());
-			$json['addresses'] = $addressRepository->getAddresses((int)$this->customer->getId(), (int)$this->config->get('config_language_id'));
+			$json['address_id'] = $this->addressRepository->save($post_info, (int)$this->customer->getId());
+			$json['addresses'] = $this->addressRepository->getAddresses((int)$this->customer->getId(), (int)$this->config->get('config_language_id'));
 
-			$this->session->data['shipping_address'] = $addressRepository->getAddress($json['address_id'], (int)$this->config->get('config_language_id'));
+			$this->session->data['shipping_address'] = $this->addressRepository->getAddress($json['address_id'], (int)$this->config->get('config_language_id'));
 
 			$json['success'] = $this->language->get('text_success');
 
@@ -208,7 +212,6 @@ class ShippingAddress extends BaseController {
 	 */
 	public function address(): void {
 		$this->load->language('checkout/shipping_address');
-		$cartRepository = $this->getRepository(CartRepository::class);
 
 		$json = [];
 
@@ -219,24 +222,23 @@ class ShippingAddress extends BaseController {
 		}
 
 		// Validate cart has products and has stock.
-		if (empty($cartRepository->getProducts()) || (!$cartRepository->hasStock() && !$this->config->get('config_stock_checkout')) || !$cartRepository->hasMinimum()) {
+		if (!$this->cartRepository->hasProducts() || (!$this->cartRepository->hasStock() && !$this->config->get('config_stock_checkout')) || !$this->cartRepository->hasMinimum()) {
 			$json['redirect'] = $this->url->link('checkout/cart', 'language=' . $this->config->get('config_language'), true);
 		}
 
 		// Validate if customer is logged in or customer session data is not set
-		if (!$this->customer->isLogged() || !isset($this->session->data['customer'])) {
+		if (!$this->customer->isLogged()) {
 			$json['redirect'] = $this->url->link('account/login', 'language=' . $this->config->get('config_language'), true);
 		}
 
 		// Validate if shipping is not required
-		if (!$cartRepository->hasShipping()) {
+		if (!$this->cartRepository->hasShipping()) {
 			$json['redirect'] = $this->url->link('checkout/cart', 'language=' . $this->config->get('config_language'), true);
 		}
 
 		if (!$json) {
 			// Shipping Address
-			$addressRepository = $this->getRepository(AddressRepository::class);
-			$address_info = $addressRepository->getAddress($address_id, (int)$this->config->get('config_language_id'));
+			$address_info = $this->addressRepository->getAddress($address_id, (int)$this->config->get('config_language_id'));
 
 			if (!$address_info) {
 				$json['error'] = $this->language->get('error_address');
