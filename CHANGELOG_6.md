@@ -1,4 +1,4 @@
-# Registro de Modificações IA (Fase de Automação de UI)
+# Registro Automático de Modificações (Fase de Automação de UI)
 
 ---
 

@@ -1,10 +1,9 @@
----
 
 ### Correção de Bug: Fatal Error no Carrinho de Compras (Cart)
 
-- **Implementação:** Correção de chamadas de método de carregamento de linguagem incorretas (`$this->loadLanguage` para `$this->load->language`) no controlador `catalog/controller/checkout/cart.php` nos métodos `list()`, `add()`, `edit()` e `remove()`.
-- **Motivo:** O método `loadLanguage` não existia no escopo do controlador, originando o erro `Call to undefined method` e resultando na interrupção (Crash) durante a adição de produtos ao carrinho. O carregamento de traduções precisa ser intermediado pelo objeto Loader da arquitetura OpenCart.
-- **Benefício:** Restaura o funcionamento assíncrono do carrinho de compras, impedindo que o fluxo de checkout e adição ao carrinho resulte em uma tela de erro ou pare de processar as chamadas AJAX vindas do front-end.
+ **Implementação:** Correção de chamadas de método de carregamento de linguagem incorretas (`$this->loadLanguage` para `$this->load->language`) no controlador `catalog/controller/checkout/cart.php` nos métodos `list()`, `add()`, `edit()` e `remove()`.
+ **Motivo:** O método `loadLanguage` não existia no escopo do controlador, originando o erro `Call to undefined method` e resultando na interrupção (Crash) durante a adição de produtos ao carrinho. O carregamento de traduções precisa ser intermediado pelo objeto Loader da arquitetura OpenCart.
+ **Benefício:** Restaura o funcionamento assíncrono do carrinho de compras, impedindo que o fluxo de checkout e adição ao carrinho resulte em uma tela de erro ou pare de processar as chamadas AJAX vindas do front-end.
 
 ---
 
