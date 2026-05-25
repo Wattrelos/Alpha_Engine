@@ -1,7 +1,6 @@
 <?php
 namespace Opencart\Catalog\Controller\Startup;
 
-use Alpha\Controller\BaseController;
 use Alpha\Mappers\EntityMappers\LanguageMapper;
 use Alpha\Mappers\CollectionToArrayConverter;
 
@@ -10,7 +9,7 @@ use Alpha\Mappers\CollectionToArrayConverter;
  *
  * @package Opencart\Catalog\Controller\Startup
  */
-class Language extends BaseController {
+class Language extends \Opencart\System\Engine\Controller {
 	/**
 	 * @var array<string, array<string, mixed>>
 	 */
@@ -24,7 +23,7 @@ class Language extends BaseController {
 	public function index(): void {
 		// Language
 		/** @var LanguageMapper $languageMapper */
-		$languageMapper = $this->getMapper(LanguageMapper::class);
+		$languageMapper = $this->registry->get('alpha_mapper_factory')->get(LanguageMapper::class);
 		$results = $languageMapper->getLanguages();
 
 		foreach ($results as $result) {

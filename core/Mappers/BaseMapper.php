@@ -118,15 +118,15 @@ abstract class BaseMapper implements MapperInterface
             $column = $this->camelToSnake($key);
             
             if (is_string($value) && str_contains($value, '%')) {
-                $query->where("{$column} LIKE ?", [$value]);
+                $query->where("`{$column}` LIKE ?", [$value]);
             } else {
-                $query->where("{$column} = ?", [$value]);
+                $query->where("`{$column}` = ?", [$value]);
             }
         }
 
         if ($orderBy !== null) {
             foreach ($orderBy as $column => $direction) {
-                $query->orderBy($this->camelToSnake($column), strtoupper($direction));
+                $query->orderBy("`" . $this->camelToSnake($column) . "`", strtoupper($direction));
             }
         }
 
@@ -161,15 +161,15 @@ abstract class BaseMapper implements MapperInterface
             $column = $this->camelToSnake($key);
             
             if (is_string($value) && str_contains($value, '%')) {
-                $query->where("{$column} LIKE ?", [$value]);
+                $query->where("`{$column}` LIKE ?", [$value]);
             } else {
-                $query->where("{$column} = ?", [$value]);
+                $query->where("`{$column}` = ?", [$value]);
             }
         }
 
         if ($orderBy !== null) {
             foreach ($orderBy as $column => $direction) {
-                $query->orderBy($this->camelToSnake($column), strtoupper($direction));
+                $query->orderBy("`" . $this->camelToSnake($column) . "`", strtoupper($direction));
             }
         }
 

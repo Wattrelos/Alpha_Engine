@@ -4,6 +4,7 @@ namespace Alpha\Model\Domain\Repositories;
 use Alpha\Mappers\EntityMappers\CustomerWishlistMapper;
 use Alpha\Mappers\EntityMappers\ProductMapper;
 use Alpha\Mappers\EntityMappers\StockStatusMapper;
+use Alpha\Mappers\EntityMappers\WishlistMapper;
 use Alpha\Model\DataTransferObject\ViewResponse;
 
 /**
@@ -14,7 +15,7 @@ class WishlistRepository extends AbstractRepository implements BaseRepositoryInt
     /**
      * Consolida todos os dados para a visualização da listagem da lista de desejos (index).
      */
-    public function getIndexData(int $customerId, string $successMessage = ''): ViewResponse {
+    public function getWishlistViewData(int $customerId, string $successMessage = ''): ViewResponse {
         $response = new ViewResponse($this->loadLanguage('account/wishlist'));
 
         return $response->addBreadcrumbs($this->getBaseBreadcrumbs())
@@ -98,6 +99,15 @@ class WishlistRepository extends AbstractRepository implements BaseRepositoryInt
         }
 
         return $products;
+    }
+
+    /**
+     * Retorna o total de itens na lista de desejos do cliente.
+     */
+    public function getTotalWishlist(int $customerId): int {
+        /** @var WishlistMapper $mapper */
+        $mapper = $this->mapperFactory->get(WishlistMapper::class);
+        return $mapper->getTotalWishlist($customerId);
     }
 
     // Métodos obrigatórios da interface BaseRepositoryInterface (placeholders)

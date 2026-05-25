@@ -18,7 +18,8 @@ class CustomerAuthorizeRepository extends AbstractRepository
      */
     public function findByToken(string $token): ?CustomerAuthorize
     {
-        return $this->mapper->findOneBy(['token' => $token]);
+        $results = $this->mapper->search(['token' => $token]);
+        return $results[0] ?? null;
     }
 
     /**

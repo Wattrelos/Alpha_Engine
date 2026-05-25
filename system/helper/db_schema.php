@@ -6135,11 +6135,13 @@ function oc_db_schema() {
 			],
 			[
 				'name' => 'cpf_cnpj',
-				'type' => 'varchar(14)'
+				'type' => 'varchar(14)',
+				'default' => ''
 			],
 			[
 				'name' => 'persontype',
-				'type' => 'varchar(1)'
+				'type' => 'varchar(1)',
+				'default' => 'F'
 			],
 			[
 				'name'    => 'product_id',

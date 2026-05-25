@@ -99,7 +99,7 @@ class Transaction extends \Opencart\System\Engine\Model {
 	 * $results = $this->model_account_transaction->getTransactions($customer_id, $filter_data);
 	 */
 	public function getTransactions(int $customer_id, array $data = []): array {
-		$sql = "SELECT * FROM `" . DB_PREFIX . "customer_transaction` WHERE `customer_id` = '" . (int)$customer_id . "'";
+		$sql = "SELECT *, id AS customer_transaction_id FROM `" . DB_PREFIX . "customer_transaction` WHERE `customer_id` = '" . (int)$customer_id . "'";
 
 		$sort_data = [
 			'amount',

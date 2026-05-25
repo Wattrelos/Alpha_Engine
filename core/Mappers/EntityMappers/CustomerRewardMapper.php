@@ -11,6 +11,6 @@ use Alpha\Model\Domain\Entities\CustomerReward;
  */
 class CustomerRewardMapper extends BaseMapper
 {
-    protected string $table = 'customer_reward';
+    protected string $tableName = 'customer_reward';
     protected string $entityClass = CustomerReward::class;
 }

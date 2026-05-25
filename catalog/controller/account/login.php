@@ -1,23 +1,30 @@
 <?php
 namespace Opencart\Catalog\Controller\Account;
 
+use Alpha\Controller\BaseController;
 use Alpha\Model\Domain\Repositories\CustomerRepository;
 
-class Login extends \Opencart\System\Engine\Controller {
+class Login extends BaseController {
+	private CustomerRepository $customerRepository;
+
+	public function __construct(\Opencart\System\Engine\Registry $registry) {
+		parent::__construct($registry);
+		$this->customerRepository = $this->registry->get('alpha_repository_factory')->get(CustomerRepository::class);
+	}
+
 	public function index(): void {
 		// ... lógicas de exibição de formulário ...
 	}
 
 	public function confirm(): void {
-		$this->load->language('account/login');
+		$this->loadLanguageData('account/login');
 
 		$json = [];
 
 		if (isset($this->request->post['email']) && isset($this->request->post['password'])) {
-			$customerRepository = $this->registry->get('alpha_repository_factory')->get(CustomerRepository::class);
 			
 			// 1. Check brute force
-			$login_attempts = $customerRepository->getLoginAttempts($this->request->post['email']);
+			$login_attempts = $this->customerRepository->getLoginAttempts($this->request->post['email']);
 
 			if ($login_attempts >= (int)$this->config->get('config_login_attempts')) {
 				$json['error']['warning'] = $this->language->get('error_attempts');
@@ -25,11 +32,11 @@ class Login extends \Opencart\System\Engine\Controller {
 
 			if (!$json) {
 				// 2. Repository Invocation
-				$customer = $customerRepository->findByEmail($this->request->post['email']);
+				$customer = $this->customerRepository->findByEmail($this->request->post['email']);
 
 				if ($customer && $customer->isStatus() && password_verify($this->request->post['password'], $customer->getPassword())) {
 					// Login bem-sucedido
-					$customerRepository->deleteLoginAttempts($customer->getEmail());
+					$this->customerRepository->deleteLoginAttempts($customer->getEmail());
 					
 					// Inicia a sessão no objeto Customer do OpenCart (System Library)
 					$this->customer->login($customer->getEmail(), $this->request->post['password']);
@@ -38,12 +45,12 @@ class Login extends \Opencart\System\Engine\Controller {
 				} else {
 					$json['error']['warning'] = $this->language->get('error_login');
 
-					$customerRepository->addLoginAttempt($this->request->post['email'], oc_get_ip());
+					$this->customerRepository->addLoginAttempt($this->request->post['email'], oc_get_ip());
 				}
 			}
 		}
 
-		$this->response->addHeader('Content-Type: application/json');
-		$this->response->setOutput(json_encode($json));
+		// Utiliza o auxiliar de resposta nativo da Alpha Engine
+		$this->jsonResponse($json);
 	}
 }

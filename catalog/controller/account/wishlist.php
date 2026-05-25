@@ -34,7 +34,7 @@ class WishList extends BaseController {
 		}
 
 		// Alpha Engine: Uma única chamada ao Repositório para abastecer a View
-		$data = $this->wishlistRepository->getIndexData($this->customer->getId(), $this->session->data['success'] ?? '')->toArray();
+		$data = $this->wishlistRepository->getWishlistViewData($this->customer->getId(), $this->session->data['success'] ?? '')->toArray();
 		
 		unset($this->session->data['success']);
 

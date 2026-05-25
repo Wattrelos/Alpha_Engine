@@ -96,7 +96,8 @@ class LanguageRepository extends AbstractRepository implements BaseRepositoryInt
             return $this->cache->get($cacheKey);
         }
 
-        $entity = $this->getMapper()->findOneBy($criteria);
+        $results = $this->getMapper()->search($criteria);
+        $entity = $results[0] ?? null;
 
         if ($entity && $this->cache) {
             $this->cache->set($cacheKey, $entity);

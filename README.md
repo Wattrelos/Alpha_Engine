@@ -34,5 +34,11 @@ A camada de lógica de negócios e cálculo de frete (Shipping Services) foi **i
 ### 6. Guia de Diagramas
 Instruções para visualizar e editar os diagramas PlantUML (`.puml`) localizados na pasta `diagrams/`.
 
+### 7. Ferramentas de Auditoria e Automação ORM
+Coleção de scripts vitais em `tests/scripts_uteis/` (como o *Detector de Zumbis* e *Renomeador de Referências*) que garantem sincronia absoluta entre Entidades PHP, Banco de Dados e Namespaces.
+
+### 8. Estratégia de Cache e Performance
+Adoção do contrato `CacheStrategyInterface` (inspirado na PSR-16), permitindo injeção de drivers de cache em memória nas instâncias de Repository para mitigação de consultas repetidas (N+1 Queries).
+
 ---
 *Nota: Este índice foi gerado para organizar o conteúdo distribuído. Os arquivos `.md` mencionados acima devem ser mantidos em sincronia com as evoluções do código em `core/`.*

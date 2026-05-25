@@ -1,14 +1,10 @@
 <?php
-
 namespace Alpha\Model\Domain\Repositories;
 
 use Alpha\Mappers\EntityMappers\ExtensionMapper;
 use Alpha\Model\Domain\Entities\Extension;
 use Alpha\Model\Domain\InterfaceEntity;
 
-/**
- * ExtensionRepository - Autoridade de Domínio para Extensões (Módulos).
- */
 class ExtensionRepository extends AbstractRepository implements BaseRepositoryInterface
 {
     protected function getMapper(): ExtensionMapper
@@ -16,44 +12,62 @@ class ExtensionRepository extends AbstractRepository implements BaseRepositoryIn
         return $this->mapperFactory->get(ExtensionMapper::class);
     }
 
-    /**
-     * Recupera os nomes de extensões distintas.
-     */
-    public function getDistinctExtensions(): array
+    public function find(int $id): ?InterfaceEntity
     {
-        return $this->getMapper()->getDistinctExtensions();
+        return $this->getMapper()->findById($id);
+    }
+
+    public function findBy(array $criteria, ?array $orderBy = null, ?int $limit = null, ?int $offset = null): array
+    {
+        return $this->getMapper()->search($criteria, $orderBy, $limit, $offset);
+    }
+
+    public function findOneBy(array $criteria): ?InterfaceEntity
+    {
+        $results = $this->getMapper()->search($criteria);
+        return $results[0] ?? null;
     }
 
     /**
-     * Recupera extensões instaladas filtradas por tipo.
+     * Retorna todas as Extensões instaladas.
+     * 
+     * @return Extension[]
+     */
+    public function findAll(): array
+    {
+        $cacheKey = 'extension.all';
+        if ($this->cache && $this->cache->has($cacheKey)) {
+            return $this->cache->get($cacheKey);
+        }
+
+        $extensions = $this->getMapper()->findAll();
+
+        if ($this->cache) {
+            $this->cache->set($cacheKey, $extensions);
+        }
+
+        return $extensions;
+    }
+
+    /**
+     * Retorna Extensões instaladas de um tipo específico (ex: 'payment', 'captcha').
      * 
      * @param string $type
      * @return Extension[]
      */
     public function getExtensionsByType(string $type): array
     {
-        return $this->getMapper()->getExtensionsByType($type);
-    }
+        $cacheKey = 'extension.type.' . $type;
+        if ($this->cache && $this->cache->has($cacheKey)) {
+            return $this->cache->get($cacheKey);
+        }
 
-    /**
-     * Recupera todas as extensões em formato de array bruto (Legacy Bridge).
-     */
-    public function getExtensions(): array
-    {
-        return $this->getMapper()->getExtensions();
-    }
+        $extensions = $this->getMapper()->getExtensionsByType($type);
 
-    /**
-     * Recupera uma extensão específica pelo tipo e código.
-     */
-    public function getExtensionByCode(string $type, string $code): ?Extension
-    {
-        return $this->getMapper()->getExtensionByCode($type, $code);
-    }
+        if ($this->cache) {
+            $this->cache->set($cacheKey, $extensions);
+        }
 
-    // Métodos obrigatórios da BaseRepositoryInterface
-    public function find(int $id): ?InterfaceEntity { return $this->getMapper()->findById($id); }
-    public function findAll(): array { return []; }
-    public function findBy(array $criteria, ?array $orderBy = null, ?int $limit = null, ?int $offset = null): array { return []; }
-    public function findOneBy(array $criteria): ?InterfaceEntity { return null; }
+        return $extensions;
+    }
 }

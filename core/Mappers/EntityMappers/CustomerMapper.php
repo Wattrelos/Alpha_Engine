@@ -16,7 +16,7 @@ use Alpha\Model\Domain\Entities\Customer;
  */
 class CustomerMapper extends BaseMapper
 {
-    protected string $table = 'customer';
+    protected string $tableName = 'customer';
     protected string $entityClass = Customer::class;
 
     /**
@@ -24,14 +24,54 @@ class CustomerMapper extends BaseMapper
      */
     public function findByEmail(string $email): ?Customer
     {
-        return $this->findOneBy(['email' => strtolower($email)]);
+        $query = (new QueryBuilder())
+            ->from($this->getFullTableName())
+            ->where("LCASE(email) = LCASE(?)", [$email])
+            ->select('id')
+            ->limit(1);
+
+        $results = $this->dao->executeQuery($query);
+
+        if (!empty($results)) {
+            $customer = new Customer();
+            $customer->setId((int)$results[0]['id']);
+            $hydrated = $this->dao->read($customer);
+            return $hydrated ? $hydrated[0] : null;
+        }
+
+        return null;
+    }
+
+    /**
+     * Localiza um cliente baseado em critérios genéricos.
+     */
+    public function findOneBy(array $criteria): ?Customer
+    {
+        $builder = (new QueryBuilder())
+            ->from($this->getFullTableName())
+            ->select('id')
+            ->limit(1);
+            
+        foreach ($criteria as $field => $value) {
+            $builder->where("`$field` = ?", [$value]);
+        }
+
+        $results = $this->dao->executeQuery($builder);
+        
+        if (!empty($results)) {
+            $customer = new Customer();
+            $customer->setId((int)$results[0]['id']);
+            $hydrated = $this->dao->read($customer);
+            return $hydrated ? $hydrated[0] : null;
+        }
+
+        return null;
     }
 
     /**
      * Persiste (Salva ou Atualiza) um cliente no banco de dados.
      */
-    public function save(Customer $customer): int
-    {
+    public function save(\Alpha\Model\Domain\InterfaceEntity $customer): ?int {
         if ($customer->getId() > 0) {
             $this->dao->update($customer);
             return $customer->getId();

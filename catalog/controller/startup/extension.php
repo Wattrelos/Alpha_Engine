@@ -1,5 +1,8 @@
 <?php
 namespace Opencart\Catalog\Controller\Startup;
+
+use Alpha\Model\Domain\Repositories\ExtensionRepository;
+
 /**
  * Class Extension
  *
@@ -12,27 +15,27 @@ class Extension extends \Opencart\System\Engine\Controller {
 	 * @return void
 	 */
 	public function index(): void {
-		// Add extension paths from the DB
-		$this->load->model('setting/extension');
+		/** @var ExtensionRepository $extensionRepo */
+		$extensionRepo = $this->registry->get('alpha_repository_factory')->get(ExtensionRepository::class);
+		$extensions = $extensionRepo->findAll();
 
-		$results = $this->model_setting_extension->getExtensions();
-
-		foreach ($results as $result) {
-			$extension = str_replace(['_', '/'], ['', '\\'], ucwords($result['extension'], '_/'));
+		foreach ($extensions as $result) {
+			$extensionCode = $result->getExtension();
+			$extensionClass = str_replace(['_', '/'], ['', '\\'], ucwords($extensionCode, '_/'));
 
 			// Register controllers, models and system extension folders
-			$this->autoloader->register('Opencart\Catalog\Controller\Extension\\' . $extension, DIR_EXTENSION . $result['extension'] . '/catalog/controller/');
-			$this->autoloader->register('Opencart\Catalog\Model\Extension\\' . $extension, DIR_EXTENSION . $result['extension'] . '/catalog/model/');
-			$this->autoloader->register('Opencart\System\Library\Extension\\' . $extension, DIR_EXTENSION . $result['extension'] . '/system/library/');
+			$this->autoloader->register('Opencart\Catalog\Controller\Extension\\' . $extensionClass, DIR_EXTENSION . $extensionCode . '/catalog/controller/');
+			$this->autoloader->register('Opencart\Catalog\Model\Extension\\' . $extensionClass, DIR_EXTENSION . $extensionCode . '/catalog/model/');
+			$this->autoloader->register('Opencart\System\Library\Extension\\' . $extensionClass, DIR_EXTENSION . $extensionCode . '/system/library/');
 
 			// Template directory
-			$this->template->addPath('extension/' . $result['extension'], DIR_EXTENSION . $result['extension'] . '/catalog/view/template/');
+			$this->template->addPath('extension/' . $extensionCode, DIR_EXTENSION . $extensionCode . '/catalog/view/template/');
 
 			// Language directory
-			$this->language->addPath('extension/' . $result['extension'], DIR_EXTENSION . $result['extension'] . '/catalog/language/');
+			$this->language->addPath('extension/' . $extensionCode, DIR_EXTENSION . $extensionCode . '/catalog/language/');
 
 			// Config directory
-			$this->config->addPath('extension/' . $result['extension'], DIR_EXTENSION . $result['extension'] . '/system/config/');
+			$this->config->addPath('extension/' . $extensionCode, DIR_EXTENSION . $extensionCode . '/system/config/');
 		}
 
 		// Register OCMOD

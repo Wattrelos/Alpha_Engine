@@ -32,6 +32,9 @@ class Cart extends BaseController {
 		$response = $this->cartRepository->getCartPageData();
 		$data = $response->getData();
 
+		// Alpha Engine: Injeta as variáveis de tradução diretamente no array $data da view principal
+		$this->loadLanguageData('checkout/cart', $data);
+
 		// Alpha Engine: Fim do overhead do Loader para métodos da mesma classe
 		$data['list'] = $this->getList();
 
@@ -45,7 +48,7 @@ class Cart extends BaseController {
 	 * @return void
 	 */
 	public function list(): void {
-		$this->loadLanguage('checkout/cart');
+		$this->load->language('checkout/cart');
 
 		$this->response->setOutput($this->getList());
 	}
@@ -60,6 +63,10 @@ class Cart extends BaseController {
 		$response = $this->cartRepository->getCartListDisplayData();
 		
 		$data = $response->getData();
+
+		// Alpha Engine: Injeta as variáveis de tradução do carrinho no array do template
+		$this->loadLanguageData('checkout/cart', $data);
+
 		$data['modules'] = [];
 
 		foreach ($data['total_extensions'] ?? [] as $extension) {
@@ -71,7 +78,7 @@ class Cart extends BaseController {
 		}
 		unset($data['total_extensions']);
 
-		return $this->getTemplate('checkout/cart_list', $data);
+		return $this->load->view('checkout/cart_list', $data);
 	}
 
 	/**
@@ -80,7 +87,7 @@ class Cart extends BaseController {
 	 * @return void
 	 */
 	public function add(): void {
-		$this->loadLanguage('checkout/cart');
+		$this->load->language('checkout/cart');
 
 		$json = [];
 
@@ -124,7 +131,7 @@ class Cart extends BaseController {
 	 * @return void
 	 */
 	public function edit(): void {
-		$this->loadLanguage('checkout/cart');
+		$this->load->language('checkout/cart');
 
 		$json = [];
 
@@ -149,7 +156,7 @@ class Cart extends BaseController {
 	 * @return void
 	 */
 	public function remove(): void {
-		$this->loadLanguage('checkout/cart');
+		$this->load->language('checkout/cart');
 
 		$json = [];
 

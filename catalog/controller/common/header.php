@@ -6,6 +6,7 @@ namespace Opencart\Catalog\Controller\Common;
 use Alpha\Controller\BaseController;
 use Alpha\Model\Domain\Repositories\HeaderRepository;
 use Alpha\Model\Domain\Repositories\LayoutRepository;
+use Alpha\Model\Domain\Repositories\WishlistRepository;
 use Opencart\Catalog\Controller\Common\Language;
 use Opencart\Catalog\Controller\Common\Currency;
 use Opencart\Catalog\Controller\Common\Search;
@@ -56,10 +57,9 @@ class Header extends BaseController {
 		$data['wishlist']      = $this->url->link('account/wishlist', $langUrl);
 
 		// Resolução da contagem da Lista de Desejos (Wishlist)
-		// @todo Alpha Engine: Migrar para WishlistRepository (Domínio de Clientes) para aniquilar o modelo legado
 		if ($this->customer->isLogged()) {
-			$this->load->model('account/wishlist');
-			$wishlistCount = $this->model_account_wishlist->getTotalWishlist();
+			$wishlistRepository = $this->getRepository(WishlistRepository::class);
+			$wishlistCount = $wishlistRepository->getTotalWishlist($this->customer->getId());
 		} else {
 			$wishlistCount = count($this->session->data['wishlist'] ?? []);
 		}

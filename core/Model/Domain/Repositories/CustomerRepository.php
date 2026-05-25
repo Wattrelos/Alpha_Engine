@@ -26,7 +26,8 @@ class CustomerRepository extends AbstractRepository implements BaseRepositoryInt
      * Busca a entidade de um cliente através do seu e-mail.
      */
     public function findByEmail(string $email): ?Customer {
-        return $this->getMapper()->findByEmail($email);
+        $results = $this->getMapper()->search(['email' => $email]);
+        return $results[0] ?? null;
     }
 
     /**
@@ -187,16 +188,21 @@ class CustomerRepository extends AbstractRepository implements BaseRepositoryInt
      * @param Customer $customer
      * @return int O ID do cliente inserido.
      */
-    public function save(Customer $customer): int {
-        return $this->getMapper()->save($customer);
+    public function save(Customer $customer): ?int {
+        $id = $this->getMapper()->save($customer);
+        if (!$id) {
+            throw new \RuntimeException("Alpha Engine: Falha de Persistência. O DAO retornou nulo ao tentar salvar o Customer. Verifique o arquivo storage/logs/error.log para identificar qual coluna o banco de dados rejeitou (ex: restrição NOT NULL em colunas como 'ip' ou 'token').");
+        }
+        return $id;
     }
 
     // BaseRepositoryInterface bindings
     public function findBy(array $criteria, ?array $orderBy = null, ?int $limit = null, ?int $offset = null): array { 
-        return $this->getMapper()->findBy($criteria, $orderBy, $limit, $offset); 
+        return $this->getMapper()->search($criteria, $orderBy, $limit, $offset); 
     }
     public function findOneBy(array $criteria): ?InterfaceEntity { 
-        return $this->getMapper()->findOneBy($criteria); 
+        $results = $this->getMapper()->search($criteria);
+        return $results[0] ?? null;
     }
     public function findAll(): array {
         return $this->getMapper()->findAll();

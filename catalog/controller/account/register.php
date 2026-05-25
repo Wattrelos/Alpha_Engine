@@ -6,7 +6,9 @@ use Alpha\Model\Domain\Repositories\CustomFieldRepository;
 use Alpha\Model\Domain\Repositories\CustomerRepository;
 use Alpha\Model\Domain\Repositories\InformationRepository;
 use Alpha\Model\Domain\Repositories\CustomerGroupRepository;
+use Alpha\Model\Domain\Repositories\ExtensionRepository;
 use Alpha\Model\Domain\Entities\Customer;
+use Alpha\Model\DataTransferObject\EntityMapper;
 
 /**
  * Class Register
@@ -18,6 +20,7 @@ class Register extends BaseController {
 	private CustomerRepository $customerRepository;
 	private InformationRepository $informationRepository;
 	private CustomerGroupRepository $customerGroupRepository;
+	private ExtensionRepository $extensionRepository;
 
 	public function __construct(\Opencart\System\Engine\Registry $registry) {
 		parent::__construct($registry);
@@ -26,6 +29,7 @@ class Register extends BaseController {
 		$this->customerRepository = $repoFactory->get(CustomerRepository::class);
 		$this->informationRepository = $repoFactory->get(InformationRepository::class);
 		$this->customerGroupRepository = $repoFactory->get(CustomerGroupRepository::class);
+		$this->extensionRepository = $repoFactory->get(ExtensionRepository::class);
 	}
 
 	/**
@@ -34,11 +38,11 @@ class Register extends BaseController {
 	 * @return void
 	 */
 	public function index(): void {
+		$data = [];
+		$this->loadLanguageData('account/register', $data);
 		if ($this->customer->isLogged()) {
 			$this->response->redirect($this->url->link('account/account', 'language=' . $this->config->get('config_language') . '&customer_token=' . $this->session->data['customer_token'], true));
 		}
-
-		$this->load->language('account/register');
 
 		$this->document->setTitle($this->language->get('heading_title'));
 
@@ -104,9 +108,20 @@ class Register extends BaseController {
 		}
 
 		// Captcha
-		$this->load->model('setting/extension');
-
-		$extension_info = $this->model_setting_extension->getExtensionByCode('captcha', $this->config->get('config_captcha'));
+		$extension_info = null;
+		$extensions = $this->extensionRepository->findAll();
+		foreach ($extensions as $ext) {
+			$ext_type = is_object($ext) ? $ext->getType() : ($ext['type'] ?? '');
+			$ext_code = is_object($ext) ? $ext->getCode() : ($ext['code'] ?? '');
+			
+			if ($ext_type === 'captcha' && $ext_code === $this->config->get('config_captcha')) {
+				$extension_info = [
+					'extension' => is_object($ext) ? $ext->getExtension() : ($ext['extension'] ?? ''),
+					'code'      => $ext_code
+				];
+				break;
+			}
+		}
 
 		if ($extension_info && $this->config->get('captcha_' . $this->config->get('config_captcha') . '_status') && in_array('register', (array)$this->config->get('config_captcha_page'))) {
 			$data['captcha'] = $this->load->controller('extension/' . $extension_info['extension'] . '/captcha/' . $extension_info['code']);
@@ -135,7 +150,8 @@ class Register extends BaseController {
 	 * @return void
 	 */
 	public function register(): void {
-		$this->load->language('account/register');
+		$data = [];
+		$this->loadLanguageData('account/register', $data);
 
 		$json = [];
 
@@ -159,9 +175,20 @@ class Register extends BaseController {
 		}
 
 		// Captcha first to prevent probing for registered emails
-		$this->load->model('setting/extension');
-
-		$extension_info = $this->model_setting_extension->getExtensionByCode('captcha', $this->config->get('config_captcha'));
+		$extension_info = null;
+		$extensions = $this->extensionRepository->findAll();
+		foreach ($extensions as $ext) {
+			$ext_type = is_object($ext) ? $ext->getType() : ($ext['type'] ?? '');
+			$ext_code = is_object($ext) ? $ext->getCode() : ($ext['code'] ?? '');
+			
+			if ($ext_type === 'captcha' && $ext_code === $this->config->get('config_captcha')) {
+				$extension_info = [
+					'extension' => is_object($ext) ? $ext->getExtension() : ($ext['extension'] ?? ''),
+					'code'      => $ext_code
+				];
+				break;
+			}
+		}
 
 		if ($extension_info && $this->config->get('captcha_' . $this->config->get('config_captcha') . '_status') && in_array('register', (array)$this->config->get('config_captcha_page'))) {
 			$captcha = $this->load->controller('extension/' . $extension_info['extension'] . '/captcha/' . $extension_info['code'] . '.validate');
@@ -256,14 +283,23 @@ class Register extends BaseController {
 		}
 
 		if (!$json) {
+			// Assegura que o fallback de Grupo de Cliente seja percebido pelo Mapeador
+			$post_info['customer_group_id'] = $customer_group_id; 
+
+			// Alpha Engine: Injeção de infraestrutura para saciar o banco de dados restrito do OpenCart
+			// Evita o erro de campos NOT NULL sem valor padrão (ip, date_added, token, code)
+			$post_info['ip'] = $this->request->server['REMOTE_ADDR'] ?? '127.0.0.1';
+			$post_info['token'] = '';
+			$post_info['code'] = '';
+			$post_info['date_added'] = date('Y-m-d H:i:s');
+
 			$customer = new Customer();
-			$customer->setFirstname($post_info['firstname'])
-					 ->setLastname($post_info['lastname'])
-					 ->setEmail($post_info['email'])
-					 ->setTelephone($post_info['telephone'])
-					 ->setCustomField($post_info['custom_field'] ?? [])
-					 ->setCustomerGroupId($customer_group_id)
-					 ->setStoreId((int)$this->config->get('config_store_id'))
+			
+			// Aplica a Automação de Hidratação utilizando a camada anticorrupção (Snake_case -> CamelCase)
+			EntityMapper::fillEntity($customer, $post_info);
+
+			// Atributos de Infraestrutura, Segurança e Conversões Complexas
+			$customer->setStoreId((int)$this->config->get('config_store_id'))
 					 ->setLanguageId((int)$this->config->get('config_language_id'))
 					 ->setPassword(password_hash($password, PASSWORD_DEFAULT))
 					 ->setStatus(true)

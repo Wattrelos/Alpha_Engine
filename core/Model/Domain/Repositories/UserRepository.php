@@ -25,7 +25,8 @@ class UserRepository extends AbstractRepository implements BaseRepositoryInterfa
      */
     public function findByUsername(string $username): ?User
     {
-        return $this->getMapper()->findOneBy(['username' => $username]);
+        $results = $this->getMapper()->search(['username' => $username]);
+        return $results[0] ?? null;
     }
 
     /**
@@ -36,7 +37,8 @@ class UserRepository extends AbstractRepository implements BaseRepositoryInterfa
      */
     public function findByEmail(string $email): ?User
     {
-        return $this->getMapper()->findOneBy(['email' => $email]);
+        $results = $this->getMapper()->search(['email' => $email]);
+        return $results[0] ?? null;
     }
 
     public function find(int $id): ?InterfaceEntity
@@ -55,6 +57,7 @@ class UserRepository extends AbstractRepository implements BaseRepositoryInterfa
     }
     public function findOneBy(array $criteria): ?InterfaceEntity
     {
-        return $this->getMapper()->findOneBy($criteria);
+        $results = $this->getMapper()->search($criteria);
+        return $results[0] ?? null;
     }
 }

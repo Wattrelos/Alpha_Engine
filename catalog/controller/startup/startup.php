@@ -1,26 +1,16 @@
 <?php
 namespace Opencart\Catalog\Controller\Startup;
-/**
- * Class Startup
- *
- * @package Opencart\Catalog\Controller\Startup
- */
+
+use Alpha\Model\Domain\Repositories\StartupRepository;
+
 class Startup extends \Opencart\System\Engine\Controller {
-	/**
-	 * Index
-	 *
-	 * @return void
-	 */
 	public function index(): void {
-		// Load startup actions
-		$this->load->model('setting/startup');
+		/** @var StartupRepository $startupRepo */
+		$startupRepo = $this->registry->get('alpha_repository_factory')->get(StartupRepository::class);
+		$startups = $startupRepo->getStartups();
 
-		$results = $this->model_setting_startup->getStartups();
-
-		foreach ($results as $result) {
-			if (substr($result['action'], 0, 8) == 'catalog/') {
-				$this->load->controller(substr($result['action'], 8));
-			}
+		foreach ($startups as $startup) {
+			$this->load->controller($startup->getAction());
 		}
 	}
 }

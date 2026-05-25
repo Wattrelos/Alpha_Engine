@@ -15,6 +15,7 @@ use Alpha\Model\Domain\Attributes\OneToMany;
  */
 class Zone extends BaseEntity
 {
+    private string $name = '';
     private string $code = '';
     private int $countryId = 0;
     private bool $status = true;
@@ -27,6 +28,17 @@ class Zone extends BaseEntity
 
     #[ManyToOne(targetEntity: Country::class, foreignKey: 'countryId')]
     private ?Country $country = null;
+
+    public function getName(): string
+    {
+        return $this->name;
+    }
+
+    public function setName(string $name): self
+    {
+        $this->name = $name;
+        return $this;
+    }
 
     public function getCountryId(): int
     {

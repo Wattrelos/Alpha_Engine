@@ -55,10 +55,11 @@ class CustomerGroupRepository extends AbstractRepository implements BaseReposito
     }
 
     public function findBy(array $criteria, ?array $orderBy = null, ?int $limit = null, ?int $offset = null): array {
-        return $this->getMapper()->findBy($criteria, $orderBy, $limit, $offset);
+        return $this->getMapper()->search($criteria, $orderBy, $limit, $offset);
     }
 
     public function findOneBy(array $criteria): ?InterfaceEntity {
-        return $this->getMapper()->findOneBy($criteria);
+        $results = $this->getMapper()->search($criteria);
+        return $results[0] ?? null;
     }
 }

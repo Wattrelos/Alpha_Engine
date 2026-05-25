@@ -11,6 +11,6 @@ use Alpha\Model\Domain\Entities\ApiIp;
  */
 class ApiIpMapper extends BaseMapper
 {
-    protected string $table = 'api_ip';
+    protected string $tableName = 'api_ip';
     protected string $entityClass = ApiIp::class;
 }

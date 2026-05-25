@@ -42,19 +42,19 @@
 /************************************************************************************************************/
 
 
-.menu-container {
+.ag-menu-container {
     display: inline-flex; /* Combina as duas regras anteriores para não anular o flexbox */
     position: relative;   /* Permite posicionar o menu dropdown abaixo do botão */
     font-family: Arial, Helvetica, sans-serif;
     /* font-size: medium; */
 
 }
-.menu-container ul {
+.ag-menu-container ul {
   border-radius: 1em;
 }
 
 /* Efeito ao passar o mouse sobre um item do menu principal */
-.menu-container:hover .dropdown-menu-recursive {
+.ag-menu-container:hover .dropdown-menu-recursive {
     display: block;  /* Mostra o menu principal ao passar o mouse sobre o container */    
 }
 

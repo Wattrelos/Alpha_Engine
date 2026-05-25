@@ -27,13 +27,14 @@ Este log documenta a fundação técnica, segurança de acesso e utilitários gl
     *   **Identity Map**: Cache de instâncias em memória para evitar consultas redundantes.
     *   **Lazy Loading**: Implementação de `LazyCollection` via Closures para adiar a execução de queries pesadas.
     *   **Batch SEO Loading**: Carregamento em lote de URLs amigáveis para vitrines.
-    *   **Filesystem Cache Strategy**: Motor de cache robusto para armazenamento de objetos de domínio serializados.
+    *   **PSR-16 Cache Strategy**: Implementação do contrato abstrato `CacheStrategyInterface` inspirado na PSR-16, acompanhado do motor de cache robusto via *Filesystem* para armazenamento serializado.
     *   **Cache-Aware Repositories**: Infraestrutura base preparada para injeção de cache em todos os repositórios de domínio.
     *   **Domain Entity Caching**: Implementação de cache de longa duração para entidades de localização e sistema (Language, Currency, TaxClass, TaxRate e TaxRule).
 3.  **AlphaContainer (Legacy Bridge)**: Interceptor de modelos legados que redireciona chamadas para Repositórios modernos, permitindo migração progressiva.
     *   **$O(1)$ Dictionary Mapping**: Resolução de mais de 25 modelos interceptados via arrays estáticos em milissegundos.
 4.  **Observabilidade**: Sistema de logs de depreciação com rastreamento de IP/Rota para erradicação de débito técnico.
 5.  **Configuration & I18N**: `ConfigurationRepository` e `TranslationRepository` isolam o sistema de configurações e traduções do motor legado, operando 100% via memória injetada no Registry.
+6.  **Automação e Auditoria ORM**: Coleção de scripts utilitários (ex: *Detector de Zumbis* e *Renomeador de Referências*) que garantem alinhamento estrutural perfeito entre Entidades PHP 8.4 e colunas do Banco de Dados via Reflection API.
 
 
 ## 🖼️ [DESIGN] Motor de Renderização
@@ -54,6 +55,8 @@ Este log documenta a fundação técnica, segurança de acesso e utilitários gl
 10. **Infraestrutura de Lazy Loading**: Implementação de `LazyCollection` no core da Alpha Engine para suportar hidratação sob demanda de coleções pesadas.
 11. **Domínio de Sessão Modernizado**: Implementação da entidade `Session` e `SessionMapper`, consolidando a transição para Surrogate Keys e eliminando de vez o SQL legado do driver de sessão.
 12. **Modernização de Sessão de API**: Refatoração do `ApiSessionRepository` e seu Mapper, isolando o token de transporte da PK numérica e padronizando a segurança de acesso remoto.
+13. **PSR-16 Cache**: Padronização da interface de cache para viabilizar integração transparente de novos drivers em memória (Redis/Memcached) no futuro, já consolidado com driver nativo em arquivos.
+14. **Auditoria ORM**: Erradicação da possibilidade de "Entidades Zumbis" e atributos órfãos através de varredura inteligente, assegurando 100% de estabilidade e mapeamento fidedigno.
 
 ### 💡 Insights de Core
 *   A inicialização de propriedades com `0` ou `''` nas entidades é vital para prevenir o erro de `uninitialized property` do PHP 8.4.

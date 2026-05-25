@@ -433,6 +433,7 @@ class ProductRepository extends AbstractRepository implements BaseRepositoryInte
      */
     public function findOneBy(array $criteria): ?InterfaceEntity
     {
-        return $this->mapperFactory->get(ProductMapper::class)->findOneBy($criteria);
+        $results = $this->mapperFactory->get(ProductMapper::class)->search($criteria);
+        return $results[0] ?? null;
     }
 }

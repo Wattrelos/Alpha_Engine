@@ -25,7 +25,8 @@ class Confirm extends BaseController {
 	 * Exibe o resumo final do pedido (Carrinho, Endereços, Totais).
 	 */
 	public function index(): string {
-		$this->loadLanguage('checkout/confirm');
+		$data = [];
+		$this->loadLanguageData('checkout/confirm', $data);
 
 		$data['products'] = $this->cartRepository->getCartProducts(
 			(int)$this->customer->getId(),
@@ -34,13 +35,11 @@ class Confirm extends BaseController {
 		);
 
 		$data['vouchers'] = [];
-		if (!empty($this->session->data['vouchers'])) {
-			foreach ($this->session->data['vouchers'] as $voucher) {
-				$data['vouchers'][] = [
-					'description' => $voucher['description'],
-					'amount'      => $this->currency->format($voucher['amount'], $this->session->data['currency'])
-				];
-			}
+		foreach ($this->session->data['vouchers'] ?? [] as $voucher) {
+			$data['vouchers'][] = [
+				'description' => $voucher['description'],
+				'amount'      => $this->currency->format($voucher['amount'], $this->session->data['currency'])
+			];
 		}
 
 		$totals = [];
@@ -59,7 +58,7 @@ class Confirm extends BaseController {
 
 		// Alpha Engine: O método render já injeta Header/Footer se necessário, 
 		// mas aqui retornamos apenas o HTML da tabela para o Ajax do checkout.
-		return $this->getTemplate('checkout/confirm', $data);
+		return $this->load->view('checkout/confirm', $data);
 	}
 
 	/**

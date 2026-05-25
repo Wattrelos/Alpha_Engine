@@ -1,31 +1,28 @@
 <?php
-
 namespace Alpha\Model\Domain\Repositories;
 
 use Alpha\Mappers\EntityMappers\EventMapper;
-use Alpha\Model\Domain\InterfaceEntity;
+use Alpha\Model\Domain\Entities\Event;
 
-/**
- * EventRepository - Autoridade de Domínio para Eventos do Sistema.
- */
-class EventRepository extends AbstractRepository implements BaseRepositoryInterface
+class EventRepository extends AbstractRepository
 {
-    protected function getMapper(): EventMapper
-    {
-        return $this->mapperFactory->get(EventMapper::class);
-    }
-
     /**
-     * Recupera todos os eventos ativos.
+     * Retorna todos os Eventos ativos ordenados corretamente.
+     * @return Event[]
      */
     public function getEvents(): array
     {
-        return $this->getMapper()->getEvents();
-    }
+        $cacheKey = 'event.all.active';
+        if ($this->cache && $this->cache->has($cacheKey)) {
+            return $this->cache->get($cacheKey);
+        }
 
-    // Métodos obrigatórios da BaseRepositoryInterface
-    public function find(int $id): ?InterfaceEntity { return null; }
-    public function findAll(): array { return []; }
-    public function findBy(array $criteria, ?array $orderBy = null, ?int $limit = null, ?int $offset = null): array { return []; }
-    public function findOneBy(array $criteria): ?InterfaceEntity { return null; }
+        $events = $this->mapperFactory->get(EventMapper::class)->search(['status' => 1], ['sort_order' => 'ASC']);
+
+        if ($this->cache) {
+            $this->cache->set($cacheKey, $events);
+        }
+
+        return $events;
+    }
 }

@@ -12,9 +12,9 @@ class EvolutionGenerator
 {
     private string $targetFile;
 
-    public function __construct(string $targetFile = 'README3.md')
+    public function __construct(string $targetFile = '')
     {
-        $this->targetFile = $targetFile;
+        $this->targetFile = $targetFile ?: dirname(__DIR__, 2) . '/docs/README3.md';
     }
 
     public function run(): void

@@ -2,6 +2,7 @@
 namespace Opencart\Catalog\Controller\Account;
 
 use Alpha\Controller\BaseController;
+use Alpha\Model\Domain\Repositories\CustomerAffiliateRepository;
 
 /**
  * Class Affiliate
@@ -9,6 +10,13 @@ use Alpha\Controller\BaseController;
  * @package Opencart\Catalog\Controller\Account
  */
 class Affiliate extends BaseController {
+	private CustomerAffiliateRepository $affiliateRepository;
+
+	public function __construct(\Opencart\System\Engine\Registry $registry) {
+		parent::__construct($registry);
+		$this->affiliateRepository = $this->registry->get('alpha_repository_factory')->get(CustomerAffiliateRepository::class);
+	}
+
 	/**
 	 * Index
 	 *
@@ -54,76 +62,20 @@ class Affiliate extends BaseController {
 
 		$data['upload'] = $this->url->link('tool/upload', 'language=' . $this->config->get('config_language') . '&upload_token=' . $this->session->data['upload_token']);
 
-		// Affiliate
-		$this->load->model('account/affiliate');
+		// Alpha Engine: Affiliate Domain
+		$affiliate_info = $this->affiliateRepository->find($this->customer->getId());
 
-		$affiliate_info = $this->model_account_affiliate->getAffiliate($this->customer->getId());
-
-		if (!empty($affiliate_info)) {
-			$data['company'] = $affiliate_info['company'];
-		} else {
-			$data['company'] = '';
-		}
-
-		if (!empty($affiliate_info)) {
-			$data['website'] = $affiliate_info['website'];
-		} else {
-			$data['website'] = '';
-		}
-
-		if (!empty($affiliate_info)) {
-			$data['tax'] = $affiliate_info['tax'];
-		} else {
-			$data['tax'] = '';
-		}
-
-		if (!empty($affiliate_info)) {
-			$data['payment_method'] = $affiliate_info['payment_method'];
-		} else {
-			$data['payment_method'] = 'cheque';
-		}
-
-		if (!empty($affiliate_info)) {
-			$data['cheque'] = $affiliate_info['cheque'];
-		} else {
-			$data['cheque'] = '';
-		}
-
-		if (!empty($affiliate_info)) {
-			$data['paypal'] = $affiliate_info['paypal'];
-		} else {
-			$data['paypal'] = '';
-		}
-
-		if (!empty($affiliate_info)) {
-			$data['bank_name'] = $affiliate_info['bank_name'];
-		} else {
-			$data['bank_name'] = '';
-		}
-
-		if (!empty($affiliate_info)) {
-			$data['bank_branch_number'] = $affiliate_info['bank_branch_number'];
-		} else {
-			$data['bank_branch_number'] = '';
-		}
-
-		if (!empty($affiliate_info)) {
-			$data['bank_swift_code'] = $affiliate_info['bank_swift_code'];
-		} else {
-			$data['bank_swift_code'] = '';
-		}
-
-		if (!empty($affiliate_info)) {
-			$data['bank_account_name'] = $affiliate_info['bank_account_name'];
-		} else {
-			$data['bank_account_name'] = '';
-		}
-
-		if (!empty($affiliate_info)) {
-			$data['bank_account_number'] = $affiliate_info['bank_account_number'];
-		} else {
-			$data['bank_account_number'] = '';
-		}
+		$data['company']             = $affiliate_info ? $affiliate_info->getCompany() : '';
+		$data['website']             = $affiliate_info ? $affiliate_info->getWebsite() : '';
+		$data['tax']                 = $affiliate_info ? $affiliate_info->getTax() : '';
+		$data['payment_method']      = $affiliate_info ? $affiliate_info->getPaymentMethod() : 'cheque';
+		$data['cheque']              = $affiliate_info ? $affiliate_info->getCheque() : '';
+		$data['paypal']              = $affiliate_info ? $affiliate_info->getPaypal() : '';
+		$data['bank_name']           = $affiliate_info ? $affiliate_info->getBankName() : '';
+		$data['bank_branch_number']  = $affiliate_info ? $affiliate_info->getBankBranchNumber() : '';
+		$data['bank_swift_code']     = $affiliate_info ? $affiliate_info->getBankSwiftCode() : '';
+		$data['bank_account_name']   = $affiliate_info ? $affiliate_info->getBankAccountName() : '';
+		$data['bank_account_number'] = $affiliate_info ? $affiliate_info->getBankAccountNumber() : '';
 
 		// Custom Field
 		$this->load->model('account/custom_field');
@@ -136,13 +88,7 @@ class Affiliate extends BaseController {
 			}
 		}
 
-		if (!empty($affiliate_info)) {
-			$data['affiliate_custom_field'] = $affiliate_info['custom_field'];
-		} else {
-			$data['affiliate_custom_field'] = [];
-		}
-
-		$affiliate_info = $this->model_account_affiliate->getAffiliate($this->customer->getId());
+		$data['affiliate_custom_field'] = $affiliate_info ? $affiliate_info->getCustomFieldArray() : [];
 
 		if (!$affiliate_info && $this->config->get('config_affiliate_id')) {
 			// Information
@@ -233,9 +179,7 @@ class Affiliate extends BaseController {
 			}
 
 			// Validate agree only if customer not already an affiliate
-			$this->load->model('account/affiliate');
-
-			$affiliate_info = $this->model_account_affiliate->getAffiliate($this->customer->getId());
+			$affiliate_info = $this->affiliateRepository->find($this->customer->getId());
 
 			if (!$affiliate_info) {
 				// Information
@@ -250,11 +194,7 @@ class Affiliate extends BaseController {
 		}
 
 		if (!$json) {
-			if (!$affiliate_info) {
-				$this->model_account_affiliate->addAffiliate($this->customer->getId(), $post_info);
-			} else {
-				$this->model_account_affiliate->editAffiliate($this->customer->getId(), $post_info);
-			}
+			$this->affiliateRepository->processSave($this->customer->getId(), $post_info);
 
 			$this->session->data['success'] = $this->language->get('text_success');
 

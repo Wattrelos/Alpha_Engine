@@ -1,31 +1,28 @@
 <?php
-
 namespace Alpha\Model\Domain\Repositories;
 
 use Alpha\Mappers\EntityMappers\StartupMapper;
-use Alpha\Model\Domain\InterfaceEntity;
+use Alpha\Model\Domain\Entities\Startup;
 
-/**
- * StartupRepository - Autoridade de Domínio para Tarefas de Inicialização (Startup).
- */
-class StartupRepository extends AbstractRepository implements BaseRepositoryInterface
+class StartupRepository extends AbstractRepository
 {
-    protected function getMapper(): StartupMapper
-    {
-        return $this->mapperFactory->get(StartupMapper::class);
-    }
-
     /**
-     * Recupera todas as tarefas de inicialização ativas.
+     * Retorna todos os Startups ativos ordenados corretamente.
+     * @return Startup[]
      */
     public function getStartups(): array
     {
-        return $this->getMapper()->getStartups();
-    }
+        $cacheKey = 'startup.all.active';
+        if ($this->cache && $this->cache->has($cacheKey)) {
+            return $this->cache->get($cacheKey);
+        }
 
-    // Métodos obrigatórios da BaseRepositoryInterface
-    public function find(int $id): ?InterfaceEntity { return null; }
-    public function findAll(): array { return []; }
-    public function findBy(array $criteria, ?array $orderBy = null, ?int $limit = null, ?int $offset = null): array { return []; }
-    public function findOneBy(array $criteria): ?InterfaceEntity { return null; }
+        $startups = $this->mapperFactory->get(StartupMapper::class)->search(['status' => 1], ['sort_order' => 'ASC']);
+
+        if ($this->cache) {
+            $this->cache->set($cacheKey, $startups);
+        }
+
+        return $startups;
+    }
 }

@@ -18,7 +18,8 @@ class CustomerTokenRepository extends AbstractRepository
      */
     public function findByCode(string $code): ?CustomerToken
     {
-        return $this->mapper->findOneBy(['code' => $code]);
+        $results = $this->mapper->search(['code' => $code]);
+        return $results[0] ?? null;
     }
 
     /**

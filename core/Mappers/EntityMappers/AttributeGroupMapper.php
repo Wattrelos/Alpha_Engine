@@ -11,6 +11,6 @@ use Alpha\Model\Domain\Entities\AttributeGroup;
  */
 class AttributeGroupMapper extends BaseMapper
 {
-    protected string $table = 'attribute_group';
+    protected string $tableName = 'attribute_group';
     protected string $entityClass = AttributeGroup::class;
 }

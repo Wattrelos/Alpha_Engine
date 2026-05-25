@@ -1,11 +1,14 @@
 <?php
 namespace Opencart\Catalog\Controller\Extension\Opencart\Checkout;
+
+use Alpha\Controller\BaseController;
+
 /**
  * Class Coupon
  *
  * @package Opencart\Catalog\Controller\Extension\Opencart\Checkout
  */
-class Coupon extends \Opencart\System\Engine\Controller {
+class Coupon extends BaseController {
 	/**
 	 * Index
 	 *
@@ -13,7 +16,8 @@ class Coupon extends \Opencart\System\Engine\Controller {
 	 */
 	public function index(): string {
 		if ($this->config->get('total_coupon_status')) {
-			$this->load->language('extension/opencart/checkout/coupon');
+			$data = [];
+			$this->loadLanguageData('extension/opencart/checkout/coupon', $data);
 
 			$data['save'] = $this->url->link('extension/opencart/checkout/coupon.save', 'language=' . $this->config->get('config_language'), true);
 			$data['remove'] = $this->url->link('extension/opencart/checkout/coupon.remove', 'language=' . $this->config->get('config_language'), true);
@@ -68,8 +72,7 @@ class Coupon extends \Opencart\System\Engine\Controller {
 			unset($this->session->data['payment_methods']);
 		}
 
-		$this->response->addHeader('Content-Type: application/json');
-		$this->response->setOutput(json_encode($json));
+		$this->jsonResponse($json);
 	}
 
 	/**
@@ -97,7 +100,6 @@ class Coupon extends \Opencart\System\Engine\Controller {
 			unset($this->session->data['payment_methods']);
 		}
 
-		$this->response->addHeader('Content-Type: application/json');
-		$this->response->setOutput(json_encode($json));
+		$this->jsonResponse($json);
 	}
 }

@@ -11,6 +11,6 @@ use Alpha\Model\Domain\Entities\ApiHistory;
  */
 class ApiHistoryMapper extends BaseMapper
 {
-    protected string $table = 'api_history';
+    protected string $tableName = 'api_history';
     protected string $entityClass = ApiHistory::class;
 }

@@ -1,11 +1,14 @@
 <?php
 namespace Opencart\Catalog\Controller\Extension\Opencart\Checkout;
+
+use Alpha\Controller\BaseController;
+
 /**
  * Class Reward
  *
  * @package Opencart\Catalog\Controller\Extension\Opencart\Checkout
  */
-class Reward extends \Opencart\System\Engine\Controller {
+class Reward extends BaseController {
 	/**
 	 * Index
 	 *
@@ -24,7 +27,8 @@ class Reward extends \Opencart\System\Engine\Controller {
 			}
 
 			if ($available && $points_total) {
-				$this->load->language('extension/opencart/checkout/reward');
+				$data = [];
+				$this->loadLanguageData('extension/opencart/checkout/reward', $data);
 
 				$data['heading_title'] = sprintf($this->language->get('heading_title'), $available);
 
@@ -94,7 +98,6 @@ class Reward extends \Opencart\System\Engine\Controller {
 			}
 		}
 
-		$this->response->addHeader('Content-Type: application/json');
-		$this->response->setOutput(json_encode($json));
+		$this->jsonResponse($json);
 	}
 }

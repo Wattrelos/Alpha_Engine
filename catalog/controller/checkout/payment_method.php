@@ -41,25 +41,10 @@ class PaymentMethod extends BaseController {
 		$data = [];
 		$this->loadLanguageData('checkout/payment_method', $data);
 
-		if (isset($this->session->data['payment_method'])) {
-			$data['payment_method'] = $this->session->data['payment_method']['name'];
-			$data['code'] = $this->session->data['payment_method']['code'];
-		} else {
-			$data['payment_method'] = '';
-			$data['code'] = '';
-		}
-
-		if (isset($this->session->data['comment'])) {
-			$data['comment'] = $this->session->data['comment'];
-		} else {
-			$data['comment'] = '';
-		}
-
-		if (isset($this->session->data['agree'])) {
-			$data['agree'] = $this->session->data['agree'];
-		} else {
-			$data['agree'] = '';
-		}
+		$data['payment_method'] = $this->session->data['payment_method']['name'] ?? '';
+		$data['code']           = $this->session->data['payment_method']['code'] ?? '';
+		$data['comment']        = $this->session->data['comment'] ?? '';
+		$data['agree']          = $this->session->data['agree'] ?? '';
 
 		// Information
 		$information_info = $this->informationRepository->getInformation((int)$this->config->get('config_checkout_id'));
@@ -72,7 +57,7 @@ class PaymentMethod extends BaseController {
 
 		$data['language'] = $this->config->get('config_language');
 
-		return $this->getTemplate('checkout/payment_method', $data);
+		return $this->load->view('checkout/payment_method', $data);
 	}
 
 	/**
@@ -201,17 +186,8 @@ class PaymentMethod extends BaseController {
 
 		$json = [];
 
-		if (isset($this->session->data['order_id'])) {
-			$order_id = (int)$this->session->data['order_id'];
-		} else {
-			$order_id = 0;
-		}
-
-		if (isset($this->request->post['comment'])) {
-			$comment = (string)$this->request->post['comment'];
-		} else {
-			$comment = '';
-		}
+		$order_id = (int)($this->session->data['order_id'] ?? 0);
+		$comment  = (string)($this->request->post['comment'] ?? '');
 
 		$order_info = $this->orderRepository->find($order_id);
 

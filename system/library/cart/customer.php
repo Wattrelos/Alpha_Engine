@@ -71,10 +71,10 @@ class Customer {
 		$this->session = $registry->get('session');
 
 		if (isset($this->session->data['customer_id'])) {
-			$customer_query = $this->db->query("SELECT * FROM `" . DB_PREFIX . "customer` WHERE `customer_id` = '" . (int)$this->session->data['customer_id'] . "' AND `status` = '1'");
+			$customer_query = $this->db->query("SELECT * FROM `" . DB_PREFIX . "customer` WHERE `id` = '" . (int)$this->session->data['customer_id'] . "' AND `status` = '1'");
 
 			if ($customer_query->num_rows) {
-				$this->customer_id = $customer_query->row['customer_id'];
+				$this->customer_id = $customer_query->row['id'];
 				$this->firstname = $customer_query->row['firstname'];
 				$this->lastname = $customer_query->row['lastname'];
 				$this->customer_group_id = $customer_query->row['customer_group_id'];
@@ -84,7 +84,7 @@ class Customer {
 				$this->safe = (bool)$customer_query->row['safe'];
 				$this->commenter = (bool)$customer_query->row['commenter'];
 
-				$this->db->query("UPDATE `" . DB_PREFIX . "customer` SET `language_id` = '" . (int)$this->config->get('config_language_id') . "', `ip` = '" . $this->db->escape(oc_get_ip()) . "' WHERE `customer_id` = '" . (int)$this->customer_id . "'");
+				$this->db->query("UPDATE `" . DB_PREFIX . "customer` SET `language_id` = '" . (int)$this->config->get('config_language_id') . "', `ip` = '" . $this->db->escape(oc_get_ip()) . "' WHERE `id` = '" . (int)$this->customer_id . "'");
 			} else {
 				$this->logout();
 			}
@@ -120,13 +120,13 @@ class Customer {
 				}
 
 				if ($rehash) {
-					$this->db->query("UPDATE `" . DB_PREFIX . "customer` SET `password` = '" . $this->db->escape(password_hash($password, PASSWORD_DEFAULT)) . "' WHERE `customer_id` = '" . (int)$customer_query->row['customer_id'] . "'");
+					$this->db->query("UPDATE `" . DB_PREFIX . "customer` SET `password` = '" . $this->db->escape(password_hash($password, PASSWORD_DEFAULT)) . "' WHERE `id` = '" . (int)$customer_query->row['id'] . "'");
 				}
 			}
 
-			$this->session->data['customer_id'] = $customer_query->row['customer_id'];
+			$this->session->data['customer_id'] = $customer_query->row['id'];
 
-			$this->customer_id = $customer_query->row['customer_id'];
+			$this->customer_id = $customer_query->row['id'];
 			$this->firstname = $customer_query->row['firstname'];
 			$this->lastname = $customer_query->row['lastname'];
 			$this->customer_group_id = $customer_query->row['customer_group_id'];
@@ -136,7 +136,7 @@ class Customer {
 			$this->safe = (bool)$customer_query->row['safe'];
 			$this->commenter = (bool)$customer_query->row['commenter'];
 
-			$this->db->query("UPDATE `" . DB_PREFIX . "customer` SET `language_id` = '" . (int)$this->config->get('config_language_id') . "', `ip` = '" . $this->db->escape(oc_get_ip()) . "' WHERE `customer_id` = '" . (int)$this->customer_id . "'");
+			$this->db->query("UPDATE `" . DB_PREFIX . "customer` SET `language_id` = '" . (int)$this->config->get('config_language_id') . "', `ip` = '" . $this->db->escape(oc_get_ip()) . "' WHERE `id` = '" . (int)$this->customer_id . "'");
 
 			return true;
 		} else {
@@ -310,7 +310,7 @@ class Customer {
 		$query = $this->db->query("SELECT * FROM `" . DB_PREFIX . "address` WHERE `customer_id` = '" . (int)$this->customer_id . "' AND `default` = '1'");
 
 		if ($query->num_rows) {
-			return (int)$query->row['address_id'];
+			return (int)$query->row['id'];
 		} else {
 			return 0;
 		}

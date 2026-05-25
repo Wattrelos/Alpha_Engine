@@ -15,9 +15,10 @@ use Alpha\Model\Domain\Attributes\OneToMany;
  */
 class Country extends BaseEntity
 {
+    private string $name = '';
     private string $isoCode2 = '';
     private string $isoCode3 = '';
-    private int $addressFormatId = 0;
+    private string $addressFormat = '';
     private bool $postcodeRequired = false;
     private bool $status = true;
 
@@ -32,6 +33,17 @@ class Country extends BaseEntity
      */
     #[OneToMany(targetEntity: CountryDescription::class, mappedBy: "country", foreignKey: "countryId")]
     private array $descriptions = [];
+
+    public function getName(): string
+    {
+        return $this->name;
+    }
+
+    public function setName(string $name): self
+    {
+        $this->name = $name;
+        return $this;
+    }
 
     public function getIsoCode2(): string
     {
@@ -55,14 +67,14 @@ class Country extends BaseEntity
         return $this;
     }
 
-    public function getAddressFormatId(): int
+    public function getAddressFormat(): string
     {
-        return $this->addressFormatId;
+        return $this->addressFormat;
     }
 
-    public function setAddressFormatId(int $addressFormatId): self
+    public function setAddressFormat(string $addressFormat): self
     {
-        $this->addressFormatId = $addressFormatId;
+        $this->addressFormat = $addressFormat;
         return $this;
     }
 

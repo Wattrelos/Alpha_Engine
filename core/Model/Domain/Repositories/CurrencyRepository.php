@@ -70,7 +70,7 @@ class CurrencyRepository extends AbstractRepository implements BaseRepositoryInt
      */
     public function findBy(array $criteria, ?array $orderBy = null, ?int $limit = null, ?int $offset = null): array
     {
-        return $this->mapperFactory->get(CurrencyMapper::class)->findBy($criteria, $orderBy, $limit, $offset);
+        return $this->mapperFactory->get(CurrencyMapper::class)->search($criteria, $orderBy, $limit, $offset);
     }
 
     /**
@@ -87,7 +87,8 @@ class CurrencyRepository extends AbstractRepository implements BaseRepositoryInt
             return $this->cache->get($cacheKey);
         }
 
-        $entity = $this->mapperFactory->get(CurrencyMapper::class)->findOneBy($criteria);
+        $results = $this->mapperFactory->get(CurrencyMapper::class)->search($criteria);
+        $entity = $results[0] ?? null;
 
         if ($entity && $this->cache) {
             $this->cache->set($cacheKey, $entity);

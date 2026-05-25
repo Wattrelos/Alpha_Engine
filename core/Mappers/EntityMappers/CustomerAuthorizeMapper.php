@@ -11,6 +11,6 @@ use Alpha\Model\Domain\Entities\CustomerAuthorize;
  */
 class CustomerAuthorizeMapper extends BaseMapper
 {
-    protected string $table = 'customer_authorize';
+    protected string $tableName = 'customer_authorize';
     protected string $entityClass = CustomerAuthorize::class;
 }

@@ -15,6 +15,18 @@ use Opencart\System\Library\Log;
 class AlphaContainer extends Factory
 {
     /**
+     * Retorna a instância do logger de rastreamento (Trace).
+     */
+    private function getTraceLogger(): Log
+    {
+        static $traceLogger;
+        if (!$traceLogger) {
+            $traceLogger = new Log('alpha_trace.log');
+        }
+        return $traceLogger;
+    }
+
+    /**
      * Intercepta o carregamento de modelos.
      * 
      * @param string $route Caminho do modelo (ex: 'catalog/product')
@@ -22,6 +34,9 @@ class AlphaContainer extends Factory
      */
     public function model(string $route): object
     {
+        // Rastreamento de Fluxo (Trace)
+        $this->getTraceLogger()->write("[Alpha TRACE] Solicitado Model: '{$route}'");
+
         // 1. Normaliza a rota para identificar o componente
         $sanitized_route = preg_replace('/[^a-zA-Z0-9_\/]/', '', $route);
         
@@ -33,6 +48,7 @@ class AlphaContainer extends Factory
             $repositoriesMap = [
                 'account/customer'          => \Alpha\Model\Domain\Repositories\CustomerRepository::class,
                 'account/customer_group'    => \Alpha\Model\Domain\Repositories\CustomerGroupRepository::class,
+                'account/affiliate'         => \Alpha\Model\Domain\Repositories\CustomerAffiliateRepository::class,
                 'account/wishlist'          => \Alpha\Model\Domain\Repositories\WishlistRepository::class,
                 'catalog/category'          => \Alpha\Model\Domain\Repositories\CategoryRepository::class,
                 'catalog/product'           => \Alpha\Model\Domain\Repositories\ProductRepository::class,
@@ -51,6 +67,7 @@ class AlphaContainer extends Factory
                 'localisation/tax_rate'     => \Alpha\Model\Domain\Repositories\TaxRateRepository::class,
                 'localisation/tax_rule'     => \Alpha\Model\Domain\Repositories\TaxRuleRepository::class,
                 'setting/setting'           => \Alpha\Model\Domain\Repositories\SettingRepository::class,
+                'setting/extension'         => \Alpha\Model\Domain\Repositories\ExtensionRepository::class,
             ];
 
             if (isset($repositoriesMap[$sanitized_route])) {
@@ -62,7 +79,6 @@ class AlphaContainer extends Factory
 
         if ($mapper_factory) {
             $mappersMap = [
-                'setting/extension'     => \Alpha\Mappers\EntityMappers\ExtensionMapper::class,
                 'setting/module'        => \Alpha\Mappers\EntityMappers\ModuleMapper::class,
                 'localisation/currency' => \Alpha\Mappers\EntityMappers\CurrencyMapper::class,
                 'catalog/review'        => \Alpha\Mappers\EntityMappers\ReviewMapper::class,
@@ -105,6 +121,9 @@ class AlphaContainer extends Factory
      */
     public function library(string $route, array $args = []): object
     {
+        // Rastreamento de Fluxo (Trace)
+        $this->getTraceLogger()->write("[Alpha TRACE] Solicitada Library: '{$route}'");
+
         // 1. Normaliza a rota
         $sanitized_route = preg_replace('/[^a-zA-Z0-9_\/]/', '', $route);
 
@@ -148,18 +167,22 @@ class AlphaContainer extends Factory
         // Implementar lógica de verificação baseada em nomes de arquivos core/
         return false;
     }
-    public function config(string $route): void
-{
-    // Log de depreciação da Alpha Engine
-    if ($this->registry->get('config')->get('config_error_log')) {
-        $this->registry->get('log')->write(
-            "[Alpha DEPRECATION] Carregamento de Config Legado: '{$route}'"
-        );
-    }
 
-    // Passa o bastão para o repositório Alpha em vez do fluxo nativo
-    $repositoryFactory = $this->registry->get('alpha_repository_factory');
-    $repositoryFactory->get(\Alpha\Model\Domain\Repositories\ConfigurationRepository::class)->loadFile($route);
-}
+    public function config(string $route): void
+    {
+        // Rastreamento de Fluxo (Trace)
+        $this->getTraceLogger()->write("[Alpha TRACE] Solicitada Config: '{$route}'");
+
+        // Log de depreciação da Alpha Engine
+        if ($this->registry->get('config')->get('config_error_log')) {
+            $this->registry->get('log')->write(
+                "[Alpha DEPRECATION] Carregamento de Config Legado: '{$route}'"
+            );
+        }
+
+        // Passa o bastão para o repositório Alpha em vez do fluxo nativo
+        $repositoryFactory = $this->registry->get('alpha_repository_factory');
+        $repositoryFactory->get(\Alpha\Model\Domain\Repositories\ConfigurationRepository::class)->loadFile($route);
+    }
 
 }

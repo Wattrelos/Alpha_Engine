@@ -27,7 +27,8 @@ class LanguageMapper extends BaseMapper
      */
     public function getLanguageByCode(string $code): ?Language
     {
-        return $this->findOneBy(['code' => $code]);
+        $results = $this->search(['code' => $code]);
+        return $results[0] ?? null;
     }
 
     /**

@@ -19,7 +19,8 @@ class ApiIpRepository extends AbstractRepository
      */
     public function isIpAllowed(int $apiId, string $ip): bool
     {
-        $result = $this->mapper->findOneBy(['apiId' => $apiId, 'ip' => $ip]);
+        $results = $this->mapper->search(['apiId' => $apiId, 'ip' => $ip]);
+        $result = $results[0] ?? null;
         return $result instanceof ApiIp;
     }
 }

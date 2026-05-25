@@ -182,6 +182,78 @@ $(document).on('submit', 'form', function (e) {
     }
 });
 
+// Alpha Engine: Standalone AJAX Elements (Buttons / Links)
+// Transforma botões e links independentes em requisições POST automatizadas sem precisar de <form>
+$(document).on('click', 'a[data-oc-toggle=\'ajax\'], button[data-oc-toggle=\'ajax\']', function(e) {
+    var element = this;
+    
+    // Se for um botão de submit dentro de um form, deixa o evento de 'submit' padrão lidar
+    if ($(element).attr('type') === 'submit' && $(element).closest('form').length > 0) {
+        return;
+    }
+
+    e.preventDefault();
+
+    var action = $(element).attr('href') || $(element).attr('data-oc-url') || $(element).attr('formaction');
+    var method = $(element).attr('data-oc-method') || $(element).attr('formmethod') || 'post';
+
+    if (typeof action === 'undefined' || action === false || action === '') {
+        console.error('Alpha Engine Error: Elemento disparou requisição AJAX, mas não possui "href", "data-oc-url" ou "formaction".', element);
+        return false;
+    }
+
+    // Coleta os atributos data-* para enviar como payload no POST
+    var payload = $.extend({}, $(element).data());
+    // Remove atributos de controle internos do plugin
+    delete payload.ocToggle;
+    delete payload.ocUrl;
+    delete payload.ocMethod;
+    delete payload.ocTarget;
+    delete payload.ocLoad;
+
+    $.ajax({
+        url: action.replaceAll('&amp;', '&'),
+        type: method,
+        data: payload,
+        dataType: 'json',
+        beforeSend: function () {
+            if ($(element).is('button')) {
+                $(element).button('loading');
+            }
+        },
+        complete: function () {
+            if ($(element).is('button')) {
+                $(element).button('reset');
+            }
+        },
+        success: function (json, textStatus) {
+            $('.alert-dismissible').remove();
+
+            if (json['redirect']) {
+                location = json['redirect'];
+            }
+
+            if (typeof json['error'] == 'string') {
+                $('#alert').prepend('<div class="alert alert-danger alert-dismissible"><i class="fa-solid fa-circle-exclamation"></i> ' + json['error'] + ' <button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>');
+            }
+
+            if (json['success']) {
+                $('#alert').prepend('<div class="alert alert-success alert-dismissible"><i class="fa-solid fa-circle-check"></i> ' + json['success'] + ' <button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>');
+
+                var url = $(element).attr('data-oc-load');
+                var target = $(element).attr('data-oc-target');
+
+                if (url !== undefined && target !== undefined) {
+                    $(target).load(url);
+                }
+            }
+        },
+        error: function (xhr, ajaxOptions, thrownError) {
+            console.log(thrownError + "\r\n" + xhr.statusText + "\r\n" + xhr.responseText);
+        }
+    });
+});
+
 // Upload
 $(document).on('click', 'button[data-oc-toggle=\'upload\']', function() {
     var element = this;

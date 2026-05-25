@@ -1,21 +1,22 @@
 /* Verificar se as senhas digitadas são iguais */
-/*
-const input1 = document.getElementById('User_password');
-const input2 = document.getElementById('repeat-password');
-function verificarCampos() {
-  if (input1.value === input2.value) {
-    input2.setCustomValidity('');
-  } else {
-    input2.setCustomValidity('As senhas devem ser iguais.');
-  } 
-}
-// Adiciona listeners para o evento 'input' em ambos os campos
-// O evento 'input' é acionado sempre que o valor do input muda.
-input1.addEventListener('input', verificarCampos);
-input2.addEventListener('input', verificarCampos);
+document.addEventListener('DOMContentLoaded', () => {
+    const inputPassword = document.getElementById('input-password') || document.querySelector('input[name="password"]');
+    const inputConfirm = document.getElementById('input-confirm') || document.querySelector('input[name="confirm"]');
+    
+    if (inputPassword && inputConfirm) {
+        function verificarSenhas() {
+            if (inputPassword.value === inputConfirm.value) {
+                inputConfirm.setCustomValidity('');
+            } else {
+                inputConfirm.setCustomValidity('As senhas não conferem.');
+            } 
+        }
+        // Adiciona listeners para o evento 'input' em ambos os campos
+        inputPassword.addEventListener('input', verificarSenhas);
+        inputConfirm.addEventListener('input', verificarSenhas);
+    }
+});
 
-
-*/
 // Seleciona o campo de input
 const inputTelefone = document.getElementsByName('telephone');
 if (inputTelefone.length > 0) {
@@ -90,25 +91,3 @@ if (inputCpf.length > 0) {
         eventCPF.target.value = valorCPF; // 3. Atualiza o valorCPF do campo de input
     });
 }
-/*
-
-
-document.addEventListener('DOMContentLoaded', () => {
-    // Pega o formulário, o botão de envio e todos os inputs exceto o submit
-    const form = document.getElementById('signupForm');
-    const btnSubmit = document.getElementById('signup-botao');
-    const inputs = form.querySelectorAll('input:not([type="submit"])');
-  
-    // Adiciona um listener para o evento 'input' em cada campo
-    inputs.forEach(input => {
-      input.addEventListener('input', () => {
-        // Verifica se todos os inputs são válidos
-        const todosValidos = Array.from(inputs).every(input => input.validity.valid);
-        
-        // Habilita ou desabilita o botão de envio
-        btnSubmit.disabled = !todosValidos;
-      });
-    });
-  });
-
-  */

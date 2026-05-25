@@ -11,6 +11,6 @@ use Alpha\Model\Domain\Entities\Attribute;
  */
 class AttributeMapper extends BaseMapper
 {
-    protected string $table = 'attribute';
+    protected string $tableName = 'attribute';
     protected string $entityClass = Attribute::class;
 }

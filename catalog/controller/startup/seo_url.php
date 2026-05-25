@@ -1,7 +1,6 @@
 <?php
 namespace Opencart\Catalog\Controller\Startup;
 
-use Alpha\Controller\BaseController;
 use Alpha\Model\Domain\Repositories\SeoUrlRepository;
 
 /**
@@ -9,7 +8,7 @@ use Alpha\Model\Domain\Repositories\SeoUrlRepository;
  *
  * @package Opencart\Catalog\Controller\Startup
  */
-class SeoUrl extends BaseController {
+class SeoUrl extends \Opencart\System\Engine\Controller {
 	/**
 	 * @var array<string, string>
 	 */
@@ -26,7 +25,7 @@ class SeoUrl extends BaseController {
 			$this->url->addRewrite($this);
 
 			// Alpha Engine: Injeção fluida do repositório nativo do domínio
-			$seoUrlRepository = $this->getRepository(SeoUrlRepository::class);
+			$seoUrlRepository = $this->registry->get('alpha_repository_factory')->get(SeoUrlRepository::class);
 
 			// Decode URL
 			if (isset($this->request->get['_route_'])) {
@@ -40,7 +39,7 @@ class SeoUrl extends BaseController {
 
 				foreach ($parts as $key => $value) {
 					// Alpha Engine: Resolve o slug para a query string interna correspondente (ex: "product_id=123")
-					$query_string = $seoUrlRepository->getQueryByKeyword($value, $this->storeId, $this->languageId);
+					$query_string = $seoUrlRepository->getQueryByKeyword($value, (int)$this->config->get('config_store_id'), (int)$this->config->get('config_language_id'));
 
 					if ($query_string) {
 						$pair = explode('=', $query_string);
@@ -102,7 +101,7 @@ class SeoUrl extends BaseController {
 		// Start changing the URL query into a path
 		$paths = [];
 
-		$seoUrlRepository = $this->getRepository(SeoUrlRepository::class);
+		$seoUrlRepository = $this->registry->get('alpha_repository_factory')->get(SeoUrlRepository::class);
 
 		foreach ($parts as $part) {
 			$pair = explode('=', $part);
@@ -119,22 +118,25 @@ class SeoUrl extends BaseController {
 
 			$index = $key . '=' . $value;
 
-			if (!isset($this->data[$this->languageId][$index])) {
+			$languageId = (int)$this->config->get('config_language_id');
+			$storeId = (int)$this->config->get('config_store_id');
+
+			if (!isset($this->data[$languageId][$index])) {
 				// Alpha Engine: Resolução de alta performance via Repositório (Identity Map -> Cache Físico -> DAO)
-				$keyword = $seoUrlRepository->getKeywordByQuery($key, $value, $this->storeId, $this->languageId);
+				$keyword = $seoUrlRepository->getKeywordByQuery($key, $value, $storeId, $languageId);
 				
 				if ($keyword) {
-					$this->data[$this->languageId][$index] = [
+					$this->data[$languageId][$index] = [
 						'keyword'    => $keyword,
 						'sort_order' => count($paths)
 					];
 				} else {
-					$this->data[$this->languageId][$index] = false;
+					$this->data[$languageId][$index] = false;
 				}
 			}
 
-			if (!empty($this->data[$this->languageId][$index])) {
-				$paths[] = $this->data[$this->languageId][$index];
+			if (!empty($this->data[$languageId][$index])) {
+				$paths[] = $this->data[$languageId][$index];
 
 				unset($query[$key]);
 			}

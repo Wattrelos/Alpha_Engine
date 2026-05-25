@@ -41,22 +41,36 @@ class EntityMapper
                 // Transforma setNomeCompleto -> nomeCompleto
                 $fieldName = lcfirst($propertyName);
                 
-                // Verifica se o campo existe no request e não está vazio (preserva a lógica do Java)
-                if (isset($request[$fieldName]) && trim((string)$request[$fieldName]) !== '') {
-                    $paramValue = $request[$fieldName];
+                // Alpha Engine (Anti-Corruption Layer): Transforma camelCase para snake_case (OpenCart Legacy)
+                // ex: customerGroupId -> customer_group_id
+                $snakeCaseField = strtolower(preg_replace('/(?<!^)[A-Z]/', '_$0', $fieldName));
+                
+                // Prioriza o padrão camelCase, com fallback elegante para o padrão do OpenCart
+                $requestKey = null;
+                if (isset($request[$fieldName])) {
+                    $requestKey = $fieldName;
+                                } elseif (isset($request[$snakeCaseField])) {
+                    $requestKey = $snakeCaseField;
+                }
 
-                    try {
-                        // Obtém o tipo do primeiro parâmetro do setter
-                        $params = $method->getParameters();
-                        $parameterType = $params[0]->getType()?->getName();
-                        
-                        $convertedValue = self::convertValue($paramValue, $parameterType);
-                        
-                        if ($convertedValue !== null) {
-                            $method->invoke($entity, $convertedValue);
+                if ($requestKey !== null) {
+                    $paramValue = $request[$requestKey];
+                    $isEmpty = is_scalar($paramValue) ? trim((string)$paramValue) === '' : empty($paramValue);
+
+                    if (!$isEmpty) {
+                        try {
+                            // Obtém o tipo do primeiro parâmetro do setter
+                            $params = $method->getParameters();
+                            $parameterType = $params[0]->getType()?->getName();
+                            
+                            $convertedValue = self::convertValue($paramValue, $parameterType);
+                            
+                            if ($convertedValue !== null) {
+                                $method->invoke($entity, $convertedValue);
+                            }
+                        } catch (Exception $e) {
+                            error_log("Erro ao popular campo $fieldName: " . $e->getMessage());
                         }
-                    } catch (Exception $e) {
-                        error_log("Erro ao popular campo $fieldName: " . $e->getMessage());
                     }
                 }
             }
@@ -126,13 +140,14 @@ class EntityMapper
         if ($value === null) return null;
 
         return match ($targetType) {
-            'string' => (string)$value,
+            'string' => is_array($value) ? json_encode($value, JSON_UNESCAPED_UNICODE) : (string)$value,
             'int', 'integer' => (int)$value,
             'float', 'double' => (float)$value,
             'bool', 'boolean' => filter_var($value, FILTER_VALIDATE_BOOLEAN),
-            'DateTime', 'DateTimeInterface' => new DateTime((string)$value),
+            'array' => is_array($value) ? $value : [$value],
+            'DateTime', 'DateTimeInterface' => new DateTime(is_scalar($value) ? (string)$value : 'now'),
             // BigDecimal em PHP é comumente tratado como string para bibliotecas de precisão (BCMath)
-            'BigDecimal' => (string)$value,
+            'BigDecimal' => is_scalar($value) ? (string)$value : '0',
             default => $value,
         };
     }

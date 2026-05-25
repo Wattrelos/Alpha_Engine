@@ -41,49 +41,6 @@ class DataAccessObject
      */
     public function executeQuery(QueryBuilder $builder): array {      
         
-        // Depurador recorrente. Comente, porém não apage ---------------------------------------------------------------------------------------
-        /*
-        // Alpha Engine: Debugger Ultra-Leve (Crash-Proof & Memory Safe)
-        
-        $logFile = DIR_LOGS . 'queries.php';
-        if (!file_exists($logFile)) {
-            file_put_contents($logFile, "<?php die('Acesso Restrito'); ?>\n\n");
-        }
-        
-        $safeParams = [];
-        $runnableSql = $builder->getSQL();
-        
-        foreach ($builder->getParams() ?? [] as $param) {
-            if (is_string($param) && strlen($param) > 500) {
-                $safeParam = substr($param, 0, 500) . '... [TRUNCATED, SIZE: ' . strlen($param) . ' bytes]';
-            } else {
-                $safeParam = $param;
-            }
-            $safeParams[] = $safeParam;
-            
-            // Formata o valor para a query executável
-            if ($safeParam === null) {
-                $value = 'NULL';
-            } elseif (is_bool($safeParam)) {
-                $value = $safeParam ? '1' : '0';
-            } elseif (is_numeric($safeParam) && !is_string($safeParam)) {
-                $value = (string)$safeParam;
-            } else {
-                $value = "'" . addslashes((string)$safeParam) . "'";
-            }
-            
-            // Substitui o primeiro '?' encontrado (Seguro contra Memory Leaks e Backreferences)
-            $pos = strpos($runnableSql, '?');
-            if ($pos !== false) {
-                $runnableSql = substr_replace($runnableSql, $value, $pos, 1);
-            }
-        }
-        
-        // Usamos error_log (unbuffered) para forçar a gravação instantânea no disco, mesmo se a linha abaixo der OOM
-        error_log("[" . date('Y-m-d H:i:s') . "] " . $runnableSql . "\n", 3, $logFile);
-        */
-        // ------------------------------------------------------------------------------------------------------------------------------------------
-
         $conn = ConnectionDB::getInstance()->getConnection();        
         $stmt = $conn->prepare($builder->getSQL());
         
@@ -91,7 +48,6 @@ class DataAccessObject
             $startTime = microtime(true);
             $stmt->execute($builder->getParams());
             $results = $stmt->fetchAll(\PDO::FETCH_ASSOC);
-            $executionTime = round((microtime(true) - $startTime) * 1000, 2);
 
             // Prepara a amostra da primeira linha para auditar nomenclatura do ORM (Crash-Proof)
             $rowCount = count($results);
@@ -102,10 +58,10 @@ class DataAccessObject
                 }
             }
 
-            // error_log("  -> [RETORNO] Tempo: {$executionTime}ms | Linhas: {$rowCount} | Amostra: " . json_encode($sample) . "\n", 3, $logFile);
+            $this->logDebugQuery($builder->getSQL(), $builder->getParams() ?? [], $startTime, $rowCount, $sample);
             return $results;
         } catch (\PDOException $e) {
-            error_log("  -> [ERRO SQL] " . $e->getMessage() . "\n", 3, $logFile);
+            $this->logDebugQuery("[ERRO SQL] " . $e->getMessage() . " | " . $builder->getSQL(), $builder->getParams() ?? []);
             throw $e;
         }
     }
@@ -173,14 +129,10 @@ class DataAccessObject
 
     private function insertForClass(\PDO $conn, InterfaceEntity $entity, string $clazz, ?int $parentId): ?int
     {
-        $columns = [];
-        $values = [];
-        $placeholders = [];
+        $columnsMap = [];
 
         if ($parentId !== null) {
-            $columns[] = "id";
-            $placeholders[] = "?";
-            $values[] = $parentId;
+            $columnsMap['id'] = $parentId;
         }
 
         $reflection = new ReflectionClass($clazz);
@@ -202,26 +154,54 @@ class DataAccessObject
                 $prefixLength = str_starts_with($name, 'is') ? 2 : 3;
                 $colName = $this->convertPascalCaseToSnakeCase(substr($name, $prefixLength));
 
-                if ($value instanceof InterfaceEntity) {
+                $returnType = $method->getReturnType();
+                $returnTypeName = $returnType instanceof \ReflectionNamedType ? $returnType->getName() : null;
+
+                // Aplica Sufixo _id se o valor for Entidade ou se a Assinatura do Método garantir que é uma Entidade
+                if ($value instanceof InterfaceEntity || ($returnTypeName && is_subclass_of($returnTypeName, InterfaceEntity::class))) {
                     $colName .= "_id";
-                    $value = $value->getId();
+                    $value = $value ? $value->getId() : null;
                 }
 
-                $columns[] = "`$colName`";
-                $placeholders[] = "?";
-                $values[] = $value;
+                // Alpha Engine: Desduplicação de colunas e Resolução de Conflitos FK vs Objeto Nulo.
+                if (!array_key_exists($colName, $columnsMap) || $value !== null) {
+                    $columnsMap[$colName] = $value;
+                }
             }
+        }
+
+        $columns = [];
+        $placeholders = [];
+        $values = [];
+
+        foreach ($columnsMap as $col => $val) {
+            $columns[] = "`$col`";
+            $placeholders[] = "?";
+            
+            if ($val instanceof \DateTimeInterface) {
+                $val = $val->format('Y-m-d H:i:s');
+            }
+            $values[] = is_bool($val) ? (int)$val : $val;
         }
 
         $sql = $this->buildInsertSql($clazz, $columns, $placeholders);
 
         try {
+            $startTime = microtime(true);
             $stmt = $conn->prepare($sql);
             $stmt->execute($values);
 
-            return $parentId ?? (int)$conn->lastInsertId();
+            $insertId = $parentId ?? (int)$conn->lastInsertId();
+            
+            $this->logDebugQuery($sql, $values, $startTime, $insertId, ['action' => 'CREATE']);
+            return $insertId;
         } catch (PDOException $e) {
+            $this->logDebugQuery("[ERRO SQL CREATE] " . $e->getMessage() . " | " . $sql, $values);
             error_log("Erro na tabela " . $reflection->getShortName() . ": " . $e->getMessage());
+            
+            if ($e->getCode() == 23000 || (isset($e->errorInfo[1]) && $e->errorInfo[1] == 1062)) {
+                throw new \DomainException("Alpha Engine [Violação de Integridade]: O banco de dados rejeitou a operação pois um registro com estes dados únicos (ex: e-mail) já existe.", 1062, $e);
+            }
             throw $e;
         }
     }
@@ -579,8 +559,7 @@ class DataAccessObject
     
     private function updateForClass(\PDO $conn, InterfaceEntity $entity, string $clazz): void
     {
-        $setClauses = [];
-        $values = [];
+        $columnsMap = [];
         $reflection = new ReflectionClass($clazz);
 
         foreach ($reflection->getMethods(ReflectionMethod::IS_PUBLIC) as $method) {
@@ -591,16 +570,34 @@ class DataAccessObject
                 $value = $method->invoke($entity);
                 if (is_array($value)) continue;
 
-                if ($value !== null) {
-                    $prefixLength = str_starts_with($name, 'is') ? 2 : 3;
-                    $colName = $this->convertPascalCaseToSnakeCase(substr($name, $prefixLength));
-                    if ($value instanceof InterfaceEntity) {
-                        $colName .= "_id";
-                        $value = $value->getId();
-                    }
-                    $setClauses[] = "`$colName` = ?";
-                    $values[] = $value;
+                $prefixLength = str_starts_with($name, 'is') ? 2 : 3;
+                $colName = $this->convertPascalCaseToSnakeCase(substr($name, $prefixLength));
+
+                $returnType = $method->getReturnType();
+                $returnTypeName = $returnType instanceof \ReflectionNamedType ? $returnType->getName() : null;
+
+                if ($value instanceof InterfaceEntity || ($returnTypeName && is_subclass_of($returnTypeName, InterfaceEntity::class))) {
+                    $colName .= "_id";
+                    $value = $value ? $value->getId() : null;
                 }
+
+                if (!array_key_exists($colName, $columnsMap) || $value !== null) {
+                    $columnsMap[$colName] = $value;
+                }
+            }
+        }
+
+        $setClauses = [];
+        $values = [];
+
+        foreach ($columnsMap as $col => $val) {
+            if ($val !== null) {
+                $setClauses[] = "`$col` = ?";
+                
+                if ($val instanceof \DateTimeInterface) {
+                    $val = $val->format('Y-m-d H:i:s');
+                }
+                $values[] = is_bool($val) ? (int)$val : $val;
             }
         }
 
@@ -610,7 +607,15 @@ class DataAccessObject
                "` SET " . implode(", ", $setClauses) . " WHERE id = ?";
         
         $values[] = $entity->getId();
-        $conn->prepare($sql)->execute($values);
+        
+        try {
+            $conn->prepare($sql)->execute($values);
+        } catch (PDOException $e) {
+            if ($e->getCode() == 23000 || (isset($e->errorInfo[1]) && $e->errorInfo[1] == 1062)) {
+                throw new \DomainException("Alpha Engine [Violação de Integridade]: Atualização rejeitada. Os dados informados entram em conflito com registros únicos já existentes.", 1062, $e);
+            }
+            throw $e;
+        }
     }
 
     // ---------------------------------------------------------------------------------------------------
@@ -852,5 +857,44 @@ class DataAccessObject
             'data'  => $rows, // ou $entities
             'total' => $total
         ];
+    }
+
+    /**
+     * Alpha Engine: Debugger Ultra-Leve (Crash-Proof & Memory Safe)
+     * Centraliza a auditoria de queries para leitura e escrita.
+     */
+    private function logDebugQuery(string $sql, array $params, ?float $startTime = null, ?int $affectedRowsOrId = null, array $sample = []): void {
+        if (!defined('DIR_LOGS')) return;
+
+        $logFile = DIR_LOGS . 'queries.php';
+        if (!file_exists($logFile)) {
+            file_put_contents($logFile, "<?php die('Acesso Restrito'); ?>\n\n");
+        }
+        
+        $runnableSql = $sql;
+        foreach ($params as $param) {
+            $safeParam = (is_string($param) && strlen($param) > 500) 
+                ? substr($param, 0, 500) . '... [TRUNCATED, SIZE: ' . strlen($param) . ' bytes]' 
+                : $param;
+            
+            if ($safeParam === null) $value = 'NULL';
+            elseif (is_bool($safeParam)) $value = $safeParam ? '1' : '0';
+            elseif (is_numeric($safeParam) && !is_string($safeParam)) $value = (string)$safeParam;
+            else $value = "'" . addslashes((string)$safeParam) . "'";
+            
+            $pos = strpos($runnableSql, '?');
+            if ($pos !== false) {
+                $runnableSql = substr_replace($runnableSql, $value, $pos, 1);
+            }
+        }
+        
+        error_log("[" . date('Y-m-d H:i:s') . "] " . $runnableSql . "\n", 3, $logFile);
+        
+        if ($startTime !== null) {
+            $executionTime = round((microtime(true) - $startTime) * 1000, 2);
+            $msg = "  -> [RETORNO] Tempo: {$executionTime}ms | " . ($affectedRowsOrId !== null ? "Linhas/ID: {$affectedRowsOrId} | " : "");
+            if (!empty($sample)) $msg .= "Amostra/Detalhes: " . json_encode($sample);
+            error_log($msg . "\n", 3, $logFile);
+        }
     }
 }

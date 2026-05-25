@@ -1,11 +1,14 @@
 <?php
 namespace Opencart\Catalog\Controller\Extension\Opencart\Checkout;
+
+use Alpha\Controller\BaseController;
+
 /**
  * Class Shipping
  *
  * @package Opencart\Catalog\Controller\Extension\Opencart\Checkout
  */
-class Shipping extends \Opencart\System\Engine\Controller {
+class Shipping extends BaseController {
 	/**
 	 * Index
 	 *
@@ -13,7 +16,10 @@ class Shipping extends \Opencart\System\Engine\Controller {
 	 */
 	public function index(): string {
 		if ($this->config->get('total_shipping_status') && $this->config->get('total_shipping_estimator') && $this->cart->hasShipping()) {
-			$this->load->language('extension/opencart/checkout/shipping');
+			$data = [];
+			
+			$this->loadLanguageData('extension/opencart/checkout/shipping', $data);
+
 
 			if (isset($this->session->data['shipping_address'])) {
 				$data['postcode'] = $this->session->data['shipping_address']['postcode'];
@@ -142,8 +148,7 @@ class Shipping extends \Opencart\System\Engine\Controller {
 			}
 		}
 
-		$this->response->addHeader('Content-Type: application/json');
-		$this->response->setOutput(json_encode($json));
+		$this->jsonResponse($json);
 	}
 
 	/**
@@ -175,7 +180,6 @@ class Shipping extends \Opencart\System\Engine\Controller {
 			unset($this->session->data['payment_methods']);
 		}
 
-		$this->response->addHeader('Content-Type: application/json');
-		$this->response->setOutput(json_encode($json));
+		$this->jsonResponse($json);
 	}
 }

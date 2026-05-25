@@ -51,21 +51,10 @@ class ShippingAddress extends BaseController {
 		// Address
 		$data['addresses'] = $this->addressRepository->getAddresses((int)$this->customer->getId(), (int)$this->config->get('config_language_id'));
 
-		if (isset($this->session->data['shipping_address']['address_id'])) {
-			$data['address_id'] = $this->session->data['shipping_address']['address_id'];
-		} else {
-			$data['address_id'] = 0;
-		}
-
-		if (isset($this->session->data['shipping_address'])) {
-			$data['postcode'] = $this->session->data['shipping_address']['postcode'];
-			$data['country_id'] = $this->session->data['shipping_address']['country_id'];
-			$data['zone_id'] = $this->session->data['shipping_address']['zone_id'];
-		} else {
-			$data['postcode'] = '';
-			$data['country_id'] = (int)$this->config->get('config_country_id');
-			$data['zone_id'] = '';
-		}
+		$data['address_id'] = $this->session->data['shipping_address']['address_id'] ?? 0;
+		$data['postcode']   = $this->session->data['shipping_address']['postcode'] ?? '';
+		$data['country_id'] = $this->session->data['shipping_address']['country_id'] ?? (int)$this->config->get('config_country_id');
+		$data['zone_id']    = $this->session->data['shipping_address']['zone_id'] ?? '';
 
 		// Country
 		$data['countries'] = $this->countryRepository->getCountries();
@@ -86,7 +75,7 @@ class ShippingAddress extends BaseController {
 
 		$data['language'] = $this->config->get('config_language');
 
-		return $this->getTemplate('checkout/shipping_address', $data);
+		return $this->load->view('checkout/shipping_address', $data);
 	}
 
 	/**
@@ -215,11 +204,7 @@ class ShippingAddress extends BaseController {
 
 		$json = [];
 
-		if (isset($this->request->get['address_id'])) {
-			$address_id = (int)$this->request->get['address_id'];
-		} else {
-			$address_id = 0;
-		}
+		$address_id = (int)($this->request->get['address_id'] ?? 0);
 
 		// Validate cart has products and has stock.
 		if (!$this->cartRepository->hasProducts() || (!$this->cartRepository->hasStock() && !$this->config->get('config_stock_checkout')) || !$this->cartRepository->hasMinimum()) {

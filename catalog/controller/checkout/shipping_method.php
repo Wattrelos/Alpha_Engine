@@ -30,17 +30,12 @@ class ShippingMethod extends BaseController {
 		$data = [];
 		$this->loadLanguageData('checkout/shipping_method', $data);
 
-		if (isset($this->session->data['shipping_method'])) {
-			$data['shipping_method'] = $this->session->data['shipping_method']['name'];
-			$data['code'] = $this->session->data['shipping_method']['code'];
-		} else {
-			$data['shipping_method'] = '';
-			$data['code'] = '';
-		}
+		$data['shipping_method'] = $this->session->data['shipping_method']['name'] ?? '';
+		$data['code']            = $this->session->data['shipping_method']['code'] ?? '';
 
 		$data['language'] = $this->config->get('config_language');
 
-		return $this->getTemplate('checkout/shipping_method', $data);
+		return $this->load->view('checkout/shipping_method', $data);
 	}
 
 	/**

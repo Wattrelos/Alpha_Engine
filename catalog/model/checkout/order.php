@@ -2,6 +2,7 @@
 namespace Opencart\Catalog\Model\Checkout;
 
 use Alpha\Mappers\OrderMapper;
+use Alpha\Model\Domain\Repositories\CustomerAffiliateRepository;
 
 /**
  * Class Order
@@ -19,78 +20,6 @@ class Order extends \Opencart\System\Engine\Model {
 	 * @param array<string, mixed> $data array of data
 	 *
 	 * @return int returns the primary key of the new order record
-	 *
-	 * @example
-	 *
-	 * $order_data = [
-	 *     'subscription_id'        => 1,
-	 *     'invoice_prefix'         => 'INV-',
-	 *     'store_id'               => 1,
-	 *     'store_name'             => 'Your Store',
-	 *     'store_url'              => '',
-	 *     'customer_id'            => 1,
-	 *     'customer_group_id'      => 1,
-	 *     'firstname'              => 'John',
-	 *     'lastname'               => 'Doe',
-	 *     'email'                  => 'demo@opencart.com',
-	 *     'telephone'              => '1234567890',
-	 *     'custom_field'           => [],
-	 *     'payment_address_id'     => 1,
-	 *     'payment_firstname'      => 'John',
-	 *     'payment_lastname'       => 'Doe',
-	 *     'payment_company'        => '',
-	 *     'payment_address_1'      => 'Address 1',
-	 *     'payment_address_2'      => 'Address 2',
-	 *     'payment_city'           => '',
-	 *     'payment_postcode'       => '',
-	 *     'payment_country'        => 'United Kingdom',
-	 *     'payment_country_id'     => 222,
-	 *     'payment_zone'           => 'Lancashire',
-	 *     'payment_zone_id'        => 3563,
-	 *     'payment_address_format' => '',
-	 *     'payment_custom_field'   => [],
-	 *     'payment_method'         => [
-	 *         'name' => 'Payment Name',
-	 *         'code' => 'Payment Code'
-	 *      ],
-	 *      'shipping_address_id'     => 1,
-	 *      'shipping_firstname'      => 'John',
-	 *      'shipping_lastname'       => 'Doe',
-	 *      'shipping_company'        => '',
-	 *      'shipping_address_1'      => 'Address 1',
-	 *      'shipping_address_2'      => 'Address 2',
-	 *      'shipping_city'           => '',
-	 *      'shipping_postcode'       => '',
-	 *      'shipping_country'        => 'United Kingdom',
-	 *      'shipping_country_id'     => 222,
-	 *      'shipping_zone'           => 'Lancashire',
-	 *      'shipping_zone_id'        => 3563,
-	 *      'shipping_address_format' => '',
-	 *      'shipping_custom_field'   => [],
-	 *      'shipping_method'         => [
-	 *          'name' => 'Shipping Name',
-	 *          'code' => 'Shipping Code'
-	 *      ],
-	 *      'comment'         => '',
-	 *      'total'           => '0.0000',
-	 *      'affiliate_id'    => 0,
-	 *      'commission'      => '0.0000',
-	 *      'marketing_id'    => 0,
-	 *      'tracking'        => '',
-	 *      'language_id'     => 1,
-	 *      'language_code'   => 'en-gb',
-	 *      'currency_id'     => 1,
-	 *      'currency_code'   => 'USD',
-	 *      'currency_value'  => '1.00000000',
-	 *      'ip'              => '',
-	 *      'forwarded_ip'    => '',
-	 *      'user_agent'      => '',
-	 *      'accept_language' => ''
-	 * ];
-	 *
-	 * $this->load->model('checkout/order');
-	 *
-	 * $this->model_checkout_order->addOrder($order_data);
 	 */
 	public function addOrder(array $data): int {
 		$mapper = new OrderMapper();
@@ -123,78 +52,6 @@ class Order extends \Opencart\System\Engine\Model {
 	 * @param array<string, mixed> $data     array of data
 	 *
 	 * @return void
-	 *
-	 * @example
-	 *
-	 * $order_data = [
-	 *     'subscription_id'        => 1,
-	 *     'invoice_prefix'         => 'INV-',
-	 *     'store_id'               => 1,
-	 *     'store_name'             => 'Your Store',
-	 *     'store_url'              => '',
-	 *     'customer_id'            => 1,
-	 *     'customer_group_id'      => 1,
-	 *     'firstname'              => 'John',
-	 *     'lastname'               => 'Doe',
-	 *     'email'                  => 'demo@opencart.com',
-	 *     'telephone'              => '1234567890',
-	 *     'custom_field'           => [],
-	 *     'payment_address_id'     => 1,
-	 *     'payment_firstname'      => 'John',
-	 *     'payment_lastname'       => 'Doe',
-	 *     'payment_company'        => '',
-	 *     'payment_address_1'      => 'Address 1',
-	 *     'payment_address_2'      => 'Address 2',
-	 *     'payment_city'           => '',
-	 *     'payment_postcode'       => '',
-	 *     'payment_country'        => 'United Kingdom',
-	 *     'payment_country_id'     => 222,
-	 *     'payment_zone'           => 'Lancashire',
-	 *     'payment_zone_id'        => 3563,
-	 *     'payment_address_format' => '',
-	 *     'payment_custom_field'   => [],
-	 *     'payment_method'         => [
-	 *         'name' => 'Payment Name',
-	 *         'code' => 'Payment Code'
-	 *      ],
-	 *      'shipping_address_id'     => 1,
-	 *      'shipping_firstname'      => 'John',
-	 *      'shipping_lastname'       => 'Doe',
-	 *      'shipping_company'        => '',
-	 *      'shipping_address_1'      => 'Address 1',
-	 *      'shipping_address_2'      => 'Address 2',
-	 *      'shipping_city'           => '',
-	 *      'shipping_postcode'       => '',
-	 *      'shipping_country'        => 'United Kingdom',
-	 *      'shipping_country_id'     => 222,
-	 *      'shipping_zone'           => 'Lancashire',
-	 *      'shipping_zone_id'        => 3563,
-	 *      'shipping_address_format' => '',
-	 *      'shipping_custom_field'   => [],
-	 *      'shipping_method'         => [
-	 *          'name' => 'Shipping Name',
-	 *          'code' => 'Shipping Code'
-	 *      ],
-	 *      'comment'         => '',
-	 *      'total'           => '0.0000',
-	 *      'affiliate_id'    => 0,
-	 *      'commission'      => '0.0000',
-	 *      'marketing_id'    => 0,
-	 *      'tracking'        => '',
-	 *      'language_id'     => 1,
-	 *      'language_code'   => 'en-gb',
-	 *      'currency_id'     => 1,
-	 *      'currency_code'   => 'USD',
-	 *      'currency_value'  => '1.00000000',
-	 *      'ip'              => '',
-	 *      'forwarded_ip'    => '',
-	 *      'user_agent'      => '',
-	 *      'accept_language' => ''
-	 * ];
-	 *
-	 * $this->load->model('checkout/order');
-	 *
-	 * $this->model_checkout_order->editOrder($order_id, $order_data);
 	 */
 	public function editOrder(int $order_id, array $data): void {
 		// 1. Void the order first
@@ -235,84 +92,30 @@ class Order extends \Opencart\System\Engine\Model {
 
 	/**
 	 * Edit Transaction ID
-	 *
-	 * Edit order transaction record in the database.
-	 *
-	 * @param int    $order_id       primary key of the order record
-	 * @param string $transaction_id primary key of the transaction record
-	 *
-	 * @return void
-	 *
-	 * @example
-	 *
-	 * $this->load->model('checkout/order');
-	 *
-	 * $this->model_checkout_order->editTransactionId($order_id, $transaction_id);
 	 */
 	public function editTransactionId(int $order_id, string $transaction_id): void {
 		$mapper = new OrderMapper();
-
 		$mapper->updateTransactionId($order_id, $transaction_id);
 	}
 
 	/**
 	 * Edit Order Status ID
-	 *
-	 * Edit order status record in the database.
-	 *
-	 * @param int $order_id        primary key of the order record
-	 * @param int $order_status_id primary key of the order status record
-	 *
-	 * @return void
-	 *
-	 * @example
-	 *
-	 * $this->load->model('checkout/order');
-	 *
-	 * $this->model_checkout_order->editOrderStatusId($order_id, $order_status_id);
 	 */
 	public function editOrderStatusId(int $order_id, int $order_status_id): void {
 		$mapper = new OrderMapper();
-		
 		$mapper->updateStatus($order_id, $order_status_id);
 	}
 
 	/**
 	 * Edit Comment
-	 *
-	 * Edit order comment record in the database.
-	 *
-	 * @param int    $order_id primary key of the order record
-	 * @param string $comment
-	 *
-	 * @return void
-	 *
-	 * @example
-	 *
-	 * $this->load->model('checkout/order');
-	 *
-	 * $this->model_checkout_order->editComment($order_id, $comment);
 	 */
 	public function editComment(int $order_id, string $comment): void {
 		$mapper = new OrderMapper();
-
 		$mapper->updateComment($order_id, $comment);
 	}
 
 	/**
 	 * Delete Order
-	 *
-	 * Delete order record in the database.
-	 *
-	 * @param int $order_id primary key of the order record
-	 *
-	 * @return void
-	 *
-	 * @example
-	 *
-	 * $this->load->model('checkout/order');
-	 *
-	 * $this->model_checkout_order->deleteOrder($order_id);
 	 */
 	public function deleteOrder(int $order_id): void {
 		// Void the order first so it restocks products
@@ -323,38 +126,21 @@ class Order extends \Opencart\System\Engine\Model {
 
 		// Transaction
 		$this->load->model('account/transaction');
-
 		$this->model_account_transaction->deleteTransactionsByOrderId($order_id);
 
 		// Reward
 		$this->load->model('account/reward');
-
 		$this->model_account_reward->deleteRewardsByOrderId($order_id);
 	}
 
 	/**
 	 * Get Order
-	 *
-	 * Get the record of the order record in the database.
-	 *
-	 * @param int $order_id primary key of the order record
-	 *
-	 * @return array<string, mixed> order record that has order ID
-	 *
-	 * @example
-	 *
-	 * $this->load->model('checkout/order');
-	 *
-	 * $order_info = $this->model_checkout_order->getOrder($order_id);
 	 */
 	public function getOrder(int $order_id): array {
 		$mapper = new OrderMapper();
-		
 		$order_data = $mapper->getOrder($order_id);
 
 		if ($order_data) {
-			// O Mapper já traz order_status, country names e zone codes via JOIN.
-			// Apenas processamos os campos que são armazenados como JSON no banco.
 			$order_data['custom_field'] = $order_data['custom_field'] ? json_decode($order_data['custom_field'], true) : [];
 			
 			$json_fields = [
@@ -379,31 +165,6 @@ class Order extends \Opencart\System\Engine\Model {
 
 	/**
 	 * Add Product
-	 *
-	 * Create a new order product record in the database.
-	 *
-	 * @param int                  $order_id primary key of the order record
-	 * @param array<string, mixed> $data     array of data
-	 *
-	 * @return int returns the primary key of the new order product record
-	 *
-	 * @example
-	 *
-	 * $order_product_data = [
-	 *     'product_id' => 1,
-	 *     'master_id'  => 0,
-	 *     'name'       => 'Product Name',
-	 *     'model'      => 'Product Model',
-	 *     'quantity'   => 1,
-	 *     'price'      => 0.0000,
-	 *     'total'      => 0.0000,
-	 *     'tax'        => 0.0000,
-	 *     'reward'     => 0
-	 * ];
-	 *
-	 * $this->load->model('checkout/order');
-	 *
-	 * $this->model_checkout_order->addProduct($order_id, $order_product_data);
 	 */
 	public function addProduct(int $order_id, array $data): int {
 		$mapper = new OrderMapper();
@@ -425,41 +186,14 @@ class Order extends \Opencart\System\Engine\Model {
 
 	/**
 	 * Delete Products
-	 *
-	 * Delete order product record in the database.
-	 *
-	 * @param int $order_id         primary key of the order record
-	 * @param int $order_product_id primary key of the order product record
-	 *
-	 * @return void
-	 *
-	 * @example
-	 *
-	 * $this->load->model('checkout/order');
-	 *
-	 * $this->model_checkout_order->deleteProducts($order_id);
 	 */
 	public function deleteProducts(int $order_id): void {
 		$mapper = new OrderMapper();
-
 		$mapper->deleteProducts($order_id);
 	}
 
 	/**
 	 * Get Product
-	 *
-	 * Get the record of the order product record in the database.
-	 *
-	 * @param int $order_id         primary key of the order record
-	 * @param int $order_product_id primary key of the order product record
-	 *
-	 * @return array<int, array<string, mixed>> product record that has order ID, order product ID
-	 *
-	 * @example
-	 *
-	 * $this->load->model('checkout/order');
-	 *
-	 * $order_product = $this->model_checkout_order->getProduct($order_id, $order_product_id);
 	 */
 	public function getProduct(int $order_id, int $order_product_id): array {
 		$mapper = new OrderMapper();
@@ -468,49 +202,14 @@ class Order extends \Opencart\System\Engine\Model {
 
 	/**
 	 * Get Products
-	 *
-	 * Get the record of the order product records in the database.
-	 *
-	 * @param int $order_id primary key of the order record
-	 *
-	 * @return array<int, array<string, mixed>> product records that have order ID
-	 *
-	 * @example
-	 *
-	 * $this->load->model('checkout/order');
-	 *
-	 * $order_products = $this->model_checkout_order->getProducts($order_id);
 	 */
 	public function getProducts(int $order_id): array {
 		$mapper = new OrderMapper();
-
 		return $mapper->getOrderProducts($order_id);
 	}
 
 	/**
 	 * Add Option
-	 *
-	 * Create a new order option record in the database.
-	 *
-	 * @param int                  $order_id         primary key of the order record
-	 * @param int                  $order_product_id primary key of the order product record
-	 * @param array<string, mixed> $data             array of data
-	 *
-	 * @return void
-	 *
-	 * @example
-	 *
-	 * $order_option_data = [
-	 *     'product_option_id'       => 1,
-	 *     'product_option_value_id' => 1,
-	 *     'name'                    => 'Option Name',
-	 *     'value'                   => 'Option Value',
-	 *     'type'                    => 'radio'
-	 * ];
-	 *
-	 * $this->load->model('checkout/order');
-	 *
-	 * $this->model_checkout_order->addOption($order_id, $order_product_id, $order_option_data);
 	 */
 	public function addOption(int $order_id, int $order_product_id, array $data): void {
 		$mapper = new OrderMapper();
@@ -519,41 +218,14 @@ class Order extends \Opencart\System\Engine\Model {
 
 	/**
 	 * Delete Options
-	 *
-	 * Delete order option records in the database.
-	 *
-	 * @param int $order_id         primary key of the order record
-	 * @param int $order_product_id primary key of the order product record
-	 *
-	 * @return void
-	 *
-	 * @example
-	 *
-	 * $this->load->model('checkout/order');
-	 *
-	 * $this->model_checkout_order->deleteOptions($order_id);
 	 */
 	public function deleteOptions(int $order_id): void {
 		$mapper = new OrderMapper();
-
 		$mapper->deleteOptions($order_id);
 	}
 
 	/**
 	 * Get Options
-	 *
-	 * Get the record of the order option records in the database.
-	 *
-	 * @param int $order_id         primary key of the order record
-	 * @param int $order_product_id primary key of the order product record
-	 *
-	 * @return array<int, array<string, mixed>> option records that have order ID, order product ID
-	 *
-	 * @example
-	 *
-	 * $this->load->model('checkout/order');
-	 *
-	 * $order_options = $this->model_checkout_order->getOptions($order_id, $order_product_id);
 	 */
 	public function getOptions(int $order_id, int $order_product_id): array {
 		$mapper = new OrderMapper();
@@ -562,36 +234,6 @@ class Order extends \Opencart\System\Engine\Model {
 
 	/**
 	 * Add Subscription
-	 *
-	 * Create a order subscription record in the database.
-	 *
-	 * @param int                  $order_id         primary key of the order record
-	 * @param int                  $order_product_id primary key of the order product record
-	 * @param array<string, mixed> $data             array of data
-	 *
-	 * @return void
-	 *
-	 * @example
-	 *
-	 * $order_subscription_data = [
-	 *     'product_id'           => 1,
-	 *     'subscription_plan_id' => 1,
-	 *     'trial_price'          => 0.0000,
-	 *     'trial_tax'            => 0.0000,
-	 *     'trial_frequency'      => 'month',
-	 *     'trial_cycle'          => 5,
-	 *     'trial_duration'       => 1,
-	 *     'trial_status'         => 1,
-	 *     'price'                => 0.0000,
-	 *     'tax'                  => 0.0000,
-	 *     'frequency'            => 'month',
-	 *     'cycle'                => 5,
-	 *     'duration'             => 1
-	 * ];
-	 *
-	 * $this->load->model('checkout/order');
-	 *
-	 * $this->model_checkout_order->addSubscription($order_id, $order_product_id, $order_subscription_data);
 	 */
 	public function addSubscription(int $order_id, int $order_product_id, array $data): void {
 		$mapper = new OrderMapper();
@@ -600,41 +242,14 @@ class Order extends \Opencart\System\Engine\Model {
 
 	/**
 	 * Delete Subscription
-	 *
-	 * Delete order subscription record in the database.
-	 *
-	 * @param int $order_id         primary key of the order record
-	 * @param int $order_product_id primary key of the order product record
-	 *
-	 * @return void
-	 *
-	 * @example
-	 *
-	 * $this->load->model('checkout/order');
-	 *
-	 * $this->model_checkout_order->deleteSubscription($order_id);
 	 */
 	public function deleteSubscription(int $order_id): void {
 		$mapper = new OrderMapper();
-
 		$mapper->deleteSubscriptions($order_id);
 	}
 
 	/**
 	 * Get Subscription
-	 *
-	 * Get the record of the order subscription record in the database.
-	 *
-	 * @param int $order_id         primary key of the order record
-	 * @param int $order_product_id primary key of the order product record
-	 *
-	 * @return array<string, mixed> subscription record that have order ID, order product ID
-	 *
-	 * @example
-	 *
-	 * $this->load->model('checkout/order');
-	 *
-	 * $order_subscription_info = $this->model_checkout_order->getSubscription($order_id, $order_product_id);
 	 */
 	public function getSubscription(int $order_id, int $order_product_id): array {
 		$mapper = new OrderMapper();
@@ -643,18 +258,6 @@ class Order extends \Opencart\System\Engine\Model {
 
 	/**
 	 * Get Subscriptions
-	 *
-	 * Get the record of the order subscription records in the database.
-	 *
-	 * @param int $order_id primary key of the order record
-	 *
-	 * @return array<int, array<string, mixed>> subscription records that have order ID
-	 *
-	 * @example
-	 *
-	 * $this->load->model('checkout/order');
-	 *
-	 * $results = $this->model_checkout_order->getSubscriptions($order_id);
 	 */
 	public function getSubscriptions(int $order_id): array {
 		$mapper = new OrderMapper();
@@ -663,18 +266,6 @@ class Order extends \Opencart\System\Engine\Model {
 
 	/**
 	 * Get Total Orders By Subscription ID
-	 *
-	 * Get the total number of total orders by subscription records in the database.
-	 *
-	 * @param int $subscription_id primary key of the subscription record
-	 *
-	 * @return int total number of order that have subscription ID
-	 *
-	 * @example
-	 *
-	 * $this->load->model('checkout/order');
-	 *
-	 * $subscription_total = $this->model_checkout_order->getTotalOrdersBySubscriptionId($subscription_id);
 	 */
 	public function getTotalOrdersBySubscriptionId(int $subscription_id): int {
 		$mapper = new OrderMapper();
@@ -683,27 +274,6 @@ class Order extends \Opencart\System\Engine\Model {
 
 	/**
 	 * Add Total
-	 *
-	 * Create a new order total record in the database.
-	 *
-	 * @param int                  $order_id primary key of the order record
-	 * @param array<string, mixed> $data     array of data
-	 *
-	 * @return void
-	 *
-	 * @example
-	 *
-	 * $order_total_data = [
-	 *     'extension' => '',
-	 *     'code'      => '',
-	 *     'title'     => 'Order Total Title',
-	 *     'value'     => 0.0000,
-	 *     'sort_order'
-	 * ];
-	 *
-	 * $this->load->model('checkout/order');
-	 *
-	 * $this->model_checkout_order->addTotal($order_id, $order_total_data);
 	 */
 	public function addTotal(int $order_id, array $data): void {
 		$mapper = new OrderMapper();
@@ -712,64 +282,22 @@ class Order extends \Opencart\System\Engine\Model {
 
 	/**
 	 * Delete Totals
-	 *
-	 * Delete order total records in the database.
-	 *
-	 * @param int $order_id primary key of the order record
-	 *
-	 * @return void
-	 *
-	 * @example
-	 *
-	 * $this->load->model('checkout/order');
-	 *
-	 * $this->model_checkout_order->deleteTotals($order_id);
 	 */
 	public function deleteTotals(int $order_id): void {
 		$mapper = new OrderMapper();
-
 		$mapper->deleteTotals($order_id);
 	}
 
 	/**
 	 * Get Totals
-	 *
-	 * Get the record of the order total records in the database.
-	 *
-	 * @param int $order_id primary key of the order record
-	 *
-	 * @return array<int, array<string, mixed>> total records that have order ID
-	 *
-	 * @example
-	 *
-	 * $this->load->model('checkout/order');
-	 *
-	 * $order_totals = $this->model_checkout_order->getTotals($order_id);
 	 */
 	public function getTotals(int $order_id): array {
 		$mapper = new OrderMapper();
-
 		return $mapper->getOrderTotals($order_id);
 	}
 
 	/**
 	 * Add History
-	 *
-	 * Create a new order history record in the database.
-	 *
-	 * @param int    $order_id        primary key of the order record
-	 * @param int    $order_status_id primary key of the order status record
-	 * @param string $comment
-	 * @param bool   $notify
-	 * @param bool   $override
-	 *
-	 * @return void
-	 *
-	 * @example
-	 *
-	 * $this->load->model('checkout/order');
-	 *
-	 * $this->model_checkout_order->addHistory($order_id, $order_status_id, $comment, $notify, $override);
 	 */
 	public function addHistory(int $order_id, int $order_status_id, string $comment = '', bool $notify = false, bool $override = false): void {
 		$mapper = new OrderMapper();
@@ -862,11 +390,18 @@ class Order extends \Opencart\System\Engine\Model {
 			if (!in_array($order_info['order_status_id'], (array)$this->config->get('config_complete_status')) && in_array($order_status_id, (array)$this->config->get('config_complete_status'))) {
 				// Affiliate add commission if complete status
 				if ($order_info['affiliate_id'] && $this->config->get('config_affiliate_auto')) {
-					// Add commission if sale is linked to affiliate referral.
-					$this->load->model('account/customer');
+					// Alpha Engine: Affiliate Domain Validation
+					$affiliateRepo = $this->registry->get('alpha_repository_factory')->get(CustomerAffiliateRepository::class);
+					$affiliate = $affiliateRepo->find($order_info['affiliate_id']);
 
-					if (!$this->model_account_customer->getTotalTransactionsByOrderId($order_id)) {
-						$this->model_account_customer->addTransaction($order_info['affiliate_id'], $this->language->get('text_order_id') . ' #' . $order_id, $order_info['commission'], $order_id);
+					// Only add commission if the affiliate exists and is active (approved)
+					if ($affiliate && $affiliate->isStatus()) {
+						// Add commission if sale is linked to affiliate referral.
+						$this->load->model('account/customer');
+
+						if (!$this->model_account_customer->getTotalTransactionsByOrderId($order_id)) {
+							$this->model_account_customer->addTransaction($order_info['affiliate_id'], $this->language->get('text_order_id') . ' #' . $order_id, $order_info['commission'], $order_id);
+						}
 					}
 				}
 
@@ -964,7 +499,8 @@ class Order extends \Opencart\System\Engine\Model {
 				if ($order_info['affiliate_id']) {
 					$this->load->model('account/transaction');
 
-					$this->model_account_transaction->deleteTransaction($order_info['customer_id'], $order_id);
+					// Alpha Engine Fix: A transação pertence ao affiliate_id e não ao customer_id (comprador).
+					$this->model_account_transaction->deleteTransaction($order_info['affiliate_id'], $order_id);
 				}
 			}
 
@@ -979,22 +515,9 @@ class Order extends \Opencart\System\Engine\Model {
 
 	/**
 	 * Delete Order Histories
-	 *
-	 * Delete order history records in the database.
-	 *
-	 * @param int $order_id primary key of the order record
-	 *
-	 * @return void
-	 *
-	 * @example
-	 *
-	 * $this->load->model('checkout/order');
-	 *
-	 * $this->model_checkout_order->deleteHistories($order_id);
 	 */
 	public function deleteHistories(int $order_id): void {
 		$mapper = new OrderMapper();
-
 		$mapper->deleteHistories($order_id);
 	}
 }

@@ -129,6 +129,31 @@ class CartRepository extends AbstractRepository implements BaseRepositoryInterfa
     }
 
     /**
+     * Alpha Engine: Sincroniza o Endereço de Domínio ativo com a Sessão
+     * para garantir a precisão do cálculo de Impostos (Tax Zone) e Frete.
+     */
+    private function resolveTaxAndShippingZone(): void
+    {
+        if ($this->customer->isLogged() && empty($this->session->data['shipping_address']) && empty($this->session->data['payment_address'])) {
+            /** @var \Alpha\Model\Domain\Repositories\AddressRepository $addressRepo */
+            $addressRepo = $this->registry->get('alpha_repository_factory')->get(\Alpha\Model\Domain\Repositories\AddressRepository::class);
+            $defaultAddress = $addressRepo->getDefaultAddress($this->getCustomerId());
+            
+            if ($defaultAddress) {
+                $addressDTO = $addressRepo->getAddress($defaultAddress->getId());
+                
+                $this->session->data['shipping_address'] = $addressDTO;
+                $this->session->data['payment_address'] = $addressDTO;
+                
+                if ($this->registry->has('tax')) {
+                    $this->tax->setShippingAddress($defaultAddress->getCountryId(), $defaultAddress->getZoneId());
+                    $this->tax->setPaymentAddress($defaultAddress->getCountryId(), $defaultAddress->getZoneId());
+                }
+            }
+        }
+    }
+
+    /**
      * Alpha Engine: Recupera e hidrata os produtos do carrinho.
      * Fim do N+1: A hidratação de produtos consome o ProductMapper e aplica descontos.
      */
@@ -137,6 +162,10 @@ class CartRepository extends AbstractRepository implements BaseRepositoryInterfa
         if ($this->isLoaded) {
             return $this->data;
         }
+
+        // Alpha Engine: Garante que as zonas de frete e impostos estejam resolvidas
+        // utilizando a nova arquitetura da Entidade Address antes do processamento.
+        $this->resolveTaxAndShippingZone();
 
         $cartItems = $this->getMapper()->getItems($this->getCustomerId(), $this->getSessionId(), $this->store_id);
         
@@ -265,6 +294,10 @@ class CartRepository extends AbstractRepository implements BaseRepositoryInterfa
                     }
                 }
 
+                // Alpha Engine: Integração da Zona de Imposto (Tax Zone) na exibição de preços
+                $taxPrice = $this->tax->calculate($price, $productInfo['tax_class_id'], $this->config->get('config_tax'));
+                $taxTotal = $taxPrice * $item['quantity'];
+
                 // Formatação final do produto protegendo a interface legada
                 $products[] = [
                     'cart_id'               => $item['cart_id'] ?? $item['id'], // Interoperabilidade para chaves renomeadas
@@ -282,9 +315,9 @@ class CartRepository extends AbstractRepository implements BaseRepositoryInterfa
                     'stock'                 => ($productInfo['quantity'] >= $item['quantity']),
                     'stock_status'          => ($productInfo['quantity'] >= $item['quantity']),
                     'price'                 => $price,
-                    'price_text'            => $this->currency->format($price, $this->session->data['currency']),
+                    'price_text'            => $this->currency->format($taxPrice, $this->session->data['currency']),
                     'total'                 => $price * $item['quantity'],
-                    'total_text'            => $this->currency->format($price * $item['quantity'], $this->session->data['currency']),
+                    'total_text'            => $this->currency->format($taxTotal, $this->session->data['currency']),
                     'reward'                => (int)$productInfo['reward'] * $item['quantity'],
                     'points'                => $points * $item['quantity'],
                     'weight'                => $weight,

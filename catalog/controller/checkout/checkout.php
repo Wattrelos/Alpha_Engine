@@ -56,29 +56,10 @@ class Checkout extends BaseController {
 			'href' => $this->url->link('checkout/checkout', 'language=' . $this->config->get('config_language'))
 		];
 
-		if (!$this->customer->isLogged()) {
-			$data['register'] = (new Register($this->registry))->index();
-		} else {
-			$data['register'] = '';
-		}
-
-		if ($this->customer->isLogged() && $this->config->get('config_checkout_payment_address')) {
-			$data['payment_address'] = (new PaymentAddress($this->registry))->index();
-		} else {
-			$data['payment_address'] = '';
-		}
-
-		if ($this->customer->isLogged() && $this->cartRepository->hasShipping()) {
-			$data['shipping_address'] = (new ShippingAddress($this->registry))->index();
-		} else {
-			$data['shipping_address'] = '';
-		}
-
-		if ($this->cartRepository->hasShipping()) {
-			$data['shipping_method'] = (new ShippingMethod($this->registry))->index();
-		} else {
-			$data['shipping_method'] = '';
-		}
+		$data['register']         = !$this->customer->isLogged() ? (new Register($this->registry))->index() : '';
+		$data['payment_address']  = ($this->customer->isLogged() && $this->config->get('config_checkout_payment_address')) ? (new PaymentAddress($this->registry))->index() : '';
+		$data['shipping_address'] = ($this->customer->isLogged() && $this->cartRepository->hasShipping()) ? (new ShippingAddress($this->registry))->index() : '';
+		$data['shipping_method']  = $this->cartRepository->hasShipping() ? (new ShippingMethod($this->registry))->index() : '';
 
 		// Alpha Engine: Injeção Loader-Free dos sub-controladores
 		$data['payment_method'] = (new PaymentMethod($this->registry))->index();
