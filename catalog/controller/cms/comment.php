@@ -1,5 +1,11 @@
 <?php
 namespace Opencart\Catalog\Controller\Cms;
+
+use Alpha\Controller\BaseController;
+use Alpha\Model\Domain\Repositories\ArticleRepository;
+use Alpha\Model\Domain\Repositories\ExtensionRepository;
+use Alpha\Model\Domain\Repositories\AntispamRepository;
+
 /**
  * Class Comment
  *
@@ -7,7 +13,7 @@ namespace Opencart\Catalog\Controller\Cms;
  *
  * @package Opencart\Catalog\Controller\Cms
  */
-class Comment extends \Opencart\System\Engine\Controller {
+class Comment extends BaseController {
 	/**
 	 * Index
 	 *
@@ -50,9 +56,6 @@ class Comment extends \Opencart\System\Engine\Controller {
 		$data['like'] = $this->url->link('cms/comment.rate', 'language=' . $this->config->get('config_language') . '&article_id=' . $data['article_id'] . '&rate=1&comment_token=' . $this->session->data['comment_token'], true);
 		$data['dislike'] = $this->url->link('cms/comment.rate', 'language=' . $this->config->get('config_language') . '&article_id=' . $data['article_id'] . '&rate=0&comment_token=' . $this->session->data['comment_token'], true);
 
-		// Article
-		$this->load->model('cms/article');
-
 		$data['list'] = $this->load->controller('cms/comment.getList');
 
 		$data['sorts'] = [];
@@ -85,9 +88,8 @@ class Comment extends \Opencart\System\Engine\Controller {
 		$data['order'] = $order;
 
 		// Captcha
-		$this->load->model('setting/extension');
-
-		$extension_info = $this->model_setting_extension->getExtensionByCode('captcha', $this->config->get('config_captcha'));
+		$extensionRepository = $this->getRepository(ExtensionRepository::class);
+		$extension_info = $extensionRepository->getExtensionByCode('captcha', $this->config->get('config_captcha'));
 
 		if ($extension_info && $this->config->get('captcha_' . $this->config->get('config_captcha') . '_status') && in_array('comment', (array)$this->config->get('config_captcha_page'))) {
 			$data['captcha'] = $this->load->controller('extension/' . $extension_info['extension'] . '/captcha/' . $extension_info['code']);
@@ -154,9 +156,8 @@ class Comment extends \Opencart\System\Engine\Controller {
 		];
 
 		// Article
-		$this->load->model('cms/article');
-
-		$results = $this->model_cms_article->getComments($article_id, $filter_data);
+		$articleRepository = $this->getRepository(ArticleRepository::class);
+		$results = $articleRepository->getComments($article_id, $filter_data);
 
 		foreach ($results as $result) {
 			$data['comments'][] = [
@@ -166,11 +167,11 @@ class Comment extends \Opencart\System\Engine\Controller {
 				'dislike'     => $this->url->link('cms/comment.rate', 'language=' . $this->config->get('config_language') . '&article_id=' . $article_id . '&article_comment_id=' . $result['article_comment_id'] . '&comment_token=' . $this->session->data['comment_token'] . '&rate=0', true),
 				'reply'       => $this->url->link('cms/comment.reply', 'language=' . $this->config->get('config_language') . '&article_id=' . $article_id . '&parent_id=' . $result['article_comment_id'], true),
 				'reply_add'   => $this->url->link('cms/comment.add', 'language=' . $this->config->get('config_language') . '&article_id=' . $article_id . '&parent_id=' . $result['article_comment_id'] . '&comment_token=' . $this->session->data['comment_token'], true),
-				'reply_total' => $this->model_cms_article->getTotalComments($article_id, ['parent_id' => $result['article_comment_id']])
+				'reply_total' => $articleRepository->getTotalComments($article_id, ['parent_id' => $result['article_comment_id']])
 			] + $result;
 		}
 
-		$comment_total = $this->model_cms_article->getTotalComments($article_id, $filter_data);
+		$comment_total = $articleRepository->getTotalComments($article_id, $filter_data);
 
 		$data['pagination'] = $this->load->controller('common/pagination', [
 			'total' => $comment_total,
@@ -237,9 +238,8 @@ class Comment extends \Opencart\System\Engine\Controller {
 		];
 
 		// Article
-		$this->load->model('cms/article');
-
-		$results = $this->model_cms_article->getComments($article_id, $filter_data);
+		$articleRepository = $this->getRepository(ArticleRepository::class);
+		$results = $articleRepository->getComments($article_id, $filter_data);
 
 		foreach ($results as $result) {
 			$data['replies'][] = [
@@ -248,7 +248,7 @@ class Comment extends \Opencart\System\Engine\Controller {
 			] + $result;
 		}
 
-		$reply_total = $this->model_cms_article->getTotalComments($article_id, $filter_data);
+		$reply_total = $articleRepository->getTotalComments($article_id, $filter_data);
 
 		$data['refresh'] = $this->url->link('cms/comment.reply', 'language=' . $this->config->get('config_language') . '&article_id=' . $article_id . '&parent_id=' . $parent_id . '&page=' . $page, true);
 
@@ -302,9 +302,8 @@ class Comment extends \Opencart\System\Engine\Controller {
 		}
 
 		// Article
-		$this->load->model('cms/article');
-
-		$article_info = $this->model_cms_article->getArticle($article_id);
+		$articleRepository = $this->getRepository(ArticleRepository::class);
+		$article_info = $articleRepository->getArticle($article_id);
 
 		if (!$article_info) {
 			$json['error']['warning'] = $this->language->get('error_article');
@@ -327,7 +326,7 @@ class Comment extends \Opencart\System\Engine\Controller {
 				'limit'       => 1
 			];
 
-			$results = $this->model_cms_article->getComments($article_id, $filter_data);
+			$results = $articleRepository->getComments($article_id, $filter_data);
 
 			foreach ($results as $result) {
 				if (strtotime('+' . $this->config->get('config_comment_interval') . ' minute', strtotime($result['date_added'])) >= time()) {
@@ -339,9 +338,8 @@ class Comment extends \Opencart\System\Engine\Controller {
 		}
 
 		// Captcha
-		$this->load->model('setting/extension');
-
-		$extension_info = $this->model_setting_extension->getExtensionByCode('captcha', $this->config->get('config_captcha'));
+		$extensionRepository = $this->getRepository(ExtensionRepository::class);
+		$extension_info = $extensionRepository->getExtensionByCode('captcha', $this->config->get('config_captcha'));
 
 		if ($extension_info && $this->config->get('captcha_' . $this->config->get('config_captcha') . '_status') && in_array('comment', (array)$this->config->get('config_captcha_page'))) {
 			$captcha = $this->load->controller('extension/' . $extension_info['extension'] . '/captcha/' . $extension_info['code'] . '.validate');
@@ -357,9 +355,8 @@ class Comment extends \Opencart\System\Engine\Controller {
 
 		if (!$json) {
 			// Anti-Spam
-			$this->load->model('cms/antispam');
-
-			$spam = $this->model_cms_antispam->getSpam($post_info['comment']);
+			$antispamRepository = $this->getRepository(AntispamRepository::class);
+			$spam = $antispamRepository->getSpam($post_info['comment']);
 
 			// If customer has been approved to make comments without moderation
 			if ($this->customer->isCommenter()) {
@@ -376,7 +373,7 @@ class Comment extends \Opencart\System\Engine\Controller {
 				'status'    => $status
 			];
 
-			$this->model_cms_article->addComment($article_id, $comment_data);
+			$articleRepository->addComment($article_id, $comment_data);
 
 			if ($status) {
 				$json['success'] = $this->language->get('text_success');
@@ -426,9 +423,8 @@ class Comment extends \Opencart\System\Engine\Controller {
 		}
 
 		// Article
-		$this->load->model('cms/article');
-
-		$article_info = $this->model_cms_article->getArticle($article_id);
+		$articleRepository = $this->getRepository(ArticleRepository::class);
+		$article_info = $articleRepository->getArticle($article_id);
 
 		if (!$article_info) {
 			$json['error'] = $this->language->get('error_article');
@@ -436,7 +432,7 @@ class Comment extends \Opencart\System\Engine\Controller {
 
 		// Comment to rate
 		if ($article_comment_id) {
-			$article_comment_info = $this->model_cms_article->getComment($article_comment_id);
+			$article_comment_info = $articleRepository->getComment($article_comment_id);
 
 			if (!$article_comment_info) {
 				$json['error'] = $this->language->get('error_article_comment');
@@ -445,14 +441,14 @@ class Comment extends \Opencart\System\Engine\Controller {
 
 		if (!$json) {
 			// Delete previous rating if there is one
-			$this->model_cms_article->deleteRating($article_id, $article_comment_id);
+			$articleRepository->deleteRating($article_id, $article_comment_id);
 
-			$this->model_cms_article->addRating($article_id, $article_comment_id, $rating);
+			$articleRepository->addRating($article_id, $article_comment_id, $rating);
 
 			$like = 0;
 			$dislike = 0;
 
-			$results = $this->model_cms_article->getRatings($article_id, $article_comment_id);
+			$results = $articleRepository->getRatings($article_id, $article_comment_id);
 
 			foreach ($results as $result) {
 				if ($result['rating'] == 1) {
@@ -465,9 +461,9 @@ class Comment extends \Opencart\System\Engine\Controller {
 			}
 
 			if (!$article_comment_id) {
-				$this->model_cms_article->editRating($article_id, $like - $dislike);
+				$articleRepository->editRating($article_id, $like - $dislike);
 			} else {
-				$this->model_cms_article->editCommentRating($article_id, $article_comment_id, $like - $dislike);
+				$articleRepository->editCommentRating($article_id, $article_comment_id, $like - $dislike);
 			}
 
 			$json['success'] = $this->language->get('text_rating');

@@ -3,6 +3,9 @@ namespace Opencart\Catalog\Controller\Api;
 
 use Alpha\Controller\BaseController;
 use Alpha\Model\Domain\Repositories\CartRepository;
+use Alpha\Model\Domain\Repositories\ExtensionRepository;
+use Alpha\Model\Domain\Repositories\CustomerAffiliateRepository;
+use Alpha\Model\Domain\Repositories\OrderRepository;
 
 /**
  * Class Order
@@ -149,9 +152,8 @@ class Order extends BaseController {
 		$output = $this->load->controller('api/shipping_method');
 
 		// Extension
-		$this->load->model('setting/extension');
-
-		$extensions = $this->model_setting_extension->getExtensionsByType('total');
+		$extensionRepository = $this->getRepository(ExtensionRepository::class);
+		$extensions = $extensionRepository->getExtensionsByType('total');
 
 		foreach ($extensions as $extension) {
 			$this->load->controller('extension/' . $extension['extension'] . '/api/' . $extension['code']);
@@ -206,9 +208,8 @@ class Order extends BaseController {
 		$output = $this->load->controller('api/payment_method');
 
 		// Extension
-		$this->load->model('setting/extension');
-
-		$extensions = $this->model_setting_extension->getExtensionsByType('total');
+		$extensionRepository = $this->getRepository(ExtensionRepository::class);
+		$extensions = $extensionRepository->getExtensionsByType('total');
 
 		foreach ($extensions as $extension) {
 			$this->load->controller('extension/' . $extension['extension'] . '/api/' . $extension['code']);
@@ -244,9 +245,8 @@ class Order extends BaseController {
 		$output = [];
 
 		// Extension
-		$this->load->model('setting/extension');
-
-		$extensions = $this->model_setting_extension->getExtensionsByType('total');
+		$extensionRepository = $this->getRepository(ExtensionRepository::class);
+		$extensions = $extensionRepository->getExtensionsByType('total');
 
 		foreach ($extensions as $extension) {
 			$result = $this->load->controller('extension/' . $extension['extension'] . '/api/' . $extension['code']);
@@ -287,9 +287,8 @@ class Order extends BaseController {
 		$this->load->controller('api/shipping_address');
 
 		// Extension
-		$this->load->model('setting/extension');
-
-		$extensions = $this->model_setting_extension->getExtensionsByType('total');
+		$extensionRepository = $this->getRepository(ExtensionRepository::class);
+		$extensions = $extensionRepository->getExtensionsByType('total');
 
 		foreach ($extensions as $extension) {
 			$this->load->controller('extension/' . $extension['extension'] . '/api/' . $extension['code']);
@@ -328,9 +327,8 @@ class Order extends BaseController {
 		$this->load->controller('api/payment_method');
 
 		// Extension
-		$this->load->model('setting/extension');
-
-		$extensions = $this->model_setting_extension->getExtensionsByType('total');
+		$extensionRepository = $this->getRepository(ExtensionRepository::class);
+		$extensions = $extensionRepository->getExtensionsByType('total');
 
 		foreach ($extensions as $extension) {
 			$this->load->controller('extension/' . $extension['extension'] . '/api/' . $extension['code']);
@@ -427,9 +425,8 @@ class Order extends BaseController {
 		}
 
 		// 8. Validate coupons, rewards
-		$this->load->model('setting/extension');
-
-		$extensions = $this->model_setting_extension->getExtensionsByType('total');
+		$extensionRepository = $this->getRepository(ExtensionRepository::class);
+		$extensions = $extensionRepository->getExtensionsByType('total');
 
 		foreach ($extensions as $extension) {
 			$result = $this->load->controller('extension/' . $extension['extension'] . '/api/' . $extension['code']);
@@ -581,10 +578,7 @@ class Order extends BaseController {
 			$taxes = $cartRepository->getTaxes();
 			$total = 0;
 
-			// Cart
-			$this->load->model('checkout/cart');
-
-			($this->model_checkout_cart->getTotals)($totals, $taxes, $total);
+			$cartRepository->getTotals($totals, $taxes, $total);
 
 			$total_data = [
 				'totals' => $totals,
@@ -603,14 +597,13 @@ class Order extends BaseController {
 				$subtotal = $cartRepository->getSubTotal();
 
 				// Affiliate
-				$this->load->model('account/affiliate');
-
-				$affiliate_info = $this->model_account_affiliate->getAffiliate($this->session->data['affiliate_id']);
+				$customerAffiliateRepository = $this->getRepository(CustomerAffiliateRepository::class);
+				$affiliate_info = $customerAffiliateRepository->find($this->session->data['affiliate_id']);
 
 				if ($affiliate_info) {
-					$order_data['affiliate_id'] = $affiliate_info['customer_id'];
-					$order_data['commission'] = ($subtotal / 100) * $affiliate_info['commission'];
-					$order_data['tracking'] = $affiliate_info['tracking'];
+					$order_data['affiliate_id'] = $affiliate_info->getCustomerId();
+					$order_data['commission'] = ($subtotal / 100) * $affiliate_info->getCommission();
+					$order_data['tracking'] = $affiliate_info->getTracking();
 				}
 			}
 
@@ -651,15 +644,15 @@ class Order extends BaseController {
 			}
 
 			// Order
-			$this->load->model('checkout/order');
+			$orderRepository = $this->getRepository(OrderRepository::class);
 
 			if (!$order_id) {
-				$order_id = $this->model_checkout_order->addOrder($order_data);
+				$order_id = $orderRepository->addOrder($order_data);
 			} else {
-				$order_info = $this->model_checkout_order->getOrder($order_id);
+				$order_info = $orderRepository->getOrder($order_id);
 
 				if ($order_info) {
-					$this->model_checkout_order->editOrder($order_id, $order_data);
+					$orderRepository->editOrder($order_id, $order_data);
 				}
 			}
 
@@ -672,7 +665,7 @@ class Order extends BaseController {
 				$order_status_id = (int)$this->config->get('config_order_status_id');
 			}
 
-			$this->model_checkout_order->addHistory($order_id, $order_status_id);
+			$orderRepository->addHistory($order_id, $order_status_id);
 
 			$output['success'] = $this->language->get('text_success');
 
@@ -712,16 +705,15 @@ class Order extends BaseController {
 		$post_info = $this->request->post + $required;
 
 		// Order
-		$this->load->model('checkout/order');
-
-		$order_info = $this->model_checkout_order->getOrder((int)$post_info['order_id']);
+		$orderRepository = $this->getRepository(OrderRepository::class);
+		$order_info = $orderRepository->getOrder((int)$post_info['order_id']);
 
 		if (!$order_info) {
 			$output['error'] = $this->language->get('error_order');
 		}
 
 		if (!$output) {
-			$this->model_checkout_order->addHistory((int)$post_info['order_id'], (int)$post_info['order_status_id'], (string)$post_info['comment'], (bool)$post_info['notify'], (bool)$post_info['override']);
+			$orderRepository->addHistory((int)$post_info['order_id'], (int)$post_info['order_status_id'], (string)$post_info['comment'], (bool)$post_info['notify'], (bool)$post_info['override']);
 
 			$output['success'] = $this->language->get('text_success');
 		}

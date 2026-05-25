@@ -3,6 +3,7 @@ namespace Opencart\catalog\controller\api;
 
 use Alpha\Controller\BaseController;
 use Alpha\Model\Domain\Repositories\CartRepository;
+use Alpha\Mappers\EntityMappers\ShippingMapper;
 
 /**
  * Class Shipping Method
@@ -94,10 +95,8 @@ class ShippingMethod extends BaseController {
 		}
 
 		if (!$output) {
-			// Shipping Method
-			$this->load->model('checkout/shipping_method');
-
-			$shipping_methods = $this->model_checkout_shipping_method->getMethods($this->session->data['shipping_address']);
+			// Alpha Engine: Instanciação nativa do ShippingMapper via Factory
+			$shipping_methods = $this->mapper->get(ShippingMapper::class)->getMethods($this->session->data['shipping_address']);
 
 			if ($shipping_methods) {
 				$output['shipping_methods'] = $shipping_methods;

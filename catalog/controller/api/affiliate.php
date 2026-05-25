@@ -52,8 +52,7 @@ class Affiliate extends BaseController {
 				}
 			} else {
 				// Fallback de Segurança caso a Entidade OrderTotal ainda não tenha sido completamente populada no Controller
-				$this->load->model('checkout/order');
-				$results = $this->model_checkout_order->getTotals($this->session->data['order_id']);
+				$results = $orderRepository->getTotals($this->session->data['order_id']);
 				foreach ($results as $result) {
 					if ($result['code'] == 'subtotal') {
 						$subtotal = $result['value'];

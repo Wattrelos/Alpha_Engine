@@ -16,6 +16,7 @@ use Alpha\Model\Domain\Repositories\InformationRepository;
 use Alpha\Model\Domain\Repositories\CustomFieldRepository;
 use Alpha\Model\DataAccessObject\UnitOfWork;
 use Alpha\Model\Domain\Entities\Customer;
+use Alpha\Model\Domain\Repositories\ExtensionRepository;
 
 /**
  * Class Register
@@ -141,10 +142,8 @@ class Register extends BaseController {
 		$data['custom_fields'] = $this->customFieldRepository->getCustomFields();
 
 		// Captcha
-		$this->load->model('checkout/payment_method'); // Placeholder for extension loading logic if needed, but we use ExtensionMapper if refactored
-		
-		$this->load->model('setting/extension');
-		$extension_info = $this->model_setting_extension->getExtensionByCode('captcha', $this->config->get('config_captcha'));
+		$extensionRepository = $this->getRepository(ExtensionRepository::class);
+		$extension_info = $extensionRepository->getExtensionByCode('captcha', $this->config->get('config_captcha'));
 
 		if ($extension_info && $this->config->get('captcha_' . $this->config->get('config_captcha') . '_status') && in_array('register', (array)$this->config->get('config_captcha_page'))) {
 			$data['captcha'] = $this->load->controller('extension/' . $extension_info['extension'] . '/captcha/' . $extension_info['code']);
@@ -405,10 +404,10 @@ class Register extends BaseController {
 			}
 
 			// Captcha
-			$this->load->model('setting/extension');
+			$extensionRepository = $this->getRepository(ExtensionRepository::class);
 
 			if (!$this->customer->isLogged()) {
-				$extension_info = $this->model_setting_extension->getExtensionByCode('captcha', $this->config->get('config_captcha'));
+				$extension_info = $extensionRepository->getExtensionByCode('captcha', $this->config->get('config_captcha'));
 
 				if ($extension_info && $this->config->get('captcha_' . $this->config->get('config_captcha') . '_status') && in_array('register', (array)$this->config->get('config_captcha_page'))) {
 					$captcha = $this->load->controller('extension/' . $extension_info['extension'] . '/captcha/' . $extension_info['code'] . '.validate');

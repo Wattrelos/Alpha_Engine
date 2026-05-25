@@ -4,6 +4,7 @@ namespace Alpha\Model\Domain\Repositories;
 use Alpha\Mappers\EntityMappers\CustomerMapper;
 use Alpha\Model\Domain\Entities\Customer;
 use Alpha\Model\Domain\InterfaceEntity;
+use Alpha\Model\DataTransferObject\EntityMapper;
 
 /**
  * Class CustomerRepository
@@ -95,19 +96,117 @@ class CustomerRepository extends AbstractRepository implements BaseRepositoryInt
     }
 
     /**
-     * Validações rigorosas de domínio para registro/edição de cliente.
-     * @return array Array contendo os erros encontrados. Vazio se válido.
+     * Valida e registra um novo cliente encapsulando regras de negócio e infraestrutura.
+     * 
+     * @param array $data Dados vindos do formulário (POST)
+     * @return array Array contendo status da transação, erros e ID do cliente.
      */
-    public function validateRegistrationData(array $data): array {
+    public function registerCustomer(array $data): array {
         $errors = [];
+        $language = $this->registry->get('language');
+        $config = $this->registry->get('config');
+        $request = $this->registry->get('request');
+        
+        $language->load('account/register');
 
-        if (empty($data['email']) || !filter_var($data['email'], FILTER_VALIDATE_EMAIL)) {
-            $errors['email'] = 'O e-mail fornecido é inválido!';
-        } elseif ($this->findByEmail($data['email'])) {
-            $errors['email'] = 'Atenção: Este e-mail já está registrado!';
+        // Validação de Grupo de Clientes
+        $customer_group_id = !empty($data['customer_group_id']) ? (int)$data['customer_group_id'] : (int)$config->get('config_customer_group_id');
+
+        $repoFactory = $this->registry->get('alpha_repository_factory');
+        $customerGroupRepo = $repoFactory->get(\Alpha\Model\Domain\Repositories\CustomerGroupRepository::class);
+        $customer_group_info = $customerGroupRepo->getCustomerGroup($customer_group_id, (int)$config->get('config_language_id'));
+
+        if (!$customer_group_info || !in_array($customer_group_id, (array)$config->get('config_customer_group_display'))) {
+            $errors['warning'] = $language->get('error_customer_group');
         }
 
-        return $errors;
+        if (!oc_validate_length($data['firstname'] ?? '', 1, 32)) {
+            $errors['firstname'] = $language->get('error_firstname');
+        }
+        if (!oc_validate_length($data['lastname'] ?? '', 1, 32)) {
+            $errors['lastname'] = $language->get('error_lastname');
+        }
+        if (!oc_validate_email($data['email'] ?? '')) {
+            $errors['email'] = $language->get('error_email');
+        } elseif ($this->findByEmail($data['email'])) {
+            $errors['warning'] = $language->get('error_exists');
+        }
+        if ($config->get('config_telephone_required') && !oc_validate_length($data['telephone'] ?? '', 3, 32)) {
+            $errors['telephone'] = $language->get('error_telephone');
+        }
+
+        // Validação de Campos Customizados
+        $customFieldRepo = $repoFactory->get(\Alpha\Model\Domain\Repositories\CustomFieldRepository::class);
+        $custom_fields = $customFieldRepo->getCustomFields($customer_group_id);
+
+        foreach ($custom_fields as $custom_field) {
+            if ($custom_field['location'] == 'account') {
+                if ($custom_field['required'] && empty($data['custom_field'][$custom_field['custom_field_id']])) {
+                    $errors['custom_field_' . $custom_field['custom_field_id']] = sprintf($language->get('error_custom_field'), $custom_field['name']);
+                } elseif (($custom_field['type'] == 'text') && !empty($custom_field['validation']) && !oc_validate_regex($data['custom_field'][$custom_field['custom_field_id']] ?? '', $custom_field['validation'])) {
+                    $errors['custom_field_' . $custom_field['custom_field_id']] = sprintf($language->get('error_regex'), $custom_field['name']);
+                }
+            }
+        }
+
+        // Validação de Força de Senha
+        $password = html_entity_decode($data['password'] ?? '', ENT_QUOTES, 'UTF-8');
+
+        if (!oc_validate_length($password, (int)$config->get('config_password_length'), 40)) {
+            $errors['password'] = sprintf($language->get('error_password_length'), (int)$config->get('config_password_length'));
+        }
+
+        $required = [];
+        if ($config->get('config_password_uppercase') && !preg_match('/[A-Z]/', $password)) { $required[] = $language->get('error_password_uppercase'); }
+        if ($config->get('config_password_lowercase') && !preg_match('/[a-z]/', $password)) { $required[] = $language->get('error_password_lowercase'); }
+        if ($config->get('config_password_number') && !preg_match('/[0-9]/', $password)) { $required[] = $language->get('error_password_number'); }
+        if ($config->get('config_password_symbol') && !preg_match('/[^a-zA-Z0-9]/', $password)) { $required[] = $language->get('error_password_symbol'); }
+
+        if ($required) {
+            $errors['password'] = sprintf($language->get('error_password'), implode(', ', $required), $config->get('config_password_length'));
+        }
+
+        // Aceite dos Termos de Uso
+        $informationRepo = $repoFactory->get(\Alpha\Model\Domain\Repositories\InformationRepository::class);
+        $information_info = $informationRepo->getInformation((int)$config->get('config_account_id'));
+        if ($information_info && empty($data['agree'])) {
+            $errors['warning'] = sprintf($language->get('error_agree'), $information_info['title']);
+        }
+
+        if ($errors) {
+            return [
+                'customer_id' => null, 
+                'errors' => $errors, 
+                'customer_group_info' => $customer_group_info,
+                'customer_group_id' => $customer_group_id
+            ];
+        }
+
+        // --- Hidratação da Entidade ---
+        $data['customer_group_id'] = $customer_group_id; 
+        $data['ip'] = $request->server['REMOTE_ADDR'] ?? '127.0.0.1';
+        $data['token'] = '';
+        $data['code'] = '';
+        $data['date_added'] = date('Y-m-d H:i:s');
+
+        $customer = new Customer();
+        
+        EntityMapper::fillEntity($customer, $data);
+
+        $customer->setStoreId((int)$config->get('config_store_id'))
+                 ->setLanguageId((int)$config->get('config_language_id'))
+                 ->setPassword(password_hash($password, PASSWORD_DEFAULT))
+                 ->setStatus(true)
+                 ->setSafe(true);
+
+        $customerId = $this->save($customer);
+
+        return [
+            'customer_id' => $customerId, 
+            'errors' => [], 
+            'customer_group_info' => $customer_group_info,
+            'customer_group_id' => $customer_group_id
+        ];
     }
 
     /**

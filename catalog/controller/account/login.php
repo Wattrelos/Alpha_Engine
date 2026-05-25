@@ -5,13 +5,6 @@ use Alpha\Controller\BaseController;
 use Alpha\Model\Domain\Repositories\CustomerRepository;
 
 class Login extends BaseController {
-	private CustomerRepository $customerRepository;
-
-	public function __construct(\Opencart\System\Engine\Registry $registry) {
-		parent::__construct($registry);
-		$this->customerRepository = $this->registry->get('alpha_repository_factory')->get(CustomerRepository::class);
-	}
-
 	public function index(): void {
 		// ... lógicas de exibição de formulário ...
 	}
@@ -22,30 +15,31 @@ class Login extends BaseController {
 		$json = [];
 
 		if (isset($this->request->post['email']) && isset($this->request->post['password'])) {
+			$customerRepository = $this->getRepository(CustomerRepository::class);
+			$email = (string)$this->request->post['email'];
+			$password = (string)$this->request->post['password'];
 			
 			// 1. Check brute force
-			$login_attempts = $this->customerRepository->getLoginAttempts($this->request->post['email']);
-
-			if ($login_attempts >= (int)$this->config->get('config_login_attempts')) {
+			if ($customerRepository->isLockedOut($email, (int)$this->config->get('config_login_attempts'))) {
 				$json['error']['warning'] = $this->language->get('error_attempts');
 			}
 
 			if (!$json) {
-				// 2. Repository Invocation
-				$customer = $this->customerRepository->findByEmail($this->request->post['email']);
+				// 2. Domain Authentication (Skinny Controller)
+				$customer = $customerRepository->authenticate($email, $password);
 
-				if ($customer && $customer->isStatus() && password_verify($this->request->post['password'], $customer->getPassword())) {
+				if ($customer && $customer->isStatus()) {
 					// Login bem-sucedido
-					$this->customerRepository->deleteLoginAttempts($customer->getEmail());
+					$customerRepository->resetLoginAttempts($email);
 					
 					// Inicia a sessão no objeto Customer do OpenCart (System Library)
-					$this->customer->login($customer->getEmail(), $this->request->post['password']);
+					$this->customer->login($email, $password);
 
 					$json['redirect'] = $this->url->link('account/account', 'language=' . $this->config->get('config_language') . (isset($this->session->data['customer_token']) ? '&customer_token=' . $this->session->data['customer_token'] : ''));
 				} else {
 					$json['error']['warning'] = $this->language->get('error_login');
 
-					$this->customerRepository->addLoginAttempt($this->request->post['email'], oc_get_ip());
+					$customerRepository->addLoginAttempt($email, oc_get_ip());
 				}
 			}
 		}

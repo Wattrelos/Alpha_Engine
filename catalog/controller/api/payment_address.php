@@ -5,6 +5,7 @@ use Alpha\Controller\BaseController;
 use Alpha\Model\Domain\Repositories\CountryRepository;
 use Alpha\Model\Domain\Repositories\ZoneRepository;
 use Alpha\Model\Domain\Repositories\AddressRepository;
+use Alpha\Model\Domain\Repositories\CustomFieldRepository;
 
 /**
  * Class Payment Address
@@ -76,9 +77,8 @@ class PaymentAddress extends BaseController {
 		}
 
 		// Custom field validation
-		$this->load->model('account/custom_field');
-
-		$custom_fields = $this->model_account_custom_field->getCustomFields((int)$this->config->get('config_customer_group_id'));
+		$customFieldRepository = $this->getRepository(CustomFieldRepository::class);
+		$custom_fields = $customFieldRepository->getCustomFields((int)$this->config->get('config_customer_group_id'));
 
 		foreach ($custom_fields as $custom_field) {
 			if ($custom_field['location'] == 'address') {

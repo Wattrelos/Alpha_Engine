@@ -3,6 +3,7 @@ namespace Alpha\Model\Domain\Entities;
 
 use Alpha\Model\Domain\BaseEntity;
 use Alpha\Model\Domain\Attributes\ManyToOne;
+use Alpha\Model\DataTransferObject\Attributes\AllowHtml;
 
 /**
  * Entidade ArticleDescription - Traduções e metadados SEO dos artigos.
@@ -16,6 +17,8 @@ use Alpha\Model\Domain\Attributes\ManyToOne;
 class ArticleDescription extends BaseEntity
 {
     private string $name = '';
+    
+    #[AllowHtml]
     private string $description = '';
     private string $image = '';
     private string $tag = '';

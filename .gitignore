@@ -12,12 +12,14 @@ system/storage/session/*
 system/storage/upload/*
 system/storage/vendor/*
 image/cache/*
+docs/joplin/*
 
 storage/
 readme_backup/
 logs/
 cache/
 download/
+.joplin_export/
 
 # Composer
 vendor/

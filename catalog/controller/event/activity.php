@@ -1,11 +1,17 @@
 <?php
 namespace Opencart\Catalog\Controller\Event;
+
+use Alpha\Controller\BaseController;
+use Alpha\Model\Domain\Repositories\ActivityRepository;
+use Alpha\Model\Domain\Repositories\CustomerRepository;
+use Alpha\Model\Domain\Repositories\OrderRepository;
+
 /**
  * Class Activity
  *
  * @package Opencart\Catalog\Controller\Event
  */
-class Activity extends \Opencart\System\Engine\Controller {
+class Activity extends BaseController {
 	/**
 	 * Add Customer
 	 *
@@ -19,14 +25,14 @@ class Activity extends \Opencart\System\Engine\Controller {
 	 */
 	public function addCustomer(string &$route, array &$args, &$output): void {
 		if ($this->config->get('config_customer_activity')) {
-			$this->load->model('account/activity');
+			$activityRepository = $this->getRepository(ActivityRepository::class);
 
 			$activity_data = [
 				'customer_id' => $output,
 				'name'        => $args[0]['firstname'] . ' ' . $args[0]['lastname']
 			];
 
-			$this->model_account_activity->addActivity('register', $activity_data);
+			$activityRepository->addActivity('register', $activity_data);
 		}
 	}
 
@@ -43,14 +49,14 @@ class Activity extends \Opencart\System\Engine\Controller {
 	 */
 	public function editCustomer(string &$route, array &$args, &$output): void {
 		if ($this->config->get('config_customer_activity')) {
-			$this->load->model('account/activity');
+			$activityRepository = $this->getRepository(ActivityRepository::class);
 
 			$activity_data = [
 				'customer_id' => $this->customer->getId(),
 				'name'        => $this->customer->getFirstName() . ' ' . $this->customer->getLastName()
 			];
 
-			$this->model_account_activity->addActivity('edit', $activity_data);
+			$activityRepository->addActivity('edit', $activity_data);
 		}
 	}
 
@@ -67,7 +73,7 @@ class Activity extends \Opencart\System\Engine\Controller {
 	 */
 	public function editPassword(string &$route, array &$args, &$output): void {
 		if ($this->config->get('config_customer_activity')) {
-			$this->load->model('account/activity');
+			$activityRepository = $this->getRepository(ActivityRepository::class);
 
 			if ($this->customer->isLogged()) {
 				$activity_data = [
@@ -75,17 +81,21 @@ class Activity extends \Opencart\System\Engine\Controller {
 					'name'        => $this->customer->getFirstName() . ' ' . $this->customer->getLastName()
 				];
 
-				$this->model_account_activity->addActivity('password', $activity_data);
+				$activityRepository->addActivity('password', $activity_data);
 			} else {
-				$customer_info = $this->model_account_customer->getCustomerByEmail($args[0]);
+				$customerRepository = $this->getRepository(CustomerRepository::class);
+				$customer_info = $customerRepository->findByEmail($args[0]);
 
 				if ($customer_info) {
+					$customerId = is_object($customer_info) ? $customer_info->getId() : $customer_info['customer_id'];
+					$name = (is_object($customer_info) ? $customer_info->getFirstname() : $customer_info['firstname']) . ' ' . (is_object($customer_info) ? $customer_info->getLastname() : $customer_info['lastname']);
+
 					$activity_data = [
-						'customer_id' => $customer_info['customer_id'],
-						'name'        => $customer_info['firstname'] . ' ' . $customer_info['lastname']
+						'customer_id' => $customerId,
+						'name'        => $name
 					];
 
-					$this->model_account_activity->addActivity('reset', $activity_data);
+					$activityRepository->addActivity('reset', $activity_data);
 				}
 			}
 		}
@@ -104,17 +114,21 @@ class Activity extends \Opencart\System\Engine\Controller {
 	 */
 	public function login(string &$route, array &$args, &$output): void {
 		if (isset($this->request->get['route']) && ($this->request->get['route'] == 'account/login' || $this->request->get['route'] == 'checkout/login.save') && $this->config->get('config_customer_activity')) {
-			$customer_info = $this->model_account_customer->getCustomerByEmail($args[0]);
+			$customerRepository = $this->getRepository(CustomerRepository::class);
+			$customer_info = $customerRepository->findByEmail($args[0]);
 
 			if ($customer_info) {
-				$this->load->model('account/activity');
+				$activityRepository = $this->getRepository(ActivityRepository::class);
+
+				$customerId = is_object($customer_info) ? $customer_info->getId() : $customer_info['customer_id'];
+				$name = (is_object($customer_info) ? $customer_info->getFirstname() : $customer_info['firstname']) . ' ' . (is_object($customer_info) ? $customer_info->getLastname() : $customer_info['lastname']);
 
 				$activity_data = [
-					'customer_id' => $customer_info['customer_id'],
-					'name'        => $customer_info['firstname'] . ' ' . $customer_info['lastname']
+					'customer_id' => $customerId,
+					'name'        => $name
 				];
 
-				$this->model_account_activity->addActivity('login', $activity_data);
+				$activityRepository->addActivity('login', $activity_data);
 			}
 		}
 	}
@@ -133,19 +147,21 @@ class Activity extends \Opencart\System\Engine\Controller {
 	public function forgotten(string &$route, array &$args, &$output): void {
 		// Customer
 		if (isset($this->request->get['route']) && $this->request->get['route'] == 'account/forgotten' && $this->config->get('config_customer_activity')) {
-			$this->load->model('account/customer');
-
-			$customer_info = $this->model_account_customer->getCustomerByEmail($args[0]);
+			$customerRepository = $this->getRepository(CustomerRepository::class);
+			$customer_info = $customerRepository->findByEmail($args[0]);
 
 			if ($customer_info) {
-				$this->load->model('account/activity');
+				$activityRepository = $this->getRepository(ActivityRepository::class);
+
+				$customerId = is_object($customer_info) ? $customer_info->getId() : $customer_info['customer_id'];
+				$name = (is_object($customer_info) ? $customer_info->getFirstname() : $customer_info['firstname']) . ' ' . (is_object($customer_info) ? $customer_info->getLastname() : $customer_info['lastname']);
 
 				$activity_data = [
-					'customer_id' => $customer_info['customer_id'],
-					'name'        => $customer_info['firstname'] . ' ' . $customer_info['lastname']
+					'customer_id' => $customerId,
+					'name'        => $name
 				];
 
-				$this->model_account_activity->addActivity('forgotten', $activity_data);
+				$activityRepository->addActivity('forgotten', $activity_data);
 			}
 		}
 	}
@@ -164,20 +180,22 @@ class Activity extends \Opencart\System\Engine\Controller {
 	public function addTransaction(string &$route, array &$args, &$output): void {
 		// Customer
 		if ($this->config->get('config_customer_activity')) {
-			$this->load->model('account/customer');
-
-			$customer_info = $this->model_account_customer->getCustomer($args[0]);
+			$customerRepository = $this->getRepository(CustomerRepository::class);
+			$customer_info = $customerRepository->find($args[0]);
 
 			if ($customer_info) {
-				$this->load->model('account/activity');
+				$activityRepository = $this->getRepository(ActivityRepository::class);
+
+				$customerId = is_object($customer_info) ? $customer_info->getId() : $customer_info['customer_id'];
+				$name = (is_object($customer_info) ? $customer_info->getFirstname() : $customer_info['firstname']) . ' ' . (is_object($customer_info) ? $customer_info->getLastname() : $customer_info['lastname']);
 
 				$activity_data = [
-					'customer_id' => $customer_info['customer_id'],
-					'name'        => $customer_info['firstname'] . ' ' . $customer_info['lastname'],
+					'customer_id' => $customerId,
+					'name'        => $name,
 					'order_id'    => $args[3]
 				];
 
-				$this->model_account_activity->addActivity('transaction', $activity_data);
+				$activityRepository->addActivity('transaction', $activity_data);
 			}
 		}
 	}
@@ -195,14 +213,14 @@ class Activity extends \Opencart\System\Engine\Controller {
 	 */
 	public function addAffiliate(string &$route, array &$args, &$output): void {
 		if ($this->config->get('config_customer_activity')) {
-			$this->load->model('account/activity');
+			$activityRepository = $this->getRepository(ActivityRepository::class);
 
 			$activity_data = [
 				'customer_id' => $this->customer->getId(),
 				'name'        => $this->customer->getFirstName() . ' ' . $this->customer->getLastName()
 			];
 
-			$this->model_account_activity->addActivity('affiliate_add', $activity_data);
+			$activityRepository->addActivity('affiliate_add', $activity_data);
 		}
 	}
 
@@ -219,14 +237,14 @@ class Activity extends \Opencart\System\Engine\Controller {
 	 */
 	public function editAffiliate(string &$route, array &$args, &$output): void {
 		if ($this->config->get('config_customer_activity')) {
-			$this->load->model('account/activity');
+			$activityRepository = $this->getRepository(ActivityRepository::class);
 
 			$activity_data = [
 				'customer_id' => $this->customer->getId(),
 				'name'        => $this->customer->getFirstName() . ' ' . $this->customer->getLastName()
 			];
 
-			$this->model_account_activity->addActivity('affiliate_edit', $activity_data);
+			$activityRepository->addActivity('affiliate_edit', $activity_data);
 		}
 	}
 
@@ -243,14 +261,14 @@ class Activity extends \Opencart\System\Engine\Controller {
 	 */
 	public function addAddress(string &$route, array &$args, &$output): void {
 		if ($this->config->get('config_customer_activity')) {
-			$this->load->model('account/activity');
+			$activityRepository = $this->getRepository(ActivityRepository::class);
 
 			$activity_data = [
 				'customer_id' => $this->customer->getId(),
 				'name'        => $this->customer->getFirstName() . ' ' . $this->customer->getLastName()
 			];
 
-			$this->model_account_activity->addActivity('address_add', $activity_data);
+			$activityRepository->addActivity('address_add', $activity_data);
 		}
 	}
 
@@ -267,14 +285,14 @@ class Activity extends \Opencart\System\Engine\Controller {
 	 */
 	public function editAddress(string &$route, array &$args, &$output): void {
 		if ($this->config->get('config_customer_activity')) {
-			$this->load->model('account/activity');
+			$activityRepository = $this->getRepository(ActivityRepository::class);
 
 			$activity_data = [
 				'customer_id' => $this->customer->getId(),
 				'name'        => $this->customer->getFirstName() . ' ' . $this->customer->getLastName()
 			];
 
-			$this->model_account_activity->addActivity('address_edit', $activity_data);
+			$activityRepository->addActivity('address_edit', $activity_data);
 		}
 	}
 
@@ -291,14 +309,14 @@ class Activity extends \Opencart\System\Engine\Controller {
 	 */
 	public function deleteAddress(string &$route, array &$args, &$output): void {
 		if ($this->config->get('config_customer_activity')) {
-			$this->load->model('account/activity');
+			$activityRepository = $this->getRepository(ActivityRepository::class);
 
 			$activity_data = [
 				'customer_id' => $this->customer->getId(),
 				'name'        => $this->customer->getFirstName() . ' ' . $this->customer->getLastName()
 			];
 
-			$this->model_account_activity->addActivity('address_delete', $activity_data);
+			$activityRepository->addActivity('address_delete', $activity_data);
 		}
 	}
 
@@ -315,7 +333,7 @@ class Activity extends \Opencart\System\Engine\Controller {
 	 */
 	public function addReturn(string &$route, array &$args, &$output): void {
 		if ($this->config->get('config_customer_activity') && $output) {
-			$this->load->model('account/activity');
+			$activityRepository = $this->getRepository(ActivityRepository::class);
 
 			if ($this->customer->isLogged()) {
 				$activity_data = [
@@ -324,14 +342,14 @@ class Activity extends \Opencart\System\Engine\Controller {
 					'return_id'   => $output
 				];
 
-				$this->model_account_activity->addActivity('return_account', $activity_data);
+				$activityRepository->addActivity('return_account', $activity_data);
 			} else {
 				$activity_data = [
 					'name'      => $args[0]['firstname'] . ' ' . $args[0]['lastname'],
 					'return_id' => $output
 				];
 
-				$this->model_account_activity->addActivity('return_guest', $activity_data);
+				$activityRepository->addActivity('return_guest', $activity_data);
 			}
 		}
 	}
@@ -349,12 +367,11 @@ class Activity extends \Opencart\System\Engine\Controller {
 	public function addHistory(string &$route, array &$args): void {
 		if ($this->config->get('config_customer_activity')) {
 			// If the last order status id returns 0, and the new order status is not, then we record it as new order
-			$this->load->model('checkout/order');
-
-			$order_info = $this->model_checkout_order->getOrder($args[0]);
+			$orderRepository = $this->getRepository(OrderRepository::class);
+			$order_info = $orderRepository->getOrder($args[0]);
 
 			if ($order_info && !$order_info['order_status_id'] && $args[1]) {
-				$this->load->model('account/activity');
+				$activityRepository = $this->getRepository(ActivityRepository::class);
 
 				if ($order_info['customer_id']) {
 					$activity_data = [
@@ -363,14 +380,14 @@ class Activity extends \Opencart\System\Engine\Controller {
 						'order_id'    => $args[0]
 					];
 
-					$this->model_account_activity->addActivity('order_account', $activity_data);
+					$activityRepository->addActivity('order_account', $activity_data);
 				} else {
 					$activity_data = [
 						'name'     => $order_info['firstname'] . ' ' . $order_info['lastname'],
 						'order_id' => $args[0]
 					];
 
-					$this->model_account_activity->addActivity('order_guest', $activity_data);
+					$activityRepository->addActivity('order_guest', $activity_data);
 				}
 			}
 		}

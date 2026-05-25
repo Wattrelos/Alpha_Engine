@@ -2,6 +2,7 @@
 namespace Opencart\Catalog\Controller\Account;
 
 use Alpha\Controller\BaseController;
+use Alpha\Model\Domain\Repositories\CustomerRepository;
 
 /**
  * Class Newsletter
@@ -68,9 +69,8 @@ class Newsletter extends BaseController {
 
 		if (!$json) {
 			// Customer
-			$this->load->model('account/customer');
-
-			$this->model_account_customer->editNewsletter($this->customer->getId(), !empty($this->request->post['newsletter']));
+			$customerRepository = $this->getRepository(CustomerRepository::class);
+			$customerRepository->editNewsletter($this->customer->getId(), !empty($this->request->post['newsletter']));
 
 			$json['success'] = $this->language->get('text_success');
 		}

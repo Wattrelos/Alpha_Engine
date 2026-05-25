@@ -3,6 +3,10 @@ namespace Opencart\Catalog\Controller\Api;
 
 use Alpha\Controller\BaseController;
 use Alpha\Model\Domain\Repositories\CartRepository;
+use Alpha\Model\Domain\Repositories\CustomerRepository;
+use Alpha\Model\Domain\Repositories\AddressRepository;
+use Alpha\Model\Domain\Repositories\SubscriptionPlanRepository;
+use Alpha\Model\Domain\Repositories\SubscriptionRepository;
 
 /**
  * Class Subscription
@@ -75,9 +79,8 @@ class Subscription extends BaseController {
 			$customer_id = 0;
 		}
 
-		$this->load->model('account/customer');
-
-		$customer_info = $this->model_account_customer->getCustomer($customer_id);
+		$customerRepository = $this->getRepository(CustomerRepository::class);
+		$customer_info = $customerRepository->getCustomer($customer_id);
 
 		if (!$customer_info) {
 			$output['error'] = $this->language->get('error_customer');
@@ -112,9 +115,8 @@ class Subscription extends BaseController {
 		}
 
 		// Payment Address
-		$this->load->model('account/address');
-
-		$address_info = $this->model_account_address->getAddress($this->customer->getId(), $address_id);
+		$addressRepository = $this->getRepository(AddressRepository::class);
+		$address_info = $addressRepository->getAddress($this->customer->getId(), $address_id);
 
 		if (!$address_info) {
 			$output['error'] = $this->language->get('error_payment_address');
@@ -146,9 +148,8 @@ class Subscription extends BaseController {
 		}
 
 		// Shipping Address
-		$this->load->model('account/address');
-
-		$address_info = $this->model_account_address->getAddress($this->customer->getId(), $address_id);
+		$addressRepository = $this->getRepository(AddressRepository::class);
+		$address_info = $addressRepository->getAddress($this->customer->getId(), $address_id);
 
 		if (!$address_info) {
 			$output['error'] = $this->language->get('error_shipping_address');
@@ -320,9 +321,8 @@ class Subscription extends BaseController {
 		}
 
 		// Subscription Plan
-		$this->load->model('catalog/subscription_plan');
-
-		$subscription_plan_info = $this->model_catalog_subscription_plan->getSubscriptionPlan($post_info['subscription_plan_id']);
+		$subscriptionPlanRepository = $this->getRepository(SubscriptionPlanRepository::class);
+		$subscription_plan_info = $subscriptionPlanRepository->getSubscriptionPlan($post_info['subscription_plan_id']);
 
 		if (!$subscription_plan_info) {
 			$output['error']['subscription_plan'] = $this->language->get('error_subscription_plan');
@@ -392,12 +392,12 @@ class Subscription extends BaseController {
 				'currency'             => $this->session->data['currency']
 			];
 
-			$this->load->model('checkout/subscription');
+			$subscriptionRepository = $this->getRepository(SubscriptionRepository::class);
 
 			if (!$post_info['subscription_plan_id']) {
-				$output['subscription_id'] = $this->model_checkout_subscription->addSubscription($post_info + $subscription_data);
+				$output['subscription_id'] = $subscriptionRepository->addSubscription($post_info + $subscription_data);
 			} else {
-				$this->model_checkout_subscription->editSubscription((int)$post_info['subscription_id'], $post_info + $subscription_data);
+				$subscriptionRepository->editSubscription((int)$post_info['subscription_id'], $post_info + $subscription_data);
 			}
 
 			$output['success'] = $this->language->get('text_success');
@@ -430,16 +430,15 @@ class Subscription extends BaseController {
 		$post_info = $this->request->post + $required;
 
 		// Subscription
-		$this->load->model('checkout/subscription');
-
-		$subscription_info = $this->model_checkout_subscription->getSubscription((int)$post_info['subscription_id']);
+		$subscriptionRepository = $this->getRepository(SubscriptionRepository::class);
+		$subscription_info = $subscriptionRepository->getSubscription((int)$post_info['subscription_id']);
 
 		if (!$subscription_info) {
 			$output['error'] = $this->language->get('error_subscription');
 		}
 
 		if (!$output) {
-			$this->model_checkout_order->addHistory((int)$post_info['subscription_id'], (int)$post_info['subscription_status_id'], (string)$post_info['comment'], (bool)$post_info['notify']);
+			$subscriptionRepository->addHistory((int)$post_info['subscription_id'], (int)$post_info['subscription_status_id'], (string)$post_info['comment'], (bool)$post_info['notify']);
 
 			$output['success'] = $this->language->get('text_success');
 		}

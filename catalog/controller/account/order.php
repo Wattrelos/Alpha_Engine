@@ -2,6 +2,10 @@
 namespace Opencart\Catalog\Controller\Account;
 
 use Alpha\Controller\BaseController;
+use Alpha\Model\Domain\Repositories\OrderRepository;
+use Alpha\Model\Domain\Repositories\OrderStatusRepository;
+use Alpha\Model\Domain\Repositories\SubscriptionRepository;
+use Alpha\Model\Domain\Repositories\UploadRepository;
 
 /**
  * Order Controller - Modernizado para Alpha Engine.
@@ -56,16 +60,13 @@ class Order extends BaseController {
 
 		$data['orders'] = [];
 
-		// Order
-		$this->load->model('account/order');
+		$orderRepository = $this->getRepository(OrderRepository::class);
+		$orderStatusRepository = $this->getRepository(OrderStatusRepository::class);
 
-		// Order Status
-		$this->load->model('localisation/order_status');
-
-		$results = $this->model_account_order->getOrders(($page - 1) * $limit, $limit);
+		$results = $orderRepository->getOrders(($page - 1) * $limit, $limit);
 
 		foreach ($results as $result) {
-			$order_status_info = $this->model_localisation_order_status->getOrderStatus($result['order_status_id']);
+			$order_status_info = $orderStatusRepository->getOrderStatus($result['order_status_id']);
 
 			if ($order_status_info) {
 				$order_status = $order_status_info['name'];
@@ -76,13 +77,13 @@ class Order extends BaseController {
 			$data['orders'][] = [
 				'status'        => $order_status,
 				'date_added'    => date($this->language->get('date_format_short'), strtotime($result['date_added'])),
-				'product_total' => $this->model_account_order->getTotalProductsByOrderId($result['order_id']),
+				'product_total' => $orderRepository->getTotalProductsByOrderId($result['order_id']),
 				'total'         => $this->currency->format($result['total'], $result['currency_code'], $result['currency_value']),
 				'view'          => $this->url->link('account/order.info', 'language=' . $this->config->get('config_language') . '&customer_token=' . $this->session->data['customer_token'] . '&order_id=' . $result['order_id']),
 			] + $result;
 		}
 
-		$order_total = $this->model_account_order->getTotalOrders();
+		$order_total = $orderRepository->getTotalOrders();
 
 		$data['pagination'] = $this->load->controller('common/pagination', [
 			'total' => $order_total,
@@ -119,10 +120,8 @@ class Order extends BaseController {
 			$this->response->redirect($this->url->link('account/login', 'language=' . $this->config->get('config_language'), true));
 		}
 
-		// Order
-		$this->load->model('account/order');
-
-		$order_info = $this->model_account_order->getOrder($order_id);
+		$orderRepository = $this->getRepository(OrderRepository::class);
+		$order_info = $orderRepository->getOrder($order_id);
 
 		if ($order_info) {
 			$heading_title = sprintf($this->language->get('text_order'), $order_info['order_id']);
@@ -165,10 +164,8 @@ class Order extends BaseController {
 
 			$data['order_id'] = $order_id;
 
-			// Order Status
-			$this->load->model('localisation/order_status');
-
-			$order_status_info = $this->model_localisation_order_status->getOrderStatus($order_info['order_status_id']);
+			$orderStatusRepository = $this->getRepository(OrderStatusRepository::class);
+			$order_status_info = $orderStatusRepository->getOrderStatus($order_info['order_status_id']);
 
 			if ($order_status_info) {
 				$data['order_status'] = $order_status_info['name'];
@@ -281,30 +278,24 @@ class Order extends BaseController {
 				$data['shipping_method'] = '';
 			}
 
-			// Subscription
-			$this->load->model('account/subscription');
-
-			// Product
-			$this->load->model('catalog/product');
-
-			// Upload
-			$this->load->model('tool/upload');
+			$subscriptionRepository = $this->getRepository(SubscriptionRepository::class);
+			$uploadRepository = $this->getRepository(UploadRepository::class);
 
 			// Products
 			$data['products'] = [];
 
-			$products = $this->model_account_order->getProducts($order_id);
+			$products = $orderRepository->getProducts($order_id);
 
 			foreach ($products as $product) {
 				$option_data = [];
 
-				$options = $this->model_account_order->getOptions($order_id, $product['order_product_id']);
+				$options = $orderRepository->getOptions($order_id, $product['order_product_id']);
 
 				foreach ($options as $option) {
 					if ($option['type'] != 'file') {
 						$value = $option['value'];
 					} else {
-						$upload_info = $this->model_tool_upload->getUploadByCode($option['value']);
+						$upload_info = $uploadRepository->getUploadByCode($option['value']);
 
 						if ($upload_info) {
 							$value = $upload_info['name'];
@@ -318,7 +309,7 @@ class Order extends BaseController {
 
 				$subscription_plan = '';
 
-				$order_subscription_info = $this->model_account_order->getSubscription($order_id, $product['order_product_id']);
+				$order_subscription_info = $orderRepository->getSubscription($order_id, $product['order_product_id']);
 
 				if ($order_subscription_info) {
 					if ($order_subscription_info['trial_status']) {
@@ -346,7 +337,7 @@ class Order extends BaseController {
 					$subscription_plan_id = 0;
 				}
 
-				$subscription_info = $this->model_account_subscription->getProductByOrderProductId($order_id, $product['order_product_id']);
+				$subscription_info = $subscriptionRepository->getProductByOrderProductId($order_id, $product['order_product_id']);
 
 				if ($subscription_info) {
 					$subscription = $this->url->link('account/subscription.info', 'language=' . $this->config->get('config_language') . '&customer_token=' . $this->session->data['customer_token'] . '&subscription_id=' . $subscription_info['subscription_id']);
@@ -369,7 +360,7 @@ class Order extends BaseController {
 			// Totals
 			$data['totals'] = [];
 
-			$totals = $this->model_account_order->getTotals($order_id);
+			$totals = $orderRepository->getTotals($order_id);
 
 			foreach ($totals as $total) {
 				$data['totals'][] = ['text' => $this->currency->format($total['value'], $order_info['currency_code'], $order_info['currency_value'])] + $total;
@@ -431,10 +422,8 @@ class Order extends BaseController {
 			return '';
 		}
 
-		// Order
-		$this->load->model('account/order');
-
-		$order_info = $this->model_account_order->getOrder($order_id);
+		$orderRepository = $this->getRepository(OrderRepository::class);
+		$order_info = $orderRepository->getOrder($order_id);
 
 		if (!$order_info) {
 			return '';
@@ -442,7 +431,7 @@ class Order extends BaseController {
 
 		$data['histories'] = [];
 
-		$results = $this->model_account_order->getHistories($order_id);
+		$results = $orderRepository->getHistories($order_id);
 
 		foreach ($results as $result) {
 			$data['histories'][] = [
@@ -451,7 +440,7 @@ class Order extends BaseController {
 			] + $result;
 		}
 
-		$history_total = $this->model_account_order->getTotalHistories($order_id);
+		$history_total = $orderRepository->getTotalHistories($order_id);
 
 		$data['pagination'] = $this->load->controller('common/pagination', [
 			'total' => $history_total,

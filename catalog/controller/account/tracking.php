@@ -2,6 +2,8 @@
 namespace Opencart\Catalog\Controller\Account;
 
 use Alpha\Controller\BaseController;
+use Alpha\Model\Domain\Repositories\CustomerAffiliateRepository;
+use Alpha\Model\Domain\Repositories\ProductRepository;
 
 /**
  * Class Tracking
@@ -26,9 +28,8 @@ class Tracking extends BaseController {
 		}
 
 		// Affiliate
-		$this->load->model('account/affiliate');
-
-		$affiliate_info = $this->model_account_affiliate->getAffiliate($this->customer->getId());
+		$customerAffiliateRepository = $this->getRepository(CustomerAffiliateRepository::class);
+		$affiliate_info = $customerAffiliateRepository->find($this->customer->getId());
 
 		if (!$affiliate_info) {
 			$this->response->redirect($this->url->link('account/account', 'language=' . $this->config->get('config_language') . '&customer_token=' . $this->session->data['customer_token'], true));
@@ -57,7 +58,7 @@ class Tracking extends BaseController {
 
 		$data['text_description'] = sprintf($this->language->get('text_description'), $this->config->get('config_name'));
 
-		$data['code'] = $affiliate_info['tracking'];
+		$data['code'] = $affiliate_info->getTracking();
 
 		$data['continue'] = $this->url->link('account/account', 'language=' . $this->config->get('config_language') . '&customer_token=' . $this->session->data['customer_token']);
 
@@ -102,9 +103,8 @@ class Tracking extends BaseController {
 			];
 
 			// Product
-			$this->load->model('catalog/product');
-
-			$results = $this->model_catalog_product->getProducts($filter_data);
+			$productRepository = $this->getRepository(ProductRepository::class);
+			$results = $productRepository->getProducts($filter_data);
 
 			foreach ($results as $result) {
 				$json[] = [

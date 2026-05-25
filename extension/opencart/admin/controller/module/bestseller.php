@@ -50,7 +50,7 @@ class BestSeller extends \Opencart\System\Engine\Controller {
 
 		// Extension
 		if (isset($this->request->get['module_id'])) {
-			$this->load->model('setting/module');
+			'setting/module');
 
 			$module_info = $this->model_setting_module->getModule($this->request->get['module_id']);
 		}
@@ -145,7 +145,7 @@ class BestSeller extends \Opencart\System\Engine\Controller {
 
 		if (!$json) {
 			// Extension
-			$this->load->model('setting/module');
+			'setting/module');
 
 			if (!$post_info['module_id']) {
 				$json['module_id'] = $this->model_setting_module->addModule('opencart.bestseller', $post_info);
@@ -169,7 +169,7 @@ class BestSeller extends \Opencart\System\Engine\Controller {
 	 */
 	public function install(): void {
 		if ($this->user->hasPermission('modify', 'extension/opencart/module/bestseller')) {
-			$this->load->model('extension/opencart/module/bestseller');
+			'extension/opencart/module/bestseller');
 
 			$this->model_extension_opencart_module_bestseller->install();
 		}
@@ -182,7 +182,7 @@ class BestSeller extends \Opencart\System\Engine\Controller {
 	 */
 	public function uninstall(): void {
 		if ($this->user->hasPermission('modify', 'extension/opencart/module/bestseller')) {
-			$this->load->model('extension/opencart/module/bestseller');
+			'extension/opencart/module/bestseller');
 
 			$this->model_extension_opencart_module_bestseller->uninstall();
 		}
@@ -216,10 +216,10 @@ class BestSeller extends \Opencart\System\Engine\Controller {
 		$data['reports'] = [];
 
 		// Bestseller
-		$this->load->model('extension/opencart/module/bestseller');
+		'extension/opencart/module/bestseller');
 
 		// Product
-		$this->load->model('catalog/product');
+		'catalog/product');
 
 		$results = $this->model_extension_opencart_module_bestseller->getReports(($page - 1) * $limit, $limit);
 
@@ -275,13 +275,13 @@ class BestSeller extends \Opencart\System\Engine\Controller {
 
 		if (!$json) {
 			// Bestseller
-			$this->load->model('extension/opencart/module/bestseller');
+			'extension/opencart/module/bestseller');
 
 			// Product
-			$this->load->model('catalog/product');
+			'catalog/product');
 
 			// Order
-			$this->load->model('sale/order');
+			'sale/order');
 
 			$total = $this->model_catalog_product->getTotalProducts();
 			$limit = 10;

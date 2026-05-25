@@ -10,23 +10,25 @@ use Alpha\Model\Domain\Attributes\OneToMany;
  */
 class Customer extends BaseEntity
 {
-    private int $customerGroupId = 0;
-    private int $storeId = 0;
-    private int $languageId = 0;
+    private int    $customerGroupId = 0;
+    private int    $storeId = 0;
+    private int    $languageId = 0;
     private string $firstname = '';
     private string $lastname = '';
     private string $email = '';
     private string $telephone = '';
     private string $password = '';
     private string $customField = '';
-    private bool $newsletter = false;
+    private bool   $newsletter = false;
     private string $ip = '';
-    private bool $status = true;
-    private bool $safe = false;
-    private bool $commenter = false;
+    private bool   $status = true;
+    private bool   $safe = false;
+    private bool   $commenter = false;
     private string $token = '';
     private string $code = '';
     private string $dateAdded = '';
+    private string $cpfCnpj = '';     // Atributo personalizado
+    private string $persontype = '';  // Atributo personalizado
 
     // Associações Muitos-para-Um
 
@@ -132,8 +134,12 @@ class Customer extends BaseEntity
         return $this->customField;
     }
 
-    public function setCustomField(string $customField): self {
-        $this->customField = $customField;
+    public function getCustomFieldArray(): array {
+        return json_decode($this->customField, true) ?: [];
+    }
+
+    public function setCustomField(string|array $customField): self {
+        $this->customField = is_array($customField) ? json_encode($customField) : $customField;
         return $this;
     }
 
@@ -224,6 +230,25 @@ class Customer extends BaseEntity
     public function getDateAdded(): string {
         return $this->dateAdded;
     }
+
+    public function getCpfCnpj(): string {
+        return $this->cpfCnpj;
+    }
+
+    public function setCpfCnpj(string $cpfCnpj): self {
+        $this->cpfCnpj = $cpfCnpj;
+        return $this;
+    }
+
+    public function getPersontype(): string {
+        return $this->persontype;
+    }
+
+    public function setPersontype(string $persontype): self {
+        $this->persontype = $persontype;
+        return $this;
+    }
+
 
     public function setDateAdded(string $dateAdded): self {
         $this->dateAdded = $dateAdded;

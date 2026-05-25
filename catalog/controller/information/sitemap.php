@@ -12,12 +12,12 @@ class Sitemap extends BaseController {
 	/**
 	 * Index
 	 *
-	 * @return string
+	 * @return void
 	 */
-	public function index(): string {
-		$this->loadLanguage('information/sitemap');
+	public function index(): void {
+		$this->load->language('information/sitemap');
 
-		$sitemapRepository = $this->repository->get(SitemapRepository::class);
+		$sitemapRepository = $this->getRepository(SitemapRepository::class);
 		$sitemapData = $sitemapRepository->getSitemapData();
 		
 		$data = $sitemapData->toArray();
@@ -32,6 +32,6 @@ class Sitemap extends BaseController {
 			'href' => $this->url->link('information/sitemap')
 		];
 
-		return $this->render('information/sitemap', $data);
+		$this->render('information/sitemap', $data);
 	}
 }

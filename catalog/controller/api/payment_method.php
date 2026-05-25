@@ -115,9 +115,8 @@ class PaymentMethod extends BaseController {
 			}
 
 			// Payment Method
-			$this->load->model('checkout/payment_method');
-
-			$payment_methods = $this->model_checkout_payment_method->getMethods($payment_address);
+			$paymentMethodMapper = $this->mapper->get(\Alpha\Mappers\EntityMappers\PaymentMethodMapper::class);
+			$payment_methods = $paymentMethodMapper->getMethods($payment_address);
 
 			if ($payment_methods) {
 				$output['payment_methods'] = $payment_methods;

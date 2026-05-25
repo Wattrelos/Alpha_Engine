@@ -12,15 +12,6 @@ use Alpha\Mappers\EntityMappers\ShippingMapper;
  * @package Opencart\Catalog\Controller\Checkout
  */
 class ShippingMethod extends BaseController {
-	private CartRepository $cartRepository;
-	private ShippingMapper $shippingMapper;
-
-	public function __construct(\Opencart\System\Engine\Registry $registry) {
-		parent::__construct($registry);
-		$this->cartRepository = $this->registry->get('alpha_repository_factory')->get(CartRepository::class);
-		$this->shippingMapper = $this->registry->get('mapperFactory')->get(ShippingMapper::class);
-	}
-
 	/**
 	 * Index
 	 *
@@ -48,8 +39,10 @@ class ShippingMethod extends BaseController {
 
 		$json = [];
 
+		$cartRepository = $this->getRepository(CartRepository::class);
+
 		// Validate cart has products and has stock.
-		if (empty($this->cartRepository->getProducts()) || (!$this->cartRepository->hasStock() && !$this->config->get('config_stock_checkout')) || !$this->cartRepository->hasMinimum()) {
+		if (empty($cartRepository->getProducts()) || (!$cartRepository->hasStock() && !$this->config->get('config_stock_checkout')) || !$cartRepository->hasMinimum()) {
 			$json['redirect'] = $this->url->link('checkout/cart', 'language=' . $this->config->get('config_language'), true);
 		}
 
@@ -64,14 +57,14 @@ class ShippingMethod extends BaseController {
 			}
 
 			// Validate if shipping not required. If not the customer should not have reached this page.
-			if ($this->cartRepository->hasShipping() && !isset($this->session->data['shipping_address']['address_id'])) {
+			if ($cartRepository->hasShipping() && !isset($this->session->data['shipping_address']['address_id'])) {
 				$json['error'] = $this->language->get('error_shipping_address');
 			}
 		}
 
 		if (!$json) {
 			// Alpha Engine: Instanciação nativa do ShippingMapper via Factory
-			$shipping_methods = $this->shippingMapper->getMethods($this->session->data['shipping_address']);
+			$shipping_methods = $this->mapper->get(ShippingMapper::class)->getMethods($this->session->data['shipping_address']);
 
 			if ($shipping_methods) {
 				$json['shipping_methods'] = $this->session->data['shipping_methods'] = $shipping_methods;
@@ -93,8 +86,10 @@ class ShippingMethod extends BaseController {
 
 		$json = [];
 
+		$cartRepository = $this->getRepository(CartRepository::class);
+
 		// Validate cart has products and has stock.
-		if (empty($this->cartRepository->getProducts()) || (!$this->cartRepository->hasStock() && !$this->config->get('config_stock_checkout')) || !$this->cartRepository->hasMinimum()) {
+		if (empty($cartRepository->getProducts()) || (!$cartRepository->hasStock() && !$this->config->get('config_stock_checkout')) || !$cartRepository->hasMinimum()) {
 			$json['redirect'] = $this->url->link('checkout/cart', 'language=' . $this->config->get('config_language'), true);
 		}
 
@@ -109,7 +104,7 @@ class ShippingMethod extends BaseController {
 			}
 
 			// Validate if shipping not required. If not the customer should not have reached this page.
-			if ($this->cartRepository->hasShipping() && !isset($this->session->data['shipping_address']['address_id'])) {
+			if ($cartRepository->hasShipping() && !isset($this->session->data['shipping_address']['address_id'])) {
 				$json['error'] = $this->language->get('error_shipping_address');
 			}
 

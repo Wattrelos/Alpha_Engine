@@ -3,6 +3,7 @@
 namespace Alpha\Model\DataTransferObject;
 
 use Alpha\Model\DataTransferObject\Attributes\Validation;
+use Alpha\Model\DataTransferObject\Attributes\AllowHtml;
 use ReflectionClass;
 use ReflectionMethod;
 use Exception;
@@ -47,14 +48,26 @@ class EntityMapper
                 
                 // Prioriza o padrão camelCase, com fallback elegante para o padrão do OpenCart
                 $requestKey = null;
-                if (isset($request[$fieldName])) {
+            if (isset($request[$fieldName])) {
                     $requestKey = $fieldName;
-                                } elseif (isset($request[$snakeCaseField])) {
+                            } elseif (isset($request[$snakeCaseField])) {
                     $requestKey = $snakeCaseField;
                 }
 
                 if ($requestKey !== null) {
-                    $paramValue = $request[$requestKey];
+                $paramValue = $request[$requestKey];
+
+                // Verifica se a propriedade permite HTML rico via Atributo
+                $allowHtml = false;
+                if ($reflection->hasProperty($fieldName)) {
+                    $prop = $reflection->getProperty($fieldName);
+                    if (!empty($prop->getAttributes(AllowHtml::class))) {
+                        $allowHtml = true;
+                    }
+                }
+
+                $paramValue = $allowHtml ? $paramValue : self::sanitizeInput($paramValue);
+
                     $isEmpty = is_scalar($paramValue) ? trim((string)$paramValue) === '' : empty($paramValue);
 
                     if (!$isEmpty) {
@@ -129,6 +142,29 @@ class EntityMapper
         }
 
         return $errors;
+    }
+
+    /**
+     * Sanitiza os dados recursivamente para evitar ataques XSS.
+     * Escapa caracteres especiais do HTML convertendo-os em entidades seguras.
+     */
+    public static function sanitizeInput(mixed $data): mixed 
+    {
+        if (is_array($data)) {
+            $sanitizedArray = [];
+            foreach ($data as $key => $value) {
+                // Mantém as chaves intactas, sanitiza os valores recursivamente
+                $sanitizedArray[$key] = self::sanitizeInput($value);
+            }
+            return $sanitizedArray;
+        }
+
+        if (is_string($data)) {
+            // Converte <, >, ', " e & para suas entidades HTML seguras
+            return htmlspecialchars(trim($data), ENT_QUOTES | ENT_HTML5, 'UTF-8');
+        }
+
+        return $data; // Retorna int, float ou bool sem alteração
     }
 
     /**

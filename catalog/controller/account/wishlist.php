@@ -3,7 +3,6 @@ namespace Opencart\Catalog\Controller\Account;
 
 use Alpha\Controller\BaseController;
 use Alpha\Model\Domain\Repositories\WishlistRepository;
-use Alpha\Model\Domain\Repositories\RepositoryFactory;
 use Alpha\Mappers\EntityMappers\CustomerWishlistMapper;
 use Alpha\Mappers\EntityMappers\ProductMapper;
 
@@ -13,14 +12,6 @@ use Alpha\Mappers\EntityMappers\ProductMapper;
  * @package Opencart\Catalog\Controller\Account
  */
 class WishList extends BaseController {
-	private WishlistRepository $wishlistRepository;
-
-    public function __construct(\Opencart\System\Engine\Registry $registry) {
-        parent::__construct($registry);
-        $repositoryFactory = new RepositoryFactory($this->mapper, $registry);
-        $this->wishlistRepository = $repositoryFactory->get(WishlistRepository::class);
-    }
-
 	/**
 	 * Index
 	 *
@@ -34,7 +25,7 @@ class WishList extends BaseController {
 		}
 
 		// Alpha Engine: Uma única chamada ao Repositório para abastecer a View
-		$data = $this->wishlistRepository->getWishlistViewData($this->customer->getId(), $this->session->data['success'] ?? '')->toArray();
+		$data = $this->getRepository(WishlistRepository::class)->getWishlistViewData($this->customer->getId(), $this->session->data['success'] ?? '')->toArray();
 		
 		unset($this->session->data['success']);
 
@@ -56,7 +47,7 @@ class WishList extends BaseController {
 			$this->response->redirect($this->url->link('account/login', 'language=' . $this->config->get('config_language'), true));
 		}
 
-		$data['products'] = $this->wishlistRepository->getFormattedWishlistProducts($this->customer->getId());
+		$data['products'] = $this->getRepository(WishlistRepository::class)->getFormattedWishlistProducts($this->customer->getId());
 		$this->response->setOutput($this->getTemplate('account/wishlist_list', $data));
 	}
 
@@ -78,7 +69,7 @@ class WishList extends BaseController {
 	 * @return void
 	 */
 	public function add(): void {
-		$this->wishlistRepository->loadLanguage('account/wishlist');
+		$this->getRepository(WishlistRepository::class)->loadLanguage('account/wishlist');
 
 		$json = [];
 
@@ -132,7 +123,7 @@ class WishList extends BaseController {
 	 * @return void
 	 */
 	public function remove(): void {
-		$this->wishlistRepository->loadLanguage('account/wishlist');
+		$this->getRepository(WishlistRepository::class)->loadLanguage('account/wishlist');
 
 		$json = [];
 

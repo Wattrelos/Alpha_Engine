@@ -5,7 +5,6 @@ namespace Alpha\Mappers\EntityMappers;
 use Alpha\Model\DataAccessObject\DataAccessObject;
 use Alpha\Model\DataAccessObject\QueryBuilder;
 use Alpha\Model\Domain\Entities\Category;
-use Alpha\Mappers\EntityMappers;
 
 /**
  * CategoryMapper - Gerencia a persistência e a hierarquia de categorias.

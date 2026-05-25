@@ -28,12 +28,21 @@ class ProxyFactory
         $proxyFQCN = $entityClass . 'AlphaProxy';
 
         if (!isset(self::$generatedClasses[$proxyFQCN])) {
-            $reflection = new ReflectionClass($entityClass);
-            $namespace = $reflection->getNamespaceName();
-            $shortName = $reflection->getShortName();
-            $proxyShortName = $shortName . 'AlphaProxy';
-            
-            $methodsCode = '';
+            $cacheDir = defined('DIR_CACHE') ? DIR_CACHE . 'alpha_proxies/' : sys_get_temp_dir() . '/alpha_proxies/';
+            if (!is_dir($cacheDir)) {
+                @mkdir($cacheDir, 0777, true);
+            }
+            $cacheFile = $cacheDir . str_replace('\\', '_', $proxyFQCN) . '.php';
+
+            if (file_exists($cacheFile)) {
+                require_once $cacheFile;
+            } else {
+                $reflection = new ReflectionClass($entityClass);
+                $namespace = $reflection->getNamespaceName();
+                $shortName = $reflection->getShortName();
+                $proxyShortName = $shortName . 'AlphaProxy';
+                
+                $methodsCode = '';
 
             $formatType = function(?\ReflectionType $type) {
                 if (!$type) return '';
@@ -58,9 +67,13 @@ class ProxyFactory
                 $methodName = $method->getName();
                 
                 $returnType = '';
+                $isVoid = false;
                 if ($method->hasReturnType()) {
                     $type = $method->getReturnType();
-                    $returnType = ': ' . ($type->allowsNull() ? '?' : '') . $formatType($type);
+                    $formattedType = $formatType($type);
+                    $prefix = ($type->allowsNull() && $formattedType !== 'mixed' && !($type instanceof \ReflectionUnionType)) ? '?' : '';
+                    $returnType = ': ' . $prefix . $formattedType;
+                    $isVoid = ($formattedType === 'void' || $formattedType === 'never');
                 }
 
                 $params = [];
@@ -69,14 +82,17 @@ class ProxyFactory
                     $paramStr = '';
                     if ($param->hasType()) {
                         $type = $param->getType();
-                        $paramStr .= ($type->allowsNull() ? '?' : '') . $formatType($type) . ' ';
+                        $formattedType = $formatType($type);
+                        $prefix = ($type->allowsNull() && $formattedType !== 'mixed' && !($type instanceof \ReflectionUnionType)) ? '?' : '';
+                        $paramStr .= $prefix . $formattedType . ' ';
                     }
                     
+                    $isReference = $param->isPassedByReference() ? '&' : '';
                     if ($param->isVariadic()) {
-                        $paramStr .= '...$' . $param->getName();
+                        $paramStr .= $isReference . '...$' . $param->getName();
                         $paramNames[] = '...$' . $param->getName();
                     } else {
-                        $paramStr .= '$' . $param->getName();
+                        $paramStr .= $isReference . '$' . $param->getName();
                         $paramNames[] = '$' . $param->getName();
                     }
                     
@@ -89,11 +105,13 @@ class ProxyFactory
                 $paramsStr = implode(', ', $params);
                 $paramNamesStr = implode(', ', $paramNames);
 
+                $returnStmt = $isVoid ? "parent::{$methodName}({$paramNamesStr});" : "return parent::{$methodName}({$paramNamesStr});";
+
                 $methodsCode .= "
                 public function {$methodName}({$paramsStr}){$returnType}
                 {
                     \$this->_alphaTriggerLoad();
-                    return parent::{$methodName}({$paramNamesStr});
+                    {$returnStmt}
                 }
                 ";
             }
@@ -125,7 +143,9 @@ class ProxyFactory
                 }
             ";
 
-            eval($classCode);
+                file_put_contents($cacheFile, "<?php\n" . $classCode);
+                require_once $cacheFile;
+            }
             self::$generatedClasses[$proxyFQCN] = true;
         }
 

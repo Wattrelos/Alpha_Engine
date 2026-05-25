@@ -37,11 +37,15 @@ Este projeto implementa uma camada de engenharia de software moderna sobre o nú
   * **Tratamento de Integridade e Observabilidade:** O DAO agora intercepta Unique Constraints graciosamente (lançando exceções de domínio) e possui um SQL Debugger expandido que audita as operações complexas de escrita (`CREATE`) geradas pelo ORM diretamente em log físico.
   * **Aderência Restrita a Contratos (SOLID / PHP 8.4):** Ajustes cirúrgicos de tipagens polimórficas de Mapper e resolução de violações do Princípio de Substituição de Liskov (LSP) no Repositório de Lista de Desejos.
   * **Normalização Legada:** Compatibilização da inicialização do usuário no motor de sessão (`system/library/cart/customer.php`) para operar sobre o schema unificado da Alpha Engine (`id`), estabelecendo o fluxo fluído e seguro de login na loja.
-* **Status Atual:** **Sprint de Estabilização de Infraestrutura e PHP 8.4.** A navegação global da loja (Home, Cabeçalho, SEO, Menu, Minicart) está 100% blindada, sem warnings, sem memory leaks e operando totalmente sobre a Alpha Engine. A fundação de persistência suportou com sucesso os rigores das tipagens fechadas do novo PHP.
+  * **Saneamento de ViewRenderer (Anti-WSOD Total):** Substituição em massa do `$this->load->view()` para o `$this->viewRenderer->render()` em componentes parciais (Cart, Menu, Footer, Language, Currency, Cookie, Search), listagens de Categorias/Busca, Checkout Confirm e Páginas Institucionais, erradicando as Telas Brancas (*White Screen of Death*).
+  * **Refatoração do Checkout e Área de Cliente (Lazy Loading):** Remoção de construtores pesados e engessados em `checkout.php`, `confirm.php`, `login.php` e `register.php`. Adoção estrita do *Lazy Loading* via `$this->getRepository()`, reduzindo drasticamente o *Memory Footprint* nas rotas críticas de conversão.
+  * **Isolamento de Segurança de Domínio (Skinny Controllers):** O controlador de Login agora delega 100% da inteligência de `password_verify` e proteção contra força bruta ao `CustomerRepository`. A página de Contato teve sua vulnerabilidade de *Fatal Error* corrigida e delega validações ao domínio.
+  * **Fragment Caching Bottom-Funnel:** Validação da página Home operando livre de consultas ao banco de dados com a *CacheStrategyInterface*. Aplicação de *Fragment Caching* no sub-widget de Produtos Relacionados na tela de Produto, blindando contra N+1 Queries a página de maior tráfego.
+* **Status Atual:** **Sprint de Estabilização do Core Transacional e de UI.** A navegação global da loja (Home, Catálogo, Busca), além das rotas vitais de entrada de clientes (Login, Registro) e fechamento (Checkout Raiz), estão 100% blindadas, leves (operando via *Lazy Loading*) e obedecendo estritamente o padrão *Skinny Controller* da Alpha Engine.
 * **Próximos Passos (Retomada):** 
-  1. Refatorar o controlador da **Página de Produto** (`catalog/controller/product/product.php`) aplicando os padrões Loader-Free e DTOs, além de revisar a view correspondente.
-  2. Revisar o sistema de processamento e finalização de compras (Checkout) para garantir conformidade total com a Alpha Engine, garantindo transações O(1).
-  3. Iniciar a faxina de classes `.old` ou legadas desnecessárias após assegurarmos a estabilidade total das rotas do Catálogo.
+  1. Encapsular as linhas residuais do `EntityMapper` e do fluxo de validação dentro do método `CustomerRepository->registerCustomer()`, isolando 100% o Registro.
+  2. Refatorar o Painel Principal do Cliente (`account/account.php`), Endereços e Lista de Desejos, erradicando os últimos vazamentos lógicos da área logada.
+  3. Escovar os sub-controladores AJAX assíncronos do Checkout (métodos de frete e pagamento) para concluir a estabilidade atômica das transações.
 
 ---
 
@@ -83,9 +87,24 @@ Diferente do OpenCart padrão, onde o SQL fica espalhado pelos Models, este proj
 *   ✅ `common/home`
 *   ✅ `common/header`
 *   ✅ `common/menu`
+*   ✅ `common/footer`
+*   ✅ `common/cart`
+*   ✅ `common/language`
+*   ✅ `common/currency`
+*   ✅ `common/cookie`
+*   ✅ `common/search`
 *   ✅ `module/featured`
 *   ✅ `module/latest`
 *   ✅ `module/bestseller`
+*   ✅ `product/product`
+*   ✅ `product/category`
+*   ✅ `product/search`
+*   ✅ `information/information`
+*   ✅ `information/contact`
+*   ✅ `account/login`
+*   ✅ `account/register`
+*   ✅ `checkout/checkout`
+*   ✅ `checkout/confirm`
 
 ## 📦 Estrutura do Core
 

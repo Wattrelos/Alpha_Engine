@@ -2,6 +2,12 @@
 namespace Opencart\Catalog\Controller\Account;
 
 use Alpha\Controller\BaseController;
+use Alpha\Model\Domain\Repositories\ReturnRepository;
+use Alpha\Model\Domain\Repositories\OrderRepository;
+use Alpha\Model\Domain\Repositories\ProductRepository;
+use Alpha\Model\Domain\Repositories\ReturnReasonRepository;
+use Alpha\Model\Domain\Repositories\ExtensionRepository;
+use Alpha\Model\Domain\Repositories\InformationRepository;
 
 /**
  * Class Returns
@@ -58,9 +64,8 @@ class Returns extends BaseController {
 
 		$data['returns'] = [];
 
-		$this->load->model('account/returns');
-
-		$results = $this->model_account_returns->getReturns(($page - 1) * $limit, $limit);
+		$returnRepository = $this->getRepository(ReturnRepository::class);
+		$results = $returnRepository->getReturns(($page - 1) * $limit, $limit);
 
 		foreach ($results as $result) {
 			$data['returns'][] = [
@@ -69,7 +74,7 @@ class Returns extends BaseController {
 			] + $result;
 		}
 
-		$return_total = $this->model_account_returns->getTotalReturns();
+		$return_total = $returnRepository->getTotalReturns();
 
 		$data['pagination'] = $this->load->controller('common/pagination', [
 			'total' => $return_total,
@@ -105,9 +110,8 @@ class Returns extends BaseController {
 			$this->response->redirect($this->url->link('account/login', 'language=' . $this->config->get('config_language'), true));
 		}
 
-		$this->load->model('account/returns');
-
-		$return_info = $this->model_account_returns->getReturn($return_id);
+		$returnRepository = $this->getRepository(ReturnRepository::class);
+		$return_info = $returnRepository->getReturn($return_id);
 
 		if ($return_info) {
 			$this->document->setTitle($this->language->get('text_return'));
@@ -206,18 +210,14 @@ class Returns extends BaseController {
 
 		$data['save'] = $this->url->link('account/returns.save', 'language=' . $this->config->get('config_language') . '&return_token=' . $this->session->data['return_token']);
 
-		// Order
-		$this->load->model('account/order');
-
+		$orderRepository = $this->getRepository(OrderRepository::class);
 		if (isset($this->request->get['order_id'])) {
-			$order_info = $this->model_account_order->getOrder($this->request->get['order_id']);
+			$order_info = $orderRepository->getOrder($this->request->get['order_id']);
 		}
 
-		// Product
-		$this->load->model('catalog/product');
-
+		$productRepository = $this->getRepository(ProductRepository::class);
 		if (isset($this->request->get['product_id'])) {
-			$product_info = $this->model_catalog_product->getProduct($this->request->get['product_id']);
+			$product_info = $productRepository->getProduct($this->request->get['product_id']);
 		}
 
 		if (!empty($order_info)) {
@@ -274,15 +274,11 @@ class Returns extends BaseController {
 			$data['model'] = '';
 		}
 
-		// Return Reason
-		$this->load->model('localisation/return_reason');
+		$returnReasonRepository = $this->getRepository(ReturnReasonRepository::class);
+		$data['return_reasons'] = $returnReasonRepository->getReturnReasons();
 
-		$data['return_reasons'] = $this->model_localisation_return_reason->getReturnReasons();
-
-		// Captcha
-		$this->load->model('setting/extension');
-
-		$extension_info = $this->model_setting_extension->getExtensionByCode('captcha', $this->config->get('config_captcha'));
+		$extensionRepository = $this->getRepository(ExtensionRepository::class);
+		$extension_info = $extensionRepository->getExtensionByCode('captcha', $this->config->get('config_captcha'));
 
 		if ($extension_info && $this->config->get('captcha_' . $this->config->get('config_captcha') . '_status') && in_array('returns', (array)$this->config->get('config_captcha_page'))) {
 			$data['captcha'] = $this->load->controller('extension/' . $extension_info['extension'] . '/captcha/' . $extension_info['code']);
@@ -290,10 +286,8 @@ class Returns extends BaseController {
 			$data['captcha'] = '';
 		}
 
-		// Information
-		$this->load->model('catalog/information');
-
-		$information_info = $this->model_catalog_information->getInformation((int)$this->config->get('config_return_id'));
+		$informationRepository = $this->getRepository(InformationRepository::class);
+		$information_info = $informationRepository->getInformation((int)$this->config->get('config_return_id'));
 
 		if ($information_info) {
 			$data['text_agree'] = sprintf($this->language->get('text_agree'), $this->url->link('information/information.info', 'language=' . $this->config->get('config_language') . '&information_id=' . $this->config->get('config_return_id')), $information_info['title']);
@@ -367,10 +361,8 @@ class Returns extends BaseController {
 				$json['error']['reason'] = $this->language->get('error_reason');
 			}
 
-			// Captcha
-			$this->load->model('setting/extension');
-
-			$extension_info = $this->model_setting_extension->getExtensionByCode('captcha', $this->config->get('config_captcha'));
+			$extensionRepository = $this->getRepository(ExtensionRepository::class);
+			$extension_info = $extensionRepository->getExtensionByCode('captcha', $this->config->get('config_captcha'));
 
 			if ($extension_info && $this->config->get('captcha_' . $this->config->get('config_captcha') . '_status') && in_array('returns', (array)$this->config->get('config_captcha_page'))) {
 				$captcha = $this->load->controller('extension/' . $extension_info['extension'] . '/captcha/' . $extension_info['code'] . '.validate');
@@ -381,10 +373,8 @@ class Returns extends BaseController {
 			}
 
 			if ($this->config->get('config_return_id')) {
-				// Information
-				$this->load->model('catalog/information');
-
-				$information_info = $this->model_catalog_information->getInformation((int)$this->config->get('config_return_id'));
+				$informationRepository = $this->getRepository(InformationRepository::class);
+				$information_info = $informationRepository->getInformation((int)$this->config->get('config_return_id'));
 
 				if ($information_info && !isset($post_info['agree'])) {
 					$json['error']['warning'] = sprintf($this->language->get('error_agree'), $information_info['title']);
@@ -393,9 +383,8 @@ class Returns extends BaseController {
 		}
 
 		if (!$json) {
-			$this->load->model('account/returns');
-
-			$this->model_account_returns->addReturn($post_info);
+			$returnRepository = $this->getRepository(ReturnRepository::class);
+			$returnRepository->addReturn($post_info);
 
 			// Remove form token
 			unset($this->session->data['return_token']);
@@ -476,9 +465,8 @@ class Returns extends BaseController {
 
 		$data['histories'] = [];
 
-		$this->load->model('account/returns');
-
-		$results = $this->model_account_returns->getHistories($return_id, ($page - 1) * $limit, $limit);
+		$returnRepository = $this->getRepository(ReturnRepository::class);
+		$results = $returnRepository->getHistories($return_id, ($page - 1) * $limit, $limit);
 
 		foreach ($results as $result) {
 			$data['histories'][] = [
@@ -487,7 +475,7 @@ class Returns extends BaseController {
 			] + $result;
 		}
 
-		$return_total = $this->model_account_returns->getTotalHistories($return_id);
+		$return_total = $returnRepository->getTotalHistories($return_id);
 
 		$data['pagination'] = $this->load->controller('common/pagination', [
 			'total' => $return_total,

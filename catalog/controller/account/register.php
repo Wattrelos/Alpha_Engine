@@ -7,8 +7,6 @@ use Alpha\Model\Domain\Repositories\CustomerRepository;
 use Alpha\Model\Domain\Repositories\InformationRepository;
 use Alpha\Model\Domain\Repositories\CustomerGroupRepository;
 use Alpha\Model\Domain\Repositories\ExtensionRepository;
-use Alpha\Model\Domain\Entities\Customer;
-use Alpha\Model\DataTransferObject\EntityMapper;
 
 /**
  * Class Register
@@ -16,22 +14,6 @@ use Alpha\Model\DataTransferObject\EntityMapper;
  * @package Opencart\Catalog\Controller\Account
  */
 class Register extends BaseController {
-	private CustomFieldRepository $customFieldRepository;
-	private CustomerRepository $customerRepository;
-	private InformationRepository $informationRepository;
-	private CustomerGroupRepository $customerGroupRepository;
-	private ExtensionRepository $extensionRepository;
-
-	public function __construct(\Opencart\System\Engine\Registry $registry) {
-		parent::__construct($registry);
-		$repoFactory = $this->registry->get('alpha_repository_factory');
-		$this->customFieldRepository = $repoFactory->get(CustomFieldRepository::class);
-		$this->customerRepository = $repoFactory->get(CustomerRepository::class);
-		$this->informationRepository = $repoFactory->get(InformationRepository::class);
-		$this->customerGroupRepository = $repoFactory->get(CustomerGroupRepository::class);
-		$this->extensionRepository = $repoFactory->get(ExtensionRepository::class);
-	}
-
 	/**
 	 * Index
 	 *
@@ -84,7 +66,8 @@ class Register extends BaseController {
 		$data['customer_groups'] = [];
 
 		if (is_array($this->config->get('config_customer_group_display'))) {
-			$customer_groups = $this->customerGroupRepository->getCustomerGroups((int)$this->config->get('config_language_id'));
+			$customerGroupRepository = $this->getRepository(CustomerGroupRepository::class);
+			$customer_groups = $customerGroupRepository->getCustomerGroups((int)$this->config->get('config_language_id'));
 
 			foreach ($customer_groups as $customer_group) {
 				if (in_array($customer_group['id'], (array)$this->config->get('config_customer_group_display'))) {
@@ -99,7 +82,8 @@ class Register extends BaseController {
 		// Custom Fields
 		$data['custom_fields'] = [];
 
-		$custom_fields = $this->customFieldRepository->getCustomFields($data['customer_group_id']);
+		$customFieldRepository = $this->getRepository(CustomFieldRepository::class);
+		$custom_fields = $customFieldRepository->getCustomFields($data['customer_group_id']);
 
 		foreach ($custom_fields as $custom_field) {
 			if ($custom_field['location'] == 'account') {
@@ -109,7 +93,8 @@ class Register extends BaseController {
 
 		// Captcha
 		$extension_info = null;
-		$extensions = $this->extensionRepository->findAll();
+		$extensionRepository = $this->getRepository(ExtensionRepository::class);
+		$extensions = $extensionRepository->findAll();
 		foreach ($extensions as $ext) {
 			$ext_type = is_object($ext) ? $ext->getType() : ($ext['type'] ?? '');
 			$ext_code = is_object($ext) ? $ext->getCode() : ($ext['code'] ?? '');
@@ -130,7 +115,8 @@ class Register extends BaseController {
 		}
 
 		// Information
-		$information_info = $this->informationRepository->getInformation((int)$this->config->get('config_account_id'));
+		$informationRepository = $this->getRepository(InformationRepository::class);
+		$information_info = $informationRepository->getInformation((int)$this->config->get('config_account_id'));
 
 		if ($information_info) {
 			$data['text_agree'] = sprintf($this->language->get('text_agree'), $this->url->link('information/information.info', 'language=' . $this->config->get('config_language') . '&information_id=' . $this->config->get('config_account_id')), $information_info['title']);
@@ -176,7 +162,8 @@ class Register extends BaseController {
 
 		// Captcha first to prevent probing for registered emails
 		$extension_info = null;
-		$extensions = $this->extensionRepository->findAll();
+		$extensionRepository = $this->getRepository(ExtensionRepository::class);
+		$extensions = $extensionRepository->findAll();
 		foreach ($extensions as $ext) {
 			$ext_type = is_object($ext) ? $ext->getType() : ($ext['type'] ?? '');
 			$ext_code = is_object($ext) ? $ext->getCode() : ($ext['code'] ?? '');
@@ -199,149 +186,53 @@ class Register extends BaseController {
 		}
 
 		if (!$json) {
-			// Customer Group
-			if ($post_info['customer_group_id']) {
-				$customer_group_id = (int)$post_info['customer_group_id'];
-			} else {
-				$customer_group_id = (int)$this->config->get('config_customer_group_id');
-			}
-
-			$customer_group_info = $this->customerGroupRepository->getCustomerGroup($customer_group_id, (int)$this->config->get('config_language_id'));
-
-			if (!$customer_group_info || !in_array($customer_group_id, (array)$this->config->get('config_customer_group_display'))) {
-				$json['error']['warning'] = $this->language->get('error_customer_group');
-			}
-
-			if (!oc_validate_length($post_info['firstname'], 1, 32)) {
-				$json['error']['firstname'] = $this->language->get('error_firstname');
-			}
-
-			if (!oc_validate_length($post_info['lastname'], 1, 32)) {
-				$json['error']['lastname'] = $this->language->get('error_lastname');
-			}
-
-			if (!oc_validate_email($post_info['email'])) {
-				$json['error']['email'] = $this->language->get('error_email');
-			}
-
-			// Customer
-			if ($this->customerRepository->findByEmail($post_info['email'])) {
-				$json['error']['warning'] = $this->language->get('error_exists');
-			}
-
-			if ($this->config->get('config_telephone_required') && !oc_validate_length($post_info['telephone'], 3, 32)) {
-				$json['error']['telephone'] = $this->language->get('error_telephone');
-			}
-
-			// Custom field validation
-			$custom_fields = $this->customFieldRepository->getCustomFields($customer_group_id);
-
-			foreach ($custom_fields as $custom_field) {
-				if ($custom_field['location'] == 'account') {
-					if ($custom_field['required'] && empty($post_info['custom_field'][$custom_field['custom_field_id']])) {
-						$json['error']['custom_field_' . $custom_field['custom_field_id']] = sprintf($this->language->get('error_custom_field'), $custom_field['name']);
-					} elseif (($custom_field['type'] == 'text') && !empty($custom_field['validation']) && !oc_validate_regex($post_info['custom_field'][$custom_field['custom_field_id']], $custom_field['validation'])) {
-						$json['error']['custom_field_' . $custom_field['custom_field_id']] = sprintf($this->language->get('error_regex'), $custom_field['name']);
-					}
-				}
-			}
-
-			$password = html_entity_decode($post_info['password'], ENT_QUOTES, 'UTF-8');
-
-			if (!oc_validate_length($password, (int)$this->config->get('config_password_length'), 40)) {
-				$json['error']['password'] = sprintf($this->language->get('error_password_length'), (int)$this->config->get('config_password_length'));
-			}
-
-			$required = [];
-
-			if ($this->config->get('config_password_uppercase') && !preg_match('/[A-Z]/', $password)) {
-				$required[] = $this->language->get('error_password_uppercase');
-			}
-
-			if ($this->config->get('config_password_lowercase') && !preg_match('/[a-z]/', $password)) {
-				$required[] = $this->language->get('error_password_lowercase');
-			}
-
-			if ($this->config->get('config_password_number') && !preg_match('/[0-9]/', $password)) {
-				$required[] = $this->language->get('error_password_number');
-			}
-
-			if ($this->config->get('config_password_symbol') && !preg_match('/[^a-zA-Z0-9]/', $password)) {
-				$required[] = $this->language->get('error_password_symbol');
-			}
-
-			if ($required) {
-				$json['error']['password'] = sprintf($this->language->get('error_password'), implode(', ', $required), $this->config->get('config_password_length'));
-			}
-
-			// Agree to terms
-			$information_info = $this->informationRepository->getInformation((int)$this->config->get('config_account_id'));
-
-			if ($information_info && !$post_info['agree']) {
-				$json['error']['warning'] = sprintf($this->language->get('error_agree'), $information_info['title']);
-			}
-		}
-
-		if (!$json) {
-			// Assegura que o fallback de Grupo de Cliente seja percebido pelo Mapeador
-			$post_info['customer_group_id'] = $customer_group_id; 
-
-			// Alpha Engine: Injeção de infraestrutura para saciar o banco de dados restrito do OpenCart
-			// Evita o erro de campos NOT NULL sem valor padrão (ip, date_added, token, code)
-			$post_info['ip'] = $this->request->server['REMOTE_ADDR'] ?? '127.0.0.1';
-			$post_info['token'] = '';
-			$post_info['code'] = '';
-			$post_info['date_added'] = date('Y-m-d H:i:s');
-
-			$customer = new Customer();
+			$customerRepository = $this->getRepository(CustomerRepository::class);
 			
-			// Aplica a Automação de Hidratação utilizando a camada anticorrupção (Snake_case -> CamelCase)
-			EntityMapper::fillEntity($customer, $post_info);
+			// Alpha Engine: Encapsulamento total do registro via Domínio (Skinny Controller)
+			$result = $customerRepository->registerCustomer($post_info);
 
-			// Atributos de Infraestrutura, Segurança e Conversões Complexas
-			$customer->setStoreId((int)$this->config->get('config_store_id'))
-					 ->setLanguageId((int)$this->config->get('config_language_id'))
-					 ->setPassword(password_hash($password, PASSWORD_DEFAULT))
-					 ->setStatus(true)
-					 ->setSafe(true);
+			if (!empty($result['errors'])) {
+				$json['error'] = $result['errors'];
+			} else {
+				$customer_group_info = $result['customer_group_info'];
+				$customer_id = $result['customer_id'];
 
-			$customer_id = $this->customerRepository->save($customer);
+				// Login if requires approval
+				if (!$customer_group_info['approval']) {
+					$this->customer->login($post_info['email'], $post_info['password']);
 
-			// Login if requires approval
-			if (!$customer_group_info['approval']) {
-				$this->customer->login($post_info['email'], $password);
+					// Add customer details into session
+					$this->session->data['customer'] = [
+						'customer_id'       => $customer_id,
+						'customer_group_id' => $result['customer_group_id'],
+						'firstname'         => $post_info['firstname'],
+						'lastname'          => $post_info['lastname'],
+						'email'             => $post_info['email'],
+						'telephone'         => $post_info['telephone'],
+						'cpf_cnpj'          => $post_info['cpf_cnpj'],
+						'persontype'        => $post_info['persontype'],
+						'custom_field'      => $post_info['custom_field']
+					];
 
-				// Add customer details into session
-				$this->session->data['customer'] = [
-					'customer_id'       => $customer_id,
-					'customer_group_id' => $customer_group_id,
-					'firstname'         => $post_info['firstname'],
-					'lastname'          => $post_info['lastname'],
-					'email'             => $post_info['email'],
-					'telephone'         => $post_info['telephone'],
-					'cpf_cnpj'          => $post_info['cpf_cnpj'],
-					'persontype'        => $post_info['persontype'],
-					'custom_field'      => $post_info['custom_field']
-				];
+					// Create customer token
+					$this->session->data['customer_token'] = oc_token(26);
+				}
 
-				// Create customer token
-				$this->session->data['customer_token'] = oc_token(26);
+				// Remove form token
+				unset($this->session->data['register_token']);
+
+				// Clear any previous login attempts for unregistered accounts.
+				$customerRepository->resetLoginAttempts($post_info['email']);
+
+				// Clear old session data
+				unset($this->session->data['guest']);
+				unset($this->session->data['shipping_method']);
+				unset($this->session->data['shipping_methods']);
+				unset($this->session->data['payment_method']);
+				unset($this->session->data['payment_methods']);
+
+				$json['redirect'] = $this->url->link('account/success', 'language=' . $this->config->get('config_language') . (isset($this->session->data['customer_token']) ? '&customer_token=' . $this->session->data['customer_token'] : ''), true);
 			}
-
-			// Remove form token
-			unset($this->session->data['register_token']);
-
-			// Clear any previous login attempts for unregistered accounts.
-			$this->customerRepository->resetLoginAttempts($post_info['email']);
-
-			// Clear old session data
-			unset($this->session->data['guest']);
-			unset($this->session->data['shipping_method']);
-			unset($this->session->data['shipping_methods']);
-			unset($this->session->data['payment_method']);
-			unset($this->session->data['payment_methods']);
-
-			$json['redirect'] = $this->url->link('account/success', 'language=' . $this->config->get('config_language') . (isset($this->session->data['customer_token']) ? '&customer_token=' . $this->session->data['customer_token'] : ''), true);
 		}
 
 		$this->jsonResponse($json);

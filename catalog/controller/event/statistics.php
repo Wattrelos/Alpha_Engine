@@ -1,11 +1,16 @@
 <?php
 namespace Opencart\Catalog\Controller\Event;
+
+use Alpha\Controller\BaseController;
+use Alpha\Model\Domain\Repositories\StatisticsRepository;
+use Alpha\Model\Domain\Repositories\OrderRepository;
+
 /**
  * Class Statistics
  *
  * @package Opencart\Catalog\Controller\Event
  */
-class Statistics extends \Opencart\System\Engine\Controller {
+class Statistics extends BaseController {
 	/**
 	 * Add Review
 	 *
@@ -19,9 +24,8 @@ class Statistics extends \Opencart\System\Engine\Controller {
 	 */
 	public function addReview(string &$route, array &$args, &$output): void {
 		// Statistics
-		$this->load->model('report/statistics');
-
-		$this->model_report_statistics->addValue('review', 1);
+		$statisticsRepository = $this->getRepository(StatisticsRepository::class);
+		$statisticsRepository->addValue('review', 1);
 	}
 
 	/**
@@ -37,9 +41,8 @@ class Statistics extends \Opencart\System\Engine\Controller {
 	 */
 	public function addReturn(string &$route, array &$args, &$output): void {
 		// Statistics
-		$this->load->model('report/statistics');
-
-		$this->model_report_statistics->addValue('returns', 1);
+		$statisticsRepository = $this->getRepository(StatisticsRepository::class);
+		$statisticsRepository->addValue('returns', 1);
 	}
 
 	/**
@@ -54,13 +57,12 @@ class Statistics extends \Opencart\System\Engine\Controller {
 	 */
 	public function addHistory(string &$route, array &$args): void {
 		// Order
-		$this->load->model('checkout/order');
-
-		$order_info = $this->model_checkout_order->getOrder($args[0]);
+		$orderRepository = $this->getRepository(OrderRepository::class);
+		$order_info = $orderRepository->getOrder($args[0]);
 
 		if ($order_info) {
 			// Stats
-			$this->load->model('report/statistics');
+			$statisticsRepository = $this->getRepository(StatisticsRepository::class);
 
 			$old_status_id = $order_info['order_status_id'];
 			$new_status_id = $args[1];
@@ -72,32 +74,32 @@ class Statistics extends \Opencart\System\Engine\Controller {
 
 			// If order status in complete or processing add value to sale total
 			if (in_array($new_status_id, $active_status) && !in_array($old_status_id, $active_status)) {
-				$this->model_report_statistics->addValue('order_sale', $order_info['total']);
+				$statisticsRepository->addValue('order_sale', $order_info['total']);
 			}
 
 			// If order status not in complete or processing remove value to sale total
 			if (!in_array($new_status_id, $active_status) && in_array($old_status_id, $active_status)) {
-				$this->model_report_statistics->removeValue('order_sale', $order_info['total']);
+				$statisticsRepository->removeValue('order_sale', $order_info['total']);
 			}
 
 			// Add to processing status if new status is in the array
 			if (in_array($new_status_id, $processing_status) && !in_array($old_status_id, $processing_status)) {
-				$this->model_report_statistics->addValue('order_processing', 1);
+				$statisticsRepository->addValue('order_processing', 1);
 			}
 
 			// Remove from processing status if new status is not array and old status is
 			if (!in_array($new_status_id, $processing_status) && in_array($old_status_id, $processing_status)) {
-				$this->model_report_statistics->removeValue('order_processing', 1);
+				$statisticsRepository->removeValue('order_processing', 1);
 			}
 
 			// Add to complete status if new status is not array
 			if (in_array($new_status_id, $complete_status) && !in_array($old_status_id, $complete_status)) {
-				$this->model_report_statistics->addValue('order_complete', 1);
+				$statisticsRepository->addValue('order_complete', 1);
 			}
 
 			// Remove from complete status if new status is not array
 			if (!in_array($new_status_id, $complete_status) && in_array($old_status_id, $complete_status)) {
-				$this->model_report_statistics->removeValue('order_complete', 1);
+				$statisticsRepository->removeValue('order_complete', 1);
 			}
 		}
 	}

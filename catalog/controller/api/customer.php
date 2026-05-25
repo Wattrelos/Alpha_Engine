@@ -3,6 +3,8 @@ namespace Opencart\catalog\Controller\Api;
 
 use Alpha\Controller\BaseController;
 use Alpha\Model\Domain\Repositories\CustomerRepository;
+use Alpha\Model\Domain\Repositories\CustomerGroupRepository;
+use Alpha\Model\Domain\Repositories\CustomFieldRepository;
 
 /**
  * Class Customer
@@ -53,9 +55,8 @@ class Customer extends BaseController {
 			$customer_group_id = (int)$this->config->get('config_customer_group_id');
 		}
 
-		$this->load->model('account/customer_group');
-
-		$customer_group_info = $this->model_account_customer_group->getCustomerGroup($customer_group_id);
+		$customerGroupRepository = $this->getRepository(CustomerGroupRepository::class);
+		$customer_group_info = $customerGroupRepository->getCustomerGroup($customer_group_id);
 
 		if (!$customer_group_info) {
 			$output['error']['customer_group'] = $this->language->get('error_customer_group');
@@ -86,9 +87,8 @@ class Customer extends BaseController {
 		}
 
 		// Custom field validation
-		$this->load->model('account/custom_field');
-
-		$custom_fields = $this->model_account_custom_field->getCustomFields((int)$customer_group_id);
+		$customFieldRepository = $this->getRepository(CustomFieldRepository::class);
+		$custom_fields = $customFieldRepository->getCustomFields((int)$customer_group_id);
 
 		foreach ($custom_fields as $custom_field) {
 			if ($custom_field['location'] == 'account') {

@@ -3,6 +3,8 @@ namespace Opencart\Catalog\Controller\Account;
 
 use Alpha\Controller\BaseController;
 use Alpha\Model\Domain\Repositories\CustomerAffiliateRepository;
+use Alpha\Model\Domain\Repositories\CustomFieldRepository;
+use Alpha\Model\Domain\Repositories\InformationRepository;
 
 /**
  * Class Affiliate
@@ -10,13 +12,6 @@ use Alpha\Model\Domain\Repositories\CustomerAffiliateRepository;
  * @package Opencart\Catalog\Controller\Account
  */
 class Affiliate extends BaseController {
-	private CustomerAffiliateRepository $affiliateRepository;
-
-	public function __construct(\Opencart\System\Engine\Registry $registry) {
-		parent::__construct($registry);
-		$this->affiliateRepository = $this->registry->get('alpha_repository_factory')->get(CustomerAffiliateRepository::class);
-	}
-
 	/**
 	 * Index
 	 *
@@ -63,7 +58,7 @@ class Affiliate extends BaseController {
 		$data['upload'] = $this->url->link('tool/upload', 'language=' . $this->config->get('config_language') . '&upload_token=' . $this->session->data['upload_token']);
 
 		// Alpha Engine: Affiliate Domain
-		$affiliate_info = $this->affiliateRepository->find($this->customer->getId());
+		$affiliate_info = $this->getRepository(CustomerAffiliateRepository::class)->find($this->customer->getId());
 
 		$data['company']             = $affiliate_info ? $affiliate_info->getCompany() : '';
 		$data['website']             = $affiliate_info ? $affiliate_info->getWebsite() : '';
@@ -78,9 +73,8 @@ class Affiliate extends BaseController {
 		$data['bank_account_number'] = $affiliate_info ? $affiliate_info->getBankAccountNumber() : '';
 
 		// Custom Field
-		$this->load->model('account/custom_field');
-
-		$custom_fields = $this->model_account_custom_field->getCustomFields((int)$this->config->get('config_customer_group_id'));
+		$customFieldRepository = $this->getRepository(CustomFieldRepository::class);
+		$custom_fields = $customFieldRepository->getCustomFields((int)$this->config->get('config_customer_group_id'));
 
 		foreach ($custom_fields as $custom_field) {
 			if ($custom_field['location'] == 'affiliate') {
@@ -92,9 +86,8 @@ class Affiliate extends BaseController {
 
 		if (!$affiliate_info && $this->config->get('config_affiliate_id')) {
 			// Information
-			$this->load->model('catalog/information');
-
-			$information_info = $this->model_catalog_information->getInformation((int)$this->config->get('config_affiliate_id'));
+			$informationRepository = $this->getRepository(InformationRepository::class);
+			$information_info = $informationRepository->getInformation((int)$this->config->get('config_affiliate_id'));
 
 			if ($information_info) {
 				$data['text_agree'] = sprintf($this->language->get('text_agree'), $this->url->link('information/information.info', 'language=' . $this->config->get('config_language') . '&information_id=' . $this->config->get('config_affiliate_id')), $information_info['title']);
@@ -179,13 +172,12 @@ class Affiliate extends BaseController {
 			}
 
 			// Validate agree only if customer not already an affiliate
-			$affiliate_info = $this->affiliateRepository->find($this->customer->getId());
+			$affiliate_info = $this->getRepository(CustomerAffiliateRepository::class)->find($this->customer->getId());
 
 			if (!$affiliate_info) {
 				// Information
-				$this->load->model('catalog/information');
-
-				$information_info = $this->model_catalog_information->getInformation((int)$this->config->get('config_affiliate_id'));
+				$informationRepository = $this->getRepository(InformationRepository::class);
+				$information_info = $informationRepository->getInformation((int)$this->config->get('config_affiliate_id'));
 
 				if ($information_info && !$post_info['agree']) {
 					$json['error']['warning'] = sprintf($this->language->get('error_agree'), $information_info['title']);
@@ -194,7 +186,7 @@ class Affiliate extends BaseController {
 		}
 
 		if (!$json) {
-			$this->affiliateRepository->processSave($this->customer->getId(), $post_info);
+			$this->getRepository(CustomerAffiliateRepository::class)->processSave($this->customer->getId(), $post_info);
 
 			$this->session->data['success'] = $this->language->get('text_success');
 

@@ -2,6 +2,7 @@
 namespace Opencart\Catalog\Controller\Account;
 
 use Alpha\Controller\BaseController;
+use Alpha\Model\Domain\Repositories\DownloadRepository;
 
 /**
  * Class Download
@@ -52,9 +53,8 @@ class Download extends BaseController {
 
 		$data['downloads'] = [];
 
-		$this->load->model('account/download');
-
-		$results = $this->model_account_download->getDownloads(($page - 1) * $limit, $limit);
+		$downloadRepository = $this->getRepository(DownloadRepository::class);
+		$results = $downloadRepository->getDownloads(($page - 1) * $limit, $limit);
 
 		foreach ($results as $result) {
 			if (is_file(DIR_DOWNLOAD . $result['filename'])) {
@@ -87,7 +87,7 @@ class Download extends BaseController {
 			}
 		}
 
-		$download_total = $this->model_account_download->getTotalDownloads();
+		$download_total = $downloadRepository->getTotalDownloads();
 
 		$data['pagination'] = $this->load->controller('common/pagination', [
 			'total' => $download_total,
@@ -121,9 +121,8 @@ class Download extends BaseController {
 			$this->response->redirect($this->url->link('account/login', 'language=' . $this->config->get('config_language'), true));
 		}
 
-		$this->load->model('account/download');
-
-		$download_info = $this->model_account_download->getDownload($download_id);
+		$downloadRepository = $this->getRepository(DownloadRepository::class);
+		$download_info = $downloadRepository->getDownload($download_id);
 
 		if ($download_info) {
 			$file = DIR_DOWNLOAD . $download_info['filename'];
@@ -144,7 +143,7 @@ class Download extends BaseController {
 
 					readfile($file);
 
-					$this->model_account_download->addReport($download_id, oc_get_ip());
+					$downloadRepository->addReport($download_id, oc_get_ip());
 
 					exit();
 				} else {

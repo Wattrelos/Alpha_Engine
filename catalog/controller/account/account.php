@@ -10,20 +10,14 @@ use Alpha\Model\Domain\Repositories\CustomerAffiliateRepository;
  * @package Opencart\Catalog\Controller\Account
  */
 class Account extends BaseController {
-	private CustomerAffiliateRepository $affiliateRepository;
-
-	public function __construct(\Opencart\System\Engine\Registry $registry) {
-		parent::__construct($registry);
-		$this->affiliateRepository = $this->registry->get('alpha_repository_factory')->get(CustomerAffiliateRepository::class);
-	}
-
 	/**
 	 * Index
 	 *
 	 * @return void
 	 */
 	public function index(): void {
-		$this->load->language('account/account');
+		$data = [];
+		$this->loadLanguageData('account/account', $data); // Alpha Engine: Carregamento unificado e injeção automática de dicionário
 
 		if (!$this->customer->isLogged()) {
 			$this->session->data['redirect'] = $this->url->link('account/account', 'language=' . $this->config->get('config_language'));
@@ -32,8 +26,6 @@ class Account extends BaseController {
 		}
 
 		$this->document->setTitle($this->language->get('heading_title'));
-
-		$data['breadcrumbs'] = [];
 
 		$data['breadcrumbs'][] = [
 			'text' => $this->language->get('text_home'),
@@ -77,7 +69,8 @@ class Account extends BaseController {
 			$data['affiliate'] = $this->url->link('account/affiliate', 'language=' . $this->config->get('config_language') . '&customer_token=' . $this->session->data['customer_token']);
 
 			// Alpha Engine: Uso do Repository em vez da camada de Mapper direta
-			$affiliate_info = $this->affiliateRepository->findOneBy(['customer_id' => $this->customer->getId()]);
+			$affiliateRepository = $this->getRepository(CustomerAffiliateRepository::class);
+			$affiliate_info = $affiliateRepository->findOneBy(['customer_id' => $this->customer->getId()]);
 
 			if ($affiliate_info) {
 				$data['tracking'] = $this->url->link('account/tracking', 'language=' . $this->config->get('config_language') . '&customer_token=' . $this->session->data['customer_token']);

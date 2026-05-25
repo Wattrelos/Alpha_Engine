@@ -8,13 +8,6 @@ use Alpha\Model\Domain\Repositories\CustomerRepository;
  * Password Controller - Modernizado para Alpha Engine.
  */
 class Password extends BaseController {
-	private CustomerRepository $customerRepository;
-
-	public function __construct(\Opencart\System\Engine\Registry $registry) {
-		parent::__construct($registry);
-		$this->customerRepository = $this->registry->get('alpha_repository_factory')->get(CustomerRepository::class);
-	}
-
 	/**
 	 * Index
 	 *
@@ -76,14 +69,14 @@ class Password extends BaseController {
 			$post_info = $this->request->post + $required;
 
 			// Alpha Engine: Validações de Força e Padrão delegadas ao Domínio
-			$errors = $this->customerRepository->validatePasswordData($post_info);
+			$errors = $this->getRepository(CustomerRepository::class)->validatePasswordData($post_info);
 			if ($errors) {
 				$json['error'] = $errors;
 			}
 		}
 
 		if (!$json) {
-			$this->customerRepository->updatePassword($this->customer->getId(), $this->request->post['password']);
+			$this->getRepository(CustomerRepository::class)->updatePassword($this->customer->getId(), $this->request->post['password']);
 
 			$json['success'] = $this->language->get('text_success');
 		}

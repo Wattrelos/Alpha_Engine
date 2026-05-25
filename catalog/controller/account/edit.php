@@ -9,15 +9,6 @@ use Alpha\Model\Domain\Repositories\CustomFieldRepository;
  * Edit Controller - Modernizado para Alpha Engine.
  */
 class Edit extends BaseController {
-	private CustomerRepository $customerRepository;
-	private CustomFieldRepository $customFieldRepository;
-
-	public function __construct(\Opencart\System\Engine\Registry $registry) {
-		parent::__construct($registry);
-		$this->customerRepository = $this->registry->get('alpha_repository_factory')->get(CustomerRepository::class);
-		$this->customFieldRepository = $this->registry->get('alpha_repository_factory')->get(CustomFieldRepository::class);
-	}
-
 	/**
 	 * Index
 	 *
@@ -63,7 +54,7 @@ class Edit extends BaseController {
 		$data['upload'] = $this->url->link('tool/upload', 'language=' . $this->config->get('config_language') . '&upload_token=' . $this->session->data['upload_token']);
 
 		// Alpha Engine: Entidade Cliente do Domínio
-		$customer = $this->customerRepository->find($this->customer->getId());
+		$customer = $this->getRepository(CustomerRepository::class)->find($this->customer->getId());
 
 		$data['firstname'] = $customer ? $customer->getFirstname() : $this->customer->getFirstName();
 		$data['lastname'] = $customer ? $customer->getLastname() : $this->customer->getLastName();
@@ -75,7 +66,7 @@ class Edit extends BaseController {
 		// Custom Fields
 		$data['custom_fields'] = [];
 
-		$custom_fields = $this->customFieldRepository->getCustomFields($this->customer->getGroupId());
+		$custom_fields = $this->getRepository(CustomFieldRepository::class)->getCustomFields($this->customer->getGroupId());
 
 		foreach ($custom_fields as $custom_field) {
 			if ($custom_field['location'] == 'account') {
@@ -119,10 +110,10 @@ class Edit extends BaseController {
 			$post_info = $this->request->post + $required;
 
 			// Alpha Engine: Validações injetadas pelo Repositório
-			$errors = $this->customerRepository->validateEditData($post_info, $this->customer->getId());
+			$errors = $this->getRepository(CustomerRepository::class)->validateEditData($post_info, $this->customer->getId());
 			
 			// Custom field validation
-			$custom_fields = $this->customFieldRepository->getCustomFields($this->customer->getGroupId());
+			$custom_fields = $this->getRepository(CustomFieldRepository::class)->getCustomFields($this->customer->getGroupId());
 
 			foreach ($custom_fields as $custom_field) {
 				if ($custom_field['location'] == 'account') {
@@ -141,7 +132,7 @@ class Edit extends BaseController {
 
 		if (!$json) {
 			// Update customer in db via Domain
-			$customer = $this->customerRepository->find($this->customer->getId());
+			$customer = $this->getRepository(CustomerRepository::class)->find($this->customer->getId());
 			
 			if ($customer) {
 				$customer->setFirstname($post_info['firstname'])
@@ -155,7 +146,7 @@ class Edit extends BaseController {
 					$customer->setCustomFieldArray($post_info['custom_field']);
 				}
 				
-				$this->customerRepository->updateProfile($customer);
+				$this->getRepository(CustomerRepository::class)->updateProfile($customer);
 			}
 
 			$json['success'] = $this->language->get('text_success');

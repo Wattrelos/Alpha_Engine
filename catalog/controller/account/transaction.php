@@ -2,6 +2,7 @@
 namespace Opencart\Catalog\Controller\Account;
 
 use Alpha\Controller\BaseController;
+use Alpha\Model\Domain\Repositories\CustomerTransactionRepository;
 
 /**
  * Class Transaction
@@ -62,9 +63,8 @@ class Transaction extends BaseController {
 			'limit' => $limit
 		];
 
-		$this->load->model('account/transaction');
-
-		$results = $this->model_account_transaction->getTransactions($this->customer->getId(), $filter_data);
+		$customerTransactionRepository = $this->getRepository(CustomerTransactionRepository::class);
+		$results = $customerTransactionRepository->getTransactions($this->customer->getId(), $filter_data);
 
 		foreach ($results as $result) {
 			$data['transactions'][] = [
@@ -73,7 +73,7 @@ class Transaction extends BaseController {
 			] + $result;
 		}
 
-		$transaction_total = $this->model_account_transaction->getTotalTransactions($this->customer->getId());
+		$transaction_total = $customerTransactionRepository->getTotalTransactions($this->customer->getId());
 
 		$data['pagination'] = $this->load->controller('common/pagination', [
 			'total' => $transaction_total,

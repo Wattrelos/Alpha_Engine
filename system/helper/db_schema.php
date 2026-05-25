@@ -107,7 +107,7 @@ function oc_db_schema() {
 				'type' => 'varchar(128)'
 			],
 			[
-				'name' => 'number',
+				'name' => 'number',  // Manter campo personalizado.
 				'type' => 'int(11)'
 			],
 			[
@@ -115,7 +115,7 @@ function oc_db_schema() {
 				'type' => 'varchar(128)'
 			],
 			[
-				'name' => 'neighborhood',
+				'name' => 'neighborhood', // Manter campo personalizado.
 				'type' => 'varchar(60)'
 			],
 			[
@@ -1876,8 +1876,16 @@ function oc_db_schema() {
 				'type' => 'varchar(40)'
 			],
 			[
-				'name' => 'date_added',
+				'name' => 'date_modified', 
 				'type' => 'datetime'
+			],
+			[
+				'name' => 'cpf_cnpj',	 // Manter campo personalizado.
+				'type' => 'varchar(14)'
+			],
+			[
+				'name' => 'persontype',	 // Manter campo personalizado.
+				'type' => 'varchar(1)'
 			]
 		],
 		'primary' => [

@@ -2,6 +2,12 @@
 namespace Opencart\Catalog\Controller\Account;
 
 use Alpha\Controller\BaseController;
+use Alpha\Model\Domain\Repositories\SubscriptionRepository;
+use Alpha\Model\Domain\Repositories\SubscriptionStatusRepository;
+use Alpha\Model\Domain\Repositories\AddressRepository;
+use Alpha\Model\Domain\Repositories\ProductRepository;
+use Alpha\Model\Domain\Repositories\UploadRepository;
+use Alpha\Model\Domain\Repositories\OrderRepository;
 
 /**
  * Class Subscription
@@ -58,16 +64,10 @@ class Subscription extends BaseController {
 
 		$data['subscriptions'] = [];
 
-		// Subscription
-		$this->load->model('account/subscription');
+		$subscriptionRepository = $this->getRepository(SubscriptionRepository::class);
+		$subscriptionStatusRepository = $this->getRepository(SubscriptionStatusRepository::class);
 
-		// Currency
-		$this->load->model('localisation/currency');
-
-		// Subscription Status
-		$this->load->model('localisation/subscription_status');
-
-		$results = $this->model_account_subscription->getSubscriptions(($page - 1) * $limit, $limit);
+		$results = $subscriptionRepository->getSubscriptions(($page - 1) * $limit, $limit);
 
 		foreach ($results as $result) {
 			$description = '';
@@ -92,7 +92,7 @@ class Subscription extends BaseController {
 				$description .= sprintf($this->language->get('text_subscription_cancel'), $price, $cycle, $frequency);
 			}
 
-			$subscription_status_info = $this->model_localisation_subscription_status->getSubscriptionStatus($result['subscription_status_id']);
+			$subscription_status_info = $subscriptionStatusRepository->getSubscriptionStatus($result['subscription_status_id']);
 
 			if ($subscription_status_info) {
 				$subscription_status = $subscription_status_info['name'];
@@ -101,7 +101,7 @@ class Subscription extends BaseController {
 			}
 
 			$data['subscriptions'][] = [
-				'product_total' => $this->model_account_subscription->getTotalProducts($result['subscription_id']),
+				'product_total' => $subscriptionRepository->getTotalProducts($result['subscription_id']),
 				'description'   => $description,
 				'status'        => $subscription_status,
 				'date_added'    => date($this->language->get('date_format_short'), strtotime($result['date_added'])),
@@ -109,7 +109,7 @@ class Subscription extends BaseController {
 			] + $result;
 		}
 
-		$subscription_total = $this->model_account_subscription->getTotalSubscriptions();
+		$subscription_total = $subscriptionRepository->getTotalSubscriptions();
 
 		$data['pagination'] = $this->load->controller('common/pagination', [
 			'total' => $subscription_total,
@@ -145,9 +145,8 @@ class Subscription extends BaseController {
 			$this->response->redirect($this->url->link('account/login', 'language=' . $this->config->get('config_language'), true));
 		}
 
-		$this->load->model('account/subscription');
-
-		$subscription_info = $this->model_account_subscription->getSubscription($subscription_id);
+		$subscriptionRepository = $this->getRepository(SubscriptionRepository::class);
+		$subscription_info = $subscriptionRepository->getSubscription($subscription_id);
 
 		if ($subscription_info) {
 			$heading_title = sprintf($this->language->get('text_subscription'), $subscription_info['subscription_id']);
@@ -188,9 +187,9 @@ class Subscription extends BaseController {
 			$data['order_id'] = $subscription_info['order_id'];
 
 			// Payment Address
-			$this->load->model('account/address');
+			$addressRepository = $this->getRepository(AddressRepository::class);
 
-			$address_info = $this->model_account_address->getAddress($this->customer->getId(), $subscription_info['payment_address_id']);
+			$address_info = $addressRepository->getAddress($this->customer->getId(), $subscription_info['payment_address_id']);
 
 			if ($address_info) {
 				if ($address_info['address_format']) {
@@ -243,9 +242,7 @@ class Subscription extends BaseController {
 			}
 
 			// Shipping Address
-			$this->load->model('account/address');
-
-			$address_info = $this->model_account_address->getAddress($this->customer->getId(), $subscription_info['shipping_address_id']);
+			$address_info = $addressRepository->getAddress($this->customer->getId(), $subscription_info['shipping_address_id']);
 
 			if ($address_info) {
 				if ($address_info['address_format']) {
@@ -312,20 +309,20 @@ class Subscription extends BaseController {
 			// Product
 			$data['products'] = [];
 
-			$this->load->model('catalog/product');
-
-			$results = $this->model_account_subscription->getProducts($subscription_id);
+			$productRepository = $this->getRepository(ProductRepository::class);
+			$uploadRepository = $this->getRepository(UploadRepository::class);
+			$results = $subscriptionRepository->getProducts($subscription_id);
 
 			foreach ($results as $result) {
 				$option_data = [];
 
-				$options = $this->model_account_subscription->getOptions($result['product_id'], $result['subscription_product_id']);
+				$options = $subscriptionRepository->getOptions($result['product_id'], $result['subscription_product_id']);
 
 				foreach ($options as $option) {
 					if ($option['type'] != 'file') {
 						$value = $option['value'];
 					} else {
-						$upload_info = $this->model_tool_upload->getUploadByCode($option['value']);
+						$upload_info = $uploadRepository->getUploadByCode($option['value']);
 
 						if ($upload_info) {
 							$value = $upload_info['name'];
@@ -425,9 +422,8 @@ class Subscription extends BaseController {
 		}
 
 		if (!$json) {
-			$this->load->model('account/subscription');
-
-			$subscription_info = $this->model_account_subscription->getSubscription($subscription_id);
+			$subscriptionRepository = $this->getRepository(SubscriptionRepository::class);
+			$subscription_info = $subscriptionRepository->getSubscription($subscription_id);
 
 			if ($subscription_info) {
 				if ($subscription_info['trial_remaining']) {
@@ -445,9 +441,7 @@ class Subscription extends BaseController {
 		}
 
 		if (!$json) {
-			$this->load->model('checkout/subscription');
-
-			$this->model_checkout_subscription->addHistory($subscription_id, (int)$this->config->get('config_subscription_canceled_status_id'));
+			$subscriptionRepository->addHistory($subscription_id, (int)$this->config->get('config_subscription_canceled_status_id'));
 
 			$json['success'] = $this->language->get('text_success');
 		}
@@ -499,9 +493,8 @@ class Subscription extends BaseController {
 		// Histories
 		$data['histories'] = [];
 
-		$this->load->model('account/subscription');
-
-		$results = $this->model_account_subscription->getHistories($subscription_id, ($page - 1) * $limit, $limit);
+		$subscriptionRepository = $this->getRepository(SubscriptionRepository::class);
+		$results = $subscriptionRepository->getHistories($subscription_id, ($page - 1) * $limit, $limit);
 
 		foreach ($results as $result) {
 			$data['histories'][] = [
@@ -510,7 +503,7 @@ class Subscription extends BaseController {
 			] + $result;
 		}
 
-		$subscription_total = $this->model_account_subscription->getTotalHistories($subscription_id);
+		$subscription_total = $subscriptionRepository->getTotalHistories($subscription_id);
 
 		$data['pagination'] = $this->load->controller('common/pagination', [
 			'total' => $subscription_total,
@@ -568,9 +561,8 @@ class Subscription extends BaseController {
 		// Order
 		$data['orders'] = [];
 
-		$this->load->model('account/order');
-
-		$results = $this->model_account_order->getOrdersBySubscriptionId($subscription_id, ($page - 1) * $limit, $limit);
+		$orderRepository = $this->getRepository(OrderRepository::class);
+		$results = $orderRepository->getOrdersBySubscriptionId($subscription_id, ($page - 1) * $limit, $limit);
 
 		foreach ($results as $result) {
 			$data['orders'][] = [
@@ -580,7 +572,7 @@ class Subscription extends BaseController {
 			] + $result;
 		}
 
-		$order_total = $this->model_account_order->getTotalOrdersBySubscriptionId($subscription_id);
+		$order_total = $orderRepository->getTotalOrdersBySubscriptionId($subscription_id);
 
 		$data['pagination'] = $this->load->controller('common/pagination', [
 			'total' => $order_total,

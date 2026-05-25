@@ -2,6 +2,7 @@
 namespace Opencart\Catalog\Controller\Account;
 
 use Alpha\Controller\BaseController;
+use Alpha\Model\Domain\Repositories\CustomerRewardRepository;
 
 /**
  * Reward Controller - Modernizado para Alpha Engine.
@@ -58,9 +59,8 @@ class Reward extends BaseController {
 			'limit' => $limit
 		];
 
-		$this->load->model('account/reward');
-
-		$results = $this->model_account_reward->getRewards($this->customer->getId(), $filter_data);
+		$customerRewardRepository = $this->getRepository(CustomerRewardRepository::class);
+		$results = $customerRewardRepository->getRewards($this->customer->getId(), $filter_data);
 
 		foreach ($results as $result) {
 			$data['rewards'][] = [
@@ -69,7 +69,7 @@ class Reward extends BaseController {
 			] + $result;
 		}
 
-		$reward_total = $this->model_account_reward->getTotalRewards($this->customer->getId());
+		$reward_total = $customerRewardRepository->getTotalRewards($this->customer->getId());
 
 		$data['pagination'] = $this->load->controller('common/pagination', [
 			'total' => $reward_total,

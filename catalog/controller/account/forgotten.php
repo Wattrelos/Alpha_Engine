@@ -1,11 +1,15 @@
 <?php
 namespace Opencart\Catalog\Controller\Account;
+
+use Alpha\Controller\BaseController;
+use Alpha\Model\Domain\Repositories\CustomerRepository;
+
 /**
  * Class Forgotten
  *
  * @package Opencart\Catalog\Controller\Account
  */
-class Forgotten extends \Opencart\System\Engine\Controller {
+class Forgotten extends BaseController {
 	/**
 	 * Index
 	 *
@@ -40,14 +44,7 @@ class Forgotten extends \Opencart\System\Engine\Controller {
 		$data['confirm'] = $this->url->link('account/forgotten.confirm', 'language=' . $this->config->get('config_language'));
 		$data['back'] = $this->url->link('account/login', 'language=' . $this->config->get('config_language'));
 
-		$data['column_left'] = $this->load->controller('common/column_left');
-		$data['column_right'] = $this->load->controller('common/column_right');
-		$data['content_top'] = $this->load->controller('common/content_top');
-		$data['content_bottom'] = $this->load->controller('common/content_bottom');
-		$data['footer'] = $this->load->controller('common/footer');
-		$data['header'] = $this->load->controller('common/header');
-
-		$this->response->setOutput($this->load->view('account/forgotten', $data));
+		$this->render('account/forgotten', $data);
 	}
 
 	/**
@@ -68,9 +65,8 @@ class Forgotten extends \Opencart\System\Engine\Controller {
 			$post_info = $this->request->post + ['email' => ''];
 
 			// Customer
-			$this->load->model('account/customer');
-
-			$customer_info = $this->model_account_customer->getCustomerByEmail($post_info['email']);
+			$customerRepository = $this->getRepository(CustomerRepository::class);
+			$customer_info = $customerRepository->getCustomerByEmail($post_info['email']);
 
 			if (!$customer_info) {
 				$json['error'] = $this->language->get('error_not_found');
@@ -80,13 +76,12 @@ class Forgotten extends \Opencart\System\Engine\Controller {
 		if (!$json) {
 			$this->session->data['success'] = $this->language->get('text_success');
 
-			$this->model_account_customer->addToken($customer_info['customer_id'], 'password', oc_token(40));
+			$customerRepository->addToken($customer_info['customer_id'], 'password', oc_token(40));
 
 			$json['redirect'] = $this->url->link('account/login', 'language=' . $this->config->get('config_language'), true);
 		}
 
-		$this->response->addHeader('Content-Type: application/json');
-		$this->response->setOutput(json_encode($json));
+		$this->jsonResponse($json);
 	}
 
 	/**
@@ -114,14 +109,13 @@ class Forgotten extends \Opencart\System\Engine\Controller {
 		}
 
 		// Customer
-		$this->load->model('account/customer');
-
-		$customer_info = $this->model_account_customer->getTokenByCode($code);
+		$customerRepository = $this->getRepository(CustomerRepository::class);
+		$customer_info = $customerRepository->getTokenByCode($code);
 
 		if (!$customer_info || !$customer_info['email'] || $customer_info['email'] != $email || $customer_info['type'] != 'password') {
 			$this->session->data['error'] = $this->language->get('error_code');
 
-			$this->model_account_customer->deleteTokenByCode($code);
+			$customerRepository->deleteTokenByCode($code);
 
 			$this->response->redirect($this->url->link('account/login', 'language=' . $this->config->get('config_language'), true));
 		}
@@ -150,14 +144,7 @@ class Forgotten extends \Opencart\System\Engine\Controller {
 		$data['save'] = $this->url->link('account/forgotten.password', 'language=' . $this->config->get('config_language') . '&email=' . urlencode($email) . '&code=' . $code . '&reset_token=' . $this->session->data['reset_token']);
 		$data['back'] = $this->url->link('account/login', 'language=' . $this->config->get('config_language'));
 
-		$data['column_left'] = $this->load->controller('common/column_left');
-		$data['column_right'] = $this->load->controller('common/column_right');
-		$data['content_top'] = $this->load->controller('common/content_top');
-		$data['content_bottom'] = $this->load->controller('common/content_bottom');
-		$data['footer'] = $this->load->controller('common/footer');
-		$data['header'] = $this->load->controller('common/header');
-
-		$this->response->setOutput($this->load->view('account/forgotten_reset', $data));
+		$this->render('account/forgotten_reset', $data);
 	}
 
 	/**
@@ -194,15 +181,14 @@ class Forgotten extends \Opencart\System\Engine\Controller {
 
 		if (!$json) {
 			// Customer
-			$this->load->model('account/customer');
-
-			$customer_info = $this->model_account_customer->getTokenByCode($code);
+			$customerRepository = $this->getRepository(CustomerRepository::class);
+			$customer_info = $customerRepository->getTokenByCode($code);
 
 			if (!$customer_info || !$customer_info['email'] || $customer_info['email'] !== $email || $customer_info['type'] != 'password') {
 				$this->session->data['error'] = $this->language->get('error_code');
 
 				// Reset token
-				$this->model_account_customer->deleteTokenByCode($code);
+				$customerRepository->deleteTokenByCode($code);
 
 				$json['redirect'] = $this->url->link('account/forgotten', 'language=' . $this->config->get('config_language'), true);
 			}
@@ -252,18 +238,17 @@ class Forgotten extends \Opencart\System\Engine\Controller {
 		if (!$json) {
 			$this->session->data['success'] = $this->language->get('text_reset');
 
-			$this->model_account_customer->editPassword($customer_info['email'], $post_info['password']);
+			$customerRepository->editPassword($customer_info['email'], $post_info['password']);
 
 			// Remove for token
 			unset($this->session->data['reset_token']);
 
 			// Reset token
-			$this->model_account_customer->deleteTokenByCode($code);
+			$customerRepository->deleteTokenByCode($code);
 
 			$json['redirect'] = $this->url->link('account/login', 'language=' . $this->config->get('config_language'), true);
 		}
 
-		$this->response->addHeader('Content-Type: application/json');
-		$this->response->setOutput(json_encode($json));
+		$this->jsonResponse($json);
 	}
 }

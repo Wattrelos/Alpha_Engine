@@ -3,10 +3,6 @@
 namespace Alpha\Mappers;
 
 use Opencart\System\Engine\Registry;
-use Alpha\Mappers\EntityMappers\ProductMapper;
-use Alpha\Mappers\EntityMappers\CategoryMapper;
-use Alpha\Mappers\EntityMappers\OrderMapper;
-use Alpha\Mappers\EntityMappers\ManufacturerMapper;
 
 /**
  * MapperFactory - Centraliza a criação de Mappers na Alpha Engine.

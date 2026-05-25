@@ -24,19 +24,23 @@ class SitemapRepository extends AbstractRepository implements BaseRepositoryInte
     public function getSitemapData(): Collection
     {
         $data = [];
+        $store_id = (int)$this->config->get('config_store_id');
+        $language_id = (int)$this->config->get('config_language_id');
         $language_param = 'language=' . $this->config->get('config_language');
         $customer_token = isset($this->session->data['customer_token']) ? '&customer_token=' . $this->session->data['customer_token'] : '';
         $full_token = $language_param . $customer_token;
 
         // 1. Categorias (Árvore de 3 níveis)
         // Alpha Engine: Implementação de cache para evitar processamento recursivo custoso
-        $cache_key = 'sitemap.categories.' . (int)$this->store_id . '.' . (int)$this->language_id;
+        $cache_key = 'sitemap.categories.' . $store_id . '.' . $language_id;
         
-        $categories = $this->cache->get($cache_key);
+        $categories = $this->cache ? $this->cache->get($cache_key) : null;
 
         if (!$categories) {
-            $categories = $this->getCategoryTree();
-            $this->cache->set($cache_key, $categories);
+            $categories = $this->getCategoryTree($store_id, $language_id);
+            if ($this->cache) {
+                $this->cache->set($cache_key, $categories);
+            }
         }
         $data['categories'] = $categories;
 
@@ -55,13 +59,15 @@ class SitemapRepository extends AbstractRepository implements BaseRepositoryInte
 
         // 3. Páginas de Informação
         // Alpha Engine: Cache de páginas institucionais
-        $cache_key = 'sitemap.informations.' . (int)$this->store_id . '.' . (int)$this->language_id;
+        $cache_key = 'sitemap.informations.' . $store_id . '.' . $language_id;
 
-        $informations = $this->cache->get($cache_key);
+        $informations = $this->cache ? $this->cache->get($cache_key) : null;
 
         if (!$informations) {
-            $informations = $this->getInformations();
-            $this->cache->set($cache_key, $informations);
+            $informations = $this->getInformations($store_id, $language_id);
+            if ($this->cache) {
+                $this->cache->set($cache_key, $informations);
+            }
         }
         $data['informations'] = $informations;
 
@@ -71,7 +77,7 @@ class SitemapRepository extends AbstractRepository implements BaseRepositoryInte
     /**
      * Resolve a árvore de categorias para o sitemap.
      */
-    private function getCategoryTree(): array
+    private function getCategoryTree(int $store_id, int $language_id): array
     {
         /** @var CategoryMapper $categoryMapper */
         $categoryMapper = $this->mapperFactory->get(CategoryMapper::class);
@@ -79,35 +85,47 @@ class SitemapRepository extends AbstractRepository implements BaseRepositoryInte
         $categories = [];
         $language_param = 'language=' . $this->config->get('config_language');
 
-        $categories_1 = $categoryMapper->getSubCategories(0, $this->language_id, $this->store_id);
+        // Alpha Engine: Evitando o problema de N+1 Queries.
+        // Carrega todas as categorias de uma vez e monta a árvore em memória.
+        $allCategories = $categoryMapper->getAllCategories($language_id, $store_id);
+        
+        $categoryMap = [];
+        foreach ($allCategories as $cat) {
+            $categoryMap[(int)$cat['parent_id']][] = $cat;
+        }
 
-        foreach ($categories_1 as $category_1) {
-            $level_2_data = [];
-            $categories_2 = $categoryMapper->getSubCategories((int)$category_1['id'], $this->language_id, $this->store_id);
+        // Verifica se existem categorias raiz (parent_id = 0)
+        if (isset($categoryMap[0])) {
+            foreach ($categoryMap[0] as $category_1) {
+                $level_2_data = [];
+                
+                if (isset($categoryMap[(int)$category_1['id']])) {
+                    foreach ($categoryMap[(int)$category_1['id']] as $category_2) {
+                        $level_3_data = [];
+                        
+                        if (isset($categoryMap[(int)$category_2['id']])) {
+                            foreach ($categoryMap[(int)$category_2['id']] as $category_3) {
+                                $level_3_data[] = [
+                                    'name' => $category_3['name'],
+                                    'href' => $this->url->link('product/category', $language_param . '&path=' . $category_1['id'] . '_' . $category_2['id'] . '_' . $category_3['id'])
+                                ];
+                            }
+                        }
 
-            foreach ($categories_2 as $category_2) {
-                $level_3_data = [];
-                $categories_3 = $categoryMapper->getSubCategories((int)$category_2['id'], $this->language_id, $this->store_id);
-
-                foreach ($categories_3 as $category_3) {
-                    $level_3_data[] = [
-                        'name' => $category_3['name'],
-                        'href' => $this->url->link('product/category', $language_param . '&path=' . $category_1['id'] . '_' . $category_2['id'] . '_' . $category_3['id'])
-                    ];
+                        $level_2_data[] = [
+                            'name'     => $category_2['name'],
+                            'children' => $level_3_data,
+                            'href'     => $this->url->link('product/category', $language_param . '&path=' . $category_1['id'] . '_' . $category_2['id'])
+                        ];
+                    }
                 }
 
-                $level_2_data[] = [
-                    'name'     => $category_2['name'],
-                    'children' => $level_3_data,
-                    'href'     => $this->url->link('product/category', $language_param . '&path=' . $category_1['id'] . '_' . $category_2['id'])
+                $categories[] = [
+                    'name'     => $category_1['name'],
+                    'children' => $level_2_data,
+                    'href'     => $this->url->link('product/category', $language_param . '&path=' . $category_1['id'])
                 ];
             }
-
-            $categories[] = [
-                'name'     => $category_1['name'],
-                'children' => $level_2_data,
-                'href'     => $this->url->link('product/category', $language_param . '&path=' . $category_1['id'])
-            ];
         }
 
         return $categories;
@@ -116,7 +134,7 @@ class SitemapRepository extends AbstractRepository implements BaseRepositoryInte
     /**
      * Busca a lista de páginas institucionais ativas.
      */
-    private function getInformations(): array
+    private function getInformations(int $store_id, int $language_id): array
     {
         /** @var InformationMapper $informationMapper */
         $informationMapper = $this->mapperFactory->get(InformationMapper::class);
@@ -124,7 +142,7 @@ class SitemapRepository extends AbstractRepository implements BaseRepositoryInte
         $informations = [];
         $language_param = 'language=' . $this->config->get('config_language');
 
-        foreach ($informationMapper->getInformations($this->language_id, $this->store_id) as $result) {
+        foreach ($informationMapper->getInformations($language_id, $store_id) as $result) {
             $informations[] = [
                 'title' => $result['title'],
                 'href'  => $this->url->link('information/information', $language_param . '&information_id=' . $result['id'])

@@ -333,10 +333,7 @@ class Cart extends BaseController {
 		$taxes = $this->getRepository(CartRepository::class)->getTaxes();
 		$total = 0;
 
-		// Cart
-		$this->load->model('checkout/cart');
-
-		($this->model_checkout_cart->getTotals)($totals, $taxes, $total);
+		$this->getRepository(CartRepository::class)->getTotals($totals, $taxes, $total);
 
 		$total_data = [];
 

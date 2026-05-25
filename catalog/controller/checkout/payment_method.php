@@ -16,22 +16,6 @@ use Alpha\Model\Domain\Repositories\InformationRepository;
  * @package Opencart\Catalog\Controller\Checkout
  */
 class PaymentMethod extends BaseController {
-	private CartRepository $cartRepository;
-	private OrderRepository $orderRepository;
-	private PaymentMapper $paymentMapper;
-	private InformationRepository $informationRepository;
-
-	public function __construct(\Opencart\System\Engine\Registry $registry) {
-		parent::__construct($registry);
-		$repositoryFactory = $this->registry->get('alpha_repository_factory');
-		$this->cartRepository = $repositoryFactory->get(CartRepository::class);
-		$this->orderRepository = $repositoryFactory->get(OrderRepository::class);
-		$this->informationRepository = $repositoryFactory->get(InformationRepository::class);
-		
-		$mapperFactory = $this->registry->get('alpha_mapper_factory');
-		$this->paymentMapper = $mapperFactory->get(PaymentMapper::class);
-	}
-
 	/**
 	 * Index
 	 *
@@ -47,7 +31,7 @@ class PaymentMethod extends BaseController {
 		$data['agree']          = $this->session->data['agree'] ?? '';
 
 		// Information
-		$information_info = $this->informationRepository->getInformation((int)$this->config->get('config_checkout_id'));
+		$information_info = $this->getRepository(InformationRepository::class)->getInformation((int)$this->config->get('config_checkout_id'));
 
 		if ($information_info) {
 			$data['text_agree'] = sprintf($data['text_agree'] ?? $this->language->get('text_agree'), $this->url->link('information/information.info', 'language=' . $this->config->get('config_language') . '&information_id=' . $this->config->get('config_checkout_id')), $information_info['title']);
@@ -70,8 +54,10 @@ class PaymentMethod extends BaseController {
 
 		$json = [];
 
+		$cartRepository = $this->getRepository(CartRepository::class);
+
 		// Validate cart has products and has stock.
-		if (empty($this->cartRepository->getProducts()) || (!$this->cartRepository->hasStock() && !$this->config->get('config_stock_checkout')) || !$this->cartRepository->hasMinimum()) {
+		if (empty($cartRepository->getProducts()) || (!$cartRepository->hasStock() && !$this->config->get('config_stock_checkout')) || !$cartRepository->hasMinimum()) {
 			$json['redirect'] = $this->url->link('checkout/cart', 'language=' . $this->config->get('config_language'), true);
 		}
 
@@ -86,7 +72,7 @@ class PaymentMethod extends BaseController {
 			}
 
 			// Validate shipping
-			if ($this->cartRepository->hasShipping()) {
+			if ($cartRepository->hasShipping()) {
 				// Validate shipping address
 				if (!isset($this->session->data['shipping_address']['address_id'])) {
 					$json['error'] = $this->language->get('error_shipping_address');
@@ -109,7 +95,7 @@ class PaymentMethod extends BaseController {
 			}
 
 			// Alpha Engine: Centralização via PaymentMapper
-			$payment_methods = $this->paymentMapper->getMethods($payment_address);
+			$payment_methods = $this->mapper->get(PaymentMapper::class)->getMethods($payment_address);
 
 			if ($payment_methods) {
 				$json['payment_methods'] = $this->session->data['payment_methods'] = $payment_methods;
@@ -131,8 +117,10 @@ class PaymentMethod extends BaseController {
 
 		$json = [];
 
+		$cartRepository = $this->getRepository(CartRepository::class);
+
 		// Validate cart has products and has stock.
-		if (empty($this->cartRepository->getProducts()) || (!$this->cartRepository->hasStock() && !$this->config->get('config_stock_checkout')) || !$this->cartRepository->hasMinimum()) {
+		if (empty($cartRepository->getProducts()) || (!$cartRepository->hasStock() && !$this->config->get('config_stock_checkout')) || !$cartRepository->hasMinimum()) {
 			$json['redirect'] = $this->url->link('checkout/cart', 'language=' . $this->config->get('config_language'), true);
 		}
 
@@ -143,7 +131,7 @@ class PaymentMethod extends BaseController {
 			}
 
 			// Validate shipping
-			if ($this->cartRepository->hasShipping()) {
+			if ($cartRepository->hasShipping()) {
 				// Validate shipping address
 				if (!isset($this->session->data['shipping_address']['address_id'])) {
 					$json['error'] = $this->language->get('error_shipping_address');
@@ -189,7 +177,8 @@ class PaymentMethod extends BaseController {
 		$order_id = (int)($this->session->data['order_id'] ?? 0);
 		$comment  = (string)($this->request->post['comment'] ?? '');
 
-		$order_info = $this->orderRepository->find($order_id);
+		$orderRepository = $this->getRepository(OrderRepository::class);
+		$order_info = $orderRepository->find($order_id);
 
 		if (!$order_info) {
 			$json['error'] = $this->language->get('error_order');
@@ -198,7 +187,7 @@ class PaymentMethod extends BaseController {
 		if (!$json) {
 			$this->session->data['comment'] = $comment;
 
-			$this->orderRepository->editComment($order_id, $comment);
+			$orderRepository->editComment($order_id, $comment);
 
 			$json['success'] = $this->language->get('text_comment');
 		}

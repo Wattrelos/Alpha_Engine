@@ -20,7 +20,7 @@ class Cart {
 	 */
 	public function __construct(\Opencart\System\Engine\Registry $registry) {
 		// Resolução via Repository Factory no Registry da Alpha Engine
-		$repositoryFactory = $registry->get('repository');
+		$repositoryFactory = $registry->get('alpha_repository_factory');
 		$this->cartRepository = $repositoryFactory->get(CartRepository::class);
 
 		// O CartRepository assume a responsabilidade de limpar sessões antigas

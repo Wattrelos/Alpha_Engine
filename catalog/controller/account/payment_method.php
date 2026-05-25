@@ -2,6 +2,7 @@
 namespace Opencart\Catalog\Controller\Account;
 
 use Alpha\Controller\BaseController;
+use Alpha\Model\Domain\Repositories\ExtensionRepository;
 
 /**
  * Class Payment Method
@@ -90,10 +91,8 @@ class PaymentMethod extends BaseController {
 
 		$data['payment_methods'] = [];
 
-		// Extension
-		$this->load->model('setting/extension');
-
-		$results = $this->model_setting_extension->getExtensionsByType('payment');
+		$extensionRepository = $this->getRepository(ExtensionRepository::class);
+		$results = $extensionRepository->getExtensionsByType('payment');
 
 		foreach ($results as $result) {
 			if ($this->config->get('payment_' . $result['code'] . '_status')) {

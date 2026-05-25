@@ -1,11 +1,16 @@
 <?php
 namespace Opencart\Catalog\Controller\Cms;
+
+use Alpha\Controller\BaseController;
+use Alpha\Model\Domain\Repositories\TopicRepository;
+use Alpha\Model\Domain\Repositories\ArticleRepository;
+
 /**
  * Class Blog
  *
  * @package Opencart\Catalog\Controller\Cms
  */
-class Blog extends \Opencart\System\Engine\Controller {
+class Blog extends BaseController {
 	/**
 	 * Index
 	 *
@@ -83,9 +88,8 @@ class Blog extends \Opencart\System\Engine\Controller {
 		];
 
 		// Topic
-		$this->load->model('cms/topic');
-
-		$topic_info = $this->model_cms_topic->getTopic($filter_topic_id);
+		$topicRepository = $this->getRepository(TopicRepository::class);
+		$topic_info = $topicRepository->getTopic($filter_topic_id);
 
 		if ($topic_info) {
 			$url = '';
@@ -167,9 +171,8 @@ class Blog extends \Opencart\System\Engine\Controller {
 			'limit'           => $limit
 		];
 
-		$this->load->model('cms/article');
-
-		$results = $this->model_cms_article->getArticles($filter_data);
+		$articleRepository = $this->getRepository(ArticleRepository::class);
+		$results = $articleRepository->getArticles($filter_data);
 
 		foreach ($results as $result) {
 			$description = trim(strip_tags(html_entity_decode($result['description'], ENT_QUOTES, 'UTF-8')));
@@ -188,7 +191,7 @@ class Blog extends \Opencart\System\Engine\Controller {
 				'description'   => $description,
 				'image'         => $image,
 				'filter_author' => $this->url->link('cms/blog', 'language=' . $this->config->get('config_language') . '&author=' . $result['author'] . $url),
-				'comment_total' => $this->model_cms_article->getTotalComments($result['article_id'], ['parent_id' => 0]),
+				'comment_total' => $articleRepository->getTotalComments($result['article_id'], ['parent_id' => 0]),
 				'date_added'    => date($this->language->get('date_format_short'), strtotime($result['date_added'])),
 				'href'          => $this->url->link('cms/blog.info', 'language=' . $this->config->get('config_language') . '&article_id=' . $result['article_id'] . $url)
 			] + $result;
@@ -220,7 +223,7 @@ class Blog extends \Opencart\System\Engine\Controller {
 			$url .= '&order=' . $this->request->get['order'];
 		}
 
-		$article_total = $this->model_cms_article->getTotalArticles($filter_data);
+		$article_total = $articleRepository->getTotalArticles($filter_data);
 
 		$data['pagination'] = $this->load->controller('common/pagination', [
 			'total' => $article_total,
@@ -234,7 +237,7 @@ class Blog extends \Opencart\System\Engine\Controller {
 		$data['search'] = $filter_search;
 		$data['topic_id'] = $filter_topic_id;
 
-		$data['topics'] = $this->model_cms_topic->getTopics();
+		$data['topics'] = $topicRepository->getTopics();
 
 		$url = '';
 
@@ -331,9 +334,8 @@ class Blog extends \Opencart\System\Engine\Controller {
 		}
 
 		// Article
-		$this->load->model('cms/article');
-
-		$article_info = $this->model_cms_article->getArticle($article_id);
+		$articleRepository = $this->getRepository(ArticleRepository::class);
+		$article_info = $articleRepository->getArticle($article_id);
 
 		if ($article_info) {
 			$this->document->setTitle($article_info['meta_title']);
@@ -375,9 +377,8 @@ class Blog extends \Opencart\System\Engine\Controller {
 			}
 
 			// Topic
-			$this->load->model('cms/topic');
-
-			$topic_info = $this->model_cms_topic->getTopic($topic_id);
+			$topicRepository = $this->getRepository(TopicRepository::class);
+			$topic_info = $topicRepository->getTopic($topic_id);
 
 			if ($topic_info) {
 				$data['breadcrumbs'][] = [
@@ -421,7 +422,7 @@ class Blog extends \Opencart\System\Engine\Controller {
 			}
 
 			$data['comment'] = $this->config->get('config_comment_status') ? $this->load->controller('cms/comment') : '';
-			$data['comment_total'] = $this->model_cms_article->getTotalComments($article_id, ['parent_id' => 0]);
+			$data['comment_total'] = $articleRepository->getTotalComments($article_id, ['parent_id' => 0]);
 
 			$data['continue'] = $this->url->link('cms/blog', 'language=' . $this->config->get('config_language') . $url);
 
