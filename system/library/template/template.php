@@ -67,11 +67,29 @@ class Template {
 		if ($code) {
 			ob_start();
 
-			extract($data);
+			try {
+				extract($data);
 
-			include($this->compile($filename, $code));
+				include($this->compile($filename, $code));
 
-			return ob_get_clean();
+				return ob_get_clean();
+			} catch (\Throwable $t) {
+				// Alpha Engine: Intercepta quebras de código dentro do template (variáveis ausentes, fatal errors)
+				if (ob_get_level()) {
+					ob_end_clean();
+				}
+
+				$errorMessage = sprintf(
+					"[Alpha Template Engine] Erro fatal interceptado no template '%s'. \nArquivo: %s (Linha %d). \nMotivo: %s",
+					$filename, $t->getFile(), $t->getLine(), $t->getMessage()
+				);
+
+				if (defined('DIR_LOGS')) {
+					file_put_contents(DIR_LOGS . 'alpha_template_engine_trace.log', "[" . date('Y-m-d H:i:s') . "] " . $errorMessage . PHP_EOL, FILE_APPEND);
+				}
+
+				throw new \RuntimeException($errorMessage, (int)$t->getCode(), $t);
+			}
 		} else {
 			return '';
 		}
@@ -89,7 +107,11 @@ class Template {
 		$file = DIR_CACHE . 'template/' . hash('md5', $filename . $code) . '.php';
 
 		if (!is_file($file)) {
-			file_put_contents($file, $code, LOCK_EX);
+			$written = file_put_contents($file, $code, LOCK_EX);
+
+			if ($written === false) {
+				throw new \RuntimeException(sprintf("[Alpha Template Engine] Falha de I/O. Não foi possível gravar o cache compilado no disco. Verifique as permissões ou espaço na pasta '%s'", dirname($file)));
+			}
 		}
 
 		return $file;

@@ -16,21 +16,16 @@ use Opencart\Catalog\Controller\Checkout\Confirm;
  * @package Opencart\Catalog\Controller\Checkout
  */
 class Checkout extends BaseController {
-	private CartRepository $cartRepository;
-
-	public function __construct(\Opencart\System\Engine\Registry $registry) {
-		parent::__construct($registry);
-		$this->cartRepository = $this->registry->get('alpha_repository_factory')->get(CartRepository::class);
-	}
-
 	/**
 	 * Index
 	 *
 	 * @return \Opencart\System\Engine\Action|null
 	 */
 	public function index(): ?\Opencart\System\Engine\Action {
+		$cartRepository = $this->getRepository(CartRepository::class);
+
 		// Validate cart to see if it has products and has stock.
-		if (!$this->cartRepository->hasProducts() || (!$this->cartRepository->hasStock() && !$this->config->get('config_stock_checkout')) || !$this->cartRepository->hasMinimum()) {
+		if (!$cartRepository->hasProducts() || (!$cartRepository->hasStock() && !$this->config->get('config_stock_checkout')) || !$cartRepository->hasMinimum()) {
 			$this->response->redirect($this->url->link('checkout/cart', 'language=' . $this->config->get('config_language'), true));
 		}
 
@@ -58,8 +53,8 @@ class Checkout extends BaseController {
 
 		$data['register']         = !$this->customer->isLogged() ? (new Register($this->registry))->index() : '';
 		$data['payment_address']  = ($this->customer->isLogged() && $this->config->get('config_checkout_payment_address')) ? (new PaymentAddress($this->registry))->index() : '';
-		$data['shipping_address'] = ($this->customer->isLogged() && $this->cartRepository->hasShipping()) ? (new ShippingAddress($this->registry))->index() : '';
-		$data['shipping_method']  = $this->cartRepository->hasShipping() ? (new ShippingMethod($this->registry))->index() : '';
+		$data['shipping_address'] = ($this->customer->isLogged() && $cartRepository->hasShipping()) ? (new ShippingAddress($this->registry))->index() : '';
+		$data['shipping_method']  = $cartRepository->hasShipping() ? (new ShippingMethod($this->registry))->index() : '';
 
 		// Alpha Engine: Injeção Loader-Free dos sub-controladores
 		$data['payment_method'] = (new PaymentMethod($this->registry))->index();

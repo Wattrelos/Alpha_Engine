@@ -65,7 +65,8 @@ class Information extends BaseController {
 			$data = $response->getData();
 				
 			$this->response->addHeader('X-Robots-Tag: noindex');
-			$this->response->setOutput($this->load->view('information/information_info', $data));
+			// Alpha Engine: Utiliza ViewRenderer para evitar WSOD em chamadas parciais (AJAX/Popups)
+			$this->response->setOutput($this->viewRenderer->render('information/information_info', $data));
 		}
 	}
 }

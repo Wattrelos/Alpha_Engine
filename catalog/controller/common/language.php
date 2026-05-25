@@ -26,7 +26,7 @@ class Language extends BaseController {
 		// Alpha Engine: Redirect URL agora é o único parâmetro contextual extra
 		$data['redirect'] = $languageRepository->getRedirectUrl($this->request->get);
 
-		return $this->load->view('common/language', $data);
+		return $this->viewRenderer->render('common/language', $data);
 	}
 
 	/**

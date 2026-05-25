@@ -63,7 +63,8 @@ class Search extends BaseController {
 		$data['products'] = [];
 		// Alpha Engine: Processamento Loader-Free utilizando o Repositório e o ImagePresenter (Fim do N+1 Controllers)
 		foreach ($results as $result) {
-			$data['products'][] = $this->load->view('product/thumb', $productRepository->getProductThumbData($result));
+			// Proteção Anti-WSOD aplicada na renderização unitária de cada cartão de produto (Busca)
+			$data['products'][] = $this->viewRenderer->render('product/thumb', $productRepository->getProductThumbData($result));
 		}
 
 		// Alpha Engine: Padroniza variável para View e adiciona Fallback (Failsafe Div zero já aplicado)

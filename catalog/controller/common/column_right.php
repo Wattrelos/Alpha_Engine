@@ -16,6 +16,6 @@ class ColumnRight extends BaseController {
 		// Alpha Engine: Delegar a renderização completa da posição para o método herdado
 		$data['modules'] = $this->renderPosition('column_right');
 
-		return $this->load->view('common/column_right', );
+		return $this->viewRenderer->render('common/column_right', $data);
 	}
 }

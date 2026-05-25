@@ -80,8 +80,13 @@ class Header extends BaseController {
 		$data['currency'] = (new Currency($this->registry))->index();
 		$data['search']   = (new Search($this->registry))->index();
 		$data['cart']     = (new Cart($this->registry))->index();
-		$data['menu']     = (new Menu($this->registry))->index();
+		
+		// Alpha Engine: Cache de Fragmento PSR-16 aplicado na renderização da Árvore de Categorias (Menu)
+		$data['menu']     = $this->renderFragment('layout_header_menu', function() {
+			return (new Menu($this->registry))->index();
+		}, 3600); // 1 hora de memória para o menu multinível
 
-		return $this->load->view('common/header', $data);
+		// Alpha Engine: Retorno blindado contra WSOD usando o motor próprio da view
+		return $this->viewRenderer->render('common/header', $data);
 	}
 }

@@ -3,7 +3,6 @@ namespace Opencart\Catalog\Controller\Common;
 
 use Alpha\Controller\BaseController;
 use Alpha\Model\Domain\Repositories\HomeRepository;
-use Alpha\Model\Domain\Repositories\ProductRepository;
 
 /**
  * Class Home
@@ -31,39 +30,7 @@ class Home extends BaseController {
         // Alpha Engine: Carregamento unificado das traduções
         $this->loadLanguageData('common/home', $data);
 
-        $data['continue'] = $this->url->link('common/home', 'language=' . $this->config->get('config_language'));
-
-		/** @var ProductRepository $productRepository */
-		$productRepository = $this->getRepository(ProductRepository::class);
-
-		// Alpha Engine: Injeção Loader-Free de Lançamentos (Latest)
-		$filter_latest = [
-			'sort'  => 'p.date_added',
-			'order' => 'DESC',
-			'start' => 0,
-			'limit' => 8 // Mostraremos 8 produtos na grid
-		];
-		
-		$data['latest_products'] = [];
-		foreach ($productRepository->getProducts($filter_latest) as $result) {
-			$data['latest_products'][] = $this->load->view('product/thumb', $productRepository->getProductThumbData($result));
-		}
-
-		// Alpha Engine: Injeção Loader-Free de Destaques (Featured - Usando 'Mais Vistos' como regra)
-		$filter_featured = [
-			'sort'  => 'p.viewed',
-			'order' => 'DESC',
-			'start' => 0,
-			'limit' => 4 // Mostraremos 4 destaques na grid
-		];
-
-		$data['featured_products'] = [];
-		foreach ($productRepository->getProducts($filter_featured) as $result) {
-			$data['featured_products'][] = $this->load->view('product/thumb', $productRepository->getProductThumbData($result));
-		}
-
-		// Array reservado para quando implementarmos o BannerRepository
-		$data['home_banner'] = [];
+        $data['continue'] = $this->url->link('common/home', 'language=' . $this->config->get('config_language'));       
 
 		// A renderização do BaseController injeta automaticamente header, footer, colunas e os produtos na View
 		$this->render('common/home', $data);

@@ -22,7 +22,7 @@ class Cookie extends BaseController {
 		$cookieData = $cookieRepository->getCookieDisplayData();
 
 		if ($cookieData) {
-			return $this->load->view('common/cookie', $cookieData->toArray());
+			return $this->viewRenderer->render('common/cookie', $cookieData->toArray());
 		}
 
 		return '';

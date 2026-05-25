@@ -11,16 +11,6 @@ use Alpha\Model\Domain\Repositories\OrderRepository;
  * Refatorado para Alpha Engine: Orquestra a exibição final e a confirmação transacional do pedido.
  */
 class Confirm extends BaseController {
-	private CartRepository $cartRepository;
-	private OrderRepository $orderRepository;
-
-	public function __construct(\Opencart\System\Engine\Registry $registry) {
-		parent::__construct($registry);
-		$factory = $this->registry->get('alpha_repository_factory');
-		$this->cartRepository = $factory->get(CartRepository::class);
-		$this->orderRepository = $factory->get(OrderRepository::class);
-	}
-
 	/**
 	 * Exibe o resumo final do pedido (Carrinho, Endereços, Totais).
 	 */
@@ -28,7 +18,9 @@ class Confirm extends BaseController {
 		$data = [];
 		$this->loadLanguageData('checkout/confirm', $data);
 
-		$data['products'] = $this->cartRepository->getCartProducts(
+		$cartRepository = $this->getRepository(CartRepository::class);
+
+		$data['products'] = $cartRepository->getCartProducts(
 			(int)$this->customer->getId(),
 			$this->session->getId(),
 			(int)$this->customer->getGroupId()
@@ -43,10 +35,10 @@ class Confirm extends BaseController {
 		}
 
 		$totals = [];
-		$taxes = $this->cartRepository->getTaxes();
+		$taxes = $cartRepository->getTaxes();
 		$total = 0;
 
-		$this->cartRepository->getTotals($totals, $taxes, $total);
+		$cartRepository->getTotals($totals, $taxes, $total);
 
 		$data['totals'] = [];
 		foreach ($totals as $total_row) {
@@ -58,7 +50,7 @@ class Confirm extends BaseController {
 
 		// Alpha Engine: O método render já injeta Header/Footer se necessário, 
 		// mas aqui retornamos apenas o HTML da tabela para o Ajax do checkout.
-		return $this->load->view('checkout/confirm', $data);
+		return $this->viewRenderer->render('checkout/confirm', $data);
 	}
 
 	/**
@@ -68,19 +60,22 @@ class Confirm extends BaseController {
 		$json = [];
 
 		try {
+			$orderRepository = $this->getRepository(OrderRepository::class);
+			$cartRepository = $this->getRepository(CartRepository::class);
+
 			// 1. Criação Inicial do Pedido (Status Pendente)
 			if (!isset($this->session->data['order_id'])) {
-				$this->session->data['order_id'] = $this->orderRepository->createFromSession();
+				$this->session->data['order_id'] = $orderRepository->createFromSession();
 			}
 
 			$order_id = (int)$this->session->data['order_id'];
 			$order_status_id = (int)$this->config->get('config_order_status_id'); // Status inicial (ex: Pendente)
 
 			// 2. Alpha Engine: Confirmação Transacional (Histórico + Estoque + Notificação)
-			$this->orderRepository->confirm($order_id, $order_status_id, 'Pedido confirmado via checkout Alpha Engine', true);
+			$orderRepository->confirm($order_id, $order_status_id, 'Pedido confirmado via checkout Alpha Engine', true);
 
 			// 3. Limpeza de estado após sucesso
-			$this->cartRepository->clear();
+			$cartRepository->clear();
 			unset($this->session->data['shipping_method'], $this->session->data['shipping_methods']);
 			unset($this->session->data['payment_method'], $this->session->data['payment_methods']);
 			unset($this->session->data['guest'], $this->session->data['comment'], $this->session->data['order_id']);

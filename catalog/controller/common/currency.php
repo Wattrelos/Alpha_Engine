@@ -26,7 +26,7 @@ class Currency extends BaseController {
 
 		$data['redirect'] = $currencyRepository->getRedirectUrl($this->request->get);
 
-		return $this->load->view('common/currency', $data);
+		return $this->viewRenderer->render('common/currency', $data);
 	}
 
 	/**

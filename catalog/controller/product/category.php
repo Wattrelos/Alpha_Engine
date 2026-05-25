@@ -49,6 +49,11 @@ class Category extends BaseController {
 		$this->loadLanguageData('product/category', $data); // Injeta variáveis de linguagem
 		$data['heading_title'] = $data['name']; // Substitui o título genérico pelo nome da categoria
 
+		// Alpha Engine: Injeção explícita de Meta Tags (SEO) para leitura do header.twig
+		$this->document->setTitle($response->get('meta_title') ?: $response->get('name'));
+		$this->document->setDescription($response->get('meta_description') ?: '');
+		$this->document->setKeywords($response->get('meta_keyword') ?: '');
+
 		// UI: Configuração do texto de comparação e links de ação
 		$data['text_compare'] = sprintf($this->language->get('text_compare'), isset($this->session->data['compare']) ? count($this->session->data['compare']) : 0);
 		$data['compare']      = $this->url->link('product/compare', 'language=' . $this->config->get('config_language'));
@@ -62,7 +67,8 @@ class Category extends BaseController {
 		$results = $data['products'] ?? [];
 		$data['products'] = [];
 		foreach ($results as $result) {
-			$data['products'][] = $this->load->view('product/thumb', $productRepository->getProductThumbData($result));
+			// Proteção Anti-WSOD aplicada na renderização unitária de cada cartão de produto
+			$data['products'][] = $this->viewRenderer->render('product/thumb', $productRepository->getProductThumbData($result));
 		}
 
 		// UI: Renderização da Paginação via Controller legado (Bridge)

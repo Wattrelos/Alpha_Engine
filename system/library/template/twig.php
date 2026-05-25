@@ -117,8 +117,22 @@ class Twig {
 			}
 
 			return $twig->render($file, $data);
-		} catch (\Twig\Error\SyntaxError $e) {
-			throw new \Exception('Error: Could not load template ' . $filename . '!');
+		} catch (\Throwable $t) {
+			// Alpha Engine: Intercepta qualquer falha fatal (Syntax, Runtime, Type Errors no PHP 8+)
+			if (ob_get_level()) {
+				ob_end_clean();
+			}
+
+			$errorMessage = sprintf(
+				"[Alpha Twig Engine] Erro fatal interceptado no template '%s'. \nArquivo: %s (Linha %d). \nMotivo: %s",
+				$filename, $t->getFile(), $t->getLine(), $t->getMessage()
+			);
+
+			if (defined('DIR_LOGS')) {
+				file_put_contents(DIR_LOGS . 'alpha_twig_engine_trace.log', "[" . date('Y-m-d H:i:s') . "] " . $errorMessage . PHP_EOL, FILE_APPEND);
+			}
+
+			throw new \RuntimeException($errorMessage, (int)$t->getCode(), $t);
 		}
 	}
 }

@@ -16,6 +16,6 @@ class ContentTop extends BaseController {
 		// Alpha Engine: Delegar a renderização completa da posição para o método herdado
 		$data['modules'] = $this->renderPosition('content_top');
 
-		return $this->load->view('common/content_top', );
+		return $this->viewRenderer->render('common/content_top', $data);
 	}
 }

@@ -46,8 +46,8 @@ class Cart extends BaseController {
 		// Alpha Engine: Define a rota de re-renderização via AJAX usada pelo common.js
 		$data['list'] = $this->url->link('common/cart|info', 'language=' . $this->config->get('config_language'));
 
-		// Widgets parciais usam load->view diretamente para não invocar o Header novamente (Loop Infinito)
-		return $this->load->view('common/cart', $data);
+		// Alpha Engine: Utiliza o renderizador de View blindado contra WSOD para partials
+		return $this->viewRenderer->render('common/cart', $data);
 	}
 
 	/**

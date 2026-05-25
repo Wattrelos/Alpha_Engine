@@ -20,6 +20,6 @@ class Menu extends BaseController {
 		// 2. (Fallback) Mantém o array vazio para evitar quebra no laço Twig legado, se houver
 		$data['categories'] = [];
 
-		return $this->load->view('common/menu', $data);
+		return $this->viewRenderer->render('common/menu', $data);
 	}
 }

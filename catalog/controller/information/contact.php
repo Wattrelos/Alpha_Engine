@@ -13,31 +13,40 @@ class Contact extends BaseController {
 	/**
 	 * Index
 	 *
-	 * @return string
+	 * @return ?\Opencart\System\Engine\Action
 	 */
-	public function index(): string {
-		$this->loadLanguage('information/contact');
+	public function index(): ?\Opencart\System\Engine\Action {
+		$data = [];
+		
+		// Alpha Engine: Carregamento unificado das traduções (Corrige Fatal Error)
+		$this->loadLanguageData('information/contact', $data);
 
-		$informationRepository = $this->repository->get(InformationRepository::class);
+		// Alpha Engine: Padronização da Injeção de Repositório
+		$informationRepository = $this->getRepository(InformationRepository::class);
 		
 		// Alpha Engine: Coleta de dados via repositório para manter o controlador fino
 		$contactData = $informationRepository->getContactPageData();
 		
-		$data = $contactData->toArray();
+		$data = array_merge($data, $contactData->toArray());
+
+		// Alpha Engine: Injeção de Meta Tags (SEO) faltantes
+		$this->document->setTitle($data['heading_title'] ?? $this->language->get('heading_title'));
 
 		$data['breadcrumbs'] = [];
 		$data['breadcrumbs'][] = [
 			'text' => $this->language->get('text_home'),
-			'href' => $this->url->link('common/home')
+			'href' => $this->url->link('common/home', 'language=' . $this->config->get('config_language'))
 		];
 		$data['breadcrumbs'][] = [
 			'text' => $this->language->get('heading_title'),
-			'href' => $this->url->link('information/contact')
+			'href' => $this->url->link('information/contact', 'language=' . $this->config->get('config_language'))
 		];
 
 		$data['action'] = $this->url->link('information/contact.save', 'language=' . $this->config->get('config_language'));
 
-		return $this->render('information/contact', $data);
+		$this->render('information/contact', $data);
+		
+		return null;
 	}
 
 	/**
@@ -46,11 +55,11 @@ class Contact extends BaseController {
 	 * @return void
 	 */
 	public function save(): void {
-		$this->loadLanguage('information/contact');
+		$this->load->language('information/contact'); // Callback nativo sem injeção automática em array
 
 		$json = [];
 
-		$informationRepository = $this->repository->get(InformationRepository::class);
+		$informationRepository = $this->getRepository(InformationRepository::class);
 
 		// Alpha Engine: Validação centralizada no domínio
 		$errors = $informationRepository->validateContactForm($this->request->post);

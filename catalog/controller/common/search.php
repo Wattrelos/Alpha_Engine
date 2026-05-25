@@ -14,6 +14,6 @@ class Search extends BaseController {
 		$searchRepository = $this->getRepository(SearchRepository::class);
 		$searchData = $searchRepository->getSearchDisplayData();
 
-		return $this->load->view('common/search', $searchData->toArray());
+		return $this->viewRenderer->render('common/search', $searchData->toArray());
 	}
 }

@@ -16,7 +16,6 @@ class ContentBottom extends BaseController {
 		// Alpha Engine: Delegar a renderização completa da posição para o método herdado
 		$data['modules'] = $this->renderPosition('content_bottom');
 
-		return $this->load->view('common/content_bottom', );
+		return $this->viewRenderer->render('common/content_bottom', $data);
 	}
 }
-

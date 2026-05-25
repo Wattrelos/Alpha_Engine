@@ -55,7 +55,11 @@ class Product extends BaseController {
 			
 			// Alpha Engine: Instanciação Loader-Free de Componentes Sub-Widgets
 			$data['review']  = (new Review($this->registry))->index();
-			$data['related'] = (new Related($this->registry))->index(['product_id' => $product_id]);
+			
+			// Alpha Engine: Caching PSR-16 Inteligente para o bloco de Produtos Relacionados (Evita N+1 na página do produto)
+			$data['related'] = $this->remember('product_related_' . $product_id, 3600, function () use ($product_id) {
+				return (new Related($this->registry))->index(['product_id' => $product_id]);
+			});
 
 			if ($this->config->get('config_product_report_status')) {
 				$productRepository->addReport($product_id, oc_get_ip());
