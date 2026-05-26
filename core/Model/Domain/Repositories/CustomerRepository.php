@@ -135,16 +135,74 @@ class CustomerRepository extends AbstractRepository implements BaseRepositoryInt
             $errors['telephone'] = $language->get('error_telephone');
         }
 
+        // Validação Algorítmica de Documentos (CPF/CNPJ)
+        $personType = $data['persontype'] ?? '';
+        $cpfCnpj = $data['cpf_cnpj'] ?? '';
+
+        if ($personType === 'F' && !empty($cpfCnpj)) {
+            $cpf = preg_replace('/[^0-9]/', '', (string)$cpfCnpj);
+            $cpf_valid = true;
+
+            if (strlen($cpf) != 11 || preg_match('/(\d)\1{10}/', $cpf)) {
+                $cpf_valid = false;
+            } else {
+                for ($t = 9; $t < 11; $t++) {
+                    for ($d = 0, $c = 0; $c < $t; $c++) {
+                        $d += (int)$cpf[$c] * (($t + 1) - $c);
+                    }
+                    $d = ((10 * $d) % 11) % 10;
+                    if ((int)$cpf[$c] !== $d) {
+                        $cpf_valid = false;
+                        break;
+                    }
+                }
+            }
+            if (!$cpf_valid) {
+                $errors['cpf_cnpj'] = $language->get('error_cpf') ?: 'O CPF informado é inválido.';
+            }
+        } elseif ($personType === 'J' && !empty($cpfCnpj)) {
+            $cnpj = preg_replace('/[^0-9]/', '', (string)$cpfCnpj);
+            $cnpj_valid = true;
+
+            if (strlen($cnpj) != 14 || preg_match('/(\d)\1{13}/', $cnpj)) {
+                $cnpj_valid = false;
+            } else {
+                $b = [6, 5, 4, 3, 2, 9, 8, 7, 6, 5, 4, 3, 2];
+                for ($i = 0, $n = 0; $i < 12; $n += (int)$cnpj[$i] * $b[++$i]);
+                if ((int)$cnpj[12] != ((($n %= 11) < 2) ? 0 : 11 - $n)) { $cnpj_valid = false; } else {
+                    for ($i = 0, $n = 0; $i <= 12; $n += (int)$cnpj[$i] * $b[$i++]);
+                    if ((int)$cnpj[13] != ((($n %= 11) < 2) ? 0 : 11 - $n)) { $cnpj_valid = false; }
+                }
+            }
+            if (!$cnpj_valid) {
+                $errors['cpf_cnpj'] = $language->get('error_cnpj') ?: 'O CNPJ informado é inválido.';
+            }
+        }
+
         // Validação de Campos Customizados
         $customFieldRepo = $repoFactory->get(\Alpha\Model\Domain\Repositories\CustomFieldRepository::class);
         $custom_fields = $customFieldRepo->getCustomFields($customer_group_id);
 
         foreach ($custom_fields as $custom_field) {
             if ($custom_field['location'] == 'account') {
-                if ($custom_field['required'] && empty($data['custom_field'][$custom_field['custom_field_id']])) {
-                    $errors['custom_field_' . $custom_field['custom_field_id']] = sprintf($language->get('error_custom_field'), $custom_field['name']);
-                } elseif (($custom_field['type'] == 'text') && !empty($custom_field['validation']) && !oc_validate_regex($data['custom_field'][$custom_field['custom_field_id']] ?? '', $custom_field['validation'])) {
-                    $errors['custom_field_' . $custom_field['custom_field_id']] = sprintf($language->get('error_regex'), $custom_field['name']);
+                $cf_id = $custom_field['custom_field_id'];
+                $is_empty = true;
+
+                if (isset($data['custom_field'][$cf_id])) {
+                    $cf_value = $data['custom_field'][$cf_id];
+                    if (is_array($cf_value)) {
+                        $is_empty = empty($cf_value);
+                    } else {
+                        $is_empty = (trim((string)$cf_value) === '');
+                    }
+                }
+
+                if ($custom_field['required'] && $is_empty) {
+                    $errors['custom_field_' . $cf_id] = sprintf($language->get('error_custom_field'), $custom_field['name']);
+                } elseif ($custom_field['type'] == 'text' && !empty($custom_field['validation']) && !$is_empty) {
+                    if (!oc_validate_regex((string)($data['custom_field'][$cf_id] ?? ''), $custom_field['validation'])) {
+                        $errors['custom_field_' . $cf_id] = sprintf($language->get('error_regex'), $custom_field['name']);
+                    }
                 }
             }
         }
@@ -244,6 +302,80 @@ class CustomerRepository extends AbstractRepository implements BaseRepositoryInt
 
         if ($config->get('config_telephone_required') && !oc_validate_length($data['telephone'], 3, 32)) {
             $errors['telephone'] = $language->get('error_telephone');
+        }
+
+        // Validação Algorítmica de Documentos (CPF/CNPJ)
+        $personType = $data['persontype'] ?? '';
+        $cpfCnpj = $data['cpf_cnpj'] ?? '';
+
+        if ($personType === 'F' && !empty($cpfCnpj)) {
+            $cpf = preg_replace('/[^0-9]/', '', (string)$cpfCnpj);
+            $cpf_valid = true;
+
+            if (strlen($cpf) != 11 || preg_match('/(\d)\1{10}/', $cpf)) {
+                $cpf_valid = false;
+            } else {
+                for ($t = 9; $t < 11; $t++) {
+                    for ($d = 0, $c = 0; $c < $t; $c++) {
+                        $d += (int)$cpf[$c] * (($t + 1) - $c);
+                    }
+                    $d = ((10 * $d) % 11) % 10;
+                    if ((int)$cpf[$c] !== $d) {
+                        $cpf_valid = false;
+                        break;
+                    }
+                }
+            }
+            if (!$cpf_valid) {
+                $errors['cpf_cnpj'] = $language->get('error_cpf') ?: 'O CPF informado é inválido.';
+            }
+        } elseif ($personType === 'J' && !empty($cpfCnpj)) {
+            $cnpj = preg_replace('/[^0-9]/', '', (string)$cpfCnpj);
+            $cnpj_valid = true;
+
+            if (strlen($cnpj) != 14 || preg_match('/(\d)\1{13}/', $cnpj)) {
+                $cnpj_valid = false;
+            } else {
+                $b = [6, 5, 4, 3, 2, 9, 8, 7, 6, 5, 4, 3, 2];
+                for ($i = 0, $n = 0; $i < 12; $n += (int)$cnpj[$i] * $b[++$i]);
+                if ((int)$cnpj[12] != ((($n %= 11) < 2) ? 0 : 11 - $n)) { $cnpj_valid = false; } else {
+                    for ($i = 0, $n = 0; $i <= 12; $n += (int)$cnpj[$i] * $b[$i++]);
+                    if ((int)$cnpj[13] != ((($n %= 11) < 2) ? 0 : 11 - $n)) { $cnpj_valid = false; }
+                }
+            }
+            if (!$cnpj_valid) {
+                $errors['cpf_cnpj'] = $language->get('error_cnpj') ?: 'O CNPJ informado é inválido.';
+            }
+        }
+
+        // Validação Estrita (Type-Safe) de Campos Customizados
+        $customer = $this->find($customerId);
+        $customerGroupId = $customer ? $customer->getGroupId() : (int)$config->get('config_customer_group_id');
+        $customFieldRepo = $this->registry->get('alpha_repository_factory')->get(\Alpha\Model\Domain\Repositories\CustomFieldRepository::class);
+        $custom_fields = $customFieldRepo->getCustomFields($customerGroupId);
+
+        foreach ($custom_fields as $custom_field) {
+            if ($custom_field['location'] == 'account') {
+                $cf_id = $custom_field['custom_field_id'];
+                $is_empty = true;
+
+                if (isset($data['custom_field'][$cf_id])) {
+                    $cf_value = $data['custom_field'][$cf_id];
+                    if (is_array($cf_value)) {
+                        $is_empty = empty($cf_value);
+                    } else {
+                        $is_empty = (trim((string)$cf_value) === '');
+                    }
+                }
+
+                if ($custom_field['required'] && $is_empty) {
+                    $errors['custom_field_' . $cf_id] = sprintf($language->get('error_custom_field'), $custom_field['name']);
+                } elseif ($custom_field['type'] == 'text' && !empty($custom_field['validation']) && !$is_empty) {
+                    if (!oc_validate_regex((string)($data['custom_field'][$cf_id] ?? ''), $custom_field['validation'])) {
+                        $errors['custom_field_' . $cf_id] = sprintf($language->get('error_regex'), $custom_field['name']);
+                    }
+                }
+            }
         }
 
         return $errors;

@@ -16,7 +16,8 @@ class Newsletter extends BaseController {
 	 * @return void
 	 */
 	public function index(): void {
-		$this->load->language('account/newsletter');
+		$data = [];
+		$this->loadLanguageData('account/newsletter', $data);
 
 		if (!$this->customer->isLogged()) {
 			$this->session->data['redirect'] = $this->url->link('account/newsletter', 'language=' . $this->config->get('config_language'));

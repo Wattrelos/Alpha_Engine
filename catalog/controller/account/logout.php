@@ -31,7 +31,8 @@ class Logout extends \Opencart\System\Engine\Controller {
 			$this->response->redirect($this->url->link('account/logout', 'language=' . $this->config->get('config_language'), true));
 		}
 
-		$this->load->language('account/logout');
+		$data = [];
+		$this->loadLanguageData('account/logout', $data);
 
 		$this->document->setTitle($this->language->get('heading_title'));
 

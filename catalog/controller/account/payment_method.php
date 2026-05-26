@@ -16,7 +16,8 @@ class PaymentMethod extends BaseController {
 	 * @return void
 	 */
 	public function index(): void {
-		$this->load->language('account/payment_method');
+		$data = [];
+		$this->loadLanguageData('account/payment_method', $data);
 
 		if (!$this->customer->isLogged()) {
 			$this->session->data['redirect'] = $this->url->link('account/payment_method', 'language=' . $this->config->get('config_language'));
@@ -66,7 +67,8 @@ class PaymentMethod extends BaseController {
 	 * @return void
 	 */
 	public function list(): void {
-		$this->load->language('account/payment_method');
+		$data = [];
+		$this->loadLanguageData('account/payment_method', $data);
 
 		if (!$this->customer->isLogged()) {
 			$this->session->data['redirect'] = $this->url->link('account/payment_method', 'language=' . $this->config->get('config_language'));

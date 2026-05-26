@@ -21,7 +21,8 @@ class Edit extends BaseController {
 			$this->response->redirect($this->url->link('account/login', 'language=' . $this->config->get('config_language'), true));
 		}
 
-		$this->load->language('account/edit');
+		$data = [];
+		$this->loadLanguageData('account/edit', $data);
 		$this->document->setTitle($this->language->get('heading_title'));
 
 		$data['breadcrumbs'] = [];
@@ -111,19 +112,6 @@ class Edit extends BaseController {
 
 			// Alpha Engine: Validações injetadas pelo Repositório
 			$errors = $this->getRepository(CustomerRepository::class)->validateEditData($post_info, $this->customer->getId());
-			
-			// Custom field validation
-			$custom_fields = $this->getRepository(CustomFieldRepository::class)->getCustomFields($this->customer->getGroupId());
-
-			foreach ($custom_fields as $custom_field) {
-				if ($custom_field['location'] == 'account') {
-					if ($custom_field['required'] && empty($post_info['custom_field'][$custom_field['custom_field_id']])) {
-						$errors['custom_field_' . $custom_field['custom_field_id']] = sprintf($this->language->get('error_custom_field'), $custom_field['name']);
-					} elseif ($custom_field['type'] == 'text' && !empty($custom_field['validation']) && !oc_validate_regex($post_info['custom_field'][$custom_field['custom_field_id']], $custom_field['validation'])) {
-						$errors['custom_field_' . $custom_field['custom_field_id']] = sprintf($this->language->get('error_regex'), $custom_field['name']);
-					}
-				}
-			}
 			
 			if ($errors) {
 				$json['error'] = $errors;

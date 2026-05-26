@@ -35,7 +35,8 @@ class Tracking extends BaseController {
 			$this->response->redirect($this->url->link('account/account', 'language=' . $this->config->get('config_language') . '&customer_token=' . $this->session->data['customer_token'], true));
 		}
 
-		$this->load->language('account/tracking');
+		$data = [];
+		$this->loadLanguageData('account/tracking', $data);
 
 		$this->document->setTitle($this->language->get('heading_title'));
 

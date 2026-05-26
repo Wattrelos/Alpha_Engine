@@ -21,7 +21,8 @@ class Returns extends BaseController {
 	 * @return void
 	 */
 	public function index(): void {
-		$this->load->language('account/returns');
+		$data = [];
+		$this->loadLanguageData('account/returns', $data);
 
 		if (isset($this->request->get['page'])) {
 			$page = (int)$this->request->get['page'];
@@ -96,7 +97,8 @@ class Returns extends BaseController {
 	 * @return \Opencart\System\Engine\Action|null
 	 */
 	public function info(): ?\Opencart\System\Engine\Action {
-		$this->load->language('account/returns');
+		$data = [];
+		$this->loadLanguageData('account/returns', $data);
 
 		if (isset($this->request->get['return_id'])) {
 			$return_id = (int)$this->request->get['return_id'];
@@ -182,7 +184,8 @@ class Returns extends BaseController {
 	 * @return void
 	 */
 	public function add(): void {
-		$this->load->language('account/returns');
+		$data = [];
+		$this->loadLanguageData('account/returns', $data);
 
 		$this->document->setTitle($this->language->get('heading_title'));
 
@@ -401,7 +404,8 @@ class Returns extends BaseController {
 	 * @return void
 	 */
 	public function success(): void {
-		$this->load->language('account/returns');
+		$data = [];
+		$this->loadLanguageData('account/returns', $data);
 
 		$this->document->setTitle($this->language->get('heading_title'));
 
@@ -428,7 +432,8 @@ class Returns extends BaseController {
 	 * @return void
 	 */
 	public function history(): void {
-		$this->load->language('account/return');
+		$data = [];
+		$this->loadLanguageData('account/return', $data);
 
 		if (!$this->customer->isLogged()) {
 			$this->session->data['redirect'] = $this->url->link('account/returns', 'language=' . $this->config->get('config_language'));
@@ -463,6 +468,8 @@ class Returns extends BaseController {
 			return '';
 		}
 
+		$data = [];
+		$this->loadLanguageData('account/return', $data);
 		$data['histories'] = [];
 
 		$returnRepository = $this->getRepository(ReturnRepository::class);

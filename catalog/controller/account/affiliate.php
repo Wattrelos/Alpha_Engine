@@ -18,7 +18,8 @@ class Affiliate extends BaseController {
 	 * @return void
 	 */
 	public function index(): void {
-		$this->load->language('account/affiliate');
+		$data = [];
+		$this->loadLanguageData('account/affiliate', $data);
 
 		if (!$this->customer->isLogged()) {
 			$this->customer->logout();

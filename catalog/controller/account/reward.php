@@ -14,7 +14,8 @@ class Reward extends BaseController {
 	 * @return void
 	 */
 	public function index(): void {
-		$this->load->language('account/reward');
+		$data = [];
+		$this->loadLanguageData('account/reward', $data);
 
 		if (isset($this->request->get['page'])) {
 			$page = (int)$this->request->get['page'];

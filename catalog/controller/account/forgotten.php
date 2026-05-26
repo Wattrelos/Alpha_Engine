@@ -16,7 +16,8 @@ class Forgotten extends BaseController {
 	 * @return void
 	 */
 	public function index(): void {
-		$this->load->language('account/forgotten');
+		$data = [];
+		$this->loadLanguageData('account/forgotten', $data);
 
 		if ($this->customer->isLogged()) {
 			$this->response->redirect($this->url->link('account/account', 'language=' . $this->config->get('config_language') . '&customer_token=' . $this->session->data['customer_token'], true));
@@ -90,7 +91,8 @@ class Forgotten extends BaseController {
 	 * @return void
 	 */
 	public function reset(): void {
-		$this->load->language('account/forgotten');
+		$data = [];
+		$this->loadLanguageData('account/forgotten', $data);
 
 		if (isset($this->request->get['email'])) {
 			$email = (string)$this->request->get['email'];
@@ -153,7 +155,8 @@ class Forgotten extends BaseController {
 	 * @return void
 	 */
 	public function password(): void {
-		$this->load->language('account/forgotten');
+		$data = [];
+		$this->loadLanguageData('account/forgotten', $data);
 
 		$json = [];
 

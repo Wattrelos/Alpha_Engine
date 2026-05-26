@@ -21,7 +21,8 @@ class Subscription extends BaseController {
 	 * @return void
 	 */
 	public function index(): void {
-		$this->load->language('account/subscription');
+		$data = [];
+		$this->loadLanguageData('account/subscription', $data);
 
 		if (isset($this->request->get['page'])) {
 			$page = (int)$this->request->get['page'];
@@ -131,7 +132,8 @@ class Subscription extends BaseController {
 	 * @return \Opencart\System\Engine\Action|null
 	 */
 	public function info(): ?\Opencart\System\Engine\Action {
-		$this->load->language('account/subscription');
+		$data = [];
+		$this->loadLanguageData('account/subscription', $data);
 
 		if (isset($this->request->get['subscription_id'])) {
 			$subscription_id = (int)$this->request->get['subscription_id'];
@@ -455,7 +457,8 @@ class Subscription extends BaseController {
 	 * @return void
 	 */
 	public function history(): void {
-		$this->load->language('account/subscription');
+		$data = [];
+		$this->loadLanguageData('account/subscription', $data);
 
 		if (!$this->customer->isLogged()) {
 			$this->session->data['redirect'] = $this->url->link('account/subscription', 'language=' . $this->config->get('config_language'));

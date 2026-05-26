@@ -16,7 +16,8 @@ class Download extends BaseController {
 	 * @return void
 	 */
 	public function index(): void {
-		$this->load->language('account/download');
+		$data = [];
+		$this->loadLanguageData('account/download', $data);
 
 		if (isset($this->request->get['page'])) {
 			$page = (int)$this->request->get['page'];

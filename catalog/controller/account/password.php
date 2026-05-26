@@ -20,7 +20,8 @@ class Password extends BaseController {
 			$this->response->redirect($this->url->link('account/login', 'language=' . $this->config->get('config_language'), true));
 		}
 
-		$this->load->language('account/password');
+		$data = [];
+		$this->loadLanguageData('account/password', $data);
 		$this->document->setTitle($this->language->get('heading_title'));
 
 		$data['breadcrumbs'] = [];

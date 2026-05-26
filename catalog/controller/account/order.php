@@ -17,7 +17,8 @@ class Order extends BaseController {
 	 * @return void
 	 */
 	public function index(): void {
-		$this->load->language('account/order');
+		$data = [];
+		$this->loadLanguageData('account/order', $data);
 
 		if (isset($this->request->get['page'])) {
 			$page = (int)$this->request->get['page'];
@@ -106,7 +107,8 @@ class Order extends BaseController {
 	 * @return \Opencart\System\Engine\Action|null
 	 */
 	public function info(): ?\Opencart\System\Engine\Action {
-		$this->load->language('account/order');
+		$data = [];
+		$this->loadLanguageData('account/order', $data);
 
 		if (isset($this->request->get['order_id'])) {
 			$order_id = (int)$this->request->get['order_id'];
@@ -387,7 +389,8 @@ class Order extends BaseController {
 	 * @return void
 	 */
 	public function history(): void {
-		$this->load->language('account/order');
+		$data = [];
+		$this->loadLanguageData('account/order', $data);
 
 		if (!$this->customer->isLogged()) {
 			$this->session->data['redirect'] = $this->url->link('account/order', 'language=' . $this->config->get('config_language'));

@@ -16,7 +16,8 @@ class Authorize extends BaseController {
 	 * @return void
 	 */
 	public function index(): void {
-		$this->load->language('account/authorize');
+		$data = [];
+		$this->loadLanguageData('account/authorize', $data);
 
 		if (isset($this->request->cookie['customer_authorize'])) {
 			$token = $this->request->cookie['customer_authorize'];
@@ -205,7 +206,8 @@ class Authorize extends BaseController {
 	 * @return void
 	 */
 	public function reset(): void {
-		$this->load->language('account/authorize');
+		$data = [];
+		$this->loadLanguageData('account/authorize', $data);
 
 		if (isset($this->request->cookie['customer_authorize'])) {
 			$token = $this->request->cookie['customer_authorize'];

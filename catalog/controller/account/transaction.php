@@ -16,7 +16,8 @@ class Transaction extends BaseController {
 	 * @return void
 	 */
 	public function index(): void {
-		$this->load->language('account/transaction');
+		$data = [];
+		$this->loadLanguageData('account/transaction', $data);
 
 		if (isset($this->request->get['page'])) {
 			$page = (int)$this->request->get['page'];
