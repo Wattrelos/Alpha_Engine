@@ -4,7 +4,7 @@ namespace Alpha\Model\Domain\Repositories;
 use Alpha\Mappers\EntityMappers\CustomerMapper;
 use Alpha\Model\Domain\Entities\Customer;
 use Alpha\Model\Domain\InterfaceEntity;
-use Alpha\Model\DataTransferObject\EntityMapper;
+use Alpha\Support\EntityHydrator;
 
 /**
  * Class CustomerRepository
@@ -132,7 +132,7 @@ class CustomerRepository extends AbstractRepository implements BaseRepositoryInt
 
         $customer = new Customer();
         
-        EntityMapper::fillEntity($customer, $data);
+        EntityHydrator::fillEntity($customer, $data);
 
         $password = html_entity_decode($data['password'] ?? '', ENT_QUOTES, 'UTF-8');
         $customer->setStoreId((int)$config->get('config_store_id'))

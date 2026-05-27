@@ -1,22 +1,23 @@
 <?php
 
-namespace Alpha\Model\DataTransferObject;
+namespace Alpha\Support;
 
 use Alpha\Model\DataTransferObject\Attributes\Validation;
 use Alpha\Model\DataTransferObject\Attributes\AllowHtml;
+use Alpha\Model\DataTransferObject\BaseDTO;
 use ReflectionClass;
 use ReflectionMethod;
 use Exception;
 use DateTime;
 
 /**
- * Refere-se a EntityMapper.java
+ * EntityHydrator
  * Adaptado para PHP 8.4.16
  * 
  * Esta classe é responsável por mapear dados de um array associativo (geralmente vindo do request)
  * para os atributos de uma instância de entidade, utilizando métodos setters e conversão automática de tipos.
  */
-class EntityMapper
+class EntityHydrator
 {
     /**
      * Preenche a entidade com base nos parâmetros do request com conversão de tipos.
@@ -48,25 +49,25 @@ class EntityMapper
                 
                 // Prioriza o padrão camelCase, com fallback elegante para o padrão do OpenCart
                 $requestKey = null;
-            if (isset($request[$fieldName])) {
+                if (isset($request[$fieldName])) {
                     $requestKey = $fieldName;
-                            } elseif (isset($request[$snakeCaseField])) {
+                } elseif (isset($request[$snakeCaseField])) {
                     $requestKey = $snakeCaseField;
                 }
 
                 if ($requestKey !== null) {
-                $paramValue = $request[$requestKey];
+                    $paramValue = $request[$requestKey];
 
-                // Verifica se a propriedade permite HTML rico via Atributo
-                $allowHtml = false;
-                if ($reflection->hasProperty($fieldName)) {
-                    $prop = $reflection->getProperty($fieldName);
-                    if (!empty($prop->getAttributes(AllowHtml::class))) {
-                        $allowHtml = true;
+                    // Verifica se a propriedade permite HTML rico via Atributo
+                    $allowHtml = false;
+                    if ($reflection->hasProperty($fieldName)) {
+                        $prop = $reflection->getProperty($fieldName);
+                        if (!empty($prop->getAttributes(AllowHtml::class))) {
+                            $allowHtml = true;
+                        }
                     }
-                }
 
-                $paramValue = $allowHtml ? $paramValue : self::sanitizeInput($paramValue);
+                    $paramValue = $allowHtml ? $paramValue : self::sanitizeInput($paramValue);
 
                     $isEmpty = is_scalar($paramValue) ? trim((string)$paramValue) === '' : empty($paramValue);
 

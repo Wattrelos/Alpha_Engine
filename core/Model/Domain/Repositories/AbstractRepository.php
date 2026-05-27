@@ -74,6 +74,7 @@ abstract class AbstractRepository
         return $this->registry->get($key);
     }
 
+
     /**
      * Implementação padrão para index. 
      * Pode ser sobrescrito nas classes filhas para lógicas complexas de paginação.

@@ -6,6 +6,7 @@ Este projeto implementa uma camada de engenharia de software moderna sobre o nú
 ## 📍 Status Atual (Checkpoint)
 
 * **Onde paramos (Última Conquista):** 
+  * **Saneamento Semântico (EntityMapper para EntityHydrator):** Renomeação da classe utilitária de preenchimento reflexivo e validação e sua realocação para `core/Support` (namespace `Alpha\Support`), eliminando o desvio conceitual de pastas de DTOs e Mappers de persistência.
   * Criamos os repositórios vitais de infraestrutura (`ConfigurationRepository`, `TranslationRepository`), eliminando a dependência do `loader.php` para configurações e traduções (i18n).
   * O `AlphaContainer` foi refatorado para usar dicionários $O(1)$, interceptando mais de 25 modelos legados aposentados (`.old`) de forma performática e blindando o OpenCart contra quebras.
   * Consolidamos a lógica do `CartRepository` (mesclagem de sessões, opções, cálculos de peso e impostos).
@@ -43,7 +44,7 @@ Este projeto implementa uma camada de engenharia de software moderna sobre o nú
   * **Fragment Caching Bottom-Funnel:** Validação da página Home operando livre de consultas ao banco de dados com a *CacheStrategyInterface*. Aplicação de *Fragment Caching* no sub-widget de Produtos Relacionados na tela de Produto, blindando contra N+1 Queries a página de maior tráfego.
 * **Status Atual:** **Sprint de Estabilização do Core Transacional e de UI.** A navegação global da loja (Home, Catálogo, Busca), além das rotas vitais de entrada de clientes (Login, Registro) e fechamento (Checkout Raiz), estão 100% blindadas, leves (operando via *Lazy Loading*) e obedecendo estritamente o padrão *Skinny Controller* da Alpha Engine.
 * **Próximos Passos (Retomada):** 
-  1. Encapsular as linhas residuais do `EntityMapper` e do fluxo de validação dentro do método `CustomerRepository->registerCustomer()`, isolando 100% o Registro.
+  1. Encapsular as linhas residuais do `EntityHydrator` e do fluxo de validação dentro do método `CustomerRepository->registerCustomer()`, isolando 100% o Registro.
   2. Refatorar o Painel Principal do Cliente (`account/account.php`), Endereços e Lista de Desejos, erradicando os últimos vazamentos lógicos da área logada.
   3. Escovar os sub-controladores AJAX assíncronos do Checkout (métodos de frete e pagamento) para concluir a estabilidade atômica das transações.
 

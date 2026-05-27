@@ -25,13 +25,13 @@ class PaymentMapper extends BaseMapper {
     public function getMethods(array $payment_address): array {
         $payment_methods = [];
 
-        $extensionMapper = new ExtensionMapper($this->registry);
+        $extensionMapper = $this->registry->get('alpha_mapper_factory')->get(ExtensionMapper::class);
         $results = $extensionMapper->getExtensionsByType('payment');
 
         $sort_order = [];
 
         foreach ($results as $key => $value) {
-            $sort_order[$key] = (int)oc_config('payment_' . $value->getCode() . '_sort_order');
+            $sort_order[$key] = (int)$this->registry->get('config')->get('payment_' . $value->getCode() . '_sort_order');
         }
 
         array_multisort($sort_order, SORT_ASC, $results);
@@ -39,7 +39,7 @@ class PaymentMapper extends BaseMapper {
         /** @var \Alpha\Model\Domain\Entities\Extension $result */
         foreach ($results as $result) {
             // Alpha Engine: Verificação de status via config nativa
-            if (oc_config('payment_' . $result->getCode() . '_status')) {
+            if ($this->registry->get('config')->get('payment_' . $result->getCode() . '_status')) {
                 // Invocação dinâmica da extensão (enquanto as extensões de pagamento não são convertidas em Mappers)
                 $load = $this->registry->get('load');
                 

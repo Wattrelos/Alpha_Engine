@@ -25,20 +25,20 @@ class TotalMapper extends BaseMapper {
      * @param float &$total  Valor acumulado final
      */
     public function getTotals(array &$totals, array &$taxes, float &$total): void {
-        $extensionMapper = new ExtensionMapper($this->registry);
+        $extensionMapper = $this->registry->get('alpha_mapper_factory')->get(ExtensionMapper::class);
         $results = $extensionMapper->getExtensionsByType('total');
 
         $sort_order = [];
 
         foreach ($results as $key => $value) {
-            $sort_order[$key] = (int)oc_config('total_' . $value->getCode() . '_sort_order');
+            $sort_order[$key] = (int)$this->registry->get('config')->get('total_' . $value->getCode() . '_sort_order');
         }
 
         array_multisort($sort_order, SORT_ASC, $results);
 
         foreach ($results as $result) {
             // Alpha Engine: Verificação de status via config nativa
-            if (oc_config('total_' . $result->getCode() . '_status')) {
+            if ($this->registry->get('config')->get('total_' . $result->getCode() . '_status')) {
                 // Invocação dinâmica da extensão (enquanto as extensões de total não são convertidas em Mappers)
                 // Utilizamos o Registry do OpenCart para manter a compatibilidade de execução
                 $load = $this->registry->get('load');

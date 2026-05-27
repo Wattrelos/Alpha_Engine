@@ -1,8 +1,7 @@
 <?php
 namespace Alpha\Model\Domain\Repositories;
 
-use Alpha\Mappers\EntityMappers\CustomerWishlistMapper;
-use Alpha\Mappers\EntityMappers\ProductMapper;
+use Alpha\Model\Domain\Repositories\ProductRepository;
 use Alpha\Mappers\EntityMappers\StockStatusMapper;
 use Alpha\Mappers\EntityMappers\WishlistMapper;
 use Alpha\Model\DataTransferObject\ViewResponse;
@@ -28,29 +27,50 @@ class WishlistRepository extends AbstractRepository implements BaseRepositoryInt
     }
 
     /**
+     * Retorna os breadcrumbs base para páginas da conta do cliente (Home > Conta).
+     */
+    protected function getBaseBreadcrumbs(): array {
+        return [
+            [
+                'text' => $this->language->get('text_home'),
+                'href' => $this->url->link('common/home', 'language=' . $this->config->get('config_language'))
+            ],
+            [
+                'text' => $this->language->get('text_account'),
+                'href' => $this->url->link('account/account', 'language=' . $this->config->get('config_language') . '&customer_token=' . ($this->session->data['customer_token'] ?? ''))
+            ]
+        ];
+    }
+
+    /**
      * Obtém a lista de produtos da lista de desejos formatados para exibição.
      */
     public function getFormattedWishlistProducts(int $customerId): array {
-        /** @var CustomerWishlistMapper $wishlistMapper */
-        $wishlistMapper = $this->mapperFactory->get(CustomerWishlistMapper::class);
-        /** @var ProductMapper $productMapper */
-        $productMapper = $this->mapperFactory->get(ProductMapper::class);
+        /** @var WishlistMapper $wishlistMapper */
+        $wishlistMapper = $this->mapperFactory->get(WishlistMapper::class);
+        /** @var ProductRepository $productRepository */
+        $productRepository = $this->alpha_repository_factory->get(ProductRepository::class);
         /** @var StockStatusMapper $stockStatusMapper */
         $stockStatusMapper = $this->mapperFactory->get(StockStatusMapper::class);
 
-        $results = $wishlistMapper->getWishlist($customerId);
+        $storeId = (int)$this->config->get('config_store_id');
+        $results = $wishlistMapper->getWishlist($customerId, $storeId);
 
         $products = [];
         foreach ($results as $result) {
-            $product_info = $productMapper->getProduct($result['product_id']);
+            $product_info = $productRepository->getProduct($result['product_id']);
 
             if ($product_info) {
-                $image = '';
-                if ($product_info['image'] && is_file(DIR_IMAGE . html_entity_decode($product_info['image'], ENT_QUOTES, 'UTF-8'))) {
-                    // Assuming $this->model_tool_image is available via registry or a dedicated ImageService
-                    // For now, direct call to resize, ideally this would be an ImageService
-                    $image = $this->model_tool_image->resize($product_info['image'], $this->config->get('config_image_wishlist_width'), $this->config->get('config_image_wishlist_height'));
+                if (!isset($product_info['product_id']) && isset($product_info['id'])) {
+                    $product_info['product_id'] = $product_info['id'];
                 }
+                $imagePresenter = new \Alpha\Support\Presenters\ImagePresenter($this->registry);
+                $image = $imagePresenter->resize(
+                    $product_info['image'] ?? '',
+                    (int)$this->config->get('config_image_wishlist_width'),
+                    (int)$this->config->get('config_image_wishlist_height'),
+                    false
+                );
 
                 $stock = '';
                 if ($product_info['quantity'] <= 0) {
@@ -94,7 +114,7 @@ class WishlistRepository extends AbstractRepository implements BaseRepositoryInt
                 ];
             } else {
                 // If product no longer exists, remove it from the wishlist
-                $wishlistMapper->deleteWishlist($customerId, $result['product_id']);
+                $wishlistMapper->deleteWishlist($customerId, $result['product_id'], $storeId);
             }
         }
 
@@ -107,7 +127,28 @@ class WishlistRepository extends AbstractRepository implements BaseRepositoryInt
     public function getTotalWishlist(int $customerId): int {
         /** @var WishlistMapper $mapper */
         $mapper = $this->mapperFactory->get(WishlistMapper::class);
-        return $mapper->getTotalWishlist($customerId);
+        $storeId = (int)$this->config->get('config_store_id');
+        return $mapper->getTotalWishlist($customerId, $storeId);
+    }
+
+    /**
+     * Adiciona um produto à lista de desejos.
+     */
+    public function addWishlist(int $customerId, int $productId): void {
+        /** @var WishlistMapper $mapper */
+        $mapper = $this->mapperFactory->get(WishlistMapper::class);
+        $storeId = (int)$this->config->get('config_store_id');
+        $mapper->addWishlist($customerId, $productId, $storeId);
+    }
+
+    /**
+     * Remove um produto da lista de desejos.
+     */
+    public function deleteWishlist(int $customerId, int $productId): void {
+        /** @var WishlistMapper $mapper */
+        $mapper = $this->mapperFactory->get(WishlistMapper::class);
+        $storeId = (int)$this->config->get('config_store_id');
+        $mapper->deleteWishlist($customerId, $productId, $storeId);
     }
 
     // Métodos obrigatórios da interface BaseRepositoryInterface (placeholders)

@@ -25,7 +25,7 @@ class TranslationRepository extends AbstractRepository implements BaseRepository
             return $this->cache->get($cacheKey);
         }
 
-        $results = $this->getMapper()->getTranslations($route, $this->language_id, $this->store_id);
+        $results = $this->getMapper()->getRouteTranslations($route, $this->store_id, $this->language_id);
 
         if ($this->cache) {
             $this->cache->set($cacheKey, $results);

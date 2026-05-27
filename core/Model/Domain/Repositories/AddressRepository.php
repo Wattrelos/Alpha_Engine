@@ -117,7 +117,7 @@ class AddressRepository extends AbstractRepository implements BaseRepositoryInte
             throw new \RuntimeException("Acesso negado ao editar endereço.");
         }
 
-        \Alpha\Model\DataTransferObject\EntityMapper::fillEntity($address, $data);
+        \Alpha\Support\EntityHydrator::fillEntity($address, $data);
         $address->setCustomerId($customerId);
 
         $isDefault = !empty($data['default']);

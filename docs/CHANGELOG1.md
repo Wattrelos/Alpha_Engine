@@ -18,8 +18,10 @@
 * **Sistema de Auditoria**: Entidades `ApiIp`, `Log`, `CustomerActivity` e `ProductReport` integradas ao motor de persistência.
 * **Camada de Cache**: Introdução da `CacheStrategyInterface` e `FilesystemCacheStrategy` baseada em disco com suporte a TTL e Lock de escrita.
 * **CurrencyMapper**: Criação do Mapper na Alpha Engine para isolar as consultas da tabela de moedas, adicionando regra de negócio de negócio via `findAllActive()` para listar e alocar em memória apenas moedas ativas.
+* **StockStatusMapper**: Criação do Mapper para gerenciar as mensagens de status de estoque no Alpha Engine, resolvendo a busca por ID e idioma atual da loja.
 
 ### Modificado (Changed)
+* **Refatoração de EntityMapper para EntityHydrator**: Renomeação da classe utilitária de preenchimento e validação e sua realocação para `core/Support` (namespace `Alpha\Support`), corrigindo desvios conceituais de DTOs e Mappers de persistência de banco de dados.
 * **Normalização de Banco de Dados**: Padronização de chaves primárias para `id` e chaves estrangeiras para `[tabela]_id` com tipo BIGINT para prevenção de overflow.
 * **Segurança de Tipos (PHP 8.4)**: Migração total para propriedades tipadas, inicialização segura de valores padrão e uso de `self` para interfaces fluidas nos setters.
 * **Isolamento SQL**: Remoção de lógica procedural e queries manuais dos models legados para o motor `QueryBuilder`.
@@ -82,9 +84,13 @@
 * **APIs de Checkout (Cliente, Frete, Pagamento, etc.)**: Transição em massa dos controladores `api/customer.php`, `api/shipping_address.php`, `api/payment_method.php`, `api/shipping_method.php`, `api/payment_address.php`, `api/affiliate.php` e `api/subscription.php` para a `BaseController`. Eliminação completa do acoplamento com a biblioteca `$this->cart`, substituída pelo `CartRepository` da Alpha Engine.
 * **Controladores de Checkout Frontend**: Refatoração das etapas visuais do fluxo de compra (`checkout/payment_address.php`, `checkout/shipping_address.php`, `checkout/shipping_method.php`, `checkout/register.php`), migrando para a arquitetura `BaseController` e injetando repositórios de domínio (`AddressRepository`, `CountryRepository`, etc) em vez de invocar a `mapperFactory` diretamente.
 * **Proxies de Configuração do Sistema**: Transformação dos models legados em `catalog/model/setting/` (`store.php`, `extension.php`, `api.php`, `event.php`, `cron.php`, `startup.php`) em pontes seguras (Proxies) que apenas repassam a requisição para os Repositórios da Alpha Engine, blindando a inicialização do sistema.
+* **Painel do Cliente e Endereços (`account/account.php` e `account/address.php`)**: Migração total para a arquitetura `BaseController` e consumo do `WishlistRepository`, `AddressRepository` e `CustomerRepository`.
+* **Lista de Desejos (`account/wishlist.php` e `WishlistRepository`)**: Refatoração completa para usar repositories (`ProductRepository`, `WishlistRepository`), removendo imports e instanciações de mappers nos controladores e centralizando a formatação dos produtos e ações na camada de domínio. Integração do `ImagePresenter` para redimensionamento seguro de imagens de produtos.
 
 ### Corrigido (Fixed)
 * **Ajuste no ProductMapper**: Inclusão explícita da descrição na consulta SQL dentro do Mapper para garantir que ela não fique vazia.
+* **Correção no TranslationRepository**: Correção de chamada de método inexistente e parâmetros invertidos de idioma e loja no mapper.
+* **Substituição da Função Inexistente oc_config**: Substituição da função `oc_config()` por chamadas diretas ao Registry nos mappers `TotalMapper`, `ShippingMapper` e `PaymentMapper`, evitando erros fatais em fluxos de fechamento de pedido.
 * **Correção no Controlador Featured**: Adicionado o operador de coalescência nula (`?? ''`) e um cast para `(int)` no comprimento para evitar problemas de tipo.
 * **Segurança de Inicialização**: Inicialização de todas as propriedades das entidades com valores padrão para prevenir erros de `uninitialized property`.
 * **Recursividade do DAO**: Correção na resolução de associações ManyToOne/OneToMany para evitar loops infinitos em objetos como `CustomerGroup` e `Language`.

@@ -228,6 +228,19 @@ abstract class BaseController extends Controller
     }
 
     /**
+     * Alpha Engine: Renderiza uma view e retorna seu HTML como string.
+     * Envelopa a chamada no ViewRenderer protegido contra WSOD.
+     * 
+     * @param string $route
+     * @param array $data
+     * @return string
+     */
+    protected function getTemplate(string $route, array $data = []): string
+    {
+        return $this->viewRenderer->render($route, $data);
+    }
+
+    /**
      * Método utilitário para renderizar a View.
      * Injeta automaticamente os componentes globais (Header, Footer, Colunas) 
      * caso eles já não tenham sido definidos no array de dados.

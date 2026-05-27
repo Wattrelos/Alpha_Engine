@@ -5,6 +5,7 @@ namespace Alpha\Mappers\EntityMappers;
 use Alpha\Model\Domain\Repositories\LengthClassRepository;
 use Alpha\Model\Domain\Repositories\WeightClassRepository;
 use Alpha\Mappers\BaseMapper;
+use Opencart\System\Engine\Registry;
 
 /**
  * ShippingMapper - Orquestra a listagem e cálculo de métodos de frete (Alpha Engine).
@@ -22,14 +23,15 @@ use Alpha\Mappers\BaseMapper;
  * - Centralização: Garante que a ordenação e validação de status sigam o padrão Alpha.
  * - Performance: Utiliza o registry centralizado para carga dinâmica de modelos de extensão.
  */
-class ShippingMapper extends BaseMapper {
+class ShippingMapper extends BaseMapper
+{
 
     protected string $tableName = 'extension';
-    
+
     private WeightClassRepository $weightClassRepository;
     private LengthClassRepository $lengthClassRepository;
 
-    public function __construct(\Registry $registry)
+    public function __construct(Registry $registry)
     {
         parent::__construct($registry);
         $mapperFactory = $registry->get('mapperFactory');
@@ -42,17 +44,18 @@ class ShippingMapper extends BaseMapper {
      * @param array $shipping_address
      * @return array
      */
-    public function getMethods(array $shipping_address): array {
+    public function getMethods(array $shipping_address): array
+    {
         $shipping_methods = [];
 
         // Alpha Engine: O ExtensionMapper agora gerencia o cache internamente por tipo
-        $extensionMapper = new ExtensionMapper($this->registry); 
+        $extensionMapper = $this->registry->get('alpha_mapper_factory')->get(ExtensionMapper::class);
         $results = $extensionMapper->getExtensionsByType('shipping');
 
         $sort_order = [];
 
         foreach ($results as $key => $value) {
-            $sort_order[$key] = (int)oc_config('shipping_' . $value->getCode() . '_sort_order');
+            $sort_order[$key] = (int)$this->registry->get('config')->get('shipping_' . $value->getCode() . '_sort_order');
         }
 
         array_multisort($sort_order, SORT_ASC, $results);
@@ -60,16 +63,16 @@ class ShippingMapper extends BaseMapper {
         /** @var \Alpha\Model\Domain\Entities\Extension $result */
         foreach ($results as $result) {
             // Alpha Engine: Verificação de status via config nativa
-            if (oc_config('shipping_' . $result->getCode() . '_status')) {
+            if ($this->registry->get('config')->get('shipping_' . $result->getCode() . '_status')) {
                 // Invocação dinâmica da extensão (enquanto as extensões de frete não são convertidas em Mappers)
                 $load = $this->registry->get('load');
-                
+
                 $route = 'extension/' . $result->getExtension() . '/shipping/' . $result->getCode();
-                
+
                 $load->model($route);
-                
+
                 $model_name = 'model_extension_' . $result->getExtension() . '_shipping_' . $result->getCode();
-                
+
                 if ($this->registry->has($model_name)) {
                     // Alpha Engine: Correção para o padrão OpenCart (extensões de frete usam getQuote)
                     $quote = $this->registry->get($model_name)->getQuote($shipping_address);

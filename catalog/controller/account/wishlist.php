@@ -3,8 +3,6 @@ namespace Opencart\Catalog\Controller\Account;
 
 use Alpha\Controller\BaseController;
 use Alpha\Model\Domain\Repositories\WishlistRepository;
-use Alpha\Mappers\EntityMappers\CustomerWishlistMapper;
-use Alpha\Mappers\EntityMappers\ProductMapper;
 
 /**
  * Class Wish List
@@ -28,6 +26,8 @@ class WishList extends BaseController {
 		$data = $this->getRepository(WishlistRepository::class)->getWishlistViewData($this->customer->getId(), $this->session->data['success'] ?? '')->toArray();
 		
 		unset($this->session->data['success']);
+
+		$this->document->setTitle($data['heading_title'] ?? '');
 
 		$data['list'] = $this->getTemplate('account/wishlist_list', ['products' => $data['products']]); // Pass only products to the list template
 
@@ -69,7 +69,8 @@ class WishList extends BaseController {
 	 * @return void
 	 */
 	public function add(): void {
-		$this->getRepository(WishlistRepository::class)->loadLanguage('account/wishlist');
+		$this->load->language('account/wishlist');
+		$wishlistRepository = $this->getRepository(WishlistRepository::class);
 
 		$json = [];
 
@@ -80,9 +81,8 @@ class WishList extends BaseController {
 		} 
 
 		// Product
-		/** @var ProductMapper $productMapper */
-		$productMapper = $this->mapper->get(ProductMapper::class);
-		$product_info = $productMapper->getProduct($product_id);
+		$productRepository = $this->getRepository(\Alpha\Model\Domain\Repositories\ProductRepository::class);
+		$product_info = $productRepository->getProduct($product_id);
 
 		if (!$product_info) {
 			$json['error'] = $this->language->get('error_product');
@@ -99,13 +99,11 @@ class WishList extends BaseController {
 
 			// Logged in. We store the product ID into the wishlist
 			if ($this->customer->isLogged()) {
-				/** @var CustomerWishlistMapper $wishlistMapper */
-				$wishlistMapper = $this->mapper->get(CustomerWishlistMapper::class);
-				$wishlistMapper->addWishlist($this->customer->getId(), $product_id);
+				$wishlistRepository->addWishlist($this->customer->getId(), $product_id);
 
 				$json['success'] = sprintf($this->language->get('text_success'), $this->url->link('product/product', 'product_id=' . $product_id), $product_info['name'], $this->url->link('account/wishlist'));
 
-				$json['total'] = sprintf($this->language->get('text_wishlist'), $wishlistMapper->getTotalWishlist($this->customer->getId()));
+				$json['total'] = sprintf($this->language->get('text_wishlist'), $wishlistRepository->getTotalWishlist($this->customer->getId()));
 			} else {
 				$json['error'] = sprintf($this->language->get('text_login'), $this->url->link('account/login'), $this->url->link('account/register'), $this->url->link('product/product', 'product_id=' . $product_id), $product_info['name'], $this->url->link('account/wishlist'));
 
@@ -113,8 +111,7 @@ class WishList extends BaseController {
 			}
 		}
 
-		$this->response->addHeader('Content-Type: application/json');
-		$this->response->setOutput(json_encode($json));
+		$this->jsonResponse($json);
 	}
 
 	/**
@@ -123,7 +120,8 @@ class WishList extends BaseController {
 	 * @return void
 	 */
 	public function remove(): void {
-		$this->getRepository(WishlistRepository::class)->loadLanguage('account/wishlist');
+		$this->load->language('account/wishlist');
+		$wishlistRepository = $this->getRepository(WishlistRepository::class);
 
 		$json = [];
 
@@ -138,14 +136,11 @@ class WishList extends BaseController {
 		}
 
 		if (!$json) {
-			/** @var CustomerWishlistMapper $wishlistMapper */
-			$wishlistMapper = $this->mapper->get(CustomerWishlistMapper::class);
-			$wishlistMapper->deleteWishlist($this->customer->getId(), $product_id);
+			$wishlistRepository->deleteWishlist($this->customer->getId(), $product_id);
 
 			$json['success'] = $this->language->get('text_remove');
 		}
 
-		$this->response->addHeader('Content-Type: application/json');
-		$this->response->setOutput(json_encode($json));
+		$this->jsonResponse($json);
 	}
 }

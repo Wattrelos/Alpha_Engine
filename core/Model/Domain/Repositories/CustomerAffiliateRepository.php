@@ -4,7 +4,7 @@ namespace Alpha\Model\Domain\Repositories;
 use Alpha\Mappers\EntityMappers\CustomerAffiliateMapper;
 use Alpha\Model\Domain\InterfaceEntity;
 use Alpha\Model\Domain\Entities\CustomerAffiliate;
-use Alpha\Model\DataTransferObject\EntityMapper;
+use Alpha\Support\EntityHydrator;
 
 class CustomerAffiliateRepository extends AbstractRepository implements BaseRepositoryInterface
 {
@@ -61,7 +61,7 @@ class CustomerAffiliateRepository extends AbstractRepository implements BaseRepo
             $affiliate->setStatus(!$approvalRequired);
         }
 
-        EntityMapper::fillEntity($affiliate, $data);
+        EntityHydrator::fillEntity($affiliate, $data);
         
         $this->save($affiliate);
     }
