@@ -10,9 +10,16 @@ use Alpha\Mappers\EntityMappers\UserLoginMapper;
  */
 class UserLoginRepository extends AbstractRepository
 {
+    private UserLoginMapper $mapper;
+
+    public function __construct(UserLoginMapper $mapper)
+    {
+        $this->mapper = $mapper;
+    }
+
     protected function getMapper(): UserLoginMapper
     {
-        return $this->mapperFactory->get(UserLoginMapper::class);
+        return $this->mapper;
     }
 
     /**
@@ -34,6 +41,10 @@ class UserLoginRepository extends AbstractRepository
      */
     public function clearLoginAttempts(int $userId): void
     {
-        // A implementação no ORM deve deletar os registros ou o controller lidará enviando os objetos para o delete
+        // Alpha Engine: Dívida técnica resolvida. O Repositório assume a deleção de histórico via Mapper.
+        $logins = $this->getMapper()->search(['userId' => $userId]);
+        foreach ($logins as $login) {
+            $this->getMapper()->delete($login);
+        }
     }
 }

@@ -1,5 +1,8 @@
 <?php
 namespace Opencart\Catalog\Model\Extension\Opencart\Total;
+
+use Alpha\Model\Domain\Repositories\CartRepository;
+
 /**
  * Class Shipping
  *
@@ -18,7 +21,9 @@ class Shipping extends \Opencart\System\Engine\Model {
 	 * @return void
 	 */
 	public function getTotal(array &$totals, array &$taxes, float &$total): void {
-		if ($this->cart->hasShipping() && isset($this->session->data['shipping_method'])) {
+		$cartRepository = $this->registry->get('alpha_repository_factory')->get(CartRepository::class);
+
+		if ($cartRepository->hasShipping() && isset($this->session->data['shipping_method'])) {
 			$totals[] = [
 				'extension'  => 'opencart',
 				'code'       => 'shipping',

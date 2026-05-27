@@ -1,5 +1,8 @@
 <?php
 namespace Opencart\Catalog\Model\Extension\Opencart\Total;
+
+use Alpha\Model\Domain\Repositories\CartRepository;
+
 /**
  * Class Sub Total
  *
@@ -20,7 +23,8 @@ class SubTotal extends \Opencart\System\Engine\Model {
 	public function getTotal(array &$totals, array &$taxes, float &$total): void {
 		$this->load->language('extension/opencart/total/sub_total');
 
-		$sub_total = $this->cart->getSubTotal();
+		$cartRepository = $this->registry->get('alpha_repository_factory')->get(CartRepository::class);
+		$sub_total = $cartRepository->getSubTotal();
 
 		$totals[] = [
 			'extension'  => 'opencart',

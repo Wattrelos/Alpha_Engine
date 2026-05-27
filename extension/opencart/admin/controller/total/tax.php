@@ -1,11 +1,14 @@
 <?php
 namespace Opencart\Admin\Controller\Extension\Opencart\Total;
+
+use Alpha\Controller\BaseController;
+
 /**
  * Class Tax
  *
  * @package Opencart\Admin\Controller\Extension\Opencart\Total
  */
-class Tax extends \Opencart\System\Engine\Controller {
+class Tax extends BaseController {
 	/**
 	 * Index
 	 *
@@ -39,11 +42,7 @@ class Tax extends \Opencart\System\Engine\Controller {
 		$data['total_tax_status'] = $this->config->get('total_tax_status');
 		$data['total_tax_sort_order'] = $this->config->get('total_tax_sort_order');
 
-		$data['header'] = $this->load->controller('common/header');
-		$data['column_left'] = $this->load->controller('common/column_left');
-		$data['footer'] = $this->load->controller('common/footer');
-
-		$this->response->setOutput($this->load->view('extension/opencart/total/tax', $data));
+		$this->render('extension/opencart/total/tax', $data);
 	}
 
 	/**
@@ -69,7 +68,6 @@ class Tax extends \Opencart\System\Engine\Controller {
 			$json['success'] = $this->language->get('text_success');
 		}
 
-		$this->response->addHeader('Content-Type: application/json');
-		$this->response->setOutput(json_encode($json));
+		$this->jsonResponse($json);
 	}
 }

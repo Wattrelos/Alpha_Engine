@@ -2,6 +2,7 @@
 namespace Opencart\Catalog\Controller\Product;
 
 use Alpha\Controller\BaseController;
+use Alpha\Model\Domain\Repositories\ManufacturerRepository;
 
 /**
  * Class Manufacturer
@@ -11,7 +12,7 @@ use Alpha\Controller\BaseController;
 class Manufacturer extends BaseController {
 	
 	public function index(): void {
-		$this->loadLanguage('product/manufacturer');
+		$this->load->language('product/manufacturer');
 
 		$this->document->setTitle($this->language->get('heading_title'));
 
@@ -26,7 +27,7 @@ class Manufacturer extends BaseController {
 		];
 
 		// Alpha Engine: O repositório cuida do agrupamento alfabético (A-Z, 0-9)
-		$data['categories'] = $this->manufacturerRepository->getAllGrouped();
+		$data['categories'] = $this->getRepository(ManufacturerRepository::class)->getAllGrouped();
 
 		$data['continue'] = $this->url->link('common/home', 'language=' . $this->config->get('config_language'));
 
@@ -34,7 +35,7 @@ class Manufacturer extends BaseController {
 	}
 
 	public function info(): void {
-		$this->loadLanguage('product/manufacturer');
+		$this->load->language('product/manufacturer');
 
 		$manufacturer_id = (int)($this->request->get['manufacturer_id'] ?? 0);
 
@@ -46,7 +47,7 @@ class Manufacturer extends BaseController {
 		];
 
 		// Alpha Engine: Resgate de dados enriquecidos via Repositório
-		$manufacturerData = $this->manufacturerRepository->getManufacturerData($manufacturer_id, $filter_data);
+		$manufacturerData = $this->getRepository(ManufacturerRepository::class)->getManufacturerData($manufacturer_id, $filter_data);
 
 		if ($manufacturerData->get('name')) {
 			$this->document->setTitle($manufacturerData->get('name'));

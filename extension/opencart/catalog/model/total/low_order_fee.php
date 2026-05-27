@@ -1,5 +1,8 @@
 <?php
 namespace Opencart\Catalog\Model\Extension\Opencart\Total;
+
+use Alpha\Model\Domain\Repositories\CartRepository;
+
 /**
  * Class Low Order Fee
  *
@@ -18,7 +21,10 @@ class LowOrderFee extends \Opencart\System\Engine\Model {
 	 * @return void
 	 */
 	public function getTotal(array &$totals, array &$taxes, float &$total): void {
-		if ($this->cart->getSubTotal() && ($this->cart->getSubTotal() < (float)$this->config->get('total_low_order_fee_total'))) {
+		$cartRepository = $this->registry->get('alpha_repository_factory')->get(CartRepository::class);
+		$sub_total = $cartRepository->getSubTotal();
+
+		if ($sub_total && ($sub_total < (float)$this->config->get('total_low_order_fee_total'))) {
 			$this->load->language('extension/opencart/total/low_order_fee');
 
 			$totals[] = [

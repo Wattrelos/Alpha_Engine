@@ -1,5 +1,8 @@
 <?php
 namespace Opencart\Catalog\Model\Extension\Opencart\Total;
+
+use Alpha\Model\Domain\Repositories\CouponRepository;
+
 /**
  * Class Coupon
  *
@@ -21,9 +24,8 @@ class Coupon extends \Opencart\System\Engine\Model {
 		if (isset($this->session->data['coupon'])) {
 			$this->load->language('extension/opencart/total/coupon', 'coupon');
 
-			$this->load->model('marketing/coupon');
-
-			$coupon_info = $this->model_marketing_coupon->getCoupon($this->session->data['coupon']);
+			$couponRepository = $this->registry->get('alpha_repository_factory')->get(CouponRepository::class);
+			$coupon_info = $couponRepository->getCoupon($this->session->data['coupon']);
 
 			if ($coupon_info) {
 				$discount_total = 0;
@@ -129,21 +131,20 @@ class Coupon extends \Opencart\System\Engine\Model {
 		}
 
 		if ($code) {
-			$this->load->model('marketing/coupon');
-
 			$status = true;
 
-			$coupon_info = $this->model_marketing_coupon->getCouponByCode($code);
+			$couponRepository = $this->registry->get('alpha_repository_factory')->get(CouponRepository::class);
+			$coupon_info = $couponRepository->getCouponByCode($code);
 
 			if ($coupon_info) {
-				$coupon_total = $this->model_marketing_coupon->getTotalHistories($coupon_info['coupon_id']);
+				$coupon_total = $couponRepository->getTotalHistories($coupon_info['coupon_id']);
 
 				if ($coupon_info['uses_total'] > 0 && ($coupon_total >= $coupon_info['uses_total'])) {
 					$status = false;
 				}
 
 				if ($order_info['customer_id']) {
-					$customer_total = $this->model_marketing_coupon->getTotalHistoriesByCustomerId($coupon_info['coupon_id'], $order_info['customer_id']);
+					$customer_total = $couponRepository->getTotalHistoriesByCustomerId($coupon_info['coupon_id'], $order_info['customer_id']);
 
 					if ($coupon_info['uses_customer'] > 0 && ($customer_total >= $coupon_info['uses_customer'])) {
 						$status = false;
@@ -154,7 +155,7 @@ class Coupon extends \Opencart\System\Engine\Model {
 			}
 
 			if ($status) {
-				$this->model_marketing_coupon->addHistory($coupon_info['coupon_id'], $order_info['order_id'], $order_info['customer_id'], $order_total['value']);
+				$couponRepository->addHistory($coupon_info['coupon_id'], $order_info['order_id'], $order_info['customer_id'], $order_total['value']);
 			} else {
 				return $this->config->get('config_fraud_status_id');
 			}
@@ -171,8 +172,7 @@ class Coupon extends \Opencart\System\Engine\Model {
 	 * @return void
 	 */
 	public function unconfirm(array $order_info): void {
-		$this->load->model('marketing/coupon');
-
-		$this->model_marketing_coupon->deleteHistoriesByOrderId($order_info['order_id']);
+		$couponRepository = $this->registry->get('alpha_repository_factory')->get(CouponRepository::class);
+		$couponRepository->deleteHistoriesByOrderId($order_info['order_id']);
 	}
 }

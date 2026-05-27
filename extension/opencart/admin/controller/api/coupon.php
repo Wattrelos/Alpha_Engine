@@ -1,11 +1,15 @@
 <?php
 namespace Opencart\Admin\Controller\Extension\Opencart\Api;
+
+use Alpha\Controller\BaseController;
+use Alpha\Model\Domain\Repositories\OrderRepository;
+
 /**
  * Class Coupon
  *
  * @package Opencart\Admin\Controller\Extension\Opencart\Api
  */
-class Coupon extends \Opencart\System\Engine\Controller {
+class Coupon extends BaseController {
 	/**
 	 * Index
 	 *
@@ -23,15 +27,20 @@ class Coupon extends \Opencart\System\Engine\Controller {
 		$data['coupon'] = '';
 
 		if ($order_id) {
-			$order_totals = $this->model_sale_order->getTotalsByCode($order_id, 'coupon');
+			$orderRepository = $this->getRepository(OrderRepository::class);
+			$order_totals = $orderRepository->getTotals($order_id);
 
 			foreach ($order_totals as $order_total) {
-				// If coupon or reward points
-				$start = strpos($order_total['title'], '(');
-				$end = strrpos($order_total['title'], ')');
+				if (method_exists($order_total, 'getCode') && $order_total->getCode() == 'coupon') {
+					$title = method_exists($order_total, 'getTitle') ? $order_total->getTitle() : '';
 
-				if ($start !== false && $end !== false) {
-					$data['coupon'] = substr($order_total['title'], $start + 1, $end - ($start + 1));
+					// If coupon or reward points
+					$start = strpos($title, '(');
+					$end = strrpos($title, ')');
+
+					if ($start !== false && $end !== false) {
+						$data['coupon'] = substr($title, $start + 1, $end - ($start + 1));
+					}
 				}
 			}
 		}

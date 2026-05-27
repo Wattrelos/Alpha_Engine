@@ -1,5 +1,8 @@
 <?php
 namespace Opencart\Catalog\Model\Extension\Opencart\Total;
+
+use Alpha\Model\Domain\Repositories\CartRepository;
+
 /**
  * Class Reward
  *
@@ -28,7 +31,10 @@ class Reward extends \Opencart\System\Engine\Model {
 
 				$points_total = 0;
 
-				foreach ($this->cart->getProducts() as $product) {
+				$cartRepository = $this->registry->get('alpha_repository_factory')->get(CartRepository::class);
+				$products = $cartRepository->getProducts();
+
+				foreach ($products as $product) {
 					if ($product['points']) {
 						$points_total += $product['points'];
 					}
@@ -36,7 +42,7 @@ class Reward extends \Opencart\System\Engine\Model {
 
 				$points = min($points, $points_total);
 
-				foreach ($this->cart->getProducts() as $product) {
+				foreach ($products as $product) {
 					$discount = 0;
 
 					if ($product['points']) {

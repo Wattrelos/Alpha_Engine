@@ -26,28 +26,6 @@ use Alpha\Model\Domain\Repositories\ExtensionRepository;
  * @package Opencart\Catalog\Controller\Checkout
  */
 class Register extends BaseController {
-	private CartRepository $cartRepository;
-	private CustomerRepository $customerRepository;
-	private CountryRepository $countryRepository;
-	private ZoneRepository $zoneRepository;
-	private AddressRepository $addressRepository;
-	private CustomFieldRepository $customFieldRepository;
-	private InformationRepository $informationRepository;
-	private CustomerGroupRepository $customerGroupRepository;
-
-	public function __construct(\Opencart\System\Engine\Registry $registry) {
-		parent::__construct($registry);
-		$repoFactory = $this->registry->get('alpha_repository_factory');
-		$this->cartRepository = $repoFactory->get(CartRepository::class);
-		$this->customerRepository = $repoFactory->get(CustomerRepository::class);
-		$this->countryRepository = $repoFactory->get(CountryRepository::class);
-		$this->zoneRepository = $repoFactory->get(ZoneRepository::class);
-		$this->addressRepository = $repoFactory->get(AddressRepository::class);
-		$this->customFieldRepository = $repoFactory->get(CustomFieldRepository::class);
-		$this->informationRepository = $repoFactory->get(InformationRepository::class);
-		$this->customerGroupRepository = $repoFactory->get(CustomerGroupRepository::class);
-	}
-
 	/**
 	 * Index
 	 *
@@ -63,13 +41,14 @@ class Register extends BaseController {
 
 		$data['error_upload_size'] = sprintf($data['error_upload_size'], $this->config->get('config_file_max_size'));
 
+		$cartRepository = $this->getRepository(CartRepository::class);
 		$data['config_checkout_payment_address'] = $this->config->get('config_checkout_payment_address');
-		$data['config_checkout_guest'] = ($this->config->get('config_checkout_guest') && !$this->config->get('config_customer_price') && !$this->cartRepository->hasDownload() && !$this->cartRepository->hasSubscription());
+		$data['config_checkout_guest'] = ($this->config->get('config_checkout_guest') && !$this->config->get('config_customer_price') && !$cartRepository->hasDownload() && !$cartRepository->hasSubscription());
 		$data['config_file_max_size'] = ((int)$this->config->get('config_file_max_size') * 1024 * 1024);
 		$data['config_telephone_display'] = $this->config->get('config_telephone_display');
 		$data['config_telephone_required'] = $this->config->get('config_telephone_required');
 
-		$data['shipping_required'] = $this->cartRepository->hasShipping();
+		$data['shipping_required'] = $cartRepository->hasShipping();
 
 		$this->session->data['upload_token'] = oc_token(32);
 
@@ -79,7 +58,8 @@ class Register extends BaseController {
 		$data['customer_groups'] = [];
 
 		if (is_array($this->config->get('config_customer_group_display'))) {
-			$customer_groups = $this->customerGroupRepository->getCustomerGroups((int)$this->config->get('config_language_id'));
+			$customerGroupRepository = $this->getRepository(CustomerGroupRepository::class);
+			$customer_groups = $customerGroupRepository->getCustomerGroups((int)$this->config->get('config_language_id'));
 
 			foreach ($customer_groups as $customer_group) {
 				if (in_array($customer_group['id'], (array)$this->config->get('config_customer_group_display'))) {
@@ -113,10 +93,12 @@ class Register extends BaseController {
 		$data['payment_custom_field'] = $this->session->data['payment_address']['custom_field'] ?? [];
 
 		// Country
-		$data['countries'] = $this->countryRepository->getCountries();
+		$countryRepository = $this->getRepository(CountryRepository::class);
+		$data['countries'] = $countryRepository->getCountries();
 
 		// Zone
-		$data['payment_zones'] = $this->zoneRepository->getZonesByCountryId($data['payment_country_id']);
+		$zoneRepository = $this->getRepository(ZoneRepository::class);
+		$data['payment_zones'] = $zoneRepository->getZonesByCountryId($data['payment_country_id']);
 
 		$data['shipping_firstname']    = $this->session->data['shipping_address']['firstname'] ?? '';
 		$data['shipping_lastname']     = $this->session->data['shipping_address']['lastname'] ?? '';
@@ -135,11 +117,12 @@ class Register extends BaseController {
 		if ($data['payment_country_id'] == $data['shipping_country_id']) {
 			$data['shipping_zones'] = $data['payment_zones'];
 		} else {
-			$data['shipping_zones'] = $this->zoneRepository->getZonesByCountryId($data['shipping_country_id']);
+			$data['shipping_zones'] = $zoneRepository->getZonesByCountryId($data['shipping_country_id']);
 		}
 
 		// Custom Fields
-		$data['custom_fields'] = $this->customFieldRepository->getCustomFields();
+		$customFieldRepository = $this->getRepository(CustomFieldRepository::class);
+		$data['custom_fields'] = $customFieldRepository->getCustomFields();
 
 		// Captcha
 		$extensionRepository = $this->getRepository(ExtensionRepository::class);
@@ -152,7 +135,8 @@ class Register extends BaseController {
 		}
 
 		// Information
-		$information_info = $this->informationRepository->getInformation((int)$this->config->get('config_account_id'));
+		$informationRepository = $this->getRepository(InformationRepository::class);
+		$information_info = $informationRepository->getInformation((int)$this->config->get('config_account_id'));
 
 		if ($information_info) {
 			$data['text_agree'] = sprintf($data['text_agree'] ?? $this->language->get('text_agree'), $this->url->link('information/information.info', 'language=' . $this->config->get('config_language') . '&information_id=' . $this->config->get('config_account_id')), $information_info['title']);
@@ -212,12 +196,13 @@ class Register extends BaseController {
 		$post_info = $this->request->post + $required;
 
 		// Force account requires subscript or is a downloadable product.
-		if ($this->cartRepository->hasDownload() || $this->cartRepository->hasSubscription() || !$this->config->get('config_checkout_guest')) {
+		$cartRepository = $this->getRepository(CartRepository::class);
+		if ($cartRepository->hasDownload() || $cartRepository->hasSubscription() || !$this->config->get('config_checkout_guest')) {
 			$post_info['account'] = 1;
 		}
 
 		// Validate cart has products and has stock.
-		if (empty($this->cartRepository->getProducts()) || (!$this->cartRepository->hasStock() && !$this->config->get('config_stock_checkout')) || !$this->cartRepository->hasMinimum()) {
+		if (empty($cartRepository->getProducts()) || (!$cartRepository->hasStock() && !$this->config->get('config_stock_checkout')) || !$cartRepository->hasMinimum()) {
 			$json['redirect'] = $this->url->link('checkout/cart', 'language=' . $this->config->get('config_language'), true);
 		}
 
@@ -234,7 +219,8 @@ class Register extends BaseController {
 				$customer_group_id = (int)$this->config->get('config_customer_group_id');
 			}
 
-			$customer_group_info = $this->customerGroupRepository->getCustomerGroup($customer_group_id, (int)$this->config->get('config_language_id'));
+			$customerGroupRepository = $this->getRepository(CustomerGroupRepository::class);
+			$customer_group_info = $customerGroupRepository->getCustomerGroup($customer_group_id, (int)$this->config->get('config_language_id'));
 
 			if (!$customer_group_info || !in_array($customer_group_id, (array)$this->config->get('config_customer_group_display'))) {
 				$json['error']['warning'] = $this->language->get('error_customer_group');
@@ -253,7 +239,8 @@ class Register extends BaseController {
 			}
 
 			// Customer
-			$customer_info = $this->customerRepository->findByEmail($post_info['email']);
+			$customerRepository = $this->getRepository(CustomerRepository::class);
+			$customer_info = $customerRepository->findByEmail($post_info['email']);
 
 			if ($post_info['account'] && $customer_info) {
 				$json['error']['warning'] = $this->language->get('error_exists');
@@ -264,7 +251,8 @@ class Register extends BaseController {
 			}
 
 			// Custom field validation
-			$custom_fields = $this->customFieldRepository->getCustomFields($customer_group_id);
+			$customFieldRepository = $this->getRepository(CustomFieldRepository::class);
+			$custom_fields = $customFieldRepository->getCustomFields($customer_group_id);
 
 			foreach ($custom_fields as $custom_field) {
 				if ($custom_field['location'] == 'account') {
@@ -286,7 +274,8 @@ class Register extends BaseController {
 				}
 
 				// Country
-				$payment_country_info = $this->countryRepository->getCountry((int)$post_info['payment_country_id']);
+				$countryRepository = $this->getRepository(CountryRepository::class);
+				$payment_country_info = $countryRepository->getCountry((int)$post_info['payment_country_id']);
 
 				if ($payment_country_info && $payment_country_info['postcode_required'] && !oc_validate_length($post_info['payment_postcode'], 2, 10)) {
 					$json['error']['payment_postcode'] = $this->language->get('error_postcode');
@@ -297,7 +286,8 @@ class Register extends BaseController {
 				}
 
 				// Zone
-				$zone_total = $this->zoneRepository->getTotalZonesByCountryId((int)$post_info['payment_country_id']);
+				$zoneRepository = $this->getRepository(ZoneRepository::class);
+				$zone_total = $zoneRepository->getTotalZonesByCountryId((int)$post_info['payment_country_id']);
 
 				if ($zone_total && !$post_info['payment_zone_id']) {
 					$json['error']['payment_zone'] = $this->language->get('error_zone');
@@ -315,7 +305,7 @@ class Register extends BaseController {
 				}
 			}
 
-			if ($this->cartRepository->hasShipping() && !$post_info['address_match']) {
+			if ($cartRepository->hasShipping() && !$post_info['address_match']) {
 				// If payment address not required we need to use the firstname and lastname from the account.
 				if ($this->config->get('config_checkout_payment_address')) {
 					if (!oc_validate_length($post_info['shipping_firstname'], 1, 32)) {
@@ -336,7 +326,8 @@ class Register extends BaseController {
 				}
 
 				// Country
-				$shipping_country_info = $this->countryRepository->getCountry((int)$post_info['shipping_country_id']);
+				$countryRepository = $this->getRepository(CountryRepository::class);
+				$shipping_country_info = $countryRepository->getCountry((int)$post_info['shipping_country_id']);
 
 				if ($shipping_country_info && $shipping_country_info['postcode_required'] && !oc_validate_length($post_info['shipping_postcode'], 2, 10)) {
 					$json['error']['shipping_postcode'] = $this->language->get('error_postcode');
@@ -347,7 +338,8 @@ class Register extends BaseController {
 				}
 
 				// Zone
-				$zone_total = $this->zoneRepository->getTotalZonesByCountryId((int)$post_info['shipping_country_id']);
+				$zoneRepository = $this->getRepository(ZoneRepository::class);
+				$zone_total = $zoneRepository->getTotalZonesByCountryId((int)$post_info['shipping_country_id']);
 
 				if ($zone_total && !$post_info['shipping_zone_id']) {
 					$json['error']['shipping_zone'] = $this->language->get('error_zone');
@@ -396,7 +388,8 @@ class Register extends BaseController {
 				}
 
 				// Agree to terms
-				$information_info = $this->informationRepository->getInformation((int)$this->config->get('config_account_id'));
+				$informationRepository = $this->getRepository(InformationRepository::class);
+				$information_info = $informationRepository->getInformation((int)$this->config->get('config_account_id'));
 				
 				if ($information_info && !$post_info['agree']) {
 					$json['error']['warning'] = sprintf($this->language->get('error_agree'), $information_info['title']);
@@ -453,12 +446,14 @@ class Register extends BaseController {
 						->setStatus(true)
 						->setSafe(true);
 
-					$customer_data['customer_id'] = $this->customerRepository->save($customer);
+					$customerRepository = $this->getRepository(CustomerRepository::class);
+					$customer_data['customer_id'] = $customerRepository->save($customer);
 				}
 
 				// Endereço de Pagamento
 				$payment_address_data = [];
 				if ($this->config->get('config_checkout_payment_address')) {
+					$addressRepository = $this->getRepository(AddressRepository::class);
 					$payment_address_data = [
 						'firstname'      => $post_info['firstname'],
 						'lastname'       => $post_info['lastname'],
@@ -476,16 +471,17 @@ class Register extends BaseController {
 
 					// Persistir endereço se for conta nova
 					if ($post_info['account']) {
-						$payment_address_data['address_id'] = $this->addressRepository->save($payment_address_data, $customer_data['customer_id']);
+						$payment_address_data['address_id'] = $addressRepository->save($payment_address_data, $customer_data['customer_id']);
 					}
 
-					$this->session->data['payment_address'] = $this->addressRepository->getAddress($payment_address_data['address_id'] ?? 0, (int)$this->config->get('config_language_id'));
+					$this->session->data['payment_address'] = $addressRepository->getAddress($payment_address_data['address_id'] ?? 0, (int)$this->config->get('config_language_id'));
 				}
 
 				// Endereço de Entrega
 				$shipping_address_data = [];
-				if ($this->cartRepository->hasShipping()) {
+				if ($cartRepository->hasShipping()) {
 					if (!$post_info['address_match']) {
+						$addressRepository = $this->getRepository(AddressRepository::class);
 						$shipping_address_data = [
 							'firstname'      => $post_info['shipping_firstname'],
 							'lastname'       => $post_info['shipping_lastname'],
@@ -503,10 +499,10 @@ class Register extends BaseController {
 
 						// Persistir endereço se for conta nova
 						if ($post_info['account']) {
-							$shipping_address_data['address_id'] = $this->addressRepository->save($shipping_address_data, $customer_data['customer_id']);
+							$shipping_address_data['address_id'] = $addressRepository->save($shipping_address_data, $customer_data['customer_id']);
 						}
 
-						$this->session->data['shipping_address'] = $this->addressRepository->getAddress($shipping_address_data['address_id'] ?? 0, (int)$this->config->get('config_language_id'));
+						$this->session->data['shipping_address'] = $addressRepository->getAddress($shipping_address_data['address_id'] ?? 0, (int)$this->config->get('config_language_id'));
 					} else {
 						// Se for o mesmo endereço de pagamento
 						$this->session->data['shipping_address'] = $this->session->data['payment_address'];
@@ -528,7 +524,8 @@ class Register extends BaseController {
 					}
 
 					// Limpar tentativas de login
-					$this->customerRepository->resetLoginAttempts($post_info['email']);
+					$customerRepository = $this->getRepository(CustomerRepository::class);
+					$customerRepository->resetLoginAttempts($post_info['email']);
 				} else {
 					$json['redirect'] = $this->url->link('account/success', 'language=' . $this->config->get('config_language'), true);
 				}

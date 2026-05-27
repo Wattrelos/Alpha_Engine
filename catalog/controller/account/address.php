@@ -62,7 +62,14 @@ class Address extends BaseController {
 		$this->loadLanguageData('account/address', $data);
 		
 		if ($address_id) {
-			$data['address'] = $this->getRepository(AddressRepository::class)->getAddress($address_id);
+			$address_info = $this->getRepository(AddressRepository::class)->getAddress($address_id);
+			// Alpha Engine: Prevenção de IDOR na visualização do formulário
+			if ($address_info && $address_info['customer_id'] == $this->customer->getId()) {
+				$data['address'] = $address_info;
+			} else {
+				$data['address'] = [];
+				$address_id = 0; // Reseta para evitar salvar em ID inválido
+			}
 		} else {
 			$data['address'] = [];
 		}
@@ -110,6 +117,16 @@ class Address extends BaseController {
 		if (!$json) {
 			$address_id = (int)($this->request->get['address_id'] ?? 0);
 
+			// Alpha Engine: Prevenção de IDOR antes de autorizar a persistência
+			if ($address_id) {
+				$address_info = $this->getRepository(AddressRepository::class)->getAddress($address_id);
+				if (!$address_info || $address_info['customer_id'] != $this->customer->getId()) {
+					$json['redirect'] = $this->url->link('account/address', 'language=' . $this->config->get('config_language'), true);
+					$this->jsonResponse($json);
+					return;
+				}
+			}
+
 			$post_data = $this->request->post;
 			if ($address_id) {
 				$post_data['id'] = $address_id;
@@ -117,6 +134,12 @@ class Address extends BaseController {
 			
 			$this->getRepository(AddressRepository::class)->save($post_data, (int)$this->customer->getId());
 			$this->session->data['success'] = $address_id ? $this->language->get('text_edit') : $this->language->get('text_add');
+
+			// Alpha Engine: Invalidação dos métodos de envio/pagamento cacheados que dependem da geografia
+			unset($this->session->data['shipping_method']);
+			unset($this->session->data['shipping_methods']);
+			unset($this->session->data['payment_method']);
+			unset($this->session->data['payment_methods']);
 
 			$json['redirect'] = $this->url->link('account/address', 'language=' . $this->config->get('config_language'), true);
 		}
@@ -137,6 +160,13 @@ class Address extends BaseController {
 
 		if (!$json) {
 			$this->getRepository(AddressRepository::class)->delete($address_id, (int)$this->customer->getId());
+			
+			// Alpha Engine: Invalidação do checkout na deleção
+			unset($this->session->data['shipping_method']);
+			unset($this->session->data['shipping_methods']);
+			unset($this->session->data['payment_method']);
+			unset($this->session->data['payment_methods']);
+
 			$json['success'] = $this->language->get('text_delete');
 		}
 

@@ -41,8 +41,7 @@ class TotalMapper extends BaseMapper {
             if (oc_config('total_' . $result->getCode() . '_status')) {
                 // Invocação dinâmica da extensão (enquanto as extensões de total não são convertidas em Mappers)
                 // Utilizamos o Registry do OpenCart para manter a compatibilidade de execução
-                $registry = \Alpha\Model\DataAccessObject\ConnectionDB::getRegistry();
-                $load = $registry->get('load');
+                $load = $this->registry->get('load');
                 
                 $extension_route = 'extension/' . $result->getExtension() . '/total/' . $result->getCode();
                 
@@ -50,8 +49,8 @@ class TotalMapper extends BaseMapper {
                 
                 $model_name = 'model_extension_' . $result->getExtension() . '_total_' . $result->getCode();
                 
-                if ($registry->has($model_name)) {
-                    $registry->get($model_name)->getTotal($totals, $taxes, $total);
+                if ($this->registry->has($model_name)) {
+                    $this->registry->get($model_name)->getTotal($totals, $taxes, $total);
                 }
             }
         }

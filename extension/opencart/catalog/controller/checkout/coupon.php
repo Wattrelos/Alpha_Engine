@@ -2,6 +2,7 @@
 namespace Opencart\Catalog\Controller\Extension\Opencart\Checkout;
 
 use Alpha\Controller\BaseController;
+use Alpha\Model\Domain\Repositories\CouponRepository;
 
 /**
  * Class Coupon
@@ -29,7 +30,8 @@ class Coupon extends BaseController {
 				$data['coupon'] = '';
 			}
 
-			return $this->load->view('extension/opencart/checkout/coupon', $data);
+			// Alpha Engine: Renderização envelopada Anti-WSOD
+			return $this->viewRenderer->render('extension/opencart/checkout/coupon', $data);
 		}
 
 		return '';
@@ -55,9 +57,9 @@ class Coupon extends BaseController {
 			$json['error'] = $this->language->get('error_status');
 		}
 
-		$this->load->model('marketing/coupon');
-
-		$coupon_info = $this->model_marketing_coupon->getCoupon($coupon);
+		// Alpha Engine: Injeção do Repositório de Domínio e desacoplamento do Model antigo
+		$couponRepository = $this->getRepository(CouponRepository::class);
+		$coupon_info = $couponRepository->getCoupon($coupon);
 
 		if (!$coupon_info) {
 			$json['error'] = $this->language->get('error_coupon');

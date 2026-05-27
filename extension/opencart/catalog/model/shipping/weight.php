@@ -25,7 +25,7 @@ class Weight extends \Opencart\System\Engine\Model {
 
 		$results = $this->model_localisation_geo_zone->getGeoZones();
 
-		$weight = $this->cart->getWeight();
+		$weight = $this->cartRepository->getWeight();
 
 		foreach ($results as $result) {
 			if ($this->config->get('shipping_weight_' . $result['geo_zone_id'] . '_status')) {

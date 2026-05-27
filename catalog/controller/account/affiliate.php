@@ -78,7 +78,7 @@ class Affiliate extends BaseController {
 		$custom_fields = $customFieldRepository->getCustomFields((int)$this->config->get('config_customer_group_id'));
 
 		foreach ($custom_fields as $custom_field) {
-			if ($custom_field['location'] == 'affiliate') {
+			if ($custom_field->getLocation() == 'affiliate') {
 				$data['custom_fields'][] = $custom_field;
 			}
 		}
@@ -91,7 +91,7 @@ class Affiliate extends BaseController {
 			$information_info = $informationRepository->getInformation((int)$this->config->get('config_affiliate_id'));
 
 			if ($information_info) {
-				$data['text_agree'] = sprintf($this->language->get('text_agree'), $this->url->link('information/information.info', 'language=' . $this->config->get('config_language') . '&information_id=' . $this->config->get('config_affiliate_id')), $information_info['title']);
+				$data['text_agree'] = sprintf($this->language->get('text_agree'), $this->url->link('information/information.info', 'language=' . $this->config->get('config_language') . '&information_id=' . $this->config->get('config_affiliate_id')), $information_info->getTitle());
 			} else {
 				$data['text_agree'] = '';
 			}
@@ -158,16 +158,15 @@ class Affiliate extends BaseController {
 			}
 
 			// Custom field validation
-			$this->load->model('account/custom_field');
-
-			$custom_fields = $this->model_account_custom_field->getCustomFields((int)$this->config->get('config_customer_group_id'));
+			$customFieldRepository = $this->getRepository(CustomFieldRepository::class);
+			$custom_fields = $customFieldRepository->getCustomFields((int)$this->config->get('config_customer_group_id'));
 
 			foreach ($custom_fields as $custom_field) {
-				if ($custom_field['location'] == 'affiliate') {
-					if ($custom_field['required'] && empty($post_info['custom_field'][$custom_field['custom_field_id']])) {
-						$json['error']['custom_field_' . $custom_field['custom_field_id']] = sprintf($this->language->get('error_custom_field'), $custom_field['name']);
-					} elseif (($custom_field['type'] == 'text') && !empty($custom_field['validation']) && !oc_validate_regex($post_info['custom_field'][$custom_field['custom_field_id']], $custom_field['validation'])) {
-						$json['error']['custom_field_' . $custom_field['custom_field_id']] = sprintf($this->language->get('error_regex'), $custom_field['name']);
+				if ($custom_field->getLocation() == 'affiliate') {
+					if ($custom_field->getRequired() && empty($post_info['custom_field'][$custom_field->getId()])) {
+						$json['error']['custom_field_' . $custom_field->getId()] = sprintf($this->language->get('error_custom_field'), $custom_field->getName());
+					} elseif (($custom_field->getType() == 'text') && !empty($custom_field->getValidation()) && !oc_validate_regex($post_info['custom_field'][$custom_field->getId()], $custom_field->getValidation())) {
+						$json['error']['custom_field_' . $custom_field->getId()] = sprintf($this->language->get('error_regex'), $custom_field->getName());
 					}
 				}
 			}
@@ -181,7 +180,7 @@ class Affiliate extends BaseController {
 				$information_info = $informationRepository->getInformation((int)$this->config->get('config_affiliate_id'));
 
 				if ($information_info && !$post_info['agree']) {
-					$json['error']['warning'] = sprintf($this->language->get('error_agree'), $information_info['title']);
+					$json['error']['warning'] = sprintf($this->language->get('error_agree'), $information_info->getTitle());
 				}
 			}
 		}

@@ -1,9 +1,9 @@
 <?php
 namespace Opencart\Catalog\Controller\Product;
 
-use Alpha\Model\Mappers\ReviewMapper;
-use Alpha\Mappers\ProductMapper;
-use Alpha\Model\Domain\Entities\Review;
+use Alpha\Controller\BaseController;
+use Alpha\Mappers\EntityMappers\ReviewMapper;
+use Alpha\Mappers\EntityMappers\ProductMapper;
 
 /**
  * Class Review
@@ -12,7 +12,8 @@ use Alpha\Model\Domain\Entities\Review;
  *
  * @package Opencart\Catalog\Controller\Product
  */
-class Review extends \Opencart\System\Engine\Controller {
+
+class Review extends BaseController {
 	/**
 	 * Index
 	 *
@@ -98,12 +99,12 @@ class Review extends \Opencart\System\Engine\Controller {
 		
 		$result = $reviewMapper->getReviewsByProductId($product_id, $page, $limit);
 
-		foreach ($result['data'] as $result) {
+		foreach ($result['data'] as $review_item) {
 			$data['reviews'][] = [
-				'text'       => nl2br($result['text']),
-				'rating'     => (int)$result['rating'],
-				'date_added' => date($this->language->get('date_format_short'), strtotime($result['date_added']))
-			] + $result;
+				'text'       => nl2br($review_item['text']),
+				'rating'     => (int)$review_item['rating'],
+				'date_added' => date($this->language->get('date_format_short'), strtotime($review_item['date_added']))
+			] + $review_item;
 		}
 
 		$review_total = $result['total'];
@@ -184,9 +185,9 @@ class Review extends \Opencart\System\Engine\Controller {
 
 		if ($this->customer->isLogged() && $this->config->get('config_review_purchased')) {
 			// Order
-			$this->load->model('account/order');
+			$orderRepository = $this->getRepository(\Alpha\Model\Domain\Repositories\OrderRepository::class);
 
-			if (!$this->model_account_order->getTotalOrdersByProductId($product_id)) {
+			if (!$orderRepository->getTotalOrdersByProductId($product_id)) {
 				$json['error']['purchased'] = $this->language->get('error_purchased');
 			}
 		}
@@ -222,7 +223,6 @@ class Review extends \Opencart\System\Engine\Controller {
 			$json['success'] = $this->language->get('text_success');
 		}
 
-		$this->response->addHeader('Content-Type: application/json');
-		$this->response->setOutput(json_encode($json));
+		$this->jsonResponse($json);
 	}
 }

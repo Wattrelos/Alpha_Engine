@@ -155,6 +155,9 @@ class ProductMapper extends BaseMapper {
     public function getProductsByIds(array $product_ids, int $language_id, int $store_id, int $customer_group_id = 0, array $priceStatements = []): array {
         if (empty($product_ids)) return [];
         
+        // Alpha Engine: Desduplica os IDs para evitar repetição de Placeholders IN(?,?,?) na mesma query
+        $product_ids = array_values(array_unique($product_ids));
+        
         $placeholders = implode(',', array_fill(0, count($product_ids), '?'));
         
         $query = (new QueryBuilder())

@@ -68,9 +68,9 @@ class Account extends BaseController {
 		if ($this->config->get('config_affiliate_status')) {
 			$data['affiliate'] = $this->url->link('account/affiliate', 'language=' . $this->config->get('config_language') . '&customer_token=' . $this->session->data['customer_token']);
 
-			// Alpha Engine: Uso do Repository em vez da camada de Mapper direta
+			// Alpha Engine: Consumo limpo do domínio sem vazar colunas de persistência (Identity Map)
 			$affiliateRepository = $this->getRepository(CustomerAffiliateRepository::class);
-			$affiliate_info = $affiliateRepository->findOneBy(['customer_id' => $this->customer->getId()]);
+			$affiliate_info = $affiliateRepository->find($this->customer->getId());
 
 			if ($affiliate_info) {
 				$data['tracking'] = $this->url->link('account/tracking', 'language=' . $this->config->get('config_language') . '&customer_token=' . $this->session->data['customer_token']);

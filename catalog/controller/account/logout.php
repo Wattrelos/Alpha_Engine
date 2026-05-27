@@ -1,11 +1,14 @@
 <?php
 namespace Opencart\Catalog\Controller\Account;
+
+use Alpha\Controller\BaseController;
+
 /**
  * Class Logout
  *
  * @package Opencart\Catalog\Controller\Account
  */
-class Logout extends \Opencart\System\Engine\Controller {
+class Logout extends BaseController {
 	/**
 	 * Index
 	 *
@@ -55,13 +58,6 @@ class Logout extends \Opencart\System\Engine\Controller {
 
 		$data['continue'] = $this->url->link('common/home', 'language=' . $this->config->get('config_language'));
 
-		$data['column_left'] = $this->load->controller('common/column_left');
-		$data['column_right'] = $this->load->controller('common/column_right');
-		$data['content_top'] = $this->load->controller('common/content_top');
-		$data['content_bottom'] = $this->load->controller('common/content_bottom');
-		$data['footer'] = $this->load->controller('common/footer');
-		$data['header'] = $this->load->controller('common/header');
-
-		$this->response->setOutput($this->load->view('common/success', $data));
+		$this->render('common/success', $data);
 	}
 }

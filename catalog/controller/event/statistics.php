@@ -64,7 +64,7 @@ class Statistics extends BaseController {
 			// Stats
 			$statisticsRepository = $this->getRepository(StatisticsRepository::class);
 
-			$old_status_id = $order_info['order_status_id'];
+			$old_status_id = $order_info->getOrderStatusId();
 			$new_status_id = $args[1];
 
 			$processing_status = (array)$this->config->get('config_processing_status');
@@ -74,12 +74,12 @@ class Statistics extends BaseController {
 
 			// If order status in complete or processing add value to sale total
 			if (in_array($new_status_id, $active_status) && !in_array($old_status_id, $active_status)) {
-				$statisticsRepository->addValue('order_sale', $order_info['total']);
+				$statisticsRepository->addValue('order_sale', $order_info->getTotal());
 			}
 
 			// If order status not in complete or processing remove value to sale total
 			if (!in_array($new_status_id, $active_status) && in_array($old_status_id, $active_status)) {
-				$statisticsRepository->removeValue('order_sale', $order_info['total']);
+				$statisticsRepository->removeValue('order_sale', $order_info->getTotal());
 			}
 
 			// Add to processing status if new status is in the array

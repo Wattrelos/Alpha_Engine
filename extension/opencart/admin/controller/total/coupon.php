@@ -1,11 +1,14 @@
 <?php
 namespace Opencart\Admin\Controller\Extension\Opencart\Total;
+
+use Alpha\Controller\BaseController;
+
 /**
  * Class Coupon
  *
  * @package Opencart\Admin\Controller\Extension\Opencart\Total
  */
-class Coupon extends \Opencart\System\Engine\Controller {
+class Coupon extends BaseController {
 	/**
 	 * Index
 	 *
@@ -39,11 +42,7 @@ class Coupon extends \Opencart\System\Engine\Controller {
 		$data['total_coupon_status'] = $this->config->get('total_coupon_status');
 		$data['total_coupon_sort_order'] = $this->config->get('total_coupon_sort_order');
 
-		$data['header'] = $this->load->controller('common/header');
-		$data['column_left'] = $this->load->controller('common/column_left');
-		$data['footer'] = $this->load->controller('common/footer');
-
-		$this->response->setOutput($this->load->view('extension/opencart/total/coupon', $data));
+		$this->render('extension/opencart/total/coupon', $data);
 	}
 
 	/**
@@ -69,7 +68,6 @@ class Coupon extends \Opencart\System\Engine\Controller {
 			$json['success'] = $this->language->get('text_success');
 		}
 
-		$this->response->addHeader('Content-Type: application/json');
-		$this->response->setOutput(json_encode($json));
+		$this->jsonResponse($json);
 	}
 }

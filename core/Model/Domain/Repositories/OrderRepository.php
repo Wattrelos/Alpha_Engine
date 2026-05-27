@@ -5,6 +5,7 @@ use Alpha\Model\Domain\DTOs\OrderDataDTO;
 use Alpha\Mappers\OrderMapper;
 use Alpha\Mappers\CartMapper;
 use Alpha\Model\DataAccessObject\UnitOfWork;
+use Alpha\Model\Domain\InterfaceEntity;
 use Alpha\Support\Factories\MapperFactory;
 use Opencart\System\Engine\Registry;
 
@@ -13,7 +14,7 @@ use Opencart\System\Engine\Registry;
  * 
  * Gerencia a lógica de negócio e orquestração de persistência de pedidos.
  */
-class OrderRepository extends AbstractRepository {
+class OrderRepository extends AbstractRepository implements BaseRepositoryInterface {
 
     private UnitOfWork $unitOfWork;
     private Registry $registry;
@@ -170,5 +171,114 @@ class OrderRepository extends AbstractRepository {
         $data['user_agent'] = $this->registry->get('request')->server['HTTP_USER_AGENT'] ?? '';
 
         return $data;
+    }
+
+    // --- Legacy Bridges (account/order) ---
+
+    public function getOrder(int $order_id): array {
+        $query = $this->db->query("SELECT * FROM `" . DB_PREFIX . "order` WHERE order_id = '" . (int)$order_id . "' AND customer_id = '" . (int)$this->customer->getId() . "' AND order_status_id > '0'");
+        return $query->row;
+    }
+
+    public function getOrders(int $start = 0, int $limit = 20): array {
+        if ($start < 0) {
+            $start = 0;
+        }
+        if ($limit < 1) {
+            $limit = 20;
+        }
+        $query = $this->db->query("SELECT o.order_id, o.firstname, o.lastname, os.name as status, o.date_added, o.total, o.currency_code, o.currency_value, o.order_status_id FROM `" . DB_PREFIX . "order` o LEFT JOIN " . DB_PREFIX . "order_status os ON (o.order_status_id = os.order_status_id) WHERE o.customer_id = '" . (int)$this->customer->getId() . "' AND o.order_status_id > '0' AND o.store_id = '" . (int)$this->config->get('config_store_id') . "' AND os.language_id = '" . (int)$this->config->get('config_language_id') . "' ORDER BY o.order_id DESC LIMIT " . (int)$start . "," . (int)$limit);
+        return $query->rows;
+    }
+
+    public function getTotalOrders(): int {
+        $query = $this->db->query("SELECT COUNT(*) AS total FROM `" . DB_PREFIX . "order` WHERE customer_id = '" . (int)$this->customer->getId() . "' AND order_status_id > '0' AND store_id = '" . (int)$this->config->get('config_store_id') . "'");
+        return (int)$query->row['total'];
+    }
+
+    public function getTotalProductsByOrderId(int $order_id): int {
+        $query = $this->db->query("SELECT COUNT(*) AS total FROM " . DB_PREFIX . "order_product WHERE order_id = '" . (int)$order_id . "'");
+        return (int)$query->row['total'];
+    }
+
+    public function getProducts(int $order_id): array {
+        $query = $this->db->query("SELECT * FROM " . DB_PREFIX . "order_product WHERE order_id = '" . (int)$order_id . "'");
+        return $query->rows;
+    }
+
+    public function getOptions(int $order_id, int $order_product_id): array {
+        $query = $this->db->query("SELECT * FROM " . DB_PREFIX . "order_option WHERE order_id = '" . (int)$order_id . "' AND order_product_id = '" . (int)$order_product_id . "'");
+        return $query->rows;
+    }
+
+    public function getVouchers(int $order_id): array {
+        $query = $this->db->query("SELECT * FROM " . DB_PREFIX . "order_voucher WHERE order_id = '" . (int)$order_id . "'");
+        return $query->rows;
+    }
+
+    public function getTotals(int $order_id): array {
+        $query = $this->db->query("SELECT * FROM " . DB_PREFIX . "order_total WHERE order_id = '" . (int)$order_id . "' ORDER BY sort_order");
+        return $query->rows;
+    }
+
+    public function getHistories(int $order_id): array {
+        $query = $this->db->query("SELECT date_added, os.name AS status, oh.comment, oh.notify FROM " . DB_PREFIX . "order_history oh LEFT JOIN " . DB_PREFIX . "order_status os ON oh.order_status_id = os.order_status_id WHERE oh.order_id = '" . (int)$order_id . "' AND os.language_id = '" . (int)$this->config->get('config_language_id') . "' ORDER BY oh.date_added ASC");
+        return $query->rows;
+    }
+
+    public function getTotalHistories(int $order_id): int {
+        $query = $this->db->query("SELECT COUNT(*) AS total FROM " . DB_PREFIX . "order_history WHERE order_id = '" . (int)$order_id . "'");
+        return (int)$query->row['total'];
+    }
+
+    public function getSubscription(int $order_id, int $order_product_id): array {
+        $query = $this->db->query("SELECT * FROM " . DB_PREFIX . "order_subscription WHERE order_id = '" . (int)$order_id . "' AND order_product_id = '" . (int)$order_product_id . "'");
+        return $query->row;
+    }
+
+    public function getOrdersBySubscriptionId(int $subscription_id, int $start = 0, int $limit = 20): array {
+        if ($start < 0) {
+            $start = 0;
+        }
+        if ($limit < 1) {
+            $limit = 20;
+        }
+        $query = $this->db->query("SELECT o.order_id, o.total, o.currency_code, o.currency_value, o.date_added FROM `" . DB_PREFIX . "order` o WHERE o.subscription_id = '" . (int)$subscription_id . "' ORDER BY o.order_id DESC LIMIT " . (int)$start . "," . (int)$limit);
+        return $query->rows;
+    }
+
+    public function getTotalOrdersBySubscriptionId(int $subscription_id): int {
+        $query = $this->db->query("SELECT COUNT(*) AS total FROM `" . DB_PREFIX . "order` WHERE subscription_id = '" . (int)$subscription_id . "'");
+        return (int)$query->row['total'];
+    }
+
+    // --- Implementações Obrigatórias da Interface BaseRepositoryInterface ---    
+
+    public function find(int $id): ?InterfaceEntity
+    {
+        $mapper = $this->getMapper();
+        return method_exists($mapper, 'findById') ? $mapper->findById($id) : null;
+    }
+
+    public function findAll(): array
+    {
+        $mapper = $this->getMapper();
+        return method_exists($mapper, 'findAll') ? $mapper->findAll() : [];
+    }
+
+    public function findBy(array $criteria, ?array $orderBy = null, ?int $limit = null, ?int $offset = null): array
+    {
+        $mapper = $this->getMapper();
+        return method_exists($mapper, 'search') ? $mapper->search($criteria, $orderBy, $limit, $offset) : [];
+    }
+
+    public function findOneBy(array $criteria): ?InterfaceEntity
+    {
+        $mapper = $this->getMapper();
+        if (method_exists($mapper, 'search')) {
+            $results = $mapper->search($criteria);
+            return $results[0] ?? null;
+        }
+        return null;
     }
 }

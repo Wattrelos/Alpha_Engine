@@ -87,12 +87,9 @@ class Activity extends BaseController {
 				$customer_info = $customerRepository->findByEmail($args[0]);
 
 				if ($customer_info) {
-					$customerId = is_object($customer_info) ? $customer_info->getId() : $customer_info['customer_id'];
-					$name = (is_object($customer_info) ? $customer_info->getFirstname() : $customer_info['firstname']) . ' ' . (is_object($customer_info) ? $customer_info->getLastname() : $customer_info['lastname']);
-
 					$activity_data = [
-						'customer_id' => $customerId,
-						'name'        => $name
+						'customer_id' => $customer_info->getId(),
+						'name'        => $customer_info->getFirstName() . ' ' . $customer_info->getLastName()
 					];
 
 					$activityRepository->addActivity('reset', $activity_data);
@@ -120,12 +117,9 @@ class Activity extends BaseController {
 			if ($customer_info) {
 				$activityRepository = $this->getRepository(ActivityRepository::class);
 
-				$customerId = is_object($customer_info) ? $customer_info->getId() : $customer_info['customer_id'];
-				$name = (is_object($customer_info) ? $customer_info->getFirstname() : $customer_info['firstname']) . ' ' . (is_object($customer_info) ? $customer_info->getLastname() : $customer_info['lastname']);
-
 				$activity_data = [
-					'customer_id' => $customerId,
-					'name'        => $name
+					'customer_id' => $customer_info->getId(),
+					'name'        => $customer_info->getFirstName() . ' ' . $customer_info->getLastName()
 				];
 
 				$activityRepository->addActivity('login', $activity_data);
@@ -153,12 +147,9 @@ class Activity extends BaseController {
 			if ($customer_info) {
 				$activityRepository = $this->getRepository(ActivityRepository::class);
 
-				$customerId = is_object($customer_info) ? $customer_info->getId() : $customer_info['customer_id'];
-				$name = (is_object($customer_info) ? $customer_info->getFirstname() : $customer_info['firstname']) . ' ' . (is_object($customer_info) ? $customer_info->getLastname() : $customer_info['lastname']);
-
 				$activity_data = [
-					'customer_id' => $customerId,
-					'name'        => $name
+					'customer_id' => $customer_info->getId(),
+					'name'        => $customer_info->getFirstName() . ' ' . $customer_info->getLastName()
 				];
 
 				$activityRepository->addActivity('forgotten', $activity_data);
@@ -186,12 +177,9 @@ class Activity extends BaseController {
 			if ($customer_info) {
 				$activityRepository = $this->getRepository(ActivityRepository::class);
 
-				$customerId = is_object($customer_info) ? $customer_info->getId() : $customer_info['customer_id'];
-				$name = (is_object($customer_info) ? $customer_info->getFirstname() : $customer_info['firstname']) . ' ' . (is_object($customer_info) ? $customer_info->getLastname() : $customer_info['lastname']);
-
 				$activity_data = [
-					'customer_id' => $customerId,
-					'name'        => $name,
+					'customer_id' => $customer_info->getId(),
+					'name'        => $customer_info->getFirstName() . ' ' . $customer_info->getLastName(),
 					'order_id'    => $args[3]
 				];
 
@@ -370,20 +358,20 @@ class Activity extends BaseController {
 			$orderRepository = $this->getRepository(OrderRepository::class);
 			$order_info = $orderRepository->getOrder($args[0]);
 
-			if ($order_info && !$order_info['order_status_id'] && $args[1]) {
+			if ($order_info && !$order_info->getOrderStatusId() && $args[1]) {
 				$activityRepository = $this->getRepository(ActivityRepository::class);
 
-				if ($order_info['customer_id']) {
+				if ($order_info->getCustomerId()) {
 					$activity_data = [
-						'customer_id' => $order_info['customer_id'],
-						'name'        => $order_info['firstname'] . ' ' . $order_info['lastname'],
+						'customer_id' => $order_info->getCustomerId(),
+						'name'        => $order_info->getFirstName() . ' ' . $order_info->getLastName(),
 						'order_id'    => $args[0]
 					];
 
 					$activityRepository->addActivity('order_account', $activity_data);
 				} else {
 					$activity_data = [
-						'name'     => $order_info['firstname'] . ' ' . $order_info['lastname'],
+						'name'     => $order_info->getFirstName() . ' ' . $order_info->getLastName(),
 						'order_id' => $args[0]
 					];
 

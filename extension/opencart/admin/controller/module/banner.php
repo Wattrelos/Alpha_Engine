@@ -126,11 +126,7 @@ class Banner extends \Opencart\System\Engine\Controller {
 			$data['module_id'] = 0;
 		}
 
-		$data['header'] = $this->load->controller('common/header');
-		$data['column_left'] = $this->load->controller('common/column_left');
-		$data['footer'] = $this->load->controller('common/footer');
-
-		$this->response->setOutput($this->load->view('extension/opencart/module/banner', $data));
+		$this->render('extension/opencart/module/banner', $data);
 	}
 
 	/**
@@ -186,7 +182,6 @@ class Banner extends \Opencart\System\Engine\Controller {
 			$json['success'] = $this->language->get('text_success');
 		}
 
-		$this->response->addHeader('Content-Type: application/json');
-		$this->response->setOutput(json_encode($json));
+		$this->jsonResponse($json);
 	}
 }

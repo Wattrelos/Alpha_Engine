@@ -102,134 +102,17 @@ class CustomerRepository extends AbstractRepository implements BaseRepositoryInt
      * @return array Array contendo status da transação, erros e ID do cliente.
      */
     public function registerCustomer(array $data): array {
-        $errors = [];
-        $language = $this->registry->get('language');
         $config = $this->registry->get('config');
         $request = $this->registry->get('request');
         
-        $language->load('account/register');
-
-        // Validação de Grupo de Clientes
+        // Definição de Grupo de Clientes
         $customer_group_id = !empty($data['customer_group_id']) ? (int)$data['customer_group_id'] : (int)$config->get('config_customer_group_id');
-
         $repoFactory = $this->registry->get('alpha_repository_factory');
         $customerGroupRepo = $repoFactory->get(\Alpha\Model\Domain\Repositories\CustomerGroupRepository::class);
         $customer_group_info = $customerGroupRepo->getCustomerGroup($customer_group_id, (int)$config->get('config_language_id'));
 
-        if (!$customer_group_info || !in_array($customer_group_id, (array)$config->get('config_customer_group_display'))) {
-            $errors['warning'] = $language->get('error_customer_group');
-        }
-
-        if (!oc_validate_length($data['firstname'] ?? '', 1, 32)) {
-            $errors['firstname'] = $language->get('error_firstname');
-        }
-        if (!oc_validate_length($data['lastname'] ?? '', 1, 32)) {
-            $errors['lastname'] = $language->get('error_lastname');
-        }
-        if (!oc_validate_email($data['email'] ?? '')) {
-            $errors['email'] = $language->get('error_email');
-        } elseif ($this->findByEmail($data['email'])) {
-            $errors['warning'] = $language->get('error_exists');
-        }
-        if ($config->get('config_telephone_required') && !oc_validate_length($data['telephone'] ?? '', 3, 32)) {
-            $errors['telephone'] = $language->get('error_telephone');
-        }
-
-        // Validação Algorítmica de Documentos (CPF/CNPJ)
-        $personType = $data['persontype'] ?? '';
-        $cpfCnpj = $data['cpf_cnpj'] ?? '';
-
-        if ($personType === 'F' && !empty($cpfCnpj)) {
-            $cpf = preg_replace('/[^0-9]/', '', (string)$cpfCnpj);
-            $cpf_valid = true;
-
-            if (strlen($cpf) != 11 || preg_match('/(\d)\1{10}/', $cpf)) {
-                $cpf_valid = false;
-            } else {
-                for ($t = 9; $t < 11; $t++) {
-                    for ($d = 0, $c = 0; $c < $t; $c++) {
-                        $d += (int)$cpf[$c] * (($t + 1) - $c);
-                    }
-                    $d = ((10 * $d) % 11) % 10;
-                    if ((int)$cpf[$c] !== $d) {
-                        $cpf_valid = false;
-                        break;
-                    }
-                }
-            }
-            if (!$cpf_valid) {
-                $errors['cpf_cnpj'] = $language->get('error_cpf') ?: 'O CPF informado é inválido.';
-            }
-        } elseif ($personType === 'J' && !empty($cpfCnpj)) {
-            $cnpj = preg_replace('/[^0-9]/', '', (string)$cpfCnpj);
-            $cnpj_valid = true;
-
-            if (strlen($cnpj) != 14 || preg_match('/(\d)\1{13}/', $cnpj)) {
-                $cnpj_valid = false;
-            } else {
-                $b = [6, 5, 4, 3, 2, 9, 8, 7, 6, 5, 4, 3, 2];
-                for ($i = 0, $n = 0; $i < 12; $n += (int)$cnpj[$i] * $b[++$i]);
-                if ((int)$cnpj[12] != ((($n %= 11) < 2) ? 0 : 11 - $n)) { $cnpj_valid = false; } else {
-                    for ($i = 0, $n = 0; $i <= 12; $n += (int)$cnpj[$i] * $b[$i++]);
-                    if ((int)$cnpj[13] != ((($n %= 11) < 2) ? 0 : 11 - $n)) { $cnpj_valid = false; }
-                }
-            }
-            if (!$cnpj_valid) {
-                $errors['cpf_cnpj'] = $language->get('error_cnpj') ?: 'O CNPJ informado é inválido.';
-            }
-        }
-
-        // Validação de Campos Customizados
-        $customFieldRepo = $repoFactory->get(\Alpha\Model\Domain\Repositories\CustomFieldRepository::class);
-        $custom_fields = $customFieldRepo->getCustomFields($customer_group_id);
-
-        foreach ($custom_fields as $custom_field) {
-            if ($custom_field['location'] == 'account') {
-                $cf_id = $custom_field['custom_field_id'];
-                $is_empty = true;
-
-                if (isset($data['custom_field'][$cf_id])) {
-                    $cf_value = $data['custom_field'][$cf_id];
-                    if (is_array($cf_value)) {
-                        $is_empty = empty($cf_value);
-                    } else {
-                        $is_empty = (trim((string)$cf_value) === '');
-                    }
-                }
-
-                if ($custom_field['required'] && $is_empty) {
-                    $errors['custom_field_' . $cf_id] = sprintf($language->get('error_custom_field'), $custom_field['name']);
-                } elseif ($custom_field['type'] == 'text' && !empty($custom_field['validation']) && !$is_empty) {
-                    if (!oc_validate_regex((string)($data['custom_field'][$cf_id] ?? ''), $custom_field['validation'])) {
-                        $errors['custom_field_' . $cf_id] = sprintf($language->get('error_regex'), $custom_field['name']);
-                    }
-                }
-            }
-        }
-
-        // Validação de Força de Senha
-        $password = html_entity_decode($data['password'] ?? '', ENT_QUOTES, 'UTF-8');
-
-        if (!oc_validate_length($password, (int)$config->get('config_password_length'), 40)) {
-            $errors['password'] = sprintf($language->get('error_password_length'), (int)$config->get('config_password_length'));
-        }
-
-        $required = [];
-        if ($config->get('config_password_uppercase') && !preg_match('/[A-Z]/', $password)) { $required[] = $language->get('error_password_uppercase'); }
-        if ($config->get('config_password_lowercase') && !preg_match('/[a-z]/', $password)) { $required[] = $language->get('error_password_lowercase'); }
-        if ($config->get('config_password_number') && !preg_match('/[0-9]/', $password)) { $required[] = $language->get('error_password_number'); }
-        if ($config->get('config_password_symbol') && !preg_match('/[^a-zA-Z0-9]/', $password)) { $required[] = $language->get('error_password_symbol'); }
-
-        if ($required) {
-            $errors['password'] = sprintf($language->get('error_password'), implode(', ', $required), $config->get('config_password_length'));
-        }
-
-        // Aceite dos Termos de Uso
-        $informationRepo = $repoFactory->get(\Alpha\Model\Domain\Repositories\InformationRepository::class);
-        $information_info = $informationRepo->getInformation((int)$config->get('config_account_id'));
-        if ($information_info && empty($data['agree'])) {
-            $errors['warning'] = sprintf($language->get('error_agree'), $information_info['title']);
-        }
+        // Alpha Engine: Delegação da Validação DRY
+        $errors = $this->validateRegistrationData($data, $customer_group_id, $customer_group_info);
 
         if ($errors) {
             return [
@@ -251,6 +134,7 @@ class CustomerRepository extends AbstractRepository implements BaseRepositoryInt
         
         EntityMapper::fillEntity($customer, $data);
 
+        $password = html_entity_decode($data['password'] ?? '', ENT_QUOTES, 'UTF-8');
         $customer->setStoreId((int)$config->get('config_store_id'))
                  ->setLanguageId((int)$config->get('config_language_id'))
                  ->setPassword(password_hash($password, PASSWORD_DEFAULT))
@@ -265,6 +149,55 @@ class CustomerRepository extends AbstractRepository implements BaseRepositoryInt
             'customer_group_info' => $customer_group_info,
             'customer_group_id' => $customer_group_id
         ];
+    }
+
+    /**
+     * Valida os dados de registro isolando o fluxo de erros de forma limpa.
+     */
+    public function validateRegistrationData(array $data, int $customerGroupId, ?array $customerGroupInfo): array {
+        $errors = [];
+        $language = $this->registry->get('language');
+        $config = $this->registry->get('config');
+        
+        $language->load('account/register');
+
+        if (!$customerGroupInfo || !in_array($customerGroupId, (array)$config->get('config_customer_group_display'))) {
+            $errors['warning'] = $language->get('error_customer_group');
+        }
+
+        if (!oc_validate_length($data['firstname'] ?? '', 1, 32)) {
+            $errors['firstname'] = $language->get('error_firstname');
+        }
+        if (!oc_validate_length($data['lastname'] ?? '', 1, 32)) {
+            $errors['lastname'] = $language->get('error_lastname');
+        }
+        if (!oc_validate_email($data['email'] ?? '')) {
+            $errors['email'] = $language->get('error_email');
+        } elseif ($this->findByEmail($data['email'] ?? '')) {
+            $errors['warning'] = $language->get('error_exists');
+        }
+        if ($config->get('config_telephone_required') && !oc_validate_length($data['telephone'] ?? '', 3, 32)) {
+            $errors['telephone'] = $language->get('error_telephone');
+        }
+
+        // DRY: Validação Compartilhada - Documentos, Campos Customizados e Senha
+        $docError = $this->getDocumentError($data['persontype'] ?? '', $data['cpf_cnpj'] ?? '');
+        if ($docError) $errors['cpf_cnpj'] = $docError;
+
+        $errors = array_merge($errors, $this->getCustomFieldsErrors($data, $customerGroupId));
+
+        $password = html_entity_decode($data['password'] ?? '', ENT_QUOTES, 'UTF-8');
+        $passError = $this->getPasswordError($password);
+        if ($passError) $errors['password'] = $passError;
+
+        // Aceite dos Termos de Uso
+        $informationRepo = $this->registry->get('alpha_repository_factory')->get(\Alpha\Model\Domain\Repositories\InformationRepository::class);
+        $information_info = $informationRepo->getInformation((int)$config->get('config_account_id'));
+        if ($information_info && empty($data['agree'])) {
+            $errors['warning'] = sprintf($language->get('error_agree'), $information_info['title']);
+        }
+
+        return $errors;
     }
 
     /**
@@ -285,98 +218,32 @@ class CustomerRepository extends AbstractRepository implements BaseRepositoryInt
         
         $language->load('account/edit');
 
-        if (!oc_validate_length($data['firstname'], 1, 32)) {
+        if (!oc_validate_length($data['firstname'] ?? '', 1, 32)) {
             $errors['firstname'] = $language->get('error_firstname');
         }
-        if (!oc_validate_length($data['lastname'], 1, 32)) {
+        if (!oc_validate_length($data['lastname'] ?? '', 1, 32)) {
             $errors['lastname'] = $language->get('error_lastname');
         }
-        if (!oc_validate_email($data['email'])) {
+        if (!oc_validate_email($data['email'] ?? '')) {
             $errors['email'] = $language->get('error_email');
         }
 
-        $existingCustomer = $this->findByEmail($data['email']);
+        $existingCustomer = $this->findByEmail($data['email'] ?? '');
         if ($existingCustomer && $existingCustomer->getId() !== $customerId) {
             $errors['warning'] = $language->get('error_exists');
         }
 
-        if ($config->get('config_telephone_required') && !oc_validate_length($data['telephone'], 3, 32)) {
+        if ($config->get('config_telephone_required') && !oc_validate_length($data['telephone'] ?? '', 3, 32)) {
             $errors['telephone'] = $language->get('error_telephone');
         }
 
-        // Validação Algorítmica de Documentos (CPF/CNPJ)
-        $personType = $data['persontype'] ?? '';
-        $cpfCnpj = $data['cpf_cnpj'] ?? '';
+        // DRY: Documentos e Campos Customizados
+        $docError = $this->getDocumentError($data['persontype'] ?? '', $data['cpf_cnpj'] ?? '');
+        if ($docError) $errors['cpf_cnpj'] = $docError;
 
-        if ($personType === 'F' && !empty($cpfCnpj)) {
-            $cpf = preg_replace('/[^0-9]/', '', (string)$cpfCnpj);
-            $cpf_valid = true;
-
-            if (strlen($cpf) != 11 || preg_match('/(\d)\1{10}/', $cpf)) {
-                $cpf_valid = false;
-            } else {
-                for ($t = 9; $t < 11; $t++) {
-                    for ($d = 0, $c = 0; $c < $t; $c++) {
-                        $d += (int)$cpf[$c] * (($t + 1) - $c);
-                    }
-                    $d = ((10 * $d) % 11) % 10;
-                    if ((int)$cpf[$c] !== $d) {
-                        $cpf_valid = false;
-                        break;
-                    }
-                }
-            }
-            if (!$cpf_valid) {
-                $errors['cpf_cnpj'] = $language->get('error_cpf') ?: 'O CPF informado é inválido.';
-            }
-        } elseif ($personType === 'J' && !empty($cpfCnpj)) {
-            $cnpj = preg_replace('/[^0-9]/', '', (string)$cpfCnpj);
-            $cnpj_valid = true;
-
-            if (strlen($cnpj) != 14 || preg_match('/(\d)\1{13}/', $cnpj)) {
-                $cnpj_valid = false;
-            } else {
-                $b = [6, 5, 4, 3, 2, 9, 8, 7, 6, 5, 4, 3, 2];
-                for ($i = 0, $n = 0; $i < 12; $n += (int)$cnpj[$i] * $b[++$i]);
-                if ((int)$cnpj[12] != ((($n %= 11) < 2) ? 0 : 11 - $n)) { $cnpj_valid = false; } else {
-                    for ($i = 0, $n = 0; $i <= 12; $n += (int)$cnpj[$i] * $b[$i++]);
-                    if ((int)$cnpj[13] != ((($n %= 11) < 2) ? 0 : 11 - $n)) { $cnpj_valid = false; }
-                }
-            }
-            if (!$cnpj_valid) {
-                $errors['cpf_cnpj'] = $language->get('error_cnpj') ?: 'O CNPJ informado é inválido.';
-            }
-        }
-
-        // Validação Estrita (Type-Safe) de Campos Customizados
         $customer = $this->find($customerId);
         $customerGroupId = $customer ? $customer->getGroupId() : (int)$config->get('config_customer_group_id');
-        $customFieldRepo = $this->registry->get('alpha_repository_factory')->get(\Alpha\Model\Domain\Repositories\CustomFieldRepository::class);
-        $custom_fields = $customFieldRepo->getCustomFields($customerGroupId);
-
-        foreach ($custom_fields as $custom_field) {
-            if ($custom_field['location'] == 'account') {
-                $cf_id = $custom_field['custom_field_id'];
-                $is_empty = true;
-
-                if (isset($data['custom_field'][$cf_id])) {
-                    $cf_value = $data['custom_field'][$cf_id];
-                    if (is_array($cf_value)) {
-                        $is_empty = empty($cf_value);
-                    } else {
-                        $is_empty = (trim((string)$cf_value) === '');
-                    }
-                }
-
-                if ($custom_field['required'] && $is_empty) {
-                    $errors['custom_field_' . $cf_id] = sprintf($language->get('error_custom_field'), $custom_field['name']);
-                } elseif ($custom_field['type'] == 'text' && !empty($custom_field['validation']) && !$is_empty) {
-                    if (!oc_validate_regex((string)($data['custom_field'][$cf_id] ?? ''), $custom_field['validation'])) {
-                        $errors['custom_field_' . $cf_id] = sprintf($language->get('error_regex'), $custom_field['name']);
-                    }
-                }
-            }
-        }
+        $errors = array_merge($errors, $this->getCustomFieldsErrors($data, $customerGroupId));
 
         return $errors;
     }
@@ -388,13 +255,88 @@ class CustomerRepository extends AbstractRepository implements BaseRepositoryInt
     public function validatePasswordData(array $data): array {
         $errors = [];
         $language = $this->registry->get('language');
-        $config = $this->registry->get('config');
         
         $language->load('account/password');
-        $password = html_entity_decode($data['password'], ENT_QUOTES, 'UTF-8');
+        $password = html_entity_decode($data['password'] ?? '', ENT_QUOTES, 'UTF-8');
 
+        $passError = $this->getPasswordError($password);
+        if ($passError) $errors['password'] = $passError;
+
+        if (($data['confirm'] ?? '') != $password) {
+            $errors['confirm'] = $language->get('error_confirm');
+        }
+
+        return $errors;
+    }
+
+    /**
+     * Helpers DRY para validações comuns de clientes.
+     */
+    private function getDocumentError(string $personType, string $cpfCnpj): ?string {
+        $language = $this->registry->get('language');
+        
+        if ($personType === 'F' && !empty($cpfCnpj)) {
+            $cpf = preg_replace('/[^0-9]/', '', (string)$cpfCnpj);
+            if (strlen($cpf) != 11 || preg_match('/(\d)\1{10}/', $cpf)) {
+                return $language->get('error_cpf') ?: 'O CPF informado é inválido.';
+            }
+            for ($t = 9; $t < 11; $t++) {
+                for ($d = 0, $c = 0; $c < $t; $c++) {
+                    $d += (int)$cpf[$c] * (($t + 1) - $c);
+                }
+                $d = ((10 * $d) % 11) % 10;
+                if ((int)$cpf[$c] !== $d) {
+                    return $language->get('error_cpf') ?: 'O CPF informado é inválido.';
+                }
+            }
+        } elseif ($personType === 'J' && !empty($cpfCnpj)) {
+            $cnpj = preg_replace('/[^0-9]/', '', (string)$cpfCnpj);
+            if (strlen($cnpj) != 14 || preg_match('/(\d)\1{13}/', $cnpj)) {
+                return $language->get('error_cnpj') ?: 'O CNPJ informado é inválido.';
+            }
+            $b = [6, 5, 4, 3, 2, 9, 8, 7, 6, 5, 4, 3, 2];
+            for ($i = 0, $n = 0; $i < 12; $n += (int)$cnpj[$i] * $b[++$i]);
+            if ((int)$cnpj[12] != ((($n %= 11) < 2) ? 0 : 11 - $n)) return $language->get('error_cnpj') ?: 'O CNPJ informado é inválido.';
+            for ($i = 0, $n = 0; $i <= 12; $n += (int)$cnpj[$i] * $b[$i++]);
+            if ((int)$cnpj[13] != ((($n %= 11) < 2) ? 0 : 11 - $n)) return $language->get('error_cnpj') ?: 'O CNPJ informado é inválido.';
+        }
+        return null;
+    }
+
+    private function getCustomFieldsErrors(array $data, int $customerGroupId): array {
+        $errors = [];
+        $language = $this->registry->get('language');
+        $customFieldRepo = $this->registry->get('alpha_repository_factory')->get(\Alpha\Model\Domain\Repositories\CustomFieldRepository::class);
+        $custom_fields = $customFieldRepo->getCustomFields($customerGroupId);
+
+        foreach ($custom_fields as $custom_field) {
+            if ($custom_field['location'] == 'account') {
+                $cf_id = $custom_field['custom_field_id'];
+                $is_empty = true;
+
+                if (isset($data['custom_field'][$cf_id])) {
+                    $cf_value = $data['custom_field'][$cf_id];
+                    $is_empty = is_array($cf_value) ? empty($cf_value) : (trim((string)$cf_value) === '');
+                }
+
+                if ($custom_field['required'] && $is_empty) {
+                    $errors['custom_field_' . $cf_id] = sprintf($language->get('error_custom_field'), $custom_field['name']);
+                } elseif ($custom_field['type'] == 'text' && !empty($custom_field['validation']) && !$is_empty) {
+                    if (!oc_validate_regex((string)($data['custom_field'][$cf_id] ?? ''), $custom_field['validation'])) {
+                        $errors['custom_field_' . $cf_id] = sprintf($language->get('error_regex'), $custom_field['name']);
+                    }
+                }
+            }
+        }
+        return $errors;
+    }
+
+    private function getPasswordError(string $password): ?string {
+        $language = $this->registry->get('language');
+        $config = $this->registry->get('config');
+        
         if (!oc_validate_length($password, (int)$config->get('config_password_length'), 40)) {
-            $errors['password'] = sprintf($language->get('error_password_length'), $config->get('config_password_length'));
+            return sprintf($language->get('error_password_length'), (int)$config->get('config_password_length'));
         }
 
         $required = [];
@@ -404,13 +346,10 @@ class CustomerRepository extends AbstractRepository implements BaseRepositoryInt
         if ($config->get('config_password_symbol') && !preg_match('/[^a-zA-Z0-9]/', $password)) { $required[] = $language->get('error_password_symbol'); }
 
         if ($required) {
-            $errors['password'] = sprintf($language->get('error_password'), implode(', ', $required), $config->get('config_password_length'));
+            return sprintf($language->get('error_password'), implode(', ', $required), $config->get('config_password_length'));
         }
-        if ($data['confirm'] != $data['password']) {
-            $errors['confirm'] = $language->get('error_confirm');
-        }
-
-        return $errors;
+        
+        return null;
     }
 
     /**

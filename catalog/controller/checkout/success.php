@@ -10,13 +10,6 @@ use Alpha\Model\Domain\Repositories\CartRepository;
  * @package Opencart\Catalog\Controller\Checkout
  */
 class Success extends BaseController {
-	private CartRepository $cartRepository;
-
-	public function __construct(\Opencart\System\Engine\Registry $registry) {
-		parent::__construct($registry);
-		$this->cartRepository = $this->registry->get('alpha_repository_factory')->get(CartRepository::class);
-	}
-
 	/**
 	 * Index
 	 *
@@ -27,7 +20,8 @@ class Success extends BaseController {
 		$this->loadLanguageData('checkout/success', $data);
 
 		if (isset($this->session->data['order_id'])) {
-			$this->cartRepository->clear();
+			$cartRepository = $this->getRepository(CartRepository::class);
+			$cartRepository->clear();
 
 			unset($this->session->data['order_id']);
 			unset($this->session->data['payment_method']);

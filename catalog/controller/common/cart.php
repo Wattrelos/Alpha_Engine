@@ -40,7 +40,11 @@ class Cart extends BaseController {
 		}
 		
 		foreach ($totals as $result) {
-		    $data['totals'][] = ['title' => $result['title'], 'text' => $this->currency->format($result['value'], $this->session->data['currency'])];
+			if (is_object($result)) {
+				$data['totals'][] = ['title' => $result->getTitle(), 'text' => $this->currency->format($result->getValue(), $this->session->data['currency'])];
+			} else {
+				$data['totals'][] = ['title' => $result['title'], 'text' => $this->currency->format($result['value'], $this->session->data['currency'])];
+			}
 		}
 
 		// Alpha Engine: Define a rota de re-renderização via AJAX usada pelo common.js

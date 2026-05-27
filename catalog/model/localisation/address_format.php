@@ -1,5 +1,8 @@
 <?php
 namespace Opencart\Catalog\Model\Localisation;
+
+use Alpha\Model\Domain\Repositories\AddressFormatRepository;
+
 /**
  * Class Address Format
  *
@@ -24,8 +27,19 @@ class AddressFormat extends \Opencart\System\Engine\Model {
 	 * $address_format_info = $this->model_localisation_address_format->getAddressFormat($address_format_id);
 	 */
 	public function getAddressFormat(int $address_format_id): array {
-		$query = $this->db->query("SELECT DISTINCT * FROM `" . DB_PREFIX . "address_format` WHERE `address_format_id` = '" . (int)$address_format_id . "'");
+		// Alpha Engine: Bridge para acionar o Repository
+		$repositoryFactory = $this->registry->get('alpha_repository_factory');
+		$repository = $repositoryFactory->get(AddressFormatRepository::class);
+		$entity = $repository->find($address_format_id);
 
-		return $query->row;
+		if ($entity) {
+			return [
+				'address_format_id' => $entity->getId(),
+				'name'              => $entity->getName(),
+				'address_format'    => $entity->getAddressFormat()
+			];
+		}
+
+		return [];
 	}
 }

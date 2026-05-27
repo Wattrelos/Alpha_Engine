@@ -1,11 +1,15 @@
 <?php
 namespace Opencart\Admin\Controller\Extension\Opencart\Dashboard;
+
+use Alpha\Controller\BaseController;
+use Alpha\Model\Domain\Repositories\ActivityRepository;
+
 /**
  * Class Activity
  *
  * @package Opencart\Admin\Controller\Extension\Opencart\Dashboard
  */
-class Activity extends \Opencart\System\Engine\Controller {
+class Activity extends BaseController {
 	/**
 	 * Index
 	 *
@@ -92,12 +96,11 @@ class Activity extends \Opencart\System\Engine\Controller {
 		$data['activities'] = [];
 
 		// Activity
-		$this->load->model('extension/opencart/report/activity');
-
-		$results = $this->model_extension_opencart_report_activity->getActivities();
+		$activityRepository = $this->getRepository(ActivityRepository::class);
+		$results = $activityRepository->getActivities();
 
 		foreach ($results as $result) {
-			$comment = vsprintf($this->language->get('text_activity_' . $result['key']), json_decode($result['data'], true));
+			$comment = vsprintf($this->language->get('text_activity_' . $result->getKey()), is_array($result->getData()) ? $result->getData() : json_decode($result->getData(), true));
 
 			$find = [
 				'customer_id=',
@@ -113,7 +116,7 @@ class Activity extends \Opencart\System\Engine\Controller {
 
 			$data['activities'][] = [
 				'comment'    => str_replace($find, $replace, $comment),
-				'date_added' => date($this->language->get('datetime_format'), strtotime($result['date_added']))
+				'date_added' => date($this->language->get('datetime_format'), strtotime($result->getDateAdded()))
 			];
 		}
 

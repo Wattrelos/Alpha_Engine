@@ -62,8 +62,7 @@ class ShippingMapper extends BaseMapper {
             // Alpha Engine: Verificação de status via config nativa
             if (oc_config('shipping_' . $result->getCode() . '_status')) {
                 // Invocação dinâmica da extensão (enquanto as extensões de frete não são convertidas em Mappers)
-                $registry = \Alpha\Model\DataAccessObject\ConnectionDB::getRegistry();
-                $load = $registry->get('load');
+                $load = $this->registry->get('load');
                 
                 $route = 'extension/' . $result->getExtension() . '/shipping/' . $result->getCode();
                 
@@ -71,9 +70,9 @@ class ShippingMapper extends BaseMapper {
                 
                 $model_name = 'model_extension_' . $result->getExtension() . '_shipping_' . $result->getCode();
                 
-                if ($registry->has($model_name)) {
+                if ($this->registry->has($model_name)) {
                     // Alpha Engine: Correção para o padrão OpenCart (extensões de frete usam getQuote)
-                    $quote = $registry->get($model_name)->getQuote($shipping_address);
+                    $quote = $this->registry->get($model_name)->getQuote($shipping_address);
 
                     if ($quote) {
                         $shipping_methods[$result->getCode()] = $quote;

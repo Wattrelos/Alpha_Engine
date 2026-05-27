@@ -54,8 +54,8 @@ class Affiliate extends BaseController {
 				// Fallback de Segurança caso a Entidade OrderTotal ainda não tenha sido completamente populada no Controller
 				$results = $orderRepository->getTotals($this->session->data['order_id']);
 				foreach ($results as $result) {
-					if ($result['code'] == 'subtotal') {
-						$subtotal = $result['value'];
+					if ($result->getCode() == 'subtotal') {
+						$subtotal = $result->getValue();
 						break;
 					}
 				}

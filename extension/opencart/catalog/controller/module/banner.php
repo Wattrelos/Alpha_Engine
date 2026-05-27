@@ -1,11 +1,15 @@
 <?php
 namespace Opencart\Catalog\Controller\Extension\Opencart\Module;
+
+use Alpha\Controller\BaseController;
+use Alpha\Model\Domain\Repositories\BannerRepository;
+
 /**
  * Class Banner
  *
  * @package Opencart\Catalog\Controller\Extension\Opencart\Module
  */
-class Banner extends \Opencart\System\Engine\Controller {
+class Banner extends BaseController {
 	/**
 	 * Index
 	 *
@@ -16,15 +20,14 @@ class Banner extends \Opencart\System\Engine\Controller {
 	public function index(array $setting): string {
 		static $module = 0;
 
-		// Banner
-		$this->load->model('design/banner');
+		$bannerRepository = $this->getRepository(BannerRepository::class);
 
 		// Image
 		$this->load->model('tool/image');
 
 		$data['banners'] = [];
 
-		$results = $this->model_design_banner->getBanner($setting['banner_id']);
+		$results = $bannerRepository->getBanner($setting['banner_id']);
 
 		foreach ($results as $result) {
 			if (is_file(DIR_IMAGE . html_entity_decode($result['image'], ENT_QUOTES, 'UTF-8'))) {
@@ -47,7 +50,7 @@ class Banner extends \Opencart\System\Engine\Controller {
 			$data['width'] = $setting['width'];
 			$data['height'] = $setting['height'];
 
-			return $this->load->view('extension/opencart/module/banner', $data);
+			return $this->viewRenderer->render('extension/opencart/module/banner', $data);
 		} else {
 			return '';
 		}

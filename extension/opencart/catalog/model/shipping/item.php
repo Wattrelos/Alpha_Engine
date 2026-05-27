@@ -36,7 +36,7 @@ class Item extends \Opencart\System\Engine\Model {
 		if ($status) {
 			$items = 0;
 
-			foreach ($this->cart->getProducts() as $product) {
+			foreach ($this->cartRepository->getProducts() as $product) {
 				if ($product['shipping']) {
 					$items += $product['quantity'];
 				}

@@ -7,13 +7,27 @@
 $baseDir = dirname(__DIR__, 2) . '/catalog/model/';
 
 $modelosPortados = [
+    'account/returns'           => \Alpha\Model\Domain\Repositories\OrderReturnRepository::class,
+    'account/reward'            => \Alpha\Model\Domain\Repositories\CustomerRewardRepository::class,
+    'account/order'             => \Alpha\Model\Domain\Repositories\OrderRepository::class,
+    'account/subscription'      => \Alpha\Model\Domain\Repositories\SubscriptionRepository::class,
+    'account/wishlist'          => \Alpha\Model\Domain\Repositories\WishlistRepository::class,
+    'catalog/category'          => \Alpha\Model\Domain\Repositories\CategoryRepository::class,
+    'catalog/product'           => \Alpha\Model\Domain\Repositories\ProductRepository::class,
+
+    // Já renomeados: 
+    /*
     'design/banner.php',
     'design/theme.php',
     'design/translation.php',
     'setting/setting.php',
+    'account/transaction.php',
+    'account/download.php',
+    'account/returns.php',
+    'account/reward.php',
+    'account/order.php',
 
-    // Já renomeados: 
-    /*
+
     'account/address.php',
     'account/custom_field.php',
     'account/customer.php',

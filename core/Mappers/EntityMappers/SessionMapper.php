@@ -4,7 +4,6 @@ namespace Alpha\Mappers\EntityMappers;
 
 use Alpha\Mappers\BaseMapper; // Alterado de AbstractMapper para BaseMapper
 use Alpha\Model\DataAccessObject\QueryBuilder; // Adicionado
-use Alpha\Model\DataAccessObject\ConnectionDB; // Adicionado para acesso direto ao PDO em operações específicas
 use Alpha\Model\Domain\Entities\Session;
 
 /**
@@ -17,6 +16,11 @@ class SessionMapper extends BaseMapper // Alterado de AbstractMapper para BaseMa
 {
     protected string $tableName = 'session'; // Alterado de $table para $tableName para consistência com BaseMapper
     protected string $entityClass = Session::class; // Adicionado para que findOneBy funcione corretamente
+
+    /**
+     * Limite máximo de segurança para o blob de sessão (~5MB).
+     */
+    private const MAX_SESSION_SIZE = 5000000;
 
     /**
      * Busca os dados brutos de uma sessão ativa pelo token.
@@ -35,7 +39,7 @@ class SessionMapper extends BaseMapper // Alterado de AbstractMapper para BaseMa
             ->limit(1);
             
         $check = $this->dao->executeQuery($checkQuery);
-        if ($check && (int)$check[0]['size'] > 5000000) {
+        if ($check && (int)$check[0]['size'] > self::MAX_SESSION_SIZE) {
             $this->deleteByToken($token);
             return null;
         }
@@ -58,16 +62,14 @@ class SessionMapper extends BaseMapper // Alterado de AbstractMapper para BaseMa
      */
     public function saveSession(string $token, string $data, string $expireDate): void
     {
-        // Alpha Engine: Embora o QueryBuilder construa a query, para operações atômicas 
-        // como ON DUPLICATE KEY UPDATE, mantemos a execução via DAO para garantir logs e segurança.
+        // Alpha Engine: Delegação da execução atômica bruta para o DAO, garantindo 
+        // que a instrução passe pelo SQL Debugger e tratamento de exceções (Fail Fast).
         $sql = "INSERT IGNORE INTO " . $this->getFullTableName() . " 
                 (`token_session`, `data`, `expire_at`) 
                 VALUES (?, ?, ?) 
                 ON DUPLICATE KEY UPDATE `data` = VALUES(`data`), `expire_at` = VALUES(`expire_at`)";
 
-        $conn = ConnectionDB::getInstance()->getConnection();
-        $stmt = $conn->prepare($sql);
-        $stmt->execute([$token, $data, $expireDate]);
+        $this->dao->executeRawSQL($sql, [$token, $data, $expireDate]);
     }
 
     /**
@@ -99,7 +101,7 @@ class SessionMapper extends BaseMapper // Alterado de AbstractMapper para BaseMa
 
         // Alpha Engine Failsafe: Evita "Memory Exhausted" no PDO bloqueando sessões corrompidas.
         // Se o tamanho do blob ultrapassar ~5MB, a sessão é considerada lixo e destruída.
-        if ((int)$results[0]['size'] > 5000000) {
+        if ((int)$results[0]['size'] > self::MAX_SESSION_SIZE) {
             $this->deleteByToken($token);
             return null;
         }
@@ -129,7 +131,7 @@ class SessionMapper extends BaseMapper // Alterado de AbstractMapper para BaseMa
         if (!$results) return null;
 
         // Alpha Engine Failsafe: Evita carregar sessões monstruosas no Identity Map
-        if ((int)$results[0]['size'] > 5000000) {
+        if ((int)$results[0]['size'] > self::MAX_SESSION_SIZE) {
             $this->dao->execute((new QueryBuilder())->delete($this->getFullTableName())->where("id = ?", [$results[0]['id']]));
             return null;
         }

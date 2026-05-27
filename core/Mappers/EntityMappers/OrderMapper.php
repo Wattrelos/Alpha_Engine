@@ -26,9 +26,9 @@ class OrderMapper
     /** @var OrderObserverInterface[] */
     private array $observers = [];
 
-    public function __construct()
+    public function __construct(DataAccessObject $dao)
     {
-        $this->dao = new DataAccessObject();
+        $this->dao = $dao;
     }
 
     /**

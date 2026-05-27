@@ -2,7 +2,7 @@
 namespace Opencart\Catalog\Controller\Account;
 
 use Alpha\Controller\BaseController;
-use Alpha\Model\Domain\Repositories\ReturnRepository;
+use Alpha\Model\Domain\Repositories\OrderReturnRepository;
 use Alpha\Model\Domain\Repositories\OrderRepository;
 use Alpha\Model\Domain\Repositories\ProductRepository;
 use Alpha\Model\Domain\Repositories\ReturnReasonRepository;
@@ -65,7 +65,7 @@ class Returns extends BaseController {
 
 		$data['returns'] = [];
 
-		$returnRepository = $this->getRepository(ReturnRepository::class);
+		$returnRepository = $this->getRepository(OrderReturnRepository::class);
 		$results = $returnRepository->getReturns(($page - 1) * $limit, $limit);
 
 		foreach ($results as $result) {
@@ -112,7 +112,7 @@ class Returns extends BaseController {
 			$this->response->redirect($this->url->link('account/login', 'language=' . $this->config->get('config_language'), true));
 		}
 
-		$returnRepository = $this->getRepository(ReturnRepository::class);
+		$returnRepository = $this->getRepository(OrderReturnRepository::class);
 		$return_info = $returnRepository->getReturn($return_id);
 
 		if ($return_info) {
@@ -386,7 +386,7 @@ class Returns extends BaseController {
 		}
 
 		if (!$json) {
-			$returnRepository = $this->getRepository(ReturnRepository::class);
+			$returnRepository = $this->getRepository(OrderReturnRepository::class);
 			$returnRepository->addReturn($post_info);
 
 			// Remove form token
@@ -472,7 +472,7 @@ class Returns extends BaseController {
 		$this->loadLanguageData('account/return', $data);
 		$data['histories'] = [];
 
-		$returnRepository = $this->getRepository(ReturnRepository::class);
+		$returnRepository = $this->getRepository(OrderReturnRepository::class);
 		$results = $returnRepository->getHistories($return_id, ($page - 1) * $limit, $limit);
 
 		foreach ($results as $result) {

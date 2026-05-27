@@ -41,8 +41,7 @@ class PaymentMapper extends BaseMapper {
             // Alpha Engine: Verificação de status via config nativa
             if (oc_config('payment_' . $result->getCode() . '_status')) {
                 // Invocação dinâmica da extensão (enquanto as extensões de pagamento não são convertidas em Mappers)
-                $registry = \Alpha\Model\DataAccessObject\ConnectionDB::getRegistry();
-                $load = $registry->get('load');
+                $load = $this->registry->get('load');
                 
                 $extension_route = 'extension/' . $result->getExtension() . '/payment/' . $result->getCode();
                 
@@ -50,8 +49,8 @@ class PaymentMapper extends BaseMapper {
                 
                 $model_name = 'model_extension_' . $result->getExtension() . '_payment_' . $result->getCode();
                 
-                if ($registry->has($model_name)) {
-                    $method = $registry->get($model_name)->getMethods($payment_address);
+                if ($this->registry->has($model_name)) {
+                    $method = $this->registry->get($model_name)->getMethods($payment_address);
 
                     if ($method) {
                         $payment_methods[$result['code']] = $method;

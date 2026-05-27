@@ -1,11 +1,14 @@
 <?php
 namespace Opencart\Admin\Controller\Extension\Opencart\Total;
+
+use Alpha\Controller\BaseController;
+
 /**
  * Class Shipping
  *
  * @package Opencart\Admin\Controller\Extension\Opencart\Total
  */
-class Shipping extends \Opencart\System\Engine\Controller {
+class Shipping extends BaseController {
 	/**
 	 * Index
 	 *
@@ -40,11 +43,7 @@ class Shipping extends \Opencart\System\Engine\Controller {
 		$data['total_shipping_status'] = $this->config->get('total_shipping_status');
 		$data['total_shipping_sort_order'] = $this->config->get('total_shipping_sort_order');
 
-		$data['header'] = $this->load->controller('common/header');
-		$data['column_left'] = $this->load->controller('common/column_left');
-		$data['footer'] = $this->load->controller('common/footer');
-
-		$this->response->setOutput($this->load->view('extension/opencart/total/shipping', $data));
+		$this->render('extension/opencart/total/shipping', $data);
 	}
 
 	/**
@@ -70,7 +69,6 @@ class Shipping extends \Opencart\System\Engine\Controller {
 			$json['success'] = $this->language->get('text_success');
 		}
 
-		$this->response->addHeader('Content-Type: application/json');
-		$this->response->setOutput(json_encode($json));
+		$this->jsonResponse($json);
 	}
 }

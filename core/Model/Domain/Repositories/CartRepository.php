@@ -17,6 +17,8 @@ class CartRepository extends AbstractRepository implements BaseRepositoryInterfa
 {
     private array $data = [];
     private bool $isLoaded = false;
+    private ?float $cachedSubTotal = null;
+    private ?float $cachedWeight = null;
 
     protected function getMapper(): CartMapper
     {
@@ -85,6 +87,8 @@ class CartRepository extends AbstractRepository implements BaseRepositoryInterfa
 
         // Invalida o cache em memória para forçar a reconstrução na próxima leitura
         $this->isLoaded = false;
+        $this->cachedSubTotal = null;
+        $this->cachedWeight = null;
     }
 
     /**
@@ -94,6 +98,8 @@ class CartRepository extends AbstractRepository implements BaseRepositoryInterfa
     {
         $this->getMapper()->updateItem($cartId, $quantity, $this->getCustomerId(), $this->getSessionId());
         $this->isLoaded = false;
+        $this->cachedSubTotal = null;
+        $this->cachedWeight = null;
     }
 
     /**
@@ -103,6 +109,8 @@ class CartRepository extends AbstractRepository implements BaseRepositoryInterfa
     {
         $this->getMapper()->removeItem($cartId, $this->getCustomerId(), $this->getSessionId());
         $this->isLoaded = false;
+        $this->cachedSubTotal = null;
+        $this->cachedWeight = null;
     }
 
     /**
@@ -126,6 +134,8 @@ class CartRepository extends AbstractRepository implements BaseRepositoryInterfa
         $this->getMapper()->clearItems($this->getCustomerId(), $this->getSessionId(), $this->store_id);
         $this->data = [];
         $this->isLoaded = true;
+        $this->cachedSubTotal = null;
+        $this->cachedWeight = null;
     }
 
     /**
@@ -341,6 +351,10 @@ class CartRepository extends AbstractRepository implements BaseRepositoryInterfa
      */
     public function getWeight(): float
     {
+        if ($this->cachedWeight !== null) {
+            return $this->cachedWeight;
+        }
+
         $weight = 0.0;
 
         foreach ($this->getProducts() as $product) {
@@ -354,6 +368,7 @@ class CartRepository extends AbstractRepository implements BaseRepositoryInterfa
             }
         }
 
+        $this->cachedWeight = $weight;
         return $weight;
     }
 
@@ -397,11 +412,16 @@ class CartRepository extends AbstractRepository implements BaseRepositoryInterfa
      */
     public function getSubTotal(): float
     {
+        if ($this->cachedSubTotal !== null) {
+            return $this->cachedSubTotal;
+        }
+
         $total = 0.0;
         foreach ($this->getProducts() as $product) {
             $total += $product['total'];
         }
-        return $total;
+        $this->cachedSubTotal = $total;
+        return $this->cachedSubTotal;
     }
 
     /**

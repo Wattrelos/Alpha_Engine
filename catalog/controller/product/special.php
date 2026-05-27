@@ -2,13 +2,15 @@
 namespace Opencart\Catalog\Controller\Product;
 
 use Alpha\Mappers\ProductMapper;
+use Alpha\Controller\BaseController;
+use Alpha\Model\Domain\Repositories\ProductRepository;
 
 /**
  * Class Special
  *
  * @package Opencart\Catalog\Controller\Product
  */
-class Special extends \Opencart\System\Engine\Controller {
+class Special extends BaseController {
 	/**
 	 * Index
 	 *
@@ -89,9 +91,6 @@ class Special extends \Opencart\System\Engine\Controller {
 
 		$productMapper = new ProductMapper();
 
-		// Image
-		$this->load->model('tool/image');
-
 		$results = $productMapper->getSpecials(
 			$filter_data,
 			(int)$this->config->get('config_language_id'),
@@ -101,48 +100,12 @@ class Special extends \Opencart\System\Engine\Controller {
 
 		$results = array_map(fn($item) => ['product_id' => $item['id']] + $item, $results);
 
+		/** @var ProductRepository $productRepository */
+		$productRepository = $this->getRepository(ProductRepository::class);
+
 		foreach ($results as $result) {
-			$description = trim(strip_tags(html_entity_decode($result['description'], ENT_QUOTES, 'UTF-8')));
-
-			if (oc_strlen($description) > $this->config->get('config_product_description_length')) {
-				$description = oc_substr($description, 0, $this->config->get('config_product_description_length')) . '..';
-			}
-
-			if ($result['image'] && is_file(DIR_IMAGE . html_entity_decode($result['image'], ENT_QUOTES, 'UTF-8'))) {
-				$image = $result['image'];
-			} else {
-				$image = 'placeholder.png';
-			}
-
-			if ($this->customer->isLogged() || !$this->config->get('config_customer_price')) {
-				$price = $this->currency->format($this->tax->calculate($result['price'], $result['tax_class_id'], $this->config->get('config_tax')), $this->session->data['currency']);
-			} else {
-				$price = false;
-			}
-
-			if ((float)$result['special']) {
-				$special = $this->currency->format($this->tax->calculate($result['special'], $result['tax_class_id'], $this->config->get('config_tax')), $this->session->data['currency']);
-			} else {
-				$special = false;
-			}
-
-			if ($this->config->get('config_tax')) {
-				$tax = $this->currency->format((float)$result['special'] ? $result['special'] : $result['price'], $this->session->data['currency']);
-			} else {
-				$tax = false;
-			}
-
-			$product_data = [
-				'thumb'       => $this->model_tool_image->resize($image, $this->config->get('config_image_product_width'), $this->config->get('config_image_product_height')),
-				'description' => $description,
-				'price'       => $price,
-				'special'     => $special,
-				'tax'         => $tax,
-				'minimum'     => $result['minimum'] > 0 ? $result['minimum'] : 1,
-				'href'        => $this->url->link('product/product', 'language=' . $this->config->get('config_language') . '&product_id=' . $result['product_id'] . $url)
-			] + $result;
-
-			$data['products'][] = $this->load->controller('product/thumb', $product_data);
+			// Alpha Engine: Renderização de Thumbnail sem Controller N+1
+			$data['products'][] = $this->viewRenderer->render('product/thumb', $productRepository->getProductThumbData($result));
 		}
 
 		$url = '';
@@ -282,13 +245,7 @@ class Special extends \Opencart\System\Engine\Controller {
 
 		$data['continue'] = $this->url->link('common/home', 'language=' . $this->config->get('config_language'));
 
-		$data['column_left'] = $this->load->controller('common/column_left');
-		$data['column_right'] = $this->load->controller('common/column_right');
-		$data['content_top'] = $this->load->controller('common/content_top');
-		$data['content_bottom'] = $this->load->controller('common/content_bottom');
-		$data['footer'] = $this->load->controller('common/footer');
-		$data['header'] = $this->load->controller('common/header');
-
-		$this->response->setOutput($this->load->view('product/special', $data));
+		// Alpha Engine: Renderização envelopada Anti-WSOD
+		$this->render('product/special', $data);
 	}
 }

@@ -14,6 +14,11 @@ class Search extends BaseController {
 		$searchRepository = $this->getRepository(SearchRepository::class);
 		$searchData = $searchRepository->getSearchDisplayData();
 
-		return $this->viewRenderer->render('common/search', $searchData->toArray());
+		$data = $searchData->toArray();
+
+		// Alpha Engine: Injeção de traduções para prevenir "Undefined variable" no Twig
+		$this->loadLanguageData('common/search', $data);
+
+		return $this->viewRenderer->render('common/search', $data);
 	}
 }

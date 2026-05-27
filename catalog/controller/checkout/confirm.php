@@ -43,8 +43,8 @@ class Confirm extends BaseController {
 		$data['totals'] = [];
 		foreach ($totals as $total_row) {
 			$data['totals'][] = [
-				'title' => $total_row['title'],
-				'text'  => $this->currency->format($total_row['value'], $this->session->data['currency'])
+				'title' => is_object($total_row) ? $total_row->getTitle() : $total_row['title'],
+				'text'  => $this->currency->format(is_object($total_row) ? $total_row->getValue() : $total_row['value'], $this->session->data['currency'])
 			];
 		}
 

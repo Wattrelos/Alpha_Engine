@@ -31,7 +31,7 @@ class Free extends \Opencart\System\Engine\Model {
 			$status = false;
 		}
 
-		if ($this->cart->getSubTotal() < $this->config->get('shipping_free_total')) {
+		if ($this->cartRepository->getSubTotal() < $this->config->get('shipping_free_total')) {
 			$status = false;
 		}
 

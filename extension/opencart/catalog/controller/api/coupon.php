@@ -1,11 +1,16 @@
 <?php
 namespace Opencart\Catalog\Controller\Extension\Opencart\Api;
+
+use Alpha\Controller\BaseController;
+use Alpha\Model\Domain\Repositories\CartRepository;
+use Alpha\Model\Domain\Repositories\CouponRepository;
+
 /**
  * Class Coupon
  *
  * @package Opencart\Catalog\Controller\Extension\Opencart\Api
  */
-class Coupon extends \Opencart\System\Engine\Controller {
+class Coupon extends BaseController {
 	/**
 	 * Index
 	 *
@@ -22,9 +27,11 @@ class Coupon extends \Opencart\System\Engine\Controller {
 			$coupon = '';
 		}
 
-		if (empty($this->request->post['coupon']) && $this->request->get['call'] == 'confirm') {
+		if (empty($this->request->post['coupon']) && isset($this->request->get['call']) && $this->request->get['call'] == 'confirm') {
 			return [];
 		}
+
+		$cartRepository = $this->getRepository(CartRepository::class);
 
 		// 1. Validate customer data exists
 		if (!isset($this->session->data['customer'])) {
@@ -32,7 +39,7 @@ class Coupon extends \Opencart\System\Engine\Controller {
 		}
 
 		// 2. Validate cart has products.
-		if (!$this->cart->hasProducts()) {
+		if (!$cartRepository->hasProducts()) {
 			$output['error'] = $this->language->get('error_product');
 		}
 
@@ -41,10 +48,8 @@ class Coupon extends \Opencart\System\Engine\Controller {
 		}
 
 		if (!$output) {
-			// Setting
-			$this->load->model('marketing/coupon');
-
-			$coupon_info = $this->model_marketing_coupon->getCoupon($coupon);
+			$couponRepository = $this->getRepository(CouponRepository::class);
+			$coupon_info = $couponRepository->getCoupon($coupon);
 
 			if (!$coupon_info) {
 				$output['error'] = $this->language->get('error_coupon');

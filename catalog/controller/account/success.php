@@ -1,11 +1,15 @@
 <?php
 namespace Opencart\Catalog\Controller\Account;
+
+use Alpha\Controller\BaseController;
+use Alpha\Model\Domain\Repositories\CartRepository;
+
 /**
  * Class Success
  *
  * @package Opencart\Catalog\Controller\Account
  */
-class Success extends \Opencart\System\Engine\Controller {
+class Success extends BaseController {
 	/**
 	 * Index
 	 *
@@ -40,19 +44,13 @@ class Success extends \Opencart\System\Engine\Controller {
 			$data['text_message'] = sprintf($this->language->get('text_approval'), $this->config->get('config_name'), $this->url->link('information/contact', 'language=' . $this->config->get('config_language')));
 		}
 
-		if ($this->cart->hasProducts()) {
+		$cartRepository = $this->getRepository(CartRepository::class);
+		if ($cartRepository->hasProducts()) {
 			$data['continue'] = $this->url->link('checkout/cart', 'language=' . $this->config->get('config_language'));
 		} else {
 			$data['continue'] = $this->url->link('account/account', 'language=' . $this->config->get('config_language') . (isset($this->session->data['customer_token']) ? '&customer_token=' . $this->session->data['customer_token'] : ''));
 		}
 
-		$data['column_left'] = $this->load->controller('common/column_left');
-		$data['column_right'] = $this->load->controller('common/column_right');
-		$data['content_top'] = $this->load->controller('common/content_top');
-		$data['content_bottom'] = $this->load->controller('common/content_bottom');
-		$data['footer'] = $this->load->controller('common/footer');
-		$data['header'] = $this->load->controller('common/header');
-
-		$this->response->setOutput($this->load->view('common/success', $data));
+		$this->render('common/success', $data);
 	}
 }
