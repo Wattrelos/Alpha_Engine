@@ -2,14 +2,16 @@
 
 namespace Alpha\Mappers\EntityMappers;
 
+use Alpha\Mappers\BaseMapper;
 use Alpha\Model\DataAccessObject\DataAccessObject;
 use Alpha\Model\DataAccessObject\QueryBuilder;
 use Alpha\Model\Domain\Entities\Order;
 use Alpha\Model\Domain\Entities\OrderHistory;
 use Alpha\Model\Domain\Entities\OrderProduct;
+use Alpha\Model\Domain\Entities\OrderOption;
 use Alpha\Model\Domain\Entities\OrderTotal;
-use Alpha\Model\Domain\Entities\OrderVoucher;
 use Alpha\Model\Domain\Observers\OrderObserverInterface;
+use Alpha\Model\Domain\DTOs\OrderDataDTO;
 
 /**
  * OrderMapper - Orquestrador de persistência para o ciclo de vida de pedidos.
@@ -20,15 +22,17 @@ use Alpha\Model\Domain\Observers\OrderObserverInterface;
  * - Integridade Financeira: Garante que cálculos de impostos e totais sejam preservados como objetos tipados.
  * - Suporte a Observers: Permite disparar ações automáticas (como e-mails) após o salvamento.
  */
-class OrderMapper
+class OrderMapper extends BaseMapper
 {
-    private DataAccessObject $dao;
+    protected string $tableName = 'order';
+    protected string $entityClass = Order::class;
+
     /** @var OrderObserverInterface[] */
     private array $observers = [];
 
-    public function __construct(DataAccessObject $dao)
+    public function __construct($registry = null)
     {
-        $this->dao = $dao;
+        parent::__construct($registry);
     }
 
     /**
@@ -45,7 +49,7 @@ class OrderMapper
      * O DAO processará automaticamente as coleções (products, totals, vouchers) 
      * através dos atributos #[OneToMany].
      */
-    public function save(Order $order): ?int
+    public function save(\Alpha\Model\Domain\InterfaceEntity $order): ?int
     {
         $orderId = ($order->getId() > 0) ? $this->dao->update($order) : $this->dao->create($order);
 
@@ -126,5 +130,269 @@ class OrderMapper
         // Alpha Engine Optimization: Resolve a hidratação de todos os pedidos em lote, evitando N+1 queries.
         $ids = array_column($pagination['data'], 'id');
         return !empty($ids) ? $this->dao->readByIds(Order::class, array_map('intval', $ids)) : [];
+    }
+
+    // --- Métodos de persistência e consulta legada migrados para PDO ---
+
+    public function insert(OrderDataDTO $dto): int
+    {
+        $order = new Order();
+        
+        // Map DTO flat properties to the Order entity properties
+        $order->setStoreId((int)$dto->get('store_id'))
+            ->setCustomerId((int)$dto->get('customer_id'))
+            ->setFirstname((string)$dto->get('firstname'))
+            ->setLastname((string)$dto->get('lastname'))
+            ->setEmail((string)$dto->get('email'))
+            ->setTelephone((string)$dto->get('telephone'))
+            ->setCustomField(is_array($dto->get('custom_field')) ? json_encode($dto->get('custom_field')) : (string)$dto->get('custom_field'))
+            ->setPaymentMethod((string)$dto->get('payment_method'))
+            ->setShippingMethod((string)$dto->get('shipping_method'))
+            ->setTotal((float)$dto->get('total'))
+            ->setOrderStatusId((int)$dto->get('order_status_id', 0))
+            ->setSubscriptionId((int)$dto->get('subscription_id', 0))
+            ->setInvoiceNo((int)$dto->get('invoice_no', 0))
+            ->setInvoicePrefix((string)$dto->get('invoice_prefix'))
+            ->setTransactionId((string)$dto->get('transaction_id'))
+            ->setStoreName((string)$dto->get('store_name'))
+            ->setStoreUrl((string)$dto->get('store_url'))
+            ->setCustomerGroupId((int)$dto->get('customer_group_id'))
+            ->setPaymentAddressId((int)$dto->get('payment_address_id'))
+            ->setPaymentFirstname((string)$dto->get('payment_firstname'))
+            ->setPaymentLastname((string)$dto->get('payment_lastname'))
+            ->setPaymentCompany((string)$dto->get('payment_company'))
+            ->setPaymentAddress1((string)$dto->get('payment_address_1'))
+            ->setPaymentNumber((int)$dto->get('payment_number'))
+            ->setPaymentAddress2((string)$dto->get('payment_address_2'))
+            ->setPaymentNeighborhood((string)$dto->get('payment_neighborhood'))
+            ->setPaymentCity((string)$dto->get('payment_city'))
+            ->setPaymentPostcode((string)$dto->get('payment_postcode'))
+            ->setPaymentCountry((string)$dto->get('payment_country'))
+            ->setPaymentCountryId((int)$dto->get('payment_country_id'))
+            ->setPaymentZone((string)$dto->get('payment_zone'))
+            ->setPaymentZoneId((int)$dto->get('payment_zone_id'))
+            ->setPaymentAddressFormat((string)$dto->get('payment_address_format'))
+            ->setPaymentCustomField(is_array($dto->get('payment_custom_field')) ? json_encode($dto->get('payment_custom_field')) : (string)$dto->get('payment_custom_field'))
+            ->setShippingAddressId((int)$dto->get('shipping_address_id'))
+            ->setShippingFirstname((string)$dto->get('shipping_firstname'))
+            ->setShippingLastname((string)$dto->get('shipping_lastname'))
+            ->setShippingCompany((string)$dto->get('shipping_company'))
+            ->setShippingAddress1((string)$dto->get('shipping_address_1'))
+            ->setShippingNumber((int)$dto->get('shipping_number'))
+            ->setShippingAddress2((string)$dto->get('shipping_address_2'))
+            ->setShippingNeighborhood((string)$dto->get('shipping_neighborhood'))
+            ->setShippingCity((string)$dto->get('shipping_city'))
+            ->setShippingPostcode((string)$dto->get('shipping_postcode'))
+            ->setShippingCountry((string)$dto->get('shipping_country'))
+            ->setShippingCountryId((int)$dto->get('shipping_country_id'))
+            ->setShippingZone((string)$dto->get('shipping_zone'))
+            ->setShippingZoneId((int)$dto->get('shipping_zone_id'))
+            ->setShippingAddressFormat((string)$dto->get('shipping_address_format'))
+            ->setShippingCustomField(is_array($dto->get('shipping_custom_field')) ? json_encode($dto->get('shipping_custom_field')) : (string)$dto->get('shipping_custom_field'))
+            ->setComment((string)$dto->get('comment'))
+            ->setAffiliateId((int)$dto->get('affiliate_id', 0))
+            ->setCommission((float)$dto->get('commission', 0.0))
+            ->setMarketingId((int)$dto->get('marketing_id', 0))
+            ->setTracking((string)$dto->get('tracking'))
+            ->setLanguageId((int)$dto->get('language_id'))
+            ->setLanguageCode((string)$dto->get('language_code'))
+            ->setCurrencyId((int)$dto->get('currency_id'))
+            ->setCurrencyCode((string)$dto->get('currency_code', 'BRL'))
+            ->setCurrencyValue((float)$dto->get('currency_value', 1.0))
+            ->setIp((string)$dto->get('ip'))
+            ->setForwardedIp((string)$dto->get('forwarded_ip'))
+            ->setUserAgent((string)$dto->get('user_agent'))
+            ->setAcceptLanguage((string)$dto->get('accept_language'))
+            ->setDateAdded(date('Y-m-d H:i:s'))
+            ->setDateModified(date('Y-m-d H:i:s'));
+
+        // Map DTO products to OrderProduct entities
+        $products = [];
+        foreach ((array)$dto->get('products', []) as $productData) {
+            $product = new OrderProduct();
+            $product->setProductId((int)$productData['product_id'])
+                ->setName((string)$productData['name'])
+                ->setModel((string)$productData['model'])
+                ->setQuantity((int)$productData['quantity'])
+                ->setPrice((float)$productData['price'])
+                ->setTotal((float)$productData['total'])
+                ->setTax((float)$productData['tax'])
+                ->setReward((int)$productData['reward'])
+                ->setOrder($order);
+
+            // Map product options to OrderOption entities
+            $options = [];
+            foreach ((array)($productData['option'] ?? []) as $optionData) {
+                $option = new OrderOption();
+                $option->setProductOptionId((int)$optionData['product_option_id'])
+                    ->setProductOptionValueId((int)($optionData['product_option_value_id'] ?? 0))
+                    ->setName((string)$optionData['name'])
+                    ->setValue((string)$optionData['value'])
+                    ->setType((string)$optionData['type'])
+                    ->setOrder($order)
+                    ->setOrderProduct($product);
+                
+                $options[] = $option;
+            }
+            $product->setOptions($options);
+            $products[] = $product;
+        }
+        $order->setProducts($products);
+
+        // Map DTO totals to OrderTotal entities
+        $totals = [];
+        foreach ((array)$dto->get('totals', []) as $totalData) {
+            $total = new OrderTotal();
+            $total->setCode((string)$totalData['code'])
+                ->setTitle((string)$totalData['title'])
+                ->setValue((float)$totalData['value'])
+                ->setSortOrder((int)$totalData['sort_order'])
+                ->setExtension((string)($totalData['extension'] ?? ''))
+                ->setOrder($order);
+            $totals[] = $total;
+        }
+        $order->setTotals($totals);
+
+        $orderId = $this->save($order);
+        return (int)$orderId;
+    }
+
+    public function getOrderArray(int $orderId, int $customerId = 0): array
+    {
+        $sql = "SELECT *, id AS order_id FROM `" . DB_PREFIX . "order` WHERE id = :order_id AND order_status_id > '0'";
+        $params = ['order_id' => $orderId];
+
+        if ($customerId > 0) {
+            $sql .= " AND customer_id = :customer_id";
+            $params['customer_id'] = $customerId;
+        }
+
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute($params);
+        return $stmt->fetch(\PDO::FETCH_ASSOC) ?: [];
+    }
+
+    public function getOrdersArray(int $customerId, int $storeId, int $languageId, int $start = 0, int $limit = 20): array
+    {
+        $sql = "SELECT o.id AS order_id, o.firstname, o.lastname, os.name as status, o.date_added, o.total, o.currency_code, o.currency_value, o.order_status_id 
+                FROM `" . DB_PREFIX . "order` o 
+                LEFT JOIN `" . DB_PREFIX . "order_status` os ON (o.order_status_id = os.id) 
+                WHERE o.customer_id = :customer_id AND o.order_status_id > '0' AND o.store_id = :store_id AND os.language_id = :language_id 
+                ORDER BY o.id DESC 
+                LIMIT :start, :limit";
+
+        $stmt = $this->db->prepare($sql);
+        $stmt->bindValue(':customer_id', $customerId, \PDO::PARAM_INT);
+        $stmt->bindValue(':store_id', $storeId, \PDO::PARAM_INT);
+        $stmt->bindValue(':language_id', $languageId, \PDO::PARAM_INT);
+        $stmt->bindValue(':start', $start, \PDO::PARAM_INT);
+        $stmt->bindValue(':limit', $limit, \PDO::PARAM_INT);
+        $stmt->execute();
+        return $stmt->fetchAll(\PDO::FETCH_ASSOC);
+    }
+
+    public function getTotalOrdersCount(int $customerId, int $storeId): int
+    {
+        $sql = "SELECT COUNT(*) AS total FROM `" . DB_PREFIX . "order` WHERE customer_id = :customer_id AND order_status_id > '0' AND store_id = :store_id";
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute(['customer_id' => $customerId, 'store_id' => $storeId]);
+        $row = $stmt->fetch(\PDO::FETCH_ASSOC);
+        return (int)($row['total'] ?? 0);
+    }
+
+    public function getTotalProductsByOrderId(int $orderId): int
+    {
+        $sql = "SELECT COUNT(*) AS total FROM `" . DB_PREFIX . "order_product` WHERE order_id = :order_id";
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute(['order_id' => $orderId]);
+        $row = $stmt->fetch(\PDO::FETCH_ASSOC);
+        return (int)($row['total'] ?? 0);
+    }
+
+    public function getProductsArray(int $orderId): array
+    {
+        $sql = "SELECT *, id AS order_product_id FROM `" . DB_PREFIX . "order_product` WHERE order_id = :order_id";
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute(['order_id' => $orderId]);
+        return $stmt->fetchAll(\PDO::FETCH_ASSOC);
+    }
+
+    public function getOptionsArray(int $orderId, int $orderProductId): array
+    {
+        $sql = "SELECT *, id AS order_option_id FROM `" . DB_PREFIX . "order_option` WHERE order_id = :order_id AND order_product_id = :order_product_id";
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute(['order_id' => $orderId, 'order_product_id' => $orderProductId]);
+        return $stmt->fetchAll(\PDO::FETCH_ASSOC);
+    }
+
+    public function getVouchersArray(int $orderId): array
+    {
+        $sql = "SELECT *, id AS order_voucher_id FROM `" . DB_PREFIX . "order_voucher` WHERE order_id = :order_id";
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute(['order_id' => $orderId]);
+        return $stmt->fetchAll(\PDO::FETCH_ASSOC);
+    }
+
+    public function getTotalsArray(int $orderId): array
+    {
+        $sql = "SELECT *, id AS order_total_id FROM `" . DB_PREFIX . "order_total` WHERE order_id = :order_id ORDER BY sort_order";
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute(['order_id' => $orderId]);
+        return $stmt->fetchAll(\PDO::FETCH_ASSOC);
+    }
+
+    public function getHistoriesArray(int $orderId, int $languageId): array
+    {
+        $sql = "SELECT oh.date_added, os.name AS status, oh.comment, oh.notify 
+                FROM `" . DB_PREFIX . "order_history` oh 
+                LEFT JOIN `" . DB_PREFIX . "order_status` os ON (oh.order_status_id = os.id) 
+                WHERE oh.order_id = :order_id AND os.language_id = :language_id 
+                ORDER BY oh.date_added ASC";
+        
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute(['order_id' => $orderId, 'language_id' => $languageId]);
+        return $stmt->fetchAll(\PDO::FETCH_ASSOC);
+    }
+
+    public function getTotalHistoriesCount(int $orderId): int
+    {
+        $sql = "SELECT COUNT(*) AS total FROM `" . DB_PREFIX . "order_history` WHERE order_id = :order_id";
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute(['order_id' => $orderId]);
+        $row = $stmt->fetch(\PDO::FETCH_ASSOC);
+        return (int)($row['total'] ?? 0);
+    }
+
+    public function getSubscriptionArray(int $orderId, int $orderProductId): array
+    {
+        $sql = "SELECT *, id AS order_subscription_id FROM `" . DB_PREFIX . "order_subscription` WHERE order_id = :order_id AND order_product_id = :order_product_id";
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute(['order_id' => $orderId, 'order_product_id' => $orderProductId]);
+        return $stmt->fetch(\PDO::FETCH_ASSOC) ?: [];
+    }
+
+    public function getOrdersBySubscriptionIdArray(int $subscriptionId, int $start = 0, int $limit = 20): array
+    {
+        $sql = "SELECT o.id AS order_id, o.total, o.currency_code, o.currency_value, o.date_added 
+                FROM `" . DB_PREFIX . "order` o 
+                WHERE o.subscription_id = :subscription_id 
+                ORDER BY o.id DESC 
+                LIMIT :start, :limit";
+
+        $stmt = $this->db->prepare($sql);
+        $stmt->bindValue(':subscription_id', $subscriptionId, \PDO::PARAM_INT);
+        $stmt->bindValue(':start', $start, \PDO::PARAM_INT);
+        $stmt->bindValue(':limit', $limit, \PDO::PARAM_INT);
+        $stmt->execute();
+        return $stmt->fetchAll(\PDO::FETCH_ASSOC);
+    }
+
+    public function getTotalOrdersBySubscriptionIdCount(int $subscriptionId): int
+    {
+        $sql = "SELECT COUNT(*) AS total FROM `" . DB_PREFIX . "order` WHERE subscription_id = :subscription_id";
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute(['subscription_id' => $subscriptionId]);
+        $row = $stmt->fetch(\PDO::FETCH_ASSOC);
+        return (int)($row['total'] ?? 0);
     }
 }

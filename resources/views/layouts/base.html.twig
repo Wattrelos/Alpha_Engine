@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <title>{% block title %}Meu App{% endblock %}</title>
+    <link rel="stylesheet" href="/css/app.css">
+    <link rel="stylesheet" href="/css/custom/personalizada.css">
+</head>
+<body>
+
+    <!-- O Header entra de forma automática em todas as páginas -->
+    {% include 'components/organisms/header.twig' %}
+
+    <main class="main-content">
+        {% block content %}{% endblock %}
+    </main>
+
+    <script src="/js/app.js"></script>
+</body>
+</html>

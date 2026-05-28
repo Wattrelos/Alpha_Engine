@@ -1,0 +1,6 @@
+{% extends 'layouts/base.html.twig' %}
+
+{% block content %}
+    {# O controller enviou a variável $categorias para o Twig #}
+    {% include 'components/organisms/department-menu.twig' with { 'categories': categories } %}
+{% endblock %}

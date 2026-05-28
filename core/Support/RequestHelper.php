@@ -1,5 +1,7 @@
-namespace Alpha\Support;
 <?php
+
+namespace Alpha\Support;
+
 /**
  * Class RequestHelper
  *

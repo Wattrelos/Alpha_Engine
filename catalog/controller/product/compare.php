@@ -70,7 +70,7 @@ class Compare extends BaseController {
 		$manufacturerMapper = new ManufacturerMapper();
 
 		// Image
-		$this->load->model('tool/image');
+		$imagePresenter = $this->getImagePresenter();
 
 		foreach ($this->session->data['compare'] as $key => $product_id) {
 			$product_info = $productMapper->getProduct(
@@ -95,11 +95,7 @@ class Compare extends BaseController {
 					$description = oc_substr($description, 0, $this->config->get('config_product_description_length')) . '..';
 				}
 
-				if ($product_info['image'] && is_file(DIR_IMAGE . html_entity_decode($product_info['image'], ENT_QUOTES, 'UTF-8'))) {
-					$image = $this->model_tool_image->resize($product_info['image'], $this->config->get('config_image_compare_width'), $this->config->get('config_image_compare_height'));
-				} else {
-					$image = '';
-				}
+				$image = $imagePresenter->resize($product_info['image'] ?? '', $this->config->get('config_image_compare_width'), $this->config->get('config_image_compare_height'), false);
 
 				if ($this->customer->isLogged() || !$this->config->get('config_customer_price')) {
 					$price = $this->currency->format($this->tax->calculate($product_info['price'], $product_info['tax_class_id'], $this->config->get('config_tax')), $this->session->data['currency']);

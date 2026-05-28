@@ -1,0 +1,15 @@
+<header class="site-header">
+    <div class="container">
+        <!-- Átomo da Logo -->
+        {% include 'components/atoms/logo.twig' %}
+
+        <!-- Molécula do Menu (Passando os links por variável) -->
+        {% include 'components/molecules/nav-menu.twig' with {
+            'links': [
+                {'url': '/', 'label': 'Início', 'route': 'home'},
+                {'url': '/produtos', 'label': 'Produtos', 'route': 'products'},
+                {'url': '/contato', 'label': 'Contato', 'route': 'contact'}
+            ]
+        } %}
+    </div>
+</header>

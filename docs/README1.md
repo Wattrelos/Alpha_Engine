@@ -111,17 +111,104 @@ Diferente do OpenCart padrão, onde o SQL fica espalhado pelos Models, este proj
 
 ```text
 core/
-├── Mappers/               # Inteligência de dados (SQL Isolation)
-└── Model/
-    └── DataAccessObject/  # Camada de abstração de banco (PDO/Transactions)
-        ├── Controller/    # BaseController e Master Patterns
-    ├── Domain/
-    │   ├── Entities/      # Objetos de Domínio (PHP 8.4 Typed)
-    │   └── Repositories/  # Camada de Abstração e Lazy Loading
-    ├── Mappers/           # Inteligência de dados (SQL Isolation)
-    └── Support/           # Utilitários (Security, Logging, Helpers)
+├── Auth/                                    # 🔐 Domínio de autenticação e segurança
+│   ├── Middleware/                          # 🛡️ Guards PSR-15 do Router
+│   │   ├── SignatureMiddleware.php          # Valida assinatura HMAC da requisição
+│   │   └── SessionMiddleware.php           # Valida sessão ativa no Redis
+│   └── Services/                           # 🧠 Lógica de negócio de autenticação
+│       └── AuthService.php                 # Autentica credenciais, cria/destroi sessão
+│
+├── Containers/                             # 📂 Nova pasta de infraestrutura do roteador
+│   └── AppContainer.php                    # 📦 Fábrica central que monta as Actions (com Twig/Redis)
+│
+├── Controller/                             # 🎮 Orquestradores de requisição HTTP
+│   ├── BaseController.php                  # 🧱 Injeção de Mappers, Repos e helpers JSON
+│   ├── Auth/                               # Controladores de acesso
+│   │   ├── LoginController.php             # 🚪 Processa formulário de login
+│   │   └── LogoutController.php            # 🚪 Destroi sessão e expira cookie
+│   ├── Web/                                # 📄 Respostas em HTML (páginas do site)
+│   │   ├── HomeController.php
+│   │   ├── DashboardController.php
+│   │   └── ProductController.php
+│   └── Api/                               # 🔌 Respostas em JSON (endpoints REST)
+│       └── ApiProductController.php
+│
+├── Mappers/                               # 🗺️ SQL Isolation — acesso ao banco de dados
+│   ├── MapperInterface.php                # Contrato público dos Mappers
+│   ├── AbstractMapper.php                 # Base abstrata comum
+│   ├── BaseMapper.php                     # CRUD genérico via DataAccessObject
+│   ├── MapperFactory.php                  # 🏭 Fábrica central de instâncias
+│   ├── CollectionToArrayConverter.php     # Serialização de coleções de entidades
+│   ├── EntityMappers/                     # Um Mapper por entidade de domínio (75+)
+│   └── Observers/                         # 👁️ Side-effects de persistência
+│       ├── OrderObserverInterface.php
+│       └── OrderEmailObserver.php
+│
+├── Model/                                 # 🏛️ Coração do domínio
+│   ├── DataAccessObject/                  # Abstração PDO, QueryBuilder, Transactions
+│   │   ├── DataAccessObject.php
+│   │   ├── ConnectionDB.php
+│   │   ├── QueryBuilder.php
+│   │   ├── UnitOfWork.php
+│   │   └── ProxyFactory.php
+│   ├── DataTransferObject/                # Anotações e validações de entrada
+│   │   └── Attributes/
+│   │       ├── AllowHtml.php
+│   │       └── Validation.php
+│   └── Domain/                            # Entidades e regras de negócio puras
+│       ├── BaseEntity.php
+│       ├── InterfaceEntity.php
+│       ├── Attributes/                    # Atributos ORM (HasOne, ManyToMany, etc.)
+│       ├── Entities/                      # Objetos de domínio tipados (PHP 8.4)
+│       ├── DTOs/
+│       ├── Factory/
+│       ├── Repositories/                  # Abstração e regras de negócio por entidade
+│       └── Observers/
+│
+├── Services/                              # ⚙️ Serviços de domínio e orquestração
+│   └── Shipping/                          # Cálculo e seleção de fretes
+│
+├── Support/                               # 🛠️ Utilitários e helpers transversais
+│   ├── Cache/                             # Estratégias de cache (Filesystem)
+│   ├── Presenters/                        # Formatadores de saída (ImagePresenter)
+│   ├── Collection.php
+│   ├── LazyCollection.php
+│   ├── EntityHydrator.php
+│   ├── EvolutionGenerator.php
+│   ├── RequestHelper.php
+│   └── ViewHelper.php
+│
+│── View/                                  # 🖼️ Camada de apresentação (Twig/HTML)
+│    └── ViewRenderer.php
+│
+│── resources/views/
+│      ├── components/                     <-- Pedaços de tela que se repetem (reutilizáveis)
+│      │   ├── atoms/                      <-- Elementos base (botão, input, tag)
+│      │   │    ├── logo.twig              <-- Apenas a imagem/link da logo
+│      │   │    ├── nav-link.twig          <-- Um link individual do menu
+│      │   │    └── menu-button.twig       <-- O botão "Departamentos"
+│      │   ├── molecules/                  <-- Junção de átomos (barra de busca, card)
+│      │   │    ├── nav-menu.twig          <-- A lista com todos os links do menu juntos
+│      │   │    ├── card-user.twig
+│      │   │    └── dropdown-recursive.twig    <-- A lista que se repete sozinha
+│      │   └── organism/                   <-- Combinação de moléculas (formulário de busca, header completo)
+│      │        ├── header.html.twig       <-- Header completo com logo + menu
+│      │        ├── department-menu.twig   <-- O bloco completo (Container)
+│      │        └── footer.html.twig       <-- Footer completo
+│      │ 
+│      ├── layouts/             <-- Estruturas gerais da página
+│      │   └── base.html.twig
+│      └── pages/               <-- As páginas finais do sistema
+│        ├── home.html.twig
+│        └── users/
+│            ├── index.html.twig
+│            └── edit.html.twig
+└─ public_html
+    ├── index.php
+    └── .htaccess
 
 ```
+
 
 ## ⚙️ Requisitos
 

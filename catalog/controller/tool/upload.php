@@ -1,11 +1,15 @@
 <?php
 namespace Opencart\Catalog\Controller\Tool;
+
+use Alpha\Controller\BaseController;
+use Alpha\Model\Domain\Repositories\UploadRepository;
+
 /**
  * Class Upload
  *
  * @package Opencart\Catalog\Controller\Tool
  */
-class Upload extends \Opencart\System\Engine\Controller {
+class Upload extends BaseController {
 	/**
 	 * Index
 	 *
@@ -75,15 +79,13 @@ class Upload extends \Opencart\System\Engine\Controller {
 
 			move_uploaded_file($this->request->files['file']['tmp_name'], DIR_UPLOAD . $file);
 
-			// Hide the uploaded file name, so people cannot link to it directly.
-			$this->load->model('tool/upload');
+			$uploadRepository = $this->getRepository(UploadRepository::class);
 
-			$json['code'] = $this->model_tool_upload->addUpload($filename, $file);
+			$json['code'] = $uploadRepository->addUpload($filename, $file);
 
 			$json['success'] = $this->language->get('text_upload');
 		}
 
-		$this->response->addHeader('Content-Type: application/json');
-		$this->response->setOutput(json_encode($json));
+		$this->jsonResponse($json);
 	}
 }

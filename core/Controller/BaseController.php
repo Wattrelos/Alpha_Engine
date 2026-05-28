@@ -6,7 +6,7 @@ use Opencart\System\Engine\Controller;
 use Opencart\System\Engine\Registry;
 use Alpha\Mappers\MapperFactory;
 use Alpha\Model\Domain\Repositories\RepositoryFactory;
-use Alpha\System\ViewRenderer;
+use Alpha\View\ViewRenderer;
 
 /**
  * BaseController
@@ -79,6 +79,16 @@ abstract class BaseController extends Controller
             : MapperFactory::getInstance();
 
         return $factory->get($class);
+    }
+
+    /**
+     * Retorna a instância do ImagePresenter.
+     * 
+     * @return \Alpha\Support\Presenters\ImagePresenter
+     */
+    protected function getImagePresenter(): \Alpha\Support\Presenters\ImagePresenter
+    {
+        return new \Alpha\Support\Presenters\ImagePresenter($this->registry);
     }
 
     /**

@@ -17,6 +17,8 @@ class AlphaContainer extends Factory
     /**
      * Retorna a instância do logger de rastreamento (Trace).
      */
+
+/* Cógigo para debug. Usado com frequência (não apague)-------------------------------------------------------------
     private function getTraceLogger(): Log
     {
         static $traceLogger;
@@ -25,7 +27,8 @@ class AlphaContainer extends Factory
         }
         return $traceLogger;
     }
-
+// -----------------------------------------------------------------------------------------------------------------
+*/
     /**
      * Intercepta o carregamento de modelos.
      * 
@@ -35,11 +38,11 @@ class AlphaContainer extends Factory
     public function model(string $route): object
     {
         // Rastreamento de Fluxo (Trace)
-        $this->getTraceLogger()->write("[Alpha TRACE] Solicitado Model: '{$route}'");
+        // $this->getTraceLogger()->write("[Alpha TRACE] Solicitado Model: '{$route}'");
 
         // 1. Normaliza a rota para identificar o componente
         $sanitized_route = preg_replace('/[^a-zA-Z0-9_\/]/', '', $route);
-        
+
         // 2. Mapeamento de "Shortcuts": Se a rota do modelo coincidir com algo migrado
         // podemos retornar o Repositório diretamente do Registry.
         $repository_factory = $this->registry->get('alpha_repository_factory');
@@ -82,6 +85,8 @@ class AlphaContainer extends Factory
                 'localisation/tax_rule'     => \Alpha\Model\Domain\Repositories\TaxRuleRepository::class,
                 'setting/setting'           => \Alpha\Model\Domain\Repositories\SettingRepository::class,
                 'setting/extension'         => \Alpha\Model\Domain\Repositories\ExtensionRepository::class,
+                'setting/store'             => \Alpha\Model\Domain\Repositories\StoreRepository::class,
+                'setting/api'               => \Alpha\Model\Domain\Repositories\ApiSessionRepository::class,
             ];
 
             if (isset($repositoriesMap[$sanitized_route])) {
@@ -136,7 +141,7 @@ class AlphaContainer extends Factory
     public function library(string $route, array $args = []): object
     {
         // Rastreamento de Fluxo (Trace)
-        $this->getTraceLogger()->write("[Alpha TRACE] Solicitada Library: '{$route}'");
+        // $this->getTraceLogger()->write("[Alpha TRACE] Solicitada Library: '{$route}'");
 
         // 1. Normaliza a rota
         $sanitized_route = preg_replace('/[^a-zA-Z0-9_\/]/', '', $route);
@@ -158,7 +163,7 @@ class AlphaContainer extends Factory
             // Verifica se a classe existe no padrão PSR-4 da Alpha antes de logar como legado
             // Isso ajuda a diferenciar o que é biblioteca nativa do OC e o que é Alpha.
             $alpha_class = 'Alpha\\Library\\' . str_replace(['_', '/'], ['', '\\'], ucwords($sanitized_route, '_/'));
-            
+
             if (!class_exists($alpha_class)) {
                 $log->write(sprintf(
                     "[Alpha DEPRECATION] Carregamento de Biblioteca Legada: '%s' | Originado na rota: '%s' | IP: %s",
@@ -185,7 +190,7 @@ class AlphaContainer extends Factory
     public function config(string $route): void
     {
         // Rastreamento de Fluxo (Trace)
-        $this->getTraceLogger()->write("[Alpha TRACE] Solicitada Config: '{$route}'");
+        // $this->getTraceLogger()->write("[Alpha TRACE] Solicitada Config: '{$route}'");
 
         // Log de depreciação da Alpha Engine
         if ($this->registry->get('config')->get('config_error_log')) {
@@ -198,5 +203,4 @@ class AlphaContainer extends Factory
         $repositoryFactory = $this->registry->get('alpha_repository_factory');
         $repositoryFactory->get(\Alpha\Model\Domain\Repositories\ConfigurationRepository::class)->loadFile($route);
     }
-
 }

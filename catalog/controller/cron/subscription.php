@@ -2,7 +2,7 @@
 namespace Opencart\Catalog\Controller\Cron;
 
 use Alpha\Mappers\EntityMappers\SubscriptionMapper;
-use Alpha\Mappers\EntityMappers\StoreMapper;
+use Alpha\Model\Domain\Repositories\StoreRepository;
 use Alpha\Mappers\EntityMappers\LanguageMapper;
 use Alpha\Mappers\EntityMappers\CurrencyMapper;
 use Alpha\Mappers\EntityMappers\OrderMapper;
@@ -42,17 +42,20 @@ class Subscription extends \Opencart\System\Engine\Controller {
 			'limit'                         => 10
 		];
 
-		// Alpha Engine: Instancia os Mappers para evitar o loader legado e melhorar performance no loop
-		$subscriptionMapper = new SubscriptionMapper();
-		$storeMapper = new StoreMapper();
-		$languageMapper = new LanguageMapper();
-		$currencyMapper = new CurrencyMapper();
-		$orderMapper = new OrderMapper();
-		$customerMapper = new CustomerMapper();
-		$addressMapper = new AddressMapper();
-		$productMapper = new ProductMapper();
-		$extensionMapper = new ExtensionMapper();
-		$cartMapper = new CartMapper();
+		// Alpha Engine: Obtém os Mappers/Repositories através das fábricas registradas no Registry
+		$mapperFactory = $this->registry->get('alpha_mapper_factory');
+		$repositoryFactory = $this->registry->get('alpha_repository_factory');
+
+		$subscriptionMapper = $mapperFactory->get(SubscriptionMapper::class);
+		$storeRepository = $repositoryFactory->get(StoreRepository::class);
+		$languageMapper = $mapperFactory->get(LanguageMapper::class);
+		$currencyMapper = $mapperFactory->get(CurrencyMapper::class);
+		$orderMapper = $mapperFactory->get(OrderMapper::class);
+		$customerMapper = $mapperFactory->get(CustomerMapper::class);
+		$addressMapper = $mapperFactory->get(AddressMapper::class);
+		$productMapper = $mapperFactory->get(ProductMapper::class);
+		$extensionMapper = $mapperFactory->get(ExtensionMapper::class);
+		$cartMapper = $mapperFactory->get(CartMapper::class);
 
 		$results = $subscriptionMapper->getSubscriptions($filter_data);
 
@@ -61,11 +64,11 @@ class Subscription extends \Opencart\System\Engine\Controller {
 				$error = [];
 
 				// Create new instance of a store
-				$store = $storeMapper->createStoreInstance((int)$result['store_id'], (string)$result['language'], (string)$result['currency']);
+				$store = $storeRepository->createStoreInstance((int)$result['store_id'], (string)$result['language'], (string)$result['currency']);
 
 				// Set the store ID.
 				if ($result['store_id']) {
-					$store_info = $storeMapper->getStore((int)$result['store_id']);
+					$store_info = $storeRepository->getStore((int)$result['store_id']);
 
 					if (!$store_info) {
 						$error['store'] = $this->language->get('error_store');

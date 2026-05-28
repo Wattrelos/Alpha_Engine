@@ -45,3 +45,4 @@ define('DB_SSL_CA', '');
 // Custom configuration
 define('HIDE_ZERO_STOCK', true);
 define('ENTITIES_PATH', 'Alpha.Model.Domain.Entities');
+define('ACTIONS_PATH', 'Alpha.Controller.Actions');

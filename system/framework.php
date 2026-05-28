@@ -1,11 +1,14 @@
 <?php
+
+/* Cógigo para debug. Usado com frequência (não apague)-------------------------------------------------------------
 // Alpha Engine: Boot Trace Logger (Rastreamento de Inicialização Primitivo)
 function alpha_boot_trace(string $message): void {
 	$logPath = defined('DIR_LOGS') ? DIR_LOGS : __DIR__ . '/storage/logs/';
 	@file_put_contents($logPath . 'alpha_boot_trace.log', "[" . date('Y-m-d H:i:s') . "] " . $message . "\n", FILE_APPEND);
 }
 alpha_boot_trace("--- Nova Requisição: " . ($_SERVER['REQUEST_URI'] ?? 'CLI') . " ---");
-
+//-------------------------------------------------------------------------------------------------------------------
+*/
 // Autoloader
 $autoloader = new \Opencart\System\Engine\Autoloader();
 $autoloader->register('Opencart\\' . APPLICATION, DIR_APPLICATION);
@@ -33,7 +36,7 @@ $config->load('default');
 $config->load(strtolower(APPLICATION));
 $registry->set('config', $config);
 
-alpha_boot_trace("Configurações base carregadas.");
+// alpha_boot_trace("Configurações base carregadas.");
 
 // Set the default application
 $config->set('application', APPLICATION);
@@ -45,7 +48,7 @@ date_default_timezone_set($config->get('date_timezone'));
 $log = new \Opencart\System\Library\Log($config->get('error_filename'));
 $registry->set('log', $log);
 
-alpha_boot_trace("Sistema de Logs e Handlers inicializados.");
+// alpha_boot_trace("Sistema de Logs e Handlers inicializados.");
 
 // Error Handler
 set_error_handler(function(int $code, string $message, string $file, int $line) use ($log, $config) {
@@ -155,7 +158,7 @@ $registry->set('alpha_repository_factory', $alpha_repository);
 // Mantém a chave 'repository' para compatibilidade com o adaptador de sessão (system/library/session/db.php)
 $registry->set('repository', $alpha_repository);
 
-alpha_boot_trace("AlphaContainer e Repositórios injetados no Registry.");
+// alpha_boot_trace("AlphaContainer e Repositórios injetados no Registry.");
 
 // Loader
 $loader = new \Opencart\System\Engine\Loader($registry);
@@ -192,7 +195,7 @@ $response->setCompression((int)$config->get('response_compression'));
 if ($config->get('db_autostart')) {
 	$db = new \Opencart\System\Library\DB($config->get('db_engine'), $config->get('db_hostname'), $config->get('db_username'), $config->get('db_password'), $config->get('db_database'), $config->get('db_port'), $config->get('db_ssl_key'), $config->get('db_ssl_cert'), $config->get('db_ssl_ca'));
 	$registry->set('db', $db);
-	alpha_boot_trace("Banco de Dados conectado.");
+	// alpha_boot_trace("Banco de Dados conectado.");
 }
 
 // Session
@@ -220,7 +223,7 @@ if ($config->get('session_autostart')) {
 
 	setcookie($config->get('session_name'), $session->getId(), $option);
 	
-	alpha_boot_trace("Sessão inicializada.");
+	// alpha_boot_trace("Sessão inicializada.");
 }
 
 // Cache
@@ -237,7 +240,7 @@ $language->addPath(DIR_LANGUAGE);
 $language->load('default');
 $registry->set('language', $language);
 
-alpha_boot_trace("Cache, Template e Idiomas base carregados.");
+// alpha_boot_trace("Cache, Template e Idiomas base carregados.");
 
 // Url
 $registry->set('url', new \Opencart\System\Library\Url($config->get('site_url')));
@@ -255,7 +258,7 @@ $error = new \Opencart\System\Engine\Action($config->get('action_error'));
 foreach ($config->get('action_pre_action') as $pre_action) {
 	// Alpha Engine: Bypass do compilador SCSS (Causa conhecida de Crash/Estouro de Memória)
 	if (is_string($pre_action) && str_contains(strtolower($pre_action), 'startup/sass')) {
-		alpha_boot_trace("Pre-action ignorada (Performance/WSOD Bypass): " . $pre_action);
+		// alpha_boot_trace("Pre-action ignorada (Performance/WSOD Bypass): " . $pre_action);
 		continue;
 	}
 
@@ -280,7 +283,7 @@ foreach ($config->get('action_pre_action') as $pre_action) {
 	}
 }
 
-alpha_boot_trace("Pre-actions executadas com sucesso.");
+// alpha_boot_trace("Pre-actions executadas com sucesso.");
 
 // Route
 if (isset($request->get['route'])) {
@@ -303,7 +306,7 @@ $trigger = $route;
 
 $args = [];
 
-alpha_boot_trace("Iniciando Dispatch para a rota: " . $route);
+// alpha_boot_trace("Iniciando Dispatch para a rota: " . $route);
 
 // Trigger the pre events
 $event->trigger('controller/' . $trigger . '/before', [&$route, &$args]);
@@ -315,7 +318,7 @@ if (!$action) {
 
 // Dispatch
 while ($action) {
-	alpha_boot_trace("Executando Action (Controller): " . $action->getId());
+	// alpha_boot_trace("Executando Action (Controller): " . $action->getId());
 
 	// Execute action
 	$output = $action->execute($registry, $args);
@@ -340,7 +343,7 @@ while ($action) {
 // Trigger the post events
 $event->trigger('controller/' . $trigger . '/after', [&$route, &$args, &$output]);
 
-alpha_boot_trace("Dispatch concluído. Enviando Output para o navegador.");
+// alpha_boot_trace("Dispatch concluído. Enviando Output para o navegador.");
 
 // Output
 $response->output();

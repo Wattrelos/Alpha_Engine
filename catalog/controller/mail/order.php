@@ -1,11 +1,15 @@
 <?php
 namespace Opencart\Catalog\Controller\Mail;
+
+use Alpha\Controller\BaseController;
+use Alpha\Model\Domain\Repositories\UploadRepository;
+
 /**
  * Class Order
  *
  * @package Opencart\Catalog\Controller\Mail
  */
-class Order extends \Opencart\System\Engine\Controller {
+class Order extends BaseController {
 	/**
 	 * Index
 	 *
@@ -130,9 +134,6 @@ class Order extends \Opencart\System\Engine\Controller {
 		}
 
 		$subject = sprintf($this->language->get('mail_text_subject'), $store_name, $order_info['order_id']);
-
-		// Image
-		$this->load->model('tool/image');
 
 		if (is_file(DIR_IMAGE . $store_logo)) {
 			$data['logo'] = $store_url . 'image/' . $store_logo;
@@ -267,7 +268,7 @@ class Order extends \Opencart\System\Engine\Controller {
 		$data['shipping_address'] = str_replace($pattern_1, '<br/>', preg_replace($pattern_2, '<br/>', trim(str_replace($find, $replace, $format))));
 
 		// Upload
-		$this->load->model('tool/upload');
+		$uploadRepository = $this->getRepository(UploadRepository::class);
 
 		// Products
 		$data['products'] = [];
@@ -281,7 +282,7 @@ class Order extends \Opencart\System\Engine\Controller {
 				if ($order_option['type'] != 'file') {
 					$value = $order_option['value'];
 				} else {
-					$upload_info = $this->model_tool_upload->getUploadByCode($order_option['value']);
+					$upload_info = $uploadRepository->getUploadByCode($order_option['value']);
 
 					if ($upload_info) {
 						$value = $upload_info['name'];
@@ -533,7 +534,7 @@ class Order extends \Opencart\System\Engine\Controller {
 			}
 
 			// Upload
-			$this->load->model('tool/upload');
+			$uploadRepository = $this->getRepository(UploadRepository::class);
 
 			$data['products'] = [];
 
@@ -548,7 +549,7 @@ class Order extends \Opencart\System\Engine\Controller {
 					if ($order_option['type'] != 'file') {
 						$value = $order_option['value'];
 					} else {
-						$upload_info = $this->model_tool_upload->getUploadByCode($order_option['value']);
+						$upload_info = $uploadRepository->getUploadByCode($order_option['value']);
 
 						if ($upload_info) {
 							$value = $upload_info['name'];

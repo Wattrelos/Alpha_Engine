@@ -1,0 +1,8 @@
+RewriteEngine On
+
+# Serve arquivos e diretórios estáticos (CSS, JS, imagens) diretamente — sem passar pelo Slim
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+
+# Tudo o mais vai para o index.php (Entry Point do Slim)
+RewriteRule ^ index.php [QSA,L]

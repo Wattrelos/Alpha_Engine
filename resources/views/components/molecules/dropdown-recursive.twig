@@ -1,0 +1,21 @@
+{# Criamos uma função chamada render_menu #}
+{% macro render_menu(items) %}
+    {% import _self as macros %}
+    
+    {% for item in items %}
+        <li>
+            <a href="{{ item.url }}">{{ item.name }}</a>
+            
+            {# Se a categoria tiver subcategorias, a função chama ela mesma (recursão) #}
+            {% if item.children is not empty %}
+                <ul class="submenu">
+                    {{ macros.render_menu(item.children) }}
+                </ul>
+            {% endif %}
+        </li>
+    {% endfor %}
+{% endmacro %}
+
+{# Aqui o componente executa a função com os dados passados #}
+{% import _self as macros %}
+{{ macros.render_menu(categories) }}

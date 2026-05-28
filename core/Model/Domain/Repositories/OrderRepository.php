@@ -2,12 +2,13 @@
 namespace Alpha\Model\Domain\Repositories;
 
 use Alpha\Model\Domain\DTOs\OrderDataDTO;
-use Alpha\Mappers\OrderMapper;
-use Alpha\Mappers\CartMapper;
+use Alpha\Mappers\EntityMappers\OrderMapper;
+use Alpha\Mappers\EntityMappers\CartMapper;
 use Alpha\Model\DataAccessObject\UnitOfWork;
 use Alpha\Model\Domain\InterfaceEntity;
-use Alpha\Support\Factories\MapperFactory;
+use Alpha\Mappers\MapperFactory;
 use Opencart\System\Engine\Registry;
+use Alpha\Model\Domain\Repositories\CouponRepository;
 
 /**
  * Class OrderRepository
@@ -17,22 +18,26 @@ use Opencart\System\Engine\Registry;
 class OrderRepository extends AbstractRepository implements BaseRepositoryInterface {
 
     private UnitOfWork $unitOfWork;
-    private Registry $registry;
-    private MapperFactory $mapperFactory;
 
     /**
-     * Construtor com injeção de dependências rigorosa.
+     * Construtor da Alpha Engine.
      */
     public function __construct(
-        OrderMapper $mapper,
-        UnitOfWork $unitOfWork,
+        MapperFactory $mapperFactory,
         Registry $registry,
-        MapperFactory $mapperFactory
+        ?\Alpha\Support\Cache\CacheStrategyInterface $cache = null
     ) {
-        parent::__construct($mapper);
-        $this->unitOfWork = $unitOfWork;
-        $this->registry = $registry;
-        $this->mapperFactory = $mapperFactory;
+        parent::__construct($mapperFactory, $registry, $cache);
+        $this->unitOfWork = new UnitOfWork();
+        $this->mapperClass = OrderMapper::class;
+    }
+
+    /**
+     * Obtém o Mapper de pedidos.
+     */
+    protected function getMapper(): OrderMapper
+    {
+        return $this->mapperFactory->get(OrderMapper::class);
     }
 
     /**
@@ -151,11 +156,11 @@ class OrderRepository extends AbstractRepository implements BaseRepositoryInterf
         $data['coupon_amount'] = 0.0;
 
         if ($coupon_code) {
-            $db = $this->registry->get('db');
-            $query = $db->query("SELECT id FROM " . DB_PREFIX . "coupon WHERE code = '" . $db->escape($coupon_code) . "'");
+            $couponRepo = $this->registry->get('alpha_repository_factory')->get(CouponRepository::class);
+            $coupon = $couponRepo->findByCode($coupon_code);
             
-            if ($query->num_rows) {
-                $data['coupon_id'] = (int)$query->row['id'];
+            if ($coupon) {
+                $data['coupon_id'] = $coupon->getId();
                 
                 foreach ($data['totals'] as $total) {
                     if ($total['code'] === 'coupon') {
@@ -176,8 +181,7 @@ class OrderRepository extends AbstractRepository implements BaseRepositoryInterf
     // --- Legacy Bridges (account/order) ---
 
     public function getOrder(int $order_id): array {
-        $query = $this->db->query("SELECT * FROM `" . DB_PREFIX . "order` WHERE order_id = '" . (int)$order_id . "' AND customer_id = '" . (int)$this->customer->getId() . "' AND order_status_id > '0'");
-        return $query->row;
+        return $this->getMapper()->getOrderArray($order_id, (int)$this->customer->getId());
     }
 
     public function getOrders(int $start = 0, int $limit = 20): array {
@@ -187,53 +191,52 @@ class OrderRepository extends AbstractRepository implements BaseRepositoryInterf
         if ($limit < 1) {
             $limit = 20;
         }
-        $query = $this->db->query("SELECT o.order_id, o.firstname, o.lastname, os.name as status, o.date_added, o.total, o.currency_code, o.currency_value, o.order_status_id FROM `" . DB_PREFIX . "order` o LEFT JOIN " . DB_PREFIX . "order_status os ON (o.order_status_id = os.order_status_id) WHERE o.customer_id = '" . (int)$this->customer->getId() . "' AND o.order_status_id > '0' AND o.store_id = '" . (int)$this->config->get('config_store_id') . "' AND os.language_id = '" . (int)$this->config->get('config_language_id') . "' ORDER BY o.order_id DESC LIMIT " . (int)$start . "," . (int)$limit);
-        return $query->rows;
+        return $this->getMapper()->getOrdersArray(
+            (int)$this->customer->getId(),
+            (int)$this->config->get('config_store_id'),
+            (int)$this->config->get('config_language_id'),
+            $start,
+            $limit
+        );
     }
 
     public function getTotalOrders(): int {
-        $query = $this->db->query("SELECT COUNT(*) AS total FROM `" . DB_PREFIX . "order` WHERE customer_id = '" . (int)$this->customer->getId() . "' AND order_status_id > '0' AND store_id = '" . (int)$this->config->get('config_store_id') . "'");
-        return (int)$query->row['total'];
+        return $this->getMapper()->getTotalOrdersCount(
+            (int)$this->customer->getId(),
+            (int)$this->config->get('config_store_id')
+        );
     }
 
     public function getTotalProductsByOrderId(int $order_id): int {
-        $query = $this->db->query("SELECT COUNT(*) AS total FROM " . DB_PREFIX . "order_product WHERE order_id = '" . (int)$order_id . "'");
-        return (int)$query->row['total'];
+        return $this->getMapper()->getTotalProductsByOrderId($order_id);
     }
 
     public function getProducts(int $order_id): array {
-        $query = $this->db->query("SELECT * FROM " . DB_PREFIX . "order_product WHERE order_id = '" . (int)$order_id . "'");
-        return $query->rows;
+        return $this->getMapper()->getProductsArray($order_id);
     }
 
     public function getOptions(int $order_id, int $order_product_id): array {
-        $query = $this->db->query("SELECT * FROM " . DB_PREFIX . "order_option WHERE order_id = '" . (int)$order_id . "' AND order_product_id = '" . (int)$order_product_id . "'");
-        return $query->rows;
+        return $this->getMapper()->getOptionsArray($order_id, $order_product_id);
     }
 
     public function getVouchers(int $order_id): array {
-        $query = $this->db->query("SELECT * FROM " . DB_PREFIX . "order_voucher WHERE order_id = '" . (int)$order_id . "'");
-        return $query->rows;
+        return $this->getMapper()->getVouchersArray($order_id);
     }
 
     public function getTotals(int $order_id): array {
-        $query = $this->db->query("SELECT * FROM " . DB_PREFIX . "order_total WHERE order_id = '" . (int)$order_id . "' ORDER BY sort_order");
-        return $query->rows;
+        return $this->getMapper()->getTotalsArray($order_id);
     }
 
     public function getHistories(int $order_id): array {
-        $query = $this->db->query("SELECT date_added, os.name AS status, oh.comment, oh.notify FROM " . DB_PREFIX . "order_history oh LEFT JOIN " . DB_PREFIX . "order_status os ON oh.order_status_id = os.order_status_id WHERE oh.order_id = '" . (int)$order_id . "' AND os.language_id = '" . (int)$this->config->get('config_language_id') . "' ORDER BY oh.date_added ASC");
-        return $query->rows;
+        return $this->getMapper()->getHistoriesArray($order_id, (int)$this->config->get('config_language_id'));
     }
 
     public function getTotalHistories(int $order_id): int {
-        $query = $this->db->query("SELECT COUNT(*) AS total FROM " . DB_PREFIX . "order_history WHERE order_id = '" . (int)$order_id . "'");
-        return (int)$query->row['total'];
+        return $this->getMapper()->getTotalHistoriesCount($order_id);
     }
 
     public function getSubscription(int $order_id, int $order_product_id): array {
-        $query = $this->db->query("SELECT * FROM " . DB_PREFIX . "order_subscription WHERE order_id = '" . (int)$order_id . "' AND order_product_id = '" . (int)$order_product_id . "'");
-        return $query->row;
+        return $this->getMapper()->getSubscriptionArray($order_id, $order_product_id);
     }
 
     public function getOrdersBySubscriptionId(int $subscription_id, int $start = 0, int $limit = 20): array {
@@ -243,13 +246,11 @@ class OrderRepository extends AbstractRepository implements BaseRepositoryInterf
         if ($limit < 1) {
             $limit = 20;
         }
-        $query = $this->db->query("SELECT o.order_id, o.total, o.currency_code, o.currency_value, o.date_added FROM `" . DB_PREFIX . "order` o WHERE o.subscription_id = '" . (int)$subscription_id . "' ORDER BY o.order_id DESC LIMIT " . (int)$start . "," . (int)$limit);
-        return $query->rows;
+        return $this->getMapper()->getOrdersBySubscriptionIdArray($subscription_id, $start, $limit);
     }
 
     public function getTotalOrdersBySubscriptionId(int $subscription_id): int {
-        $query = $this->db->query("SELECT COUNT(*) AS total FROM `" . DB_PREFIX . "order` WHERE subscription_id = '" . (int)$subscription_id . "'");
-        return (int)$query->row['total'];
+        return $this->getMapper()->getTotalOrdersBySubscriptionIdCount($subscription_id);
     }
 
     // --- Implementações Obrigatórias da Interface BaseRepositoryInterface ---    

@@ -4,7 +4,7 @@
 
 ### Adicionado (Added)
 * **Entidades de Domínio (PHP 8.4)**: Implementação completa de objetos tipados para `Product`, `Category`, `Customer`, `Address`, `Order`, `Voucher`, `Coupon`, `Subscription`, `Marketing`, `TaxClass`, `TaxRate`, `TaxRule`, entre outras.
-* **Camada de Mappers**: Introdução do padrão Data Mapper via `ProductMapper`, `CategoryMapper`, `OrderMapper`, `CustomerMapper`, `AddressMapper`, `CartMapper`, `ManufacturerMapper`, `ReviewMapper`, `SeoUrlMapper`, `TaxMapper` e `ExtensionMapper`.
+* **Camada de Mappers**: Introdução do padrão Data Mapper via `ProductMapper`, `CategoryMapper`, `OrderMapper`, `CustomerMapper`, `AddressMapper`, `CartMapper`, `ManufacturerMapper`, `ReviewMapper`, `SeoUrlMapper`, `TaxMapper`, `ExtensionMapper` e `SubscriptionMapper`.
 * **Repository Pattern**: Implementação de repositórios de domínio como `CustomerRepository`, `LayoutRepository`, `InformationRepository`, `ManufacturerRepository` e `CategoryRepository` para abstração de casos de uso.
 * **Lazy Loading**: Introdução da `LazyCollection` no core do `DataAccessObject` para carregamento sob demanda de coleções pesadas (associações OneToMany).
 * **BaseController (Master Pattern)**: Nova classe base em `Alpha\Controller` que automatiza injeção de mappers, repositórios, resolução de idiomas e respostas JSON.
@@ -19,6 +19,9 @@
 * **Camada de Cache**: Introdução da `CacheStrategyInterface` e `FilesystemCacheStrategy` baseada em disco com suporte a TTL e Lock de escrita.
 * **CurrencyMapper**: Criação do Mapper na Alpha Engine para isolar as consultas da tabela de moedas, adicionando regra de negócio de negócio via `findAllActive()` para listar e alocar em memória apenas moedas ativas.
 * **StockStatusMapper**: Criação do Mapper para gerenciar as mensagens de status de estoque no Alpha Engine, resolvendo a busca por ID e idioma atual da loja.
+* **UploadMapper & UploadRepository**: Mapeador e repositório de uploads de clientes criados para persistência e validação de arquivos enviados.
+* **Método executeRawSQL no DAO**: Adição do método de execução de comandos SQL parametrizados brutos no `DataAccessObject` para suporte a instruções do tipo `INSERT ... ON DUPLICATE KEY UPDATE` em persistências de alta frequência como sessões.
+
 
 ### Modificado (Changed)
 * **Refatoração de EntityMapper para EntityHydrator**: Renomeação da classe utilitária de preenchimento e validação e sua realocação para `core/Support` (namespace `Alpha\Support`), corrigindo desvios conceituais de DTOs e Mappers de persistência de banco de dados.
@@ -27,7 +30,7 @@
 * **Isolamento SQL**: Remoção de lógica procedural e queries manuais dos models legados para o motor `QueryBuilder`.
 * **CategoryRepository Cache**: Injeção da `CacheStrategyInterface` no repositório de categorias para armazenar a árvore de menus em cache, reduzindo drasticamente queries recursivas de taxonomia no banco.
 * **LayoutRepository Cache**: Injeção da `CacheStrategyInterface` no repositório de layouts para armazenar em cache a resolução de rotas, aliviando o banco de dados em todas as visualizações de páginas.
-* **OrderRepository UoW**: Consolidação do repositório de pedidos para orquestrar o `UnitOfWork` nas operações de checkout e confirmação, isolando transações complexas.
+* **OrderRepository UoW**: Consolidação do repositório de pedidos para orquestrar o `UnitOfWork` nas operações de checkout e confirmação, isolando transações complexas. Correção de conflitos de visibilidade de propriedades privadas herdadas, simplificação do construtor, e migração total de consultas SQL legadas para o `OrderMapper` adaptado às PKs normalizadas do banco.
 * **CartRepository Context**: Criação do repositório de carrinho para isolar as regras de resolução de contexto (Sessão vs Cliente Logado) e abstrair a persistência direta nos Controladores.
 * **CustomerRepository Auth**: Refatoração do repositório de clientes para centralizar regras de autenticação (`password_verify`), proteção contra força bruta e validação de registro, extraindo-as do Mapper.
 * **AddressRepository Format**: Criação do repositório de endereços para encapsular a segurança anti-IDOR na busca e a substituição dinâmica de tags do `AddressFormat` de cada região.
@@ -68,7 +71,7 @@
 * **Automated Currency Refresh**: Refatoração do controlador de Cron de Moedas para utilizar o `ExtensionMapper`, rodando o motor de cotação via Alpha Engine.
 * **GDPR Lifecycle Automation**: Refatoração do cron de GDPR para uso exclusivo do `GdprMapper` e `CustomerMapper`.
 * **Atomic GDPR Compliance**: Integração do `UnitOfWork` no processamento de GDPR para garantir que a expiração e remoção de contas ocorram em blocos transacionais atômicos.
-* **Transactional Subscription Renewal**: Refatoração do motor de recorrência (`Subscription Cron`) para utilizar Mappers na orquestração de pedidos, endereços e sessões.
+* **Transactional Subscription Renewal**: Refatoração do motor de recorrência (`Subscription Cron`) para utilizar Mappers na orquestração de pedidos, endereços e sessões, agora obtidos por meio de fábricas do Registry.
 * **Medidas Físicas**: Normalização de `WeightClass` e `LengthClass` para cálculos volumétricos de alta precisão.
 * **Módulo Fiscal**: TaxClass, TaxRate e TaxRule agora utilizam tipagem float rigorosa para evitar erros matemáticos em checkout.
 * **ShippingMapper**: Refatorado para incluir dependências de `WeightClassRepository` e `LengthClassRepository`, preparando para cálculos de frete volumétrico e de dimensões de alta precisão nos módulos de frete.
@@ -86,6 +89,10 @@
 * **Proxies de Configuração do Sistema**: Transformação dos models legados em `catalog/model/setting/` (`store.php`, `extension.php`, `api.php`, `event.php`, `cron.php`, `startup.php`) em pontes seguras (Proxies) que apenas repassam a requisição para os Repositórios da Alpha Engine, blindando a inicialização do sistema.
 * **Painel do Cliente e Endereços (`account/account.php` e `account/address.php`)**: Migração total para a arquitetura `BaseController` e consumo do `WishlistRepository`, `AddressRepository` e `CustomerRepository`.
 * **Lista de Desejos (`account/wishlist.php` e `WishlistRepository`)**: Refatoração completa para usar repositories (`ProductRepository`, `WishlistRepository`), removendo imports e instanciações de mappers nos controladores e centralizando a formatação dos produtos e ações na camada de domínio. Integração do `ImagePresenter` para redimensionamento seguro de imagens de produtos.
+* **Redimensionamento de Imagens e Apresentação (ImagePresenter)**: Refatoração do apresentador para operar de forma 100% autônoma, eliminando a dependência do model legado e utilizando bibliotecas nativas.
+* **Controladores de Ferramentas (Upload, Compare, Blog)**: Refatoração dos controladores para herdar de `BaseController` e consumir os novos repositórios/presenters da Alpha Engine.
+* **Fluxos de Correio (Mail Controllers)**: Ajuste nos controladores de disparo de e-mails de GDPR, Pedido e Assinatura para remover dependências de loaders legados e consumir os novos repositórios.
+
 
 ### Corrigido (Fixed)
 * **Ajuste no ProductMapper**: Inclusão explícita da descrição na consulta SQL dentro do Mapper para garantir que ela não fique vazia.
@@ -93,9 +100,13 @@
 * **Substituição da Função Inexistente oc_config**: Substituição da função `oc_config()` por chamadas diretas ao Registry nos mappers `TotalMapper`, `ShippingMapper` e `PaymentMapper`, evitando erros fatais em fluxos de fechamento de pedido.
 * **Correção no Controlador Featured**: Adicionado o operador de coalescência nula (`?? ''`) e um cast para `(int)` no comprimento para evitar problemas de tipo.
 * **Segurança de Inicialização**: Inicialização de todas as propriedades das entidades com valores padrão para prevenir erros de `uninitialized property`.
+* **Resiliência do ApiSessionMapper**: Adição de tratativa protetiva (try-catch) para prevenção de falhas causadas pela ausência da tabela `api_session` consolidada no OpenCart 4.
+* **Alinhamento do CustomerAffiliate**: Correção da assinatura do método `getId` / `setId` para conformidade estrita com a `InterfaceEntity` e implementação de `JsonSerializable::jsonSerialize`.
 * **Recursividade do DAO**: Correção na resolução de associações ManyToOne/OneToMany para evitar loops infinitos em objetos como `CustomerGroup` e `Language`.
 
 ### Removido (Removed)
 * **Legacy Model Decommissioning**: Desativação oficial e renomeação para `.old` de 11 modelos legados (incluindo `customer.php`, `order.php` e `subscription.php`), consolidando a autoridade do novo motor.
 * **Overhead do Loader**: Remoção progressiva da dependência de `$this->load->model` em favor da injeção via `MapperFactory`.
 * **Redundância SQL**: Eliminação de JOINS manuais em controladores para obtenção de nomes de países, zonas e status.
+* **Desativação de Modelos de Ferramentas**: Modelos legados `image.php` e `upload.php` na pasta `tool/` esvaziados e renomeados para `.old`.
+

@@ -2,6 +2,7 @@
 namespace Alpha\Model\Domain\Entities;
 
 use Alpha\Model\Domain\InterfaceEntity;
+use Alpha\Mappers\CollectionToArrayConverter;
 
 class CustomerAffiliate implements InterfaceEntity
 {
@@ -23,14 +24,14 @@ class CustomerAffiliate implements InterfaceEntity
     private bool $status = false;
     private string $dateAdded = '';
 
-    public function getId(): ?int
+    public function getId(): int
     {
         return $this->customerId;
     }
 
-    public function setId(?int $id): self
+    public function setId(int $id): self
     {
-        $this->customerId = (int)$id;
+        $this->customerId = $id;
         return $this;
     }
 
@@ -88,4 +89,9 @@ class CustomerAffiliate implements InterfaceEntity
 
     public function getDateAdded(): string { return $this->dateAdded; }
     public function setDateAdded(string $dateAdded): self { $this->dateAdded = $dateAdded; return $this; }
+
+    public function jsonSerialize(): mixed
+    {
+        return CollectionToArrayConverter::convertEntity($this);
+    }
 }

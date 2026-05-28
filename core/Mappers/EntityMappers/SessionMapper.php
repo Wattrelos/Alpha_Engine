@@ -37,7 +37,7 @@ class SessionMapper extends BaseMapper // Alterado de AbstractMapper para BaseMa
             ->where("token_session = ?", [$token])
             ->select('LENGTH(data) AS size')
             ->limit(1);
-            
+
         $check = $this->dao->executeQuery($checkQuery);
         if ($check && (int)$check[0]['size'] > self::MAX_SESSION_SIZE) {
             $this->deleteByToken($token);

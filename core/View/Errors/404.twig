@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <!-- Evita que o Google indexe essa página de erro nas buscas principais -->
+    <meta name="robots" content="noindex, follow">
+    
+    <title>{{ seo.title }}</title>
+    <meta name="description" content="{{ seo.description }}">
+    
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f8f9fa;
+            color: #333;
+            text-align: center;
+            padding: 50px 20px;
+            margin: 0;
+        }
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background: white;
+            padding: 40px;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+        }
+        h1 {
+            font-size: 72px;
+            margin: 0;
+            color: #e63946;
+        }
+        h2 {
+            font-size: 24px;
+            margin-top: 10px;
+        }
+        p {
+            color: #666;
+            line-height: 1.6;
+        }
+        .btn {
+            display: inline-block;
+            margin-top: 20px;
+            padding: 12px 24px;
+            background-color: #1d3557;
+            color: white;
+            text-decoration: none;
+            border-radius: 4px;
+            font-weight: bold;
+            transition: background 0.2s;
+        }
+        .btn:hover {
+            background-color: #457b9d;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>404</h1>
+        <h2>Página Não Encontrada</h2>
+        <p>Desculpe, o produto ou a página que você está procurando no <strong>AgSonhos</strong> não existe mais ou foi movida para um novo endereço.</p>
+        
+        <!-- Link amigável para o cliente não ficar preso no erro -->
+        <a href="/dashboard" class="btn">Voltar para o Painel</a>
+    </div>
+
+</body>
+</html>

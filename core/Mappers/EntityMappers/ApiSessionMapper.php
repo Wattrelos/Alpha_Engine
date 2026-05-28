@@ -37,17 +37,21 @@ class ApiSessionMapper extends BaseMapper
      */
     public function getApiByToken(string $token, string $ip): array
     {
-        $query = (new QueryBuilder())
-            ->from(DB_PREFIX . 'api', 'a')
-            ->leftJoin(DB_PREFIX . 'api_session', 'as', 'a.api_id = as.api_id')
-            ->leftJoin(DB_PREFIX . 'api_ip', 'ai', 'a.api_id = ai.api_id')
-            ->where("a.status = ?", ['1'])
-            ->where("as.session_id = ?", [$token])
-            ->where("ai.ip = ?", [$ip])
-            ->select('DISTINCT a.*', 'as.session_id', 'as.date_modified', 'ai.ip');
+        try {
+            $query = (new QueryBuilder())
+                ->from(DB_PREFIX . 'api', 'a')
+                ->leftJoin(DB_PREFIX . 'api_session', 'as', 'a.api_id = as.api_id')
+                ->leftJoin(DB_PREFIX . 'api_ip', 'ai', 'a.api_id = ai.api_id')
+                ->where("a.status = ?", ['1'])
+                ->where("as.session_id = ?", [$token])
+                ->where("ai.ip = ?", [$ip])
+                ->select('DISTINCT a.*', 'as.session_id', 'as.date_modified', 'ai.ip');
 
-        $result = $this->dao->executeQuery($query);
-        return $result[0] ?? [];
+            $result = $this->dao->executeQuery($query);
+            return $result[0] ?? [];
+        } catch (\Exception $e) {
+            return [];
+        }
     }
 
     /**
@@ -55,13 +59,17 @@ class ApiSessionMapper extends BaseMapper
      */
     public function getSessions(int $api_id): array
     {
-        $query = (new QueryBuilder())
-            ->from($this->getFullTableName())
-            ->where("TIMESTAMPADD(HOUR, 1, `date_modified`) < NOW()", [])
-            ->where("api_id = ?", [$api_id])
-            ->select('*');
+        try {
+            $query = (new QueryBuilder())
+                ->from($this->getFullTableName())
+                ->where("TIMESTAMPADD(HOUR, 1, `date_modified`) < NOW()", [])
+                ->where("api_id = ?", [$api_id])
+                ->select('*');
 
-        return $this->dao->executeQuery($query);
+            return $this->dao->executeQuery($query);
+        } catch (\Exception $e) {
+            return [];
+        }
     }
 
     /**
@@ -69,10 +77,14 @@ class ApiSessionMapper extends BaseMapper
      */
     public function updateSession(string $api_session_id): void
     {
-        $conn = \Alpha\Model\DataAccessObject\ConnectionDB::getInstance()->getConnection();
-        $sql = "UPDATE `" . $this->getFullTableName() . "` SET `date_modified` = NOW() WHERE `api_session_id` = ?";
-        $stmt = $conn->prepare($sql);
-        $stmt->execute([(int)$api_session_id]);
+        try {
+            $conn = \Alpha\Model\DataAccessObject\ConnectionDB::getInstance()->getConnection();
+            $sql = "UPDATE `" . $this->getFullTableName() . "` SET `date_modified` = NOW() WHERE `api_session_id` = ?";
+            $stmt = $conn->prepare($sql);
+            $stmt->execute([(int)$api_session_id]);
+        } catch (\Exception $e) {
+            // Ignore if table does not exist
+        }
     }
 
     /**
@@ -80,9 +92,13 @@ class ApiSessionMapper extends BaseMapper
      */
     public function cleanSessions(): void
     {
-        $conn = \Alpha\Model\DataAccessObject\ConnectionDB::getInstance()->getConnection();
-        $sql = "DELETE FROM `" . $this->getFullTableName() . "` WHERE TIMESTAMPADD(HOUR, 1, `date_modified`) < NOW()";
-        $conn->query($sql);
+        try {
+            $conn = \Alpha\Model\DataAccessObject\ConnectionDB::getInstance()->getConnection();
+            $sql = "DELETE FROM `" . $this->getFullTableName() . "` WHERE TIMESTAMPADD(HOUR, 1, `date_modified`) < NOW()";
+            $conn->query($sql);
+        } catch (\Exception $e) {
+            // Ignore if table does not exist
+        }
     }
 
     /**
@@ -93,17 +109,21 @@ class ApiSessionMapper extends BaseMapper
      */
     public function getByToken(string $token): ?ApiSession
     {
-        $query = (new QueryBuilder())
-            ->from($this->getFullTableName())
-            ->where("session_id = ?", [$token])
-            ->select('api_session_id AS id');
+        try {
+            $query = (new QueryBuilder())
+                ->from($this->getFullTableName())
+                ->where("session_id = ?", [$token])
+                ->select('api_session_id AS id');
 
-        $results = $this->dao->executeQuery($query);
-        if ($results) {
-            $entity = new ApiSession();
-            $entity->setId((int)$results[0]['id']);
-            $hydrated = $this->dao->read($entity);
-            return $hydrated ? $hydrated[0] : null;
+            $results = $this->dao->executeQuery($query);
+            if ($results) {
+                $entity = new ApiSession();
+                $entity->setId((int)$results[0]['id']);
+                $hydrated = $this->dao->read($entity);
+                return $hydrated ? $hydrated[0] : null;
+            }
+        } catch (\Exception $e) {
+            // Ignore if table does not exist
         }
         return null;
     }

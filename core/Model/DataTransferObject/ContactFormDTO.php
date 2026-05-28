@@ -26,7 +26,7 @@ class ContactFormDTO extends BaseDTO
 
     /**
      * Callback para validar se o e-mail já existe no banco.
-     * O $context é injetado pelo EntityMapper.
+     * O $context é injetado pelo EntityHydrator.
      */
     public function validateUniqueEmail(mixed $value, array $context): bool|string
     {

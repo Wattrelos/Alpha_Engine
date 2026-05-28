@@ -1,11 +1,15 @@
 <?php
 namespace Opencart\Catalog\Controller\Mail;
+
+use Alpha\Controller\BaseController;
+use Alpha\Model\Domain\Repositories\UploadRepository;
+
 /**
  * Class Subscription
  *
  * @package Opencart\Catalog\Controller\Mail
  */
-class Subscription extends \Opencart\System\Engine\Controller {
+class Subscription extends BaseController {
 	/**
 	 * Index
 	 *
@@ -432,7 +436,7 @@ class Subscription extends \Opencart\System\Engine\Controller {
 			}
 
 			// Upload
-			$this->load->model('tool/upload');
+			$uploadRepository = $this->getRepository(UploadRepository::class);
 
 			$data['products'] = [];
 
@@ -447,7 +451,7 @@ class Subscription extends \Opencart\System\Engine\Controller {
 					if ($order_option['type'] != 'file') {
 						$value = $order_option['value'];
 					} else {
-						$upload_info = $this->model_tool_upload->getUploadByCode($order_option['value']);
+						$upload_info = $uploadRepository->getUploadByCode($order_option['value']);
 
 						if ($upload_info) {
 							$value = $upload_info['name'];
