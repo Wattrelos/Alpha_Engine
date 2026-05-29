@@ -1,25 +1,25 @@
 <nav class="navbar navbar-expand-lg border-bottom border-body bg-primary bg-dark" data-bs-theme="dark">
     <div class="container-fluid">                                        
         <ul class="nav nav-pills nav-fill me-auto mb-2 mb-lg-0" >
-            <li class="nav-item"><a href="{{ home|default('/') }}" class="nav-link"><i class="fa-solid fa-house"></i><span class="d-none d-lg-inline"> {{ text_home|default('Início') }}</span></a></li>
-            <li class="nav-item"><a href="{{ contact|default('/contato') }}" class="nav-link"><i class="fa-solid fa-phone"></i><span class="d-none d-lg-inline"> {{ telephone|default('Contato') }}</span></a></li>
+            <li class="nav-item"><a href="{{ home|default(url('home', {}, lang)) }}" class="nav-link"><i class="fa-solid fa-house"></i><span class="d-none d-lg-inline"> {{ text_home|default('Início') }}</span></a></li>
+            <li class="nav-item"><a href="{{ contact|default(url('information/contact', {}, lang)) }}" class="nav-link"><i class="fa-solid fa-phone"></i><span class="d-none d-lg-inline"> {{ telephone|default('Contato') }}</span></a></li>
             <li class="nav-item dropdown">
                 <a href="#" class="dropdown-toggle nav-link" data-bs-toggle="dropdown"><i class="fa-solid fa-user"></i> <span class="d-none d-lg-inline">{{ text_account|default('Minha Conta') }}</span> <i class="fa-solid fa-caret-down"></i></a>
                 <ul class="dropdown-menu dropdown-menu-dark">
                     {% if not logged %}
-                        <li><a href="{{ register|default('/cadastro') }}" class="dropdown-item">{{ text_register|default('Registrar') }}</a></li>
-                        <li><a href="{{ login|default('/login') }}" class="dropdown-item">{{ text_login|default('Login') }}</a></li>
+                        <li><a href="{{ register|default(url('cadastro', {}, lang)) }}" class="dropdown-item">{{ text_register|default('Registrar') }}</a></li>
+                        <li><a href="{{ login|default(url('login', {}, lang)) }}" class="dropdown-item">{{ text_login|default('Login') }}</a></li>
                     {% else %}
-                        <li><a href="{{ account|default('/minha-conta') }}" class="dropdown-item">{{ text_account|default('Minha Conta') }}</a></li>
-                        <li><a href="{{ order|default('/pedidos') }}" class="dropdown-item">{{ text_order|default('Pedidos') }}</a></li>
-                        <li><a href="{{ transaction|default('/transacoes') }}" class="dropdown-item">{{ text_transaction|default('Transações') }}</a></li>
-                        <li><a href="{{ logout|default('/logout') }}" class="dropdown-item">{{ text_logout|default('Sair') }}</a></li>
+                        <li><a href="{{ account|default(url('account/account', {}, lang)) }}" class="dropdown-item">{{ text_account|default('Minha Conta') }}</a></li>
+                        <li><a href="{{ order|default(url('account/order', {}, lang)) }}" class="dropdown-item">{{ text_order|default('Pedidos') }}</a></li>
+                        <li><a href="{{ transaction|default(url('account/transaction', {}, lang)) }}" class="dropdown-item">{{ text_transaction|default('Transações') }}</a></li>
+                        <li><a href="{{ logout|default(url('logout', {}, lang)) }}" class="dropdown-item">{{ text_logout|default('Sair') }}</a></li>
                     {% endif %}
                 </ul>
             </li>
-            <li class="nav-item"><a class="nav-link" href="{{ wishlist|default('/favoritos') }}" id="wishlist-total" title="{{ text_wishlist|default('Favoritos') }}"><i class="fa-solid fa-heart"></i> <span class="d-none d-lg-inline">{{ text_wishlist|default('Favoritos') }}</span></a></li>
-            <li class="nav-item"><a class="nav-link" href="{{ shopping_cart|default('/carrinho') }}" title="{{ text_shopping_cart|default('Carrinho') }}"><i class="fa-solid fa-cart-shopping"></i> <span class="d-none d-lg-inline">{{ text_shopping_cart|default('Carrinho') }}</span></a></li>
-            <li class="nav-item"><a class="nav-link" href="{{ checkout|default('/checkout') }}" title="{{ text_checkout|default('Finalizar Compra') }}"><i class="fa-solid fa-share"></i> <span class="d-none d-lg-inline">{{ text_checkout|default('Finalizar Compra') }}</span></a></li>
+            <li class="nav-item"><a class="nav-link" href="{{ wishlist|default(url('account/wishlist', {}, lang)) }}" id="wishlist-total" title="{{ text_wishlist|default('Favoritos') }}"><i class="fa-solid fa-heart"></i> <span class="d-none d-lg-inline">{{ text_wishlist|default('Favoritos') }}</span></a></li>
+            <li class="nav-item"><a class="nav-link" href="{{ shopping_cart|default(url('carrinho', {}, lang)) }}" title="{{ text_shopping_cart|default('Carrinho') }}"><i class="fa-solid fa-cart-shopping"></i> <span class="d-none d-lg-inline">{{ text_shopping_cart|default('Carrinho') }}</span></a></li>
+            <li class="nav-item"><a class="nav-link" href="{{ checkout|default(url('checkout', {}, lang)) }}" title="{{ text_checkout|default('Finalizar Compra') }}"><i class="fa-solid fa-share"></i> <span class="d-none d-lg-inline">{{ text_checkout|default('Finalizar Compra') }}</span></a></li>
         </ul>
     </div>
 </nav>

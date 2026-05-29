@@ -1,0 +1,187 @@
+{% extends 'layouts/base.html.twig' %}
+
+{% block title %}{{ seo.title }}{% endblock %}
+
+{% block content %}
+<div class="container my-5">
+    <!-- Breadcrumbs -->
+    <nav aria-label="breadcrumb" class="mb-4">
+        <ol class="breadcrumb bg-light p-3 rounded shadow-sm">
+            <li class="breadcrumb-item"><a href="/{{ lang }}" class="text-primary text-decoration-none"><i class="fas fa-home"></i> Início</a></li>
+            {% if category.breadcrumbs %}
+                {% for crumb in category.breadcrumbs|slice(1) %}
+                    <li class="breadcrumb-item"><a href="{{ crumb.href }}" class="text-primary text-decoration-none">{{ crumb.text }}</a></li>
+                {% endfor %}
+            {% else %}
+                <li class="breadcrumb-item active" aria-current="page">{{ category.name }}</li>
+            {% endif %}
+        </ol>
+    </nav>
+
+    <div class="row">
+        <!-- Banner/Cabeçalho da Categoria -->
+        <div class="col-12 mb-4">
+            <div class="category-header p-4 bg-white rounded shadow-sm border text-center text-md-start">
+                <div class="row align-items-center">
+                    {% if category.thumb %}
+                        <div class="col-md-2 mb-3 mb-md-0 text-center">
+                            <img src="{{ category.thumb }}" alt="{{ category.name }}" class="img-fluid rounded shadow-sm" style="max-height: 120px;">
+                        </div>
+                    {% endif %}
+                    <div class="col">
+                        <h1 class="h3 mb-2 font-weight-bold text-dark">{{ category.name }}</h1>
+                        {% if category.description %}
+                            <div class="text-secondary lh-base small mb-0">{{ category.description|raw }}</div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Subcategorias (Se existirem) -->
+    {% if category.categories %}
+        <div class="row mb-4">
+            <div class="col-12">
+                <div class="bg-white p-3 rounded shadow-sm border">
+                    <span class="text-muted font-weight-bold d-block mb-2 text-uppercase small">Subcategorias</span>
+                    <div class="d-flex flex-wrap gap-2">
+                        {% for sub in category.categories %}
+                            <a href="{{ sub.href }}" class="btn btn-outline-secondary btn-sm rounded-pill shadow-sm transition-all hover-primary">
+                                <i class="fas fa-folder me-1"></i> {{ sub.name }}
+                            </a>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    {% endif %}
+
+    <div class="row">
+        <!-- Filtros, Ordenação e Limites -->
+        <div class="col-12 mb-4">
+            <div class="bg-white p-3 rounded shadow-sm border d-flex flex-wrap justify-content-between align-items-center gap-3">
+                <div class="text-muted small">
+                    Exibindo <strong>{{ category.products|length }}</strong> de <strong>{{ category.product_total }}</strong> produtos
+                </div>
+                
+                <div class="d-flex align-items-center gap-3 flex-wrap">
+                    <!-- Ordenação -->
+                    <div class="d-flex align-items-center gap-2">
+                        <label for="select-sort" class="text-secondary small font-weight-bold text-nowrap mb-0">Ordenar:</label>
+                        <select id="select-sort" class="form-select form-select-sm" onchange="location = this.value;">
+                            {% for option in category.sorts %}
+                                <option value="{{ option.href }}" {% if option.value == category.sort ~ '-' ~ category.order %}selected{% endif %}>{{ option.text }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <!-- Exibir por página -->
+                    <div class="d-flex align-items-center gap-2">
+                        <label for="select-limit" class="text-secondary small font-weight-bold text-nowrap mb-0">Exibir:</label>
+                        <select id="select-limit" class="form-select form-select-sm" onchange="location = this.value;">
+                            {% for option in category.limits %}
+                                <option value="{{ option.href }}" {% if option.value == category.limit %}selected{% endif %}>{{ option.text }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Grade de Produtos -->
+    <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-4">
+        {% for prod in category.products %}
+            <div class="col">
+                <div class="card h-100 product-card border rounded shadow-sm hover-shadow bg-white transition-all overflow-hidden">
+                    <a href="{{ prod.href }}" class="d-block text-center p-3 border-bottom bg-light position-relative">
+                        {% if prod.thumb %}
+                            <img src="{{ prod.thumb }}" alt="{{ prod.name }}" class="img-fluid transition-scale" style="height: 180px; object-fit: contain;">
+                        {% else %}
+                            <img src="/img/no-image.png" alt="{{ prod.name }}" class="img-fluid" style="height: 180px; object-fit: contain;">
+                        {% endif %}
+                    </a>
+                    
+                    <div class="card-body p-3 d-flex flex-column justify-content-between">
+                        <div>
+                            <h3 class="h6 card-title mb-1 text-dark text-truncate-2 font-weight-bold" style="min-height: 40px;">
+                                <a href="{{ prod.href }}" class="text-dark text-decoration-none hover-primary">{{ prod.name }}</a>
+                            </h3>
+                            
+                            <p class="text-muted small lh-sm mb-3 text-truncate-3" style="min-height: 48px;">
+                                {{ prod.description|striptags }}
+                            </p>
+                        </div>
+                        
+                        <div>
+                            <div class="price-block mb-3">
+                                {% if prod.special %}
+                                    <span class="text-muted text-decoration-line-through small me-2">{{ prod.price }}</span>
+                                    <span class="text-danger font-weight-bold fs-5">{{ prod.special }}</span>
+                                {% else %}
+                                    <span class="text-primary font-weight-bold fs-5">{{ prod.price }}</span>
+                                {% endif %}
+                                {% if prod.tax %}
+                                    <div class="text-muted x-small mt-1">Sem imposto: {{ prod.tax }}</div>
+                                {% endif %}
+                            </div>
+
+                            <form action="{{ prod.cart_add }}" method="POST" data-oc-toggle="ajax">
+                                <input type="hidden" name="product_id" value="{{ prod.product_id }}">
+                                <input type="hidden" name="quantity" value="{{ prod.minimum }}">
+                                <button type="submit" class="btn btn-primary btn-sm w-100 shadow-sm font-weight-bold">
+                                    <i class="fas fa-shopping-cart me-1"></i> Comprar
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        {% else %}
+            <div class="col-12">
+                <div class="alert alert-info text-center py-5 bg-white shadow-sm border rounded">
+                    <i class="fas fa-info-circle fa-2x mb-3 text-muted"></i>
+                    <p class="mb-0 text-secondary">Nenhum produto foi encontrado nesta categoria.</p>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+
+    <!-- Paginação -->
+    {% if category.product_total > category.limit %}
+        <div class="row mt-5">
+            <div class="col-12 d-flex justify-content-center">
+                <nav aria-label="Navegação de página">
+                    <ul class="pagination shadow-sm border rounded">
+                        {% set total_pages = (category.product_total / category.limit)|round(0, 'ceil') %}
+                        {% set current_page = category.pagination.page %}
+                        
+                        {% if current_page > 1 %}
+                            <li class="page-item">
+                                <a class="page-link" href="{{ category.pagination.url|replace({'{page}': current_page - 1}) }}" aria-label="Anterior">
+                                    <span aria-hidden="true">&laquo;</span>
+                                </a>
+                            </li>
+                        {% endif %}
+
+                        {% for page in 1..total_pages %}
+                            <li class="page-item {% if page == current_page %}active{% endif %}">
+                                <a class="page-link" href="{{ category.pagination.url|replace({'{page}': page}) }}">{{ page }}</a>
+                            </li>
+                        {% endfor %}
+
+                        {% if current_page < total_pages %}
+                            <li class="page-item">
+                                <a class="page-link" href="{{ category.pagination.url|replace({'{page}': current_page + 1}) }}" aria-label="Próximo">
+                                    <span aria-hidden="true">&raquo;</span>
+                                </a>
+                            </li>
+                        {% endif %}
+                    </ul>
+                </nav>
+            </div>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

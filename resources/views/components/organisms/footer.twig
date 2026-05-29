@@ -13,26 +13,26 @@
 
 {# 2. Links de Atendimento/Suporte #}
 {% set service_links = [
-  { href: contact|default('/index.php?route=information/contact&language=' ~ lang), label: text_contact|default('Fale Conosco') },
-  { href: return|default('/index.php?route=account/return/add&language=' ~ lang), label: text_return|default('Devoluções') },
-  { href: sitemap|default('/index.php?route=information/sitemap&language=' ~ lang), label: text_sitemap|default('Mapa do Site') }
+  { href: contact|default(url('information/contact', {}, lang)), label: text_contact|default('Fale Conosco') },
+  { href: return|default(url('account/return/add', {}, lang)), label: text_return|default('Devoluções') },
+  { href: sitemap|default(url('information/sitemap', {}, lang)), label: text_sitemap|default('Mapa do Site') }
 ] %}
 
 {# 3. Links Extras #}
 {% set extra_links = [
-  { href: manufacturer|default('/index.php?route=product/manufacturer&language=' ~ lang), label: text_manufacturer|default('Marcas/Fabricantes') }
+  { href: manufacturer|default(url('product/manufacturer', {}, lang)), label: text_manufacturer|default('Marcas/Fabricantes') }
 ] %}
 {% if affiliate %}
-  {% set extra_links = extra_links|merge([{ href: affiliate|default('/index.php?route=account/affiliate&language=' ~ lang), label: text_affiliate|default('Afiliados') }]) %}
+  {% set extra_links = extra_links|merge([{ href: affiliate|default(url('account/affiliate', {}, lang)), label: text_affiliate|default('Afiliados') }]) %}
 {% endif %}
-{% set extra_links = extra_links|merge([{ href: special|default('/index.php?route=product/special&language=' ~ lang), label: text_special|default('Ofertas Especiais') }]) %}
+{% set extra_links = extra_links|merge([{ href: special|default(url('product/special', {}, lang)), label: text_special|default('Ofertas Especiais') }]) %}
 
 {# 4. Links de Minha Conta #}
 {% set account_links = [
-  { href: account|default('/index.php?route=account/account&language=' ~ lang), label: text_account|default('Minha Conta') },
-  { href: order|default('/index.php?route=account/order&language=' ~ lang), label: text_order|default('Histórico de Pedidos') },
-  { href: wishlist|default('/index.php?route=account/wishlist&language=' ~ lang), label: text_wishlist|default('Lista de Desejos') },
-  { href: newsletter|default('/index.php?route=account/newsletter&language=' ~ lang), label: text_newsletter|default('Informativo') }
+  { href: account|default(url('account/account', {}, lang)), label: text_account|default('Minha Conta') },
+  { href: order|default(url('account/order', {}, lang)), label: text_order|default('Histórico de Pedidos') },
+  { href: wishlist|default(url('account/wishlist', {}, lang)), label: text_wishlist|default('Lista de Desejos') },
+  { href: newsletter|default(url('account/newsletter', {}, lang)), label: text_newsletter|default('Informativo') }
 ] %}
 
 <footer class="ag-footer">

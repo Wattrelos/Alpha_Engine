@@ -1,0 +1,32 @@
+{% extends 'layouts/base.html.twig' %}
+
+{% block title %}{{ seo.title }}{% endblock %}
+
+{% block content %}
+<div class="container my-5">
+    <!-- Breadcrumbs -->
+    <nav aria-label="breadcrumb" class="mb-4">
+        <ol class="breadcrumb bg-light p-3 rounded shadow-sm">
+            <li class="breadcrumb-item"><a href="/{{ lang }}" class="text-primary text-decoration-none"><i class="fas fa-home"></i> Início</a></li>
+            {% if information.breadcrumbs %}
+                {% for crumb in information.breadcrumbs|slice(1) %}
+                    <li class="breadcrumb-item"><a href="{{ crumb.href }}" class="text-primary text-decoration-none">{{ crumb.text }}</a></li>
+                {% endfor %}
+            {% else %}
+                <li class="breadcrumb-item active" aria-current="page">{{ information.title }}</li>
+            {% endif %}
+        </ol>
+    </nav>
+
+    <div class="row justify-content-center">
+        <div class="col-lg-10">
+            <article class="bg-white p-4 p-md-5 rounded shadow-sm border lh-lg">
+                <h1 class="h2 mb-4 text-dark font-weight-bold border-bottom pb-3">{{ information.title }}</h1>
+                <div class="content-body text-secondary">
+                    {{ information.description|raw }}
+                </div>
+            </article>
+        </div>
+    </div>
+</div>
+{% endblock %}
