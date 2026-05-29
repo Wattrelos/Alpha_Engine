@@ -1,14 +1,20 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Alpha\Controller\Actions\Customer\Auth;
 
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Psr\Http\Message\ResponseInterface as Response;
-use Alpha\Model\Services\Auth\AuthService;
+use Alpha\Controller\Actions\ActionInterface;
+use Alpha\Auth\Services\AuthService;
 
-class LogoutAction
+/**
+ * LoginAction - Processa a autenticação do cliente via requisição POST /login (AJAX).
+ */
+class LoginAction implements ActionInterface
 {
-    private $authService;
+    private AuthService $authService;
 
     public function __construct(AuthService $authService)
     {
@@ -17,19 +23,39 @@ class LogoutAction
 
     public function __invoke(Request $request, Response $response, array $args): Response
     {
-        // 1. Pega os cookies do cliente
-        $cookies = $request->getCookieParams();
-        $sessionId = $cookies['session_id'] ?? '';
+        $params = $request->getParsedBody();
+        $email = trim((string)($params['email'] ?? ''));
+        $password = trim((string)($params['password'] ?? ''));
+        $redirect = trim((string)($params['redirect'] ?? ''));
 
-        if (!empty($sessionId)) {
-            // 2. Remove do Redis
-            $this->authService->destroySession($sessionId);
+        // Valida as credenciais de forma segura através do AuthService (que delega para o CustomerRepository)
+        $user = $this->authService->authenticate($email, $password);
+
+        if (!$user) {
+            $response->getBody()->write(json_encode([
+                'error' => 'Aviso: Seu endereço de e-mail e/ou senha não coincidem.'
+            ]));
+            return $response->withHeader('Content-Type', 'application/json')->withStatus(400);
         }
 
-        // 3. Limpa o cookie do navegador
-        header("Set-Cookie: session_id=; Path=/; Expires=Thu, 01 Jan 1970 00:00:00 GMT; HttpOnly; SameSite=Lax");
+        // Se autenticou com sucesso, cria a sessão no Redis
+        $sessionId = $this->authService->createSession($user);
 
-        // 4. Redireciona para a tela de login pública
-        return $response->withHeader('Location', '/login')->withStatus(302);
+        // Define o Cookie de Sessão de forma segura
+        $cookieValue = sprintf(
+            'session_id=%s; Path=/; HttpOnly; SameSite=Lax; Max-Age=7200',
+            $sessionId
+        );
+
+        $redirectUrl = (!empty($redirect) && str_starts_with($redirect, '/')) ? $redirect : '/';
+
+        $response->getBody()->write(json_encode([
+            'redirect' => $redirectUrl
+        ]));
+
+        return $response
+            ->withHeader('Set-Cookie', $cookieValue)
+            ->withHeader('Content-Type', 'application/json')
+            ->withStatus(200);
     }
 }

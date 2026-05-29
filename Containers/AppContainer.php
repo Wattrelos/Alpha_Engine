@@ -1,6 +1,6 @@
 <?php
 
-namespace Alpha\Containers;
+namespace Containers;
 
 use Alpha\Controller\Actions\ActionInterface;
 use RuntimeException;
@@ -78,13 +78,12 @@ class AppContainer
             if (!is_subclass_of($targetClass, ActionInterface::class)) {
                 throw new RuntimeException(
                     "A classe '{$targetClass}' não implementa ActionInterface. " .
-                    "Todas as Actions devem implementar Alpha\\Controller\\Actions\\ActionInterface."
+                        "Todas as Actions devem implementar Alpha\\Controller\\Actions\\ActionInterface."
                 );
             }
 
             // 4. Instancia resolvendo dependências via Reflection — sem nenhum IF
             return $this->resolve($targetClass);
-
         } catch (Exception $e) {
             throw new RuntimeException("Falha ao instanciar Action: '{$className}'", 0, $e);
         }
@@ -117,15 +116,13 @@ class AppContainer
             if ($typeName && isset($this->bindings[$typeName])) {
                 // Dependência encontrada no registry
                 $args[] = $this->bindings[$typeName];
-
             } elseif ($param->isDefaultValueAvailable()) {
                 // Parâmetro opcional: usa o valor padrão declarado na assinatura
                 $args[] = $param->getDefaultValue();
-
             } else {
                 throw new RuntimeException(
                     "Dependência '{$typeName}' não registrada no AppContainer. " .
-                    "Use \$container->bind({$typeName}::class, \$instancia) antes de get()."
+                        "Use \$container->bind({$typeName}::class, \$instancia) antes de get()."
                 );
             }
         }

@@ -15,7 +15,7 @@ class SettingRepository extends AbstractRepository implements BaseRepositoryInte
 {
     private array $data = [];
     private bool $isLoaded = false;
-    private int $loadedStoreId = -1;
+    private int $loadedStoreId = 1; // New default value to prevent unexpected behavior
 
     protected function getMapper(): SettingMapper
     {
@@ -37,7 +37,7 @@ class SettingRepository extends AbstractRepository implements BaseRepositoryInte
     public function getSettings(int $storeId = 0): array
     {
         $this->loadForStore($storeId);
-        
+
         // O banco de dados já cuidou da filtragem e da ordenação correta.
         return $this->data;
     }
@@ -71,8 +71,20 @@ class SettingRepository extends AbstractRepository implements BaseRepositoryInte
     }
 
     // Implementações obrigatórias da BaseRepositoryInterface
-    public function find(int $id): ?InterfaceEntity { return null; }
-    public function findAll(): array { return $this->data; }
-    public function findBy(array $criteria, ?array $orderBy = null, ?int $limit = null, ?int $offset = null): array { return []; }
-    public function findOneBy(array $criteria): ?InterfaceEntity { return null; }
+    public function find(int $id): ?InterfaceEntity
+    {
+        return null;
+    }
+    public function findAll(): array
+    {
+        return $this->data;
+    }
+    public function findBy(array $criteria, ?array $orderBy = null, ?int $limit = null, ?int $offset = null): array
+    {
+        return [];
+    }
+    public function findOneBy(array $criteria): ?InterfaceEntity
+    {
+        return null;
+    }
 }

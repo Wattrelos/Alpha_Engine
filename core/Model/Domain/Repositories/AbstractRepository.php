@@ -4,7 +4,6 @@ namespace Alpha\Model\Domain\Repositories;
 
 use Alpha\Mappers\MapperFactory;
 use Alpha\Support\Cache\CacheStrategyInterface;
-use Opencart\System\Engine\Registry;
 
 /**
  * AbstractRepository - Classe base para todos os Repositórios da Alpha Engine.
@@ -15,16 +14,16 @@ use Opencart\System\Engine\Registry;
 abstract class AbstractRepository
 {
     protected MapperFactory $mapperFactory;
-    protected Registry $registry;
+    protected mixed $registry = null;
     protected ?CacheStrategyInterface $cache = null;
     protected string $mapperClass = ''; // Definido nas classes filhas para uso genérico do getIndexData
 
     /**
      * @param MapperFactory $mapperFactory
-     * @param Registry $registry
+     * @param mixed $registry O Registry, Container ou nulo.
      * @param CacheStrategyInterface|null $cache Driver de cache opcional para otimização de consultas.
      */
-    public function __construct(MapperFactory $mapperFactory, Registry $registry, ?CacheStrategyInterface $cache = null)
+    public function __construct(MapperFactory $mapperFactory, mixed $registry = null, ?CacheStrategyInterface $cache = null)
     {
         $this->mapperFactory = $mapperFactory;
         $this->registry = $registry;
@@ -40,40 +39,51 @@ abstract class AbstractRepository
     }
 
     /**
-     * Alpha Engine: Carrega traduções diretamente através do objeto Language nativo,
-     * eliminando a dependência do Loader legado ($this->load->language).
+     * Alpha Engine: Carrega traduções de forma nativa e segura.
      * 
      * @param string $route Rota do arquivo de idioma (ex: 'common/header')
      * @return array
      */
     protected function loadLanguage(string $route): array
     {
-        return $this->registry->get('language')->load($route) ?: [];
+        if ($this->registry && method_exists($this->registry, 'get')) {
+            $lang = $this->registry->get('language');
+            return $lang ? $lang->load($route) : [];
+        }
+        return [];
     }
+
     /**
-     * Alpha Engine: Substituto direto para $this->load->config()
+     * Alpha Engine: Carrega configurações de forma segura.
      */
     protected function loadConfig(string $filename): void
     {
-        $factory = $this->registry->get('alpha_repository_factory');
-        $factory->get(ConfigurationRepository::class)->loadFile($filename);
+        if ($this->registry && method_exists($this->registry, 'get')) {
+            $factory = $this->registry->get('alpha_repository_factory');
+            if ($factory) {
+                $factory->get(ConfigurationRepository::class)->loadFile($filename);
+            }
+        }
     }
 
-
     /**
-     * Permite acesso transparente aos serviços do OpenCart e shorthands comuns.
+     * Permite acesso transparente aos serviços e shorthands comuns.
      */
     public function __get(string $key): mixed
     {
-        if ($key === 'store_id') {
-            return (int)$this->registry->get('config')->get('config_store_id');
+        if ($this->registry && method_exists($this->registry, 'get')) {
+            if ($key === 'store_id') {
+                $config = $this->registry->get('config');
+                return $config ? (int)$config->get('config_store_id') : 0;
+            }
+            if ($key === 'language_id') {
+                $config = $this->registry->get('config');
+                return $config ? (int)$config->get('config_language_id') : 2;
+            }
+            return $this->registry->get($key);
         }
-        if ($key === 'language_id') {
-            return (int)$this->registry->get('config')->get('config_language_id');
-        }
-        return $this->registry->get($key);
+        return null;
     }
-
 
     /**
      * Implementação padrão para index. 

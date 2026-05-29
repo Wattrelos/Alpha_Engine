@@ -1,0 +1,56 @@
+{# Container principal do formulário (antigo border rounded p-3...) #}
+<div class="egen-login-card">
+	<form id="form-login" action="{{ action }}" method="post" data-oc-toggle="ajax">
+
+		{# Textos do topo (Átomos/Moléculas de texto) #}
+		{# Títulos #}
+			<h2 class="egen-login-title"> {{ title }}</h2>
+		<p class="egen-login-subtitle">
+			<strong>{{ subtitle }}</strong>
+		</p>
+
+		{# Molécula: Campo de E-mail #}
+		<div class="egen-form-group">
+			{% include 'components/molecules/form-group.twig' with {
+				id: 'input-email',
+				type: 'email',
+				name: 'email',
+				value: email_value,
+				label: entry_email_text,
+				placeholder: entry_email_text
+			} %}
+		</div>
+
+		{# Molécula: Campo de Senha + Link #}
+		<div class="egen-form-group">
+			{% include 'components/molecules/form-group-password.twig' with {
+				id: 'input-password',
+				name: 'password',
+				value: password_value,
+				label: entry_password_text,
+				placeholder: entry_password_text
+			} %}
+
+			{# Átomo: Link de Esqueci a Senha #}
+			{% include 'components/atoms/link.twig' with {
+				href: forgotten_url,
+				text: text_forgotten_text
+			} %}
+		</div>
+
+		{# Campo Invisível (Átomo) #}
+		{% if redirect %}
+			<input type="hidden" name="redirect" value="{{ redirect }}"/>
+		{% endif %}
+
+		{# Átomo: Botão de Enviar #}
+		<div class="egen-form-actions">
+			{% include 'components/atoms/button.twig' with {
+				style: 'primary',
+				text: button_login_text,
+				html_type: 'submit'
+			} %}
+		</div>
+
+	</form>
+</div>

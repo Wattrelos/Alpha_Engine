@@ -1,20 +1,20 @@
-# Alpha Engine - Modernização do OpenCart 4.x
+# Alpha Engine - Arquitetura de Software do E-commerce Standalone
 **Documentação Central de Arquitetura**
 
-Este projeto implementa uma camada de engenharia de software moderna sobre o núcleo do OpenCart, focando em separação de responsabilidades, segurança e manutenibilidade.
+Este projeto consiste em um sistema de e-commerce moderno e independente desenvolvido com a Alpha Engine. A arquitetura de execução do OpenCart foi completamente descontinuada e abandonada no runtime da aplicação. Todo o fluxo de execução — incluindo bootstrap, roteador de requisições, controllers e views — é implementado do zero, adotando as melhores práticas do mercado, enquanto os arquivos legados do OpenCart servem unicamente como referências conceituais e de dados.
 
 ## 📍 Status Atual (Checkpoint)
 
 * **Onde paramos (Última Conquista):** 
   * **Saneamento Semântico (EntityMapper para EntityHydrator):** Renomeação da classe utilitária de preenchimento reflexivo e validação e sua realocação para `core/Support` (namespace `Alpha\Support`), eliminando o desvio conceitual de pastas de DTOs e Mappers de persistência.
   * Criamos os repositórios vitais de infraestrutura (`ConfigurationRepository`, `TranslationRepository`), eliminando a dependência do `loader.php` para configurações e traduções (i18n).
-  * O `AlphaContainer` foi refatorado para usar dicionários $O(1)$, interceptando mais de 25 modelos legados aposentados (`.old`) de forma performática e blindando o OpenCart contra quebras.
+  * O `AlphaContainer` foi refatorado para usar dicionários $O(1)$, interceptando mais de 25 modelos legados aposentados (`.old`) de forma performática e blindando a Alpha Engine contra quebras ao interagir com estruturas legadas.
   * Consolidamos a lógica do `CartRepository` (mesclagem de sessões, opções, cálculos de peso e impostos).
   * Refatoramos os Controladores de **Categoria** e **Busca** para atuarem puramente via `BaseController`, consumindo ViewResponses perfeitamente padronizadas.
   * Concluímos a blindagem dos modelos de configuração legados em `catalog/model/setting/` (`api`, `cron`, `event`, `extension`, `startup`, `store`), transformando-os em Proxies que delegam o acesso a dados de forma segura e cacheada para os novos Repositórios e Mappers da Alpha Engine.
   * **Resolução de Memory Leaks Nativos:** Consertamos o vazamento de memória do sistema de eventos de Idioma (`language.php`) trocando JSONs recursivos por Pilhas (Stacks) de arrays nativos.
   * **Alpha Failsafe nas Sessões:** Implementamos um escudo no `SessionMapper` e otimizamos o `ConnectionDB` (PDO) para evitar travamentos de servidor (Erro 500 / Erro 2014) causados por sessões corrompidas e superlotadas.
-  * **Defuse do Anti-Pattern de Chaves Estrangeiras:** O `DataAccessObject` (DAO) foi ensinado a ignorar Chaves Estrangeiras zeradas (`0`), convertendo-as para `null` nas entidades, protegendo o Padrão de Domínio sem quebrar o painel de administração legado.
+  * **Defuse do Anti-Pattern de Chaves Estrangeiras:** O `DataAccessObject` (DAO) foi ensinado a ignorar Chaves Estrangeiras zeradas (`0`), convertendo-as para `null` nas entidades, protegendo o Padrão de Domínio sem quebrar a consistência das tabelas compartilhadas.
   * **Otimização de N+1 Queries:** Refatoramos a busca do Menu e dos Pedidos para utilizarem o método `readByIds` (Batch Loading), evitando milhares de consultas repetidas.
   * **Testes Unitários:** O framework de testes via JSON foi atualizado para suportar o namespace FQCN (`Alpha\Model\...`) e processar `LazyCollections` com proteção total contra referências circulares em árvores (ex: subcategorias).
   * Avançamos na refatoração do **Fluxo de Checkout** (etapas de endereço de frete, endereço de pagamento, registro e métodos de entrega) migrando para a arquitetura `BaseController` e consumindo nativamente os Repositórios de Domínio (`AddressRepository`, `CountryRepository`, `CartRepository`, etc.).
@@ -42,6 +42,7 @@ Este projeto implementa uma camada de engenharia de software moderna sobre o nú
   * **Refatoração do Checkout e Área de Cliente (Lazy Loading):** Remoção de construtores pesados e engessados em `checkout.php`, `confirm.php`, `login.php` e `register.php`. Adoção estrita do *Lazy Loading* via `$this->getRepository()`, reduzindo drasticamente o *Memory Footprint* nas rotas críticas de conversão.
   * **Isolamento de Segurança de Domínio (Skinny Controllers):** O controlador de Login agora delega 100% da inteligência de `password_verify` e proteção contra força bruta ao `CustomerRepository`. A página de Contato teve sua vulnerabilidade de *Fatal Error* corrigida e delega validações ao domínio.
   * **Fragment Caching Bottom-Funnel:** Validação da página Home operando livre de consultas ao banco de dados com a *CacheStrategyInterface*. Aplicação de *Fragment Caching* no sub-widget de Produtos Relacionados na tela de Produto, blindando contra N+1 Queries a página de maior tráfego.
+  * **Saneamento e Correção do AuthService:** Resolução do bug de sintaxe e realocação de `AuthService.php` para seu caminho PSR-4 correto (`core/Auth/Services/`), incluindo correção de lógica de hashes de senha (`password_verify`), nomes de getters da entidade `Customer` e injeção de dependência via construtor.
 * **Status Atual:** **Sprint de Estabilização do Core Transacional e de UI.** A navegação global da loja (Home, Catálogo, Busca), além das rotas vitais de entrada de clientes (Login, Registro) e fechamento (Checkout Raiz), estão 100% blindadas, leves (operando via *Lazy Loading*) e obedecendo estritamente o padrão *Skinny Controller* da Alpha Engine.
 * **Próximos Passos (Retomada):** 
   1. Encapsular as linhas residuais do `EntityHydrator` e do fluxo de validação dentro do método `CustomerRepository->registerCustomer()`, isolando 100% o Registro.
@@ -111,7 +112,7 @@ Diferente do OpenCart padrão, onde o SQL fica espalhado pelos Models, este proj
 
 ```text
 core/
-├── Auth/                                    # 🔐 Domínio de autenticação e segurança
+├── Auth/                                    # 🔐 Domínio de autenticação e segurança (novo método de autenticação que substituirá os métodos legados)
 │   ├── Middleware/                          # 🛡️ Guards PSR-15 do Router
 │   │   ├── SignatureMiddleware.php          # Valida assinatura HMAC da requisição
 │   │   └── SessionMiddleware.php           # Valida sessão ativa no Redis
@@ -121,7 +122,7 @@ core/
 ├── Containers/                             # 📂 Nova pasta de infraestrutura do roteador
 │   └── AppContainer.php                    # 📦 Fábrica central que monta as Actions (com Twig/Redis)
 │
-├── Controller/                             # 🎮 Orquestradores de requisição HTTP
+├── Controller/                             # 🎮 Orquestradores de requisição HTTP (novo controller que substituirá os métodos legados)
 │   ├── BaseController.php                  # 🧱 Injeção de Mappers, Repos e helpers JSON
 │   ├── Auth/                               # Controladores de acesso
 │   │   ├── LoginController.php             # 🚪 Processa formulário de login
@@ -178,10 +179,10 @@ core/
 │   ├── RequestHelper.php
 │   └── ViewHelper.php
 │
-│── View/                                  # 🖼️ Camada de apresentação (Twig/HTML)
+│── View/                                  # 🖼️ Camada de apresentação (Twig/HTML) que substituirá os métodos legados
 │    └── ViewRenderer.php
 │
-│── resources/views/
+│── resources/views/                        # Novas telas Twig que estão substituindo as telas legadas do Opencart e adotando novos padrões: Atomic Design e Visual Components
 │      ├── components/                     <-- Pedaços de tela que se repetem (reutilizáveis)
 │      │   ├── atoms/                      <-- Elementos base (botão, input, tag)
 │      │   │    ├── logo.twig              <-- Apenas a imagem/link da logo
@@ -207,6 +208,12 @@ core/
     ├── index.php
     └── .htaccess
 
+catalog # Pasta legada do Opencart que está sendo esvaziada.
+extension # Pasta legada do Opencart que está sendo esvaziada.
+image # Pasta legada do Opencart que está sendo esvaziada.
+system # Pasta legada do Opencart que está sendo esvaziada.
+
+
 ```
 
 
@@ -222,10 +229,10 @@ Fazer essa pausa para documentar e versionar é uma excelente prática. No desen
 
 ## 💡 Filosofia do Projeto
 
-O objetivo não é apenas "fazer funcionar", mas criar uma estrutura onde o código seja autodocumentado, seguro por padrão e fácil de testar. A remoção de lógica complexa de dentro dos controllers e models do OpenCart permite que a interface se concentre apenas na apresentação e fluxo de dados.
+O objetivo não é apenas "fazer funcionar", mas criar uma estrutura standalone onde o código seja autodocumentado, seguro por padrão e fácil de testar. A remoção de lógica complexa e o descarte dos controllers e models do OpenCart permite que a interface se concentre apenas na apresentação e fluxo de dados nativos.
 
 ---
-*Trabalho em constante evolução para elevar o padrão de engenharia do ecossistema OpenCart.*
+*Trabalho em constante evolução para elevar o padrão de engenharia do ecossistema de e-commerce com a Alpha Engine.*
 
 ## Regras de negócio para a equipe de produção:
 1. Todas as chaves primárias tem nomo "id" para não confundir com as chaves estrangeiras FK que tem [nome da tabela pai] + "_id".

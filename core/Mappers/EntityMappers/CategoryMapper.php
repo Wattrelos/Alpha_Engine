@@ -2,6 +2,7 @@
 
 namespace Alpha\Mappers\EntityMappers;
 
+use Alpha\Mappers\BaseMapper;
 use Alpha\Model\DataAccessObject\DataAccessObject;
 use Alpha\Model\DataAccessObject\QueryBuilder;
 use Alpha\Model\Domain\Entities\Category;
@@ -14,14 +15,10 @@ use Alpha\Model\Domain\Entities\Category;
  * - Hidratação via DAO: Retorna entidades ricas com descrições e metatags.
  * - Cache Friendly: Estrutura preparada para integração com camadas de cache de objetos.
  */
-class CategoryMapper
+class CategoryMapper extends BaseMapper
 {
-    private DataAccessObject $dao;
-
-    public function __construct()
-    {
-        $this->dao = new DataAccessObject();
-    }
+    protected string $entityClass = Category::class;
+    protected string $tableName = 'category';
 
     /**
      * Obtém uma categoria específica hidratada.
@@ -185,5 +182,92 @@ class CategoryMapper
         $ids = array_column($rows, 'id');
 
         return $this->dao->readByIds(Category::class, $ids);
+    }
+
+    /**
+     * Retorna a lista plana de categorias para montagem do menu tree.
+     */
+    public function getMenuTreeData(int $languageId, int $storeId): array
+    {
+        $builder = (new QueryBuilder())
+            ->from(DB_PREFIX . 'category', 'c')
+            ->join(DB_PREFIX . 'category_description', 'cd', 'c.id = cd.category_id')
+            ->join(DB_PREFIX . 'category_to_store', 'cs', 'c.id = cs.category_id')
+            ->leftJoin(
+                DB_PREFIX . 'seo_url',
+                'su',
+                "su.`key` = 'category_id' AND su.value = c.id AND su.store_id = " . (int)$storeId . " AND su.language_id = " . (int)$languageId
+            )
+            ->where('cd.language_id = ?', [$languageId])
+            ->where('cs.store_id = ?', [$storeId])
+            ->where('c.status = 1')
+            ->orderBy('c.sort_order', 'ASC')
+            ->orderBy('cd.name', 'ASC')
+            ->select('c.id', 'c.parent_id', 'cd.name', "IFNULL(su.keyword, '') AS seo_keyword");
+
+        return $this->dao->executeQuery($builder);
+    }
+
+    /**
+     * Retorna as categorias raiz destacadas.
+     */
+    public function getFeaturedCategoriesData(int $limit, int $languageId, int $storeId): array
+    {
+        $builder = (new QueryBuilder())
+            ->from(DB_PREFIX . 'category', 'c')
+            ->join(DB_PREFIX . 'category_description', 'cd', 'c.id = cd.category_id')
+            ->join(DB_PREFIX . 'category_to_store', 'cs', 'c.id = cs.category_id')
+            ->leftJoin(DB_PREFIX . 'category', 'sub', 'sub.parent_id = c.id AND sub.status = 1')
+            ->leftJoin(
+                DB_PREFIX . 'seo_url',
+                'su',
+                "su.`key` = 'category_id' AND su.value = c.id AND su.store_id = " . (int)$storeId . " AND su.language_id = " . (int)$languageId
+            )
+            ->where('cd.language_id = ?', [$languageId])
+            ->where('cs.store_id = ?', [$storeId])
+            ->where('c.status = 1')
+            ->where('c.parent_id = 0')
+            ->groupBy('c.id')
+            ->groupBy('c.image')
+            ->groupBy('cd.name')
+            ->groupBy('su.keyword')
+            ->orderBy('c.sort_order', 'ASC')
+            ->orderBy('cd.name', 'ASC')
+            ->limit($limit)
+            ->select('c.id', 'c.image', 'cd.name', "IFNULL(su.keyword, '') AS seo_keyword", 'COUNT(sub.id) AS subcategory_count');
+
+        return $this->dao->executeQuery($builder);
+    }
+
+    /**
+     * Obtém uma categoria específica com seo_keyword.
+     */
+    public function getCategoryWithSeo(int $categoryId, int $languageId, int $storeId): ?array
+    {
+        $builder = (new QueryBuilder())
+            ->from(DB_PREFIX . 'category', 'c')
+            ->join(DB_PREFIX . 'category_description', 'cd', 'c.id = cd.category_id')
+            ->leftJoin(
+                DB_PREFIX . 'seo_url',
+                'su',
+                "su.`key` = 'category_id' AND su.value = c.id AND su.store_id = " . (int)$storeId . " AND su.language_id = " . (int)$languageId
+            )
+            ->where('c.id = ?', [$categoryId])
+            ->where('cd.language_id = ?', [$languageId])
+            ->where('c.status = 1')
+            ->select(
+                'c.id',
+                'c.parent_id',
+                'c.image',
+                'cd.name',
+                'cd.description',
+                'cd.meta_title',
+                'cd.meta_description',
+                'cd.meta_keyword',
+                "IFNULL(su.keyword, '') AS seo_keyword"
+            );
+
+        $results = $this->dao->executeQuery($builder);
+        return $results ? $results[0] : null;
     }
 }

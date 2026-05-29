@@ -1,6 +1,6 @@
 # 🚀 Alpha Engine - Documentação Técnica
 
-Bem-vindo ao repositório central da Alpha Engine. Este projeto implementa um sistema de e-commerce robusto baseado em **Repository Pattern**, **Data Mappers** e **Domain-Driven Design (DDD)**.
+Bem-vindo ao repositório central da **Alpha Engine**, um sistema de e-commerce moderno e standalone desenvolvido totalmente do zero (abrangendo bootstrap, rotas, controllers e views). A engine antiga do OpenCart foi completamente abandonada de nosso runtime, restando seu código apenas como referência conceitual e de banco de dados. Este ecossistema implementa padrões rígidos como **Repository Pattern**, **Data Mappers** e **Domain-Driven Design (DDD)** para assegurar máxima performance e escalabilidade.
 
 ## 📑 Índice de Documentação
 

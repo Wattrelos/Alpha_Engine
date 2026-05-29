@@ -4,6 +4,7 @@ namespace Alpha\Model\Domain\Repositories;
 
 use Alpha\Mappers\EntityMappers\LanguageMapper;
 use Alpha\Model\Domain\InterfaceEntity;
+use Alpha\Model\Domain\Entities\Language;
 use Alpha\Mappers\CollectionToArrayConverter;
 use Alpha\Support\Collection;
 
@@ -27,9 +28,9 @@ class LanguageRepository extends AbstractRepository implements BaseRepositoryInt
      * Busca um idioma pelo seu ID único.
      * 
      * @param int $id
-     * @return InterfaceEntity|null
+     * @return Language|null
      */
-    public function find(int $id): ?InterfaceEntity
+    public function find(int $id): ?Language
     {
         $cacheKey = "language.id.{$id}";
 
@@ -86,9 +87,9 @@ class LanguageRepository extends AbstractRepository implements BaseRepositoryInt
      * Busca um único idioma baseado em critérios.
      * 
      * @param array $criteria
-     * @return InterfaceEntity|null
+     * @return Language|null
      */
-    public function findOneBy(array $criteria): ?InterfaceEntity
+    public function findOneBy(array $criteria): ?Language
     {
         $cacheKey = "language.query." . md5(serialize($criteria));
 
@@ -109,8 +110,11 @@ class LanguageRepository extends AbstractRepository implements BaseRepositoryInt
     /**
      * Busca um idioma pelo seu código ISO (ex: 'pt-br').
      * Essencial para a inicialização do contexto de idioma da loja.
+     * 
+     * @param string $code
+     * @return Language|null
      */
-    public function getByCode(string $code): ?InterfaceEntity
+    public function getByCode(string $code): ?Language
     {
         return $this->findOneBy(['code' => $code]);
     }

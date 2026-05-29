@@ -10,20 +10,11 @@ require_once('config.php');
 // Startup
 require_once(DIR_SYSTEM . 'startup.php');
 
-// Autoloader
+// Autoloader Mock para compatibilidade herdada
 $autoloader = new \Opencart\System\Engine\Autoloader();
-$autoloader->register('Opencart\Catalog', DIR_APPLICATION);
-$autoloader->register('Opencart\Extension', DIR_EXTENSION);
-$autoloader->register('Opencart\System', DIR_SYSTEM);
-$autoloader->register('Alpha\\', dirname(DIR_SYSTEM) . '/core/');
-
-// Registra o autoloader da engine no PHP
-spl_autoload_register([$autoloader, 'load']);
-
-require_once(DIR_SYSTEM . 'vendor.php');
 
 // Registry
-$registry = new \Opencart\System\Engine\Registry();
+$registry = new \Alpha\Support\Registry();
 $registry->set('autoloader', $autoloader);
 
 // Config

@@ -1,0 +1,26 @@
+<div id="top" class="row align-items-center mt-3 mb-3">
+    <div class="col-12 col-md-auto mb-2 mb-md-0">
+        {% if menu %}
+            {{ menu }}
+        {% else %}
+            {% include 'components/organisms/department-menu.twig' %}
+        {% endif %}
+    </div>
+    <div class="col-12 col-md mb-2 mb-md-0">
+        {% if search %}
+            {{ search }}
+        {% else %}
+            <div class="search-bar">
+                <input type="text" placeholder="Buscar no site...">
+                <button type="button">Buscar</button>
+            </div>
+        {% endif %}
+    </div>
+    <div class="col-12 col-md-auto">
+        {% if cart %}
+            {{ cart }}
+        {% else %}
+            <a href="/carrinho" class="btn btn-dark btn-carrinho-custom"><i class="fa-solid fa-cart-shopping"></i> Carrinho</a>
+        {% endif %}
+    </div>
+</div>

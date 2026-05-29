@@ -1,8 +1,12 @@
 {
     "autoload": {
         "psr-4": {
-            "Alpha\\": "core/"
-        }
+            "Alpha\\": "core/",
+            "Containers\\": "Containers/"
+        },
+        "files": [
+            "core/Support/autoloader_legacy.php"
+        ]
     },
     "config": {
         "optimize-autoloader": true,
@@ -10,6 +14,7 @@
         "sort-packages": true
     },
     "require": {
+        "illuminate/collections": "^13.12",
         "predis/predis": "^3.4",
         "psr/http-message": "^2.0",
         "psr/http-server-middleware": "^1.0",

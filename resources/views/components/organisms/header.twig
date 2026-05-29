@@ -1,15 +1,24 @@
-<header class="site-header">
-    <div class="container">
-        <!-- Átomo da Logo -->
-        {% include 'components/atoms/logo.twig' %}
-
-        <!-- Molécula do Menu (Passando os links por variável) -->
-        {% include 'components/molecules/nav-menu.twig' with {
-            'links': [
-                {'url': '/', 'label': 'Início', 'route': 'home'},
-                {'url': '/produtos', 'label': 'Produtos', 'route': 'products'},
-                {'url': '/contato', 'label': 'Contato', 'route': 'contact'}
-            ]
-        } %}
-    </div>
-</header>
+<div class="telhado">
+    <header>
+        <div class="container">
+            <div class="row align-items-center">
+                {# Logo (Atom) #}
+                <div class="col-auto">
+                    {% include 'components/atoms/logo.twig' %}
+                </div>
+                
+                {# Top Nav e Utility Bar (Molecules) #}
+                <div class="col">
+                    <div class="row">
+                        <div class="col text-end">
+                            {% include 'components/molecules/top-nav.twig' %}
+                        </div>
+                    </div>
+                    
+                    {# Utility Bar #}
+                    {% include 'components/molecules/utility-bar.twig' %}
+                </div>
+            </div>
+        </div>
+    </header>
+</div>

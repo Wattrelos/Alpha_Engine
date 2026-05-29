@@ -5,7 +5,7 @@ namespace Alpha\Mappers\EntityMappers;
 use Alpha\Model\Domain\Repositories\LengthClassRepository;
 use Alpha\Model\Domain\Repositories\WeightClassRepository;
 use Alpha\Mappers\BaseMapper;
-use Opencart\System\Engine\Registry;
+use Alpha\Support\Registry;
 
 /**
  * ShippingMapper - Orquestra a listagem e cálculo de métodos de frete (Alpha Engine).

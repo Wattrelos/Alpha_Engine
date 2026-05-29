@@ -1,0 +1,113 @@
+{% extends 'layouts/base.html.twig' %}
+
+{% block title %}
+	{{ title|default('Cadastrar | AgSonhos') }}
+{% endblock %}
+
+{% block breadcrumbs %}
+	<div class="container py-4">
+		{% include 'components/molecules/breadcrumbs.twig' with { items: breadcrumbs } %}
+	</div>
+{% endblock %}
+
+{% block content %}
+	<div class="egen-register-container">
+		<h1 class="egen-register-title">{{ heading_title }}</h1>
+		<p class="egen-register-subtitle">{{ text_account_already|raw }}</p>
+
+		<form id="form-register" action="{{ register }}" method="post" data-oc-toggle="ajax" class="egen-form">
+
+			<fieldset id="account" class="egen-fieldset">
+				<legend class="egen-legend">{{ text_your_details }}</legend>
+
+				{# Grupo de Seleção de Tipo de Cliente (Se houver mais de 1) #}
+				{% if customer_groups|length > 1 %}
+					<div class="egen-form-group egen-required">
+						<label class="egen-form-label" for="input-customer-group">{{ entry_customer_group }}</label>
+						<select name="customer_group_id" id="input-customer-group" class="egen-form-select">
+							{% for customer_group in customer_groups %}
+								<option value="{{ customer_group.customer_group_id }}" {% if customer_group.customer_group_id == customer_group_id %} selected {% endif %}>{{ customer_group.name }}</option>
+							{% endfor %}
+						</select>
+					</div>
+				{% endif %}
+
+				{# Grid de Campos do Formulário #}
+				<div
+					class="egen-form-grid">
+
+					{# Nome #}
+					<div class="egen-form-group egen-required">
+						<label for="input-firstname" class="egen-form-label">{{ entry_firstname }}</label>
+						<input type="text" name="firstname" value="" placeholder="{{ entry_firstname }}" id="input-firstname" class="egen-form-input"/>
+						<div id="error-firstname" class="egen-invalid-feedback"></div>
+					</div>
+
+					{# Sobrenome #}
+					<div class="egen-form-group egen-required">
+						<label for="input-lastname" class="egen-form-label">{{ entry_lastname }}</label>
+						<input type="text" name="lastname" value="" placeholder="{{ entry_lastname }}" id="input-lastname" class="egen-form-input"/>
+						<div id="error-lastname" class="egen-invalid-feedback"></div>
+					</div>
+
+					{# E-mail #}
+					<div class="egen-form-group egen-required">
+						<label for="input-email" class="egen-form-label">{{ entry_email }}</label>
+						<input type="email" name="email" value="" placeholder="{{ entry_email }}" id="input-email" class="egen-form-input"/>
+						<div id="error-email" class="egen-invalid-feedback"></div>
+					</div>
+
+					{# Telefone (Opcional por configuração do painel) #}
+					{% if config_telephone_display %}
+						<div class="egen-form-group {% if config_telephone_required %}egen-required{% endif %}">
+							<label for="input-telephone" class="egen-form-label">{{ entry_telephone }}</label>
+							<input type="tel" name="telephone" value="" placeholder="{{ entry_telephone }}" id="input-telephone" class="egen-form-input"/>
+							<div id="error-telephone" class="egen-invalid-feedback"></div>
+						</div>
+					{% endif %}
+
+				</div>
+				{# Fim do egen-form-grid #}
+
+			</fieldset>
+			<fieldset>
+				{# Password #}
+				<div class="egen-form-group egen-required">
+					<label for="input-password" class="egen-form-label">{{ entry_password }}</label>
+					<div class="egen-form-input">
+						<input type="password" name="password" value="{{ password }}" placeholder="{{ entry_password }}" id="input-password" class="egen-form-input"/>
+						<div id="error-password" class="egen-invalid-feedback">{{ error_password }}</div>
+					</div>
+				</div>
+				<div class="egen-form-group egen-required">
+					<label for="input-confirm" class="egen-form-label">{{ entry_confirm }}</label>
+					<div class="egen-form-input">
+						<input type="password" name="confirm" value="{{ confirm }}" placeholder="{{ entry_password }}" id="input-confirm" class="egen-form-input"/>
+						<div id="error-confirm" class="text-danger">{{ error_confirm }}</div>
+					</div>
+				</div>
+			</fieldset>
+
+			{# Bloco de Segurança (Se houver Captcha configurado) #}
+			{% if captcha %}
+				<div class="egen-captcha-wrapper">
+					{{ captcha }}
+				</div>
+			{% endif %}
+
+			{# Rodapé do Formulário: Termos e Botão #}
+			<div class="egen-form-footer">
+
+				{% if text_agree %}
+					<div class="egen-form-agree">
+						<input type="checkbox" name="agree" value="1" id="input-agree" class="egen-form-checkbox"/>
+						<label for="input-agree" class="egen-agree-label">{{ text_agree|raw }}</label>
+					</div>
+				{% endif %}
+
+				<button type="submit" class="egen-btn-primary">{{ button_continue }}</button>
+			</div>
+
+		</form>
+	</div>
+{% endblock %}

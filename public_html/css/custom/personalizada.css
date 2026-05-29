@@ -1,170 +1,312 @@
+:root {
+  --primary-color: #fc9003;
+  --primary-hover: #e07b00;
+  --accent-color: #ffc107;
+  --light-color-1: #ffffff;
+  --light-color-2: #f8f9fa;
+  --dark-color-1: #101418;
+  --dark-color-2: #1e2227;
+  --focus-color-1: #ffc107;
+  --transition-speed: 0.3s;
+}
+
 /************************************************************************************************************/
 /* Identidade Visual */
 
-  .telhado {
-	background-image: url('/image/catalog/seamless/scandinavian-roof-tile-seamless.jpg'); /* Caminho para tua imagem defundo */
-  }
-  .stucco4{
-	  background: url('/image/catalog/seamless/Stucco4.jpg');
-  }
-  .Roof01{
-	  padding: 10px;
-	  background: url('/image/catalog/seamless/Roof01.jpg');
-  }
-
-.roof02{
-	background: url('/image/catalog/seamless/Roof02.jpg');
-	padding: 0 10px;
+.telhado {
+  background-image: url('/img/seamless/scandinavian-roof-tile-seamless.jpg');
+  background-repeat: repeat;
+  position: relative;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.35);
+  border-bottom: 3px solid var(--primary-color);
+  transition: all var(--transition-speed) ease;
 }
+
+.telhado::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: linear-gradient(135deg, rgba(16, 20, 24, 0.8) 0%, rgba(16, 20, 24, 0.92) 100%);
+  z-index: 1;
+}
+
+.telhado > * {
+  position: relative;
+  z-index: 2;
+}
+
+.telhado header {
+  padding: 1.5rem 0;
+  transition: padding var(--transition-speed) ease;
+}
+
+.stucco4 {
+  background: url('/img/seamless/Stucco4.jpg');
+}
+
+.Roof01 {
+  padding: 10px;
+  background: url('/img/seamless/Roof01.jpg');
+}
+
+.roof02 {
+  background: url('/img/seamless/Roof02.jpg');
+  padding: 0 10px;
+}
+
 .roof02 .product-thumb {
-	background: white;
+  background: white;
 }
-.roof02 h3 {
-	color: white;
-	text-align: center;
 
+.roof02 h3 {
+  color: white;
+  text-align: center;
 }
- 
+
 /* Botão 3D. Geralmente usados no menu */
 .btn-3d {
-	text-shadow: 0 -1px 0 rgba(255, 117, 24, 0.25);
-	background-color: #ff9900;
-	background-image: linear-gradient(to bottom, #fc9003, #9c4902);
-	background-repeat: repeat-x;
-	border-color: #f58d05 #994400 #442200;
-	border-radius: 50px;
+  text-shadow: 0 -1px 0 rgba(255, 117, 24, 0.25);
+  background-color: #ff9900;
+  background-image: linear-gradient(to bottom, #fc9003, #9c4902);
+  background-repeat: repeat-x;
+  border-color: #f58d05 #994400 #442200;
+  border-radius: 50px;
 }
 
+/* Logo */
+#logo {
+  display: flex;
+  align-items: center;
+}
+
+#logo h1 {
+  margin: 0;
+  font-size: 2.2rem;
+  font-weight: 800;
+  letter-spacing: -0.5px;
+}
+
+#logo h1 a {
+  text-decoration: none;
+  background: linear-gradient(135deg, #ffffff 0%, var(--primary-color) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  transition: opacity var(--transition-speed) ease;
+}
+
+#logo h1 a:hover {
+  opacity: 0.9;
+}
+
+#logo img {
+  max-height: 70px;
+  width: auto;
+  transition: transform var(--transition-speed) ease;
+}
+
+#logo img:hover {
+  transform: scale(1.05);
+}
 
 /************************************************************************************************************/
 /** Menu de Navegação. menu-container       **/
 /**                                         **/
 /************************************************************************************************************/
 
-
 .ag-menu-container {
-    display: inline-flex; /* Combina as duas regras anteriores para não anular o flexbox */
-    position: relative;   /* Permite posicionar o menu dropdown abaixo do botão */
-    font-family: Arial, Helvetica, sans-serif;
-    /* font-size: medium; */
-
+  display: inline-flex;
+  position: relative;
+  font-family: var(--title-font), sans-serif;
 }
+
 .ag-menu-container ul {
-  border-radius: 1em;
+  border-radius: 8px;
 }
 
-/* Efeito ao passar o mouse sobre um item do menu principal */
-.ag-menu-container:hover .dropdown-menu-recursive {
-    display: block;  /* Mostra o menu principal ao passar o mouse sobre o container */    
+/* Efeito ao passar o mouse sobre um item do menu principal ou quando ativo */
+.ag-menu-container:hover .dropdown-menu-recursive,
+.ag-menu-container:focus-within .dropdown-menu-recursive,
+.dropdown-menu-recursive.show {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+  transform: translateY(0);
 }
 
-.menu-button-left, .menu-button-right {
-  text-shadow: 0 -1px 0 rgba(255, 117, 24, 0.25);
-  background-color: #ff9900;
-  background-image: linear-gradient(to bottom, #fc9003, #9c4902);
-  background-repeat: repeat-x;
-  border-color: #f58d05 #994400 #442200;
-  font-size: 15px;
-  line-height: 18px;
-  padding: 14px;
-  border-radius: 1em 0 0 1em ;
-  white-space: nowrap; /* Impedir que o texto quebre para uma nova linha. O texto continuará na mesma linha, mesmo que seja mais longo do que o contêiner. */
-}
-.menu-button-right {
-  border-radius: 0 1em 1em 0 ;   
-}
 .menu-button-left {
-   border-radius: 1em 0 0 1em ;  
+  text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.2);
+  background-color: var(--primary-color);
+  background-image: linear-gradient(to bottom, var(--primary-color), var(--primary-hover));
+  border: 1px solid var(--primary-hover);
+  color: white;
+  font-size: 15px;
+  font-weight: 600;
+  line-height: 18px;
+  padding: 12px 24px;
+  border-radius: 50px;
+  white-space: nowrap;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.25);
+  transition: all var(--transition-speed) ease;
+  cursor: pointer;
+}
+
+.menu-button-left:hover {
+  background-image: linear-gradient(to bottom, var(--accent-color), var(--primary-color));
+  border-color: var(--primary-color);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 15px rgba(252, 144, 3, 0.4);
 }
 
 .dropdown-menu-recursive {
-    display: none;  /* Oculta o menu principal inicialmente */
-    position: absolute;  /* Posiciona o menu abaixo do botão */
-    min-width: 160px;
-    box-shadow: 0em 0.8em 1.6em 0em rgba(0, 0, 0, 0.2);
-    z-index: 10; /* Garante que o menu apareça por cima de outros elementos da página */
-    list-style: none;
-    padding: 0;
-    margin: 0;
-    color: navy;
-    background: white;
+  display: block;
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  position: absolute;
+  min-width: 220px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+  z-index: 1000;
+  list-style: none;
+  padding: 0.5rem 0;
+  margin: 0;
+  background: var(--light-color-1);
+  border: 1px solid rgba(252, 144, 3, 0.3);
+  border-radius: 10px;
+  top: 100%;
+  left: 0;
+  transform: translateY(15px);
+  transition: opacity var(--transition-speed) cubic-bezier(0.16, 1, 0.3, 1),
+              transform var(--transition-speed) cubic-bezier(0.16, 1, 0.3, 1),
+              visibility var(--transition-speed);
 }
-
 
 .dropdown-menu-recursive li {
-    width:  100%; /* Link ocupa toda a largura do li */
-    height: 100%; /* Link ocupa toda a altura do li */
-    position: relative;  /* Permite posicionar submenus filhos */
-    padding: 0;
-    cursor: pointer;
-    display: flex;
-    white-space: nowrap; /* Evita quebra de linha dentro dos itens */
-    align-items: center; /* Centraliza verticalmente */
-    background: rgb(255, 255, 196) ;
-}
-.dropdown-menu-recursive li:hover {    
-    background: gold;
-    border-radius: 1em;
+  width: 100%;
+  position: relative;
+  padding: 0;
+  cursor: pointer;
+  display: flex;
+  white-space: nowrap;
+  align-items: center;
+  background: var(--light-color-1);
+  transition: all 0.2s ease;
 }
 
-/* Mostra o submenu ao passar o mouse sobre um item do menu pai */
-.dropdown-menu-recursive li:hover>.submenu {
-    display: block;
+.dropdown-menu-recursive li:hover {
+  background: rgba(252, 144, 3, 0.1);
+}
+
+/* Mostra o submenu ao passar o mouse sobre um item do menu pai ou quando ativo */
+.dropdown-menu-recursive li:hover > .submenu,
+.dropdown-menu-recursive li:focus-within > .submenu,
+.submenu.show {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+  transform: translateX(0);
 }
 
 /* Link <a> ocupa todo o container */
 .dropdown-menu-recursive li a {
-    display: flex;    
-    width:  100%; /* Link ocupa toda a largura do li */
-    height: 100%; /* Link ocupa toda a altura do li */
-    color: navy;
-    padding: 0.7em 1.5em;    
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  color: var(--dark-color-1);
+  font-weight: 500;
+  padding: 0.7em 1.5em;
+  text-decoration: none;
+  transition: color var(--transition-speed) ease;
+}
+
+.dropdown-menu-recursive li a:hover {
+  color: var(--primary-color);
 }
 
 /* Oculta o submenu inicialmente */
 .submenu {
-    background-color: rgb(240, 240, 155);
-    display: none;
-    position: absolute;
-    left: 100%;  /* Posiciona o submenu à direita do item pai */
-    top: 0;      /* Alinha o topo do submenu com o topo do item pai */
-    min-width: 160px;
-    box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
-    z-index: 9;  /* Garante que o submenu apareça por cima do menu principal */
-    list-style: none;
-    padding: 0;
-    margin: 0;
+  background-color: var(--light-color-1);
+  display: block;
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  position: absolute;
+  left: 100%;
+  top: 0;
+  min-width: 220px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+  z-index: 1001;
+  list-style: none;
+  padding: 0.5rem 0;
+  margin: 0;
+  border-radius: 8px;
+  border: 1px solid #e9ecef;
+  transform: translateX(15px);
+  transition: opacity var(--transition-speed) cubic-bezier(0.16, 1, 0.3, 1),
+              transform var(--transition-speed) cubic-bezier(0.16, 1, 0.3, 1),
+              visibility var(--transition-speed);
 }
 
+.submenu li {
+  background-color: var(--light-color-1);
+}
 
+.submenu li:hover {
+  background-color: rgba(252, 144, 3, 0.1);
+}
 
 /* Caixa de busca ----------------------*/
 .search-bar {
   display: flex;
-  flex-grow: 1;
-  width:fit-content;
+  align-items: stretch;
+  width: 100%;
+  max-width: 600px;
+  margin: 0 auto;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+  border-radius: 50px;
+  overflow: hidden;
+  background: #ffffff;
+  border: 2px solid transparent;
+  transition: all var(--transition-speed) ease;
 }
 
+.search-bar:focus-within {
+  border-color: var(--primary-color);
+  box-shadow: 0 4px 15px rgba(252, 144, 3, 0.25);
+}
 
 .search-bar input {
-  width: 100%;
-  padding: 0.4em 1.5em; /* Unidade de medida corrigida para evitar quebra de leitura do CSS */
+  flex-grow: 1;
+  border: none;
+  outline: none;
+  padding: 0.6rem 1.5rem;
+  font-size: 0.95rem;
+  color: #333333;
+  background: transparent;
 }
-/*
+
+.search-bar input::placeholder {
+  color: #999999;
+}
+
 .search-bar button {
-  cursor: pointer;  
+  background: var(--primary-color) !important;
+  color: var(--light-color-1) !important;
+  border: none;
+  padding: 0 1.8rem;
+  font-weight: 600;
+  transition: background-color var(--transition-speed) ease;
+  cursor: pointer;
 }
-*/
-.search-bar button:hover, .menu-button:hover{
-  color: black;
-  background: gold;
+
+.search-bar button:hover {
+  background: var(--primary-hover) !important;
 }
-/* --------------------------------------------------------------------------------------------------------------------- */
 
 /* Estilo para ícones de atalho para redes sociais -------------------------------------------------------------------------------------- */
 .ico-menu {
-  display: flex;         /* Ativa o flexbox */
-  align-items: center;        /* Alinha os itens verticalmente */
+  display: flex;
+  align-items: center;
   white-space: nowrap;
   padding: 0.5em;
   background: var(--primary-color);
@@ -173,86 +315,284 @@
 }
 
 .ico-menu li {
-  display: inline-block;        /* Fica um ao lado do outro */
-  list-style: none;        /* Remove os marcadores de lista */
-  margin: 0 0.5em;        /* Adiciona espaçamento entre os itens */
+  display: inline-block;
+  list-style: none;
+  margin: 0 0.5em;
 }
 
 .ico-menu li a {
-  text-decoration: none;        /* Remove sublinhado dos links */
-  color: #333;        /* Cor do texto */
-  display: flex;        /* Ativa flexbox nos links para alinhar ícone e texto */
-  align-items: center;        /* Alinha ícone e texto verticalmente */
+  text-decoration: none;
+  color: #333;
+  display: flex;
+  align-items: center;
 }
 
 .ico-menu li img {
-  width: 1em;        /* Tamanho do ícone */
+  width: 1em;
   height: 1em;
-  margin-right: 0.2em;        /* Espaço entre o ícone e o texto */
+  margin-right: 0.2em;
 }
-/* ------------------------------------------------------------------------------------------------------------------------------------ */
-
 
 /* Ações do usuário */
-/* --------------------------------------------------------------------------------------------------------------------- */
-  .user-actions {
-    display: flex;
-    white-space: nowrap;
-    align-items: center;
-    gap: 1.5rem;
-    padding-left: 1.5em;
-    padding-right: 1.5em;
-    border-radius: 1em ;
+.user-actions {
+  display: flex;
+  white-space: nowrap;
+  align-items: center;
+  gap: 1.5rem;
+  padding-left: 1.5em;
+  padding-right: 1.5em;
+  border-radius: 1em;
 }
 
 .user-actions a {
-    text-decoration: none;    
-    color: var(--light-color-1);
-    transition: color 0.3s;
-    position: relative;
+  text-decoration: none;
+  color: var(--light-color-1);
+  transition: color 0.3s;
+  position: relative;
 }
 
 .user-actions a:hover {
-    color: var(--focus-color-1);
-} 
+  color: var(--focus-color-1);
+}
 
-/* --------------------------------------------------------------------------------------------------------------------- */
-
-
-/* identidade visual dos botões */
-.user-actions, .ico-menu, .search-bar button {
+.user-actions,
+.ico-menu {
   background: var(--primary-color);
-  color: var(--light-color-1);   
+  color: var(--light-color-1);
   padding: 0.5em 1em;
   height: 100%;
+}
+
+/* Top Nav / Navbar Overrides inside Header */
+.telhado .navbar {
+  background: transparent !important;
+  border-bottom: none !important;
+  padding: 0.25rem 0;
+  display: inline-flex;
+}
+
+.telhado .navbar .container-fluid {
+  justify-content: flex-end;
+  padding: 0;
+}
+
+.telhado .navbar .nav-link {
+  color: rgba(255, 255, 255, 0.9) !important;
+  font-weight: 500;
+  font-size: 0.9rem;
+  transition: all var(--transition-speed) ease;
+  border-radius: 20px;
+  padding: 0.4rem 1rem !important;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.telhado .navbar .nav-link:hover {
+  color: var(--accent-color) !important;
+  background: rgba(252, 144, 3, 0.15) !important;
+}
+
+.telhado .navbar .nav {
+  display: flex !important;
+  flex-direction: row !important;
+  flex-wrap: nowrap !important;
+  justify-content: flex-end !important;
+  align-items: center !important;
+  gap: 0.5rem !important;
+  padding: 0;
+  margin: 0;
+  list-style: none;
+}
+
+.telhado .navbar .nav-item {
+  flex: 0 0 auto !important;
+}
+
+.telhado .navbar .nav-link i {
+  color: var(--primary-color);
+}
+
+.telhado .dropdown-menu {
+  background-color: var(--dark-color-1) !important;
+  border: 1px solid rgba(252, 144, 3, 0.3) !important;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+  border-radius: 8px;
+  padding: 0.5rem 0;
+  display: block !important;
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transform: translateY(10px);
+  transition: opacity var(--transition-speed) cubic-bezier(0.16, 1, 0.3, 1),
+              transform var(--transition-speed) cubic-bezier(0.16, 1, 0.3, 1),
+              visibility var(--transition-speed);
+}
+
+.telhado .dropdown-menu.show {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+  transform: translateY(0);
+}
+
+/* Customização Alpha Engine: Abertura suave do dropdown de Minha Conta no Hover */
+.telhado .nav-item.dropdown:hover .dropdown-menu {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+  transform: translateY(0);
+}
+
+/* Micro-animação: rotação da seta (caret-down) no hover do dropdown */
+.telhado .nav-link.dropdown-toggle i.fa-caret-down {
+  transition: transform var(--transition-speed) ease;
+  display: inline-block;
+}
+
+.telhado .nav-item.dropdown:hover .nav-link.dropdown-toggle i.fa-caret-down {
+  transform: rotate(180deg);
+  color: var(--accent-color) !important;
+}
+
+.telhado .dropdown-item {
+  color: var(--light-color-2) !important;
+  font-size: 0.9rem;
+  padding: 0.5rem 1.2rem;
+  transition: all var(--transition-speed) ease;
+}
+
+.telhado .dropdown-item:hover {
+  background-color: var(--primary-color) !important;
+  color: var(--light-color-1) !important;
+  padding-left: 1.6rem !important; /* Deslocamento suave para a direita no hover */
+}
+
+/* Carrinho Custom Button inside Utility Bar */
+#top .btn-dark.btn-carrinho-custom {
+  background-color: var(--dark-color-1) !important;
+  color: var(--light-color-1) !important;
+  border: 2px solid var(--primary-color) !important;
+  border-radius: 50px !important;
+  padding: 0.6rem 1.6rem !important;
+  font-weight: 600 !important;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  transition: all var(--transition-speed) ease !important;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+}
+
+#top .btn-dark.btn-carrinho-custom:hover {
+  background-color: var(--primary-color) !important;
+  border-color: var(--primary-hover) !important;
+  color: var(--light-color-1) !important;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 15px rgba(252, 144, 3, 0.35);
+}
+
+#top .btn-dark.btn-carrinho-custom i {
+  font-size: 1.05rem;
+}
+
+/* Sticky Header Scroll state */
+.telhado.sticky {
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.5);
+  border-bottom-color: var(--accent-color);
+}
+
+.telhado.sticky::before {
+  background: rgba(16, 20, 24, 0.95);
+}
+
+.telhado.sticky header {
+  padding: 0.5rem 0;
+}
+
+.telhado.sticky #top {
+  margin-top: 0.3rem !important;
+  margin-bottom: 0.3rem !important;
+}
+
+.telhado.sticky #logo h1 {
+  font-size: 1.8rem;
+}
+
+.telhado.sticky #logo img {
+  max-height: 50px;
+}
+
+/* Responsive Overrides */
+@media (max-width: 991px) {
+  .telhado header {
+    padding: 1rem 0;
+  }
+  
+  .telhado .row.align-items-center {
+    flex-direction: column;
+    text-align: center;
+    gap: 0.75rem;
+  }
+  
+  .telhado .col-auto, 
+  .telhado .col {
+    width: 100%;
+  }
+  
+  .telhado .navbar {
+    display: flex;
+    justify-content: center !important;
+    margin-bottom: 0.5rem;
+  }
+  
+  .telhado .navbar .container-fluid {
+    justify-content: center !important;
+  }
+  
+  .telhado .navbar .nav {
+    justify-content: center !important;
+  }
+  
+  #top {
+    flex-direction: column;
+    gap: 0.75rem;
+    margin-top: 0.5rem !important;
+    margin-bottom: 0.5rem !important;
+  }
+  
+  #top .col-12 {
+    display: flex;
+    justify-content: center;
+  }
+  
+  .search-bar {
+    max-width: 100%;
+  }
 }
 
 /* Formatação do formulário de login ----------------------------------------------------------------------------------- */
 .dropdown {
   position: relative;
-  display: inline-block; /* Ou inline, dependendo do layout */
+  display: inline-block;
 }
 
 .dropdown-content {
-  display: none; /* Oculta o conteúdo inicialmente */
+  display: none;
   position: absolute;
   background-color: #f9f9f9;
   min-width: 160px;
-  box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
-  z-index: 1; /* Garante que o dropdown apareça por cima de outros elementos */
+  box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
+  z-index: 1;
   padding: 10px;
   border-radius: 5px;
-  /* Para um estilo mais moderno, pode adicionar transições */
   transition: opacity 0.3s ease-in-out;
 }
 
-/* Adiciona um efeito de opacidade ao aparecer */
 .dropdown:hover .dropdown-content {
   display: block;
   opacity: 1;
 }
 
-/* Estilos para os campos de input e botão dentro do dropdown */
 .dropdown-content input[type="text"],
 .dropdown-content input[type="email"],
 .dropdown-content input[type="password"],
@@ -270,10 +610,108 @@
 }
 
 /* Checagem dos campos 'input' para marcar como válidos: */
-/* Estilo quando válido */
 .input-container.valid input {
-    border-color: green;
+  border-color: green;
 }
+
 .input-container.valid .checkmark {
-    display: inline; /* Mostra o ícone */
+  display: inline;
+}
+
+/************************************************************************************************************/
+/* Estilos do Rodapé (Alpha Footer) */
+/************************************************************************************************************/
+
+.ag-footer {
+  background-color: var(--dark-color-1);
+  color: var(--light-color-2);
+  border-top: 4px solid var(--primary-color);
+  padding: 4rem 0 0 0;
+  font-family: inherit;
+}
+
+.ag-footer h5.footer-column__title {
+  color: var(--light-color-1);
+  font-weight: 700;
+  font-size: 1.1rem;
+  letter-spacing: 0.5px;
+  position: relative;
+  padding-bottom: 0.5rem;
+}
+
+.ag-footer h5.footer-column__title::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 30px;
+  height: 2px;
+  background-color: var(--primary-color);
+  transition: width var(--transition-speed) ease;
+}
+
+.col-12:hover h5.footer-column__title::after {
+  width: 50px;
+}
+
+.ag-footer .footer-desc {
+  color: #a0aab5;
+  font-size: 0.9rem;
+  line-height: 1.6;
+}
+
+.ag-footer .footer-column__link {
+  color: #a0aab5;
+  font-size: 0.9rem;
+  transition: all var(--transition-speed) ease;
+  display: inline-block;
+}
+
+.ag-footer .footer-column__link:hover {
+  color: var(--primary-color) !important;
+  transform: translateX(5px);
+}
+
+.ag-footer .social-icons a {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  background: var(--dark-color-2);
+  color: var(--light-color-2);
+  margin-right: 0.5rem;
+  transition: all var(--transition-speed) ease;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  text-decoration: none;
+}
+
+.ag-footer .social-icons a:hover {
+  background: var(--primary-color);
+  color: var(--light-color-1);
+  transform: translateY(-3px) rotate(360deg);
+  box-shadow: 0 4px 10px rgba(252, 144, 3, 0.4);
+}
+
+.ag-footer-bottom {
+  background-color: var(--dark-color-2);
+  padding: 1.5rem 0;
+  margin-top: 3rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.ag-footer-bottom p {
+  color: #7d8794;
+  font-size: 0.85rem;
+}
+
+.ag-footer-bottom .payment-methods i {
+  color: #7d8794;
+  transition: all var(--transition-speed) ease;
+}
+
+.ag-footer-bottom .payment-methods i:hover {
+  color: var(--primary-color);
+  transform: scale(1.1);
 }

@@ -48,10 +48,45 @@ class SessionRepository extends AbstractRepository implements BaseRepositoryInte
     public function write(string $session_token, array $data, int $expire = 0): void
     {
         // Alpha Engine: Prioriza o tempo definido pelo driver, senão usa a configuração da loja, ou o padrão do PHP.
-        $expireTime = $expire ?: (int)$this->config->get('config_session_expire') ?: (int)ini_get('session.gc_maxlifetime');
+        $configExpire = 0;
+        if (is_object($this->config) && method_exists($this->config, 'get')) {
+            $configExpire = (int)$this->config->get('config_session_expire');
+        }
+        $expireTime = $expire ?: $configExpire ?: (int)ini_get('session.gc_maxlifetime');
         $expireDate = gmdate('Y-m-d H:i:s', time() + $expireTime);
 
         $this->getMapper()->saveSession($session_token, json_encode($data), $expireDate);
+    }
+
+    /**
+     * Lê os dados brutos da sessão em string (sem decodificar JSON).
+     * 
+     * @param string $session_token
+     * @return string
+     */
+    public function readRaw(string $session_token): string
+    {
+        $now = gmdate('Y-m-d H:i:s');
+        return $this->getMapper()->getActiveSessionData($session_token, $now) ?: '';
+    }
+
+    /**
+     * Escreve dados brutos da sessão na tabela.
+     * 
+     * @param string $session_token
+     * @param string $data
+     * @param int $expire
+     */
+    public function writeRaw(string $session_token, string $data, int $expire = 0): void
+    {
+        $configExpire = 0;
+        if (is_object($this->config) && method_exists($this->config, 'get')) {
+            $configExpire = (int)$this->config->get('config_session_expire');
+        }
+        $expireTime = $expire ?: $configExpire ?: (int)ini_get('session.gc_maxlifetime');
+        $expireDate = gmdate('Y-m-d H:i:s', time() + $expireTime);
+
+        $this->getMapper()->saveSession($session_token, $data, $expireDate);
     }
 
     /**
@@ -63,11 +98,11 @@ class SessionRepository extends AbstractRepository implements BaseRepositoryInte
     }
 
     /**
-     * Garbage Collector: Remove sessões expiradas do banco de dados.
+     * Garbage Collector: Remove sessões expiradas do banco de dados e retorna o total removido.
      */
-    public function gc(): void
+    public function gc(): int
     {
-        $this->getMapper()->deleteExpired();
+        return $this->getMapper()->deleteExpired();
     }
 
     /**

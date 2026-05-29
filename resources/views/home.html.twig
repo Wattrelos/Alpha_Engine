@@ -1,6 +1,96 @@
 {% extends 'layouts/base.html.twig' %}
 
+{% block title %}Início | AgSonhos — Materiais de Construção{% endblock %}
+
 {% block content %}
-    {# O controller enviou a variável $categorias para o Twig #}
-    {% include 'components/organisms/department-menu.twig' with { 'categories': categories } %}
+<div class="stucco4">
+  <div id="common-home" class="container py-4">
+    <div class="row">
+      {% if column_left %}
+        <div class="col-lg-3 col-md-4 col-sm-12">
+          {{ column_left }}
+        </div>
+      {% endif %}
+      
+      <div id="content" class="col">
+        {{ content_top }}
+        
+        {# ── Seção de destaque: grade de categorias principais ── #}
+        {% if featured_categories %}
+        <section class="home-categories mb-4">
+            <h2 class="section-title">Nossos Departamentos</h2>
+            <div class="category-grid">
+                {% for cat in featured_categories %}
+                    <a href="{{ cat.seo_keyword ? '/' ~ cat.seo_keyword : '/index.php?route=product/category&language=pt-br&path=' ~ cat.id }}"
+                       class="category-card">
+                        {% if cat.image %}
+                            <img src="/image/{{ cat.image }}"
+                                 alt="{{ cat.name }}"
+                                 loading="lazy"
+                                 width="200" height="200">
+                        {% else %}
+                            <div class="category-card__no-image">🏗️</div>
+                        {% endif %}
+                        <span class="category-card__name">{{ cat.name }}</span>
+                        {% if cat.subcategory_count > 0 %}
+                            <span class="category-card__count">{{ cat.subcategory_count }} subcategorias</span>
+                        {% endif %}
+                    </a>
+                {% else %}
+                    <p class="empty-state">Nenhuma categoria encontrada.</p>
+                {% endfor %}
+            </div>
+        </section>
+        {% endif %}
+        
+        {# ── Banner da Home Injetado ── #}
+        {% if home_banner %}
+          <div class="swiper-viewport mb-4">
+            <div id="carousel-home" class="swiper">
+              <div class="swiper-wrapper">
+                {% for banner in home_banner %}
+                  <div class="swiper-slide text-center">
+                    {% if banner.link %}
+                      <a href="{{ banner.link }}"><img src="{{ banner.image }}" alt="{{ banner.title }}" class="img-fluid" /></a>
+                    {% else %}
+                      <img src="{{ banner.image }}" alt="{{ banner.title }}" class="img-fluid" />
+                    {% endif %}
+                  </div>
+                {% endfor %}
+              </div>
+            </div>
+          </div>
+        {% endif %}
+
+        {# ── Produtos em Destaque Injetados ── #}
+        {% if featured_products %}
+          <h3>{{ heading_title_featured|default('Destaques') }}</h3>
+          <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-xl-4 mb-4">
+            {% for product in featured_products %}
+              <div class="col">{{ product }}</div>
+            {% endfor %}
+          </div>
+        {% endif %}
+
+        {# ── Produtos Mais Recentes Injetados ── #}
+        {% if latest_products %}
+          <h3>{{ heading_title_latest|default('Lançamentos') }}</h3>
+          <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-xl-4 mb-4">
+            {% for product in latest_products %}
+              <div class="col">{{ product }}</div>
+            {% endfor %}
+          </div>
+        {% endif %}
+
+        {{ content_bottom }}
+      </div>
+      
+      {% if column_right %}
+        <div class="col-lg-3 col-md-4 col-sm-12">
+          {{ column_right }}
+        </div>
+      {% endif %}
+    </div>
+  </div>
+</div>
 {% endblock %}

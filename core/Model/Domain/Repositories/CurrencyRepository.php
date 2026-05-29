@@ -190,7 +190,7 @@ class CurrencyRepository extends AbstractRepository implements BaseRepositoryInt
                 parse_str($parsed['query'], $query_args);
                 $route = $query_args['route'] ?? $this->config->get('action_default');
                 unset($query_args['route'], $query_args['_route_']);
-                
+
                 $url_params = http_build_query($query_args);
                 return $this->url->link($route, ($url_params ? $url_params : ''));
             }

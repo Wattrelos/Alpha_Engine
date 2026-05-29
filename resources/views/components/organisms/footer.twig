@@ -1,0 +1,114 @@
+{% set lang = lang|default('pt-br') %}
+
+{# ── Estruturação de Arrays de Links ── #}
+
+{# 1. Links de Informações Institucionais #}
+{% set info_links = [] %}
+{% if blog %}
+  {% set info_links = info_links|merge([{ href: blog, label: text_blog|default('Blog') }]) %}
+{% endif %}
+{% for info in informations %}
+  {% set info_links = info_links|merge([{ href: info.href, label: info.title }]) %}
+{% endfor %}
+
+{# 2. Links de Atendimento/Suporte #}
+{% set service_links = [
+  { href: contact|default('/index.php?route=information/contact&language=' ~ lang), label: text_contact|default('Fale Conosco') },
+  { href: return|default('/index.php?route=account/return/add&language=' ~ lang), label: text_return|default('Devoluções') },
+  { href: sitemap|default('/index.php?route=information/sitemap&language=' ~ lang), label: text_sitemap|default('Mapa do Site') }
+] %}
+
+{# 3. Links Extras #}
+{% set extra_links = [
+  { href: manufacturer|default('/index.php?route=product/manufacturer&language=' ~ lang), label: text_manufacturer|default('Marcas/Fabricantes') }
+] %}
+{% if affiliate %}
+  {% set extra_links = extra_links|merge([{ href: affiliate|default('/index.php?route=account/affiliate&language=' ~ lang), label: text_affiliate|default('Afiliados') }]) %}
+{% endif %}
+{% set extra_links = extra_links|merge([{ href: special|default('/index.php?route=product/special&language=' ~ lang), label: text_special|default('Ofertas Especiais') }]) %}
+
+{# 4. Links de Minha Conta #}
+{% set account_links = [
+  { href: account|default('/index.php?route=account/account&language=' ~ lang), label: text_account|default('Minha Conta') },
+  { href: order|default('/index.php?route=account/order&language=' ~ lang), label: text_order|default('Histórico de Pedidos') },
+  { href: wishlist|default('/index.php?route=account/wishlist&language=' ~ lang), label: text_wishlist|default('Lista de Desejos') },
+  { href: newsletter|default('/index.php?route=account/newsletter&language=' ~ lang), label: text_newsletter|default('Informativo') }
+] %}
+
+<footer class="ag-footer">
+  <div class="container pb-4">
+    <div class="row">
+      
+      {# Coluna Institucional (Logo, Resumo e Redes Sociais) #}
+      <div class="col-12 col-lg-3 mb-4 mb-lg-0 pe-lg-4">
+        <div class="footer-brand mb-3">
+          {% if logo %}
+            <img src="{{ logo }}" alt="{{ name }}" class="img-fluid footer-logo mb-2" style="max-height: 50px;">
+          {% else %}
+            <h3 class="text-white font-weight-bold mb-2">{{ name }}</h3>
+          {% endif %}
+          <p class="footer-desc mt-2">
+            A parceria ideal para a realização dos seus sonhos e da sua obra. Materiais de construção com qualidade, agilidade e o melhor preço.
+          </p>
+        </div>
+        
+        {# Redes Sociais #}
+        <div class="social-icons mt-3">
+          <a href="https://facebook.com" target="_blank" rel="noopener" title="Facebook"><i class="fa-brands fa-facebook-f"></i></a>
+          <a href="https://instagram.com" target="_blank" rel="noopener" title="Instagram"><i class="fa-brands fa-instagram"></i></a>
+          <a href="https://youtube.com" target="_blank" rel="noopener" title="YouTube"><i class="fa-brands fa-youtube"></i></a>
+          <a href="https://wa.me/5500000000000" target="_blank" rel="noopener" title="WhatsApp"><i class="fa-brands fa-whatsapp"></i></a>
+        </div>
+      </div>
+
+      {# Coluna 1: Informações (Molécula) #}
+      {% if info_links is not empty %}
+        {% include 'components/molecules/footer-column.twig' with {
+          title: text_information|default('Informações'),
+          links: info_links
+        } %}
+      {% endif %}
+
+      {# Coluna 2: Atendimento (Molécula) #}
+      {% include 'components/molecules/footer-column.twig' with {
+        title: text_service|default('Atendimento'),
+        links: service_links
+      } %}
+
+      {# Coluna 3: Extras (Molécula) #}
+      {% include 'components/molecules/footer-column.twig' with {
+        title: text_extra|default('Descubra'),
+        links: extra_links
+      } %}
+
+      {# Coluna 4: Minha Conta (Molécula) #}
+      {% include 'components/molecules/footer-column.twig' with {
+        title: text_account|default('Minha Conta'),
+        links: account_links
+      } %}
+
+    </div>
+  </div>
+
+  {# Rodapé Inferior: Copyright e Formas de Pagamento #}
+  <div class="ag-footer-bottom">
+    <div class="container">
+      <div class="row align-items-center">
+        <div class="col-12 col-md-6 text-center text-md-start mb-3 mb-md-0">
+          <p class="mb-0">
+            {{ powered|default('&copy; ' ~ "now"|date("Y") ~ ' ' ~ name ~ '. Todos os direitos reservados.')|raw }}
+          </p>
+        </div>
+        <div class="col-12 col-md-6">
+          <div class="payment-methods text-center text-md-end">
+            <span class="me-2 text-muted" style="font-size: 0.8rem; vertical-align: middle;">Formas de pagamento:</span>
+            <i class="fa-brands fa-cc-visa fa-2x mx-1 text-muted" title="Visa" style="vertical-align: middle;"></i>
+            <i class="fa-brands fa-cc-mastercard fa-2x mx-1 text-muted" title="Mastercard" style="vertical-align: middle;"></i>
+            <i class="fa-solid fa-barcode fa-2x mx-1 text-muted" title="Boleto Bancário" style="vertical-align: middle;"></i>
+            <i class="fa-solid fa-money-bill-transfer fa-2x mx-1 text-muted" title="Pix" style="vertical-align: middle;"></i>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</footer>

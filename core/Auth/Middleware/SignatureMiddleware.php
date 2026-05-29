@@ -14,12 +14,18 @@ use Predis\Client as RedisClient;
 class SignatureMiddleware
 {
     private $redis;
-    // Em produção, mova esta chave para o seu arquivo de configuração segura (.env)
-    private $apiSecret = 'sua_chave_secreta_e_muito_longa_123';
+    private $apiSecret;
 
     public function __construct()
     {
-        $this->redis = new RedisClient();
+        $this->apiSecret = $_ENV['API_SIGNATURE_SECRET'] ?? 'sua_chave_secreta_e_muito_longa_123';
+
+        // Conecta ao Redis com as credenciais do .env
+        $this->redis = new RedisClient([
+            'host' => $_ENV['REDIS_HOST'] ?? '127.0.0.1',
+            'port' => $_ENV['REDIS_PORT'] ?? 6379,
+            'password' => ($_ENV['REDIS_PASSWORD'] ?? '') ?: null
+        ]);
     }
 
     public function __invoke(Request $request, Handler $handler): Response

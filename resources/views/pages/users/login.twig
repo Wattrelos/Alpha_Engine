@@ -1,0 +1,66 @@
+{% extends 'layouts/base.html.twig' %}
+
+{% block title %}
+	{{ title|default('Acessar Conta | AgSonhos') }}
+{% endblock %}
+
+{% block content %}
+	<div
+		id="account-login" class="container py-4">
+
+		{# 2. Organismo de Navegação (Molecules) #}
+		{% include 'components/molecules/breadcrumbs.twig' with { items: breadcrumbs } %}
+
+		{# 3. Moléculas de Alerta #}
+		{% if success %}
+			{% include 'components/molecules/alert.twig' with { type: 'success', message: success, icon: 'fa-circle-check' } %}
+		{% endif %}
+
+		{% if error_warning %}
+			{% include 'components/molecules/alert.twig' with { type: 'danger', message: error_warning, icon: 'fa-circle-exclamation' } %}
+		{% endif %}
+
+		<div class="row">
+			{{ column_left }}
+
+			<div id="content" class="col">
+				{{ content_top }}
+
+				<div
+					class="row">
+					{# 4. Molécula: Bloco de Novo Cliente #}
+					<div class="col mb-3">
+						{% include 'components/molecules/card-register.twig' with { 
+						title: text_new_customer, 
+						subtitle: text_register,
+						description: text_register_account,
+						button_label: button_continue, 
+						url: register 
+					} %}
+					</div>
+
+					{# 5. Organismo: Formulário de Login #}
+					<div class="col mb-3">
+						{% include 'components/organisms/form-login.twig' with { 
+						action: login,
+						title: text_returning_customer,
+						subtitle: text_i_am_returning_customer,
+						email_value: email,
+						entry_email_text: entry_email,
+						password_value: password,
+						entry_password_text: entry_password,
+						forgotten_url: forgotten,
+						text_forgotten_text: text_forgotten,
+						redirect: redirect,
+						button_login_text: button_login
+					} %}
+					</div>
+				</div>
+
+				{{ content_bottom }}
+			</div>
+
+			{{ column_right }}
+		</div>
+	</div>
+{% endblock %}

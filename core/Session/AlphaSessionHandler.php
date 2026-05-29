@@ -33,18 +33,18 @@ class AlphaSessionHandler implements \SessionHandlerInterface
 
     public function read(string $id): string
     {
-        return $this->repository->read($id);
+        return $this->repository->readRaw($id);
     }
 
     public function write(string $id, string $data): bool
     {
-        $this->repository->write($id, $data, $this->expire);
+        $this->repository->writeRaw($id, $data, $this->expire);
         return true;
     }
 
     public function destroy(string $id): bool
     {
-        $this->repository->delete($id);
+        $this->repository->destroy($id);
         return true;
     }
 

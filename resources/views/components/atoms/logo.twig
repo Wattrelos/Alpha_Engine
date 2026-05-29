@@ -1,3 +1,10 @@
-<a href="/" class="site-logo" title="Ir para a página inicial">
-    <img src="/img/logo.png" alt="Logo da Alpha Framework" width="150" height="40" loading="eager">
-</a>
+<div id="logo">
+	{% if logo %}
+		<a href="{{ home|default('/') }}"><img src="{{ logo }}" title="{{ name|default('AgSonhos') }}" alt="{{ name|default('AgSonhos') }}" class="img-fluid"/></a>
+	{% else %}
+		<h1>
+			{# Inclui o logo #}
+			<a href="{{ home|default('/') }}">{{ name|default('AgSonhos') }}</a>
+		</h1>
+	{% endif %}
+</div>

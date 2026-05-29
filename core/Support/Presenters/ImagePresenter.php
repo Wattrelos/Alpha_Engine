@@ -1,7 +1,7 @@
 <?php
 namespace Alpha\Support\Presenters;
 
-use Opencart\System\Engine\Registry;
+use Alpha\Support\Registry;
 
 /**
  * ImagePresenter

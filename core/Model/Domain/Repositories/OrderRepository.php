@@ -7,7 +7,7 @@ use Alpha\Mappers\EntityMappers\CartMapper;
 use Alpha\Model\DataAccessObject\UnitOfWork;
 use Alpha\Model\Domain\InterfaceEntity;
 use Alpha\Mappers\MapperFactory;
-use Opencart\System\Engine\Registry;
+use Alpha\Support\Registry;
 use Alpha\Model\Domain\Repositories\CouponRepository;
 
 /**

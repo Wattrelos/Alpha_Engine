@@ -1,0 +1,14 @@
+<div class="col-12 col-sm-6 col-md mb-4 mb-md-0">
+  <h5 class="footer-column__title text-uppercase mb-3 font-weight-bold">{{ title }}</h5>
+  <ul class="list-unstyled footer-column__list">
+    {% for link in links %}
+      {% if link.href %}
+        <li class="mb-2">
+          <a href="{{ link.href }}" class="footer-column__link text-decoration-none">
+            {{ link.label }}
+          </a>
+        </li>
+      {% endif %}
+    {% endfor %}
+  </ul>
+</div>

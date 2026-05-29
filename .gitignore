@@ -14,11 +14,14 @@ system/storage/vendor/*
 image/cache/*
 docs/joplin/*
 
-storage/
-readme_backup/
-logs/
+storage/ 
+
+#Pastas antigas do OpenCart
+system/
+helper/ 
 cache/
-download/
+
+readme_backup/
 .joplin_export/
 
 # Composer

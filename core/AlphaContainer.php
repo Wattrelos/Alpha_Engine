@@ -3,7 +3,7 @@
 namespace Alpha;
 
 use Opencart\System\Engine\Factory;
-use Opencart\System\Engine\Registry;
+use Alpha\Support\Registry;
 use Opencart\System\Library\Log;
 
 /**

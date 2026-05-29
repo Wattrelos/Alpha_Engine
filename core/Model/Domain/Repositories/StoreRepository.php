@@ -4,7 +4,7 @@ namespace Alpha\Model\Domain\Repositories;
 
 use Alpha\Mappers\EntityMappers\StoreMapper;
 use Alpha\Model\Domain\InterfaceEntity;
-use Opencart\System\Engine\Registry;
+use Alpha\Support\Registry;
 
 /**
  * StoreRepository - Autoridade de Domínio para Lojas (Store).

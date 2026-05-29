@@ -5,7 +5,6 @@ use Alpha\Model\DataAccessObject\ConnectionDB;
 use Alpha\Model\DataAccessObject\DataAccessObject;
 use Alpha\Model\DataAccessObject\QueryBuilder;
 use Alpha\Model\Domain\InterfaceEntity;
-use Opencart\System\Engine\Registry;
 use ReflectionClass;
 
 /**
@@ -15,7 +14,7 @@ use ReflectionClass;
 abstract class BaseMapper implements MapperInterface
  {
     protected \PDO $db; 
-    protected ?Registry $registry = null;
+    protected mixed $registry = null;
     protected string $entityClass = '';
     protected string $tableName = '';
     protected string $table = ''; // Bridge de compatibilidade para mappers antigos
@@ -23,18 +22,12 @@ abstract class BaseMapper implements MapperInterface
     protected DataAccessObject $dao;
 
     /**
-     * @param Registry|object|null $registry O Registry do OpenCart ou conexão DB legada.
+     * @param mixed $registry O Registry, Container ou nulo.
      */
-    public function __construct($registry = null)
+    public function __construct(mixed $registry = null)
     {
-        if ($registry instanceof Registry) {
-            $this->registry = $registry;
-            $dbSource = $registry->get('db');
-        } else {
-            $dbSource = $registry;
-        }
-
-        $connection = ConnectionDB::getInstance($dbSource)->getConnection();
+        $this->registry = $registry;
+        $connection = ConnectionDB::getInstance()->getConnection();
         
         if (!$connection instanceof \PDO) {
             throw new \RuntimeException("Erro Alpha Engine: Mapper requer uma conexão PDO ativa.");

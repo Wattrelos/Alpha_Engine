@@ -3,7 +3,7 @@
 namespace Alpha\Controller;
 
 use Opencart\System\Engine\Controller;
-use Opencart\System\Engine\Registry;
+use Alpha\Support\Registry;
 use Alpha\Mappers\MapperFactory;
 use Alpha\Model\Domain\Repositories\RepositoryFactory;
 use Alpha\View\ViewRenderer;

@@ -14,7 +14,7 @@ class FilesystemCacheStrategy implements CacheStrategyInterface
 
     public function __construct(?string $cacheDir = null)
     {
-        // Utiliza o DIR_CACHE do OpenCart se definido, caso contrário usa o temp do SO
+        // Utiliza o DIR_CACHE do sistema se definido, caso contrário usa o temp do SO
         $this->cacheDir = $cacheDir ?? (defined('DIR_CACHE') ? DIR_CACHE : sys_get_temp_dir() . '/alpha_cache/');
         
         if (!is_dir($this->cacheDir)) {

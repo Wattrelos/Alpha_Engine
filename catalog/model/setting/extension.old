@@ -1,2 +1,0 @@
-<?php
-// Deprecado. Toda a lógica foi migrada para Alpha\Model\Domain\Repositories\ExtensionRepository.

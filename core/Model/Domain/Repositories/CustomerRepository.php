@@ -1,10 +1,12 @@
 <?php
+
 namespace Alpha\Model\Domain\Repositories;
 
 use Alpha\Mappers\EntityMappers\CustomerMapper;
 use Alpha\Model\Domain\Entities\Customer;
 use Alpha\Model\Domain\InterfaceEntity;
 use Alpha\Support\EntityHydrator;
+use Alpha\Support\AlphaString;
 
 /**
  * Class CustomerRepository
@@ -13,20 +15,70 @@ use Alpha\Support\EntityHydrator;
  * Centraliza a lógica de autenticação (password_verify), controle de 
  * força bruta (login attempts) e abstrai as operações do CustomerMapper.
  */
-class CustomerRepository extends AbstractRepository implements BaseRepositoryInterface {
+class CustomerRepository extends AbstractRepository implements BaseRepositoryInterface
+{
 
-    protected function getMapper(): CustomerMapper {
+    private ?array $configSettings = null;
+    private array $languageCache = [];
+
+    private function getConfigValue(string $key, mixed $default = null): mixed
+    {
+        if ($this->registry && method_exists($this->registry, 'get') && $this->registry->has('config')) {
+            $config = $this->registry->get('config');
+            if ($config) {
+                return $config->get($key);
+            }
+        }
+        if ($this->configSettings === null) {
+            try {
+                $repoFactory = RepositoryFactory::getInstance();
+                $settingRepo = $repoFactory->get(\Alpha\Model\Domain\Repositories\SettingRepository::class);
+                $this->configSettings = $settingRepo->getSetting('config', 0);
+            } catch (\Throwable) {
+                $this->configSettings = [];
+            }
+        }
+        return $this->configSettings[$key] ?? $default;
+    }
+
+    private function getTranslation(string $key, string $route, string $default = ''): string
+    {
+        if ($this->registry && method_exists($this->registry, 'get') && $this->registry->has('language')) {
+            $language = $this->registry->get('language');
+            if ($language) {
+                $language->load($route);
+                return (string)$language->get($key);
+            }
+        }
+
+        if (!isset($this->languageCache[$route])) {
+            $this->languageCache[$route] = [];
+            $file = '/var/www/html/agsonhos/core/language/pt-br/' . $route . '.php';
+            if (is_file($file)) {
+                $_ = [];
+                include $file;
+                $this->languageCache[$route] = $_;
+            }
+        }
+
+        return (string)($this->languageCache[$route][$key] ?? $default);
+    }
+
+    protected function getMapper(): CustomerMapper
+    {
         return $this->mapperFactory->get(CustomerMapper::class);
     }
 
-    public function find(int $id): ?Customer {
+    public function find(int $id): ?Customer
+    {
         return $this->getMapper()->findById($id);
     }
 
     /**
      * Busca a entidade de um cliente através do seu e-mail.
      */
-    public function findByEmail(string $email): ?Customer {
+    public function findByEmail(string $email): ?Customer
+    {
         $results = $this->getMapper()->search(['email' => $email]);
         return $results[0] ?? null;
     }
@@ -35,7 +87,8 @@ class CustomerRepository extends AbstractRepository implements BaseRepositoryInt
      * Autentica um cliente verificando a senha com password_verify nativo.
      * Retorna a entidade do cliente se a senha for válida, null caso contrário.
      */
-    public function authenticate(string $email, string $password): ?Customer {
+    public function authenticate(string $email, string $password): ?Customer
+    {
         $customer = $this->findByEmail($email);
 
         if (!$customer) {
@@ -48,15 +101,15 @@ class CustomerRepository extends AbstractRepository implements BaseRepositoryInt
         // A migração de senhas legadas (salt) para password_hash nativo
         // deve ocorrer progressivamente durante o login do usuário.
         if (password_verify($password, $storedHash)) {
-            
+
             // Se a senha precisar de rehash (ex: mudança nas opções de custo ou migração legado)
             if (password_needs_rehash($storedHash, PASSWORD_DEFAULT)) {
                 $this->updatePassword($customer->getId(), $password);
             }
-            
+
             return $customer;
         }
-        
+
         // Tratamento para senhas antigas do OpenCart (SHA1 com salt)
         // pode ser injetado aqui via mapper caso necessário.
 
@@ -66,7 +119,8 @@ class CustomerRepository extends AbstractRepository implements BaseRepositoryInt
     /**
      * Atualiza a senha do cliente já convertendo para o hash moderno.
      */
-    public function updatePassword(int $customerId, string $rawPassword): void {
+    public function updatePassword(int $customerId, string $rawPassword): void
+    {
         $customer = $this->find($customerId);
         if ($customer) {
             $customer->setPassword(password_hash($rawPassword, PASSWORD_DEFAULT));
@@ -77,21 +131,24 @@ class CustomerRepository extends AbstractRepository implements BaseRepositoryInt
     /**
      * Verifica se a conta do cliente está temporariamente bloqueada (Força Bruta).
      */
-    public function isLockedOut(string $email, int $maxAttempts): bool {
+    public function isLockedOut(string $email, int $maxAttempts): bool
+    {
         return $this->getMapper()->getLoginAttempts($email) >= $maxAttempts;
     }
 
     /**
      * Registra uma tentativa de login falha.
      */
-    public function addLoginAttempt(string $email, string $ip = ''): void {
+    public function addLoginAttempt(string $email, string $ip = ''): void
+    {
         $this->getMapper()->addLoginAttempt($email, $ip);
     }
 
     /**
      * Reseta (limpa) as tentativas de login após uma autenticação bem-sucedida.
      */
-    public function resetLoginAttempts(string $email): void {
+    public function resetLoginAttempts(string $email): void
+    {
         $this->getMapper()->deleteLoginAttempts($email);
     }
 
@@ -101,51 +158,63 @@ class CustomerRepository extends AbstractRepository implements BaseRepositoryInt
      * @param array $data Dados vindos do formulário (POST)
      * @return array Array contendo status da transação, erros e ID do cliente.
      */
-    public function registerCustomer(array $data): array {
-        $config = $this->registry->get('config');
-        $request = $this->registry->get('request');
-        
+    public function registerCustomer(array $data): array
+    {
+        // Inicialização de fallbacks resilientes para rodar tanto no OpenCart quanto no Slim standalone
+        $storeId = (int)$this->getConfigValue('config_store_id', 0);
+        $languageId = (int)$this->getConfigValue('config_language_id', 2);
+        $defaultGroupId = (int)$this->getConfigValue('config_customer_group_id', 1);
+
         // Definição de Grupo de Clientes
-        $customer_group_id = !empty($data['customer_group_id']) ? (int)$data['customer_group_id'] : (int)$config->get('config_customer_group_id');
-        $repoFactory = $this->registry->get('alpha_repository_factory');
-        $customerGroupRepo = $repoFactory->get(\Alpha\Model\Domain\Repositories\CustomerGroupRepository::class);
-        $customer_group_info = $customerGroupRepo->getCustomerGroup($customer_group_id, (int)$config->get('config_language_id'));
+        $customer_group_id = !empty($data['customer_group_id']) ? (int)$data['customer_group_id'] : $defaultGroupId;
+
+        $customerGroupRepo = null;
+        try {
+            $repoFactory = ($this->registry && method_exists($this->registry, 'get') && $this->registry->has('alpha_repository_factory'))
+                ? $this->registry->get('alpha_repository_factory')
+                : RepositoryFactory::getInstance();
+            $customerGroupRepo = $repoFactory->get(\Alpha\Model\Domain\Repositories\CustomerGroupRepository::class);
+        } catch (\Throwable) {
+            // Fallback silencioso
+        }
+
+        $customer_group_info = $customerGroupRepo ? $customerGroupRepo->getCustomerGroup($customer_group_id, $languageId) : null;
 
         // Alpha Engine: Delegação da Validação DRY
         $errors = $this->validateRegistrationData($data, $customer_group_id, $customer_group_info);
 
         if ($errors) {
             return [
-                'customer_id' => null, 
-                'errors' => $errors, 
+                'customer_id' => null,
+                'errors' => $errors,
                 'customer_group_info' => $customer_group_info,
                 'customer_group_id' => $customer_group_id
             ];
         }
 
         // --- Hidratação da Entidade ---
-        $data['customer_group_id'] = $customer_group_id; 
-        $data['ip'] = $request->server['REMOTE_ADDR'] ?? '127.0.0.1';
+        $data['customer_group_id'] = $customer_group_id;
+        $data['ip'] = $data['ip'] ?? $_SERVER['REMOTE_ADDR'] ?? '127.0.0.1';
         $data['token'] = '';
         $data['code'] = '';
         $data['date_added'] = date('Y-m-d H:i:s');
 
         $customer = new Customer();
-        
+
         EntityHydrator::fillEntity($customer, $data);
 
         $password = html_entity_decode($data['password'] ?? '', ENT_QUOTES, 'UTF-8');
-        $customer->setStoreId((int)$config->get('config_store_id'))
-                 ->setLanguageId((int)$config->get('config_language_id'))
-                 ->setPassword(password_hash($password, PASSWORD_DEFAULT))
-                 ->setStatus(true)
-                 ->setSafe(true);
+        $customer->setStoreId($storeId)
+            ->setLanguageId($languageId)
+            ->setPassword(password_hash($password, PASSWORD_DEFAULT))
+            ->setStatus(true)
+            ->setSafe(true);
 
         $customerId = $this->save($customer);
 
         return [
-            'customer_id' => $customerId, 
-            'errors' => [], 
+            'customer_id' => $customerId,
+            'errors' => [],
             'customer_group_info' => $customer_group_info,
             'customer_group_id' => $customer_group_id
         ];
@@ -154,30 +223,35 @@ class CustomerRepository extends AbstractRepository implements BaseRepositoryInt
     /**
      * Valida os dados de registro isolando o fluxo de erros de forma limpa.
      */
-    public function validateRegistrationData(array $data, int $customerGroupId, ?array $customerGroupInfo): array {
+    public function validateRegistrationData(array $data, int $customerGroupId, ?array $customerGroupInfo): array
+    {
         $errors = [];
-        $language = $this->registry->get('language');
-        $config = $this->registry->get('config');
-        
-        $language->load('account/register');
 
-        if (!$customerGroupInfo || !in_array($customerGroupId, (array)$config->get('config_customer_group_display'))) {
-            $errors['warning'] = $language->get('error_customer_group');
+        $telephoneRequired = (bool)$this->getConfigValue('config_telephone_required', false);
+        $customerGroupDisplay = (array)$this->getConfigValue('config_customer_group_display', [1]);
+        $accountId = (int)$this->getConfigValue('config_account_id', 5);
+
+        $getLang = function (string $key, string $default = '') {
+            return $this->getTranslation($key, 'account/register', $default);
+        };
+
+        if (!$customerGroupInfo || !in_array($customerGroupId, $customerGroupDisplay)) {
+            $errors['warning'] = $getLang('error_customer_group', 'O grupo de clientes parece não ser válido!');
         }
 
-        if (!oc_validate_length($data['firstname'] ?? '', 1, 32)) {
-            $errors['firstname'] = $language->get('error_firstname');
+        if (!AlphaString::validateLength($data['firstname'] ?? '', 1, 32)) {
+            $errors['firstname'] = $getLang('error_firstname', 'O nome deve ter entre 1 e 32 caracteres.');
         }
-        if (!oc_validate_length($data['lastname'] ?? '', 1, 32)) {
-            $errors['lastname'] = $language->get('error_lastname');
+        if (!AlphaString::validateLength($data['lastname'] ?? '', 1, 32)) {
+            $errors['lastname'] = $getLang('error_lastname', 'O sobrenome deve ter entre 1 e 32 caracteres.');
         }
-        if (!oc_validate_email($data['email'] ?? '')) {
-            $errors['email'] = $language->get('error_email');
+        if (!AlphaString::validateEmail($data['email'] ?? '')) {
+            $errors['email'] = $getLang('error_email', 'O e-mail não é válido.');
         } elseif ($this->findByEmail($data['email'] ?? '')) {
-            $errors['warning'] = $language->get('error_exists');
+            $errors['warning'] = $getLang('error_exists', 'Atenção: Este e-mail já está cadastrado.');
         }
-        if ($config->get('config_telephone_required') && !oc_validate_length($data['telephone'] ?? '', 3, 32)) {
-            $errors['telephone'] = $language->get('error_telephone');
+        if ($telephoneRequired && !AlphaString::validateLength($data['telephone'] ?? '', 3, 32)) {
+            $errors['telephone'] = $getLang('error_telephone', 'O telefone deve ter entre 10 e 11 números.');
         }
 
         // DRY: Validação Compartilhada - Documentos, Campos Customizados e Senha
@@ -191,10 +265,18 @@ class CustomerRepository extends AbstractRepository implements BaseRepositoryInt
         if ($passError) $errors['password'] = $passError;
 
         // Aceite dos Termos de Uso
-        $informationRepo = $this->registry->get('alpha_repository_factory')->get(\Alpha\Model\Domain\Repositories\InformationRepository::class);
-        $information_info = $informationRepo->getInformation((int)$config->get('config_account_id'));
+        $informationRepo = null;
+        try {
+            $repoFactory = ($this->registry && method_exists($this->registry, 'get') && $this->registry->has('alpha_repository_factory'))
+                ? $this->registry->get('alpha_repository_factory')
+                : RepositoryFactory::getInstance();
+            $informationRepo = $repoFactory->get(\Alpha\Model\Domain\Repositories\InformationRepository::class);
+        } catch (\Throwable) {
+        }
+
+        $information_info = $informationRepo ? $informationRepo->getInformation($accountId) : null;
         if ($information_info && empty($data['agree'])) {
-            $errors['warning'] = sprintf($language->get('error_agree'), $information_info['title']);
+            $errors['warning'] = sprintf($getLang('error_agree', 'Atenção: Você deve aceitar o contrato de %s.'), $information_info['title']);
         }
 
         return $errors;
@@ -203,7 +285,8 @@ class CustomerRepository extends AbstractRepository implements BaseRepositoryInt
     /**
      * Atualiza o perfil completo do cliente através da Entidade.
      */
-    public function updateProfile(Customer $customer): void {
+    public function updateProfile(Customer $customer): void
+    {
         $this->getMapper()->update($customer);
     }
 
@@ -211,30 +294,32 @@ class CustomerRepository extends AbstractRepository implements BaseRepositoryInt
      * Validações de domínio para edição de conta do cliente.
      * @return array Array contendo os erros encontrados. Vazio se válido.
      */
-    public function validateEditData(array $data, int $customerId): array {
+    public function validateEditData(array $data, int $customerId): array
+    {
         $errors = [];
-        $language = $this->registry->get('language');
-        $config = $this->registry->get('config');
-        
-        $language->load('account/edit');
 
-        if (!oc_validate_length($data['firstname'] ?? '', 1, 32)) {
-            $errors['firstname'] = $language->get('error_firstname');
+        $getLang = function (string $key, string $default = '') {
+            return $this->getTranslation($key, 'account/edit', $default);
+        };
+
+        if (!AlphaString::validateLength($data['firstname'] ?? '', 1, 32)) {
+            $errors['firstname'] = $getLang('error_firstname', 'O nome deve ter entre 1 e 32 caracteres.');
         }
-        if (!oc_validate_length($data['lastname'] ?? '', 1, 32)) {
-            $errors['lastname'] = $language->get('error_lastname');
+        if (!AlphaString::validateLength($data['lastname'] ?? '', 1, 32)) {
+            $errors['lastname'] = $getLang('error_lastname', 'O sobrenome deve ter entre 1 e 32 caracteres.');
         }
-        if (!oc_validate_email($data['email'] ?? '')) {
-            $errors['email'] = $language->get('error_email');
+        if (!AlphaString::validateEmail($data['email'] ?? '')) {
+            $errors['email'] = $getLang('error_email', 'O e-mail não é válido.');
         }
 
         $existingCustomer = $this->findByEmail($data['email'] ?? '');
         if ($existingCustomer && $existingCustomer->getId() !== $customerId) {
-            $errors['warning'] = $language->get('error_exists');
+            $errors['warning'] = $getLang('error_exists', 'Atenção: Este e-mail já está cadastrado.');
         }
 
-        if ($config->get('config_telephone_required') && !oc_validate_length($data['telephone'] ?? '', 3, 32)) {
-            $errors['telephone'] = $language->get('error_telephone');
+        $telephoneRequired = (bool)$this->getConfigValue('config_telephone_required', false);
+        if ($telephoneRequired && !AlphaString::validateLength($data['telephone'] ?? '', 3, 32)) {
+            $errors['telephone'] = $getLang('error_telephone', 'O telefone deve ter entre 10 e 11 números.');
         }
 
         // DRY: Documentos e Campos Customizados
@@ -242,7 +327,7 @@ class CustomerRepository extends AbstractRepository implements BaseRepositoryInt
         if ($docError) $errors['cpf_cnpj'] = $docError;
 
         $customer = $this->find($customerId);
-        $customerGroupId = $customer ? $customer->getGroupId() : (int)$config->get('config_customer_group_id');
+        $customerGroupId = $customer ? $customer->getGroupId() : (int)$this->getConfigValue('config_customer_group_id', 1);
         $errors = array_merge($errors, $this->getCustomFieldsErrors($data, $customerGroupId));
 
         return $errors;
@@ -252,18 +337,21 @@ class CustomerRepository extends AbstractRepository implements BaseRepositoryInt
      * Validações de domínio para alteração de senha.
      * @return array Array contendo os erros encontrados. Vazio se válido.
      */
-    public function validatePasswordData(array $data): array {
+    public function validatePasswordData(array $data): array
+    {
         $errors = [];
-        $language = $this->registry->get('language');
-        
-        $language->load('account/password');
+
+        $getLang = function (string $key, string $default = '') {
+            return $this->getTranslation($key, 'account/password', $default);
+        };
+
         $password = html_entity_decode($data['password'] ?? '', ENT_QUOTES, 'UTF-8');
 
         $passError = $this->getPasswordError($password);
         if ($passError) $errors['password'] = $passError;
 
         if (($data['confirm'] ?? '') != $password) {
-            $errors['confirm'] = $language->get('error_confirm');
+            $errors['confirm'] = $getLang('error_confirm', 'A confirmação de senha não coincide com a senha.');
         }
 
         return $errors;
@@ -272,13 +360,16 @@ class CustomerRepository extends AbstractRepository implements BaseRepositoryInt
     /**
      * Helpers DRY para validações comuns de clientes.
      */
-    private function getDocumentError(string $personType, string $cpfCnpj): ?string {
-        $language = $this->registry->get('language');
-        
+    private function getDocumentError(string $personType, string $cpfCnpj): ?string
+    {
+        $getLang = function (string $key, string $default = '') {
+            return $this->getTranslation($key, 'account/register', $default);
+        };
+
         if ($personType === 'F' && !empty($cpfCnpj)) {
             $cpf = preg_replace('/[^0-9]/', '', (string)$cpfCnpj);
             if (strlen($cpf) != 11 || preg_match('/(\d)\1{10}/', $cpf)) {
-                return $language->get('error_cpf') ?: 'O CPF informado é inválido.';
+                return $getLang('error_cpf', 'O CPF informado é inválido.');
             }
             for ($t = 9; $t < 11; $t++) {
                 for ($d = 0, $c = 0; $c < $t; $c++) {
@@ -286,27 +377,36 @@ class CustomerRepository extends AbstractRepository implements BaseRepositoryInt
                 }
                 $d = ((10 * $d) % 11) % 10;
                 if ((int)$cpf[$c] !== $d) {
-                    return $language->get('error_cpf') ?: 'O CPF informado é inválido.';
+                    return $getLang('error_cpf', 'O CPF informado é inválido.');
                 }
             }
         } elseif ($personType === 'J' && !empty($cpfCnpj)) {
             $cnpj = preg_replace('/[^0-9]/', '', (string)$cpfCnpj);
             if (strlen($cnpj) != 14 || preg_match('/(\d)\1{13}/', $cnpj)) {
-                return $language->get('error_cnpj') ?: 'O CNPJ informado é inválido.';
+                return $getLang('error_cnpj', 'O CNPJ informado é inválido.');
             }
             $b = [6, 5, 4, 3, 2, 9, 8, 7, 6, 5, 4, 3, 2];
             for ($i = 0, $n = 0; $i < 12; $n += (int)$cnpj[$i] * $b[++$i]);
-            if ((int)$cnpj[12] != ((($n %= 11) < 2) ? 0 : 11 - $n)) return $language->get('error_cnpj') ?: 'O CNPJ informado é inválido.';
+            if ((int)$cnpj[12] != ((($n %= 11) < 2) ? 0 : 11 - $n)) return $getLang('error_cnpj', 'O CNPJ informado é inválido.');
             for ($i = 0, $n = 0; $i <= 12; $n += (int)$cnpj[$i] * $b[$i++]);
-            if ((int)$cnpj[13] != ((($n %= 11) < 2) ? 0 : 11 - $n)) return $language->get('error_cnpj') ?: 'O CNPJ informado é inválido.';
+            if ((int)$cnpj[13] != ((($n %= 11) < 2) ? 0 : 11 - $n)) return $getLang('error_cnpj', 'O CNPJ informado é inválido.');
         }
         return null;
     }
 
-    private function getCustomFieldsErrors(array $data, int $customerGroupId): array {
+    private function getCustomFieldsErrors(array $data, int $customerGroupId): array
+    {
         $errors = [];
-        $language = $this->registry->get('language');
-        $customFieldRepo = $this->registry->get('alpha_repository_factory')->get(\Alpha\Model\Domain\Repositories\CustomFieldRepository::class);
+
+        $getLang = function (string $key, string $default = '') {
+            return $this->getTranslation($key, 'account/register', $default);
+        };
+
+        $repoFactory = ($this->registry && method_exists($this->registry, 'get') && $this->registry->has('alpha_repository_factory'))
+            ? $this->registry->get('alpha_repository_factory')
+            : RepositoryFactory::getInstance();
+
+        $customFieldRepo = $repoFactory->get(\Alpha\Model\Domain\Repositories\CustomFieldRepository::class);
         $custom_fields = $customFieldRepo->getCustomFields($customerGroupId);
 
         foreach ($custom_fields as $custom_field) {
@@ -320,10 +420,10 @@ class CustomerRepository extends AbstractRepository implements BaseRepositoryInt
                 }
 
                 if ($custom_field['required'] && $is_empty) {
-                    $errors['custom_field_' . $cf_id] = sprintf($language->get('error_custom_field'), $custom_field['name']);
+                    $errors['custom_field_' . $cf_id] = sprintf($getLang('error_custom_field', 'O campo %s é obrigatório.'), $custom_field['name']);
                 } elseif ($custom_field['type'] == 'text' && !empty($custom_field['validation']) && !$is_empty) {
-                    if (!oc_validate_regex((string)($data['custom_field'][$cf_id] ?? ''), $custom_field['validation'])) {
-                        $errors['custom_field_' . $cf_id] = sprintf($language->get('error_regex'), $custom_field['name']);
+                    if (!AlphaString::validateRegex((string)($data['custom_field'][$cf_id] ?? ''), $custom_field['validation'])) {
+                        $errors['custom_field_' . $cf_id] = sprintf($getLang('error_regex', 'O campo %s não é válido.'), $custom_field['name']);
                     }
                 }
             }
@@ -331,24 +431,36 @@ class CustomerRepository extends AbstractRepository implements BaseRepositoryInt
         return $errors;
     }
 
-    private function getPasswordError(string $password): ?string {
-        $language = $this->registry->get('language');
-        $config = $this->registry->get('config');
-        
-        if (!oc_validate_length($password, (int)$config->get('config_password_length'), 40)) {
-            return sprintf($language->get('error_password_length'), (int)$config->get('config_password_length'));
+    private function getPasswordError(string $password): ?string
+    {
+        $getLang = function (string $key, string $default = '') {
+            return $this->getTranslation($key, 'account/register', $default);
+        };
+
+        $passwordLength = (int)$this->getConfigValue('config_password_length', 4);
+
+        if (!AlphaString::validateLength($password, $passwordLength, 40)) {
+            return sprintf($getLang('error_password_length', 'A senha deve ter entre %d e 40 caracteres.'), $passwordLength);
         }
 
         $required = [];
-        if ($config->get('config_password_uppercase') && !preg_match('/[A-Z]/', $password)) { $required[] = $language->get('error_password_uppercase'); }
-        if ($config->get('config_password_lowercase') && !preg_match('/[a-z]/', $password)) { $required[] = $language->get('error_password_lowercase'); }
-        if ($config->get('config_password_number') && !preg_match('/[0-9]/', $password)) { $required[] = $language->get('error_password_number'); }
-        if ($config->get('config_password_symbol') && !preg_match('/[^a-zA-Z0-9]/', $password)) { $required[] = $language->get('error_password_symbol'); }
+        if ($this->getConfigValue('config_password_uppercase', false) && !preg_match('/[A-Z]/', $password)) {
+            $required[] = $getLang('error_password_uppercase', 'letra maiúscula');
+        }
+        if ($this->getConfigValue('config_password_lowercase', false) && !preg_match('/[a-z]/', $password)) {
+            $required[] = $getLang('error_password_lowercase', 'letra minúscula');
+        }
+        if ($this->getConfigValue('config_password_number', false) && !preg_match('/[0-9]/', $password)) {
+            $required[] = $getLang('error_password_number', 'número');
+        }
+        if ($this->getConfigValue('config_password_symbol', false) && !preg_match('/[^a-zA-Z0-9]/', $password)) {
+            $required[] = $getLang('error_password_symbol', 'caractere especial');
+        }
 
         if ($required) {
-            return sprintf($language->get('error_password'), implode(', ', $required), $config->get('config_password_length'));
+            return sprintf($getLang('error_password', 'A senha deve conter pelo menos: %s.'), implode(', ', $required));
         }
-        
+
         return null;
     }
 
@@ -358,7 +470,8 @@ class CustomerRepository extends AbstractRepository implements BaseRepositoryInt
      * @param Customer $customer
      * @return int O ID do cliente inserido.
      */
-    public function save(Customer $customer): ?int {
+    public function save(Customer $customer): ?int
+    {
         $id = $this->getMapper()->save($customer);
         if (!$id) {
             throw new \RuntimeException("Alpha Engine: Falha de Persistência. O DAO retornou nulo ao tentar salvar o Customer. Verifique o arquivo storage/logs/error.log para identificar qual coluna o banco de dados rejeitou (ex: restrição NOT NULL em colunas como 'ip' ou 'token').");
@@ -367,14 +480,17 @@ class CustomerRepository extends AbstractRepository implements BaseRepositoryInt
     }
 
     // BaseRepositoryInterface bindings
-    public function findBy(array $criteria, ?array $orderBy = null, ?int $limit = null, ?int $offset = null): array { 
-        return $this->getMapper()->search($criteria, $orderBy, $limit, $offset); 
+    public function findBy(array $criteria, ?array $orderBy = null, ?int $limit = null, ?int $offset = null): array
+    {
+        return $this->getMapper()->search($criteria, $orderBy, $limit, $offset);
     }
-    public function findOneBy(array $criteria): ?InterfaceEntity { 
+    public function findOneBy(array $criteria): ?InterfaceEntity
+    {
         $results = $this->getMapper()->search($criteria);
         return $results[0] ?? null;
     }
-    public function findAll(): array {
+    public function findAll(): array
+    {
         return $this->getMapper()->findAll();
     }
 }

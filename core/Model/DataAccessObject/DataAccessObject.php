@@ -4,6 +4,7 @@ namespace Alpha\Model\DataAccessObject;
 
 use PDO;
 use Exception;
+use Illuminate\Support\LazyCollection;
 use PDOException;
 use ReflectionClass;
 use ReflectionMethod;
@@ -485,7 +486,7 @@ class DataAccessObject
                     if ($paramType && is_subclass_of($paramType, InterfaceEntity::class)) {
                         $childId = (int)$value;
 
-                        // Alpha Engine: Defuse do Anti-Pattern "FK = 0" do OpenCart.
+                        // Alpha Engine: Defuse do Anti-Pattern "FK = 0" herdado de banco de dados legado.
                         // Se o ID estrangeiro for 0, consideramos que a relação não existe (ex: categoria raiz).
                         if ($childId === 0) {
                             continue;

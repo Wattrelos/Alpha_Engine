@@ -1,0 +1,8 @@
+<div class="border rounded p-3 d-flex flex-column h-100">
+  <h2>{{ title }}</h2>
+  <p><strong>{{ subtitle|default(text_register) }}</strong></p>
+  <p>{{ description|default(text_register_account) }}</p>
+  <div class="text-end mt-auto">
+    <a href="{{ url }}" class="btn btn-primary">{{ button_label }}</a>
+  </div>
+</div>

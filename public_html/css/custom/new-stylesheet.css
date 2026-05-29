@@ -1,0 +1,311 @@
+/* Seu arquivo utilidades.css - Leve e direto */
+.d-flex {
+    display: flex;
+}
+
+.flex-column {
+    flex-direction: column;
+}
+
+.h-100 {
+    height: 100%;
+}
+
+.mb-3 {
+    margin-bottom: 1rem;
+}
+
+.text-end {
+    text-align: right;
+}
+
+.border {
+    border: 1px solid #e0e0e0;
+}
+
+.rounded {
+    border-radius: 4px;
+}
+
+
+/* Estamos substituindo os estilos Bootstrap por estilos personalizados para este projeto, */
+/* Para distinguir o estilo personalizado dos outros estilos, usaremos o prefixo egen- */
+/*Estamos utilizando o método BEM para nomear as classes */
+
+
+/* --- VARIÁVEIS DE COR E ESTILO --- */
+:root {
+    --egen-primary-color: #007bff;
+    --egen-primary-hover: #0056b3;
+    --egen-border-color: #e0e0e0;
+    --egen-text-color: #333333;
+    --egen-text-muted: #666666;
+    --egen-bg-card: #ffffff;
+    --egen-radius: 8px;
+}
+
+/* --- CONTAINER DO CARTÃO --- */
+.egen-login-card {
+    background-color: var(--egen-bg-card);
+    border: 1px solid var(--egen-border-color);
+    border-radius: var(--egen-radius);
+    padding: 1.5rem;
+    height: 100%;
+    box-sizing: border-box;
+
+    /* --- NOVAS LINHAS ADICIONADAS AQUI --- */
+    max-width: 450px;
+    /* Garante que a caixa nunca passe de 450px de largura */
+    width: 100%;
+    /* Permite que ela encolha em telas de celular menores que 450px */
+    margin: 0 auto;
+    /* Centraliza a caixa horizontalmente na tela */
+}
+
+/* --- TEXTOS E TÍTULOS --- */
+.egen-login-title {
+    font-size: 1.5rem;
+    color: var(--egen-text-color);
+    margin-top: 0;
+    margin-bottom: 0.5rem;
+}
+
+.egen-login-subtitle {
+    font-size: 0.95rem;
+    color: var(--egen-text-muted);
+    margin-bottom: 1.5rem;
+}
+
+/* --- CAMPOS DO FORMULÁRIO (MOLÉCULAS) --- */
+.egen-form-group {
+    margin-bottom: 1.25rem;
+    display: flex;
+    flex-direction: column;
+}
+
+.egen-form-label {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--egen-text-color);
+    margin-bottom: 0.5rem;
+}
+
+.egen-form-input {
+    width: 100%;
+    padding: 0.6rem 0.75rem;
+    font-size: 1rem;
+    color: var(--egen-text-color);
+    background-color: #ffffff;
+    border: 1px solid var(--egen-border-color);
+    border-radius: 4px;
+    box-sizing: border-box;
+    transition: border-color 0.2s;
+}
+
+/* Efeito de clique no campo */
+.egen-form-input:focus {
+    border-color: var(--egen-primary-color);
+    outline: none;
+}
+
+/* --- LINK DE ESQUECI A SENHA --- */
+.egen-link-forgotten {
+    font-size: 0.85rem;
+    color: var(--egen-primary-color);
+    text-decoration: none;
+    margin-top: 0.5rem;
+    align-self: flex-start;
+}
+
+.egen-link-forgotten:hover {
+    text-decoration: underline;
+}
+
+/* --- ÁREA DO BOTÃO (ALINHAMENTO) --- */
+.egen-form-actions {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 1.5rem;
+}
+
+/* --- ÁTOMO: BOTÃO PRIMÁRIO --- */
+.egen-btn-primary {
+    background-color: var(--egen-primary-color);
+    color: #ffffff;
+    font-size: 1rem;
+    font-weight: 500;
+    padding: 0.6rem 1.25rem;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.egen-btn-primary:hover {
+    background-color: var(--egen-primary-hover);
+}
+
+/* --- CONTAINER PRINCIPAL --- */
+.egen-register-container {
+    max-width: 800px;
+    margin: 2rem auto;
+    padding: 2rem;
+    background-color: var(--egen-bg-card, #ffffff);
+    border: 1px solid var(--egen-border-color, #e0e0e0);
+    border-radius: var(--egen-radius, 8px);
+    box-sizing: border-box;
+}
+
+.egen-register-title {
+    font-size: 1.8rem;
+    color: var(--egen-text-color, #333333);
+    margin-top: 0;
+    margin-bottom: 0.5rem;
+}
+
+.egen-register-subtitle {
+    font-size: 1rem;
+    color: var(--egen-text-muted, #666666);
+    margin-bottom: 2rem;
+}
+
+/* --- FIELDSET E LEGEND --- */
+.egen-fieldset {
+    border: none;
+    padding: 0;
+    margin: 0 0 2rem 0;
+}
+
+.egen-legend {
+    font-size: 1.3rem;
+    font-weight: 600;
+    color: var(--egen-text-color, #333333);
+    margin-bottom: 1.5rem;
+    border-bottom: 2px solid var(--egen-border-color, #e0e0e0);
+    padding-bottom: 0.5rem;
+    width: 100%;
+}
+
+/* --- ESTRUTURA DE GRID (2 COLUNAS) --- */
+.egen-form-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 1.5rem;
+}
+
+/* --- CAMPOS DE ENTRADA --- */
+.egen-form-group {
+    display: flex;
+    flex-direction: column;
+}
+
+.egen-form-label {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--egen-text-color, #333333);
+    margin-bottom: 0.5rem;
+}
+
+/* Indicador de campo obrigatório (*) */
+.egen-required .egen-form-label::after {
+    content: " *";
+    color: #dc3545;
+}
+
+.egen-form-input,
+.egen-form-select {
+    width: 100%;
+    padding: 0.65rem 0.75rem;
+    font-size: 1rem;
+    color: var(--egen-text-color, #333333);
+    background-color: #ffffff;
+    border: 1px solid var(--egen-border-color, #e0e0e0);
+    border-radius: 4px;
+    box-sizing: border-box;
+    transition: border-color 0.2s;
+}
+
+.egen-form-input:focus,
+.egen-form-select:focus {
+    border-color: var(--egen-primary-color, #007bff);
+    outline: none;
+}
+
+/* --- MENSAGEM DE ERRO (VALIDAÇÃO AJAX DO OPENCART) --- */
+.egen-invalid-feedback {
+    color: #dc3545;
+    font-size: 0.85rem;
+    margin-top: 0.25rem;
+    display: none;
+    /* O OpenCart exibe via JS quando há erro */
+}
+
+/* --- CAPTCHA --- */
+.egen-captcha-wrapper {
+    margin-bottom: 1.5rem;
+}
+
+/* --- RODAPÉ E ACEITE DE TERMOS --- */
+.egen-form-footer {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 1rem;
+    border-top: 1px solid var(--egen-border-color, #e0e0e0);
+    padding-top: 1.5rem;
+    margin-top: 1.5rem;
+}
+
+.egen-form-agree {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.egen-form-checkbox {
+    width: 18px;
+    height: 18px;
+    cursor: pointer;
+}
+
+.egen-agree-label {
+    font-size: 0.9rem;
+    color: var(--egen-text-color, #333333);
+    cursor: pointer;
+}
+
+/* Reaproveita o botão do Login */
+.egen-btn-primary {
+    background-color: var(--egen-primary-color, #007bff);
+    color: #ffffff;
+    font-size: 1rem;
+    font-weight: 500;
+    padding: 0.65rem 1.5rem;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.egen-btn-primary:hover {
+    background-color: var(--egen-primary-hover, #0056b3);
+}
+
+/* --- RESPONSIVIDADE PARA CELULAR --- */
+@media (max-width: 480px) {
+    .egen-register-container {
+        padding: 1rem;
+        margin: 1rem;
+        border: none;
+        /* Remove bordas em telas minúsculas para virar tela cheia */
+    }
+
+    .egen-form-footer {
+        align-items: stretch;
+        /* Faz o botão ocupar toda a largura no celular */
+    }
+
+    .egen-btn-primary {
+        width: 100%;
+    }
+}

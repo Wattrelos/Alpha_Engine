@@ -3,7 +3,7 @@
 namespace Alpha\Model\Domain\Repositories;
 
 use Alpha\Mappers\MapperFactory;
-use Opencart\System\Engine\Registry;
+use Alpha\Support\Registry;
 
 class RepositoryFactory
 {
