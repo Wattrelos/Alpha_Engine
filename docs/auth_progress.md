@@ -47,3 +47,15 @@ Este documento registra o avanço na reestruturação e desacoplamento do módul
 - **Validação de Formulários via Eventos (form-validator.js)**:
   - Criação da biblioteca `form-validator.js` (`public_html/js/custom/form-validator.js`) para gerenciar máscaras em tempo real para CPF/CNPJ e Telefone, verificação de compatibilidade de senhas e submissões genéricas via AJAX (`data-oc-toggle="ajax"`).
   - A biblioteca foi integrada ao layout global (`layouts/base.html.twig`) e o arquivo órfão `verifica-formulario-cadastro-cliente.js` foi deletado.
+- **Implementação e Correção da Rota de Minha Conta (Account)**:
+  - Correção do namespace de [AccountAction.php](file:///var/www/html/agsonhos/core/Controller/Actions/Customer/Auth/AccountAction.php) para `Alpha\Controller\Actions\Customer\Auth`.
+  - Refatoração completa da action para renderizar dinamicamente a view Twig de conta [account.twig](file:///var/www/html/agsonhos/resources/views/pages/users/accounts/account.twig), definindo todas as traduções e links de rotas necessárias em pt-br.
+  - Registro da rota `/account` no bootstrap [index.php](file:///var/www/html/agsonhos/public_html/index.php) associada à `SessionMiddleware` para proteção automática de autenticação.
+  - Adição de redirecionamento de compatibilidade de `/account` para a versão com idioma `/pt-br/account`.
+- **Implementação e Correção da Rota de Meus Pedidos (Orders)**:
+  - Correção do namespace de [OrdersAction.php](file:///var/www/html/agsonhos/core/Controller/Actions/Customer/Auth/OrdersAction.php) para `Alpha\Controller\Actions\Customer\Auth`.
+  - Refatoração completa da action para buscar os pedidos do cliente, obter a quantidade de itens por pedido, formatar os valores monetários e datas, e renderizar a view [orders.twig](file:///var/www/html/agsonhos/resources/views/pages/users/accounts/orders.twig).
+  - Registro da rota `/account/orders` no bootstrap [index.php](file:///var/www/html/agsonhos/public_html/index.php) associada à `SessionMiddleware` para proteção automática de autenticação.
+  - Adição de redirecionamento de compatibilidade de `/account/orders` para a versão com idioma `/pt-br/account/orders`.
+
+

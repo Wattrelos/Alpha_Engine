@@ -1,25 +1,64 @@
-<nav class="navbar navbar-expand-lg border-bottom border-body bg-primary bg-dark" data-bs-theme="dark">
-    <div class="container-fluid">                                        
-        <ul class="nav nav-pills nav-fill me-auto mb-2 mb-lg-0" >
-            <li class="nav-item"><a href="{{ home|default(url('home', {}, lang)) }}" class="nav-link"><i class="fa-solid fa-house"></i><span class="d-none d-lg-inline"> {{ text_home|default('Início') }}</span></a></li>
-            <li class="nav-item"><a href="{{ contact|default(url('information/contact', {}, lang)) }}" class="nav-link"><i class="fa-solid fa-phone"></i><span class="d-none d-lg-inline"> {{ telephone|default('Contato') }}</span></a></li>
-            <li class="nav-item dropdown">
-                <a href="#" class="dropdown-toggle nav-link" data-bs-toggle="dropdown"><i class="fa-solid fa-user"></i> <span class="d-none d-lg-inline">{{ text_account|default('Minha Conta') }}</span> <i class="fa-solid fa-caret-down"></i></a>
-                <ul class="dropdown-menu dropdown-menu-dark">
-                    {% if not logged %}
-                        <li><a href="{{ register|default(url('cadastro', {}, lang)) }}" class="dropdown-item">{{ text_register|default('Registrar') }}</a></li>
-                        <li><a href="{{ login|default(url('login', {}, lang)) }}" class="dropdown-item">{{ text_login|default('Login') }}</a></li>
-                    {% else %}
-                        <li><a href="{{ account|default(url('account/account', {}, lang)) }}" class="dropdown-item">{{ text_account|default('Minha Conta') }}</a></li>
-                        <li><a href="{{ order|default(url('account/order', {}, lang)) }}" class="dropdown-item">{{ text_order|default('Pedidos') }}</a></li>
-                        <li><a href="{{ transaction|default(url('account/transaction', {}, lang)) }}" class="dropdown-item">{{ text_transaction|default('Transações') }}</a></li>
-                        <li><a href="{{ logout|default(url('logout', {}, lang)) }}" class="dropdown-item">{{ text_logout|default('Sair') }}</a></li>
-                    {% endif %}
-                </ul>
-            </li>
-            <li class="nav-item"><a class="nav-link" href="{{ wishlist|default(url('account/wishlist', {}, lang)) }}" id="wishlist-total" title="{{ text_wishlist|default('Favoritos') }}"><i class="fa-solid fa-heart"></i> <span class="d-none d-lg-inline">{{ text_wishlist|default('Favoritos') }}</span></a></li>
-            <li class="nav-item"><a class="nav-link" href="{{ shopping_cart|default(url('carrinho', {}, lang)) }}" title="{{ text_shopping_cart|default('Carrinho') }}"><i class="fa-solid fa-cart-shopping"></i> <span class="d-none d-lg-inline">{{ text_shopping_cart|default('Carrinho') }}</span></a></li>
-            <li class="nav-item"><a class="nav-link" href="{{ checkout|default(url('checkout', {}, lang)) }}" title="{{ text_checkout|default('Finalizar Compra') }}"><i class="fa-solid fa-share"></i> <span class="d-none d-lg-inline">{{ text_checkout|default('Finalizar Compra') }}</span></a></li>
-        </ul>
-    </div>
+<nav class="egen-top-nav" aria-label="Barra de navegação utilitária">
+	<ul class="egen-top-nav__list">
+		<li class="egen-top-nav__item">
+			<a href="{{ home|default(url('home', {}, lang)) }}" class="egen-top-nav__link">
+				<i class="fa-solid fa-house" aria-hidden="true"></i>
+				<span class="egen-top-nav__label">{{ text_home|default('Início') }}</span>
+			</a>
+		</li>
+		<li class="egen-top-nav__item">
+			<a href="{{ contact|default(url('information/contact', {}, lang)) }}" class="egen-top-nav__link">
+				<i class="fa-solid fa-phone" aria-hidden="true"></i>
+				<span class="egen-top-nav__label">{{ telephone|default('Contato') }}</span>
+			</a>
+		</li>
+		<li class="egen-top-nav__item egen-top-nav__item--dropdown">
+			<a href="#" class="egen-top-nav__link" aria-haspopup="true" aria-expanded="false">
+				<i class="fa-solid fa-user" aria-hidden="true"></i>
+				<span class="egen-top-nav__label">{{ text_account|default('Minha Conta') }}</span>
+				<i class="fa-solid fa-caret-down egen-top-nav__caret" aria-hidden="true"></i>
+			</a>
+			<ul class="egen-top-nav__dropdown" role="menu">
+				{% if not logged %}
+					<li role="none">
+						<a href="{{ register|default(url('cadastro', {}, lang)) }}" class="egen-top-nav__dropdown-item" role="menuitem">{{ text_register|default('Registrar') }}</a>
+					</li>
+					<li role="none">
+						<a href="{{ login|default(url('login', {}, lang)) }}" class="egen-top-nav__dropdown-item" role="menuitem">{{ text_login|default('Login') }}</a>
+					</li>
+				{% else %}
+					<li role="none">
+						<a href="{{ account|default(url('account/account', {}, lang)) }}" class="egen-top-nav__dropdown-item" role="menuitem">{{ text_account|default('Minha Conta') }}</a>
+					</li>
+					<li role="none">
+						<a href="{{ order|default(url('account/orders', {}, lang)) }}" class="egen-top-nav__dropdown-item" role="menuitem">{{ text_order|default('Pedidos') }}</a>
+					</li>
+					<li role="none">
+						<a href="{{ transaction|default(url('account/transaction', {}, lang)) }}" class="egen-top-nav__dropdown-item" role="menuitem">{{ text_transaction|default('Transações') }}</a>
+					</li>
+					<li role="none">
+						<a href="{{ logout|default(url('logout', {}, lang)) }}" class="egen-top-nav__dropdown-item" role="menuitem">{{ text_logout|default('Sair') }}</a>
+					</li>
+				{% endif %}
+			</ul>
+		</li>
+		<li class="egen-top-nav__item">
+			<a class="egen-top-nav__link" href="{{ wishlist|default(url('account/wishlist', {}, lang)) }}" id="wishlist-total" title="{{ text_wishlist|default('Favoritos') }}">
+				<i class="fa-solid fa-heart" aria-hidden="true"></i>
+				<span class="egen-top-nav__label">{{ text_wishlist|default('Favoritos') }}</span>
+			</a>
+		</li>
+		<li class="egen-top-nav__item">
+			<a class="egen-top-nav__link" href="{{ shopping_cart|default(url('carrinho', {}, lang)) }}" title="{{ text_shopping_cart|default('Carrinho') }}">
+				<i class="fa-solid fa-cart-shopping" aria-hidden="true"></i>
+				<span class="egen-top-nav__label">{{ text_shopping_cart|default('Carrinho') }}</span>
+			</a>
+		</li>
+		<li class="egen-top-nav__item">
+			<a class="egen-top-nav__link" href="{{ checkout|default(url('checkout', {}, lang)) }}" title="{{ text_checkout|default('Finalizar Compra') }}">
+				<i class="fa-solid fa-share" aria-hidden="true"></i>
+				<span class="egen-top-nav__label">{{ text_checkout|default('Finalizar Compra') }}</span>
+			</a>
+		</li>
+	</ul>
 </nav>

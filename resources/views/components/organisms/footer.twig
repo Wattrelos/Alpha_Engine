@@ -36,28 +36,30 @@
 ] %}
 
 <footer class="ag-footer">
-  <div class="container pb-4">
-    <div class="row">
-      
-      {# Coluna Institucional (Logo, Resumo e Redes Sociais) #}
-      <div class="col-12 col-lg-3 mb-4 mb-lg-0 pe-lg-4">
-        <div class="footer-brand mb-3">
+  <div class="egen-footer__container">
+
+    {# Grid de colunas do rodapé #}
+    <div class="egen-footer__grid">
+
+      {# Coluna Institucional — Logo, Resumo e Redes Sociais #}
+      <div class="egen-footer__brand-col">
+        <div class="egen-footer__brand">
           {% if logo %}
-            <img src="{{ logo }}" alt="{{ name }}" class="img-fluid footer-logo mb-2" style="max-height: 50px;">
+            <img src="{{ logo }}" alt="{{ name }}" class="egen-footer__logo">
           {% else %}
-            <h3 class="text-white font-weight-bold mb-2">{{ name }}</h3>
+            <h3 class="egen-footer__brand-name">{{ name }}</h3>
           {% endif %}
-          <p class="footer-desc mt-2">
+          <p class="footer-desc">
             A parceria ideal para a realização dos seus sonhos e da sua obra. Materiais de construção com qualidade, agilidade e o melhor preço.
           </p>
         </div>
-        
+
         {# Redes Sociais #}
-        <div class="social-icons mt-3">
-          <a href="https://facebook.com" target="_blank" rel="noopener" title="Facebook"><i class="fa-brands fa-facebook-f"></i></a>
-          <a href="https://instagram.com" target="_blank" rel="noopener" title="Instagram"><i class="fa-brands fa-instagram"></i></a>
-          <a href="https://youtube.com" target="_blank" rel="noopener" title="YouTube"><i class="fa-brands fa-youtube"></i></a>
-          <a href="https://wa.me/5500000000000" target="_blank" rel="noopener" title="WhatsApp"><i class="fa-brands fa-whatsapp"></i></a>
+        <div class="social-icons">
+          <a href="https://facebook.com" target="_blank" rel="noopener" title="Facebook" aria-label="Facebook"><i class="fa-brands fa-facebook-f" aria-hidden="true"></i></a>
+          <a href="https://instagram.com" target="_blank" rel="noopener" title="Instagram" aria-label="Instagram"><i class="fa-brands fa-instagram" aria-hidden="true"></i></a>
+          <a href="https://youtube.com" target="_blank" rel="noopener" title="YouTube" aria-label="YouTube"><i class="fa-brands fa-youtube" aria-hidden="true"></i></a>
+          <a href="https://wa.me/5500000000000" target="_blank" rel="noopener" title="WhatsApp" aria-label="WhatsApp"><i class="fa-brands fa-whatsapp" aria-hidden="true"></i></a>
         </div>
       </div>
 
@@ -87,27 +89,26 @@
         links: account_links
       } %}
 
-    </div>
-  </div>
+    </div>{# /.egen-footer__grid #}
+  </div>{# /.egen-footer__container #}
 
   {# Rodapé Inferior: Copyright e Formas de Pagamento #}
   <div class="ag-footer-bottom">
-    <div class="container">
-      <div class="row align-items-center">
-        <div class="col-12 col-md-6 text-center text-md-start mb-3 mb-md-0">
-          <p class="mb-0">
-            {{ powered|default('&copy; ' ~ "now"|date("Y") ~ ' ' ~ name ~ '. Todos os direitos reservados.')|raw }}
-          </p>
+    <div class="egen-footer__container">
+      <div class="egen-footer__bottom-row">
+
+        <p class="ag-footer-bottom__copy">
+          {{ powered|default('&copy; ' ~ "now"|date("Y") ~ ' ' ~ name ~ '. Todos os direitos reservados.')|raw }}
+        </p>
+
+        <div class="payment-methods">
+          <span class="payment-methods__label">Formas de pagamento:</span>
+          <i class="fa-brands fa-cc-visa fa-2x" title="Visa" aria-label="Visa"></i>
+          <i class="fa-brands fa-cc-mastercard fa-2x" title="Mastercard" aria-label="Mastercard"></i>
+          <i class="fa-solid fa-barcode fa-2x" title="Boleto Bancário" aria-label="Boleto Bancário"></i>
+          <i class="fa-solid fa-money-bill-transfer fa-2x" title="Pix" aria-label="Pix"></i>
         </div>
-        <div class="col-12 col-md-6">
-          <div class="payment-methods text-center text-md-end">
-            <span class="me-2 text-muted" style="font-size: 0.8rem; vertical-align: middle;">Formas de pagamento:</span>
-            <i class="fa-brands fa-cc-visa fa-2x mx-1 text-muted" title="Visa" style="vertical-align: middle;"></i>
-            <i class="fa-brands fa-cc-mastercard fa-2x mx-1 text-muted" title="Mastercard" style="vertical-align: middle;"></i>
-            <i class="fa-solid fa-barcode fa-2x mx-1 text-muted" title="Boleto Bancário" style="vertical-align: middle;"></i>
-            <i class="fa-solid fa-money-bill-transfer fa-2x mx-1 text-muted" title="Pix" style="vertical-align: middle;"></i>
-          </div>
-        </div>
+
       </div>
     </div>
   </div>

@@ -11,6 +11,7 @@
 {% endblock %}
 
 {% block content %}
+	<div class="egen-register-page">
 	<div class="egen-register-container">
 		<h1 class="egen-register-title">{{ heading_title }}</h1>
 		<p class="egen-register-subtitle">{{ text_account_already|raw }}</p>
@@ -70,21 +71,18 @@
 				{# Fim do egen-form-grid #}
 
 			</fieldset>
-			<fieldset>
+			<fieldset class="egen-fieldset">
+				<legend class="egen-legend">{{ text_your_password|default('Senha de Acesso') }}</legend>
 				{# Password #}
 				<div class="egen-form-group egen-required">
 					<label for="input-password" class="egen-form-label">{{ entry_password }}</label>
-					<div class="egen-form-input">
-						<input type="password" name="password" value="{{ password }}" placeholder="{{ entry_password }}" id="input-password" class="egen-form-input"/>
-						<div id="error-password" class="egen-invalid-feedback">{{ error_password }}</div>
-					</div>
+					<input type="password" name="password" value="{{ password }}" placeholder="{{ entry_password }}" id="input-password" class="egen-form-input"/>
+					<div id="error-password" class="egen-invalid-feedback">{{ error_password }}</div>
 				</div>
 				<div class="egen-form-group egen-required">
 					<label for="input-confirm" class="egen-form-label">{{ entry_confirm }}</label>
-					<div class="egen-form-input">
-						<input type="password" name="confirm" value="{{ confirm }}" placeholder="{{ entry_password }}" id="input-confirm" class="egen-form-input"/>
-						<div id="error-confirm" class="text-danger">{{ error_confirm }}</div>
-					</div>
+					<input type="password" name="confirm" value="{{ confirm }}" placeholder="{{ entry_password }}" id="input-confirm" class="egen-form-input"/>
+					<div id="error-confirm" class="egen-invalid-feedback">{{ error_confirm }}</div>
 				</div>
 			</fieldset>
 
@@ -109,5 +107,6 @@
 			</div>
 
 		</form>
-	</div>
+	</div>{# /.egen-register-container #}
+	</div>{# /.egen-register-page #}
 {% endblock %}

@@ -2,18 +2,9 @@
 <html dir="{{ direction }}" lang="{{ lang }}">
 	<head>
 		<meta charset="UTF-8">
-		<title>
-			{% block title %}Meu App
-			{% endblock %}
-		</title>
-		<link rel="stylesheet" href="/css/app.css">
-		<link rel="stylesheet" href="/css/custom/personalizada.css">
-		<link rel="stylesheet" href="/css/custom/personalizada.css">
-		<link rel="stylesheet" href="/css/custom/new-stylesheet.css">
+		<title>{% block title %}{{ title|default('AgSonhos') }}{% endblock %}</title>
 		<meta name="viewport" content="width=device-width, initial-scale=1">
 		<meta http-equiv="X-UA-Compatible" content="IE=edge">
-		<title>{{ title }}</title>
-		<base href="{{ base }}"/>
 		{% if description %}
 			<meta name="description" content="{{ description }}"/>
 		{% endif %}
@@ -23,6 +14,16 @@
 		{% if icon %}
 			<link rel="icon" href="{{ icon }}" type="image/png">
 		{% endif %}
+		<base href="{{ base }}"/>
+
+		{# ── Fontes e Ícones ── #}
+		<link rel="stylesheet" href="/fonts/fontawesome/css/all.min.css">
+
+		{# ── Estilos da Alpha Engine ── #}
+		<link rel="stylesheet" href="/css/app.css">
+		<link rel="stylesheet" href="/css/custom/personalizada.css">
+		<link rel="stylesheet" href="/css/custom/new-stylesheet.css">
+
 		{% for style in styles %}
 			<link href="{{ style.href }}" type="text/css" rel="{{ style.rel }}" media="{{ style.media }}"/>
 		{% endfor %}

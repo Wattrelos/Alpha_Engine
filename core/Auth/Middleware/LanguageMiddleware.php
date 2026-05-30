@@ -54,8 +54,50 @@ class LanguageMiddleware
 
         // Atualiza a global do Twig
         $this->twig->addGlobal('lang', $langCode);
+        $this->twig->addGlobal('logged', $this->isUserLogged($request));
 
         return $handler->handle($request);
     }
+
+    /**
+     * Verifica de forma otimizada se o cliente possui uma sessão ativa (Redis ou PHP local)
+     */
+    private function isUserLogged(Request $request): bool
+    {
+        $cookies = $request->getCookieParams();
+        $sessionId = $cookies['session_id'] ?? '';
+
+        if (empty($sessionId)) {
+            return false;
+        }
+
+        try {
+            $redis = new \Predis\Client([
+                'host' => $_ENV['REDIS_HOST'] ?? '127.0.0.1',
+                'port' => $_ENV['REDIS_PORT'] ?? 6379,
+                'password' => ($_ENV['REDIS_PASSWORD'] ?? '') ?: null,
+                'timeout' => 0.5
+            ]);
+            $redis->connect();
+            $sessionData = $redis->get("sessao:" . $sessionId);
+            if ($sessionData) {
+                return true;
+            }
+        } catch (\Exception $e) {
+            // Fallback para sessão local PHP
+            if (session_status() === PHP_SESSION_NONE) {
+                session_name('session_id');
+                session_id($sessionId);
+                @session_start();
+            }
+            $expire = $_SESSION['expire'] ?? 0;
+            if ($expire > time() && !empty($_SESSION['logged_user'])) {
+                return true;
+            }
+        }
+
+        return false;
+    }
 }
+
 

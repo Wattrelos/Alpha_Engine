@@ -69,7 +69,7 @@ class ShowLoginFormAction implements ActionInterface
             'text_forgotten' => 'Esqueceu a senha?',
             'forgotten' => '/forgotten', // Rota pública de esqueci a senha
             'button_login' => 'Acessar',
-            'login' => '/login', // Action do formulário
+            'login' => '/' . $languageCode . '/login', // Action do formulário
 
             // Alertas
             'error_warning' => $errorWarning,

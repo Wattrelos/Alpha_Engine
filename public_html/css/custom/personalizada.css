@@ -109,6 +109,167 @@
 }
 
 /************************************************************************************************************/
+/* Layout do Header (egen-header)                                                                           */
+/************************************************************************************************************/
+
+/* Wrapper interno: logo à esquerda, conteúdo à direita */
+.egen-header {
+  padding: 1.25rem 0;
+  transition: padding var(--transition-speed) ease;
+}
+
+.egen-header__container {
+  display: flex;
+  flex-direction: row;
+  align-items: stretch;         /* logo e coluna direita têm mesma altura */
+  gap: 1.5rem;
+  width: 100%;
+  max-width: 1320px;
+  margin: 0 auto;
+  padding: 0 1.5rem;
+  box-sizing: border-box;
+}
+
+/* Logo — largura mínima, não encolhe */
+.egen-header__logo {
+  display: flex;
+  align-items: center;
+  flex: 0 0 auto;
+}
+
+/* Coluna direita — ocupa todo o espaço restante */
+.egen-header__content {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  flex: 1 1 0;
+  min-width: 0; /* evita overflow em flex */
+  gap: 0.5rem;
+}
+
+/* Linha superior: top-nav alinhado à direita */
+.egen-header__top-row {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  width: 100%;
+}
+
+/* Estado sticky */
+.telhado.sticky .egen-header {
+  padding: 0.5rem 0;
+}
+
+.telhado.sticky #logo h1 {
+  font-size: 1.8rem;
+}
+
+.telhado.sticky #logo img {
+  max-height: 50px;
+}
+
+/************************************************************************************************************/
+/* Utility Bar (egen-utility-bar)                                                                           */
+/************************************************************************************************************/
+
+.egen-utility-bar {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 0.75rem;
+  width: 100%;
+}
+
+/* Botão de menu — largura mínima, não encolhe */
+.egen-utility-bar__menu {
+  flex: 0 0 auto;
+}
+
+/* Caixa de busca — expande para preencher o espaço */
+.egen-utility-bar__search {
+  flex: 1 1 0;
+  min-width: 0;
+}
+
+/* Carrinho — largura mínima, não encolhe */
+.egen-utility-bar__cart {
+  flex: 0 0 auto;
+}
+
+/* Botão do carrinho */
+.egen-btn-cart {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  background-color: var(--dark-color-1);
+  color: var(--light-color-1);
+  border: 2px solid var(--primary-color);
+  border-radius: 50px;
+  padding: 0.55rem 1.4rem;
+  font-weight: 600;
+  font-size: 0.9rem;
+  text-decoration: none;
+  white-space: nowrap;
+  transition: all var(--transition-speed) ease;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+}
+
+.egen-btn-cart:hover,
+.egen-btn-cart:focus-visible {
+  background-color: var(--primary-color);
+  border-color: var(--primary-hover);
+  color: var(--light-color-1);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 15px rgba(252, 144, 3, 0.35);
+  outline: none;
+}
+
+.egen-btn-cart i {
+  font-size: 1rem;
+}
+
+/************************************************************************************************************/
+/* Responsividade do Header                                                                                  */
+/************************************************************************************************************/
+
+@media (max-width: 991px) {
+  .egen-header {
+    padding: 1rem 0;
+  }
+
+  /* Em mobile: empilha logo acima do conteúdo */
+  .egen-header__container {
+    flex-direction: column;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0 1rem;
+  }
+
+  .egen-header__logo {
+    justify-content: center;
+  }
+
+  .egen-header__content {
+    width: 100%;
+  }
+
+  .egen-header__top-row {
+    justify-content: center;
+  }
+
+  /* Utility bar empilha verticalmente em telas muito pequenas */
+  .egen-utility-bar {
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  .egen-utility-bar__search {
+    flex: 1 1 100%; /* busca ocupa linha inteira */
+    order: -1;      /* sobe para o topo */
+  }
+}
+
+/************************************************************************************************************/
 /** Menu de Navegação. menu-container       **/
 /**                                         **/
 /************************************************************************************************************/
@@ -363,208 +524,178 @@
   height: 100%;
 }
 
-/* Top Nav / Navbar Overrides inside Header */
-.telhado .navbar {
-  background: transparent !important;
-  border-bottom: none !important;
-  padding: 0.25rem 0;
-  display: inline-flex;
+/************************************************************************************************************/
+/* Top Nav (egen-top-nav) — Barra utilitária superior do Header                                            */
+/************************************************************************************************************/
+
+.egen-top-nav {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  width: 100%;
+  padding: 0;
+  margin: 0;
 }
 
-.telhado .navbar .container-fluid {
+.egen-top-nav__list {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  align-items: center;
   justify-content: flex-end;
+  gap: 0.15rem;
+  list-style: none;
+  margin: 0;
   padding: 0;
 }
 
-.telhado .navbar .nav-link {
-  color: rgba(255, 255, 255, 0.9) !important;
-  font-weight: 500;
-  font-size: 0.9rem;
-  transition: all var(--transition-speed) ease;
-  border-radius: 20px;
-  padding: 0.4rem 1rem !important;
+/* Cada item da lista */
+.egen-top-nav__item {
+  position: relative;
+  flex: 0 0 auto;
+}
+
+/* Link / botão de cada item */
+.egen-top-nav__link {
   display: inline-flex;
   align-items: center;
   gap: 0.35rem;
+  color: rgba(255, 255, 255, 0.9);
+  font-size: 0.875rem;
+  font-weight: 500;
+  text-decoration: none;
+  white-space: nowrap;
+  padding: 0.4rem 0.85rem;
+  border-radius: 20px;
+  transition: color var(--transition-speed) ease,
+              background var(--transition-speed) ease;
 }
 
-.telhado .navbar .nav-link:hover {
-  color: var(--accent-color) !important;
-  background: rgba(252, 144, 3, 0.15) !important;
+.egen-top-nav__link:hover,
+.egen-top-nav__link:focus-visible {
+  color: var(--accent-color);
+  background: rgba(252, 144, 3, 0.15);
+  outline: none;
 }
 
-.telhado .navbar .nav {
-  display: flex !important;
-  flex-direction: row !important;
-  flex-wrap: nowrap !important;
-  justify-content: flex-end !important;
-  align-items: center !important;
-  gap: 0.5rem !important;
-  padding: 0;
-  margin: 0;
-  list-style: none;
-}
-
-.telhado .navbar .nav-item {
-  flex: 0 0 auto !important;
-}
-
-.telhado .navbar .nav-link i {
+/* Ícones FontAwesome dentro do link */
+.egen-top-nav__link i {
   color: var(--primary-color);
+  font-size: 0.85rem;
+  flex-shrink: 0;
 }
 
-.telhado .dropdown-menu {
-  background-color: var(--dark-color-1) !important;
-  border: 1px solid rgba(252, 144, 3, 0.3) !important;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+/* Texto (rótulo) — oculto em telas pequenas */
+.egen-top-nav__label {
+  display: inline;
+}
+
+/* Ícone da seta do dropdown */
+.egen-top-nav__caret {
+  font-size: 0.75rem;
+  transition: transform var(--transition-speed) ease;
+  display: inline-block;
+}
+
+/************************************************************************************************************/
+/* Dropdown do item "Minha Conta"                                                                           */
+/************************************************************************************************************/
+
+.egen-top-nav__dropdown {
+  display: block;
+  position: absolute;
+  top: calc(100% + 6px);
+  right: 0; /* alinha pela direita do item-pai */
+  min-width: 180px;
+  list-style: none;
+  margin: 0;
+  padding: 0.4rem 0;
+  background-color: var(--dark-color-1);
+  border: 1px solid rgba(252, 144, 3, 0.3);
   border-radius: 8px;
-  padding: 0.5rem 0;
-  display: block !important;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+  z-index: 1050;
+  /* Oculto inicialmente */
   opacity: 0;
   visibility: hidden;
   pointer-events: none;
-  transform: translateY(10px);
+  transform: translateY(8px);
   transition: opacity var(--transition-speed) cubic-bezier(0.16, 1, 0.3, 1),
               transform var(--transition-speed) cubic-bezier(0.16, 1, 0.3, 1),
               visibility var(--transition-speed);
 }
 
-.telhado .dropdown-menu.show {
+/* Abre no hover e no foco-interno */
+.egen-top-nav__item--dropdown:hover .egen-top-nav__dropdown,
+.egen-top-nav__item--dropdown:focus-within .egen-top-nav__dropdown {
   opacity: 1;
   visibility: visible;
   pointer-events: auto;
   transform: translateY(0);
 }
 
-/* Customização Alpha Engine: Abertura suave do dropdown de Minha Conta no Hover */
-.telhado .nav-item.dropdown:hover .dropdown-menu {
-  opacity: 1;
-  visibility: visible;
-  pointer-events: auto;
-  transform: translateY(0);
-}
-
-/* Micro-animação: rotação da seta (caret-down) no hover do dropdown */
-.telhado .nav-link.dropdown-toggle i.fa-caret-down {
-  transition: transform var(--transition-speed) ease;
-  display: inline-block;
-}
-
-.telhado .nav-item.dropdown:hover .nav-link.dropdown-toggle i.fa-caret-down {
+/* Rotação da seta no hover */
+.egen-top-nav__item--dropdown:hover .egen-top-nav__caret,
+.egen-top-nav__item--dropdown:focus-within .egen-top-nav__caret {
   transform: rotate(180deg);
-  color: var(--accent-color) !important;
+  color: var(--accent-color);
 }
 
-.telhado .dropdown-item {
-  color: var(--light-color-2) !important;
-  font-size: 0.9rem;
+/* Itens do dropdown */
+.egen-top-nav__dropdown-item {
+  display: block;
   padding: 0.5rem 1.2rem;
-  transition: all var(--transition-speed) ease;
+  color: var(--light-color-2);
+  font-size: 0.875rem;
+  text-decoration: none;
+  white-space: nowrap;
+  transition: background var(--transition-speed) ease,
+              color var(--transition-speed) ease,
+              padding-left var(--transition-speed) ease;
 }
 
-.telhado .dropdown-item:hover {
-  background-color: var(--primary-color) !important;
-  color: var(--light-color-1) !important;
-  padding-left: 1.6rem !important; /* Deslocamento suave para a direita no hover */
+.egen-top-nav__dropdown-item:hover,
+.egen-top-nav__dropdown-item:focus-visible {
+  background-color: var(--primary-color);
+  color: var(--light-color-1);
+  padding-left: 1.6rem;
+  outline: none;
 }
 
-/* Carrinho Custom Button inside Utility Bar */
-#top .btn-dark.btn-carrinho-custom {
-  background-color: var(--dark-color-1) !important;
-  color: var(--light-color-1) !important;
-  border: 2px solid var(--primary-color) !important;
-  border-radius: 50px !important;
-  padding: 0.6rem 1.6rem !important;
-  font-weight: 600 !important;
-  display: inline-flex;
-  align-items: center;
-  gap: 0.5rem;
-  transition: all var(--transition-speed) ease !important;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
-}
 
-#top .btn-dark.btn-carrinho-custom:hover {
-  background-color: var(--primary-color) !important;
-  border-color: var(--primary-hover) !important;
-  color: var(--light-color-1) !important;
-  transform: translateY(-2px);
-  box-shadow: 0 6px 15px rgba(252, 144, 3, 0.35);
-}
+/************************************************************************************************************/
+/* Responsividade do Top Nav                                                                                */
+/************************************************************************************************************/
 
-#top .btn-dark.btn-carrinho-custom i {
-  font-size: 1.05rem;
-}
-
-/* Sticky Header Scroll state */
-.telhado.sticky {
-  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.5);
-  border-bottom-color: var(--accent-color);
-}
-
-.telhado.sticky::before {
-  background: rgba(16, 20, 24, 0.95);
-}
-
-.telhado.sticky header {
-  padding: 0.5rem 0;
-}
-
-.telhado.sticky #top {
-  margin-top: 0.3rem !important;
-  margin-bottom: 0.3rem !important;
-}
-
-.telhado.sticky #logo h1 {
-  font-size: 1.8rem;
-}
-
-.telhado.sticky #logo img {
-  max-height: 50px;
-}
-
-/* Responsive Overrides */
 @media (max-width: 991px) {
-  .telhado header {
-    padding: 1rem 0;
+
+  /* Rótulos de texto nos links somem em mobile */
+  .egen-top-nav__label {
+    display: none;
   }
-  
-  .telhado .row.align-items-center {
-    flex-direction: column;
-    text-align: center;
-    gap: 0.75rem;
-  }
-  
-  .telhado .col-auto, 
-  .telhado .col {
-    width: 100%;
-  }
-  
-  .telhado .navbar {
-    display: flex;
-    justify-content: center !important;
-    margin-bottom: 0.5rem;
-  }
-  
-  .telhado .navbar .container-fluid {
-    justify-content: center !important;
-  }
-  
-  .telhado .navbar .nav {
-    justify-content: center !important;
-  }
-  
-  #top {
-    flex-direction: column;
-    gap: 0.75rem;
-    margin-top: 0.5rem !important;
-    margin-bottom: 0.5rem !important;
-  }
-  
-  #top .col-12 {
-    display: flex;
+
+  .egen-top-nav {
     justify-content: center;
   }
-  
+
+  .egen-top-nav__list {
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 0.25rem;
+  }
+
+  /* Dropdown abre para cima se estiver no fim da tela */
+  .egen-top-nav__dropdown {
+    right: auto;
+    left: 50%;
+    transform: translateX(-50%) translateY(8px);
+  }
+
+  .egen-top-nav__item--dropdown:hover .egen-top-nav__dropdown,
+  .egen-top-nav__item--dropdown:focus-within .egen-top-nav__dropdown {
+    transform: translateX(-50%) translateY(0);
+  }
+
   .search-bar {
     max-width: 100%;
   }
@@ -619,9 +750,10 @@
 }
 
 /************************************************************************************************************/
-/* Estilos do Rodapé (Alpha Footer) */
+/* Rodapé (ag-footer + egen-footer__*)                                                                      */
 /************************************************************************************************************/
 
+/* ── Wrapper do rodapé ── */
 .ag-footer {
   background-color: var(--dark-color-1);
   color: var(--light-color-2);
@@ -630,46 +762,55 @@
   font-family: inherit;
 }
 
-.ag-footer h5.footer-column__title {
+/* ── Container centralizado (reutilizado no bottom bar) ── */
+.egen-footer__container {
+  width: 100%;
+  max-width: 1320px;
+  margin: 0 auto;
+  padding: 0 1.5rem;
+  box-sizing: border-box;
+}
+
+/* ── Grid de colunas — logo + 4 colunas de links ── */
+.egen-footer__grid {
+  display: grid;
+  grid-template-columns: 1.5fr repeat(4, 1fr); /* coluna da marca maior */
+  gap: 2rem 3rem;
+  padding-bottom: 1rem;
+}
+
+/* ── Coluna da Marca (logo, descrição, redes) ── */
+.egen-footer__brand-col {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.egen-footer__logo {
+  max-height: 50px;
+  width: auto;
+  display: block;
+}
+
+.egen-footer__brand-name {
   color: var(--light-color-1);
   font-weight: 700;
-  font-size: 1.1rem;
-  letter-spacing: 0.5px;
-  position: relative;
-  padding-bottom: 0.5rem;
+  font-size: 1.4rem;
+  margin: 0 0 0.5rem 0;
 }
 
-.ag-footer h5.footer-column__title::after {
-  content: '';
-  position: absolute;
-  left: 0;
-  bottom: 0;
-  width: 30px;
-  height: 2px;
-  background-color: var(--primary-color);
-  transition: width var(--transition-speed) ease;
-}
-
-.col-12:hover h5.footer-column__title::after {
-  width: 50px;
-}
-
-.ag-footer .footer-desc {
+.footer-desc {
   color: #a0aab5;
   font-size: 0.9rem;
   line-height: 1.6;
+  margin: 0;
 }
 
-.ag-footer .footer-column__link {
-  color: #a0aab5;
-  font-size: 0.9rem;
-  transition: all var(--transition-speed) ease;
-  display: inline-block;
-}
-
-.ag-footer .footer-column__link:hover {
-  color: var(--primary-color) !important;
-  transform: translateX(5px);
+/* ── Ícones de redes sociais ── */
+.social-icons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
 }
 
 .ag-footer .social-icons a {
@@ -681,10 +822,12 @@
   border-radius: 50%;
   background: var(--dark-color-2);
   color: var(--light-color-2);
-  margin-right: 0.5rem;
-  transition: all var(--transition-speed) ease;
   border: 1px solid rgba(255, 255, 255, 0.1);
   text-decoration: none;
+  transition: background var(--transition-speed) ease,
+              color var(--transition-speed) ease,
+              transform var(--transition-speed) ease,
+              box-shadow var(--transition-speed) ease;
 }
 
 .ag-footer .social-icons a:hover {
@@ -694,24 +837,158 @@
   box-shadow: 0 4px 10px rgba(252, 144, 3, 0.4);
 }
 
+/* ── Coluna individual de links (molecule footer-column) ── */
+.egen-footer__col {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+/* Título da coluna */
+.footer-column__title {
+  color: var(--light-color-1);
+  font-weight: 700;
+  font-size: 1rem;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  position: relative;
+  padding-bottom: 0.6rem;
+  margin: 0;
+}
+
+.footer-column__title::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 28px;
+  height: 2px;
+  background-color: var(--primary-color);
+  transition: width var(--transition-speed) ease;
+}
+
+.egen-footer__col:hover .footer-column__title::after {
+  width: 48px;
+}
+
+/* Lista de links */
+.footer-column__list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.footer-column__item {
+  margin: 0;
+  padding: 0;
+}
+
+.footer-column__link {
+  color: #a0aab5;
+  font-size: 0.9rem;
+  text-decoration: none;
+  display: inline-block;
+  transition: color var(--transition-speed) ease,
+              transform var(--transition-speed) ease;
+}
+
+.footer-column__link:hover,
+.footer-column__link:focus-visible {
+  color: var(--primary-color);
+  transform: translateX(5px);
+  outline: none;
+}
+
+/* ── Barra inferior: copyright + pagamentos ── */
 .ag-footer-bottom {
   background-color: var(--dark-color-2);
-  padding: 1.5rem 0;
   margin-top: 3rem;
+  padding: 1.5rem 0;
   border-top: 1px solid rgba(255, 255, 255, 0.05);
 }
 
-.ag-footer-bottom p {
+.egen-footer__bottom-row {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.ag-footer-bottom__copy {
   color: #7d8794;
   font-size: 0.85rem;
+  margin: 0;
 }
 
-.ag-footer-bottom .payment-methods i {
+/* Ícones de formas de pagamento */
+.payment-methods {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.payment-methods__label {
   color: #7d8794;
-  transition: all var(--transition-speed) ease;
+  font-size: 0.8rem;
 }
 
-.ag-footer-bottom .payment-methods i:hover {
+.payment-methods i {
+  color: #7d8794;
+  transition: color var(--transition-speed) ease,
+              transform var(--transition-speed) ease;
+}
+
+.payment-methods i:hover {
   color: var(--primary-color);
-  transform: scale(1.1);
+  transform: scale(1.15);
+}
+
+/* ── Responsividade do Rodapé ── */
+@media (max-width: 1199px) {
+  /* Em telas médias: 2 colunas (marca + 2 / 2 + 2) */
+  .egen-footer__grid {
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+  }
+
+  .egen-footer__brand-col {
+    grid-column: 1 / -1; /* marca ocupa linha inteira */
+    flex-direction: row;
+    align-items: flex-start;
+    gap: 2rem;
+    padding-bottom: 1.5rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+  }
+
+  .social-icons {
+    margin-top: 0.5rem;
+  }
+}
+
+@media (max-width: 639px) {
+  /* Mobile: coluna única */
+  .egen-footer__grid {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+
+  .egen-footer__brand-col {
+    flex-direction: column;
+  }
+
+  .egen-footer__bottom-row {
+    flex-direction: column;
+    text-align: center;
+    align-items: center;
+  }
+
+  .payment-methods {
+    justify-content: center;
+  }
 }

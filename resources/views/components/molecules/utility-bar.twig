@@ -1,12 +1,16 @@
-<div id="top" class="row align-items-center mt-3 mb-3">
-    <div class="col-12 col-md-auto mb-2 mb-md-0">
+<div id="top" class="egen-utility-bar">
+
+    {# Botão de Departamentos / Menu #}
+    <div class="egen-utility-bar__menu">
         {% if menu %}
             {{ menu }}
         {% else %}
             {% include 'components/organisms/department-menu.twig' %}
         {% endif %}
     </div>
-    <div class="col-12 col-md mb-2 mb-md-0">
+
+    {# Caixa de Busca — expande para ocupar o espaço restante #}
+    <div class="egen-utility-bar__search">
         {% if search %}
             {{ search }}
         {% else %}
@@ -16,11 +20,17 @@
             </div>
         {% endif %}
     </div>
-    <div class="col-12 col-md-auto">
+
+    {# Botão do Carrinho #}
+    <div class="egen-utility-bar__cart">
         {% if cart %}
             {{ cart }}
         {% else %}
-            <a href="/carrinho" class="btn btn-dark btn-carrinho-custom"><i class="fa-solid fa-cart-shopping"></i> Carrinho</a>
+            <a href="/carrinho" class="egen-btn-cart">
+                <i class="fa-solid fa-cart-shopping" aria-hidden="true"></i>
+                <span>Carrinho</span>
+            </a>
         {% endif %}
     </div>
+
 </div>

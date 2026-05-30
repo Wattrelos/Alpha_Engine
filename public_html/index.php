@@ -20,6 +20,8 @@ use Alpha\Support\Registry;
 use Alpha\Controller\Actions\Customer\Auth\ShowRegistrationFormAction;
 use Alpha\Controller\Actions\Customer\Auth\RegisterAction;
 use Alpha\Controller\Actions\Customer\Auth\LogoutAction;
+use Alpha\Controller\Actions\Customer\Auth\AccountAction;
+use Alpha\Controller\Actions\Customer\OrderHistoryAction;
 use Alpha\Session\AlphaSessionHandler;
 use Alpha\Model\Domain\Repositories\SessionRepository;
 use Alpha\Controller\Actions\Product\ShowProductAction;
@@ -31,6 +33,9 @@ use Alpha\Auth\Middleware\LegacyRouteRedirectMiddleware;
 use Alpha\Model\Domain\Repositories\ProductRepository;
 use Alpha\Model\Domain\Repositories\SeoUrlRepository;
 use Alpha\Model\Domain\Repositories\InformationRepository;
+use Alpha\Controller\Actions\Customer\OrdersAction;
+use Alpha\Model\Domain\Repositories\OrderRepository;
+
 
 require __DIR__ . '/../vendor/autoload.php';
 
@@ -121,6 +126,7 @@ $categoryRepository = new CategoryRepository($mapperFactory, $registry);
 $productRepository = $repositoryFactory->get(ProductRepository::class);
 $seoUrlRepository  = $repositoryFactory->get(SeoUrlRepository::class);
 $informationRepository = $repositoryFactory->get(InformationRepository::class);
+$orderRepository   = $repositoryFactory->get(OrderRepository::class);
 
 // ─────────────────────────────────────────────────────────
 // 3. TWIG — Loader apontando para resources/views/
@@ -174,7 +180,8 @@ $container = (new AppContainer())
     ->bind(SessionRepository::class,  $sessionRepository)
     ->bind(ProductRepository::class,  $productRepository)
     ->bind(SeoUrlRepository::class,   $seoUrlRepository)
-    ->bind(InformationRepository::class, $informationRepository);
+    ->bind(InformationRepository::class, $informationRepository)
+    ->bind(OrderRepository::class,    $orderRepository);
 
 // ─────────────────────────────────────────────────────────
 // 5. SLIM APP
@@ -198,7 +205,15 @@ $app->get('/', function ($request, $response) {
     return $response->withHeader('Location', '/pt-br')->withStatus(302);
 });
 
-// Redirecionamentos de conveniência para URLs sem idioma
+$app->get('/account', function ($request, $response) {
+    return $response->withHeader('Location', '/pt-br/account')->withStatus(302);
+});
+$app->get('/account/orders', function ($request, $response) {
+    return $response->withHeader('Location', '/pt-br/account/orders')->withStatus(302);
+});
+$app->get('/account/order/history/{order_id}', function ($request, $response, $args) {
+    return $response->withHeader('Location', '/pt-br/account/order/history/' . $args['order_id'])->withStatus(302);
+});
 $app->get('/login', function ($request, $response) {
     return $response->withHeader('Location', '/pt-br/login')->withStatus(302);
 });
@@ -224,7 +239,7 @@ $app->get('/busca', function ($request, $response) {
 // 7. GRUPO DE ROTAS INTERNACIONALIZADAS
 // ─────────────────────────────────────────────────────────
 $app->group('/{lang:pt-br|en|es}', function (\Slim\Routing\RouteCollectorProxy $group) use ($container) {
-    
+
     // Página Inicial do Idioma
     $group->get('', function ($request, $response, $args) use ($container) {
         return $container->get(HomeAction::class)($request, $response, $args);
@@ -251,10 +266,25 @@ $app->group('/{lang:pt-br|en|es}', function (\Slim\Routing\RouteCollectorProxy $
         return $container->get(LogoutAction::class)($request, $response, $args);
     });
 
+    // Minha Conta
+    $group->get('/account', function ($request, $response, $args) use ($container) {
+        return $container->get(AccountAction::class)($request, $response, $args);
+    })->add(new \Alpha\Auth\Middleware\SessionMiddleware());
+
+    // Histórico do Pedido
+    $group->get('/account/order/history/{order_id}', function ($request, $response, $args) use ($container) {
+        return $container->get(OrderHistoryAction::class)($request, $response, $args);
+    })->add(new \Alpha\Auth\Middleware\SessionMiddleware());
+
     // Detalhe do Produto (SEO)
     $group->get('/produto/{slug}', function ($request, $response, $args) use ($container) {
         return $container->get(ShowProductAction::class)($request, $response, $args);
     });
+
+    // Lista de Pedidos (Auth)
+    $group->get('/account/orders', function ($request, $response, $args) use ($container) {
+        return $container->get(OrdersAction::class)($request, $response, $args);
+    })->add(new \Alpha\Auth\Middleware\SessionMiddleware());
 
     // Listagem da Categoria (SEO)
     $group->get('/categoria/{slug}', function ($request, $response, $args) use ($container) {

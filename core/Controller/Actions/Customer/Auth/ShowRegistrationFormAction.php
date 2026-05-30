@@ -69,7 +69,7 @@ class ShowRegistrationFormAction implements ActionInterface
             'title' => 'Criar Conta | AgSonhos',
             'description' => 'Crie sua conta para gerenciar seus pedidos e compras.',
             'breadcrumbs' => $breadcrumbs,
-            'register' => '/cadastro', // Rota POST para submissão do formulário
+            'register' => '/' . $languageCodeStr . '/cadastro', // Rota POST para submissão do formulário
 
             // Configurações do painel
             'config_telephone_display' => $configSettings['config_telephone_display'] ?? true,

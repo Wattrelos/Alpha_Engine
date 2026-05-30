@@ -16,6 +16,15 @@ class Customer
 
     public function getId(): int
     {
-        return (int)($_SESSION['customer_id'] ?? 0);
+        if (isset($_SESSION['customer_id'])) {
+            return (int)$_SESSION['customer_id'];
+        }
+        if (!empty($_SESSION['logged_user'])) {
+            $user = json_decode($_SESSION['logged_user']);
+            if ($user && isset($user->id)) {
+                return (int)$user->id;
+            }
+        }
+        return 0;
     }
 }
