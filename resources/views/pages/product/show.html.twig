@@ -3,207 +3,225 @@
 {% block title %}{{ seo.title }}{% endblock %}
 
 {% block content %}
-<div class="container my-5">
+<div class="egen-product-page">
     <!-- Breadcrumbs -->
-    <nav aria-label="breadcrumb" class="mb-4">
-        <ol class="breadcrumb bg-light p-3 rounded shadow-sm">
-            <li class="breadcrumb-item"><a href="/{{ lang }}" class="text-primary text-decoration-none"><i class="fas fa-home"></i> Início</a></li>
-            <li class="breadcrumb-item active" aria-current="page">{{ product.name }}</li>
-        </ol>
-    </nav>
+    <div class="egen-product-page__breadcrumbs">
+        {% include 'components/molecules/breadcrumbs.twig' with { items: [
+            { text: 'Início', href: '/' ~ lang },
+            { text: product.name, href: '' }
+        ] } %}
+    </div>
 
-    <div class="row">
+    <div class="egen-product-layout">
         <!-- Coluna da Esquerda: Imagens -->
-        <div class="col-lg-6 mb-4">
-            <div class="product-gallery p-3 bg-white rounded shadow-sm border text-center">
+        <div class="egen-product-gallery">
+            <div class="egen-product-gallery__main">
                 {% if product.popup %}
-                    <a href="{{ product.popup }}" target="_blank" class="d-block mb-3">
-                        <img src="{{ product.thumb }}" alt="{{ product.name }}" id="main-product-image" class="img-fluid rounded transition-scale" style="max-height: 450px; object-fit: contain;">
+                    <a href="{{ product.popup }}" target="_blank" class="egen-product-gallery__main-link">
+                        <img src="{{ product.thumb }}" alt="{{ product.name }}" id="main-product-image" class="egen-product-gallery__main-img">
                     </a>
                 {% else %}
-                    <img src="/img/no-image.png" alt="{{ product.name }}" class="img-fluid rounded mb-3" style="max-height: 450px; object-fit: contain;">
+                    <img src="/img/no-image.png" alt="{{ product.name }}" class="egen-product-gallery__main-img">
                 {% endif %}
+            </div>
 
-                {% if product.images %}
-                    <div class="row g-2 justify-content-center">
-                        {% for img in product.images %}
-                            <div class="col-3">
-                                <a href="javascript:void(0);" onclick="document.getElementById('main-product-image').src = '{{ img.popup }}'" class="d-block border p-1 rounded hover-shadow bg-light">
-                                    <img src="{{ img.thumb }}" alt="Foto adicional" class="img-fluid rounded" style="max-height: 80px; object-fit: contain;">
-                                </a>
+            {% if product.images %}
+                <div class="egen-product-gallery__thumbs">
+                    {% for img in product.images %}
+                        <div class="egen-product-gallery__thumb-item">
+                            <a href="javascript:void(0);" onclick="document.getElementById('main-product-image').src = '{{ img.popup }}'" class="egen-product-gallery__thumb-link">
+                                <img src="{{ img.thumb }}" alt="Foto adicional" class="egen-product-gallery__thumb-img">
+                            </a>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        </div>
+
+        <!-- Coluna da Direita: Detalhes, Preço e Compra -->
+        <div class="egen-product-info">
+            <div class="egen-product-info__header">
+                <span class="egen-product-info__model-badge">{{ product.model }}</span>
+                <h1 class="egen-product-info__title">{{ product.name }}</h1>
+
+                <!-- Avaliações -->
+                {% if product.rating is not null %}
+                    <div class="egen-product-info__rating">
+                        <div class="egen-product-info__stars">
+                            {% for i in 1..5 %}
+                                <i class="{% if i <= product.rating %}fas{% else %}far{% endif %} fa-star"></i>
+                            {% endfor %}
+                        </div>
+                        <span class="egen-product-info__reviews-count">({{ product.reviews|default(0) }} avaliações)</span>
+                    </div>
+                {% endif %}
+            </div>
+
+            <!-- Bloco de Preço -->
+            <div class="egen-product-price-card">
+                <div class="egen-product-price-card__price-wrapper">
+                    {% if product.special %}
+                        <span class="egen-product-price-card__price-old">{{ product.price }}</span>
+                        <span class="egen-product-price-card__price-special">{{ product.special }}</span>
+                    {% else %}
+                        <span class="egen-product-price-card__price-normal">{{ product.price }}</span>
+                    {% endif %}
+                </div>
+                
+                {% if product.tax %}
+                    <div class="egen-product-price-card__tax">Sem impostos: {{ product.tax }}</div>
+                {% endif %}
+                
+                <div class="egen-product-price-card__stock">
+                    <i class="fas fa-check-circle"></i> Disponibilidade: <strong>{{ product.stock }}</strong>
+                </div>
+            </div>
+
+            <!-- Descrição Curta -->
+            <p class="egen-product-info__short-desc">
+                {{ product.description|raw|slice(0, 300) ~ '...' }}
+            </p>
+
+            <!-- Formulário de Compra/Opções -->
+            <form action="/{{ lang }}/carrinho/adicionar" method="POST" id="form-product-purchase" data-oc-toggle="ajax" class="egen-product-purchase-form">
+                <input type="hidden" name="product_id" value="{{ product.product_id }}">
+
+                {% if product.options %}
+                    <div class="egen-product-options">
+                        <h4 class="egen-product-options__title">Opções Disponíveis</h4>
+                        {% for option in product.options %}
+                            <div class="egen-product-options__item">
+                                <label class="egen-form-label">{{ option.name }} {% if option.required %}<span class="text-danger">*</span>{% endif %}</label>
+                                
+                                {% if option.type == 'select' %}
+                                    <select name="option[{{ option.product_option_id }}]" class="egen-form-select" {% if option.required %}required{% endif %}>
+                                        <option value="">--- Selecione ---</option>
+                                        {% for value in option.product_option_value %}
+                                            <option value="{{ value.product_option_value_id }}">
+                                                {{ value.name }} 
+                                                {% if value.price %} ({{ value.price_prefix }}{{ value.price }}) {% endif %}
+                                            </option>
+                                        {% endfor %}
+                                    </select>
+                                {% elseif option.type == 'radio' %}
+                                    <div class="egen-product-options__inline-group">
+                                        {% for value in option.product_option_value %}
+                                            <div class="egen-product-options__inline-item">
+                                                <input class="egen-product-options__input-check" type="radio" name="option[{{ option.product_option_id }}]" id="opt-{{ value.product_option_value_id }}" value="{{ value.product_option_value_id }}" {% if option.required %}required{% endif %}>
+                                                <label class="egen-product-options__label-check" for="opt-{{ value.product_option_value_id }}">
+                                                    {{ value.name }}
+                                                    {% if value.price %} <span class="egen-product-options__price-prefix">({{ value.price_prefix }}{{ value.price }})</span> {% endif %}
+                                                </label>
+                                            </div>
+                                        {% endfor %}
+                                    </div>
+                                {% elseif option.type == 'checkbox' %}
+                                    <div class="egen-product-options__inline-group">
+                                        {% for value in option.product_option_value %}
+                                            <div class="egen-product-options__inline-item">
+                                                <input class="egen-product-options__input-check" type="checkbox" name="option[{{ option.product_option_id }}][]" id="opt-{{ value.product_option_value_id }}" value="{{ value.product_option_value_id }}">
+                                                <label class="egen-product-options__label-check" for="opt-{{ value.product_option_value_id }}">
+                                                    {{ value.name }}
+                                                    {% if value.price %} <span class="egen-product-options__price-prefix">({{ value.price_prefix }}{{ value.price }})</span> {% endif %}
+                                                </label>
+                                            </div>
+                                        {% endfor %}
+                                    </div>
+                                {% elseif option.type == 'text' %}
+                                    <input type="text" name="option[{{ option.product_option_id }}]" value="{{ option.value }}" placeholder="{{ option.name }}" class="egen-form-input" {% if option.required %}required{% endif %}>
+                                {% elseif option.type == 'textarea' %}
+                                    <textarea name="option[{{ option.product_option_id }}]" rows="3" placeholder="{{ option.name }}" class="egen-form-input" {% if option.required %}required{% endif %}>{{ option.value }}</textarea>
+                                {% endif %}
                             </div>
                         {% endfor %}
                     </div>
                 {% endif %}
-            </div>
-        </div>
 
-        <!-- Coluna da Direita: Detalhes, Preço e Compra -->
-        <div class="col-lg-6 mb-4">
-            <div class="product-info-panel p-4 bg-white rounded shadow-sm border h-100 d-flex flex-column justify-content-between">
-                <div>
-                    <span class="badge bg-secondary mb-2">{{ product.model }}</span>
-                    <h1 class="h2 mb-3 text-dark font-weight-bold">{{ product.name }}</h1>
-
-                    <!-- Avaliações -->
-                    {% if product.rating is not null %}
-                        <div class="rating-stars mb-3 text-warning">
-                            {% for i in 1..5 %}
-                                <i class="{% if i <= product.rating %}fas{% else %}far{% endif %} fa-star"></i>
-                            {% endfor %}
-                            <span class="text-muted ms-2">({{ product.reviews|default(0) }} avaliações)</span>
-                        </div>
-                    {% endif %}
-
-                    <!-- Bloco de Preço -->
-                    <div class="price-container mb-4 p-3 bg-light rounded border border-start border-primary border-4">
-                        {% if product.special %}
-                            <span class="text-muted text-decoration-line-through fs-5 me-2">{{ product.price }}</span>
-                            <span class="text-danger fs-2 font-weight-bold">{{ product.special }}</span>
-                        {% else %}
-                            <span class="text-primary fs-2 font-weight-bold">{{ product.price }}</span>
-                        {% endif %}
-                        
-                        {% if product.tax %}
-                            <div class="text-muted small mt-1">Sem impostos: {{ product.tax }}</div>
-                        {% endif %}
-                        
-                        <div class="text-success small mt-2">
-                            <i class="fas fa-check-circle"></i> Disponibilidade: <strong>{{ product.stock }}</strong>
+                <!-- Quantidade & Adicionar ao carrinho -->
+                <div class="egen-product-action-row">
+                    <div class="egen-product-qty">
+                        <label for="input-quantity" class="egen-form-label">Qtd</label>
+                        <div class="egen-product-qty__control">
+                            <button class="egen-product-qty__btn" type="button" onclick="var q = document.getElementById('input-quantity'); if(parseInt(q.value) > 1) q.value = parseInt(q.value) - 1;">-</button>
+                            <input type="text" name="quantity" value="{{ product.minimum|default(1) }}" size="2" id="input-quantity" class="egen-product-qty__input">
+                            <button class="egen-product-qty__btn" type="button" onclick="var q = document.getElementById('input-quantity'); q.value = parseInt(q.value) + 1;">+</button>
                         </div>
                     </div>
-
-                    <!-- Descrição Curta -->
-                    <p class="text-secondary mb-4">
-                        {{ product.description|raw|slice(0, 300) ~ '...' }}
-                    </p>
-
-                    <!-- Formulário de Compra/Opções -->
-                    <form action="/{{ lang }}/carrinho/adicionar" method="POST" id="form-product-purchase" data-oc-toggle="ajax">
-                        <input type="hidden" name="product_id" value="{{ product.product_id }}">
-
-                        {% if product.options %}
-                            <div class="options-container mb-4">
-                                <h4 class="h6 text-uppercase text-muted border-bottom pb-2 mb-3">Opções Disponíveis</h4>
-                                {% for option in product.options %}
-                                    <div class="mb-3">
-                                        <label class="form-label font-weight-bold">{{ option.name }} {% if option.required %}<span class="text-danger">*</span>{% endif %}</label>
-                                        
-                                        {% if option.type == 'select' %}
-                                            <select name="option[{{ option.product_option_id }}]" class="form-select" {% if option.required %}required{% endif %}>
-                                                <option value="">--- Selecione ---</option>
-                                                {% for value in option.product_option_value %}
-                                                    <option value="{{ value.product_option_value_id }}">
-                                                        {{ value.name }} 
-                                                        {% if value.price %} ({{ value.price_prefix }}{{ value.price }}) {% endif %}
-                                                    </option>
-                                                {% endfor %}
-                                            </select>
-                                        {% elseif option.type == 'radio' %}
-                                            <div>
-                                                {% for value in option.product_option_value %}
-                                                    <div class="form-check form-check-inline border p-2 rounded bg-light hover-shadow me-2 mb-2">
-                                                        <input class="form-check-input" type="radio" name="option[{{ option.product_option_id }}]" id="opt-{{ value.product_option_value_id }}" value="{{ value.product_option_value_id }}" {% if option.required %}required{% endif %}>
-                                                        <label class="form-check-label" for="opt-{{ value.product_option_value_id }}">
-                                                            {{ value.name }}
-                                                            {% if value.price %} <span class="text-muted">({{ value.price_prefix }}{{ value.price }})</span> {% endif %}
-                                                        </label>
-                                                    </div>
-                                                {% endfor %}
-                                            </div>
-                                        {% elseif option.type == 'checkbox' %}
-                                            <div>
-                                                {% for value in option.product_option_value %}
-                                                    <div class="form-check form-check-inline border p-2 rounded bg-light hover-shadow me-2 mb-2">
-                                                        <input class="form-check-input" type="checkbox" name="option[{{ option.product_option_id }}][]" id="opt-{{ value.product_option_value_id }}" value="{{ value.product_option_value_id }}">
-                                                        <label class="form-check-label" for="opt-{{ value.product_option_value_id }}">
-                                                            {{ value.name }}
-                                                            {% if value.price %} <span class="text-muted">({{ value.price_prefix }}{{ value.price }})</span> {% endif %}
-                                                        </label>
-                                                    </div>
-                                                {% endfor %}
-                                            </div>
-                                        {% elseif option.type == 'text' %}
-                                            <input type="text" name="option[{{ option.product_option_id }}]" value="{{ option.value }}" placeholder="{{ option.name }}" class="form-control" {% if option.required %}required{% endif %}>
-                                        {% elseif option.type == 'textarea' %}
-                                            <textarea name="option[{{ option.product_option_id }}]" rows="3" placeholder="{{ option.name }}" class="form-control" {% if option.required %}required{% endif %}>{{ option.value }}</textarea>
-                                        {% endif %}
-                                    </div>
-                                {% endfor %}
-                            </div>
-                        {% endif %}
-
-                        <!-- Quantidade -->
-                        <div class="row align-items-center mb-4">
-                            <div class="col-sm-4 col-5">
-                                <label for="input-quantity" class="form-label font-weight-bold">Qtd</label>
-                                <div class="input-group border rounded">
-                                    <button class="btn btn-outline-secondary border-0" type="button" onclick="var q = document.getElementById('input-quantity'); if(q.value > 1) q.value--;">-</button>
-                                    <input type="text" name="quantity" value="{{ product.minimum|default(1) }}" size="2" id="input-quantity" class="form-control border-0 text-center font-weight-bold bg-transparent">
-                                    <button class="btn btn-outline-secondary border-0" type="button" onclick="var q = document.getElementById('input-quantity'); q.value++;">+</button>
-                                </div>
-                            </div>
-                            <div class="col-sm-8 col-7 pt-4">
-                                <button type="submit" id="button-cart" class="btn btn-primary btn-lg w-100 shadow hover-translate-y">
-                                    <i class="fas fa-shopping-cart me-2"></i> Adicionar ao Carrinho
-                                </button>
-                            </div>
-                        </div>
-                    </form>
+                    <div class="egen-product-buy">
+                        <button type="submit" id="button-cart" class="egen-btn-primary egen-btn-buy">
+                            <i class="fas fa-shopping-cart"></i> Adicionar ao Carrinho
+                        </button>
+                    </div>
                 </div>
+            </form>
 
-                {% if product.minimum > 1 %}
-                    <div class="alert alert-info py-2 px-3 small mb-0">
-                        <i class="fas fa-info-circle"></i> Este produto possui quantidade mínima de compra de {{ product.minimum }} unidades.
+            {% if product.minimum > 1 %}
+                <div class="egen-alert egen-alert--info">
+                    <i class="fas fa-info-circle"></i> Este produto possui quantidade mínima de compra de {{ product.minimum }} unidades.
+                </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Abas / Detalhes de Descrição e Atributos -->
+    <div class="egen-product-tabs-wrapper">
+        <div class="egen-product-tabs-card">
+            <nav class="egen-product-tabs">
+                <button class="egen-tab-trigger egen-tab-trigger--active" data-target="nav-description" type="button">Descrição</button>
+                {% if product.attribute_groups %}
+                    <button class="egen-tab-trigger" data-target="nav-attributes" type="button">Especificações Técnicas</button>
+                {% endif %}
+            </nav>
+            
+            <div class="egen-tab-content">
+                <div class="egen-tab-pane egen-tab-pane--active" id="nav-description">
+                    {{ product.description|raw }}
+                </div>
+                
+                {% if product.attribute_groups %}
+                    <div class="egen-tab-pane" id="nav-attributes">
+                        <div class="egen-table-responsive">
+                            <table class="egen-spec-table">
+                                {% for group in product.attribute_groups %}
+                                    <thead>
+                                        <tr class="egen-spec-table__group-row">
+                                            <th colspan="2" class="egen-spec-table__group-title">{{ group.name }}</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for attr in group.attribute %}
+                                            <tr class="egen-spec-table__row">
+                                                <td class="egen-spec-table__label">{{ attr.name }}</td>
+                                                <td class="egen-spec-table__value">{{ attr.text }}</td>
+                                            </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                {% endfor %}
+                            </table>
+                        </div>
                     </div>
                 {% endif %}
             </div>
         </div>
     </div>
-
-    <!-- Abas / Detalhes de Descrição e Atributos -->
-    <div class="row mt-5">
-        <div class="col-12">
-            <div class="bg-white rounded shadow-sm border p-4">
-                <nav>
-                    <div class="nav nav-tabs border-bottom mb-4" id="nav-tab" role="tablist">
-                        <button class="nav-link active font-weight-bold py-3 px-4 border-0 border-bottom border-3 border-primary" id="nav-description-tab" data-bs-toggle="tab" data-bs-target="#nav-description" type="button" role="tab" aria-controls="nav-description" aria-selected="true">Descrição</button>
-                        {% if product.attribute_groups %}
-                            <button class="nav-link font-weight-bold py-3 px-4 border-0 border-bottom border-3 border-primary" id="nav-attributes-tab" data-bs-toggle="tab" data-bs-target="#nav-attributes" type="button" role="tab" aria-controls="nav-attributes" aria-selected="false">Especificações Técnicas</button>
-                        {% endif %}
-                    </div>
-                </nav>
-                <div class="tab-content" id="nav-tabContent">
-                    <div class="tab-pane fade show active text-secondary lh-lg" id="nav-description" role="tabpanel" aria-labelledby="nav-description-tab">
-                        {{ product.description|raw }}
-                    </div>
-                    
-                    {% if product.attribute_groups %}
-                        <div class="tab-pane fade" id="nav-attributes" role="tabpanel" aria-labelledby="nav-attributes-tab">
-                            <div class="table-responsive">
-                                <table class="table table-bordered table-striped align-middle mb-0">
-                                    {% for group in product.attribute_groups %}
-                                        <thead>
-                                            <tr class="table-light">
-                                                <th colspan="2" class="font-weight-bold text-dark">{{ group.name }}</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            {% for attr in group.attribute %}
-                                                <tr>
-                                                    <td class="text-muted w-25">{{ attr.name }}</td>
-                                                    <td class="text-secondary">{{ attr.text }}</td>
-                                                </tr>
-                                            {% endfor %}
-                                        </tbody>
-                                    {% endfor %}
-                                </table>
-                            </div>
-                        </div>
-                    {% endif %}
-                </div>
-            </div>
-        </div>
-    </div>
 </div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    document.querySelectorAll('.egen-tab-trigger').forEach(button => {
+        button.addEventListener('click', () => {
+            const targetId = button.getAttribute('data-target');
+            
+            // Remove active classes
+            document.querySelectorAll('.egen-tab-trigger').forEach(b => b.classList.remove('egen-tab-trigger--active'));
+            document.querySelectorAll('.egen-tab-pane').forEach(p => p.classList.remove('egen-tab-pane--active'));
+            
+            // Activate target
+            button.classList.add('egen-tab-trigger--active');
+            const pane = document.getElementById(targetId);
+            if (pane) pane.classList.add('egen-tab-pane--active');
+        });
+    });
+});
+</script>
 {% endblock %}

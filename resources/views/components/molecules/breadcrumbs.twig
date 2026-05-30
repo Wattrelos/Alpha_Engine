@@ -1,5 +1,12 @@
-<ul class="breadcrumb">
-  {% for breadcrumb in items %}
-    <li class="breadcrumb-item"><a href="{{ breadcrumb.href }}">{{ breadcrumb.text }}</a></li>
-  {% endfor %}
+<ul class="egen-breadcrumb">
+	{% for breadcrumb in items %}
+		<li class="egen-breadcrumb__item">
+			{% if loop.last %}
+				<span class="egen-breadcrumb__text">{{ breadcrumb.text|raw }}</span>
+			{% else %}
+				<a href="{{ breadcrumb.href }}" class="egen-breadcrumb__link">{{ breadcrumb.text|raw }}</a>
+			{% endif %}
+		</li>
+	{% endfor %}
 </ul>
+

@@ -25,12 +25,15 @@
 .telhado::before {
   content: '';
   position: absolute;
-  top: 0; left: 0; right: 0; bottom: 0;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
   background: linear-gradient(135deg, rgba(16, 20, 24, 0.8) 0%, rgba(16, 20, 24, 0.92) 100%);
   z-index: 1;
 }
 
-.telhado > * {
+.telhado>* {
   position: relative;
   z-index: 2;
 }
@@ -121,7 +124,8 @@
 .egen-header__container {
   display: flex;
   flex-direction: row;
-  align-items: stretch;         /* logo e coluna direita têm mesma altura */
+  align-items: stretch;
+  /* logo e coluna direita têm mesma altura */
   gap: 1.5rem;
   width: 100%;
   max-width: 1320px;
@@ -143,7 +147,8 @@
   flex-direction: column;
   justify-content: space-between;
   flex: 1 1 0;
-  min-width: 0; /* evita overflow em flex */
+  min-width: 0;
+  /* evita overflow em flex */
   gap: 0.5rem;
 }
 
@@ -264,8 +269,10 @@
   }
 
   .egen-utility-bar__search {
-    flex: 1 1 100%; /* busca ocupa linha inteira */
-    order: -1;      /* sobe para o topo */
+    flex: 1 1 100%;
+    /* busca ocupa linha inteira */
+    order: -1;
+    /* sobe para o topo */
   }
 }
 
@@ -337,8 +344,8 @@
   left: 0;
   transform: translateY(15px);
   transition: opacity var(--transition-speed) cubic-bezier(0.16, 1, 0.3, 1),
-              transform var(--transition-speed) cubic-bezier(0.16, 1, 0.3, 1),
-              visibility var(--transition-speed);
+    transform var(--transition-speed) cubic-bezier(0.16, 1, 0.3, 1),
+    visibility var(--transition-speed);
 }
 
 .dropdown-menu-recursive li {
@@ -358,8 +365,8 @@
 }
 
 /* Mostra o submenu ao passar o mouse sobre um item do menu pai ou quando ativo */
-.dropdown-menu-recursive li:hover > .submenu,
-.dropdown-menu-recursive li:focus-within > .submenu,
+.dropdown-menu-recursive li:hover>.submenu,
+.dropdown-menu-recursive li:focus-within>.submenu,
 .submenu.show {
   opacity: 1;
   visibility: visible;
@@ -404,8 +411,8 @@
   border: 1px solid #e9ecef;
   transform: translateX(15px);
   transition: opacity var(--transition-speed) cubic-bezier(0.16, 1, 0.3, 1),
-              transform var(--transition-speed) cubic-bezier(0.16, 1, 0.3, 1),
-              visibility var(--transition-speed);
+    transform var(--transition-speed) cubic-bezier(0.16, 1, 0.3, 1),
+    visibility var(--transition-speed);
 }
 
 .submenu li {
@@ -530,7 +537,7 @@
 
 .egen-top-nav {
   display: flex;
-  justify-content: flex-end;
+  justify-content: space-between;
   align-items: center;
   width: 100%;
   padding: 0;
@@ -542,12 +549,15 @@
   flex-direction: row;
   flex-wrap: nowrap;
   align-items: center;
-  justify-content: flex-end;
-  gap: 0.15rem;
+  justify-content: space-around;
+  /* Distribuirá os itens com espaçamento uniforme ao redor */
+  width: 100%;
+  /* Permite que a lista ocupe toda a largura disponível da barra */
   list-style: none;
   margin: 0;
   padding: 0;
 }
+
 
 /* Cada item da lista */
 .egen-top-nav__item {
@@ -568,7 +578,7 @@
   padding: 0.4rem 0.85rem;
   border-radius: 20px;
   transition: color var(--transition-speed) ease,
-              background var(--transition-speed) ease;
+    background var(--transition-speed) ease;
 }
 
 .egen-top-nav__link:hover,
@@ -605,7 +615,8 @@
   display: block;
   position: absolute;
   top: calc(100% + 6px);
-  right: 0; /* alinha pela direita do item-pai */
+  right: 0;
+  /* alinha pela direita do item-pai */
   min-width: 180px;
   list-style: none;
   margin: 0;
@@ -621,8 +632,8 @@
   pointer-events: none;
   transform: translateY(8px);
   transition: opacity var(--transition-speed) cubic-bezier(0.16, 1, 0.3, 1),
-              transform var(--transition-speed) cubic-bezier(0.16, 1, 0.3, 1),
-              visibility var(--transition-speed);
+    transform var(--transition-speed) cubic-bezier(0.16, 1, 0.3, 1),
+    visibility var(--transition-speed);
 }
 
 /* Abre no hover e no foco-interno */
@@ -650,8 +661,8 @@
   text-decoration: none;
   white-space: nowrap;
   transition: background var(--transition-speed) ease,
-              color var(--transition-speed) ease,
-              padding-left var(--transition-speed) ease;
+    color var(--transition-speed) ease,
+    padding-left var(--transition-speed) ease;
 }
 
 .egen-top-nav__dropdown-item:hover,
@@ -774,7 +785,8 @@
 /* ── Grid de colunas — logo + 4 colunas de links ── */
 .egen-footer__grid {
   display: grid;
-  grid-template-columns: 1.5fr repeat(4, 1fr); /* coluna da marca maior */
+  grid-template-columns: 1.5fr repeat(4, 1fr);
+  /* coluna da marca maior */
   gap: 2rem 3rem;
   padding-bottom: 1rem;
 }
@@ -825,9 +837,9 @@
   border: 1px solid rgba(255, 255, 255, 0.1);
   text-decoration: none;
   transition: background var(--transition-speed) ease,
-              color var(--transition-speed) ease,
-              transform var(--transition-speed) ease,
-              box-shadow var(--transition-speed) ease;
+    color var(--transition-speed) ease,
+    transform var(--transition-speed) ease,
+    box-shadow var(--transition-speed) ease;
 }
 
 .ag-footer .social-icons a:hover {
@@ -892,7 +904,7 @@
   text-decoration: none;
   display: inline-block;
   transition: color var(--transition-speed) ease,
-              transform var(--transition-speed) ease;
+    transform var(--transition-speed) ease;
 }
 
 .footer-column__link:hover,
@@ -941,7 +953,7 @@
 .payment-methods i {
   color: #7d8794;
   transition: color var(--transition-speed) ease,
-              transform var(--transition-speed) ease;
+    transform var(--transition-speed) ease;
 }
 
 .payment-methods i:hover {
@@ -951,6 +963,7 @@
 
 /* ── Responsividade do Rodapé ── */
 @media (max-width: 1199px) {
+
   /* Em telas médias: 2 colunas (marca + 2 / 2 + 2) */
   .egen-footer__grid {
     grid-template-columns: 1fr 1fr;
@@ -958,7 +971,8 @@
   }
 
   .egen-footer__brand-col {
-    grid-column: 1 / -1; /* marca ocupa linha inteira */
+    grid-column: 1 / -1;
+    /* marca ocupa linha inteira */
     flex-direction: row;
     align-items: flex-start;
     gap: 2rem;
@@ -972,6 +986,7 @@
 }
 
 @media (max-width: 639px) {
+
   /* Mobile: coluna única */
   .egen-footer__grid {
     grid-template-columns: 1fr;

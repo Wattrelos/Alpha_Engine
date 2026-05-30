@@ -35,6 +35,9 @@ use Alpha\Model\Domain\Repositories\SeoUrlRepository;
 use Alpha\Model\Domain\Repositories\InformationRepository;
 use Alpha\Controller\Actions\Customer\OrdersAction;
 use Alpha\Model\Domain\Repositories\OrderRepository;
+use Alpha\Controller\Actions\Cart\CartAction;
+use Alpha\Model\Domain\Repositories\CartRepository;
+
 
 
 require __DIR__ . '/../vendor/autoload.php';
@@ -127,6 +130,8 @@ $productRepository = $repositoryFactory->get(ProductRepository::class);
 $seoUrlRepository  = $repositoryFactory->get(SeoUrlRepository::class);
 $informationRepository = $repositoryFactory->get(InformationRepository::class);
 $orderRepository   = $repositoryFactory->get(OrderRepository::class);
+$cartRepository    = $repositoryFactory->get(CartRepository::class);
+
 
 // ─────────────────────────────────────────────────────────
 // 3. TWIG — Loader apontando para resources/views/
@@ -181,7 +186,9 @@ $container = (new AppContainer())
     ->bind(ProductRepository::class,  $productRepository)
     ->bind(SeoUrlRepository::class,   $seoUrlRepository)
     ->bind(InformationRepository::class, $informationRepository)
-    ->bind(OrderRepository::class,    $orderRepository);
+    ->bind(OrderRepository::class,    $orderRepository)
+    ->bind(CartRepository::class,     $cartRepository);
+
 
 // ─────────────────────────────────────────────────────────
 // 5. SLIM APP
@@ -300,7 +307,13 @@ $app->group('/{lang:pt-br|en|es}', function (\Slim\Routing\RouteCollectorProxy $
     $group->get('/busca', function ($request, $response, $args) use ($container) {
         return $container->get(SearchProductsAction::class)($request, $response, $args);
     });
+
+    // Carrinho de Compras
+    $group->get('/carrinho', function ($request, $response, $args) use ($container) {
+        return $container->get(CartAction::class)($request, $response, $args);
+    });
 });
+
 
 // ─────────────────────────────────────────────────────────
 // 8. HANDLER GLOBAL DE 404

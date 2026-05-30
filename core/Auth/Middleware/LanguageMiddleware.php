@@ -56,6 +56,25 @@ class LanguageMiddleware
         $this->twig->addGlobal('lang', $langCode);
         $this->twig->addGlobal('logged', $this->isUserLogged($request));
 
+        // Carrega as traduções do cabeçalho globalmente para o Twig
+        if ($translator && method_exists($translator, 'load')) {
+            $headerTranslations = $translator->load('common/header');
+            
+            // Resolve a quantidade de itens na lista de desejos (wishlist) da sessão
+            $wishlistCount = 0;
+            $session = $this->registry->get('session');
+            if ($session && isset($session->data['wishlist']) && is_array($session->data['wishlist'])) {
+                $wishlistCount = count($session->data['wishlist']);
+            }
+
+            foreach ($headerTranslations as $key => $value) {
+                if ($key === 'text_wishlist') {
+                    $value = sprintf($value, $wishlistCount);
+                }
+                $this->twig->addGlobal($key, $value);
+            }
+        }
+
         return $handler->handle($request);
     }
 

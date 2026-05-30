@@ -1,0 +1,140 @@
+{% extends "layouts/main.twig" %}
+
+{% block title %}
+	{{ title|default('Carrinho | AgSonhos') }}
+{% endblock %}
+
+{% block breadcrumbs %}
+	<div class="egen-page-header">
+		<div class="egen-page-header__inner">
+			{% include 'components/molecules/breadcrumbs.twig' with { items: breadcrumbs } %}
+		</div>
+	</div>
+{% endblock %}
+
+{% block content %}
+<div class="egen-cart-page">
+	<div class="egen-cart-container">
+		<h1 class="egen-cart-title">{{ heading_title|default('Carrinho de Compras') }}</h1>
+
+		{% if error_warning %}
+			<div class="egen-alert egen-alert--danger">
+				<i class="fa-solid fa-circle-exclamation"></i> {{ error_warning }}
+			</div>
+		{% endif %}
+
+		{% if success %}
+			<div class="egen-alert egen-alert--success">
+				<i class="fa-solid fa-circle-check"></i> {{ success }}
+			</div>
+		{% endif %}
+
+		{% if products %}
+			<div class="egen-cart-layout">
+				<!-- Tabela de Produtos -->
+				<div class="egen-cart-main">
+					<form action="{{ edit }}" method="post" enctype="multipart/form-data">
+						<div class="egen-table-responsive">
+							<table class="egen-cart-table">
+								<thead>
+									<tr>
+										<th class="text-center">{{ text_image|default('Imagem') }}</th>
+										<th>{{ text_product|default('Produto') }}</th>
+										<th>{{ text_model|default('Modelo') }}</th>
+										<th class="text-center">{{ text_quantity|default('Quantidade') }}</th>
+										<th class="text-right">{{ text_price|default('Preço Unitário') }}</th>
+										<th class="text-right">{{ text_total|default('Total') }}</th>
+									</tr>
+								</thead>
+								<tbody>
+									{% for product in products %}
+										<tr>
+											<td class="text-center egen-cart-table__image-col">
+												{% if product.thumb %}
+													<a href="{{ product.href }}">
+														<img src="{{ product.thumb }}" alt="{{ product.name }}" title="{{ product.name }}" class="egen-cart-img" />
+													</a>
+												{% endif %}
+											</td>
+											<td class="egen-cart-table__info-col">
+												<a href="{{ product.href }}" class="egen-cart-product-name">{{ product.name }}</a>
+												{% if not product.stock %}
+													<span class="text-danger">***</span>
+												{% endif %}
+												
+												{% if product.option %}
+													<div class="egen-cart-options">
+														{% for option in product.option %}
+															<small class="egen-cart-option-item"><strong>{{ option.name }}:</strong> {{ option.value }}</small>
+														{% endfor %}
+													</div>
+												{% endif %}
+
+												{% if product.subscription %}
+													<div class="egen-cart-subscription">
+														<small><strong>{{ text_subscription|default('Assinatura') }}:</strong> {{ product.subscription }}</small>
+													</div>
+												{% endif %}
+											</td>
+											<td>{{ product.model }}</td>
+											<td class="text-center">
+												<div class="egen-cart-qty-wrapper">
+													<input type="hidden" name="key" value="{{ product.cart_id }}" />
+													<input type="number" name="quantity[{{ product.cart_id }}]" value="{{ product.quantity }}" min="1" class="egen-form-input egen-cart-qty-input" />
+													<div class="egen-cart-actions-btn">
+														<button type="submit" title="{{ button_update|default('Atualizar') }}" class="egen-btn-icon egen-btn-icon--update">
+															<i class="fa-solid fa-rotate"></i>
+														</button>
+														<a href="{{ product.remove }}" title="{{ button_remove|default('Remover') }}" class="egen-btn-icon egen-btn-icon--remove">
+															<i class="fa-solid fa-trash-can"></i>
+														</a>
+													</div>
+												</div>
+											</td>
+											<td class="text-right">{{ product.price }}</td>
+											<td class="text-right font-weight-bold">{{ product.total }}</td>
+										</tr>
+									{% endfor %}
+								</tbody>
+							</table>
+						</div>
+					</form>
+				</div>
+
+				<!-- Lateral do Resumo de Totais -->
+				<div class="egen-cart-sidebar">
+					<div class="egen-cart-summary-card">
+						<h2 class="egen-cart-summary-title">{{ text_summary|default('Resumo do Pedido') }}</h2>
+						<div class="egen-cart-totals-list">
+							{% for total in totals %}
+								<div class="egen-cart-total-row {% if loop.last %}egen-cart-total-row--grand{% endif %}">
+									<span class="egen-cart-total-label">{{ total.title }}</span>
+									<span class="egen-cart-total-value">{{ total.text }}</span>
+								</div>
+							{% endfor %}
+						</div>
+						<div class="egen-cart-checkout-actions">
+							<a href="{{ checkout }}" class="egen-btn-primary egen-btn-checkout">
+								{{ button_checkout|default('Finalizar Compra') }} <i class="fa-solid fa-arrow-right"></i>
+							</a>
+							<a href="{{ continue }}" class="egen-btn-secondary egen-btn-continue">
+								<i class="fa-solid fa-arrow-left"></i> {{ button_shopping|default('Continuar Comprando') }}
+							</a>
+						</div>
+					</div>
+				</div>
+			</div>
+		{% else %}
+			<div class="egen-cart-empty">
+				<div class="egen-cart-empty__icon">
+					<i class="fa-solid fa-cart-shopping"></i>
+				</div>
+				<p class="egen-cart-empty__text">{{ text_empty|default('Seu carrinho de compras está vazio!') }}</p>
+				<a href="{{ continue }}" class="egen-btn-primary">
+					{{ button_continue|default('Continuar') }}
+				</a>
+			</div>
+		{% endif %}
+	</div>
+</div>
+{% endblock %}

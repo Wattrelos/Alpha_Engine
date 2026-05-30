@@ -333,8 +333,9 @@ class ProductRepository extends AbstractRepository implements BaseRepositoryInte
 
         $description = '';
         if (isset($result['description'])) {
-            $description = oc_substr(trim(strip_tags(html_entity_decode($result['description'], ENT_QUOTES, 'UTF-8'))), 0, $this->config->get('config_product_description_length')) . '..';
+            $description = \Alpha\Support\AlphaString::substr(trim(strip_tags(html_entity_decode($result['description'], ENT_QUOTES, 'UTF-8'))), 0, (int)$this->config->get('config_product_description_length')) . '..';
         }
+
 
         return [
             'product_id'      => $result['id'],

@@ -129,7 +129,10 @@ class CategoryRepository extends AbstractRepository implements BaseRepositoryInt
             return new \Alpha\Model\DataTransferObject\ViewResponse([]); // Retorna vazio para engatilhar o erro 404
         }
 
-        $data = $categoryInfo;
+        // Carrega o arquivo de idiomas para o catálogo/categoria
+        $languageData = $this->loadLanguage('product/category');
+        $data = array_merge($categoryInfo, $languageData);
+
         
         // 2. SEO e Metadados
         $this->document->setTitle($categoryInfo['meta_title'] ?: $categoryInfo['name']);
@@ -181,8 +184,13 @@ class CategoryRepository extends AbstractRepository implements BaseRepositoryInt
         ];
 
         // Delega ao Repositório do Produto a resolução de loja, idioma e descontos
-        $data['products'] = $productRepository->getProducts($productFilter);
+        $rawProducts = $productRepository->getProducts($productFilter);
+        $data['products'] = [];
+        foreach ($rawProducts as $product) {
+            $data['products'][] = $productRepository->getProductThumbData($product);
+        }
         $data['product_total'] = $productRepository->getTotalProducts($productFilter);
+
 
         // 6. Montagem para o componente visual de Paginação
         $url = '';
@@ -191,11 +199,14 @@ class CategoryRepository extends AbstractRepository implements BaseRepositoryInt
         if (isset($filterData['order'])) $url .= '&order=' . $filterData['order'];
         if (isset($filterData['limit'])) $url .= '&limit=' . $filterData['limit'];
 
+        $langCode = $this->config->get('config_language') ?: 'pt-br';
+        $categoryPath = '/' . $langCode . '/categoria/' . $filterData['path'];
+
         $data['pagination'] = [
             'total' => $data['product_total'],
             'page'  => $filterData['page'],
             'limit' => $filterData['limit'],
-            'url'   => $this->url->link('product/category', 'language=' . $this->config->get('config_language') . '&path=' . $filterData['path'] . $url . '&page={page}')
+            'url'   => $categoryPath . '?' . ltrim($url . '&page={page}', '&')
         ];
 
         // URL base para os selects de ordenação e limite
@@ -210,7 +221,7 @@ class CategoryRepository extends AbstractRepository implements BaseRepositoryInt
             $data['limits'][] = [
                 'text'  => $value,
                 'value' => $value,
-                'href'  => $this->url->link('product/category', 'language=' . $this->config->get('config_language') . '&path=' . $filterData['path'] . $baseUrl . '&limit=' . $value)
+                'href'  => $categoryPath . '?' . ltrim($baseUrl . '&limit=' . $value, '&')
             ];
         }
 
@@ -220,38 +231,39 @@ class CategoryRepository extends AbstractRepository implements BaseRepositoryInt
         $data['sorts'][] = [
             'text'  => $this->language->get('text_default') ?: 'Padrão',
             'value' => 'p.sort_order-ASC',
-            'href'  => $this->url->link('product/category', 'language=' . $this->config->get('config_language') . '&path=' . $filterData['path'] . '&sort=p.sort_order&order=ASC' . $urlWithLimit)
+            'href'  => $categoryPath . '?' . ltrim('&sort=p.sort_order&order=ASC' . $urlWithLimit, '&')
         ];
         $data['sorts'][] = [
             'text'  => $this->language->get('text_name_asc') ?: 'Nome (A - Z)',
             'value' => 'pd.name-ASC',
-            'href'  => $this->url->link('product/category', 'language=' . $this->config->get('config_language') . '&path=' . $filterData['path'] . '&sort=pd.name&order=ASC' . $urlWithLimit)
+            'href'  => $categoryPath . '?' . ltrim('&sort=pd.name&order=ASC' . $urlWithLimit, '&')
         ];
         $data['sorts'][] = [
             'text'  => $this->language->get('text_name_desc') ?: 'Nome (Z - A)',
             'value' => 'pd.name-DESC',
-            'href'  => $this->url->link('product/category', 'language=' . $this->config->get('config_language') . '&path=' . $filterData['path'] . '&sort=pd.name&order=DESC' . $urlWithLimit)
+            'href'  => $categoryPath . '?' . ltrim('&sort=pd.name&order=DESC' . $urlWithLimit, '&')
         ];
         $data['sorts'][] = [
             'text'  => $this->language->get('text_price_asc') ?: 'Preço (Menor > Maior)',
             'value' => 'p.price-ASC',
-            'href'  => $this->url->link('product/category', 'language=' . $this->config->get('config_language') . '&path=' . $filterData['path'] . '&sort=p.price&order=ASC' . $urlWithLimit)
+            'href'  => $categoryPath . '?' . ltrim('&sort=p.price&order=ASC' . $urlWithLimit, '&')
         ];
         $data['sorts'][] = [
             'text'  => $this->language->get('text_price_desc') ?: 'Preço (Maior > Menor)',
             'value' => 'p.price-DESC',
-            'href'  => $this->url->link('product/category', 'language=' . $this->config->get('config_language') . '&path=' . $filterData['path'] . '&sort=p.price&order=DESC' . $urlWithLimit)
+            'href'  => $categoryPath . '?' . ltrim('&sort=p.price&order=DESC' . $urlWithLimit, '&')
         ];
         $data['sorts'][] = [
             'text'  => $this->language->get('text_model_asc') ?: 'Modelo (A - Z)',
             'value' => 'p.model-ASC',
-            'href'  => $this->url->link('product/category', 'language=' . $this->config->get('config_language') . '&path=' . $filterData['path'] . '&sort=p.model&order=ASC' . $urlWithLimit)
+            'href'  => $categoryPath . '?' . ltrim('&sort=p.model&order=ASC' . $urlWithLimit, '&')
         ];
         $data['sorts'][] = [
             'text'  => $this->language->get('text_model_desc') ?: 'Modelo (Z - A)',
             'value' => 'p.model-DESC',
-            'href'  => $this->url->link('product/category', 'language=' . $this->config->get('config_language') . '&path=' . $filterData['path'] . '&sort=p.model&order=DESC' . $urlWithLimit)
+            'href'  => $categoryPath . '?' . ltrim('&sort=p.model&order=DESC' . $urlWithLimit, '&')
         ];
+
 
         // Current filters for view
         $data['sort']  = $filterData['sort'];

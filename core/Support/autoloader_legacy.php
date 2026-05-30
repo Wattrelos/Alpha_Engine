@@ -1,4 +1,7 @@
 <?php
+
+namespace Alpha\Support;
+
 /**
  * Autoloader Legado de Compatibilidade da Alpha Engine.
  * 
@@ -15,10 +18,10 @@ spl_autoload_register(function (string $class): void {
         'Opencart\\Catalog'   => defined('DIR_APPLICATION') ? DIR_APPLICATION : dirname(__DIR__, 2) . '/public_html/catalog/',
     ];
 
-    foreach ($paths as $namespace => $directory) {
-        if (strpos($class, $namespace) === 0) {
+    foreach ($paths as $nsPrefix => $directory) {
+        if (strpos($class, $nsPrefix) === 0) {
             // Conversão de camelCase para snake_case e lowercase, idêntico à regra do OpenCart original
-            $relativeClass = substr($class, strlen($namespace));
+            $relativeClass = substr($class, strlen($nsPrefix));
             $convertedPath = trim(str_replace('\\', '/', strtolower(preg_replace('~([a-z])([A-Z]|[0-9])~', '\1_\2', $relativeClass))), '/');
             $file = $directory . $convertedPath . '.php';
 
@@ -29,3 +32,4 @@ spl_autoload_register(function (string $class): void {
         }
     }
 });
+

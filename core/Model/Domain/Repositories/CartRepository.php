@@ -667,8 +667,9 @@ class CartRepository extends AbstractRepository implements BaseRepositoryInterfa
                     $value = (string)($option['value'] ?? '');
                     $optionData[] = [
                         'name'  => $option['name'],
-                        'value' => (oc_strlen($value) > 20 ? oc_substr($value, 0, 20) . '..' : $value)
+                        'value' => (\Alpha\Support\AlphaString::strlen($value) > 20 ? \Alpha\Support\AlphaString::substr($value, 0, 20) . '..' : $value)
                     ];
+
                 }
             }
 

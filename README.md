@@ -40,5 +40,9 @@ Coleção de scripts vitais em `tests/scripts_uteis/` (como o *Detector de Zumbi
 ### 8. Estratégia de Cache e Performance
 Adoção do contrato `CacheStrategyInterface` (inspirado na PSR-16), permitindo injeção de drivers de cache em memória nas instâncias de Repository para mitigação de consultas repetidas (N+1 Queries).
 
+### 9. Subsistema de Catálogo (Categorias e Produtos)
+Detalhes sobre a implementação de rotas amigáveis, paginação de categorias e refatoração completa do visual das páginas de produto no padrão BEM/CSS sem Bootstrap. (Ver [Progresso do Catálogo](file:///var/www/html/agsonhos/docs/catalog_progress.md))
+
 ---
 *Nota: Este índice foi gerado para organizar o conteúdo distribuído. Os arquivos `.md` mencionados acima devem ser mantidos em sincronia com as evoluções do código em `core/`.*
+

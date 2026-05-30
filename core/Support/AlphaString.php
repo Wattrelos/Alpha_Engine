@@ -80,4 +80,28 @@ class AlphaString
     {
         return (bool)filter_var($url, FILTER_VALIDATE_URL);
     }
+
+    /**
+     * Retorna a substring segura com codificação UTF-8.
+     */
+    public static function substr(string $string, int $offset, ?int $length = null): string
+    {
+        return mb_substr($string, $offset, $length, 'UTF-8');
+    }
+
+    /**
+     * Retorna a posição da última ocorrência de uma substring em uma string.
+     */
+    public static function strrpos(string $haystack, string $needle, int $offset = 0): int|false
+    {
+        return mb_strrpos($haystack, $needle, $offset, 'UTF-8');
+    }
+
+    /**
+     * Retorna o comprimento da string segura com codificação UTF-8.
+     */
+    public static function strlen(string $string): int
+    {
+        return mb_strlen($string, 'UTF-8');
+    }
 }
