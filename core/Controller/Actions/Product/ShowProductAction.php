@@ -8,6 +8,7 @@ use Alpha\Model\Domain\Repositories\ProductRepository;
 use Alpha\Model\Domain\Repositories\SeoUrlRepository;
 use Twig\Environment as TwigEnvironment;
 use Alpha\Controller\Actions\ActionInterface;
+use Slim\Routing\RouteContext;
 
 class ShowProductAction implements ActionInterface
 {
@@ -61,13 +62,17 @@ class ShowProductAction implements ActionInterface
             return $response->withStatus(404);
         }
 
+        $routeContext = RouteContext::fromRequest($request);
+        $routeParser = $routeContext->getRouteParser();
+        $lang = $request->getAttribute('lang', 'pt-br');
+
         // SEO tags e cabeçalhos
         $seoData = [
             'title'       => ($product['meta_title'] ?? $product['name']) . ' | AgSonhos',
             'description' => $product['meta_description'] ?? 'Confira os detalhes de nossos produtos.',
             'keywords'    => $product['meta_keyword'] ?? '',
             'image'       => $product['popup'] ?? '',
-            'canonical'   => '/' . $request->getAttribute('language_code', 'pt-br') . '/produto/' . $slug
+            'canonical'   => $routeParser->urlFor('product.detail', ['lang' => $lang, 'slug' => $slug])
         ];
 
         $html = $this->twig->render('pages/product/show.html.twig', [
@@ -82,3 +87,4 @@ class ShowProductAction implements ActionInterface
         return $response;
     }
 }
+

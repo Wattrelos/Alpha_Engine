@@ -10,6 +10,7 @@ use Alpha\Controller\Actions\ActionInterface;
 use Alpha\Model\Domain\Repositories\OrderRepository;
 use Alpha\Model\Domain\Repositories\SettingRepository;
 use Twig\Environment as TwigEnvironment;
+use Slim\Routing\RouteContext;
 
 class OrdersAction implements ActionInterface
 {
@@ -26,13 +27,14 @@ class OrdersAction implements ActionInterface
 
     public function __invoke(Request $request, Response $response, array $args): Response
     {
-        $configSettings = $this->settingRepository->getSetting('config', 0);
-        $languageCode = $configSettings['config_language_catalog'] ?? 'pt-br';
+        $routeContext = RouteContext::fromRequest($request);
+        $routeParser = $routeContext->getRouteParser();
+        $lang = $request->getAttribute('lang', 'pt-br');
 
         $breadcrumbs = [
-            ['text' => 'Início', 'href' => '/' . $languageCode],
-            ['text' => 'Minha Conta', 'href' => '/' . $languageCode . '/account'],
-            ['text' => 'Meus Pedidos', 'href' => '/' . $languageCode . '/account/orders']
+            ['text' => 'Início', 'href' => $routeParser->urlFor('home', ['lang' => $lang])],
+            ['text' => 'Minha Conta', 'href' => $routeParser->urlFor('account.index', ['lang' => $lang])],
+            ['text' => 'Meus Pedidos', 'href' => $routeParser->urlFor('account.orders', ['lang' => $lang])]
         ];
 
         // Busca pedidos do cliente logado
@@ -49,7 +51,7 @@ class OrdersAction implements ActionInterface
                 'status'        => $order['status'],
                 'total'         => $totalFormatted,
                 'date_added'    => date('d/m/Y H:i:s', strtotime($order['date_added'])),
-                'view'          => '/' . $languageCode . '/account/order/history/' . $order['order_id']
+                'view'          => $routeParser->urlFor('account.order.history', ['lang' => $lang, 'order_id' => (string)$order['order_id']])
             ];
         }
 
@@ -65,7 +67,7 @@ class OrdersAction implements ActionInterface
             'button_continue'      => 'Continuar',
             'text_no_results'      => 'Você ainda não possui pedidos cadastrados.',
             'orders'               => $orders,
-            'continue'             => '/' . $languageCode . '/account',
+            'continue'             => $routeParser->urlFor('account.index', ['lang' => $lang]),
             'column_left'          => '',
             'column_right'         => '',
             'content_top'          => '',

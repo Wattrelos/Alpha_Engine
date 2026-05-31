@@ -8,6 +8,7 @@ use Twig\Environment;
 use Alpha\Controller\Actions\ActionInterface;
 use Alpha\Support\Registry;
 use Alpha\Model\Domain\Repositories\CountryRepository;
+use Slim\Routing\RouteContext;
 
 class Checkout implements ActionInterface
 {
@@ -25,17 +26,20 @@ class Checkout implements ActionInterface
         $language = $this->registry->get('language');
         $languageData = $language ? $language->load('checkout/checkout') : [];
         $config = $this->registry->get('config');
-        $url = $this->registry->get('url');
+
+        $routeContext = RouteContext::fromRequest($request);
+        $routeParser = $routeContext->getRouteParser();
+        $lang = $request->getAttribute('lang', 'pt-br');
 
         // Breadcrumbs
         $breadcrumbs = [];
         $breadcrumbs[] = [
             'text' => $languageData['text_home'] ?? 'Principal',
-            'href' => $url->link('common/home', 'language=' . $config->get('config_language'))
+            'href' => $routeParser->urlFor('home', ['lang' => $lang])
         ];
         $breadcrumbs[] = [
             'text' => $languageData['heading_title'] ?? 'Finalizar Compra',
-            'href' => $url->link('checkout/checkout', 'language=' . $config->get('config_language'))
+            'href' => $routeParser->urlFor('checkout.index', ['lang' => $lang])
         ];
 
         // Buscar Países para o select de endereço
@@ -50,9 +54,9 @@ class Checkout implements ActionInterface
         $viewData = array_merge($languageData, [
             'breadcrumbs' => $breadcrumbs,
             'countries'   => $countries,
-            'action'      => '/' . $config->get('config_language') . '/checkout',
+            'action'      => $routeParser->urlFor('checkout.submit', ['lang' => $lang]),
             'login_email' => $session->data['email'] ?? '',
-            'forgotten'   => $url->link('account/forgotten', 'language=' . $config->get('config_language')),
+            'forgotten'   => '/' . $lang . '/forgotten', // Rota pública de esqueci a senha
             'error_warning' => $session->data['error'] ?? '',
             
             // Valores padrão dos campos de endereço / cadastro

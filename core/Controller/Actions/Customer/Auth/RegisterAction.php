@@ -8,6 +8,7 @@ use Psr\Http\Message\ServerRequestInterface as Request;
 use Psr\Http\Message\ResponseInterface as Response;
 use Alpha\Controller\Actions\ActionInterface;
 use Alpha\Model\Domain\Repositories\CustomerRepository;
+use Slim\Routing\RouteContext;
 
 /**
  * RegisterAction - Processa a criação de conta do cliente via POST /cadastro (AJAX).
@@ -36,11 +37,18 @@ class RegisterAction implements ActionInterface
             return $response->withHeader('Content-Type', 'application/json')->withStatus(400);
         }
 
+        // Obtém o parser de rotas para gerar o redirecionamento dinâmico
+        $routeContext = RouteContext::fromRequest($request);
+        $routeParser = $routeContext->getRouteParser();
+        $lang = $request->getAttribute('lang', 'pt-br');
+        $redirectUrl = $routeParser->urlFor('login.form', ['lang' => $lang]) . '?success=1';
+
         // Registro efetuado com sucesso! Redireciona para o login
         $response->getBody()->write(json_encode([
-            'redirect' => '/login?success=1'
+            'redirect' => $redirectUrl
         ]));
 
         return $response->withHeader('Content-Type', 'application/json')->withStatus(200);
     }
 }
+

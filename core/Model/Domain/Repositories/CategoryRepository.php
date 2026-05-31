@@ -39,6 +39,7 @@ class CategoryRepository extends AbstractRepository implements BaseRepositoryInt
             'meta_description' => $category['meta_description'] ?? '',
             'meta_keyword'     => $category['meta_keyword'] ?? '',
             'image'            => $category['image'] ?? '',
+            'parent_id'        => $category['parent_id'] ?? 0,
         ];
     }
 
@@ -175,12 +176,18 @@ class CategoryRepository extends AbstractRepository implements BaseRepositoryInt
         $productRepository = $this->registry->get('alpha_repository_factory')->get(\Alpha\Model\Domain\Repositories\ProductRepository::class);
         
         $productFilter = [
-            'filter_category_id' => $categoryId,
-            'filter_filter'      => $filterData['filter_filter'],
-            'sort'               => $filterData['sort'],
-            'order'              => $filterData['order'],
-            'start'              => ($filterData['page'] - 1) * $filterData['limit'],
-            'limit'              => $filterData['limit']
+            'filter_category_id'   => $categoryId,
+            'filter_sub_category'  => true,
+            'filter_filter'        => $filterData['filter_filter'],
+            'filter_categories'    => $filterData['categories'] ?? [],
+            'filter_manufacturers' => $filterData['manufacturers'] ?? [],
+            'filter_price_min'     => $filterData['price_min'] ?? null,
+            'filter_price_max'     => $filterData['price_max'] ?? null,
+            'filter_rating'        => $filterData['rating'] ?? null,
+            'sort'                 => $filterData['sort'],
+            'order'                => $filterData['order'],
+            'start'                => ($filterData['page'] - 1) * $filterData['limit'],
+            'limit'                => $filterData['limit']
         ];
 
         // Delega ao Repositório do Produto a resolução de loja, idioma e descontos
@@ -199,6 +206,21 @@ class CategoryRepository extends AbstractRepository implements BaseRepositoryInt
         if (isset($filterData['order'])) $url .= '&order=' . $filterData['order'];
         if (isset($filterData['limit'])) $url .= '&limit=' . $filterData['limit'];
 
+        // Injetar filtros facetados na URL da paginação
+        if (!empty($filterData['categories'])) {
+            foreach ($filterData['categories'] as $catId) {
+                $url .= '&category[]=' . (int)$catId;
+            }
+        }
+        if (!empty($filterData['manufacturers'])) {
+            foreach ($filterData['manufacturers'] as $brandId) {
+                $url .= '&manufacturer[]=' . (int)$brandId;
+            }
+        }
+        if (!empty($filterData['price_min'])) $url .= '&price_min=' . urlencode($filterData['price_min']);
+        if (!empty($filterData['price_max'])) $url .= '&price_max=' . urlencode($filterData['price_max']);
+        if (!empty($filterData['rating'])) $url .= '&rating=' . urlencode($filterData['rating']);
+
         $langCode = $this->config->get('config_language') ?: 'pt-br';
         $categoryPath = '/' . $langCode . '/categoria/' . $filterData['path'];
 
@@ -212,6 +234,21 @@ class CategoryRepository extends AbstractRepository implements BaseRepositoryInt
         // URL base para os selects de ordenação e limite
         $baseUrl = '';
         if (isset($filterData['filter_filter'])) $baseUrl .= '&filter=' . $filterData['filter_filter'];
+
+        // Injetar filtros facetados também no baseUrl para selects (ordenar e exibir)
+        if (!empty($filterData['categories'])) {
+            foreach ($filterData['categories'] as $catId) {
+                $baseUrl .= '&category[]=' . (int)$catId;
+            }
+        }
+        if (!empty($filterData['manufacturers'])) {
+            foreach ($filterData['manufacturers'] as $brandId) {
+                $baseUrl .= '&manufacturer[]=' . (int)$brandId;
+            }
+        }
+        if (!empty($filterData['price_min'])) $baseUrl .= '&price_min=' . urlencode($filterData['price_min']);
+        if (!empty($filterData['price_max'])) $baseUrl .= '&price_max=' . urlencode($filterData['price_max']);
+        if (!empty($filterData['rating'])) $baseUrl .= '&rating=' . urlencode($filterData['rating']);
 
         // Limits
         $data['limits'] = [];

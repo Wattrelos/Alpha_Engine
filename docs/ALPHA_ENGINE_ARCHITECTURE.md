@@ -96,3 +96,33 @@ sequenceDiagram
 ```
 
 O fluxo acima executa-se de forma 100% isolada e protegida, garantindo tempos de resposta na casa dos milissegundos e eliminando completamente os intermediários legados.
+
+---
+
+## 6. Sistema de Roteamento Centralizado e Internacionalização
+
+A Alpha Engine adota um sistema de rotas centralizado, totalmente desacoplado do bootstrap principal da aplicação (`public_html/index.php`), concentrando as definições em `Config/Routes.php`.
+
+### 🔀 Centralização de Definições (`Config/Routes.php`):
+*   O arquivo de rotas retorna uma closure que configura a instância do Slim `$app`.
+*   As rotas de compatibilidade (fallbacks para o idioma padrão) e APIs internas ficam centralizadas na raiz do arquivo.
+*   As rotas principais do catálogo e autenticação são agrupadas sob o prefixo de idioma internacionalizado: `/{lang:pt-br|en|es}`.
+
+### 🌐 Resolução Dinâmica de URLs no PHP:
+*   Os controladores/ações não utilizam strings de caminhos fixas (hardcoded) para redirecionamentos.
+*   Utilizam o parser de rotas do Slim a partir do `RouteContext` do request:
+    ```php
+    $routeContext = RouteContext::fromRequest($request);
+    $routeParser = $routeContext->getRouteParser();
+    $lang = $request->getAttribute('lang', 'pt-br');
+
+    // Gera a URL dinâmica baseada no nome da rota:
+    $redirectUrl = $routeParser->urlFor('login.form', ['lang' => $lang]);
+    ```
+
+### 🎨 Resolução Dinâmica de URLs no Twig:
+*   A integração nativa é feita adicionando o `TwigMiddleware` no bootstrap principal.
+*   Isso expõe a função nativa `url_for` (ou `url`) diretamente nos templates do Twig, permitindo renderizações dinâmicas:
+    ```twig
+    <a href="{{ url('login.form', {'lang': lang}) }}">Login</a>
+    ```

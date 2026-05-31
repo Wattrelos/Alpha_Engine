@@ -113,7 +113,7 @@ function showCartAlert(message, type = 'success') {
 // EVENT LISTENERS E RENDERIZAÇÃO
 // ─────────────────────────────────────────────────────────
 
-document.addEventListener('DOMContentLoaded', () => {
+function initCartSystem() {
     const logged = document.body.getAttribute('data-logged') === 'true';
 
     // 1. Atualizar o badge inicial do cabeçalho
@@ -121,40 +121,77 @@ document.addEventListener('DOMContentLoaded', () => {
         guestCart.updateHeaderCount();
     }
 
-    // 2. Interceptar a submissão de formulários de adição ao carrinho para Visitantes
+    // 2. Interceptar a submissão de formulários de adição ao carrinho para Visitantes ou formulários específicos de listagem (como prod-card-form)
     document.addEventListener('submit', (e) => {
         const form = e.target;
         const action = form.getAttribute('action') || '';
         
-        if (action.includes('/carrinho/adicionar') && !logged) {
-            e.preventDefault();
-            e.stopPropagation();
+        if (action.includes('/carrinho/adicionar')) {
+            const isProdCard = form.classList.contains('prod-card-form');
+            const isProductPurchase = form.classList.contains('egen-product-purchase-form');
+            
+            // Intercepta se for visitante OU se for um formulário de listagem (prod-card-form) OU de compra de produto (egen-product-purchase-form)
+            if (!logged || isProdCard || isProductPurchase) {
+                e.preventDefault();
+                e.stopPropagation();
 
-            const formData = new FormData(form);
-            const productId = parseInt(formData.get('product_id'));
-            const quantity = parseInt(formData.get('quantity') || '1');
+                const formData = new FormData(form);
+                const productId = parseInt(formData.get('product_id'));
+                const quantity = parseInt(formData.get('quantity') || '1');
 
-            if (!productId) return;
+                if (!productId) return;
 
-            // Extrai opções dinâmicas
-            const options = {};
-            for (let [key, val] of formData.entries()) {
-                if (key.startsWith('option[')) {
-                    const match = key.match(/option\[(\d+)\]/);
-                    if (match) {
-                        const optId = match[1];
-                        if (key.endsWith('[]')) {
-                            if (!options[optId]) options[optId] = [];
-                            options[optId].push(val);
-                        } else {
-                            options[optId] = val;
+                if (!logged) {
+                    // Extrai opções dinâmicas
+                    const options = {};
+                    for (let [key, val] of formData.entries()) {
+                        if (key.startsWith('option[')) {
+                            const match = key.match(/option\[(\d+)\]/);
+                            if (match) {
+                                const optId = match[1];
+                                if (key.endsWith('[]')) {
+                                    if (!options[optId]) options[optId] = [];
+                                    options[optId].push(val);
+                                } else {
+                                    options[optId] = val;
+                                }
+                            }
                         }
                     }
+
+                    guestCart.add(productId, quantity, options);
+                    showCartAlert('Produto adicionado ao carrinho com sucesso!', 'success');
+                } else {
+                    // Usuário logado, mas veio de um form de listagem (permanece na página)
+                    fetch(action, {
+                        method: 'POST',
+                        body: formData,
+                        headers: {
+                            'X-Requested-With': 'XMLHttpRequest'
+                        }
+                    })
+                    .then(res => res.json())
+                    .then(data => {
+                        if (data.success) {
+                            // Atualiza os contadores do mini-cart/header badge localmente
+                            const badges = document.querySelectorAll('.egen-cart-badge');
+                            badges.forEach(badge => {
+                                let currentCount = parseInt(badge.textContent || '0');
+                                let newCount = currentCount + quantity;
+                                badge.textContent = newCount;
+                                badge.style.display = newCount > 0 ? 'inline-flex' : 'none';
+                            });
+                            showCartAlert('Produto adicionado ao carrinho com sucesso!', 'success');
+                        } else if (data.error) {
+                            showCartAlert(data.error.warning || 'Erro ao adicionar o produto.', 'danger');
+                        }
+                    })
+                    .catch(err => {
+                        console.error('Erro ao adicionar produto ao carrinho:', err);
+                        showCartAlert('Erro de rede ou servidor ao adicionar o produto.', 'danger');
+                    });
                 }
             }
-
-            guestCart.add(productId, quantity, options);
-            showCartAlert('Produto adicionado ao carrinho com sucesso!', 'success');
         }
     });
 
@@ -163,7 +200,13 @@ document.addEventListener('DOMContentLoaded', () => {
     if (path.includes('/carrinho') && !logged) {
         renderGuestCartPage();
     }
-});
+}
+
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initCartSystem);
+} else {
+    initCartSystem();
+}
 
 // Renderiza dinamicamente a estrutura e tabelas do carrinho no DOM
 function renderGuestCartPage() {

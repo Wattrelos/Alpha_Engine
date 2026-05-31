@@ -7,6 +7,7 @@ use Psr\Http\Message\ResponseInterface as Response;
 use Alpha\Model\Domain\Repositories\ProductRepository; // Seu repositório real
 use Twig\Environment as TwigEnvironment;
 use Alpha\Controller\Actions\ActionInterface;
+use Slim\Routing\RouteContext;
 
 class ListProductsAction implements ActionInterface
 {

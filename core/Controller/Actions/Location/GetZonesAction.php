@@ -7,6 +7,7 @@ use Psr\Http\Message\ResponseInterface as Response;
 use Alpha\Controller\Actions\ActionInterface;
 use Alpha\Support\Registry;
 use Alpha\Model\Domain\Repositories\ZoneRepository;
+use Slim\Routing\RouteContext;
 
 /**
  * GetZonesAction - Retorna a lista de estados de um país em formato JSON.

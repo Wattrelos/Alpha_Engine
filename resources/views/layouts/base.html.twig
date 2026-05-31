@@ -1,23 +1,25 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}{% block page_title %}Meu App{% endblock %}{% endblock %}
-
-{% block master_content %}
-    <!-- O Header entra de forma automática em todas as páginas -->
-    {% include 'components/organisms/header.twig' %}
-
-    <div id="alert" class="container mt-2"></div>
-
-    <main class="main-content">
-        {% block content %}{% endblock %}
-    </main>
-
-    <!-- O Footer entra de forma automática em todas as páginas -->
-    {% include 'components/organisms/footer.twig' %}
-
-    <script src="/js/custom/form-validator.js"></script>
-    <script src="/js/app.js"></script>
-    <script src="/js/cart/cart.js"></script>
-    <script src="/js/cart/checkout.js"></script>
+{% block title %}
+	{% block page_title %}Meu App
+	{% endblock %}
 {% endblock %}
 
+{% block master_content %}
+	<!-- O Header entra de forma automática em todas as páginas -->
+	{% include 'components/organisms/header.twig' %}
+
+	<div id="alert" class="container mt-2"></div>
+
+	<main class="main-content">
+		{% block content %}{% endblock %}
+	</main>
+
+	<!-- O Footer entra de forma automática em todas as páginas -->
+	{% include 'components/organisms/footer.twig' %}
+
+	<script src="/js/custom/form-validator.js"></script>
+	<script src="/js/app.js"></script>
+	<script src="/js/cart/cart.js"></script>
+	<script src="/js/cart/checkout.js"></script>
+{% endblock %}

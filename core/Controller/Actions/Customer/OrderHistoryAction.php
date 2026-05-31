@@ -9,6 +9,7 @@ use Psr\Http\Message\ServerRequestInterface as Request;
 use Psr\Http\Message\ResponseInterface as Response;
 use Alpha\Model\Domain\Repositories\OrderRepository;
 use Twig\Environment as TwigEnvironment;
+use Slim\Routing\RouteContext;
 
 class OrderHistoryAction implements ActionInterface
 {
@@ -37,6 +38,17 @@ class OrderHistoryAction implements ActionInterface
             return $response->withStatus(404)->withHeader('Content-Type', 'text/html; charset=utf-8');
         }
 
+        $routeContext = RouteContext::fromRequest($request);
+        $routeParser = $routeContext->getRouteParser();
+        $lang = $request->getAttribute('lang', 'pt-br');
+
+        $breadcrumbs = [
+            ['text' => 'Início', 'href' => $routeParser->urlFor('home', ['lang' => $lang])],
+            ['text' => 'Minha Conta', 'href' => $routeParser->urlFor('account.index', ['lang' => $lang])],
+            ['text' => 'Meus Pedidos', 'href' => $routeParser->urlFor('account.orders', ['lang' => $lang])],
+            ['text' => 'Histórico do Pedido #' . $order_id, 'href' => $routeParser->urlFor('account.order.history', ['lang' => $lang, 'order_id' => (string)$order_id])]
+        ];
+
         $historiesData = $this->orderRepository->getHistories($order_id);
         $histories = [];
         foreach ($historiesData as $history) {
@@ -48,11 +60,13 @@ class OrderHistoryAction implements ActionInterface
         }
 
         $data = [
+            'breadcrumbs'       => $breadcrumbs,
             'column_date_added' => 'Data de Envio',
             'column_comment'    => 'Comentários',
             'column_status'     => 'Situação',
             'text_no_results'   => 'Nenhum histórico encontrado para este pedido.',
             'histories'         => $histories,
+            'continue'          => $routeParser->urlFor('account.orders', ['lang' => $lang]),
             'pagination'        => '',
             'results'           => ''
         ];

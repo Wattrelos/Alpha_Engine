@@ -29,6 +29,19 @@ class ManufacturerRepository extends AbstractRepository implements BaseRepositor
     }
 
     /**
+     * Alpha Engine: Recupera a lista de fabricantes/marcas ativos no sistema
+     *
+     * @param array $data Filtros/ordenamento
+     * @return array
+     */
+    public function getManufacturers(array $data = []): array
+    {
+        /** @var \Alpha\Mappers\EntityMappers\ManufacturerMapper $mapper */
+        $mapper = $this->mapperFactory->get(ManufacturerMapper::class);
+        return $mapper->getManufacturers($data, $this->store_id);
+    }
+
+    /**
      * Alpha Engine: Agrupa os fabricantes alfabeticamente (A-Z, 0-9)
      *
      * @return array
@@ -252,5 +265,18 @@ class ManufacturerRepository extends AbstractRepository implements BaseRepositor
     public function findOneBy(array $criteria): ?InterfaceEntity
     {
         return $this->mapperFactory->get(ManufacturerMapper::class)->findOneBy($criteria);
+    }
+
+    /**
+     * Alpha Engine: Recupera fabricantes associados aos produtos de uma categoria ou subcategorias
+     *
+     * @param int $categoryId
+     * @return array
+     */
+    public function getManufacturersByCategory(int $categoryId): array
+    {
+        /** @var \Alpha\Mappers\EntityMappers\ManufacturerMapper $mapper */
+        $mapper = $this->mapperFactory->get(ManufacturerMapper::class);
+        return $mapper->getManufacturersByCategory($categoryId, $this->store_id);
     }
 }

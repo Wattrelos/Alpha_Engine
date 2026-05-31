@@ -16,6 +16,7 @@ use Alpha\Model\Domain\Repositories\InformationRepository;
 use Alpha\Model\Domain\Repositories\OrderRepository;
 use Alpha\Model\Domain\Repositories\CartRepository;
 use Alpha\Model\Domain\Repositories\SitemapRepository;
+use Alpha\Model\Domain\Repositories\ManufacturerRepository;
 use Alpha\Session\AlphaSessionHandler;
 use Alpha\Auth\Services\AuthService;
 use Alpha\Support\Config;
@@ -114,6 +115,7 @@ class AppBootstrap
         $orderRepository = $repositoryFactory->get(OrderRepository::class);
         $cartRepository = $repositoryFactory->get(CartRepository::class);
         $sitemapRepository = $repositoryFactory->get(SitemapRepository::class);
+        $manufacturerRepository = $repositoryFactory->get(ManufacturerRepository::class);
 
         // Bindings no Container de Dependências
         $this->container
@@ -129,6 +131,7 @@ class AppBootstrap
             ->bind(OrderRepository::class, $orderRepository)
             ->bind(CartRepository::class, $cartRepository)
             ->bind(SitemapRepository::class, $sitemapRepository)
+            ->bind(ManufacturerRepository::class, $manufacturerRepository)
             ->bind(Registry::class, $this->registry);
     }
 

@@ -89,16 +89,23 @@ Diferente do OpenCart padrão, onde o SQL fica espalhado pelos Models, este proj
 ## 📦 Estrutura do Core
 
 ```text
-core/
-├── Auth/                                    # 🔐 Domínio de autenticação e segurança (novo método de autenticação que substituirá os métodos legados)
-│   ├── Middleware/                          # 🛡️ Guards PSR-15 do Router
-│   │   ├── SignatureMiddleware.php          # Valida assinatura HMAC da requisição
-│   │   └── SessionMiddleware.php           # Valida sessão ativa no Redis
+├── Config/                                 # 📂 Configurações da Aplicação
+│   └── Routes.php                          # 📁 Rotas PSR-15 centralizadas (Anti-Bootstrap  )
+├── Containers/                             # 📂 Nova pasta de infraestrutura do roteador
+│   ├── AppContainer.php                    # 📦 Fábrica central que monta as Actions (com Twig/Redis)
+│   └── AppBootstrap.php                    # 📦 Bootstrap da aplicação
+├── core/
+│   ├── Auth/                                   # 🔐 Domínio de autenticação e segurança (novo método de autenticação que substituirá os métodos legados)
+│   │   ├── Middleware/                         # 🛡️ Guards PSR-15 do Router
+│   │   │   ├── SignatureMiddleware.php         # Valida assinatura HMAC da requisição
+│   │   │   └── SessionMiddleware.php           # Valida sessão ativa no Redis
 │   └── Services/                           # 🧠 Lógica de negócio de autenticação
 │       └── AuthService.php                 # Autentica credenciais, cria/destroi sessão
 │
-├── Containers/                             # 📂 Nova pasta de infraestrutura do roteador
-│   └── AppContainer.php                    # 📦 Fábrica central que monta as Actions (com Twig/Redis)
+│
+
+│
+
 │
 ├── Controller/                             # 🎮 Orquestradores de requisição HTTP (novo controller que substituirá os métodos legados)
 │   ├── BaseController.php                  # 🧱 Injeção de Mappers, Repos e helpers JSON
@@ -112,33 +119,33 @@ core/
 │   └── Api/                                # 🔌 Respostas em JSON (endpoints REST)
 │       └── ApiProductController.php        # 🔌 Controlador de produtos em JSON
 │
-├── Mappers/                               # 🗺️ SQL Isolation — acesso ao banco de dados
-│   ├── MapperInterface.php                # Contrato público dos Mappers
-│   ├── AbstractMapper.php                 # Base abstrata comum
-│   ├── BaseMapper.php                     # CRUD genérico via DataAccessObject
-│   ├── MapperFactory.php                  # 🏭 Fábrica central de instâncias
-│   ├── CollectionToArrayConverter.php     # Serialização de coleções de entidades
-│   ├── EntityMappers/                     # Um Mapper por entidade de domínio (75+)
-│   └── Observers/                         # 👁️ Side-effects de persistência
-│       ├── OrderObserverInterface.php     # 📧 Interface para observar eventos de pedido
-│       └── OrderEmailObserver.php         # 📧 Observer que envia e-mails quando um pedido é criado
+├── Mappers/                                # 🗺️ SQL Isolation — acesso ao banco de dados
+│   ├── MapperInterface.php                 # Contrato público dos Mappers
+│   ├── AbstractMapper.php                  # Base abstrata comum
+│   ├── BaseMapper.php                      # CRUD genérico via DataAccessObject
+│   ├── MapperFactory.php                   # 🏭 Fábrica central de instâncias
+│   ├── CollectionToArrayConverter.php      # Serialização de coleções de entidades
+│   ├── EntityMappers/                      # Um Mapper por entidade de domínio (75+)
+│   └── Observers/                          # 👁️ Side-effects de persistência
+│       ├── OrderObserverInterface.php      # 📧 Interface para observar eventos de pedido
+│       └── OrderEmailObserver.php          # 📧 Observer que envia e-mails quando um pedido é criado
 │
-├── Model/                                 # 🏛️ Coração do domínio
-│   ├── DataAccessObject/                  # Abstração PDO, QueryBuilder, Transactions
+├── Model/                                  # 🏛️ Coração do domínio
+│   ├── DataAccessObject/                   # Abstração PDO, QueryBuilder, Transactions
 │   │   ├── DataAccessObject.php
 │   │   ├── ConnectionDB.php
 │   │   ├── QueryBuilder.php
 │   │   ├── UnitOfWork.php
 │   │   └── ProxyFactory.php
-│   ├── DataTransferObject/                # Anotações e validações de entrada
+│   ├── DataTransferObject/                 # Anotações e validações de entrada
 │   │   └── Attributes/
 │   │       ├── AllowHtml.php
 │   │       └── Validation.php
-│   └── Domain/                            # Entidades e regras de negócio puras
+│   └── Domain/                             # Entidades e regras de negócio puras
 │       ├── BaseEntity.php
 │       ├── InterfaceEntity.php
-│       ├── Attributes/                    # Atributos ORM (HasOne, ManyToMany, etc.)
-│       ├── Entities/                      # Objetos de domínio tipados (PHP 8.4)
+│       ├── Attributes/                     # Atributos ORM (HasOne, ManyToMany, etc.)
+│       ├── Entities/                       # Objetos de domínio tipados (PHP 8.4)
 │       ├── DTOs/
 │       ├── Factory/
 │       ├── Repositories/                  # Abstração e regras de negócio por entidade

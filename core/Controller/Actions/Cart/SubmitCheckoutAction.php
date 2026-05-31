@@ -8,6 +8,7 @@ use Alpha\Controller\Actions\ActionInterface;
 use Alpha\Support\Registry;
 use Alpha\Model\Domain\Repositories\OrderRepository;
 use Alpha\Model\Domain\Repositories\CartRepository;
+use Slim\Routing\RouteContext;
 
 /**
  * SubmitCheckoutAction - Processa o fechamento de pedidos (POST /checkout).
@@ -89,6 +90,10 @@ class SubmitCheckoutAction implements ActionInterface
         /** @var OrderRepository $orderRepository */
         $orderRepository = $repositoryFactory->get(OrderRepository::class);
 
+        $routeContext = RouteContext::fromRequest($request);
+        $routeParser = $routeContext->getRouteParser();
+        $lang = $request->getAttribute('lang', 'pt-br');
+
         try {
             $orderId = $orderRepository->createFromSession();
             
@@ -101,12 +106,13 @@ class SubmitCheckoutAction implements ActionInterface
             // Grava o order_id na sessão para consulta futura na página de sucesso
             $session->data['last_order_id'] = $orderId;
 
-            $lang = $args['lang'] ?? 'pt-br';
-            return $response->withHeader('Location', '/' . $lang . '/checkout/sucesso')->withStatus(302);
+            $successUrl = $routeParser->urlFor('checkout.success', ['lang' => $lang]);
+            return $response->withHeader('Location', $successUrl)->withStatus(302);
         } catch (\Exception $e) {
             $session->data['error'] = 'Erro ao processar o seu pedido: ' . $e->getMessage();
-            $lang = $args['lang'] ?? 'pt-br';
-            return $response->withHeader('Location', '/' . $lang . '/checkout')->withStatus(302);
+            $errorUrl = $routeParser->urlFor('checkout.index', ['lang' => $lang]);
+            return $response->withHeader('Location', $errorUrl)->withStatus(302);
         }
     }
 }
+

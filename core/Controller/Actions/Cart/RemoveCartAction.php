@@ -6,6 +6,7 @@ use Psr\Http\Message\ServerRequestInterface as Request;
 use Psr\Http\Message\ResponseInterface as Response;
 use Alpha\Controller\Actions\ActionInterface;
 use Alpha\Model\Domain\Repositories\CartRepository;
+use Slim\Routing\RouteContext;
 
 class RemoveCartAction implements ActionInterface
 {
@@ -26,7 +27,12 @@ class RemoveCartAction implements ActionInterface
             $this->cartRepository->remove($cartId);
         }
 
-        $lang = $args['lang'] ?? 'pt-br';
-        return $response->withHeader('Location', '/' . $lang . '/carrinho')->withStatus(302);
+        $routeContext = RouteContext::fromRequest($request);
+        $routeParser = $routeContext->getRouteParser();
+        $lang = $request->getAttribute('lang', 'pt-br');
+        $redirectUrl = $routeParser->urlFor('cart.index', ['lang' => $lang]);
+
+        return $response->withHeader('Location', $redirectUrl)->withStatus(302);
     }
 }
+

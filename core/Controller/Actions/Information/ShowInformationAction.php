@@ -8,6 +8,7 @@ use Alpha\Model\Domain\Repositories\InformationRepository;
 use Alpha\Model\Domain\Repositories\SeoUrlRepository;
 use Twig\Environment as TwigEnvironment;
 use Alpha\Controller\Actions\ActionInterface;
+use Slim\Routing\RouteContext;
 
 class ShowInformationAction implements ActionInterface
 {
@@ -57,12 +58,16 @@ class ShowInformationAction implements ActionInterface
 
         $data = $viewResponse->getData();
 
+        $routeContext = RouteContext::fromRequest($request);
+        $routeParser = $routeContext->getRouteParser();
+        $lang = $request->getAttribute('lang', 'pt-br');
+
         // SEO tags
         $seoData = [
             'title'       => ($data['meta_title'] ?? $data['title']) . ' | AgSonhos',
             'description' => $data['meta_description'] ?? 'Páginas informativas da AgSonhos.',
             'keywords'    => $data['meta_keyword'] ?? '',
-            'canonical'   => '/' . $request->getAttribute('language_code', 'pt-br') . '/pagina/' . $slug
+            'canonical'   => $routeParser->urlFor('info.page', ['lang' => $lang, 'slug' => $slug])
         ];
 
         $html = $this->twig->render('pages/information/show.html.twig', [
@@ -87,3 +92,4 @@ class ShowInformationAction implements ActionInterface
         return $response->withStatus(404);
     }
 }
+

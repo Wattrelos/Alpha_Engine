@@ -7,6 +7,7 @@ use Psr\Http\Message\ResponseInterface as Response;
 use Twig\Environment as TwigEnvironment;
 use Alpha\Controller\Actions\ActionInterface;
 use Alpha\Support\Registry;
+use Slim\Routing\RouteContext;
 
 class ShowSuccessAction implements ActionInterface
 {

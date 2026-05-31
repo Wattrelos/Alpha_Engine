@@ -10,6 +10,7 @@ use Alpha\Model\Domain\Repositories\PriceRepository;
 use Alpha\Model\Domain\Repositories\ProductOptionValueRepository;
 use Alpha\Mappers\EntityMappers\ProductMapper;
 use Alpha\Support\Presenters\ImagePresenter;
+use Slim\Routing\RouteContext;
 
 /**
  * CalculateVisitorCartAction - Processa a API de cálculo de carrinho do visitante
@@ -57,6 +58,10 @@ class CalculateVisitorCartAction implements ActionInterface
         }
 
         $imagePresenter = new ImagePresenter($this->registry);
+
+        $routeContext = RouteContext::fromRequest($request);
+        $routeParser = $routeContext->getRouteParser();
+        $lang = $request->getAttribute('lang', 'pt-br');
 
         foreach ($items as $item) {
             $productId = (int)$item['product_id'];
@@ -115,7 +120,7 @@ class CalculateVisitorCartAction implements ActionInterface
                 'option_raw' => $optionStr,
                 'price'      => $currency->format($unitPrice, $currencyCode),
                 'total'      => $currency->format($totalPrice, $currencyCode),
-                'href'       => '/' . $this->registry->get('config')->get('config_language') . '/produto/' . ($productInfo['keyword'] ?? $productId)
+                'href'       => $routeParser->urlFor('product.detail', ['lang' => $lang, 'slug' => ($productInfo['keyword'] ?? (string)$productId)])
             ];
         }
 
@@ -139,3 +144,4 @@ class CalculateVisitorCartAction implements ActionInterface
         return $response->withHeader('Content-Type', 'application/json');
     }
 }
+

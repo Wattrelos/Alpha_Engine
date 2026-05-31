@@ -10,6 +10,7 @@ use Twig\Environment as TwigEnvironment;
 use Alpha\Controller\Actions\ActionInterface;
 use Alpha\Model\Domain\Repositories\LanguageRepository;
 use Alpha\Model\Domain\Repositories\SettingRepository;
+use Slim\Routing\RouteContext;
 
 /**
  * ShowLoginFormAction - Exibe o formulário de login para o cliente.
@@ -37,9 +38,13 @@ class ShowLoginFormAction implements ActionInterface
             $language = $this->languageRepository->find(2); // Fallback para pt-br (ID 2)
         }
 
+        $routeContext = RouteContext::fromRequest($request);
+        $routeParser = $routeContext->getRouteParser();
+        $lang = $request->getAttribute('lang', 'pt-br');
+
         $breadcrumbs = [
-            ['text' => 'Início', 'href' => '/'],
-            ['text' => 'Login', 'href' => '/login']
+            ['text' => 'Início', 'href' => $routeParser->urlFor('home', ['lang' => $lang])],
+            ['text' => 'Login', 'href' => $routeParser->urlFor('login.form', ['lang' => $lang])]
         ];
 
         // Se houver algum erro ou sucesso na URL (ex: ?error=1 ou ?success=1)
@@ -59,7 +64,7 @@ class ShowLoginFormAction implements ActionInterface
             'text_register' => 'Cadastrar Conta',
             'text_register_account' => 'Ao criar uma conta, você poderá comprar mais rápido, acompanhar o status do seu pedido e controlar seus pedidos anteriores.',
             'button_continue' => 'Continuar',
-            'register' => '/register', // Rota pública de registro
+            'register' => $routeParser->urlFor('register.form', ['lang' => $lang]), // Rota pública de registro
 
             // Variáveis de idioma para o formulário de login
             'text_returning_customer' => 'Cliente Registrado',
@@ -67,9 +72,9 @@ class ShowLoginFormAction implements ActionInterface
             'entry_email' => 'Endereço de E-mail',
             'entry_password' => 'Senha',
             'text_forgotten' => 'Esqueceu a senha?',
-            'forgotten' => '/forgotten', // Rota pública de esqueci a senha
+            'forgotten' => '/' . $lang . '/forgotten', // Rota pública de esqueci a senha
             'button_login' => 'Acessar',
-            'login' => '/' . $languageCode . '/login', // Action do formulário
+            'login' => $routeParser->urlFor('login.submit', ['lang' => $lang]), // Action do formulário
 
             // Alertas
             'error_warning' => $errorWarning,

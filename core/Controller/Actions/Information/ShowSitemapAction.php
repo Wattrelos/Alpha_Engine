@@ -7,6 +7,7 @@ use Psr\Http\Message\ResponseInterface as Response;
 use Alpha\Model\Domain\Repositories\SitemapRepository;
 use Twig\Environment as TwigEnvironment;
 use Alpha\Controller\Actions\ActionInterface;
+use Slim\Routing\RouteContext;
 
 class ShowSitemapAction implements ActionInterface
 {
@@ -23,6 +24,10 @@ class ShowSitemapAction implements ActionInterface
 
     public function __invoke(Request $request, Response $response, array $args): Response
     {
+        $routeContext = RouteContext::fromRequest($request);
+        $routeParser = $routeContext->getRouteParser();
+        $lang = $request->getAttribute('lang', 'pt-br');
+
         // 1. Obtém todos os dados consolidados do sitemap
         $sitemapData = $this->sitemapRepository->getSitemapData()->toArray();
 
@@ -31,18 +36,18 @@ class ShowSitemapAction implements ActionInterface
             'title'       => 'Mapa do Site | AgSonhos',
             'description' => 'Mapa do site completo da AgSonhos. Navegue por departamentos, categorias, páginas informativas e conta de usuário.',
             'keywords'    => 'mapa do site, sitemap, departamentos, categorias, institucional',
-            'canonical'   => '/' . $request->getAttribute('language_code', 'pt-br') . '/mapa-do-site'
+            'canonical'   => $routeParser->urlFor('sitemap', ['lang' => $lang])
         ];
 
         // 3. Monta os breadcrumbs
         $breadcrumbs = [];
         $breadcrumbs[] = [
             'text' => 'Home',
-            'href' => '/' . $request->getAttribute('language_code', 'pt-br')
+            'href' => $routeParser->urlFor('home', ['lang' => $lang])
         ];
         $breadcrumbs[] = [
             'text' => 'Mapa do Site',
-            'href' => '/' . $request->getAttribute('language_code', 'pt-br') . '/mapa-do-site'
+            'href' => $routeParser->urlFor('sitemap', ['lang' => $lang])
         ];
 
         // 4. Combina os dados para o template
@@ -58,3 +63,4 @@ class ShowSitemapAction implements ActionInterface
         return $response;
     }
 }
+

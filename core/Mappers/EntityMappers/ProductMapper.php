@@ -114,6 +114,35 @@ class ProductMapper extends BaseMapper {
              $query->where(!empty($data['filter_sub_category']) ? "cp.path_id = ?" : "p2c.category_id = ?", [$data['filter_category_id']]);
         }
 
+        // Filtros facetados adicionais
+        if (empty($data['filter_category_id']) && !empty($data['filter_categories'])) {
+            $query->leftJoin(DB_PREFIX . 'product_to_category', 'p2c', 'p2c.product_id = p2s.product_id');
+        }
+
+        if (!empty($data['filter_categories']) && is_array($data['filter_categories'])) {
+            $categories = array_map('intval', $data['filter_categories']);
+            $placeholders = implode(',', array_fill(0, count($categories), '?'));
+            $query->where("p2c.category_id IN ($placeholders)", $categories);
+        }
+
+        if (!empty($data['filter_manufacturers']) && is_array($data['filter_manufacturers'])) {
+            $manufacturers = array_map('intval', $data['filter_manufacturers']);
+            $placeholders = implode(',', array_fill(0, count($manufacturers), '?'));
+            $query->where("p.manufacturer_id IN ($placeholders)", $manufacturers);
+        }
+
+        if (!empty($data['filter_price_min'])) {
+            $query->where("p.price >= ?", [(float)$data['filter_price_min']]);
+        }
+
+        if (!empty($data['filter_price_max'])) {
+            $query->where("p.price <= ?", [(float)$data['filter_price_max']]);
+        }
+
+        if (!empty($data['filter_rating'])) {
+            $query->where("(SELECT AVG(r.rating) FROM " . DB_PREFIX . "review r WHERE r.product_id = p.id AND r.status = 1) >= ?", [(int)$data['filter_rating']]);
+        }
+
         // Select e Ordenação
         $query->select('p.*', 'pd.name', 'pd.description', 'p.image', '(SELECT COUNT(*) FROM ' . DB_PREFIX . 'review r WHERE r.product_id = p.id AND r.status = 1) AS reviews');
         if (!empty($priceStatements)) {
@@ -227,6 +256,35 @@ class ProductMapper extends BaseMapper {
 
         if (!empty($data['filter_manufacturer_id'])) {
             $query->where("p.manufacturer_id = ?", [$data['filter_manufacturer_id']]);
+        }
+
+        // Filtros facetados adicionais
+        if (empty($data['filter_category_id']) && !empty($data['filter_categories'])) {
+            $query->leftJoin(DB_PREFIX . 'product_to_category', 'p2c', 'p2c.product_id = p2s.product_id');
+        }
+
+        if (!empty($data['filter_categories']) && is_array($data['filter_categories'])) {
+            $categories = array_map('intval', $data['filter_categories']);
+            $placeholders = implode(',', array_fill(0, count($categories), '?'));
+            $query->where("p2c.category_id IN ($placeholders)", $categories);
+        }
+
+        if (!empty($data['filter_manufacturers']) && is_array($data['filter_manufacturers'])) {
+            $manufacturers = array_map('intval', $data['filter_manufacturers']);
+            $placeholders = implode(',', array_fill(0, count($manufacturers), '?'));
+            $query->where("p.manufacturer_id IN ($placeholders)", $manufacturers);
+        }
+
+        if (!empty($data['filter_price_min'])) {
+            $query->where("p.price >= ?", [(float)$data['filter_price_min']]);
+        }
+
+        if (!empty($data['filter_price_max'])) {
+            $query->where("p.price <= ?", [(float)$data['filter_price_max']]);
+        }
+
+        if (!empty($data['filter_rating'])) {
+            $query->where("(SELECT AVG(r.rating) FROM " . DB_PREFIX . "review r WHERE r.product_id = p.id AND r.status = 1) >= ?", [(int)$data['filter_rating']]);
         }
 
         return $this->dao->executeCount($query);

@@ -2310,3 +2310,534 @@
     color: #8b5cf6;
     margin-right: 0.5rem;
 }
+
+/* ══════════════════════════════════════════════════════
+   ESTILOS PRÊMIUM DA HOME PAGE
+   ══════════════════════════════════════════════════════ */
+.egen-hero-section {
+    position: relative;
+    border-radius: 20px;
+    overflow: hidden;
+    margin-bottom: 3rem;
+    box-shadow: var(--egen-shadow-card);
+    border: 1px solid rgba(252, 144, 3, 0.15);
+}
+
+.egen-hero-card {
+    background: linear-gradient(135deg, rgba(16, 20, 24, 0.9) 0%, rgba(30, 34, 39, 0.7) 100%), 
+                url('/img/seamless/scandinavian-roof-tile-seamless.jpg') center/cover;
+    padding: 5rem 3rem;
+    display: flex;
+    align-items: center;
+    min-height: 400px;
+}
+
+.egen-hero-content {
+    max-width: 650px;
+    z-index: 2;
+}
+
+.egen-hero-title {
+    font-size: 3rem;
+    font-weight: 800;
+    line-height: 1.2;
+    margin-bottom: 1.5rem;
+    background: linear-gradient(135deg, #ffffff 0%, var(--egen-primary-color) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.egen-hero-subtitle {
+    font-size: 1.2rem;
+    color: var(--egen-text-muted);
+    line-height: 1.6;
+    margin-bottom: 2.5rem;
+}
+
+.egen-hero-actions {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+}
+
+.egen-btn-primary {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--egen-primary-color);
+    color: #ffffff;
+    padding: 0.8rem 2rem;
+    font-weight: 700;
+    border-radius: 50px;
+    text-decoration: none;
+    box-shadow: var(--egen-shadow-btn);
+    transition: all var(--egen-transition);
+}
+
+.egen-btn-primary:hover {
+    background: var(--egen-primary-hover);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(252, 144, 3, 0.5);
+    color: #ffffff;
+}
+
+.egen-btn-outline {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: transparent;
+    color: var(--egen-text-color);
+    border: 2px solid var(--egen-border-color);
+    padding: 0.8rem 2rem;
+    font-weight: 700;
+    border-radius: 50px;
+    text-decoration: none;
+    transition: all var(--egen-transition);
+}
+
+.egen-btn-outline:hover {
+    border-color: var(--egen-primary-color);
+    color: #ffffff;
+    background: rgba(252, 144, 3, 0.08);
+}
+
+/* Responsividade do Hero Premium */
+@media (max-width: 991px) {
+    .egen-hero-card {
+        padding: 4rem 2.5rem;
+        min-height: 350px;
+    }
+    .egen-hero-title {
+        font-size: 2.5rem;
+    }
+}
+
+@media (max-width: 768px) {
+    .egen-hero-card {
+        padding: 3rem 1.75rem;
+        min-height: 300px;
+    }
+    .egen-hero-title {
+        font-size: 2.2rem;
+    }
+    .egen-hero-subtitle {
+        font-size: 1.1rem;
+        margin-bottom: 2rem;
+    }
+}
+
+@media (max-width: 640px) {
+    .egen-hero-actions .egen-btn-primary {
+        width: auto;
+    }
+}
+
+@media (max-width: 576px) {
+    .egen-hero-card {
+        padding: 2rem 1.25rem;
+        text-align: center;
+        justify-content: center;
+    }
+    .egen-hero-title {
+        font-size: 1.75rem;
+    }
+    .egen-hero-subtitle {
+        font-size: 0.95rem;
+        margin-bottom: 1.75rem;
+    }
+    .egen-hero-actions {
+        flex-direction: column;
+        align-items: stretch;
+        width: 100%;
+        gap: 0.75rem;
+    }
+    .egen-hero-actions .egen-btn-primary,
+    .egen-hero-actions .egen-btn-outline {
+        display: inline-flex;
+        width: 100% !important;
+        justify-content: center;
+        box-sizing: border-box;
+    }
+}
+
+/* Category Grid & Cards */
+.section-title {
+    font-size: 2rem;
+    font-weight: 800;
+    background: linear-gradient(135deg, #ffffff 0%, var(--egen-primary-color) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin-bottom: 2rem;
+}
+
+.category-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 3rem;
+}
+
+.category-card {
+    background: var(--egen-bg-card);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid var(--egen-border-color);
+    border-radius: 16px;
+    padding: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    text-decoration: none;
+    transition: all var(--egen-transition);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
+}
+
+.category-card:hover {
+    transform: translateY(-5px);
+    border-color: rgba(252, 144, 3, 0.4);
+    box-shadow: 0 15px 35px rgba(252, 144, 3, 0.2);
+}
+
+.category-card__image-wrapper {
+    width: 100%;
+    height: 140px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #ffffff;
+    border-radius: 12px;
+    padding: 1rem;
+    margin-bottom: 1.25rem;
+    overflow: hidden;
+}
+
+.category-card__image-wrapper img {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+    transition: transform var(--egen-transition);
+}
+
+.category-card:hover .category-card__image-wrapper img {
+    transform: scale(1.08);
+}
+
+.category-card__no-image {
+    font-size: 3.5rem;
+    height: 140px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 1.25rem;
+    background: rgba(255, 255, 255, 0.05);
+    width: 100%;
+    border-radius: 12px;
+    border: 1px solid var(--egen-border-color);
+}
+
+.category-card__content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.25rem;
+}
+
+.category-card__name {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--egen-text-color);
+    transition: color var(--egen-transition);
+}
+
+.category-card:hover .category-card__name {
+    color: var(--egen-primary-color);
+}
+
+.category-card__count {
+    font-size: 0.8rem;
+    color: var(--egen-text-muted);
+}
+
+/* Diferenciais Premium da Home */
+.egen-advantages {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 4rem;
+    position: relative;
+}
+
+.egen-advantage-card {
+    background: var(--egen-bg-card);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid var(--egen-border-color);
+    border-radius: 16px;
+    padding: 1.5rem;
+    display: flex;
+    gap: 1rem;
+    align-items: flex-start;
+    transition: all var(--egen-transition);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+}
+
+.egen-advantage-card:hover {
+    transform: translateY(-4px);
+    border-color: rgba(252, 144, 3, 0.4);
+    box-shadow: 0 15px 35px rgba(252, 144, 3, 0.15);
+}
+
+.egen-advantage-icon {
+    font-size: 2rem;
+    flex-shrink: 0;
+    line-height: 1;
+    background: linear-gradient(135deg, var(--egen-primary-color), var(--egen-accent-color));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.egen-advantage-info {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+}
+
+.egen-advantage-title {
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--egen-text-color);
+    margin: 0;
+}
+
+.egen-advantage-desc {
+    font-size: 0.85rem;
+    color: var(--egen-text-muted);
+    margin: 0;
+    line-height: 1.4;
+}
+
+/* Decorações extras para a Home Page */
+.egen-section-header {
+    text-align: center;
+    margin-bottom: 2.5rem;
+    position: relative;
+}
+
+.egen-section-header .section-title {
+    display: inline-block;
+    margin-bottom: 0.5rem;
+}
+
+.egen-section-header::after {
+    content: '';
+    display: block;
+    width: 60px;
+    height: 3px;
+    background: linear-gradient(90deg, var(--egen-primary-color), var(--egen-accent-color));
+    margin: 0.5rem auto 0;
+    border-radius: 2px;
+}
+
+.egen-section-subtitle {
+    font-size: 1rem;
+    color: var(--egen-text-muted);
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+/* ══════════════════════════════════════════════════════
+   LAYOUT E SIDEBAR DE FILTROS FACETADOS (CATEGORIA)
+   ══════════════════════════════════════════════════════ */
+.egen-category-layout {
+    display: grid;
+    grid-template-columns: 280px 1fr;
+    gap: 2rem;
+    align-items: start;
+    width: 100%;
+    margin-top: 1.5rem;
+}
+
+.egen-aside-filters {
+    background: var(--egen-bg-card);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid rgba(252, 144, 3, 0.2);
+    border-radius: 16px;
+    padding: 1.5rem;
+    box-shadow: var(--egen-shadow-card);
+    box-sizing: border-box;
+}
+
+.egen-filter-group {
+    margin-bottom: 1.5rem;
+    border-bottom: 1px solid var(--egen-border-color);
+    padding-bottom: 1.25rem;
+}
+
+.egen-filter-group:last-of-type {
+    border-bottom: none;
+    padding-bottom: 0;
+    margin-bottom: 0;
+}
+
+.egen-filter-title {
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: var(--egen-primary-color);
+    margin: 0 0 1rem 0;
+    letter-spacing: 0.3px;
+    text-transform: uppercase;
+}
+
+.egen-filter-options {
+    display: flex;
+    flex-direction: column;
+    gap: 0.65rem;
+}
+
+.egen-filter-option {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    cursor: pointer;
+    font-size: 0.9rem;
+    color: var(--egen-text-color);
+    user-select: none;
+    transition: color var(--egen-transition);
+}
+
+.egen-filter-option:hover {
+    color: var(--egen-primary-color);
+}
+
+.egen-filter-checkbox,
+.egen-filter-radio {
+    accent-color: var(--egen-primary-color);
+    cursor: pointer;
+    width: 16px;
+    height: 16px;
+    margin: 0;
+    flex-shrink: 0;
+}
+
+.egen-filter-text {
+    line-height: 1.2;
+}
+
+.egen-price-inputs {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.egen-filter-input {
+    flex: 1;
+    min-width: 0;
+    padding: 0.5rem 0.75rem;
+    border: 1px solid var(--egen-border-color);
+    background-color: var(--egen-bg-input);
+    color: var(--egen-text-color);
+    border-radius: var(--egen-radius-sm);
+    font-size: 0.85rem;
+    box-sizing: border-box;
+    transition: border-color var(--egen-transition), background-color var(--egen-transition);
+}
+
+.egen-filter-input:focus {
+    border-color: var(--egen-border-focus);
+    background-color: var(--egen-bg-input-focus);
+    outline: none;
+}
+
+.egen-price-separator {
+    font-size: 0.85rem;
+    color: var(--egen-text-muted);
+}
+
+.egen-filter-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    margin-top: 1.5rem;
+    border-top: 1px solid var(--egen-border-color);
+    padding-top: 1.5rem;
+}
+
+.egen-filter-actions .egen-btn-primary,
+.egen-filter-actions .egen-btn-outline {
+    width: 100%;
+    justify-content: center;
+    box-sizing: border-box;
+}
+
+.egen-filter-empty {
+    font-size: 0.85rem;
+    color: var(--egen-text-muted);
+    margin: 0;
+}
+
+.egen-filter-search-input {
+    width: 100%;
+    padding: 0.5rem 0.75rem;
+    font-size: 0.85rem;
+    border: 1px solid var(--egen-border-color);
+    background-color: var(--egen-bg-input);
+    color: var(--egen-text-color);
+    border-radius: var(--egen-radius-sm);
+    margin-bottom: 0.75rem;
+    box-sizing: border-box;
+    transition: border-color var(--egen-transition), background-color var(--egen-transition);
+}
+
+.egen-filter-search-input:focus {
+    border-color: var(--egen-border-focus);
+    background-color: var(--egen-bg-input-focus);
+    outline: none;
+}
+
+.egen-filter-options-scrollbox {
+    max-height: 160px;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 0.65rem;
+    padding-right: 0.25rem;
+}
+
+/* Scrollbar estilizado para a caixa de rolagem */
+.egen-filter-options-scrollbox::-webkit-scrollbar {
+    width: 6px;
+}
+
+.egen-filter-options-scrollbox::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.02);
+    border-radius: 4px;
+}
+
+.egen-filter-options-scrollbox::-webkit-scrollbar-thumb {
+    background: rgba(252, 144, 3, 0.3);
+    border-radius: 4px;
+}
+
+.egen-filter-options-scrollbox::-webkit-scrollbar-thumb:hover {
+    background: rgba(252, 144, 3, 0.6);
+}
+
+/* Responsividade do layout e sidebar de filtros */
+@media (max-width: 991px) {
+    .egen-category-layout {
+        grid-template-columns: 240px 1fr;
+        gap: 1.5rem;
+    }
+}
+
+@media (max-width: 768px) {
+    .egen-category-layout {
+        grid-template-columns: 1fr;
+        gap: 2rem;
+    }
+}

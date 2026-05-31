@@ -10,6 +10,7 @@ use Alpha\Controller\Actions\ActionInterface;
 use Alpha\Model\Domain\Repositories\LanguageRepository;
 use Alpha\Model\Domain\Repositories\SettingRepository;
 use Twig\Environment as TwigEnvironment;
+use Slim\Routing\RouteContext;
 
 class AccountAction implements ActionInterface
 {
@@ -34,9 +35,13 @@ class AccountAction implements ActionInterface
             $language = $this->languageRepository->find(2); // Fallback para pt-br (ID 2)
         }
 
+        $routeContext = RouteContext::fromRequest($request);
+        $routeParser = $routeContext->getRouteParser();
+        $lang = $request->getAttribute('lang', 'pt-br');
+
         $breadcrumbs = [
-            ['text' => 'Início', 'href' => '/' . $languageCode],
-            ['text' => 'Minha Conta', 'href' => '/' . $languageCode . '/account']
+            ['text' => 'Início', 'href' => $routeParser->urlFor('home', ['lang' => $lang])],
+            ['text' => 'Minha Conta', 'href' => $routeParser->urlFor('account.index', ['lang' => $lang])]
         ];
 
         // Tradução e variáveis do template da conta
@@ -54,7 +59,7 @@ class AccountAction implements ActionInterface
             'text_payment_method' => 'Formas de pagamento salvas',
             'text_address' => 'Alterar meus endereços',
             'text_wishlist' => 'Lista de desejos',
-            
+
             'text_my_orders' => 'Meus Pedidos',
             'text_order' => 'Histórico de pedidos',
             'text_subscription' => 'Assinaturas',
@@ -62,30 +67,30 @@ class AccountAction implements ActionInterface
             'text_reward' => 'Pontos de fidelidade',
             'text_return' => 'Solicitações de devolução',
             'text_transaction' => 'Transações',
-            
+
             'text_my_affiliate' => 'Minha Conta de Afiliado',
             'text_affiliate_add' => 'Cadastre-se como afiliado',
             'text_affiliate_edit' => 'Alterar informações de afiliado',
             'text_tracking' => 'Gerador de links de afiliado',
-            
+
             'text_my_newsletter' => 'Novidades por E-mail',
             'text_newsletter' => 'Inscrever ou desinscrever-se na newsletter',
 
             // Links das rotas
-            'edit' => '/' . $languageCode . '/account/edit',
-            'password' => '/' . $languageCode . '/account/password',
-            'payment_method' => '/' . $languageCode . '/account/payment',
-            'address' => '/' . $languageCode . '/account/address',
-            'wishlist' => '/' . $languageCode . '/account/wishlist',
-            'order' => '/' . $languageCode . '/account/orders',
-            'subscription' => '/' . $languageCode . '/account/subscription',
-            'download' => '/' . $languageCode . '/account/download',
-            'reward' => '/' . $languageCode . '/account/reward',
-            'return' => '/' . $languageCode . '/account/return',
-            'transaction' => '/' . $languageCode . '/account/transaction',
-            'affiliate' => '/' . $languageCode . '/account/affiliate',
-            'tracking' => '/' . $languageCode . '/account/tracking',
-            'newsletter' => '/' . $languageCode . '/account/newsletter',
+            'edit' => '/' . $lang . '/account/edit',
+            'password' => '/' . $lang . '/account/password',
+            'payment_method' => '/' . $lang . '/account/payment',
+            'address' => '/' . $lang . '/account/address',
+            'wishlist' => '/' . $lang . '/account/wishlist',
+            'order' => $routeParser->urlFor('account.orders', ['lang' => $lang]),
+            'subscription' => '/' . $lang . '/account/subscription',
+            'download' => '/' . $lang . '/account/download',
+            'reward' => '/' . $lang . '/account/reward',
+            'return' => '/' . $lang . '/account/return',
+            'transaction' => '/' . $lang . '/account/transaction',
+            'affiliate' => '/' . $lang . '/account/affiliate',
+            'tracking' => '/' . $lang . '/account/tracking',
+            'newsletter' => '/' . $lang . '/account/newsletter',
 
             // Estrutura
             'column_left' => '',
@@ -103,4 +108,3 @@ class AccountAction implements ActionInterface
         return $response->withHeader('Content-Type', 'text/html; charset=utf-8');
     }
 }
-

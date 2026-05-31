@@ -6,6 +6,7 @@ use Psr\Http\Message\ServerRequestInterface as Request;
 use Psr\Http\Message\ResponseInterface as Response;
 use Alpha\Model\Domain\Repositories\ProductRepository;
 use Twig\Environment as TwigEnvironment;
+use Slim\Routing\RouteContext;
 
 class SearchProductsAction
 {
@@ -37,11 +38,15 @@ class SearchProductsAction
         $viewResponse = $this->productRepository->getSearchData($filterData);
         $data = $viewResponse->getData();
 
+        $routeContext = RouteContext::fromRequest($request);
+        $routeParser = $routeContext->getRouteParser();
+        $lang = $request->getAttribute('lang', 'pt-br');
+
         // SEO tags
         $seoData = [
             'title'       => 'Resultado de Busca: ' . ($filterData['filter_name'] ?: 'Todos os Produtos') . ' | AgSonhos',
             'description' => 'Resultado da pesquisa por produtos artesanais na AgSonhos.',
-            'canonical'   => '/' . $request->getAttribute('language_code', 'pt-br') . '/busca'
+            'canonical'   => $routeParser->urlFor('search', ['lang' => $lang])
         ];
 
         $html = $this->twig->render('pages/product/search.html.twig', [
@@ -56,3 +61,4 @@ class SearchProductsAction
         return $response;
     }
 }
+

@@ -10,6 +10,7 @@ use Twig\Environment as TwigEnvironment;
 use Alpha\Controller\Actions\ActionInterface;
 use Alpha\Model\Domain\Repositories\LanguageRepository;
 use Alpha\Model\Domain\Repositories\SettingRepository;
+use Slim\Routing\RouteContext;
 
 /**
  * ShowRegistrationFormAction - Exibe o formulário de cadastro para o cliente.
@@ -37,9 +38,13 @@ class ShowRegistrationFormAction implements ActionInterface
             $language = $this->languageRepository->find(2); // Fallback para pt-br (ID 2)
         }
 
+        $routeContext = RouteContext::fromRequest($request);
+        $routeParser = $routeContext->getRouteParser();
+        $lang = $request->getAttribute('lang', 'pt-br');
+
         $breadcrumbs = [
-            ['text' => 'Início', 'href' => '/'],
-            ['text' => 'Cadastro', 'href' => '/cadastro']
+            ['text' => 'Início', 'href' => $routeParser->urlFor('home', ['lang' => $lang])],
+            ['text' => 'Cadastro', 'href' => $routeParser->urlFor('register.form', ['lang' => $lang])]
         ];
 
         // Carrega as traduções dinamicamente a partir dos arquivos de idiomas do core
@@ -48,7 +53,10 @@ class ShowRegistrationFormAction implements ActionInterface
 
         // Formatação dinâmica dos links contidos nas chaves de tradução
         if (isset($languageData['text_account_already'])) {
-            $languageData['text_account_already'] = sprintf($languageData['text_account_already'], '/login');
+            $languageData['text_account_already'] = sprintf(
+                $languageData['text_account_already'], 
+                $routeParser->urlFor('login.form', ['lang' => $lang])
+            );
         }
         if (isset($languageData['text_agree'])) {
             $agreeUrl = '/index.php?route=information/information&information_id=5'; // Fallback para Termos de Uso
@@ -69,7 +77,7 @@ class ShowRegistrationFormAction implements ActionInterface
             'title' => 'Criar Conta | AgSonhos',
             'description' => 'Crie sua conta para gerenciar seus pedidos e compras.',
             'breadcrumbs' => $breadcrumbs,
-            'register' => '/' . $languageCodeStr . '/cadastro', // Rota POST para submissão do formulário
+            'register' => $routeParser->urlFor('register.submit', ['lang' => $lang]), // Rota POST para submissão do formulário
 
             // Configurações do painel
             'config_telephone_display' => $configSettings['config_telephone_display'] ?? true,

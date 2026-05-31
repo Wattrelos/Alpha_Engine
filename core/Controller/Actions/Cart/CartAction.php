@@ -7,6 +7,7 @@ use Psr\Http\Message\ResponseInterface as Response;
 use Twig\Environment as TwigEnvironment;
 use Alpha\Controller\Actions\ActionInterface;
 use Alpha\Model\Domain\Repositories\CartRepository;
+use Slim\Routing\RouteContext;
 
 class CartAction implements ActionInterface
 {
@@ -48,3 +49,4 @@ class CartAction implements ActionInterface
         return $response->withHeader('Content-Type', 'text/html; charset=utf-8');
     }
 }
+

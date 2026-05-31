@@ -147,10 +147,13 @@
                             <button class="egen-product-qty__btn" type="button" onclick="var q = document.getElementById('input-quantity'); q.value = parseInt(q.value) + 1;">+</button>
                         </div>
                     </div>
-                    <div class="egen-product-buy">
+                    <div class="egen-product-buy" style="display: flex; gap: 0.75rem;">
                         <button type="submit" id="button-cart" class="egen-btn-primary egen-btn-buy">
                             <i class="fas fa-shopping-cart"></i> Adicionar ao Carrinho
                         </button>
+                        <a href="javascript:history.back();" class="egen-btn-secondary" style="display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem; text-decoration: none; padding: 0.75rem 1.5rem; font-weight: 600; border-radius: 8px; box-sizing: border-box;">
+                            <i class="fa-solid fa-arrow-left"></i> Voltar
+                        </a>
                     </div>
                 </div>
             </form>

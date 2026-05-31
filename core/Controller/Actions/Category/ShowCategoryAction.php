@@ -6,22 +6,27 @@ use Psr\Http\Message\ServerRequestInterface as Request;
 use Psr\Http\Message\ResponseInterface as Response;
 use Alpha\Model\Domain\Repositories\CategoryRepository;
 use Alpha\Model\Domain\Repositories\SeoUrlRepository;
+use Alpha\Model\Domain\Repositories\ManufacturerRepository;
 use Twig\Environment as TwigEnvironment;
 use Alpha\Controller\Actions\ActionInterface;
+use Slim\Routing\RouteContext;
 
 class ShowCategoryAction implements ActionInterface
 {
     private CategoryRepository $categoryRepository;
     private SeoUrlRepository $seoRepository;
+    private ManufacturerRepository $manufacturerRepository;
     private TwigEnvironment $twig;
 
     public function __construct(
         CategoryRepository $categoryRepository,
         SeoUrlRepository $seoRepository,
+        ManufacturerRepository $manufacturerRepository,
         TwigEnvironment $twig
     ) {
         $this->categoryRepository = $categoryRepository;
         $this->seoRepository = $seoRepository;
+        $this->manufacturerRepository = $manufacturerRepository;
         $this->twig = $twig;
     }
 
@@ -57,7 +62,14 @@ class ShowCategoryAction implements ActionInterface
             'sort'          => $queryParams['sort'] ?? 'p.sort_order',
             'order'         => $queryParams['order'] ?? 'ASC',
             'page'          => (int)($queryParams['page'] ?? 1),
-            'limit'         => (int)($queryParams['limit'] ?? 12)
+            'limit'         => (int)($queryParams['limit'] ?? 12),
+            
+            // Filtros facetados
+            'categories'    => $queryParams['category'] ?? [],
+            'manufacturers' => $queryParams['manufacturer'] ?? [],
+            'price_min'     => $queryParams['price_min'] ?? null,
+            'price_max'     => $queryParams['price_max'] ?? null,
+            'rating'        => $queryParams['rating'] ?? null
         ];
 
         // Obtém os dados consolidados da categoria e seus produtos
@@ -68,21 +80,48 @@ class ShowCategoryAction implements ActionInterface
             return $this->render404($response);
         }
 
+        $routeContext = RouteContext::fromRequest($request);
+        $routeParser = $routeContext->getRouteParser();
+        $lang = $request->getAttribute('lang', 'pt-br');
+
         // SEO tags
         $seoData = [
             'title'       => ($data['meta_title'] ?? $data['name']) . ' | AgSonhos',
             'description' => $data['meta_description'] ?? 'Confira nossa categoria de produtos.',
             'keywords'    => $data['meta_keyword'] ?? '',
             'image'       => $data['thumb'] ?? '',
-            'canonical'   => '/' . $request->getAttribute('language_code', 'pt-br') . '/categoria/' . $slug
+            'canonical'   => $routeParser->urlFor('category.detail', ['lang' => $lang, 'slug' => $slug])
+        ];
+
+        // Preparar listas para a barra lateral de filtros facetados
+        // Se a categoria atual tiver subcategorias, mostramos as subcategorias dela.
+        // Se não tiver (folha), mostramos as subcategorias da categoria pai (suas "irmãs").
+        $listaCategorias = $this->categoryRepository->getCategories($categoryId);
+        if (empty($listaCategorias)) {
+            $parentId = (int)($data['parent_id'] ?? 0);
+            $listaCategorias = $this->categoryRepository->getCategories($parentId);
+        }
+        
+        // Carrega marcas dinamicamente que possuam produtos na categoria atual
+        $listaManufacturers = $this->manufacturerRepository->getManufacturersByCategory($categoryId);
+
+        $filtrosAtivos = [
+            'category'     => $filterData['categories'],
+            'manufacturer' => $filterData['manufacturers'],
+            'price_min'    => $filterData['price_min'],
+            'price_max'    => $filterData['price_max'],
+            'rating'       => $filterData['rating']
         ];
 
         $html = $this->twig->render('pages/category/show.html.twig', [
-            'category'    => $data,
-            'seo'         => $seoData,
-            'title'       => $seoData['title'],
-            'description' => $seoData['description'],
-            'keywords'    => $seoData['keywords']
+            'category'           => $data,
+            'seo'                => $seoData,
+            'title'              => $seoData['title'],
+            'description'        => $seoData['description'],
+            'keywords'           => $seoData['keywords'],
+            'lista_categorias'   => $listaCategorias,
+            'lista_manufacturers'=> $listaManufacturers,
+            'filtros_ativos'     => $filtrosAtivos
         ]);
 
         $response->getBody()->write($html);

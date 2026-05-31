@@ -7,6 +7,7 @@ use Psr\Http\Message\ResponseInterface as Response;
 use Alpha\Controller\Actions\ActionInterface;
 use Alpha\Support\Registry;
 use Alpha\Model\Domain\Repositories\CartRepository;
+use Slim\Routing\RouteContext;
 
 /**
  * SyncCartAction - Sincroniza o carrinho local (localStorage) com o banco de dados.
@@ -26,14 +27,6 @@ class SyncCartAction implements ActionInterface
     {
         $customer = $this->registry->get('customer');
 
-        if (!$customer->isLogged()) {
-            $response->getBody()->write(json_encode([
-                'success' => false,
-                'error'   => 'customer_not_logged'
-            ]));
-            return $response->withHeader('Content-Type', 'application/json')->withStatus(401);
-        }
-
         $body = json_decode($request->getBody()->getContents(), true);
         $items = $body['items'] ?? [];
 
@@ -41,6 +34,12 @@ class SyncCartAction implements ActionInterface
         /** @var CartRepository $cartRepository */
         $cartRepository = $repositoryFactory->get(CartRepository::class);
         $cartRepository->initializeContext();
+
+        // Se for visitante (não logado), limpamos o carrinho da sessão atual
+        // antes de sincronizar para espelhar exatamente o localStorage
+        if (!$customer->isLogged()) {
+            $cartRepository->clear();
+        }
 
         foreach ($items as $item) {
             $productId = (int)$item['product_id'];

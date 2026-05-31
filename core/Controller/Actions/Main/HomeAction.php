@@ -10,6 +10,7 @@ use Alpha\Model\Domain\Repositories\LanguageRepository;
 use Alpha\Model\Domain\Repositories\SettingRepository;
 use Alpha\Model\Domain\Repositories\CategoryRepository;
 use Alpha\Model\Domain\Entities\Language;
+use Slim\Routing\RouteContext;
 
 /**
  * HomeAction — Página inicial pública.
@@ -54,6 +55,10 @@ class HomeAction implements ActionInterface
             $logo = HTTP_SERVER . 'img/' . $configSettings['config_logo'];
         }
 
+        $routeContext = RouteContext::fromRequest($request);
+        $routeParser = $routeContext->getRouteParser();
+        $lang = $request->getAttribute('lang', 'pt-br');
+
         $html = $this->twig->render('home.html.twig', [
             'direction'           => 'ltr',
             'lang'                => $language ? $language->getCode() : 'pt-br',
@@ -65,7 +70,7 @@ class HomeAction implements ActionInterface
             'settings'            => $configSettings,
             'logo'                => $logo,
             'name'                => $configSettings['config_name'] ?? 'AG Sonhos e Construções',
-            'home'                => '/',
+            'home'                => $routeParser->urlFor('home', ['lang' => $lang]),
             // Próximas expansões:
             // 'featured_products' => $this->productRepository->getFeatured(),
             // 'banners'           => $this->bannerRepository->getActive(),

@@ -1,0 +1,90 @@
+<aside class="egen-aside-filters">
+	{# Redireciona para a mesma página mantendo os parâmetros na URL #}
+	<form action="" method="GET">
+
+		{# 1. CRITÉRIO: CATEGORY (Múltipla Escolha - Checkbox) #}
+		<div class="egen-filter-group">
+			<h3 class="egen-filter-title">Categorias</h3>
+			<div class="egen-filter-options">
+				{% for cat in lista_categorias %}
+					<label class="egen-filter-option">
+						<input type="checkbox" name="category[]" value="{{ cat.id }}" class="egen-filter-checkbox" {{ cat.id in filtros_ativos.category ? 'checked' : '' }}>
+						<span class="egen-filter-text">{{ cat.name }}</span>
+					</label>
+				{% else %}
+					<p class="egen-filter-empty">Nenhuma categoria encontrada.</p>
+				{% endfor %}
+			</div>
+		</div>
+
+		{# 2. CRITÉRIO: MANUFACTURER (Múltipla Escolha - Checkbox) #}
+		<div class="egen-filter-group">
+			<h3 class="egen-filter-title">Marcas</h3>
+			<input type="text" id="manufacturer-search-input" class="egen-filter-search-input" placeholder="Buscar marca..." autocomplete="off">
+			<div class="egen-filter-options-scrollbox" id="manufacturer-options-list">
+				{% for marca in lista_manufacturers %}
+					<label class="egen-filter-option" data-name="{{ marca.name|lower }}">
+						<input type="checkbox" name="manufacturer[]" value="{{ marca.id }}" class="egen-filter-checkbox" {{ marca.id in filtros_ativos.manufacturer ? 'checked' : '' }}>
+						<span class="egen-filter-text">{{ marca.name }}</span>
+					</label>
+				{% else %}
+					<p class="egen-filter-empty">Nenhuma marca encontrada.</p>
+				{% endfor %}
+			</div>
+		</div>
+
+		<script>
+			document.getElementById('manufacturer-search-input').addEventListener('input', function(e) {
+				const term = e.target.value.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+				const options = document.querySelectorAll('#manufacturer-options-list .egen-filter-option');
+				options.forEach(opt => {
+					const name = opt.getAttribute('data-name').normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+					if (name.includes(term)) {
+						opt.style.display = 'flex';
+					} else {
+						opt.style.display = 'none';
+					}
+				});
+			});
+		</script>
+
+		{# 3. CRITÉRIO: PRICE (Campos de entrada numérica) #}
+		<div class="egen-filter-group">
+			<h3 class="egen-filter-title">Faixa de Preço</h3>
+			<div class="egen-price-inputs">
+				<input type="number" name="price_min" placeholder="Mín" value="{{ filtros_ativos.price_min ?? '' }}" step="0.01" class="egen-filter-input">
+				<span class="egen-price-separator">até</span>
+				<input type="number" name="price_max" placeholder="Máx" value="{{ filtros_ativos.price_max ?? '' }}" step="0.01" class="egen-filter-input">
+			</div>
+		</div>
+
+		{# 4. CRITÉRIO: RATING (Seleção Única - Estrelas ou Nota mínima) #}
+		<div class="egen-filter-group">
+			<h3 class="egen-filter-title">Avaliação Mínima</h3>
+			<div class="egen-filter-options">
+				{% for nota in [5, 4, 3, 2, 1] %}
+					<label class="egen-filter-option">
+						<input type="radio" name="rating" value="{{ nota }}" class="egen-filter-radio" {{ filtros_ativos.rating == nota ? 'checked' : '' }}>
+						<span class="egen-filter-text">
+							{{ nota }}
+							{{ nota == 1 ? 'Estrela' : 'Estrelas' }}
+							ou mais
+						</span>
+					</label>
+				{% endfor %}
+
+				{# Opção para limpar o filtro de rating #}
+				<label class="egen-filter-option">
+					<input type="radio" name="rating" value="" class="egen-filter-radio" {{ filtros_ativos.rating is empty ? 'checked' : '' }}>
+					<span class="egen-filter-text">Todas as avaliações</span>
+				</label>
+			</div>
+		</div>
+
+		{# Ações do Formulário #}
+		<div class="egen-filter-actions">
+			<button type="submit" class="egen-btn-primary">Aplicar Filtros</button>
+			<a href="?" class="egen-btn-outline">Limpar Tudo</a>
+		</div>
+	</form>
+</aside>

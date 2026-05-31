@@ -8,6 +8,7 @@ use Psr\Http\Message\ServerRequestInterface as Request;
 use Psr\Http\Message\ResponseInterface as Response;
 use Alpha\Controller\Actions\ActionInterface;
 use Alpha\Auth\Services\AuthService;
+use Slim\Routing\RouteContext;
 
 /**
  * LoginAction - Processa a autenticação do cliente via requisição POST /login (AJAX).
@@ -47,7 +48,13 @@ class LoginAction implements ActionInterface
             $sessionId
         );
 
-        $redirectUrl = (!empty($redirect) && str_starts_with($redirect, '/')) ? $redirect : '/';
+        // Obtém o parser de rotas para obter a URL do painel da conta
+        $routeContext = RouteContext::fromRequest($request);
+        $routeParser = $routeContext->getRouteParser();
+        $lang = $request->getAttribute('lang', 'pt-br');
+        $defaultRedirect = $routeParser->urlFor('account.index', ['lang' => $lang]);
+
+        $redirectUrl = (!empty($redirect) && str_starts_with($redirect, '/')) ? $redirect : $defaultRedirect;
 
         $response->getBody()->write(json_encode([
             'redirect' => $redirectUrl
@@ -59,3 +66,4 @@ class LoginAction implements ActionInterface
             ->withStatus(200);
     }
 }
+

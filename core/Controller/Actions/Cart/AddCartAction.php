@@ -6,6 +6,7 @@ use Psr\Http\Message\ServerRequestInterface as Request;
 use Psr\Http\Message\ResponseInterface as Response;
 use Alpha\Controller\Actions\ActionInterface;
 use Alpha\Model\Domain\Repositories\CartRepository;
+use Slim\Routing\RouteContext;
 
 class AddCartAction implements ActionInterface
 {
@@ -31,13 +32,16 @@ class AddCartAction implements ActionInterface
         $this->cartRepository->initializeContext();
         $this->cartRepository->add($productId, $quantity, $option);
 
-        $lang = $args['lang'] ?? 'pt-br';
+        $routeContext = RouteContext::fromRequest($request);
+        $routeParser = $routeContext->getRouteParser();
+        $lang = $request->getAttribute('lang', 'pt-br');
         
         $response->getBody()->write(json_encode([
             'success'  => true,
-            'redirect' => '/' . $lang . '/carrinho'
+            'redirect' => $routeParser->urlFor('cart.index', ['lang' => $lang])
         ]));
 
         return $response->withHeader('Content-Type', 'application/json');
     }
 }
+

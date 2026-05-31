@@ -6,6 +6,7 @@ use Psr\Http\Message\ServerRequestInterface as Request;
 use Psr\Http\Message\ResponseInterface as Response;
 use Alpha\Controller\Actions\ActionInterface;
 use Alpha\Auth\Services\AuthService;
+use Slim\Routing\RouteContext;
 
 /**
  * LogoutAction - Processa o encerramento da sessão de forma limpa.
@@ -33,10 +34,16 @@ class LogoutAction implements ActionInterface
         // 3. Define o cabeçalho Set-Cookie para expirar/limpar o cookie do navegador
         $cookieValue = 'session_id=; Path=/; Expires=Thu, 01 Jan 1970 00:00:00 GMT; HttpOnly; SameSite=Lax';
 
-        // 4. Redireciona para a tela de login pública
+        // 4. Redireciona para a tela de login pública de forma dinâmica
+        $routeContext = RouteContext::fromRequest($request);
+        $routeParser = $routeContext->getRouteParser();
+        $lang = $request->getAttribute('lang', 'pt-br');
+        $redirectUrl = $routeParser->urlFor('login.form', ['lang' => $lang]);
+
         return $response
             ->withHeader('Set-Cookie', $cookieValue)
-            ->withHeader('Location', '/login')
+            ->withHeader('Location', $redirectUrl)
             ->withStatus(302);
     }
 }
+

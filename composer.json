@@ -2,7 +2,8 @@
     "autoload": {
         "psr-4": {
             "Alpha\\": "core/",
-            "Containers\\": "Containers/"
+            "Containers\\": "Containers/",
+            "Config\\": "Config/"
         },
         "files": [
             "core/Support/autoloader_legacy.php"
@@ -20,6 +21,7 @@
         "psr/http-server-middleware": "^1.0",
         "slim/psr7": "^1.8",
         "slim/slim": "^4.15",
+        "slim/twig-view": "^3.4",
         "twig/twig": "^3.0",
         "vlucas/phpdotenv": "^5.6"
     },

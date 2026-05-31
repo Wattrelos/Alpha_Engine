@@ -67,3 +67,11 @@ Este documento registra o avanço na reestruturação arquitetural do módulo de
 16. **Submissão de Checkout e Página de Sucesso**
     - Mapeado o método POST para `/checkout` no `index.php` para armazenar endereços da requisição na sessão e chamar o processamento de pedidos do `OrderRepository` via `createFromSession()`.
     - Criada a rota GET `/checkout/sucesso` no `index.php` e o template [success.twig](file:///var/www/html/agsonhos/resources/views/pages/cart/success.twig) para mostrar a confirmação da compra e o número identificador do pedido ao usuário após esvaziar o carrinho.
+
+17. **Sincronização Ativa de Carrinho para Visitantes no Checkout**
+    - Ajustada a API `/api/carrinho/sincronizar` (`SyncCartAction.php`) para permitir chamadas de visitantes (não logados), limpando itens legados da sessão antes da persistência para garantir paridade exata com o `localStorage`.
+    - Implementado o envio automático dos dados locais do visitante em `checkout.js` ao entrar na página de checkout para sincronizar com a sessão do servidor, solucionando o problema de pedidos vazios ou cálculos incorretos de frete e taxas para não autenticados.
+
+18. **Retenção na Página de Detalhe de Produto e Botão Voltar**
+    - O formulário de compra da página de detalhes do produto (`egen-product-purchase-form` no [show.html.twig](file:///var/www/html/agsonhos/resources/views/pages/product/show.html.twig)) agora também é interceptado via AJAX em `cart.js`. Isso evita o redirecionamento para o carrinho, mostra o alerta de sucesso e atualiza o badge imediatamente.
+    - Adicionado um botão premium de "Voltar" (`javascript:history.back()`) posicionado ao lado do botão de compra para facilitar o retorno do cliente às listagens ou buscas anteriores.
