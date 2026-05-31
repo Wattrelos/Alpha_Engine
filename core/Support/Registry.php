@@ -8,7 +8,7 @@ namespace Alpha\Support;
  * Substitui a dependência da classe herdada Opencart\System\Engine\Registry
  * para manter o desacoplamento completo da Alpha Engine standalone.
  */
-class Registry extends \Opencart\System\Engine\Registry
+class Registry
 {
     /**
      * @var array<string, object>
