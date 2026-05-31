@@ -59,7 +59,7 @@ class AlphaContainer extends Factory
                 'account/order'             => \Alpha\Model\Domain\Repositories\OrderRepository::class,
                 'account/returns'           => \Alpha\Model\Domain\Repositories\OrderReturnRepository::class,
                 'account/reward'            => \Alpha\Model\Domain\Repositories\CustomerRewardRepository::class,
-                'account/order'             => \Alpha\Model\Domain\Repositories\OrderRepository::class,
+                'account/orders'            => \Alpha\Model\Domain\Repositories\OrderRepository::class,
                 'account/subscription'      => \Alpha\Model\Domain\Repositories\SubscriptionRepository::class,
                 'account/wishlist'          => \Alpha\Model\Domain\Repositories\WishlistRepository::class,
                 'catalog/category'          => \Alpha\Model\Domain\Repositories\CategoryRepository::class,

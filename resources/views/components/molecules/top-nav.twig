@@ -28,7 +28,7 @@
 					</li>
 				{% else %}
 					<li role="none">
-						<a href="{{ account|default(url('account/account', {}, lang)) }}" class="egen-top-nav__dropdown-item" role="menuitem">{{ text_account|default('Minha Conta') }}</a>
+						<a href="{{ account|default(url('account', {}, lang)) }}" class="egen-top-nav__dropdown-item" role="menuitem">{{ text_account|default('Minha Conta') }}</a>
 					</li>
 					<li role="none">
 						<a href="{{ order|default(url('account/orders', {}, lang)) }}" class="egen-top-nav__dropdown-item" role="menuitem">{{ text_order|default('Pedidos') }}</a>
@@ -52,6 +52,7 @@
 			<a class="egen-top-nav__link" href="{{ shopping_cart|default(url('carrinho', {}, lang)) }}" title="{{ text_shopping_cart|default('Carrinho') }}">
 				<i class="fa-solid fa-cart-shopping" aria-hidden="true"></i>
 				<span class="egen-top-nav__label">{{ text_shopping_cart|default('Carrinho') }}</span>
+				<span class="egen-cart-badge" id="egen-cart-count-top" style="display: {{ cart_count > 0 ? 'inline-flex' : 'none' }};">{{ cart_count|default(0) }}</span>
 			</a>
 		</li>
 		<li class="egen-top-nav__item">

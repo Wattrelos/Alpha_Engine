@@ -19,4 +19,15 @@ class Session
         }
         $this->data = &$_SESSION;
     }
+
+    /**
+     * Retorna o ID da sessão ativa.
+     * 
+     * @return string
+     */
+    public function getId(): string
+    {
+        return session_id();
+    }
 }
+

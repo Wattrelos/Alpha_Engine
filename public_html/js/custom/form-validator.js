@@ -186,8 +186,31 @@ document.addEventListener('DOMContentLoaded', () => {
             .then(({ status, data }) => {
                 if (status === 200 && data.redirect) {
                     // Redireciona em caso de sucesso
-                    window.location.href = data.redirect;
+                    const isAuthForm = form.action.includes('/login') || form.action.includes('/cadastro');
+                    if (isAuthForm && typeof guestCart !== 'undefined' && guestCart.getItems().length > 0) {
+                        fetch('/api/carrinho/sincronizar', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json'
+                            },
+                            body: JSON.stringify({ items: guestCart.getItems() })
+                        })
+                        .then(res => res.json())
+                        .then(syncData => {
+                            if (syncData.success) {
+                                guestCart.clear();
+                            }
+                            window.location.href = data.redirect;
+                        })
+                        .catch(err => {
+                            console.error('Falha ao sincronizar carrinho:', err);
+                            window.location.href = data.redirect;
+                        });
+                    } else {
+                        window.location.href = data.redirect;
+                    }
                 } else {
+
                     // Reabilita o botão
                     if (submitBtn) {
                         submitBtn.disabled = false;

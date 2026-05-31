@@ -1,0 +1,485 @@
+/**
+ * Alpha Engine - Guest Checkout helper
+ * 
+ * Fornece métodos auxiliares para verificar o estado do carrinho de visitantes
+ * antes e durante o processo de finalização de compras (checkout).
+ */
+
+const guestCheckout = {
+    // Verifica se o visitante possui itens no carrinho local antes de prosseguir para o checkout
+    checkCartBeforeCheckout() {
+        const items = guestCart.getItems();
+        if (items.length === 0) {
+            console.warn('Checkout impedido: o carrinho do visitante está vazio.');
+            return false;
+        }
+        return true;
+    },
+
+    // Retorna a lista de itens formatada para payload de checkout
+    getCheckoutPayload() {
+        return {
+            items: guestCart.getItems(),
+            timestamp: new Date().getTime()
+        };
+    },
+
+    // Limpa o carrinho local após uma compra finalizada com sucesso
+    clearGuestCartAfterOrder() {
+        guestCart.clear();
+        console.log('Carrinho do visitante limpo após confirmação do pedido.');
+    }
+};
+
+document.addEventListener('DOMContentLoaded', () => {
+    const logged = document.body.getAttribute('data-logged') === 'true';
+    const path = window.location.pathname;
+
+    // Se estiver na página de checkout e for visitante, valida o carrinho
+    if (path.includes('/checkout') && !logged) {
+        if (!guestCheckout.checkCartBeforeCheckout()) {
+            // Se o carrinho estiver vazio, redireciona o visitante de volta para o carrinho
+            const lang = document.body.getAttribute('data-lang') || 'pt-br';
+            window.location.href = `/${lang}/carrinho`;
+        }
+    }
+
+    // ── ALTERNAR FORMULÁRIOS DA ETAPA 1 (IDENTIFICAÇÃO) ──
+    const idOptions = document.querySelector('.egen-checkout-identity-options');
+    const loginForm = document.getElementById('checkout-login-form');
+    const registerForm = document.getElementById('checkout-register-form');
+
+    if (idOptions && loginForm && registerForm) {
+        idOptions.querySelectorAll('button[data-checkout-action]').forEach(btn => {
+            btn.addEventListener('click', () => {
+                idOptions.querySelectorAll('button').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+
+                const action = btn.getAttribute('data-checkout-action');
+                if (action === 'login') {
+                    loginForm.classList.remove('egen-checkout-form-hidden');
+                    registerForm.classList.add('egen-checkout-form-hidden');
+                } else if (action === 'register') {
+                    registerForm.classList.remove('egen-checkout-form-hidden');
+                    loginForm.classList.add('egen-checkout-form-hidden');
+                } else {
+                    // Visitante
+                    loginForm.classList.add('egen-checkout-form-hidden');
+                    registerForm.classList.add('egen-checkout-form-hidden');
+                }
+            });
+        });
+    }
+
+    // ── ALTERNAR FORMULÁRIOS DA ETAPA 2 (ENDEREÇO) ──
+    const addrOptions = document.querySelector('.egen-checkout-address-options');
+    const billingForm = document.getElementById('checkout-billing-address');
+    const shippingForm = document.getElementById('checkout-shipping-address');
+
+    if (addrOptions && billingForm && shippingForm) {
+        addrOptions.querySelectorAll('button[data-checkout-action]').forEach(btn => {
+            btn.addEventListener('click', () => {
+                addrOptions.querySelectorAll('button').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+
+                const action = btn.getAttribute('data-checkout-action');
+                if (action === 'same-address') {
+                    billingForm.classList.remove('egen-checkout-form-hidden');
+                    shippingForm.classList.add('egen-checkout-form-hidden');
+                } else if (action === 'different-address') {
+                    billingForm.classList.remove('egen-checkout-form-hidden');
+                    shippingForm.classList.remove('egen-checkout-form-hidden');
+                }
+            });
+        });
+    }
+
+    // ── LOGICA DE LOGIN ASSÍNCRONO NO CHECKOUT ──
+    const loginButton = document.getElementById('login-button');
+    if (loginButton) {
+        loginButton.addEventListener('click', () => {
+            const emailInput = document.getElementById('login-email');
+            const passwordInput = document.getElementById('login-password');
+            const lang = document.body.getAttribute('data-lang') || 'pt-br';
+
+            if (!emailInput || !passwordInput) return;
+
+            const email = emailInput.value.trim();
+            const password = passwordInput.value.trim();
+
+            if (!email || !password) {
+                showCartAlert('Por favor, preencha todos os campos.', 'danger');
+                return;
+            }
+
+            // Exibir loading
+            const originalBtnHTML = loginButton.innerHTML;
+            loginButton.disabled = true;
+            loginButton.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Entrando...';
+
+            fetch(`/${lang}/login`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                    'X-Requested-With': 'XMLHttpRequest'
+                },
+                body: new URLSearchParams({
+                    email: email,
+                    password: password,
+                    redirect: `/${lang}/checkout`
+                })
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (data.redirect) {
+                    showCartAlert('Login realizado com sucesso! Redirecionando...', 'success');
+                    
+                    // Sincroniza o carrinho local de visitante com o banco de dados antes de redirecionar
+                    if (typeof guestCart !== 'undefined' && guestCart.getItems().length > 0) {
+                        fetch('/api/carrinho/sincronizar', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json'
+                            },
+                            body: JSON.stringify({ items: guestCart.getItems() })
+                        })
+                        .then(res => res.json())
+                        .then(syncData => {
+                            if (syncData.success) {
+                                guestCart.clear();
+                            }
+                            window.location.href = data.redirect;
+                        })
+                        .catch(err => {
+                            console.error('Falha ao sincronizar carrinho:', err);
+                            window.location.href = data.redirect;
+                        });
+                    } else {
+                        window.location.href = data.redirect;
+                    }
+                } else if (data.error) {
+                    showCartAlert(data.error, 'danger');
+                    loginButton.disabled = false;
+                    loginButton.innerHTML = originalBtnHTML;
+                } else {
+                    showCartAlert('Erro inesperado ao realizar login.', 'danger');
+                    loginButton.disabled = false;
+                    loginButton.innerHTML = originalBtnHTML;
+                }
+            })
+            .catch(err => {
+                console.error('Erro na requisição de login:', err);
+                showCartAlert('Erro de rede ou servidor. Tente novamente.', 'danger');
+                loginButton.disabled = false;
+                loginButton.innerHTML = originalBtnHTML;
+            });
+        });
+    }
+
+    // ── CARREGAMENTO DINÂMICO DE ESTADOS (ZONES) ──
+    function loadZones(countryId, zoneSelectId, selectedZoneId = 0) {
+        const select = document.getElementById(zoneSelectId);
+        if (!select) return;
+
+        select.innerHTML = '<option value="">Carregando...</option>';
+
+        fetch(`/api/paises/${countryId}/estados`)
+            .then(res => res.json())
+            .then(data => {
+                select.innerHTML = '<option value="">--- Selecione ---</option>';
+                if (data.zones && data.zones.length > 0) {
+                    data.zones.forEach(z => {
+                        const option = document.createElement('option');
+                        option.value = z.id || z.zone_id;
+                        option.textContent = z.name;
+                        option.setAttribute('data-code', z.code || '');
+                        if (parseInt(z.id || z.zone_id) === parseInt(selectedZoneId)) {
+                            option.selected = true;
+                        }
+                        select.appendChild(option);
+                    });
+                }
+            })
+            .catch(err => {
+                console.error('Erro ao carregar estados:', err);
+                select.innerHTML = '<option value="">Erro ao carregar estados</option>';
+            });
+    }
+
+    // Inicializa carregamento e eventos de mudança nos países
+    const paymentCountry = document.getElementById('input-payment-country');
+    const paymentZone = document.getElementById('input-payment-zone');
+    if (paymentCountry && paymentZone) {
+        const selectedCountryId = paymentCountry.value || '30';
+        const selectedZoneId = paymentZone.getAttribute('data-selected-zone') || '';
+        loadZones(selectedCountryId, 'input-payment-zone', selectedZoneId);
+        
+        paymentCountry.addEventListener('change', () => {
+            loadZones(paymentCountry.value, 'input-payment-zone');
+        });
+    }
+
+    const shippingCountry = document.getElementById('input-shipping-country');
+    const shippingZone = document.getElementById('input-shipping-zone');
+    if (shippingCountry && shippingZone) {
+        const selectedCountryId = shippingCountry.value || '30';
+        const selectedZoneId = shippingZone.getAttribute('data-selected-zone') || '';
+        loadZones(selectedCountryId, 'input-shipping-zone', selectedZoneId);
+
+        shippingCountry.addEventListener('change', () => {
+            loadZones(shippingCountry.value, 'input-shipping-zone');
+        });
+    }
+
+    // ── PREENCHIMENTO AUTOMÁTICO DE CEP (ViaCEP) ──
+    function setupCepAutocomplete(postcodeId, address1Id, neighborhoodId, cityId, zoneSelectId) {
+        const postcodeEl = document.getElementById(postcodeId);
+        if (!postcodeEl) return;
+
+        postcodeEl.addEventListener('blur', function() {
+            const cep = this.value.replace(/\D/g, '');
+
+            if (cep.length === 8) {
+                fetch(`https://viacep.com.br/ws/${cep}/json/`)
+                    .then(response => response.json())
+                    .then(data => {
+                        if (!data.erro) {
+                            document.getElementById(address1Id).value = data.logradouro || '';
+                            document.getElementById(neighborhoodId).value = data.bairro || '';
+                            document.getElementById(cityId).value = data.localidade || '';
+
+                            const stateCode = data.uf || '';
+                            const select = document.getElementById(zoneSelectId);
+                            if (select && stateCode) {
+                                for (let option of select.options) {
+                                    const optCode = option.getAttribute('data-code') || '';
+                                    if (optCode.toLowerCase() === stateCode.toLowerCase()) {
+                                        option.selected = true;
+                                        select.dispatchEvent(new Event('change'));
+                                        break;
+                                    }
+                                }
+                            }
+                        } else {
+                            showCartAlert('CEP não encontrado.', 'danger');
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Erro ao buscar CEP:', error);
+                        showCartAlert('Erro ao consultar ViaCEP.', 'danger');
+                    });
+            }
+        });
+    }
+
+    // Configura autocompletes
+    setupCepAutocomplete('input-payment-postcode', 'input-payment-address-1', 'input-payment-neighborhood', 'input-payment-city', 'input-payment-zone');
+    setupCepAutocomplete('input-shipping-postcode', 'input-shipping-address-1', 'input-shipping-neighborhood', 'input-shipping-city', 'input-shipping-zone');
+
+    // ── LÓGICA DO CHECKOUT EM ETAPAS (MULTI-STEP FLOW) ──
+    let currentStep = 1;
+    // Se o cliente já estiver logado, começamos diretamente na etapa 2
+    if (logged) {
+        currentStep = 2;
+        // Marcar a etapa 1 como concluída
+        const step1Progress = document.querySelector('[data-progress-step="1"]');
+        if (step1Progress) {
+            step1Progress.classList.remove('active');
+            step1Progress.classList.add('completed');
+        }
+        const step2Progress = document.querySelector('[data-progress-step="2"]');
+        if (step2Progress) {
+            step2Progress.classList.add('active');
+        }
+        const step1Content = document.getElementById('step-identity');
+        if (step1Content) {
+            step1Content.classList.remove('active');
+        }
+        const step2Content = document.getElementById('step-billing');
+        if (step2Content) {
+            step2Content.classList.add('active');
+        }
+    }
+
+    // Gerencia o clique nos botões "Avançar" e "Voltar"
+    document.querySelectorAll('[data-checkout-nav]').forEach(btn => {
+        btn.addEventListener('click', () => {
+            const direction = btn.getAttribute('data-checkout-nav');
+            if (direction === 'next') {
+                if (validateStep(currentStep)) {
+                    navigateNext();
+                }
+            } else if (direction === 'prev') {
+                navigatePrev();
+            }
+        });
+    });
+
+    // Controla se a entrega é diferente da cobrança
+    let differentShippingAddress = false;
+    const sameAddrBtn = document.querySelector('[data-checkout-action="same-address"]');
+    const diffAddrBtn = document.querySelector('[data-checkout-action="different-address"]');
+
+    if (sameAddrBtn) {
+        // Inicializa com Same Address por padrão
+        sameAddrBtn.classList.add('active');
+        if (billingForm) {
+            billingForm.classList.remove('egen-checkout-form-hidden');
+        }
+    }
+
+    // Adiciona listeners para atualizar o estado de entrega
+    document.querySelectorAll('[data-checkout-action]').forEach(btn => {
+        btn.addEventListener('click', () => {
+            const action = btn.getAttribute('data-checkout-action');
+            if (action === 'same-address') {
+                differentShippingAddress = false;
+            } else if (action === 'different-address') {
+                differentShippingAddress = true;
+            }
+        });
+    });
+
+    function validateStep(step) {
+        let valid = true;
+        const activeStepEl = document.querySelector(`.egen-checkout-step[data-step="${step}"]`);
+        if (!activeStepEl) return true;
+
+        // Se for etapa 1, valida apenas se uma das opções foi escolhida e se o formulário visível está correto
+        if (step === 1) {
+            const activeIdentityBtn = document.querySelector('.egen-checkout-identity-options button.active');
+            if (!activeIdentityBtn) {
+                showCartAlert('Selecione uma opção de identificação para continuar.', 'danger');
+                return false;
+            }
+
+            const action = activeIdentityBtn.getAttribute('data-checkout-action');
+            if (action === 'login') {
+                showCartAlert('Por favor, clique no botão para se autenticar ou escolha outra opção.', 'danger');
+                return false;
+            }
+
+            if (action === 'register') {
+                const registerForm = document.getElementById('checkout-register-form');
+                const inputs = registerForm.querySelectorAll('input[required]');
+                inputs.forEach(input => {
+                    if (!input.value.trim()) {
+                        input.classList.add('is-invalid');
+                        valid = false;
+                    } else {
+                        input.classList.remove('is-invalid');
+                    }
+                });
+                
+                // Valida senhas iguais
+                const password = document.getElementById('register-password');
+                const confirm = document.getElementById('register-confirm');
+                if (password && confirm && password.value !== confirm.value) {
+                    showCartAlert('As senhas não coincidem.', 'danger');
+                    confirm.classList.add('is-invalid');
+                    valid = false;
+                }
+
+                if (!valid) {
+                    showCartAlert('Por favor, preencha todos os campos obrigatórios de cadastro.', 'danger');
+                }
+            }
+        }
+
+        // Se for etapa 2, valida os campos de cobrança
+        if (step === 2) {
+            const billingForm = document.getElementById('checkout-billing-address');
+            // Só valida se o formulário de cobrança estiver visível
+            if (billingForm && !billingForm.classList.contains('egen-checkout-form-hidden')) {
+                const inputs = billingForm.querySelectorAll('input[required], select[required]');
+                inputs.forEach(input => {
+                    if (!input.value.trim()) {
+                        input.classList.add('is-invalid');
+                        valid = false;
+                    } else {
+                        input.classList.remove('is-invalid');
+                    }
+                });
+                if (!valid) {
+                    showCartAlert('Por favor, preencha todos os campos obrigatórios do endereço de cobrança.', 'danger');
+                }
+            } else {
+                showCartAlert('Escolha se deseja entregar no mesmo endereço ou em outro.', 'danger');
+                return false;
+            }
+        }
+
+        // Se for etapa 3, valida os campos de entrega se estiver visível
+        if (step === 3) {
+            const shippingForm = document.getElementById('checkout-shipping-address');
+            if (shippingForm && !shippingForm.classList.contains('egen-checkout-form-hidden')) {
+                const inputs = shippingForm.querySelectorAll('input[required], select[required]');
+                inputs.forEach(input => {
+                    if (!input.value.trim()) {
+                        input.classList.add('is-invalid');
+                        valid = false;
+                    } else {
+                        input.classList.remove('is-invalid');
+                    }
+                });
+                if (!valid) {
+                    showCartAlert('Por favor, preencha todos os campos obrigatórios do endereço de entrega.', 'danger');
+                }
+            }
+        }
+
+        return valid;
+    }
+
+    function navigateNext() {
+        if (currentStep === 1) {
+            goToStep(2);
+        } else if (currentStep === 2) {
+            if (differentShippingAddress) {
+                goToStep(3);
+            } else {
+                goToStep(4);
+            }
+        } else if (currentStep === 3) {
+            goToStep(4);
+        }
+    }
+
+    function navigatePrev() {
+        if (currentStep === 4) {
+            if (differentShippingAddress) {
+                goToStep(3);
+            } else {
+                goToStep(2);
+            }
+        } else if (currentStep === 3) {
+            goToStep(2);
+        } else if (currentStep === 2) {
+            if (!logged) {
+                goToStep(1);
+            }
+        }
+    }
+
+    function goToStep(stepNumber) {
+        document.querySelectorAll('.egen-checkout-step').forEach(el => el.classList.remove('active'));
+        
+        const nextStepEl = document.querySelector(`.egen-checkout-step[data-step="${stepNumber}"]`);
+        if (nextStepEl) {
+            nextStepEl.classList.add('active');
+        }
+
+        document.querySelectorAll('.egen-checkout-progress__step').forEach(stepEl => {
+            const stepIndex = parseInt(stepEl.getAttribute('data-progress-step'));
+            stepEl.classList.remove('active', 'completed');
+            if (stepIndex === stepNumber) {
+                stepEl.classList.add('active');
+            } else if (stepIndex < stepNumber) {
+                stepEl.classList.add('completed');
+            }
+        });
+
+        currentStep = stepNumber;
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+});

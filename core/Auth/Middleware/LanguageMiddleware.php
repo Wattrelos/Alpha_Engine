@@ -53,8 +53,24 @@ class LanguageMiddleware
                            ->withAttribute('language_code', $langCode);
 
         // Atualiza a global do Twig
+        $isLogged = $this->isUserLogged($request);
         $this->twig->addGlobal('lang', $langCode);
-        $this->twig->addGlobal('logged', $this->isUserLogged($request));
+        $this->twig->addGlobal('logged', $isLogged);
+
+        // Resolve a contagem do carrinho para o usuário (se logado)
+        $cartCount = 0;
+        if ($isLogged) {
+            $repositoryFactory = $this->registry->get('alpha_repository_factory');
+            if ($repositoryFactory) {
+                /** @var \Alpha\Model\Domain\Repositories\CartRepository $cartRepo */
+                $cartRepo = $repositoryFactory->get(\Alpha\Model\Domain\Repositories\CartRepository::class);
+                if ($cartRepo) {
+                    $cartRepo->initializeContext();
+                    $cartCount = $cartRepo->countProducts();
+                }
+            }
+        }
+        $this->twig->addGlobal('cart_count', $cartCount);
 
         // Carrega as traduções do cabeçalho globalmente para o Twig
         if ($translator && method_exists($translator, 'load')) {

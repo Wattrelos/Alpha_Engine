@@ -29,8 +29,8 @@
 
 {# 4. Links de Minha Conta #}
 {% set account_links = [
-  { href: account|default(url('account/account', {}, lang)), label: text_account|default('Minha Conta') },
-  { href: order|default(url('account/order', {}, lang)), label: text_order|default('Histórico de Pedidos') },
+  { href: account|default(url('account', {}, lang)), label: text_account|default('Minha Conta') },
+  { href: order|default(url('account/orders', {}, lang)), label: text_order|default('Histórico de Pedidos') },
   { href: wishlist|default(url('account/wishlist', {}, lang)), label: text_wishlist|default('Lista de Desejos') },
   { href: newsletter|default(url('account/newsletter', {}, lang)), label: text_newsletter|default('Informativo') }
 ] %}

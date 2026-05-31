@@ -43,6 +43,15 @@ Adoção do contrato `CacheStrategyInterface` (inspirado na PSR-16), permitindo 
 ### 9. Subsistema de Catálogo (Categorias e Produtos)
 Detalhes sobre a implementação de rotas amigáveis, paginação de categorias e refatoração completa do visual das páginas de produto no padrão BEM/CSS sem Bootstrap. (Ver [Progresso do Catálogo](file:///var/www/html/agsonhos/docs/catalog_progress.md))
 
+### 10. Análises de Viabilidade Técnica e Migrações
+Estudos de impacto para decisões arquiteturais de banco de dados e infraestrutura:
+*   [Análise de Viabilidade de Migração de PKs/FKs para BIGINT](file:///var/www/html/agsonhos/docs/pks_fks_bigint_feasibility.md)
+
+### 11. Subsistema do Carrinho de Compras e Checkout (Alpha Engine)
+Substituição completa da biblioteca de carrinho legada pelo `CartRepository` e `CartMapper` desacoplados. Registro do helper de pesos `Weight` no Registry global e ativação da rota de checkout dinâmica `/{lang}/checkout` com interface responsiva e interativa no padrão BEM/CSS. (Ver [Progresso do Carrinho](file:///var/www/html/agsonhos/docs/cart_progress.md))
+
+
 ---
 *Nota: Este índice foi gerado para organizar o conteúdo distribuído. Os arquivos `.md` mencionados acima devem ser mantidos em sincronia com as evoluções do código em `core/`.*
+
 

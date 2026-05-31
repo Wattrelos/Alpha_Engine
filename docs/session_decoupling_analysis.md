@@ -19,10 +19,11 @@ Adotou-se a estratégia de **Desacoplamento Total**, removendo toda e qualquer i
 
 ### Componentes da Arquitetura Standalone de Sessão:
 
-1. **Classe `AlphaSession` (`core/Support/Session/AlphaSession.php`)**:
+1. **Classe `Session` (`core/Support/Session.php`)**:
    * Substitui inteiramente a classe de sessão do OpenCart.
-   * Implementa métodos fortemente tipados para manipulação de dados em sessão (`set`, `get`, `has`, `remove`, `clear`).
-   * Gerencia de forma nativa a criação e leitura do cookie de sessão no navegador.
+   * Mantém a referência por referência aos dados em sessão nativa do PHP (`$_SESSION`).
+   * Gerencia de forma nativa a inicialização do estado de sessão.
+   * **Método `getId()`**: Implementado para expor nativamente o ID da sessão ativa via `session_id()`, integrando-se sem erros com mappers e repositórios de domínio (como o `CartRepository`).
 
 2. **Repositório e Persistência (`SessionRepository` e `SessionMapper`)**:
    * O ciclo de vida da sessão (leitura, gravação, expiração e garbage collection) é coordenado pelo `SessionRepository` que acessa diretamente o banco via `SessionMapper` no DAO da Alpha Engine.

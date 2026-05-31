@@ -17,8 +17,30 @@ use Exception;
  * usa ReflectionClass para inspecionar o construtor da Action e injetar automaticamente
  * as dependências registradas via bind() — eliminando qualquer cadeia de IFs.
  */
-class AppContainer
+class AppContainer implements \Psr\Container\ContainerInterface
 {
+    /**
+     * Verifica se o container possui um registro para o identificador fornecido.
+     */
+    public function has(string $id): bool
+    {
+        if (isset($this->bindings[$id])) {
+            return true;
+        }
+
+        if (str_contains($id, '\\')) {
+            return class_exists($id) && is_subclass_of($id, ActionInterface::class);
+        }
+
+        if (defined('ACTIONS_PATH')) {
+            $baseNamespace = str_replace('.', '\\', ACTIONS_PATH);
+            $targetClass = $baseNamespace . '\\' . $id;
+            return class_exists($targetClass) && is_subclass_of($targetClass, ActionInterface::class);
+        }
+
+        return false;
+    }
+
     /**
      * Registry de serviços disponíveis para injeção automática.
      * A chave é o FQCN da classe ou interface (ex: Twig\Environment::class).
@@ -57,8 +79,12 @@ class AppContainer
      *
      * @throws RuntimeException
      */
-    public function get(string $className): ActionInterface
+    public function get(string $className): object
     {
+        if (isset($this->bindings[$className])) {
+            return $this->bindings[$className];
+        }
+
         try {
             // 1. Resolve o namespace completo — mesmo padrão do SimpleObjectFactory
             // Converte ponto (convenção Java do ACTIONS_PATH) para contra-barra (namespace PHP)

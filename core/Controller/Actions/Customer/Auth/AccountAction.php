@@ -77,7 +77,7 @@ class AccountAction implements ActionInterface
             'payment_method' => '/' . $languageCode . '/account/payment',
             'address' => '/' . $languageCode . '/account/address',
             'wishlist' => '/' . $languageCode . '/account/wishlist',
-            'order' => '/' . $languageCode . '/account/order',
+            'order' => '/' . $languageCode . '/account/orders',
             'subscription' => '/' . $languageCode . '/account/subscription',
             'download' => '/' . $languageCode . '/account/download',
             'reward' => '/' . $languageCode . '/account/reward',

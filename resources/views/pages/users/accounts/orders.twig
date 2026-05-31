@@ -1,62 +1,413 @@
 {% extends 'layouts/base.html.twig' %}
-{% block title %}Meus Pedidos | AgSonhos
-{% endblock %}
+
+{% block title %}Meus Pedidos | AgSonhos{% endblock %}
 
 {% block content %}
-	<div id="account-order" class="container">
-		<ul class="breadcrumb">
-			{% for breadcrumb in breadcrumbs %}
-				<li class="breadcrumb-item">
-					<a href="{{ breadcrumb.href }}">{{ breadcrumb.text }}</a>
-				</li>
-			{% endfor %}
-		</ul>
-		<div class="row">{{ column_left }}
-			<div id="content" class="col">{{ content_top }}
-				<h1>{{ heading_title }}</h1>
-				{% if orders %}
-					<div class="table-responsive">
-						<table class="table table-bordered table-hover">
-							<thead>
-								<tr>
-									<th class="text-end">{{ column_order_id }}</th>
+<div id="account-orders-page">
 
-									<th class="text-end">{{ column_product_total }}</th>
-									<th>{{ column_status }}</th>
-									<th class="text-end">{{ column_total }}</th>
-									<th>{{ column_date_added }}</th>
-									<th></th>
-								</tr>
-							</thead>
-							<tbody>
-								{% for order in orders %}
-									<tr>
-										<td class="text-end">#{{ order.order_id }}</td>
-										<td class="text-end">{{ order.product_total }}</td>
-										<td>{{ order.status }}</td>
-										<td class="text-end">{{ order.total }}</td>
-										<td>{{ order.date_added }}</td>
-										<td class="text-end">
-											<a href="{{ order.view }}" data-bs-toggle="tooltip" title="{{ button_view }}" class="btn btn-info">
-												<i class="fa-solid fa-eye"></i>
-											</a>
-										</td>
-									</tr>
-								{% endfor %}
-							</tbody>
-						</table>
-					</div>
-					<div class="row mb-3">
-						<div class="col-sm-6 text-start">{{ pagination }}</div>
-						<div class="col-sm-6 text-end">{{ results }}</div>
-					</div>
-				{% else %}
-					<p>{{ text_no_results }}</p>
-				{% endif %}
-				<div class="text-end">
-					<a href="{{ continue }}" class="btn btn-primary">{{ button_continue }}</a>
-				</div>
-				{{ content_bottom }}</div>
-			{{ column_right }}</div>
-	</div>
+    {# ── Breadcrumb ── #}
+    <div class="orders-hero">
+        <div class="orders-hero-inner">
+            <nav class="orders-breadcrumb" aria-label="Navegação">
+                {% for breadcrumb in breadcrumbs %}
+                    {% if not loop.last %}
+                        <a href="{{ breadcrumb.href }}">{{ breadcrumb.text }}</a>
+                        <span class="sep">›</span>
+                    {% else %}
+                        <span class="current">{{ breadcrumb.text }}</span>
+                    {% endif %}
+                {% endfor %}
+            </nav>
+            <h1 class="orders-title">
+                <span class="orders-title-icon">📦</span>
+                Meus Pedidos
+            </h1>
+            <p class="orders-subtitle">Acompanhe o status e histórico das suas compras</p>
+        </div>
+    </div>
+
+    {# ── Main content ── #}
+    <div class="orders-wrapper">
+
+        {% if orders %}
+            {# ── Stats Bar ── #}
+            <div class="orders-stats">
+                <div class="stat-chip">
+                    <span class="stat-chip-value">{{ orders|length }}</span>
+                    <span class="stat-chip-label">pedido{{ orders|length != 1 ? 's' : '' }}</span>
+                </div>
+            </div>
+
+            {# ── Orders Table ── #}
+            <div class="orders-card">
+                <div class="orders-table-wrap">
+                    <table class="orders-table" id="orders-table">
+                        <thead>
+                            <tr>
+                                <th class="col-id">{{ column_order_id }}</th>
+                                <th class="col-items">{{ column_product_total }}</th>
+                                <th class="col-status">{{ column_status }}</th>
+                                <th class="col-total">{{ column_total }}</th>
+                                <th class="col-date">{{ column_date_added }}</th>
+                                <th class="col-action"></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for order in orders %}
+                            <tr class="order-row" data-order="{{ order.order_id }}">
+                                <td class="col-id">
+                                    <span class="order-num">#{{ order.order_id }}</span>
+                                </td>
+                                <td class="col-items">
+                                    <span class="items-badge">{{ order.product_total }} {{ order.product_total == 1 ? 'item' : 'itens' }}</span>
+                                </td>
+                                <td class="col-status">
+                                    <span class="status-pill status-{{ order.status|lower|replace({' ': '-'}) }}">
+                                        {{ order.status ?: 'Em processamento' }}
+                                    </span>
+                                </td>
+                                <td class="col-total">
+                                    <strong class="order-total-value">{{ order.total }}</strong>
+                                </td>
+                                <td class="col-date">
+                                    <span class="date-text">{{ order.date_added }}</span>
+                                </td>
+                                <td class="col-action">
+                                    <a href="{{ order.view }}" class="btn-view" title="{{ button_view }}">
+                                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                            <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+                                            <circle cx="12" cy="12" r="3"/>
+                                        </svg>
+                                        <span>{{ button_view }}</span>
+                                    </a>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+
+                {% if pagination %}
+                <div class="orders-pagination">
+                    <div class="pagination-info">{{ results }}</div>
+                    <div class="pagination-nav">{{ pagination|raw }}</div>
+                </div>
+                {% endif %}
+            </div>
+
+        {% else %}
+            {# ── Empty State ── #}
+            <div class="orders-empty">
+                <div class="empty-icon">🛍️</div>
+                <h2 class="empty-title">Nenhum pedido encontrado</h2>
+                <p class="empty-desc">{{ text_no_results }}</p>
+                <a href="{{ continue }}" class="btn-shop">Explorar produtos</a>
+            </div>
+        {% endif %}
+
+        {# ── Footer Actions ── #}
+        <div class="orders-footer">
+            <a href="{{ continue }}" class="btn-back">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="15 18 9 12 15 6"/>
+                </svg>
+                {{ button_continue }}
+            </a>
+        </div>
+
+    </div>{# /.orders-wrapper #}
+</div>{# /#account-orders-page #}
+
+<style>
+/* ══════════════════════════════════════════════════
+   ORDERS PAGE — Alpha Engine Premium UI
+   ══════════════════════════════════════════════════ */
+
+#account-orders-page {
+    min-height: 100vh;
+    background: #0d0f14;
+    color: #e2e8f0;
+    font-family: 'Inter', 'Outfit', system-ui, sans-serif;
+}
+
+/* ── Hero ── */
+.orders-hero {
+    background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 50%, #0f172a 100%);
+    border-bottom: 1px solid rgba(99, 102, 241, 0.2);
+    padding: 3rem 2rem 2.5rem;
+}
+.orders-hero-inner {
+    max-width: 1100px;
+    margin: 0 auto;
+}
+.orders-breadcrumb {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.8rem;
+    color: #94a3b8;
+    margin-bottom: 1.5rem;
+}
+.orders-breadcrumb a {
+    color: #94a3b8;
+    text-decoration: none;
+    transition: color 0.2s;
+}
+.orders-breadcrumb a:hover { color: #a5b4fc; }
+.orders-breadcrumb .sep { color: #475569; }
+.orders-breadcrumb .current { color: #a5b4fc; font-weight: 500; }
+
+.orders-title {
+    font-size: clamp(1.6rem, 3vw, 2.4rem);
+    font-weight: 700;
+    color: #f1f5f9;
+    margin: 0 0 0.5rem;
+    letter-spacing: -0.02em;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+.orders-title-icon { font-size: 1.6rem; }
+.orders-subtitle {
+    color: #94a3b8;
+    font-size: 0.95rem;
+    margin: 0;
+}
+
+/* ── Wrapper ── */
+.orders-wrapper {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 2rem 1.5rem 4rem;
+}
+
+/* ── Stats bar ── */
+.orders-stats {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+}
+.stat-chip {
+    background: rgba(99, 102, 241, 0.12);
+    border: 1px solid rgba(99, 102, 241, 0.25);
+    border-radius: 100px;
+    padding: 0.35rem 1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+}
+.stat-chip-value {
+    font-weight: 700;
+    color: #a5b4fc;
+    font-size: 1rem;
+}
+.stat-chip-label {
+    color: #94a3b8;
+    font-size: 0.82rem;
+}
+
+/* ── Card / Table ── */
+.orders-card {
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 16px;
+    overflow: hidden;
+    backdrop-filter: blur(8px);
+    margin-bottom: 2rem;
+}
+.orders-table-wrap {
+    overflow-x: auto;
+}
+.orders-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.9rem;
+}
+.orders-table thead tr {
+    background: rgba(99, 102, 241, 0.08);
+    border-bottom: 1px solid rgba(255,255,255,0.07);
+}
+.orders-table th {
+    padding: 0.9rem 1.2rem;
+    text-align: left;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: #94a3b8;
+    white-space: nowrap;
+}
+.orders-table th.col-id,
+.orders-table th.col-items,
+.orders-table th.col-total { text-align: right; }
+.orders-table th.col-action { text-align: center; }
+
+.order-row {
+    border-bottom: 1px solid rgba(255,255,255,0.05);
+    transition: background 0.2s;
+}
+.order-row:last-child { border-bottom: none; }
+.order-row:hover { background: rgba(99, 102, 241, 0.06); }
+
+.orders-table td {
+    padding: 1rem 1.2rem;
+    vertical-align: middle;
+}
+.orders-table td.col-id,
+.orders-table td.col-items,
+.orders-table td.col-total { text-align: right; }
+.orders-table td.col-action { text-align: center; }
+
+.order-num {
+    font-weight: 700;
+    color: #a5b4fc;
+    font-size: 0.95rem;
+    font-variant-numeric: tabular-nums;
+}
+.items-badge {
+    background: rgba(148, 163, 184, 0.1);
+    border-radius: 100px;
+    padding: 0.2rem 0.7rem;
+    font-size: 0.8rem;
+    color: #cbd5e1;
+}
+.status-pill {
+    display: inline-block;
+    padding: 0.25rem 0.75rem;
+    border-radius: 100px;
+    font-size: 0.78rem;
+    font-weight: 600;
+    letter-spacing: 0.03em;
+    background: rgba(245, 158, 11, 0.15);
+    color: #fbbf24;
+    border: 1px solid rgba(245, 158, 11, 0.3);
+}
+.status-pill.status-completo,
+.status-pill.status-entregue {
+    background: rgba(34, 197, 94, 0.12);
+    color: #4ade80;
+    border-color: rgba(34, 197, 94, 0.3);
+}
+.status-pill.status-cancelado,
+.status-pill.status-recusado {
+    background: rgba(239, 68, 68, 0.12);
+    color: #f87171;
+    border-color: rgba(239, 68, 68, 0.3);
+}
+.status-pill.status-enviado,
+.status-pill.status-em-transporte {
+    background: rgba(59, 130, 246, 0.12);
+    color: #60a5fa;
+    border-color: rgba(59, 130, 246, 0.3);
+}
+.order-total-value {
+    color: #e2e8f0;
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+}
+.date-text {
+    color: #94a3b8;
+    font-size: 0.85rem;
+    font-variant-numeric: tabular-nums;
+}
+
+/* ── View button ── */
+.btn-view {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    background: rgba(99, 102, 241, 0.15);
+    border: 1px solid rgba(99, 102, 241, 0.3);
+    color: #a5b4fc;
+    text-decoration: none;
+    padding: 0.4rem 0.85rem;
+    border-radius: 8px;
+    font-size: 0.82rem;
+    font-weight: 500;
+    transition: all 0.2s;
+    white-space: nowrap;
+}
+.btn-view:hover {
+    background: rgba(99, 102, 241, 0.3);
+    border-color: rgba(99, 102, 241, 0.6);
+    color: #c7d2fe;
+    transform: translateY(-1px);
+}
+
+/* ── Pagination ── */
+.orders-pagination {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1rem 1.2rem;
+    border-top: 1px solid rgba(255,255,255,0.06);
+    font-size: 0.85rem;
+    color: #94a3b8;
+}
+
+/* ── Empty state ── */
+.orders-empty {
+    text-align: center;
+    padding: 5rem 2rem;
+    background: rgba(255,255,255,0.02);
+    border: 1px dashed rgba(255,255,255,0.1);
+    border-radius: 16px;
+    margin-bottom: 2rem;
+}
+.empty-icon { font-size: 4rem; margin-bottom: 1.5rem; }
+.empty-title {
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: #e2e8f0;
+    margin: 0 0 0.75rem;
+}
+.empty-desc {
+    color: #94a3b8;
+    margin: 0 0 2rem;
+}
+.btn-shop {
+    display: inline-block;
+    background: linear-gradient(135deg, #6366f1, #8b5cf6);
+    color: #fff;
+    text-decoration: none;
+    padding: 0.75rem 2rem;
+    border-radius: 10px;
+    font-weight: 600;
+    transition: all 0.2s;
+    box-shadow: 0 4px 15px rgba(99, 102, 241, 0.35);
+}
+.btn-shop:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(99, 102, 241, 0.5);
+    color: #fff;
+}
+
+/* ── Footer ── */
+.orders-footer { display: flex; align-items: center; }
+.btn-back {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    color: #94a3b8;
+    text-decoration: none;
+    font-size: 0.9rem;
+    font-weight: 500;
+    padding: 0.5rem 0.75rem;
+    border-radius: 8px;
+    transition: all 0.2s;
+}
+.btn-back:hover {
+    color: #e2e8f0;
+    background: rgba(255,255,255,0.05);
+}
+
+/* ── Responsive ── */
+@media (max-width: 640px) {
+    .orders-hero { padding: 2rem 1rem 1.5rem; }
+    .orders-table th.col-date,
+    .orders-table td.col-date { display: none; }
+    .btn-view span { display: none; }
+    .btn-view { padding: 0.5rem; }
+}
+</style>
 {% endblock %}

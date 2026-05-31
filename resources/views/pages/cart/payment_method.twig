@@ -1,0 +1,154 @@
+<!-- Método de Pagamento -->
+<div class="egen-payment-method-selection">
+	<div class="egen-form-group">
+		<label class="egen-form-label">Selecione o método de pagamento:</label>
+		
+		<div class="egen-payment-methods-grid">
+			<label class="egen-payment-method-card active">
+				<input type="radio" name="payment_method" value="cod" checked class="egen-payment-method-radio">
+				<div class="egen-payment-method-card-content">
+					<i class="fa-solid fa-handshake-angle"></i>
+					<div>
+						<span class="egen-payment-method-name">Pagar na Entrega</span>
+						<span class="egen-payment-method-desc">Pague em dinheiro ou cartão ao receber seu pedido.</span>
+					</div>
+				</div>
+			</label>
+
+			<label class="egen-payment-method-card">
+				<input type="radio" name="payment_method" value="transferencia" class="egen-payment-method-radio">
+				<div class="egen-payment-method-card-content">
+					<i class="fa-solid fa-bank"></i>
+					<div>
+						<span class="egen-payment-method-name">Transferência Bancária</span>
+						<span class="egen-payment-method-desc">Realize a transferência e envie o comprovante.</span>
+					</div>
+				</div>
+			</label>
+
+			<label class="egen-payment-method-card">
+				<input type="radio" name="payment_method" value="pix" class="egen-payment-method-radio">
+				<div class="egen-payment-method-card-content">
+					<i class="fa-solid fa-qrcode"></i>
+					<div>
+						<span class="egen-payment-method-name">Pix</span>
+						<span class="egen-payment-method-desc">Aprovação imediata do seu pagamento.</span>
+					</div>
+				</div>
+			</label>
+
+			<label class="egen-payment-method-card">
+				<input type="radio" name="payment_method" value="link_pagamento" class="egen-payment-method-radio">
+				<div class="egen-payment-method-card-content">
+					<i class="fa-solid fa-link"></i>
+					<div>
+						<span class="egen-payment-method-name">Gerar Link de Pagamento</span>
+						<span class="egen-payment-method-desc">Enviaremos um link seguro para pagar online.</span>
+					</div>
+				</div>
+			</label>
+		</div>
+	</div>
+
+	<div class="egen-form-group mt-4">
+		<label for="payment_note" class="egen-form-label">Observações sobre o pedido / entrega (opcional)</label>
+		<textarea name="payment_note" id="payment_note" class="egen-form-input" rows="3" placeholder="Caso queira, escreva aqui pontos de referência ou observações adicionais."></textarea>
+	</div>
+</div>
+
+<style>
+.egen-payment-methods-grid {
+	display: grid;
+	grid-template-columns: 1fr;
+	gap: 15px;
+	margin-top: 10px;
+}
+
+@media (min-width: 768px) {
+	.egen-payment-methods-grid {
+		grid-template-columns: 1fr 1fr;
+	}
+}
+
+.egen-payment-method-card {
+	display: block;
+	position: relative;
+	background: var(--egen-bg-input, rgba(255, 255, 255, 0.05));
+	border: 1px solid var(--egen-border-color, rgba(255, 255, 255, 0.1));
+	border-radius: 12px;
+	padding: 16px;
+	cursor: pointer;
+	transition: all 0.3s ease;
+}
+
+.egen-payment-method-card:hover {
+	background: rgba(255, 255, 255, 0.08);
+	border-color: rgba(255, 255, 255, 0.2);
+}
+
+.egen-payment-method-card.active {
+	border-color: var(--egen-accent-color, #ff4081);
+	background: rgba(255, 64, 129, 0.05);
+	box-shadow: 0 0 10px rgba(255, 64, 129, 0.15);
+}
+
+.egen-payment-method-radio {
+	position: absolute;
+	top: 15px;
+	right: 15px;
+	accent-color: var(--egen-accent-color, #ff4081);
+	cursor: pointer;
+}
+
+.egen-payment-method-card-content {
+	display: flex;
+	align-items: flex-start;
+	gap: 15px;
+}
+
+.egen-payment-method-card-content i {
+	font-size: 24px;
+	margin-top: 2px;
+	color: var(--egen-accent-color, #ff4081);
+	width: 30px;
+	text-align: center;
+}
+
+.egen-payment-method-name {
+	display: block;
+	font-weight: 600;
+	font-size: 15px;
+	color: var(--egen-text-primary, #ffffff);
+	margin-bottom: 4px;
+}
+
+.egen-payment-method-desc {
+	display: block;
+	font-size: 12px;
+	color: var(--egen-text-secondary, #b3b3b3);
+	line-height: 1.4;
+}
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+	const cards = document.querySelectorAll('.egen-payment-method-card');
+	cards.forEach(card => {
+		const radio = card.querySelector('.egen-payment-method-radio');
+		
+		card.addEventListener('click', function(e) {
+			if (e.target !== radio) {
+				radio.checked = true;
+				radio.dispatchEvent(new Event('change', { bubbles: true }));
+			}
+		});
+
+		radio.addEventListener('change', function() {
+			cards.forEach(c => c.classList.remove('active'));
+			if (radio.checked) {
+				card.classList.add('active');
+			}
+		});
+	});
+});
+</script>

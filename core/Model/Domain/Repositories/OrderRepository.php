@@ -3,7 +3,7 @@ namespace Alpha\Model\Domain\Repositories;
 
 use Alpha\Model\Domain\DTOs\OrderDataDTO;
 use Alpha\Mappers\EntityMappers\OrderMapper;
-use Alpha\Mappers\EntityMappers\CartMapper;
+use Alpha\Model\Domain\Repositories\CartRepository;
 use Alpha\Model\DataAccessObject\UnitOfWork;
 use Alpha\Model\Domain\InterfaceEntity;
 use Alpha\Mappers\MapperFactory;
@@ -100,7 +100,6 @@ class OrderRepository extends AbstractRepository implements BaseRepositoryInterf
         $session = $this->registry->get('session');
         $customer = $this->registry->get('customer');
         $config = $this->registry->get('config');
-        $cart = $this->registry->get('cart');
 
         $data = [];
 
@@ -141,14 +140,15 @@ class OrderRepository extends AbstractRepository implements BaseRepositoryInterf
         $data['shipping_method'] = $session->data['shipping_method']['title'] ?? '';
         $data['shipping_code'] = $session->data['shipping_method']['code'] ?? '';
 
-        // Itens do Carrinho via Mapper para garantir tipos Alpha Engine
-        /** @var CartMapper $cartMapper */
-        $cartMapper = $this->mapperFactory->get(CartMapper::class);
+        // Itens do Carrinho via CartRepository (garante hidratação completa com opções e descontos)
+        /** @var CartRepository $cartRepository */
+        $cartRepository = $this->registry->get('alpha_repository_factory')->get(CartRepository::class);
         
-        $data['products'] = $cartMapper->getProducts($data['customer_id'], $session->getId(), $data['language_id'], $data['store_id'], $data['customer_group_id']);
+        $data['products'] = $cartRepository->getProducts();
         $data['vouchers'] = $session->data['vouchers'] ?? [];
         $data['totals'] = $session->data['totals'] ?? [];
-        $data['total'] = $cart->getTotal();
+        $data['total'] = $cartRepository->getTotal();
+        $data['comment'] = $session->data['comment'] ?? '';
 
         // Alpha Engine: Coleta de Cupom para rastreamento de marketing e histórico de uso
         $coupon_code = $session->data['coupon'] ?? '';

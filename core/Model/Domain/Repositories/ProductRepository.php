@@ -353,7 +353,7 @@ class ProductRepository extends AbstractRepository implements BaseRepositoryInte
             'button_wishlist' => $this->language->get('button_wishlist'),
             'button_compare'  => $this->language->get('button_compare'),
             'cart'            => $this->url->link('common/cart.info', 'language=' . $this->config->get('config_language')),
-            'cart_add'        => $this->url->link('checkout/cart.add', 'language=' . $this->config->get('config_language')),
+            'cart_add'        => '/' . $this->config->get('config_language') . '/carrinho/adicionar',
             'wishlist_add'    => $this->url->link('account/wishlist.add', 'language=' . $this->config->get('config_language')),
             'compare_add'     => $this->url->link('product/compare.add', 'language=' . $this->config->get('config_language'))
         ];

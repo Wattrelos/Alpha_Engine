@@ -1,0 +1,628 @@
+{% extends "layouts/base.html.twig" %}
+
+{% block title %}
+	{{ title|default('Finalizar Compra | AgSonhos') }}
+{% endblock %}
+
+{% block breadcrumbs %}
+	<div class="egen-page-header">
+		<div class="egen-page-header__inner">
+			{% include 'components/molecules/breadcrumbs.twig' with { items: breadcrumbs } %}
+		</div>
+	</div>
+{% endblock %}
+
+{% block content %}
+	<div class="egen-checkout-page">
+		<div class="egen-checkout-container">
+			<h1 class="egen-checkout-title">{{ heading_title|default('Finalizar Compra') }}</h1>
+
+			{% if error_warning %}
+				<div class="egen-alert egen-alert--danger">
+					<i class="fa-solid fa-circle-exclamation"></i>
+					{{ error_warning }}
+				</div>
+			{% endif %}
+
+			<!-- Indicador de Progresso das Etapas -->
+			<div class="egen-checkout-progress" id="checkout-progress-bar">
+				<div class="egen-checkout-progress__line"></div>
+				<div class="egen-checkout-progress__step active" data-progress-step="1">
+					<div class="egen-checkout-progress__circle">1</div>
+					<span class="egen-checkout-progress__label">Identificação</span>
+				</div>
+				<div class="egen-checkout-progress__step" data-progress-step="2">
+					<div class="egen-checkout-progress__circle">2</div>
+					<span class="egen-checkout-progress__label">Endereço de entrega</span>
+				</div>
+				<div class="egen-checkout-progress__step" data-progress-step="3">
+					<div class="egen-checkout-progress__circle">3</div>
+					<span class="egen-checkout-progress__label">Cálculo de frete</span>
+				</div>
+				<div class="egen-checkout-progress__step" data-progress-step="4">
+					<div class="egen-checkout-progress__circle">4</div>
+					<span class="egen-checkout-progress__label">Pagamento</span>
+				</div>
+			</div>
+
+			<form
+				action="{{ action }}" method="post" enctype="multipart/form-data" class="egen-checkout-form" id="checkout-main-form" novalidate>
+
+				<!-- Etapas do Checkout -->
+				<div
+					class="egen-checkout-steps" id="checkout-steps">
+
+					<!-- 1. Identificação -->
+					<div class="egen-checkout-step active" data-step="1" id="step-identity">
+						<h2 class="egen-checkout-step-title">
+							<i class="fa-solid fa-user"></i>
+							<span>{{ step_1_title|default('Identificação') }}</span>
+						</h2>
+
+						<div
+							class="egen-checkout-step-content">
+							<!-- Botões de login/cadastro -->
+							<div class="egen-checkout-identity-options">
+								<button type="button" class="egen-btn-secondary" data-checkout-action="login">
+									<i class="fa-solid fa-right-to-bracket"></i>
+									{{ button_login|default('Já tenho conta') }}
+								</button>
+								<button type="button" class="egen-btn-secondary" data-checkout-action="guest">
+									<i class="fa-solid fa-user-plus"></i>
+									{{ button_guest|default('Comprar como visitante') }}
+								</button>
+								<button type="button" class="egen-btn-secondary" data-checkout-action="register">
+									<i class="fa-solid fa-user-tie"></i>
+									{{ button_register|default('Quero me cadastrar') }}
+								</button>
+							</div>
+
+							<!-- Formulário de Login -->
+							<div id="checkout-login-form" class="egen-checkout-form-hidden">
+								<div class="egen-form-group">
+									<label for="login-email" class="egen-form-label">{{ entry_email }}
+										<span class="text-danger">*</span>
+									</label>
+									<input type="email" name="login[email]" value="{{ login_email }}" placeholder="{{ entry_email }}" id="login-email" class="egen-form-input" required/>
+								</div>
+								<div class="egen-form-group">
+									<label for="login-password" class="egen-form-label">{{ entry_password }}
+										<span class="text-danger">*</span>
+									</label>
+									<input type="password" name="login[password]" value="" placeholder="{{ entry_password }}" id="login-password" class="egen-form-input" required autocomplete="current-password"/>
+								</div>
+								<button type="button" id="login-button" class="egen-btn-primary">
+									<i class="fa-solid fa-arrow-right-to-bracket"></i>
+									{{ button_login }}
+								</button>
+								<a href="{{ forgotten }}" class="egen-link-secondary">{{ text_forgotten }}</a>
+							</div>
+
+							<!-- Formulário de Cadastro -->
+							<div id="checkout-register-form" class="egen-checkout-form-hidden">
+								<div class="egen-form-row">
+									<div class="egen-form-group">
+										<label for="register-firstname" class="egen-form-label">{{ entry_firstname }}
+											<span class="text-danger">*</span>
+										</label>
+										<input type="text" name="register[firstname]" value="{{ register_firstname }}" placeholder="{{ entry_firstname }}" id="register-firstname" class="egen-form-input" required/>
+									</div>
+									<div class="egen-form-group">
+										<label for="register-lastname" class="egen-form-label">{{ entry_lastname }}
+											<span class="text-danger">*</span>
+										</label>
+										<input type="text" name="register[lastname]" value="{{ register_lastname }}" placeholder="{{ entry_lastname }}" id="register-lastname" class="egen-form-input" required/>
+									</div>
+								</div>
+								<div class="egen-form-row">
+									<div class="egen-form-group">
+										<label for="register-email" class="egen-form-label">{{ entry_email }}
+											<span class="text-danger">*</span>
+										</label>
+										<input type="email" name="register[email]" value="{{ register_email }}" placeholder="{{ entry_email }}" id="register-email" class="egen-form-input" required/>
+									</div>
+									<div class="egen-form-group">
+										<label for="register-telephone" class="egen-form-label">{{ entry_telephone }}
+											<span class="text-danger">*</span>
+										</label>
+										<input type="tel" name="register[telephone]" value="{{ register_telephone }}" placeholder="{{ entry_telephone }}" id="register-telephone" class="egen-form-input" required/>
+									</div>
+								</div>
+								<div class="egen-form-row">
+									<div class="egen-form-group">
+										<label for="register-password" class="egen-form-label">{{ entry_password }}
+											<span class="text-danger">*</span>
+										</label>
+										<input type="password" name="register[password]" value="{{ register_password }}" placeholder="{{ entry_password }}" id="register-password" class="egen-form-input" required autocomplete="new-password"/>
+									</div>
+									<div class="egen-form-group">
+										<label for="register-confirm" class="egen-form-label">{{ entry_confirm }}
+											<span class="text-danger">*</span>
+										</label>
+										<input type="password" name="register[confirm]" value="{{ register_confirm }}" placeholder="{{ entry_confirm }}" id="register-confirm" class="egen-form-input" required autocomplete="new-password"/>
+									</div>
+								</div>
+							</div>
+
+							<div class="egen-checkout-step-nav">
+								<button type="button" class="egen-btn-primary" data-checkout-nav="next">
+									Continuar
+									<i class="fa-solid fa-arrow-right"></i>
+								</button>
+							</div>
+						</div>
+					</div>
+
+					<!-- 2. Endereço de Cobrança -->
+					<div class="egen-checkout-step" data-step="2" id="step-billing">
+						<h2 class="egen-checkout-step-title">
+							<i class="fa-solid fa-location-dot"></i>
+							<span>{{ step_2_title|default('Dados de Cobrança') }}</span>
+						</h2>
+						<div class="egen-checkout-step-content billing-address-premium">
+							<!-- Opções de endereço -->
+							<div class="egen-checkout-address-options">
+								<button type="button" class="egen-btn-secondary" data-checkout-action="same-address">
+									<i class="fa-solid fa-user-check"></i>
+									{{ button_same_address|default('Entregar no endereço de cobrança') }}
+								</button>
+								<button type="button" class="egen-btn-secondary" data-checkout-action="different-address">
+									<i class="fa-solid fa-user-pen"></i>
+									{{ button_different_address|default('Entregar em outro endereço') }}
+								</button>
+							</div>
+
+							<!-- Formulário de Endereço de Cobrança -->
+							<div id="checkout-billing-address" class="egen-checkout-form-hidden">
+								<div class="egen-form-grid-premium">
+									<div class="egen-form-group-premium">
+										<label for="input-payment-firstname" class="egen-form-label-premium">{{ entry_firstname }}
+											<span class="text-danger">*</span>
+										</label>
+										<input type="text" name="payment_firstname" value="{{ payment_firstname }}" placeholder="{{ entry_firstname }}" id="input-payment-firstname" class="egen-form-input-premium" required/>
+									</div>
+									<div class="egen-form-group-premium">
+										<label for="input-payment-lastname" class="egen-form-label-premium">{{ entry_lastname }}
+											<span class="text-danger">*</span>
+										</label>
+										<input type="text" name="payment_lastname" value="{{ payment_lastname }}" placeholder="{{ entry_lastname }}" id="input-payment-lastname" class="egen-form-input-premium" required/>
+									</div>
+								</div>
+
+								<div class="egen-form-grid-premium">
+									<div class="egen-form-group-premium">
+										<label for="input-payment-company" class="egen-form-label-premium">{{ entry_company }}</label>
+										<input type="text" name="payment_company" value="{{ payment_company }}" placeholder="{{ entry_company }}" id="input-payment-company" class="egen-form-input-premium"/>
+									</div>
+									<div class="egen-form-group-premium">
+										<label for="input-payment-country" class="egen-form-label-premium">{{ entry_country }}
+											<span class="text-danger">*</span>
+										</label>
+										<div class="select-wrapper-premium">
+											<select name="payment_country_id" id="input-payment-country" class="egen-form-select-premium">
+												<option value="">{{ text_select }}</option>
+												{% for country in countries %}
+													{% if country.country_id == payment_country_id or (payment_country_id is empty and country.country_id == 30) %}
+														<option value="{{ country.country_id }}" selected>{{ country.name }}</option>
+													{% else %}
+														<option value="{{ country.country_id }}">{{ country.name }}</option>
+													{% endif %}
+												{% endfor %}
+											</select>
+											<span class="select-arrow-premium">
+												<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+											</span>
+										</div>
+									</div>
+								</div>
+
+								<div class="egen-form-grid-premium">
+									<div class="egen-form-group-premium">
+										<label for="input-payment-postcode" class="egen-form-label-premium">{{ entry_postcode }}
+											<span class="text-danger">*</span>
+										</label>
+										<input type="text" name="payment_postcode" value="{{ payment_postcode }}" placeholder="{{ entry_postcode }}" id="input-payment-postcode" class="egen-form-input-premium" required/>
+									</div>
+									<div class="egen-form-group-premium">
+										<label for="input-payment-address-1" class="egen-form-label-premium">{{ entry_address_1 }}
+											<span class="text-danger">*</span>
+										</label>
+										<input type="text" name="payment_address_1" value="{{ payment_address_1 }}" placeholder="{{ entry_address_1 }}" id="input-payment-address-1" class="egen-form-input-premium" required/>
+									</div>
+								</div>
+
+								<div class="egen-form-grid-premium">
+									<div class="egen-form-group-premium">
+										<label for="input-payment-number" class="egen-form-label-premium">Número
+											<span class="text-danger">*</span>
+										</label>
+										<input type="text" name="payment_number" value="{{ payment_number }}" placeholder="Número" id="input-payment-number" class="egen-form-input-premium" required/>
+									</div>
+									<div class="egen-form-group-premium">
+										<label for="input-payment-address-2" class="egen-form-label-premium">{{ entry_address_2 }}</label>
+										<input type="text" name="payment_address_2" value="{{ payment_address_2 }}" placeholder="{{ entry_address_2 }}" id="input-payment-address-2" class="egen-form-input-premium"/>
+									</div>
+								</div>
+
+								<div class="egen-form-grid-premium">
+									<div class="egen-form-group-premium">
+										<label for="input-payment-neighborhood" class="egen-form-label-premium">Bairro
+											<span class="text-danger">*</span>
+										</label>
+										<input type="text" name="payment_neighborhood" value="{{ payment_neighborhood }}" placeholder="Bairro" id="input-payment-neighborhood" class="egen-form-input-premium" required/>
+									</div>
+									<div class="egen-form-group-premium">
+										<label for="input-payment-city" class="egen-form-label-premium">{{ entry_city }}
+											<span class="text-danger">*</span>
+										</label>
+										<input type="text" name="payment_city" value="{{ payment_city }}" placeholder="{{ entry_city }}" id="input-payment-city" class="egen-form-input-premium" required/>
+									</div>
+								</div>
+
+								<div class="egen-form-grid-premium">
+									<div class="egen-form-group-premium">
+										<label for="input-payment-zone" class="egen-form-label-premium">{{ entry_zone }}
+											<span class="text-danger">*</span>
+										</label>
+										<div class="select-wrapper-premium">
+											<select name="payment_zone_id" id="input-payment-zone" class="egen-form-select-premium" data-selected-zone="{{ payment_zone_id }}">
+												<option value="">{{ text_select }}</option>
+											</select>
+											<span class="select-arrow-premium">
+												<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+											</span>
+										</div>
+									</div>
+									<div class="egen-form-group-premium"></div>
+								</div>
+							</div>
+
+							<div class="egen-checkout-step-nav">
+								<button type="button" class="egen-btn-secondary" data-checkout-nav="prev">
+									<i class="fa-solid fa-arrow-left"></i>
+									Voltar
+								</button>
+								<button type="button" class="egen-btn-primary" data-checkout-nav="next" id="btn-billing-next">
+									Avançar
+									<i class="fa-solid fa-arrow-right"></i>
+								</button>
+							</div>
+						</div>
+					</div>
+
+					<!-- 3. Endereço de Entrega -->
+					<div class="egen-checkout-step" data-step="3" id="step-shipping">
+						<h2 class="egen-checkout-step-title">
+							<i class="fa-solid fa-truck-fast"></i>
+							<span>{{ step_3_title|default('Dados de Entrega') }}</span>
+						</h2>
+						<div class="egen-checkout-step-content">
+							{% include 'pages/cart/shipping-address.twig' %}
+
+							<div class="egen-checkout-step-nav">
+								<button type="button" class="egen-btn-secondary" data-checkout-nav="prev">
+									<i class="fa-solid fa-arrow-left"></i>
+									Voltar
+								</button>
+								<button type="button" class="egen-btn-primary" data-checkout-nav="next" id="btn-shipping-next">
+									Avançar
+									<i class="fa-solid fa-arrow-right"></i>
+								</button>
+							</div>
+						</div>
+					</div>
+
+					<!-- 4. Método de Pagamento -->
+					<div class="egen-checkout-step" data-step="4" id="step-payment-method">
+						<h2 class="egen-checkout-step-title">
+							<i class="fa-solid fa-credit-card"></i>
+							<span>{{ step_4_title|default('Método de Pagamento') }}</span>
+						</h2>
+						<div class="egen-checkout-step-content">
+							{% include 'pages/cart/payment_method.twig' %}
+
+							<div class="egen-checkout-step-nav">
+								<button type="button" class="egen-btn-secondary" data-checkout-nav="prev">
+									<i class="fa-solid fa-arrow-left"></i>
+									Voltar
+								</button>
+								<button type="submit" class="egen-btn-primary" id="btn-submit-checkout">
+									Finalizar Compra
+									<i class="fa-solid fa-check"></i>
+								</button>
+							</div>
+						</div>
+					</div>
+
+				</div>
+			</form>
+		</div>
+	</div>
+
+<style>
+/* Premium Form Grid and Groups */
+.egen-form-grid-premium {
+	display: grid;
+	grid-template-columns: 1fr;
+	gap: 1.25rem 1.5rem;
+	margin-bottom: 1.25rem;
+}
+@media (min-width: 768px) {
+	.egen-form-grid-premium {
+		grid-template-columns: 1fr 1fr;
+	}
+}
+
+.egen-form-group-premium {
+	display: flex;
+	flex-direction: column;
+	gap: 0.5rem;
+}
+
+.egen-form-label-premium {
+	font-size: 0.75rem;
+	font-weight: 700;
+	color: #94a3b8;
+	text-transform: uppercase;
+	letter-spacing: 0.05em;
+	display: flex;
+	align-items: center;
+	gap: 0.25rem;
+}
+
+.egen-form-input-premium,
+.egen-form-select-premium {
+	width: 100%;
+	background: rgba(255, 255, 255, 0.03) !important;
+	border: 1px solid rgba(255, 255, 255, 0.08) !important;
+	border-radius: 8px !important;
+	padding: 0.8rem 1rem !important;
+	color: #f1f5f9 !important;
+	font-family: inherit !important;
+	font-size: 0.95rem !important;
+	transition: all 0.2s ease !important;
+	box-sizing: border-box;
+}
+
+.egen-form-input-premium::placeholder {
+	color: #475569 !important;
+}
+
+.egen-form-input-premium:focus,
+.egen-form-select-premium:focus {
+	outline: none !important;
+	background: rgba(99, 102, 241, 0.04) !important;
+	border-color: rgba(99, 102, 241, 0.4) !important;
+	box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.15) !important;
+}
+
+/* Custom Select Arrow */
+.select-wrapper-premium {
+	position: relative;
+	display: flex;
+	align-items: center;
+	width: 100%;
+}
+
+.select-wrapper-premium select {
+	padding-right: 2.5rem !important;
+	appearance: none !important;
+	-webkit-appearance: none !important;
+}
+
+.select-arrow-premium {
+	position: absolute;
+	right: 1rem;
+	color: #64748b;
+	pointer-events: none;
+	display: flex;
+	align-items: center;
+}
+
+/* Premium Checkout Steps Layout */
+.egen-checkout-page {
+	min-height: 100vh;
+	background: #0d0f14;
+	color: #e2e8f0;
+	font-family: 'Inter', system-ui, sans-serif;
+	padding: 3rem 1.5rem 5rem;
+}
+
+.egen-checkout-container {
+	max-width: 900px;
+	margin: 0 auto;
+}
+
+.egen-checkout-title {
+	font-size: clamp(1.8rem, 4vw, 2.4rem);
+	font-weight: 800;
+	color: #f1f5f9;
+	margin-bottom: 2.5rem;
+	letter-spacing: -0.02em;
+	background: linear-gradient(135deg, #ffffff 0%, #a5b4fc 100%);
+	-webkit-background-clip: text;
+	-webkit-text-fill-color: transparent;
+	background-clip: text;
+}
+
+.egen-checkout-step {
+	background: rgba(255, 255, 255, 0.02);
+	border: 1px solid rgba(255, 255, 255, 0.06);
+	border-radius: 16px;
+	padding: 1.5rem 2rem;
+	margin-bottom: 1.5rem;
+	transition: all 0.3s ease;
+}
+
+.egen-checkout-step.active {
+	background: rgba(255, 255, 255, 0.04);
+	border-color: rgba(99, 102, 241, 0.25);
+	box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+}
+
+.egen-checkout-step-title {
+	font-size: 1.2rem;
+	font-weight: 700;
+	color: #f1f5f9;
+	display: flex;
+	align-items: center;
+	gap: 0.75rem;
+	margin: 0 0 1.5rem 0;
+	border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+	padding-bottom: 1rem;
+}
+
+.egen-checkout-step-title i {
+	color: #a5b4fc;
+}
+
+.egen-checkout-progress {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	position: relative;
+	margin-bottom: 3.5rem;
+	padding: 0 1rem;
+}
+
+.egen-checkout-progress__line {
+	position: absolute;
+	top: 20px;
+	left: 0;
+	right: 0;
+	height: 2px;
+	background: rgba(255, 255, 255, 0.08);
+	z-index: 1;
+}
+
+.egen-checkout-progress__step {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	gap: 0.75rem;
+	position: relative;
+	z-index: 2;
+}
+
+.egen-checkout-progress__circle {
+	width: 40px;
+	height: 40px;
+	border-radius: 50%;
+	background: #1e293b;
+	border: 2px solid rgba(255, 255, 255, 0.08);
+	color: #94a3b8;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	font-weight: 700;
+	font-size: 0.95rem;
+	transition: all 0.3s ease;
+}
+
+.egen-checkout-progress__step.active .egen-checkout-progress__circle {
+	background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+	border-color: #a5b4fc;
+	color: #ffffff;
+	box-shadow: 0 0 15px rgba(99, 102, 241, 0.4);
+}
+
+.egen-checkout-progress__label {
+	font-size: 0.8rem;
+	font-weight: 600;
+	color: #64748b;
+	transition: color 0.3s ease;
+}
+
+.egen-checkout-progress__step.active .egen-checkout-progress__label {
+	color: #a5b4fc;
+}
+
+/* Nav Buttons & Form Buttons */
+.egen-checkout-step-nav {
+	display: flex;
+	justify-content: flex-end;
+	gap: 1rem;
+	margin-top: 2rem;
+	border-top: 1px solid rgba(255, 255, 255, 0.05);
+	padding-top: 1.5rem;
+}
+
+.egen-btn-primary {
+	background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%) !important;
+	color: #ffffff !important;
+	border: none !important;
+	border-radius: 8px !important;
+	padding: 0.75rem 1.75rem !important;
+	font-weight: 700 !important;
+	cursor: pointer;
+	display: inline-flex;
+	align-items: center;
+	gap: 0.5rem;
+	box-shadow: 0 4px 14px rgba(99, 102, 241, 0.3) !important;
+	transition: all 0.2s ease !important;
+}
+
+.egen-btn-primary:hover {
+	transform: translateY(-1px) !important;
+	box-shadow: 0 6px 20px rgba(99, 102, 241, 0.4) !important;
+}
+
+.egen-btn-secondary {
+	background: rgba(255, 255, 255, 0.04) !important;
+	border: 1px solid rgba(255, 255, 255, 0.08) !important;
+	color: #e2e8f0 !important;
+	padding: 0.75rem 1.5rem !important;
+	border-radius: 8px !important;
+	font-weight: 600 !important;
+	cursor: pointer;
+	display: inline-flex;
+	align-items: center;
+	gap: 0.5rem;
+	transition: all 0.2s ease !important;
+}
+
+.egen-btn-secondary:hover {
+	background: rgba(255, 255, 255, 0.08) !important;
+	border-color: rgba(255, 255, 255, 0.15) !important;
+}
+
+/* Identity button choices */
+.egen-checkout-identity-options, .egen-checkout-address-options {
+	display: grid;
+	grid-template-columns: 1fr;
+	gap: 1rem;
+	margin-bottom: 1.5rem;
+}
+@media (min-width: 640px) {
+	.egen-checkout-identity-options, .egen-checkout-address-options {
+		grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+	}
+}
+
+.egen-checkout-identity-options button, .egen-checkout-address-options button {
+	padding: 1.25rem !important;
+	border-radius: 12px !important;
+	justify-content: center;
+	background: rgba(255,255,255,0.02) !important;
+	border: 1px solid rgba(255,255,255,0.06) !important;
+}
+
+.egen-checkout-identity-options button:hover, .egen-checkout-address-options button:hover {
+	border-color: rgba(99, 102, 241, 0.3) !important;
+	background: rgba(99, 102, 241, 0.04) !important;
+}
+
+/* Alert styles */
+.egen-alert {
+	background: rgba(239, 68, 68, 0.1);
+	border: 1px solid rgba(239, 68, 68, 0.2);
+	color: #fca5a5;
+	padding: 1rem;
+	border-radius: 8px;
+	margin-bottom: 1.5rem;
+	display: flex;
+	align-items: center;
+	gap: 0.75rem;
+}
+</style>
+{% endblock %}

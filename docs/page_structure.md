@@ -46,6 +46,15 @@ resources/views/
 │   └── organisms/    # componentes orgânicos (header, footer, sidebar, full-product-card)
 ├── utilities/        # classes utilitárias (helpers)
 └── pages/            # estilos específicos por página
+     └── category
+          ├── show.html.twig
+                    🏷️ Badge "Oferta" — gradiente vermelho-laranja quando prod.special existe
+                    🖼️ Overlay hover — rgba(99,102,241,0.75) + botão pill "Ver produto"
+                    💚 Preço especial — verde #4ade80, preço original riscado em cinza
+                    🛒 Botão carrinho — gradiente índigo/violeta com glow no hover, scale no click
+
+          ├── list.html.twig
+          └── search.html.twig
      └── users 
           ├── register.html.twig
           ├── login.html.twig
@@ -61,4 +70,40 @@ resources/views/
 
 resources/fonts/
 └── fontawesome/      # FontAwesome 6
-```
+
+### Estilos
+
+Hero (avatar circular + breadcrumb + título)
+│
+├── Seção: Minha Conta  [ícone roxo]
+│   ├── 📝 Alterar informações
+│   ├── 🔒 Alterar senha
+│   ├── 📍 Endereços
+│   └── ❤️  Lista de desejos
+│
+├── Seção: Meus Pedidos  [ícone verde]
+│   ├── ✅ Histórico de pedidos  ← card destacado (verde)
+│   ├── ⬇️  Downloads
+│   ├── ★  Pontos (condicional)
+│   ├── 🔄  Devoluções
+│   └── 💲  Transações
+│
+├── Seção: Newsletter  [ícone azul]
+│
+└── Seção: Afiliado  [ícone âmbar] ← só aparece se `affiliate` for true
+
+## Highlights dos cards
+🏷️ Badge "Oferta" — gradiente vermelho-laranja quando prod.special existe
+🖼️ Overlay hover — rgba(99,102,241,0.75) + botão pill "Ver produto"
+💚 Preço especial — verde #4ade80, preço original riscado em cinza
+🛒 Botão carrinho — gradiente índigo/violeta com glow no hover, scale no click
+
+### 🛒 cart.twig — Redesign Premium
+Destaques visuais
+🖼️ Imagem 90×90 com scale no hover e border-radius
+🏷️ Chips de opções — pills pequenos com bordas sutis
+🔄 Botão update — integrado ao input de qty com borda esquerda
+🗑️ Botão remover — vermelho com scale no hover
+🔒 Trust badges — "Compra segura" e "Dados protegidos" com ícone verde
+🟢 Total final — destacado em verde com tipografia maior
+⚡ JS de recálculo — preservado 100%, seletores atualizados para o novo markup

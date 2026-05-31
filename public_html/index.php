@@ -4,39 +4,34 @@ use Slim\Factory\AppFactory;
 use Slim\Exception\HttpNotFoundException;
 use Twig\Environment;
 use Twig\Loader\FilesystemLoader;
-use Containers\AppContainer;
+use Containers\AppBootstrap;
 use Alpha\Controller\Actions\Main\HomeAction;
 use Alpha\Controller\Actions\Customer\Auth\ShowLoginFormAction;
 use Alpha\Controller\Actions\Customer\Auth\LoginAction;
-use Alpha\Model\Domain\Repositories\CategoryRepository;
-use Alpha\Model\Domain\Repositories\SettingRepository;
-use Alpha\Model\Domain\Repositories\LanguageRepository;
-use Alpha\Model\Domain\Repositories\CustomerRepository;
-use Alpha\Model\Domain\Repositories\RepositoryFactory;
-use Alpha\Auth\Services\AuthService;
-use Alpha\Mappers\MapperFactory;
 use Alpha\Mappers\EntityMappers\InformationMapper;
-use Alpha\Support\Registry;
 use Alpha\Controller\Actions\Customer\Auth\ShowRegistrationFormAction;
 use Alpha\Controller\Actions\Customer\Auth\RegisterAction;
 use Alpha\Controller\Actions\Customer\Auth\LogoutAction;
 use Alpha\Controller\Actions\Customer\Auth\AccountAction;
 use Alpha\Controller\Actions\Customer\OrderHistoryAction;
-use Alpha\Session\AlphaSessionHandler;
-use Alpha\Model\Domain\Repositories\SessionRepository;
 use Alpha\Controller\Actions\Product\ShowProductAction;
 use Alpha\Controller\Actions\Category\ShowCategoryAction;
 use Alpha\Controller\Actions\Information\ShowInformationAction;
+use Alpha\Controller\Actions\Information\ShowSitemapAction;
 use Alpha\Controller\Actions\Product\SearchProductsAction;
 use Alpha\Auth\Middleware\LanguageMiddleware;
 use Alpha\Auth\Middleware\LegacyRouteRedirectMiddleware;
-use Alpha\Model\Domain\Repositories\ProductRepository;
-use Alpha\Model\Domain\Repositories\SeoUrlRepository;
-use Alpha\Model\Domain\Repositories\InformationRepository;
 use Alpha\Controller\Actions\Customer\OrdersAction;
-use Alpha\Model\Domain\Repositories\OrderRepository;
-use Alpha\Controller\Actions\Cart\CartAction;
-use Alpha\Model\Domain\Repositories\CartRepository;
+use Alpha\Controller\Actions\Cart\ShowCartAction;
+use Alpha\Controller\Actions\Cart\AddCartAction;
+use Alpha\Controller\Actions\Cart\EditCartAction;
+use Alpha\Controller\Actions\Cart\RemoveCartAction;
+use Alpha\Controller\Actions\Cart\CalculateVisitorCartAction;
+use Alpha\Controller\Actions\Cart\SyncCartAction;
+use Alpha\Controller\Actions\Cart\SubmitCheckoutAction;
+use Alpha\Controller\Actions\Cart\ShowSuccessAction;
+use Alpha\Controller\Actions\Location\GetZonesAction;
+use Alpha\Controller\Actions\RedirectToDefaultLanguageAction;
 
 
 
@@ -53,85 +48,22 @@ if (!defined('APPLICATION')) {
     define('APPLICATION', 'catalog');
 }
 
-// O autoloader do Composer (carregado acima) resolve todas as classes nativas e legadas.
-
-// require_once DIR_SYSTEM . 'helper/general.php';
-// require_once DIR_SYSTEM . 'helper/filter.php';
-// require_once DIR_SYSTEM . 'helper/validation.php';
-
-$pdo = new PDO(
-    sprintf(
-        'mysql:host=%s;dbname=%s;port=%s;charset=utf8mb4',
-        DB_HOSTNAME,
-        DB_DATABASE,
-        DB_PORT
-    ),
-    DB_USERNAME,
-    DB_PASSWORD,
-    [
-        PDO::ATTR_ERRMODE            => PDO::ERRMODE_EXCEPTION,
-        PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
-        PDO::ATTR_EMULATE_PREPARES   => false,
-    ]
-);
 
 // ─────────────────────────────────────────────────────────
-// 2. REPOSITÓRIOS — Instâncias que alimentam os serviços
-//    Usando o novo Slim\CategoryRepository (sem OpenCart\Registry)
+// 2. BOOTSTRAP DA ALPHA ENGINE
+//    Inicializa dependências, registros, repositórios e serviços.
 // ─────────────────────────────────────────────────────────
-$registry = new Registry();
-$mapperFactory = new MapperFactory($registry);
-$repositoryFactory = new RepositoryFactory($mapperFactory, $registry);
-
-// Registrar as factories no registry para uso por outros componentes
-$registry->set('alpha_mapper_factory', $mapperFactory);
-$registry->set('alpha_repository_factory', $repositoryFactory);
-
-$settingRepository = new SettingRepository($mapperFactory, $registry);
-$languageRepository = new LanguageRepository($mapperFactory, $registry);
-$customerRepository = new CustomerRepository($mapperFactory, $registry);
-$authService = new AuthService($customerRepository);
-
-$sessionRepository = new SessionRepository($mapperFactory, $registry);
-$sessionHandler = new AlphaSessionHandler($sessionRepository);
-session_set_save_handler($sessionHandler, true);
-
-// Resolvendo dinamicamente as configurações e idioma da loja
-$configSettings = $settingRepository->getSetting('config', 0);
-$languageCode   = $configSettings['config_language_catalog'] ?? 'pt-br';
-$language       = $languageRepository->getByCode($languageCode);
-
-if (!$language) {
-    $language = $languageRepository->find(2); // Fallback para pt-br (ID 2)
-}
-
-$languageId = $language ? $language->getId() : 2;
-
-// Injetando adaptadores e serviços standalone no Registry para compatibilidade com repositórios legados
-$registry->set('config', new \Alpha\Support\Config(array_merge([
-    'config_customer_group_id' => 1,
-    'config_tax' => false,
-    'config_customer_price' => false,
-    'config_language' => $languageCode,
-    'config_language_id' => $languageId,
-], $configSettings)));
-
-$languageAdaptor = new \Alpha\Support\Language($languageCode);
-$registry->set('language', $languageAdaptor);
-$registry->set('session', new \Alpha\Support\Session());
-$registry->set('customer', new \Alpha\Support\Customer());
-$registry->set('tax', new \Alpha\Support\Tax());
-$registry->set('currency', new \Alpha\Support\Currency($languageAdaptor));
-$registry->set('url', new \Alpha\Support\Url());
-$registry->set('document', new \Alpha\Support\Document());
-
-$categoryRepository = new CategoryRepository($mapperFactory, $registry);
-$productRepository = $repositoryFactory->get(ProductRepository::class);
-$seoUrlRepository  = $repositoryFactory->get(SeoUrlRepository::class);
-$informationRepository = $repositoryFactory->get(InformationRepository::class);
-$orderRepository   = $repositoryFactory->get(OrderRepository::class);
-$cartRepository    = $repositoryFactory->get(CartRepository::class);
-
+$bootstrap = AppBootstrap::boot();
+$registry = $bootstrap->getRegistry();
+$container = $bootstrap->getContainer();
+$configSettings = $bootstrap->getConfigSettings();
+$languageCode = $bootstrap->getLanguageCode();
+$languageId = $bootstrap->getLanguageId();
+$language = $bootstrap->getLanguage();
+$categoryRepository = $bootstrap->getCategoryRepository();
+$seoUrlRepository = $bootstrap->getSeoUrlRepository();
+$languageRepository = $bootstrap->getLanguageRepository();
+$informationRepository = $bootstrap->getInformationRepository();
 
 // ─────────────────────────────────────────────────────────
 // 3. TWIG — Loader apontando para resources/views/
@@ -160,6 +92,7 @@ $twig->addGlobal('lang',       $language ? $language->getCode() : 'pt-br');
 $twig->addGlobal('direction',  'ltr');
 
 // Resolve as páginas institucionais para o rodapé usando URLs amigáveis
+$mapperFactory = $registry->get('alpha_mapper_factory');
 $informationMapper = $mapperFactory->get(InformationMapper::class);
 $informations = [];
 foreach ($informationMapper->getInformations($languageId, 0) as $result) {
@@ -172,27 +105,15 @@ foreach ($informationMapper->getInformations($languageId, 0) as $result) {
 $twig->addGlobal('informations', $informations);
 
 // ─────────────────────────────────────────────────────────
-// 4. CONTAINER DE DEPENDÊNCIAS
-//    Binds: tipo → instância. AppContainer injeta via Reflection.
+// 4. BIND TWIG NO CONTAINER DE DEPENDÊNCIAS
 // ─────────────────────────────────────────────────────────
-$container = (new AppContainer())
-    ->bind(Environment::class,      $twig)
-    ->bind(CategoryRepository::class, $categoryRepository)
-    ->bind(SettingRepository::class, $settingRepository)
-    ->bind(LanguageRepository::class, $languageRepository)
-    ->bind(CustomerRepository::class, $customerRepository)
-    ->bind(AuthService::class,        $authService)
-    ->bind(SessionRepository::class,  $sessionRepository)
-    ->bind(ProductRepository::class,  $productRepository)
-    ->bind(SeoUrlRepository::class,   $seoUrlRepository)
-    ->bind(InformationRepository::class, $informationRepository)
-    ->bind(OrderRepository::class,    $orderRepository)
-    ->bind(CartRepository::class,     $cartRepository);
+$container->bind(Environment::class, $twig);
 
 
 // ─────────────────────────────────────────────────────────
 // 5. SLIM APP
 // ─────────────────────────────────────────────────────────
+AppFactory::setContainer($container);
 $app = AppFactory::create();
 
 // Adiciona o Middleware de Idioma para processar a variável {lang} após o roteador
@@ -206,112 +127,90 @@ $app->add(new LegacyRouteRedirectMiddleware($seoUrlRepository));
 // ─────────────────────────────────────────────────────────
 // 6. REDIRECIONAMENTOS DE COMPATIBILIDADE / FALLBACKS DE IDIOMA
 // ─────────────────────────────────────────────────────────
+// Redirecionamentos para o idioma padrão
+$app->get('/', RedirectToDefaultLanguageAction::class);
+$app->get('/login', RedirectToDefaultLanguageAction::class);
+$app->get('/cadastro', RedirectToDefaultLanguageAction::class);
+$app->get('/logout', RedirectToDefaultLanguageAction::class);
+$app->get('/carrinho', RedirectToDefaultLanguageAction::class);
+$app->get('/busca', RedirectToDefaultLanguageAction::class);
 
-// Redireciona a raiz "/" para o idioma padrão
-$app->get('/', function ($request, $response) {
-    return $response->withHeader('Location', '/pt-br')->withStatus(302);
+$app->map(['GET', 'POST'], '/checkout', RedirectToDefaultLanguageAction::class);
+
+$app->group('/account', function ($account) {
+    $account->get('', RedirectToDefaultLanguageAction::class);
+    $account->get('/orders', RedirectToDefaultLanguageAction::class);
+    $account->get('/order/history/{order_id}', RedirectToDefaultLanguageAction::class);
 });
 
-$app->get('/account', function ($request, $response) {
-    return $response->withHeader('Location', '/pt-br/account')->withStatus(302);
-});
-$app->get('/account/orders', function ($request, $response) {
-    return $response->withHeader('Location', '/pt-br/account/orders')->withStatus(302);
-});
-$app->get('/account/order/history/{order_id}', function ($request, $response, $args) {
-    return $response->withHeader('Location', '/pt-br/account/order/history/' . $args['order_id'])->withStatus(302);
-});
-$app->get('/login', function ($request, $response) {
-    return $response->withHeader('Location', '/pt-br/login')->withStatus(302);
-});
-$app->get('/cadastro', function ($request, $response) {
-    return $response->withHeader('Location', '/pt-br/cadastro')->withStatus(302);
-});
-$app->get('/logout', function ($request, $response) {
-    return $response->withHeader('Location', '/pt-br/logout')->withStatus(302);
-});
-$app->get('/carrinho', function ($request, $response) {
-    return $response->withHeader('Location', '/pt-br/carrinho')->withStatus(302);
-});
-$app->get('/checkout', function ($request, $response) {
-    return $response->withHeader('Location', '/pt-br/checkout')->withStatus(302);
-});
-$app->get('/busca', function ($request, $response) {
-    $queryParams = $request->getQueryParams();
-    $searchQuery = isset($queryParams['busca']) ? '?busca=' . urlencode($queryParams['busca']) : '';
-    return $response->withHeader('Location', '/pt-br/busca' . $searchQuery)->withStatus(302);
-});
+
+// API para calcular dados do carrinho do visitante (localStorage)
+$app->post('/api/carrinho/dados', CalculateVisitorCartAction::class);
+
+// API para sincronizar o carrinho local do visitante com o banco de dados após login
+$app->post('/api/carrinho/sincronizar', SyncCartAction::class);
+
+// API para buscar estados (zones) de um país específico
+$app->get('/api/paises/{country_id:[0-9]+}/estados', GetZonesAction::class);
 
 // ─────────────────────────────────────────────────────────
+
+
 // 7. GRUPO DE ROTAS INTERNACIONALIZADAS
 // ─────────────────────────────────────────────────────────
-$app->group('/{lang:pt-br|en|es}', function (\Slim\Routing\RouteCollectorProxy $group) use ($container) {
+$app->group('/{lang:pt-br|en|es}', function (\Slim\Routing\RouteCollectorProxy $group) {
 
     // Página Inicial do Idioma
-    $group->get('', function ($request, $response, $args) use ($container) {
-        return $container->get(HomeAction::class)($request, $response, $args);
-    });
+    $group->get('', HomeAction::class);
 
     // Login
-    $group->get('/login', function ($request, $response, $args) use ($container) {
-        return $container->get(ShowLoginFormAction::class)($request, $response, $args);
-    });
-    $group->post('/login', function ($request, $response, $args) use ($container) {
-        return $container->get(LoginAction::class)($request, $response, $args);
-    });
+    $group->get('/login', ShowLoginFormAction::class);
+    $group->post('/login', LoginAction::class);
 
     // Cadastro
-    $group->get('/cadastro', function ($request, $response, $args) use ($container) {
-        return $container->get(ShowRegistrationFormAction::class)($request, $response, $args);
-    });
-    $group->post('/cadastro', function ($request, $response, $args) use ($container) {
-        return $container->get(RegisterAction::class)($request, $response, $args);
-    });
+    $group->get('/cadastro', ShowRegistrationFormAction::class);
+    $group->post('/cadastro', RegisterAction::class);
 
     // Logout
-    $group->get('/logout', function ($request, $response, $args) use ($container) {
-        return $container->get(LogoutAction::class)($request, $response, $args);
-    });
+    $group->get('/logout', LogoutAction::class);
 
-    // Minha Conta
-    $group->get('/account', function ($request, $response, $args) use ($container) {
-        return $container->get(AccountAction::class)($request, $response, $args);
-    })->add(new \Alpha\Auth\Middleware\SessionMiddleware());
-
-    // Histórico do Pedido
-    $group->get('/account/order/history/{order_id}', function ($request, $response, $args) use ($container) {
-        return $container->get(OrderHistoryAction::class)($request, $response, $args);
+    // Grupo Protegido: Agrupa o prefixo '/account' E aplica o middleware uma única vez
+    $group->group('/account', function ($account) {
+        $account->get('', AccountAction::class);
+        $account->get('/orders', OrdersAction::class);
+        $account->get('/order/history/{order_id}', OrderHistoryAction::class);
     })->add(new \Alpha\Auth\Middleware\SessionMiddleware());
 
     // Detalhe do Produto (SEO)
-    $group->get('/produto/{slug}', function ($request, $response, $args) use ($container) {
-        return $container->get(ShowProductAction::class)($request, $response, $args);
-    });
-
-    // Lista de Pedidos (Auth)
-    $group->get('/account/orders', function ($request, $response, $args) use ($container) {
-        return $container->get(OrdersAction::class)($request, $response, $args);
-    })->add(new \Alpha\Auth\Middleware\SessionMiddleware());
+    $group->get('/produto/{slug}', ShowProductAction::class);
 
     // Listagem da Categoria (SEO)
-    $group->get('/categoria/{slug}', function ($request, $response, $args) use ($container) {
-        return $container->get(ShowCategoryAction::class)($request, $response, $args);
-    });
+    $group->get('/categoria/{slug}', ShowCategoryAction::class);
 
     // Página Institucional (SEO)
-    $group->get('/pagina/{slug}', function ($request, $response, $args) use ($container) {
-        return $container->get(ShowInformationAction::class)($request, $response, $args);
-    });
+    $group->get('/pagina/{slug}', ShowInformationAction::class);
+
+    // Mapa do Site (Sitemap) - Rotas corretas e fallbacks/legadas
+    $group->get('/mapa-do-site', ShowSitemapAction::class);
+    $group->get('/sitemap', ShowSitemapAction::class);
+    $group->get('/informacao/sitemap', ShowSitemapAction::class);
+    $group->get('/information/sitemap', ShowSitemapAction::class);
+    $group->get('/infomation/sitemap', ShowSitemapAction::class);
 
     // Busca de Produtos
-    $group->get('/busca', function ($request, $response, $args) use ($container) {
-        return $container->get(SearchProductsAction::class)($request, $response, $args);
-    });
+    $group->get('/busca', SearchProductsAction::class);
 
-    // Carrinho de Compras
-    $group->get('/carrinho', function ($request, $response, $args) use ($container) {
-        return $container->get(CartAction::class)($request, $response, $args);
-    });
+    // Carrinho de Compras (Exibição e Ações no Banco de Dados)
+    $group->get('/carrinho', ShowCartAction::class);
+    $group->post('/carrinho/adicionar', AddCartAction::class);
+    $group->post('/carrinho/editar', EditCartAction::class);
+    $group->get('/carrinho/remover/{key}', RemoveCartAction::class);
+
+    // Checkout
+    $group->get('/checkout', \Alpha\Controller\Actions\Cart\Checkout::class);
+    $group->post('/checkout', SubmitCheckoutAction::class);
+
+    $group->get('/checkout/sucesso', ShowSuccessAction::class);
 });
 
 

@@ -38,9 +38,10 @@
 			{{ analytic }}
 		{% endfor %}
 	</head>
-	<body>
+	<body data-logged="{{ logged ? 'true' : 'false' }}" data-lang="{{ lang }}">
 		<main>
 			{% block master_content %}{% endblock %}
 		</main>
 	</body>
+
 </html>

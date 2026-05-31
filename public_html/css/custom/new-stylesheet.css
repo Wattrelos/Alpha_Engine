@@ -36,38 +36,38 @@
 /* --- VARIÁVEIS DE COR E ESTILO (alinhadas com a paleta da Alpha Engine) --- */
 :root {
     /* Paleta primária — herda da personalizada.css */
-    --egen-primary-color:   #fc9003;
-    --egen-primary-hover:   #e07b00;
-    --egen-accent-color:    #ffc107;
+    --egen-primary-color: #fc9003;
+    --egen-primary-hover: #e07b00;
+    --egen-accent-color: #ffc107;
 
     /* Tons de fundo */
-    --egen-bg-page:         #0f1318;
-    --egen-bg-card:         rgba(30, 34, 39, 0.85);
-    --egen-bg-input:        rgba(255, 255, 255, 0.07);
-    --egen-bg-input-focus:  rgba(252, 144, 3, 0.08);
+    --egen-bg-page: #0f1318;
+    --egen-bg-card: rgba(30, 34, 39, 0.85);
+    --egen-bg-input: rgba(255, 255, 255, 0.07);
+    --egen-bg-input-focus: rgba(252, 144, 3, 0.08);
 
     /* Texto */
-    --egen-text-color:      #e8eaed;
-    --egen-text-muted:      #a0aab5;
-    --egen-text-label:      #c8cdd4;
+    --egen-text-color: #e8eaed;
+    --egen-text-muted: #a0aab5;
+    --egen-text-label: #c8cdd4;
 
     /* Bordas */
-    --egen-border-color:    rgba(255, 255, 255, 0.1);
-    --egen-border-focus:    #fc9003;
+    --egen-border-color: rgba(255, 255, 255, 0.1);
+    --egen-border-focus: #fc9003;
 
     /* Formas */
-    --egen-radius:          10px;
-    --egen-radius-sm:       6px;
+    --egen-radius: 10px;
+    --egen-radius-sm: 6px;
 
     /* Sombras */
-    --egen-shadow-card:     0 20px 60px rgba(0, 0, 0, 0.5);
-    --egen-shadow-btn:      0 4px 15px rgba(252, 144, 3, 0.4);
+    --egen-shadow-card: 0 20px 60px rgba(0, 0, 0, 0.5);
+    --egen-shadow-btn: 0 4px 15px rgba(252, 144, 3, 0.4);
 
     /* Erros */
-    --egen-error-color:     #ff6b6b;
+    --egen-error-color: #ff6b6b;
 
     /* Transição */
-    --egen-transition:      0.25s ease;
+    --egen-transition: 0.25s ease;
 }
 
 /* ══════════════════════════════════════════════════════
@@ -95,7 +95,9 @@
 .egen-login-card::before {
     content: '';
     position: absolute;
-    top: 0; left: 0; right: 0;
+    top: 0;
+    left: 0;
+    right: 0;
     height: 3px;
     background: linear-gradient(90deg, var(--egen-primary-color), var(--egen-accent-color), var(--egen-primary-color));
     background-size: 200% 100%;
@@ -136,14 +138,17 @@
     overflow: hidden;
     display: flex;
     flex-direction: column;
-    padding: 0; /* controlado pelos filhos */
+    padding: 0;
+    /* controlado pelos filhos */
 }
 
 /* Faixa laranja animada no topo */
 .egen-card-register::before {
     content: '';
     position: absolute;
-    top: 0; left: 0; right: 0;
+    top: 0;
+    left: 0;
+    right: 0;
     height: 3px;
     background: linear-gradient(90deg, var(--egen-primary-color), var(--egen-accent-color), var(--egen-primary-color));
     background-size: 200% 100%;
@@ -220,7 +225,7 @@
     padding: 0.6rem 0.75rem;
     font-size: 1rem;
     color: var(--egen-text-color);
-    background-color: #ffffff;
+    background-color: var(--egen-bg-input);
     border: 1px solid var(--egen-border-color);
     border-radius: 4px;
     box-sizing: border-box;
@@ -310,7 +315,9 @@
 .egen-register-container::before {
     content: '';
     position: absolute;
-    top: 0; left: 0; right: 0;
+    top: 0;
+    left: 0;
+    right: 0;
     height: 4px;
     background: linear-gradient(90deg, var(--egen-primary-color), var(--egen-accent-color), var(--egen-primary-color));
     background-size: 200% 100%;
@@ -318,8 +325,13 @@
 }
 
 @keyframes shimmer-bar {
-    0%   { background-position: 200% 0; }
-    100% { background-position: -200% 0; }
+    0% {
+        background-position: 200% 0;
+    }
+
+    100% {
+        background-position: -200% 0;
+    }
 }
 
 
@@ -377,8 +389,10 @@
 .egen-legend::after {
     content: '';
     position: absolute;
-    left: 0; bottom: 0;
-    width: 40px; height: 2px;
+    left: 0;
+    bottom: 0;
+    width: 40px;
+    height: 2px;
     background: linear-gradient(90deg, var(--egen-primary-color), var(--egen-accent-color));
     border-radius: 2px;
 }
@@ -425,10 +439,17 @@
     border-radius: var(--egen-radius-sm);
     box-sizing: border-box;
     transition: border-color var(--egen-transition),
-                background-color var(--egen-transition),
-                box-shadow var(--egen-transition);
+        background-color var(--egen-transition),
+        box-shadow var(--egen-transition);
     appearance: none;
     -webkit-appearance: none;
+}
+
+/* Garante legibilidade das opções em selects sob temas escuros */
+.egen-form-input option,
+.egen-form-select option {
+    background-color: #1e2227;
+    color: #e8eaed;
 }
 
 .egen-form-input::placeholder {
@@ -454,8 +475,15 @@
 }
 
 @keyframes fadeInDown {
-    from { opacity: 0; transform: translateY(-4px); }
-    to   { opacity: 1; transform: translateY(0); }
+    from {
+        opacity: 0;
+        transform: translateY(-4px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
 .text-danger {
@@ -928,7 +956,7 @@
     .egen-cart-layout {
         flex-direction: column;
     }
-    
+
     .egen-cart-sidebar {
         width: 100%;
         position: static;
@@ -1327,17 +1355,17 @@
         text-align: center;
         padding: 1.5rem;
     }
-    
+
     .egen-category-header__image-wrapper {
         flex: 0 0 100px;
         height: 100px;
     }
-    
+
     .egen-category-filters {
         flex-direction: column;
         align-items: flex-start;
     }
-    
+
     .egen-category-filters__controls {
         width: 100%;
         justify-content: space-between;
@@ -1724,8 +1752,13 @@
 }
 
 @keyframes fadeIn {
-    from { opacity: 0; }
-    to { opacity: 1; }
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
 }
 
 /* Tabela de Especificações */
@@ -1767,13 +1800,513 @@
     .egen-product-layout {
         flex-direction: column;
     }
-    
+
     .egen-product-gallery,
     .egen-product-info {
         width: 100%;
     }
-    
+
     .egen-product-gallery__main {
         height: 350px;
     }
+}
+
+/* ══════════════════════════════════════════════════════
+   ESTILOS DO BOTÃO DO CARRINHO E BADGE
+   ══════════════════════════════════════════════════════ */
+.egen-btn-cart {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.6rem 1.2rem;
+    border-radius: 50px;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid var(--egen-border-color);
+    color: var(--egen-text-color) !important;
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 0.95rem;
+    transition: all var(--egen-transition);
+}
+
+.egen-btn-cart:hover {
+    background: rgba(252, 144, 3, 0.15);
+    border-color: var(--egen-primary-color);
+    box-shadow: 0 0 12px rgba(252, 144, 3, 0.2);
+}
+
+.egen-btn-cart i {
+    font-size: 1.1rem;
+    color: var(--egen-primary-color);
+}
+
+.egen-cart-badge {
+    background-color: var(--egen-primary-color);
+    color: #ffffff;
+    font-size: 0.75rem;
+    font-weight: 700;
+    border-radius: 50px;
+    padding: 0.15rem 0.45rem;
+    min-width: 20px;
+    height: 20px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    line-height: 1;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+}
+
+/* ══════════════════════════════════════════════════════
+   PÁGINA DE CHECKOUT (checkout.twig)
+   ══════════════════════════════════════════════════════ */
+.egen-checkout-page {
+    background-color: var(--egen-bg-page);
+    min-height: 100vh;
+    padding: 3rem 1rem;
+    box-sizing: border-box;
+}
+
+.egen-checkout-container {
+    max-width: 1000px;
+    margin: 0 auto;
+    width: 100%;
+}
+
+.egen-checkout-title {
+    font-size: 2.2rem;
+    font-weight: 800;
+    color: var(--egen-text-color);
+    margin: 0 0 2rem 0;
+    background: linear-gradient(135deg, #ffffff 0%, var(--egen-primary-color) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.egen-checkout-form {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+}
+
+.egen-checkout-steps {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+}
+
+.egen-checkout-step {
+    background: var(--egen-bg-card);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid rgba(252, 144, 3, 0.15);
+    border-radius: 16px;
+    padding: 2rem;
+    box-shadow: var(--egen-shadow-card);
+    position: relative;
+    overflow: hidden;
+    transition: transform 0.3s ease, border-color 0.3s ease;
+}
+
+.egen-checkout-step::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, var(--egen-primary-color), var(--egen-accent-color));
+    opacity: 0.7;
+}
+
+.egen-checkout-step-title {
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: var(--egen-primary-color);
+    margin: 0 0 1.5rem 0;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    font-family: var(--title-font, inherit);
+}
+
+.egen-checkout-step-title i {
+    font-size: 1.2rem;
+}
+
+.egen-checkout-identity-options,
+.egen-checkout-address-options {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+}
+
+/* Botões secundários modernos */
+.egen-btn-secondary {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: rgba(255, 255, 255, 0.05);
+    color: var(--egen-text-color);
+    border: 1px solid var(--egen-border-color);
+    padding: 0.7rem 1.25rem;
+    font-size: 0.95rem;
+    font-weight: 600;
+    border-radius: var(--egen-radius-sm);
+    cursor: pointer;
+    transition: all var(--egen-transition);
+}
+
+.egen-btn-secondary:hover {
+    background: rgba(252, 144, 3, 0.1);
+    border-color: var(--egen-primary-color);
+    color: var(--egen-primary-color);
+}
+
+.egen-btn-secondary.active {
+    background: var(--egen-primary-color);
+    border-color: var(--egen-primary-color);
+    color: #ffffff;
+}
+
+/* Ocultar formulários inativos */
+.egen-checkout-form-hidden {
+    display: none !important;
+}
+
+/* Grid de duas colunas para form rows */
+.egen-form-row {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1.25rem;
+    margin-bottom: 1.25rem;
+}
+
+@media (min-width: 600px) {
+    .egen-form-row {
+        grid-template-columns: 1fr 1fr;
+    }
+}
+
+/* ── ESTILOS DO CHECKOUT EM ETAPAS (MULTI-STEP) ── */
+.egen-checkout-progress {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: relative;
+    margin-bottom: 3rem;
+    max-width: 500px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.egen-checkout-progress__line {
+    position: absolute;
+    top: 20px;
+    left: 10%;
+    right: 10%;
+    height: 3px;
+    background: var(--egen-border-color);
+    z-index: 1;
+    transition: background var(--egen-transition);
+}
+
+.egen-checkout-progress__step {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position: relative;
+    z-index: 2;
+    cursor: pointer;
+    flex: 1;
+}
+
+.egen-checkout-progress__circle {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: var(--egen-bg-page);
+    border: 2px solid var(--egen-border-color);
+    color: var(--egen-text-muted);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+    transition: all var(--egen-transition);
+}
+
+.egen-checkout-progress__label {
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: var(--egen-text-muted);
+    transition: color var(--egen-transition);
+    white-space: nowrap;
+}
+
+/* Etapa Ativa */
+.egen-checkout-progress__step.active .egen-checkout-progress__circle {
+    border-color: var(--egen-primary-color);
+    color: var(--egen-primary-color);
+    box-shadow: 0 0 10px rgba(252, 144, 3, 0.2);
+}
+
+.egen-checkout-progress__step.active .egen-checkout-progress__label {
+    color: var(--egen-text-color);
+}
+
+/* Etapa Concluída */
+.egen-checkout-progress__step.completed .egen-checkout-progress__circle {
+    background: var(--egen-primary-color);
+    border-color: var(--egen-primary-color);
+    color: #ffffff;
+}
+
+.egen-checkout-progress__step.completed .egen-checkout-progress__label {
+    color: var(--egen-primary-color);
+}
+
+/* Controle de Etapas do Checkout */
+.egen-checkout-step {
+    display: none;
+}
+
+.egen-checkout-step.active {
+    display: block;
+    animation: egenFadeIn 0.3s ease-out;
+}
+
+.egen-checkout-step-nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 2rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--egen-border-color);
+}
+
+/* Ajusta o alinhamento quando há apenas um botão (próximo na primeira etapa) */
+.egen-checkout-step[data-step="1"] .egen-checkout-step-nav {
+    justify-content: flex-end;
+}
+
+@keyframes egenFadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* ══════════════════════════════════════════════════
+   SITEMAP PAGE — Alpha Engine Premium UI
+   ══════════════════════════════════════════════════ */
+
+.egen-sitemap-page {
+    min-height: 100vh;
+    background: #0d0f14;
+    color: #e2e8f0;
+    font-family: 'Inter', 'Outfit', system-ui, sans-serif;
+    padding: 3rem 1.5rem 6rem;
+}
+
+.egen-sitemap-container {
+    max-width: 1000px;
+    margin: 0 auto;
+}
+
+/* Breadcrumbs */
+.egen-sitemap-breadcrumb {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.8rem;
+    color: #94a3b8;
+    margin-bottom: 2rem;
+}
+
+.egen-sitemap-breadcrumb a {
+    color: #94a3b8;
+    text-decoration: none;
+    transition: color 0.2s;
+}
+
+.egen-sitemap-breadcrumb a:hover {
+    color: #a5b4fc;
+}
+
+.egen-sitemap-breadcrumb .sep {
+    color: #475569;
+}
+
+.egen-sitemap-breadcrumb .current {
+    color: #a5b4fc;
+    font-weight: 500;
+}
+
+/* Hero header */
+.egen-sitemap-hero {
+    display: flex;
+    align-items: center;
+    gap: 1.25rem;
+    margin-bottom: 2.5rem;
+    padding-bottom: 1.5rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.egen-sitemap-icon {
+    width: 54px;
+    height: 54px;
+    background: linear-gradient(135deg, rgba(99, 102, 241, 0.2), rgba(139, 92, 246, 0.2));
+    border: 1px solid rgba(99, 102, 241, 0.3);
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #a5b4fc;
+    flex-shrink: 0;
+}
+
+.egen-sitemap-title {
+    font-size: clamp(1.6rem, 3vw, 2.2rem);
+    font-weight: 800;
+    color: #f1f5f9;
+    margin: 0 0 0.25rem 0;
+    letter-spacing: -0.02em;
+}
+
+.egen-sitemap-subtitle {
+    font-size: 0.9rem;
+    color: #94a3b8;
+    margin: 0;
+}
+
+.egen-sitemap-content-wrapper {
+    display: flex;
+    gap: 2rem;
+}
+
+.egen-sitemap-main {
+    flex: 1;
+    min-width: 0;
+}
+
+/* Grid layout */
+.egen-sitemap-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+}
+
+@media (min-width: 768px) {
+    .egen-sitemap-grid {
+        grid-template-columns: 1fr 1fr;
+    }
+}
+
+/* Cards */
+.egen-sitemap-card {
+    background: rgba(255, 255, 255, 0.02);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    border-radius: 16px;
+    padding: 2rem;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+    transition: border-color 0.2s, background 0.2s;
+}
+
+.egen-sitemap-card:hover {
+    background: rgba(255, 255, 255, 0.03);
+    border-color: rgba(99, 102, 241, 0.15);
+}
+
+.egen-sitemap-card-title {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: #f1f5f9;
+    margin: 0 0 1.5rem 0;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: #a5b4fc;
+}
+
+/* Unordered Lists styling */
+.egen-sitemap-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.egen-sitemap-item {
+    position: relative;
+    transition: all 0.2s;
+}
+
+.egen-sitemap-item a,
+.egen-sitemap-label {
+    display: inline-block;
+    color: #cbd5e1;
+    text-decoration: none;
+    font-size: 0.95rem;
+    transition: all 0.2s;
+}
+
+.egen-sitemap-item a:hover {
+    color: #8b5cf6;
+    transform: translateX(3px);
+}
+
+.egen-sitemap-label {
+    color: #94a3b8;
+    font-weight: 600;
+}
+
+/* Depths & Indentations styling */
+.egen-sitemap-item.depth-1 {
+    padding: 0.6rem 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+}
+
+.egen-sitemap-item.depth-1:last-child {
+    border-bottom: none;
+}
+
+.egen-sitemap-sublist {
+    list-style: none;
+    padding-left: 1.25rem;
+    margin-top: 0.4rem;
+    border-left: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.egen-sitemap-item.depth-2 {
+    padding: 0.35rem 0;
+    position: relative;
+}
+
+.egen-sitemap-item.depth-2::before {
+    content: "—";
+    color: rgba(255, 255, 255, 0.15);
+    margin-right: 0.5rem;
+}
+
+.egen-sitemap-sublist-3 {
+    list-style: none;
+    padding-left: 1rem;
+    margin-top: 0.25rem;
+}
+
+.egen-sitemap-item.depth-3 {
+    padding: 0.25rem 0;
+}
+
+.egen-sitemap-item.depth-3::before {
+    content: "•";
+    color: #8b5cf6;
+    margin-right: 0.5rem;
 }

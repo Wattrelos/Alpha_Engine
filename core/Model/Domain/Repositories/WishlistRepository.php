@@ -21,9 +21,9 @@ class WishlistRepository extends AbstractRepository implements BaseRepositoryInt
                  ->addBreadcrumb($response->heading_title, $this->url->link('account/wishlist', 'customer_token=' . ($this->session->data['customer_token'] ?? '')))
                  ->setSuccess($successMessage)
                  ->set('cart', $this->url->link('common/cart.info'))
-                 ->set('cart_add', $this->url->link('checkout/cart.add'))
+                 ->set('cart_add', '/' . $this->config->get('config_language') . '/carrinho/adicionar')
                  ->set('products', $this->getFormattedWishlistProducts($customerId))
-                 ->set('continue', $this->url->link('account/account', 'customer_token=' . ($this->session->data['customer_token'] ?? '')));
+                 ->set('continue', $this->url->link('account', 'customer_token=' . ($this->session->data['customer_token'] ?? '')));
     }
 
     /**

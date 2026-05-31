@@ -85,28 +85,6 @@ Diferente do OpenCart padrão, onde o SQL fica espalhado pelos Models, este proj
 *   ✅ **Clientes**: `Customer`, `CustomerApproval`, `CustomerHistory`, `CustomerLogin`, `CustomerOnline`, `CustomerPayment`, `CustomerReward`, `CustomerTransaction`, `Address`, `CustomerGroup`, `CustomField`, `CustomFieldDescription`, `CustomFieldValue`, `CustomFieldValueDescription`, `CustomFieldCustomerGroup`, `Notification`.
 *   ✅ **Módulos e Extensões**: `Extension`, `ExtensionInstall`, `ExtensionPath`, `Module`.
 
-*Controladores Refatorados (Alpha BaseController):*
-*   ✅ `common/home`
-*   ✅ `common/header`
-*   ✅ `common/menu`
-*   ✅ `common/footer`
-*   ✅ `common/cart`
-*   ✅ `common/language`
-*   ✅ `common/currency`
-*   ✅ `common/cookie`
-*   ✅ `common/search`
-*   ✅ `module/featured`
-*   ✅ `module/latest`
-*   ✅ `module/bestseller`
-*   ✅ `product/product`
-*   ✅ `product/category`
-*   ✅ `product/search`
-*   ✅ `information/information`
-*   ✅ `information/contact`
-*   ✅ `account/login`
-*   ✅ `account/register`
-*   ✅ `checkout/checkout`
-*   ✅ `checkout/confirm`
 
 ## 📦 Estrutura do Core
 
@@ -128,11 +106,11 @@ core/
 │   │   ├── LoginController.php             # 🚪 Processa formulário de login
 │   │   └── LogoutController.php            # 🚪 Destroi sessão e expira cookie
 │   ├── Web/                                # 📄 Respostas em HTML (páginas do site)
-│   │   ├── HomeController.php
-│   │   ├── DashboardController.php
-│   │   └── ProductController.php
-│   └── Api/                               # 🔌 Respostas em JSON (endpoints REST)
-│       └── ApiProductController.php
+│   │   ├── HomeController.php              # 🚪 Controlador de página inicial
+│   │   ├── DashboardController.php         # 🚪 Controlador de painel administrativo
+│   │   └── ProductController.php           # 🚪 Controlador de produtos
+│   └── Api/                                # 🔌 Respostas em JSON (endpoints REST)
+│       └── ApiProductController.php        # 🔌 Controlador de produtos em JSON
 │
 ├── Mappers/                               # 🗺️ SQL Isolation — acesso ao banco de dados
 │   ├── MapperInterface.php                # Contrato público dos Mappers
@@ -142,8 +120,8 @@ core/
 │   ├── CollectionToArrayConverter.php     # Serialização de coleções de entidades
 │   ├── EntityMappers/                     # Um Mapper por entidade de domínio (75+)
 │   └── Observers/                         # 👁️ Side-effects de persistência
-│       ├── OrderObserverInterface.php
-│       └── OrderEmailObserver.php
+│       ├── OrderObserverInterface.php     # 📧 Interface para observar eventos de pedido
+│       └── OrderEmailObserver.php         # 📧 Observer que envia e-mails quando um pedido é criado
 │
 ├── Model/                                 # 🏛️ Coração do domínio
 │   ├── DataAccessObject/                  # Abstração PDO, QueryBuilder, Transactions
@@ -204,14 +182,14 @@ core/
 │        └── users/
 │            ├── index.html.twig
 │            └── edit.html.twig
-└─ public_html
-    ├── index.php
-    └── .htaccess
+└─ public_html           # 🏛️ Única pasta apontada pelo Servidor
+    ├── index.php        # 🏛️ Arquivo principal que inicializa a Aplicação
+    └── .htaccess        # 🏛️ Arquivo de configuração do servidorApache
 
-catalog # Pasta legada do Opencart que está sendo esvaziada.
-extension # Pasta legada do Opencart que está sendo esvaziada.
-image # Pasta legada do Opencart que está sendo esvaziada.
-system # Pasta legada do Opencart que está sendo esvaziada.
+catalog                 #  Pasta legada do Opencart que está sendo esvaziada.
+extension               #  Pasta legada do Opencart que está sendo esvaziada.
+image                   #  Pasta legada do Opencart que está sendo esvaziada.
+system                  #  Pasta legada do Opencart que está sendo esvaziada.
 
 
 ```
@@ -236,7 +214,7 @@ O objetivo não é apenas "fazer funcionar", mas criar uma estrutura standalone 
 
 ## Regras de negócio para a equipe de produção:
 1. Todas as chaves primárias tem nomo "id" para não confundir com as chaves estrangeiras FK que tem [nome da tabela pai] + "_id".
-2. Para prevenir estouro de índice (overflow), as chaves PK e FK terão o tipo inteiro longo.
+2. Para prevenir estouro de índice (overflow), as chaves PK e FK terão o tipo inteiro longo (BIGINT).
 2. No banco de dados, a nomecratura segue o padrão snake_case, porém, na aplicação, o padrão é PascalCase para nomes de classes e arquivos, enquanto o padrão camelCase para nomes de variáveis e métodos. A exceção é na camada View, onde os nomes de pastas e aquivos são quase todos minúsculos.
 3. **Nomecraturas:** Em desenvolvimento web, cada linguagem possui seu próprio padrão. Para HTML e CSS o mais recomendado é o kebab-case (separado por hífens), enquanto no JavaScript domina o camelCase (letras iniciais maiúsculas após a primeira) para variáveis e PascalCase para classes
     * HTML e CSS (Classes e IDs) O padrão oficial e mais adotado pela indústria (como no Guia de Estilo CSS da Airbnb) é o kebab-case. Ele facilita a leitura e se alinha à forma como o navegador interpreta o DOM.
