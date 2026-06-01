@@ -4,6 +4,7 @@ namespace Alpha\Mappers\EntityMappers;
 
 use Alpha\Mappers\BaseMapper;
 use Alpha\Model\Domain\Entities\Upload;
+use Alpha\Model\DataAccessObject\QueryBuilder;
 
 /**
  * Mapper para a entidade Upload.
@@ -22,11 +23,13 @@ class UploadMapper extends BaseMapper
      */
     public function findByCode(string $code): ?Upload
     {
-        $sql = "SELECT * FROM " . $this->getFullTableName() . " WHERE `code` = :code LIMIT 1";
-        $stmt = $this->db->prepare($sql);
-        $stmt->execute(['code' => $code]);
-        $row = $stmt->fetch();
+        $query = (new QueryBuilder())
+            ->select('*')
+            ->from($this->getFullTableName())
+            ->where('`code` = ?', [$code])
+            ->limit(1);
 
-        return $row ? $this->dao->hydrate($this->entityClass, $row) : null;
+        $results = $this->dao->executeQuery($query);
+        return $results ? $this->dao->hydrate($this->entityClass, $results[0]) : null;
     }
 }

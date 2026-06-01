@@ -13,7 +13,6 @@ use ReflectionClass;
  */
 abstract class BaseMapper implements MapperInterface
  {
-    protected \PDO $db; 
     protected mixed $registry = null;
     protected string $entityClass = '';
     protected string $tableName = '';
@@ -27,14 +26,7 @@ abstract class BaseMapper implements MapperInterface
     public function __construct(mixed $registry = null)
     {
         $this->registry = $registry;
-        $connection = ConnectionDB::getInstance()->getConnection();
-        
-        if (!$connection instanceof \PDO) {
-            throw new \RuntimeException("Erro Alpha Engine: Mapper requer uma conexão PDO ativa.");
-        }
-
-        $this->db = $connection;
-        $this->dao = new DataAccessObject($this->db, $this->entityClass); // Passa a classe da entidade para o DAO
+        $this->dao = new DataAccessObject();
     }
 
     /**
@@ -52,6 +44,14 @@ abstract class BaseMapper implements MapperInterface
     public function save(InterfaceEntity $entity): ?int
     {
         return ($entity->getId() > 0) ? $this->dao->update($entity) : $this->dao->create($entity);
+    }
+
+    /**
+     * Implementação padrão de atualização via DAO.
+     */
+    public function update(InterfaceEntity $entity): bool
+    {
+        return (bool)$this->dao->update($entity);
     }
 
     /**
@@ -74,12 +74,14 @@ abstract class BaseMapper implements MapperInterface
      */
     public function findById(int $id): ?InterfaceEntity
     {
-        $sql = "SELECT * FROM " . $this->getFullTableName() . " WHERE " . $this->primaryKey . " = :id";
-        $stmt = $this->db->prepare($sql);
-        $stmt->execute(['id' => $id]);
-        $row = $stmt->fetch();
+        $query = (new QueryBuilder())
+            ->select('*')
+            ->from($this->getFullTableName())
+            ->where($this->primaryKey . " = ?", [$id])
+            ->limit(1);
 
-        return $row ? $this->dao->hydrate($this->entityClass, $row) : null;
+        $results = $this->dao->executeQuery($query);
+        return $results ? $this->dao->hydrate($this->entityClass, $results[0]) : null;
     }
 
     /**
@@ -87,9 +89,11 @@ abstract class BaseMapper implements MapperInterface
      */
     public function findAll(): array
     {
-        $sql = "SELECT * FROM " . $this->getFullTableName();
-        $stmt = $this->db->query($sql);
-        $rows = $stmt->fetchAll();
+        $query = (new QueryBuilder())
+            ->select('*')
+            ->from($this->getFullTableName());
+
+        $rows = $this->dao->executeQuery($query);
 
         $entities = [];
         foreach ($rows as $row) {

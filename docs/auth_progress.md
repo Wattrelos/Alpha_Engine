@@ -58,4 +58,27 @@ Este documento registra o avanço na reestruturação e desacoplamento do módul
   - Registro da rota `/account/orders` no bootstrap [index.php](file:///var/www/html/agsonhos/public_html/index.php) associada à `SessionMiddleware` para proteção automática de autenticação.
   - Adição de redirecionamento de compatibilidade de `/account/orders` para a versão com idioma `/pt-br/account/orders`.
 
+### 5. Abstração e Especialização de Serviços de Autenticação (Alpha Engine)
+- **Interface e Abstração Comum (`AuthServiceInterface` e `AbstractAuthService`)**:
+  - Extração da lógica de conexões Redis e fallback transparente para `$_SESSION` de forma parametrizada e reutilizável.
+- **Especialização do Escopo de Sessões (`CustomerAuthService` & `AdminAuthService`)**:
+  - Separação de namespaces, prefixos de chaves do Redis e cookies de sessão (`session_id` para clientes e `admin_session_id` para administradores).
+- **Segurança Dinâmica no Backoffice (Admin Login & Logout)**:
+  - Eliminação de credenciais estáticas hardcoded no controlador administrativo [LoginAction.php](file:///var/www/html/agsonhos/core/Admin/Controllers/Actions/Auth/LoginAction.php), integrando a verificação de credenciais no banco de dados via [UserRepository](file:///var/www/html/agsonhos/core/Model/Domain/Repositories/UserRepository.php) com validação de status de atividade do administrador.
+  - Implementação da `LogoutAction` de admin para encerramento completo da sessão.
+- **Bloqueio de Brute-Force Administrativo**:
+  - Recriação da tabela `tbkk_user_login` equivalente à de clientes (`customer_login`) e adição de métodos de controle de tentativas no `UserMapper` e `UserRepository`. O `AdminAuthService` bloqueia acessos caso ocorram mais de 5 tentativas consecutivas na última hora.
+  - O login malsucedido calcula tentativas restantes e exibe a nova tela dedicada de segurança [error.html.twig](file:///var/www/html/agsonhos/resources/views/admin/auth/error.html.twig) com contagem regressiva e redirecionamento.
+- **Proteção de Rotas com `AdminSessionMiddleware`**:
+  - Middleware desenvolvido para validar acessos restritos do backoffice.
+  - Correção de erro 404 nas rotas do painel via criação de arquivo de reescrita local `.htaccess` no diretório administrativo.
+
+### 6. Estabilização e Alinhamento de Segurança do Login de Clientes
+- **Bloqueio de Brute-Force e Verificação de Status**:
+  - Refatoração da autenticação em [CustomerAuthService.php](file:///var/www/html/agsonhos/core/Auth/Services/CustomerAuthService.php) para alinhar-se à arquitetura do painel de administração.
+  - O login de clientes agora valida se a conta está temporariamente bloqueada por excesso de tentativas (`isLockedOut` limitando a 5 tentativas).
+  - Adicionada a validação do status ativo (`isStatus()`) da entidade cliente.
+  - Integrada a contagem falha (`addLoginAttempt`) e a limpeza das tentativas (`resetLoginAttempts`) na persistência do banco após login bem-sucedido.
+
+
 

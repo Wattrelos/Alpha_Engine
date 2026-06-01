@@ -5,62 +5,160 @@
 {% endblock %}
 
 {% block content %}
-	<div
-		id="account-login" class="container py-4">
+<div id="account-login-page">
 
-		{# 2. Organismo de Navegação (Molecules) #}
-		{% include 'components/molecules/breadcrumbs.twig' with { items: breadcrumbs } %}
+	{# ── Hero ── #}
+	<div class="login-hero">
+		<div class="login-hero-inner">
+			<nav class="login-breadcrumb" aria-label="Navegação">
+				{% for breadcrumb in breadcrumbs %}
+					{% if not loop.last %}
+						<a href="{{ breadcrumb.href }}">{{ breadcrumb.text }}</a>
+						<span class="sep">›</span>
+					{% else %}
+						<span class="current">{{ breadcrumb.text }}</span>
+					{% endif %}
+				{% endfor %}
+			</nav>
+			<h1 class="login-hero-title">
+				<span class="login-hero-icon">
+					<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+						<path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+						<circle cx="12" cy="7" r="4"/>
+					</svg>
+				</span>
+				Minha Conta
+			</h1>
+			<p class="login-hero-sub">Identifique-se para gerenciar seus pedidos e dados</p>
+		</div>
+	</div>
 
-		{# 3. Moléculas de Alerta #}
+	{# ── Conteúdo Principal ── #}
+	<div class="login-wrapper">
+
+		{# ── Alertas ── #}
 		{% if success %}
-			{% include 'components/molecules/alert.twig' with { type: 'success', message: success, icon: 'fa-circle-check' } %}
+			<div class="login-alert login-alert--success">
+				<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+				{{ success }}
+			</div>
 		{% endif %}
 
 		{% if error_warning %}
-			{% include 'components/molecules/alert.twig' with { type: 'danger', message: error_warning, icon: 'fa-circle-exclamation' } %}
+			<div class="login-alert login-alert--danger">
+				<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+				{{ error_warning }}
+			</div>
 		{% endif %}
 
-		<div class="row">
-			{{ column_left }}
-
-			<div id="content" class="col">
-				{{ content_top }}
-
-				<div
-					class="row">
-					{# 4. Molécula: Bloco de Novo Cliente #}
-					<div class="col mb-3">
-						{% include 'components/molecules/card-register.twig' with { 
-						title: text_new_customer, 
-						subtitle: text_register,
-						description: text_register_account,
-						button_label: button_continue, 
-						url: register 
-					} %}
-					</div>
-
-					{# 5. Organismo: Formulário de Login #}
-					<div class="col mb-3">
-						{% include 'components/organisms/form-login.twig' with { 
-						action: login,
-						title: text_returning_customer,
-						subtitle: text_i_am_returning_customer,
-						email_value: email,
-						entry_email_text: entry_email,
-						password_value: password,
-						entry_password_text: entry_password,
-						forgotten_url: forgotten,
-						text_forgotten_text: text_forgotten,
-						redirect: redirect,
-						button_login_text: button_login
-					} %}
-					</div>
-				</div>
-
-				{{ content_bottom }}
+		<div class="login-grid-container">
+			{# 4. Bloco de Novo Cliente #}
+			<div class="login-grid-col">
+				{% include 'components/molecules/card-register.twig' with { 
+					title: text_new_customer, 
+					subtitle: text_register,
+					description: text_register_account,
+					button_label: button_continue, 
+					url: register 
+				} %}
 			</div>
 
-			{{ column_right }}
+			{# 5. Formulário de Login #}
+			<div class="login-grid-col">
+				{% include 'components/organisms/form-login.twig' with { 
+					action: login,
+					title: text_returning_customer,
+					subtitle: text_i_am_returning_customer,
+					email_value: email,
+					entry_email_text: entry_email,
+					password_value: password,
+					entry_password_text: entry_password,
+					forgotten_url: forgotten,
+					text_forgotten_text: text_forgotten,
+					redirect: redirect,
+					button_login_text: button_login
+				} %}
+			</div>
 		</div>
+
 	</div>
+</div>
+
+<style>
+/* ══════════════════════════════════════════════════
+   LOGIN PAGE — Alpha Engine Premium UI Style
+   ══════════════════════════════════════════════════ */
+
+#account-login-page {
+	min-height: 100vh;
+	background: #0d0f14;
+	color: #e2e8f0;
+	font-family: 'Inter', 'Outfit', system-ui, sans-serif;
+}
+
+.login-hero {
+	background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 50%, #0f172a 100%);
+	border-bottom: 1px solid rgba(252, 144, 3, 0.25);
+	padding: 3rem 2rem 2.5rem;
+}
+.login-hero-inner { max-width: 960px; margin: 0 auto; }
+
+.login-breadcrumb {
+	display: flex; align-items: center; gap: 0.5rem;
+	font-size: 0.8rem; color: #94a3b8; margin-bottom: 1.5rem;
+}
+.login-breadcrumb a { color: #94a3b8; text-decoration: none; transition: color 0.2s; }
+.login-breadcrumb a:hover { color: #fc9003; }
+.login-breadcrumb .sep { color: #475569; }
+.login-breadcrumb .current { color: #fc9003; font-weight: 500; }
+
+.login-hero-title {
+	font-size: clamp(1.6rem, 3vw, 2.2rem);
+	font-weight: 700; color: #f1f5f9; margin: 0 0 0.5rem;
+	letter-spacing: -0.02em; display: flex; align-items: center; gap: 0.75rem;
+}
+.login-hero-icon {
+	width: 44px; height: 44px; flex-shrink: 0;
+	background: linear-gradient(135deg, rgba(252,144,3,0.2), rgba(255,193,7,0.2));
+	border: 1px solid rgba(252, 144, 3, 0.35);
+	border-radius: 12px; display: flex; align-items: center;
+	justify-content: center; color: #ffc107;
+}
+.login-hero-sub { color: #94a3b8; font-size: 0.9rem; margin: 0; }
+
+.login-wrapper {
+	max-width: 960px; margin: 0 auto;
+	padding: 3rem 1.5rem 5rem;
+	display: flex; flex-direction: column; gap: 2rem;
+}
+
+.login-alert {
+	display: flex; align-items: center; gap: 0.75rem;
+	padding: 1rem 1.25rem; border-radius: 10px; font-size: 0.9rem;
+}
+.login-alert--danger {
+	background: rgba(239,68,68,0.1); border: 1px solid rgba(239,68,68,0.25); color: #fca5a5;
+}
+.login-alert--success {
+	background: rgba(34,197,94,0.1); border: 1px solid rgba(34,197,94,0.25); color: #86efac;
+}
+
+.login-grid-container {
+	display: grid;
+	grid-template-columns: 1fr 1.2fr;
+	gap: 2rem;
+	align-items: stretch;
+}
+
+.login-grid-col {
+	display: flex;
+}
+
+@media (max-width: 768px) {
+	.login-grid-container {
+		grid-template-columns: 1fr;
+		gap: 1.5rem;
+	}
+}
+</style>
 {% endblock %}

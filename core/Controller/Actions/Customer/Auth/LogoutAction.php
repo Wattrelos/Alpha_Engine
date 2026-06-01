@@ -5,7 +5,7 @@ namespace Alpha\Controller\Actions\Customer\Auth;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Psr\Http\Message\ResponseInterface as Response;
 use Alpha\Controller\Actions\ActionInterface;
-use Alpha\Auth\Services\AuthService;
+use Alpha\Auth\Services\CustomerAuthService;
 use Slim\Routing\RouteContext;
 
 /**
@@ -13,9 +13,9 @@ use Slim\Routing\RouteContext;
  */
 class LogoutAction implements ActionInterface
 {
-    private AuthService $authService;
+    private CustomerAuthService $authService;
 
-    public function __construct(AuthService $authService)
+    public function __construct(CustomerAuthService $authService)
     {
         $this->authService = $authService;
     }

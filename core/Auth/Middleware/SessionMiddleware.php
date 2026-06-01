@@ -54,12 +54,13 @@ class SessionMiddleware
                 session_start();
             }
 
-            $expire = $_SESSION['expire'] ?? 0;
+            $expire = $_SESSION['expire'] ?? $_SESSION['logged_user_expire'] ?? 0;
             if ($expire > time()) {
                 $sessionData = $_SESSION['logged_user'] ?? null;
                 if ($sessionData) {
                     // Renova/estende o tempo da sessão local por mais 2 horas
                     $_SESSION['expire'] = time() + 7200;
+                    $_SESSION['logged_user_expire'] = time() + 7200;
                 }
             }
         }

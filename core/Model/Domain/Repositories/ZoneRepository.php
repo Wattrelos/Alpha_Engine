@@ -43,8 +43,24 @@ class ZoneRepository extends AbstractRepository implements BaseRepositoryInterfa
     }
 
     // BaseRepositoryInterface bindings
-    public function find(int $id): ?InterfaceEntity { return null; }
-    public function findAll(): array { return []; }
-    public function findBy(array $criteria, ?array $orderBy = null, ?int $limit = null, ?int $offset = null): array { return []; }
-    public function findOneBy(array $criteria): ?InterfaceEntity { return null; }
+    public function find(int $id): ?InterfaceEntity
+    {
+        return $this->getMapper()->findById($id);
+    }
+
+    public function findAll(): array
+    {
+        return $this->getMapper()->findAll();
+    }
+
+    public function findBy(array $criteria, ?array $orderBy = null, ?int $limit = null, ?int $offset = null): array
+    {
+        return $this->getMapper()->search($criteria, $orderBy, $limit, $offset);
+    }
+
+    public function findOneBy(array $criteria): ?InterfaceEntity
+    {
+        $results = $this->getMapper()->search($criteria);
+        return $results[0] ?? null;
+    }
 }

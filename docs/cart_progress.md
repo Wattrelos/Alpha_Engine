@@ -75,3 +75,17 @@ Este documento registra o avanço na reestruturação arquitetural do módulo de
 18. **Retenção na Página de Detalhe de Produto e Botão Voltar**
     - O formulário de compra da página de detalhes do produto (`egen-product-purchase-form` no [show.html.twig](file:///var/www/html/agsonhos/resources/views/pages/product/show.html.twig)) agora também é interceptado via AJAX em `cart.js`. Isso evita o redirecionamento para o carrinho, mostra o alerta de sucesso e atualiza o badge imediatamente.
     - Adicionado um botão premium de "Voltar" (`javascript:history.back()`) posicionado ao lado do botão de compra para facilitar o retorno do cliente às listagens ou buscas anteriores.
+
+19. **Endereço de Entrega e Cobrança Mandatário via ViaCEP e Persistência (Sem loadZones)**
+    - Removida por completo a função `loadZones` e a lógica de carregamento assíncrono de estados/zones via AJAX em `checkout.js`.
+    - Removidos os campos dropdown de seleção de país nos formulários de entrega e cobrança, substituindo-os por inputs ocultos fixados no Brasil (código 30).
+    - Simplificados os campos de estado (Zone) nos formulários de entrega e cobrança para inputs de texto simples e somente leitura (`payment_zone_id` e `shipping_zone_id`), preenchidos com a UF do ViaCEP (ex: `SP`, `RJ`) que servirá de chave diretamente na submissão do formulário.
+    - Implementada lógica em `SubmitCheckoutAction.php` para identificar o usuário logado, consultar o `ZoneRepository` pelo código de UF da requisição para resolver o ID do estado (`zone_id`) e do país, e salvar esses dados de endereço na sessão.
+    - Se o cliente estiver autenticado, os endereços (cobrança e entrega se diferente) são persistidos na tabela `address` via `AddressRepository::save()`, e subsequentemente gravados na tabela `order` no fluxo normal do `OrderRepository`.
+    - Adicionado suporte a `addressId` na entidade `Customer` e implementado o método `update` em `MapperInterface` e `BaseMapper`, corrigindo os erros de membro/método não definidos (`setAddressId` e `update`) ao salvar o perfil do cliente logado com o novo endereço no banco de dados.
+    - O preenchimento das informações de endereço agora é mandatário via ViaCEP: os campos preenchidos automaticamente tornam-se de leitura obrigatória (`readonly`), com flexibilidade de edição liberada apenas caso o logradouro ou bairro retornem vazios na API (ex: CEPs gerais de cidades menores).
+
+20. **Correção do Motor de Impostos (Tax Class e Endereços)**
+    - Implementação completa dos métodos da classe de suporte a impostos `Alpha\Support\Tax` (`setShippingAddress`, `setPaymentAddress`, `setStoreAddress`, `calculate`, `getRates`), que antes estavam ausentes ou eram apenas stubs.
+    - Integração de `Tax` com o `Registry` da Alpha Engine para recuperação dinâmica de configurações, grupos de clientes e regras de impostos ativas.
+    - Resolução do erro fatal no `CartRepository::resolveTaxAndShippingZone` devido à falta do método `setShippingAddress`.

@@ -86,7 +86,6 @@ class AlphaContainer extends Factory
                 'setting/setting'           => \Alpha\Model\Domain\Repositories\SettingRepository::class,
                 'setting/extension'         => \Alpha\Model\Domain\Repositories\ExtensionRepository::class,
                 'setting/store'             => \Alpha\Model\Domain\Repositories\StoreRepository::class,
-                'setting/api'               => \Alpha\Model\Domain\Repositories\ApiSessionRepository::class,
             ];
 
             if (isset($repositoriesMap[$sanitized_route])) {

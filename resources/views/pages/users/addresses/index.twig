@@ -1,0 +1,344 @@
+{% extends 'layouts/base.html.twig' %}
+
+{% block title %}Meus Endereços | AgSonhos{% endblock %}
+
+{% block content %}
+<div id="addresses-page">
+
+	{# ── Hero ── #}
+	<div class="addr-hero">
+		<div class="addr-hero-inner">
+			<nav class="addr-breadcrumb" aria-label="Navegação">
+				{% for breadcrumb in breadcrumbs %}
+					{% if not loop.last %}
+						<a href="{{ breadcrumb.href }}">{{ breadcrumb.text }}</a>
+						<span class="sep">›</span>
+					{% else %}
+						<span class="current">{{ breadcrumb.text }}</span>
+					{% endif %}
+				{% endfor %}
+			</nav>
+			<h1 class="addr-hero-title">
+				<span class="addr-hero-icon">
+					<svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+						<path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
+						<circle cx="12" cy="10" r="3"/>
+					</svg>
+				</span>
+				{{ heading_title|default('Meus Endereços') }}
+			</h1>
+			<p class="addr-hero-sub">Gerencie seus endereços de entrega e cobrança</p>
+		</div>
+	</div>
+
+	{# ── Conteúdo Principal ── #}
+	<div class="addr-wrapper">
+
+		{% if error_warning %}
+			<div class="addr-alert addr-alert--danger">
+				<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+				{{ error_warning }}
+			</div>
+		{% endif %}
+
+		{% if success %}
+			<div class="addr-alert addr-alert--success">
+				<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+				{{ success }}
+			</div>
+		{% endif %}
+
+		{# ── Ação: Novo Endereço ── #}
+		<div class="addr-actions-bar">
+			<a href="{{ add }}" class="addr-btn-primary" id="btn-add-address">
+				<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+				{{ button_add|default('Novo Endereço') }}
+			</a>
+		</div>
+
+		{% if addresses %}
+
+			{# ── Grid de Endereços ── #}
+			<div class="addr-grid">
+				{% for address in addresses %}
+					<div class="addr-card {% if address.default %}addr-card--default{% endif %}" id="address-card-{{ address.address_id }}">
+
+						{% if address.default %}
+							<div class="addr-card-badge">
+								<svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+								Padrão
+							</div>
+						{% endif %}
+
+						<div class="addr-card-header">
+							<div class="addr-card-icon">
+								<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+									<path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
+									<circle cx="12" cy="10" r="3"/>
+								</svg>
+							</div>
+							<div class="addr-card-name">{{ address.firstname }} {{ address.lastname }}</div>
+						</div>
+
+						<div class="addr-card-body">
+							{% if address.company %}
+								<div class="addr-line addr-line--company">{{ address.company }}</div>
+							{% endif %}
+							<div class="addr-line">{{ address.address_1 }}{% if address.number %}, {{ address.number }}{% endif %}</div>
+							{% if address.address_2 %}
+								<div class="addr-line">{{ address.address_2 }}</div>
+							{% endif %}
+							{% if address.neighborhood %}
+								<div class="addr-line">{{ address.neighborhood }}</div>
+							{% endif %}
+							<div class="addr-line">{{ address.city }}{% if address.zone %} – {{ address.zone }}{% endif %}</div>
+							<div class="addr-line">CEP {{ address.postcode }}</div>
+							<div class="addr-line addr-line--country">{{ address.country }}</div>
+						</div>
+
+						<div class="addr-card-actions">
+							<a href="{{ address.edit }}" class="addr-btn-card addr-btn-card--edit" id="btn-edit-address-{{ address.address_id }}" title="Editar">
+								<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+								Editar
+							</a>
+							{% if not address.default %}
+								<a href="{{ address.delete }}" class="addr-btn-card addr-btn-card--delete" id="btn-delete-address-{{ address.address_id }}" title="Excluir"
+									onclick="return confirm('Deseja realmente excluir este endereço?');">
+									<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg>
+									Excluir
+								</a>
+							{% endif %}
+						</div>
+
+					</div>
+				{% endfor %}
+			</div>
+
+		{% else %}
+			{# ── Empty State ── #}
+			<div class="addr-empty">
+				<div class="addr-empty-icon">
+					<svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round">
+						<path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
+						<circle cx="12" cy="10" r="3"/>
+					</svg>
+				</div>
+				<h2 class="addr-empty-title">Nenhum endereço cadastrado</h2>
+				<p class="addr-empty-desc">{{ text_no_results|default('Adicione um endereço para agilizar suas compras.') }}</p>
+				<a href="{{ add }}" class="addr-btn-primary">
+					<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+					Adicionar Primeiro Endereço
+				</a>
+			</div>
+		{% endif %}
+
+		{# ── Rodapé ── #}
+		<div class="addr-footer">
+			<a href="{{ continue }}" class="addr-btn-back">
+				<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+				{{ button_continue|default('Voltar para Minha Conta') }}
+			</a>
+		</div>
+
+	</div>
+</div>
+
+<style>
+/* ══════════════════════════════════════════════════
+   ADDRESSES INDEX — Alpha Engine Premium UI
+   ══════════════════════════════════════════════════ */
+
+#addresses-page {
+	min-height: 100vh;
+	background: #0d0f14;
+	color: #e2e8f0;
+	font-family: 'Inter', 'Outfit', system-ui, sans-serif;
+}
+
+.addr-hero {
+	background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 50%, #0f172a 100%);
+	border-bottom: 1px solid rgba(99, 102, 241, 0.2);
+	padding: 3rem 2rem 2.5rem;
+}
+.addr-hero-inner { max-width: 1100px; margin: 0 auto; }
+
+.addr-breadcrumb {
+	display: flex; align-items: center; gap: 0.5rem;
+	font-size: 0.8rem; color: #94a3b8; margin-bottom: 1.5rem;
+}
+.addr-breadcrumb a { color: #94a3b8; text-decoration: none; transition: color 0.2s; }
+.addr-breadcrumb a:hover { color: #a5b4fc; }
+.addr-breadcrumb .sep { color: #475569; }
+.addr-breadcrumb .current { color: #a5b4fc; font-weight: 500; }
+
+.addr-hero-title {
+	font-size: clamp(1.6rem, 3vw, 2.4rem);
+	font-weight: 700; color: #f1f5f9; margin: 0 0 0.5rem;
+	letter-spacing: -0.02em; display: flex; align-items: center; gap: 0.75rem;
+}
+.addr-hero-icon {
+	width: 48px; height: 48px; flex-shrink: 0;
+	background: linear-gradient(135deg, rgba(99,102,241,0.2), rgba(139,92,246,0.2));
+	border: 1px solid rgba(99, 102, 241, 0.35);
+	border-radius: 14px; display: flex; align-items: center;
+	justify-content: center; color: #a5b4fc;
+}
+.addr-hero-sub { color: #94a3b8; font-size: 0.95rem; margin: 0; }
+
+.addr-wrapper {
+	max-width: 1100px; margin: 0 auto;
+	padding: 2.5rem 1.5rem 5rem;
+	display: flex; flex-direction: column; gap: 2rem;
+}
+
+.addr-alert {
+	display: flex; align-items: center; gap: 0.75rem;
+	padding: 1rem 1.25rem; border-radius: 10px; font-size: 0.9rem;
+}
+.addr-alert--danger {
+	background: rgba(239, 68, 68, 0.1);
+	border: 1px solid rgba(239, 68, 68, 0.25); color: #fca5a5;
+}
+.addr-alert--success {
+	background: rgba(34, 197, 94, 0.1);
+	border: 1px solid rgba(34, 197, 94, 0.25); color: #86efac;
+}
+
+.addr-actions-bar { display: flex; justify-content: flex-end; }
+
+.addr-grid {
+	display: grid;
+	grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+	gap: 1.25rem;
+}
+
+.addr-card {
+	position: relative;
+	background: rgba(255, 255, 255, 0.03);
+	border: 1px solid rgba(255, 255, 255, 0.07);
+	border-radius: 16px; padding: 1.5rem;
+	display: flex; flex-direction: column; gap: 1rem;
+	transition: border-color 0.2s, background 0.2s, box-shadow 0.2s;
+	backdrop-filter: blur(8px);
+}
+.addr-card:hover {
+	border-color: rgba(99, 102, 241, 0.25);
+	background: rgba(255, 255, 255, 0.05);
+	box-shadow: 0 8px 28px rgba(0, 0, 0, 0.25);
+}
+.addr-card--default {
+	border-color: rgba(99, 102, 241, 0.35);
+	background: rgba(99, 102, 241, 0.05);
+}
+.addr-card--default:hover {
+	border-color: rgba(99, 102, 241, 0.5);
+}
+
+.addr-card-badge {
+	position: absolute; top: 1rem; right: 1rem;
+	display: flex; align-items: center; gap: 0.3rem;
+	background: rgba(99, 102, 241, 0.2);
+	border: 1px solid rgba(99, 102, 241, 0.4);
+	color: #a5b4fc; font-size: 0.7rem; font-weight: 700;
+	padding: 0.2rem 0.6rem; border-radius: 100px;
+	text-transform: uppercase; letter-spacing: 0.05em;
+}
+
+.addr-card-header { display: flex; align-items: center; gap: 0.75rem; }
+.addr-card-icon {
+	width: 40px; height: 40px; flex-shrink: 0;
+	background: rgba(99, 102, 241, 0.12);
+	border: 1px solid rgba(99, 102, 241, 0.2);
+	border-radius: 10px; display: flex; align-items: center;
+	justify-content: center; color: #a5b4fc;
+}
+.addr-card--default .addr-card-icon {
+	background: rgba(99, 102, 241, 0.2); border-color: rgba(99, 102, 241, 0.4);
+}
+.addr-card-name {
+	font-weight: 700; font-size: 1rem; color: #f1f5f9;
+	padding-right: 5rem;
+}
+
+.addr-card-body {
+	border-top: 1px solid rgba(255, 255, 255, 0.05);
+	padding-top: 1rem; display: flex; flex-direction: column; gap: 0.2rem;
+}
+.addr-line { font-size: 0.88rem; color: #94a3b8; line-height: 1.5; }
+.addr-line--company { color: #cbd5e1; font-weight: 500; }
+.addr-line--country { color: #64748b; font-size: 0.8rem; margin-top: 0.25rem; }
+
+.addr-card-actions {
+	display: flex; gap: 0.5rem;
+	border-top: 1px solid rgba(255, 255, 255, 0.05); padding-top: 1rem;
+}
+
+.addr-btn-primary {
+	display: inline-flex; align-items: center; gap: 0.5rem;
+	background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+	color: #ffffff; text-decoration: none;
+	padding: 0.7rem 1.5rem; border-radius: 10px;
+	font-size: 0.9rem; font-weight: 700;
+	box-shadow: 0 4px 14px rgba(99, 102, 241, 0.35);
+	transition: all 0.2s;
+}
+.addr-btn-primary:hover {
+	transform: translateY(-2px);
+	box-shadow: 0 6px 20px rgba(99, 102, 241, 0.5); color: #fff;
+}
+
+.addr-btn-card {
+	display: inline-flex; align-items: center; gap: 0.4rem;
+	padding: 0.45rem 0.9rem; border-radius: 8px;
+	font-size: 0.82rem; font-weight: 500; text-decoration: none;
+	transition: all 0.2s;
+}
+.addr-btn-card--edit {
+	background: rgba(99, 102, 241, 0.12);
+	border: 1px solid rgba(99, 102, 241, 0.25); color: #a5b4fc;
+}
+.addr-btn-card--edit:hover {
+	background: rgba(99, 102, 241, 0.25);
+	border-color: rgba(99, 102, 241, 0.5); color: #c7d2fe;
+}
+.addr-btn-card--delete {
+	background: rgba(239, 68, 68, 0.08);
+	border: 1px solid rgba(239, 68, 68, 0.2); color: #f87171;
+}
+.addr-btn-card--delete:hover {
+	background: rgba(239, 68, 68, 0.18);
+	border-color: rgba(239, 68, 68, 0.4); color: #fca5a5;
+}
+
+.addr-empty {
+	text-align: center; padding: 5rem 2rem;
+	background: rgba(255,255,255,0.02);
+	border: 1px dashed rgba(255,255,255,0.08);
+	border-radius: 16px; display: flex;
+	flex-direction: column; align-items: center; gap: 1rem;
+}
+.addr-empty-icon {
+	width: 80px; height: 80px; border-radius: 50%;
+	background: rgba(99, 102, 241, 0.1);
+	border: 1px solid rgba(99, 102, 241, 0.2);
+	display: flex; align-items: center; justify-content: center;
+	color: #a5b4fc; margin-bottom: 0.5rem;
+}
+.addr-empty-title { font-size: 1.3rem; font-weight: 700; color: #e2e8f0; margin: 0; }
+.addr-empty-desc { color: #94a3b8; margin: 0 0 0.75rem; }
+
+.addr-btn-back {
+	display: inline-flex; align-items: center; gap: 0.4rem;
+	color: #94a3b8; text-decoration: none;
+	font-size: 0.9rem; font-weight: 500;
+	padding: 0.5rem 0.75rem; border-radius: 8px; transition: all 0.2s;
+}
+.addr-btn-back:hover { color: #e2e8f0; background: rgba(255,255,255,0.05); }
+
+@media (max-width: 640px) {
+	.addr-hero { padding: 2rem 1rem 1.5rem; }
+	.addr-wrapper { padding: 1.5rem 1rem 4rem; gap: 1.5rem; }
+	.addr-grid { grid-template-columns: 1fr; }
+}
+</style>
+{% endblock %}

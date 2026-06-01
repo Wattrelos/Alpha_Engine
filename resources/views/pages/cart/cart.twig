@@ -158,6 +158,26 @@
                         {% endfor %}
                     </div>
 
+                    <!-- Simulador de Frete -->
+                    <div class="egen-shipping-simulator" style="margin-top: 1.25rem; margin-bottom: 1.25rem;">
+                        <h4 class="egen-shipping-simulator__title">
+                            <i class="fa-solid fa-truck egen-shipping-simulator__icon"></i> Calcular Frete e Prazo
+                        </h4>
+                        <div class="egen-shipping-simulator__form">
+                            <input type="text" id="shipping-cep" value="{% if shipping_cep %}{{ shipping_cep|slice(0, 5) ~ '-' ~ shipping_cep|slice(5) }}{% endif %}" placeholder="00000-000" maxlength="9" class="egen-form-input egen-shipping-simulator__input" oninput="this.value = this.value.replace(/\D/g, '').replace(/^(\d{5})(\d)/, '$1-$2')">
+                            <button type="button" id="btn-calculate-shipping" class="egen-btn-primary egen-shipping-simulator__btn">Calcular</button>
+                        </div>
+                        <div id="shipping-results" class="egen-shipping-simulator__results" style="display: none;">
+                            <div class="egen-shipping-simulator__result-item">
+                                <div>
+                                    <span class="egen-shipping-simulator__result-title">Retirar na Loja</span>
+                                    <span class="egen-shipping-simulator__result-desc">Disponível em até 1 dia útil</span>
+                                </div>
+                                <span class="egen-shipping-simulator__result-price">Grátis</span>
+                            </div>
+                        </div>
+                    </div>
+
                     <div class="cart-actions">
                         <a href="{{ checkout }}" class="cart-btn-checkout" id="btn-checkout">
                             {{ button_checkout|default('Finalizar Compra') }}
@@ -191,16 +211,18 @@
 
         {% else %}
         {# ── Carrinho vazio ── #}
-        <div class="cart-empty">
-            <div class="cart-empty-icon">🛒</div>
-            <h2 class="cart-empty-title">Seu carrinho está vazio</h2>
-            <p class="cart-empty-desc">{{ text_empty|default('Adicione produtos ao carrinho para continuar.') }}</p>
-            <a href="{{ continue }}" class="cart-btn-checkout cart-btn-checkout--inline">
-                Explorar produtos
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                    <line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/>
-                </svg>
-            </a>
+        <div class="egen-cart-container">
+            <div class="cart-empty">
+                <div class="cart-empty-icon">🛒</div>
+                <h2 class="cart-empty-title">Seu carrinho está vazio</h2>
+                <p class="cart-empty-desc">{{ text_empty|default('Adicione produtos ao carrinho para continuar.') }}</p>
+                <a href="{{ continue }}" class="cart-btn-checkout cart-btn-checkout--inline">
+                    Explorar produtos
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/>
+                    </svg>
+                </a>
+            </div>
         </div>
         {% endif %}
 
@@ -602,9 +624,7 @@
     .cart-item-img-wrap { width: 70px; height: 70px; }
 }
 </style>
-{% endblock %}
 
-{% block scripts %}
 <script>
 document.addEventListener('DOMContentLoaded', () => {
     const formatBRL = (value) => {
@@ -661,4 +681,5 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 });
 </script>
+<script src="/js/custom/shipping-simulator.js"></script>
 {% endblock %}

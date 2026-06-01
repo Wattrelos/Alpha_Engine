@@ -95,78 +95,102 @@ Diferente do OpenCart padrão, onde o SQL fica espalhado pelos Models, este proj
 │   ├── AppContainer.php                    # 📦 Fábrica central que monta as Actions (com Twig/Redis)
 │   └── AppBootstrap.php                    # 📦 Bootstrap da aplicação
 ├── core/
-│   ├── Auth/                                   # 🔐 Domínio de autenticação e segurança (novo método de autenticação que substituirá os métodos legados)
-│   │   ├── Middleware/                         # 🛡️ Guards PSR-15 do Router
-│   │   │   ├── SignatureMiddleware.php         # Valida assinatura HMAC da requisição
-│   │   │   └── SessionMiddleware.php           # Valida sessão ativa no Redis
-│   └── Services/                           # 🧠 Lógica de negócio de autenticação
-│       └── AuthService.php                 # Autentica credenciais, cria/destroi sessão
-│
-│
-
-│
-
-│
-├── Controller/                             # 🎮 Orquestradores de requisição HTTP (novo controller que substituirá os métodos legados)
-│   ├── BaseController.php                  # 🧱 Injeção de Mappers, Repos e helpers JSON
-│   ├── Auth/                               # Controladores de acesso
-│   │   ├── LoginController.php             # 🚪 Processa formulário de login
-│   │   └── LogoutController.php            # 🚪 Destroi sessão e expira cookie
-│   ├── Web/                                # 📄 Respostas em HTML (páginas do site)
-│   │   ├── HomeController.php              # 🚪 Controlador de página inicial
-│   │   ├── DashboardController.php         # 🚪 Controlador de painel administrativo
-│   │   └── ProductController.php           # 🚪 Controlador de produtos
-│   └── Api/                                # 🔌 Respostas em JSON (endpoints REST)
-│       └── ApiProductController.php        # 🔌 Controlador de produtos em JSON
-│
-├── Mappers/                                # 🗺️ SQL Isolation — acesso ao banco de dados
-│   ├── MapperInterface.php                 # Contrato público dos Mappers
-│   ├── AbstractMapper.php                  # Base abstrata comum
-│   ├── BaseMapper.php                      # CRUD genérico via DataAccessObject
-│   ├── MapperFactory.php                   # 🏭 Fábrica central de instâncias
-│   ├── CollectionToArrayConverter.php      # Serialização de coleções de entidades
-│   ├── EntityMappers/                      # Um Mapper por entidade de domínio (75+)
-│   └── Observers/                          # 👁️ Side-effects de persistência
-│       ├── OrderObserverInterface.php      # 📧 Interface para observar eventos de pedido
-│       └── OrderEmailObserver.php          # 📧 Observer que envia e-mails quando um pedido é criado
-│
-├── Model/                                  # 🏛️ Coração do domínio
-│   ├── DataAccessObject/                   # Abstração PDO, QueryBuilder, Transactions
-│   │   ├── DataAccessObject.php
-│   │   ├── ConnectionDB.php
-│   │   ├── QueryBuilder.php
-│   │   ├── UnitOfWork.php
-│   │   └── ProxyFactory.php
-│   ├── DataTransferObject/                 # Anotações e validações de entrada
-│   │   └── Attributes/
-│   │       ├── AllowHtml.php
-│   │       └── Validation.php
-│   └── Domain/                             # Entidades e regras de negócio puras
-│       ├── BaseEntity.php
-│       ├── InterfaceEntity.php
-│       ├── Attributes/                     # Atributos ORM (HasOne, ManyToMany, etc.)
-│       ├── Entities/                       # Objetos de domínio tipados (PHP 8.4)
-│       ├── DTOs/
-│       ├── Factory/
-│       ├── Repositories/                  # Abstração e regras de negócio por entidade
-│       └── Observers/
-│
-├── Services/                              # ⚙️ Serviços de domínio e orquestração
-│   └── Shipping/                          # Cálculo e seleção de fretes
-│
-├── Support/                               # 🛠️ Utilitários e helpers transversais
-│   ├── Cache/                             # Estratégias de cache (Filesystem)
-│   ├── Presenters/                        # Formatadores de saída (ImagePresenter)
-│   ├── Collection.php
-│   ├── LazyCollection.php
-│   ├── EntityHydrator.php
-│   ├── EvolutionGenerator.php
-│   ├── RequestHelper.php
-│   └── ViewHelper.php
-│
-│── View/                                  # 🖼️ Camada de apresentação (Twig/HTML) que substituirá os métodos legados
-│    └── ViewRenderer.php
-│
+│      ├── Admin/Controllers/Actions/        # Domínio de administração do sistema
+│      │                       ├── Auth/                            # Fluxo de acesso ao painel
+│      │                       │    ├── LoginAction.php              # Executa a tentativa de login (POST)
+│      │                       │    ├── LogoutAction.php             # Destrói a sessão do admin
+│      │                       │    └── ResetPasswordAction.php      # Processa a nova senha
+│      │                       ├── Dashboard/
+│      │                       │   └── ViewDashboardAction.php      # Renderiza a tela inicial e métricas
+│      │                       ├── Catalog/                         # Gerenciamento do catálogo
+│      │                       │   ├── Product/
+│      │                       │   │   ├── ListProductsAction.php   # Busca e lista os produtos
+│      │                       │   │   ├── CreateProductAction.php  # Salva o novo produto no banco
+│      │                       │   │   ├── UpdateProductAction.php  # Atualiza o produto existente
+│      │                       │   │   └── DeleteProductAction.php  # Remove/Inativa o produto
+│      │                       │   └── Category/
+│      │                       │       ├── ListCategoriesAction.php
+│      │                       │       ├── CreateCategoryAction.php
+│      │                       │       └── UpdateCategoryAction.php
+│      │                       └── Sales/                           # Gerenciamento de pedidos e finanças
+│      │                            ├── Order/
+│      │                            │   ├── ListOrdersAction.php
+│      │                            │   ├── ViewOrderDetailsAction.php
+│      │                            │   └── UpdateOrderStatusAction.php # Altera status (ex: de Pago para Enviado)
+│      │                            └── Voucher/
+│      │                                 ├── ListVouchersAction.php
+│      │                                 └── CreateVoucherAction.php│
+│      └────  Controllers
+│      │       ├── Auth/                                   # 🔐 Domínio de autenticação e segurança (novo método de autenticação que substituirá os métodos legados)
+│      │       │   ├── Middleware/                         # 🛡️ Guards PSR-15 do Router
+│      │       │   │   ├── SignatureMiddleware.php         # Valida assinatura HMAC da requisição
+│      │       │   │   └── SessionMiddleware.php           # Valida sessão ativa no Redis
+│      │       └── Services/                           # 🧠 Lógica de negócio de autenticação
+│      │              └── AuthService.php                 # Autentica credenciais, cria/destroi sessão
+│      │
+│      │
+│      │
+│      │
+│      ├── Controller/                             # 🎮 Orquestradores de requisição HTTP (novo controller que substituirá os métodos legados)
+│      │   ├── BaseController.php                  # 🧱 Injeção de Mappers, Repos e helpers JSON
+│      │   ├── Auth/                               # Controladores de acesso
+│      │   │   ├── LoginController.php             # 🚪 Processa formulário de login
+│      │   │   └── LogoutController.php            # 🚪 Destroi sessão e expira cookie
+│      │   ├── Web/                                # 📄 Respostas em HTML (páginas do site)
+│      │   │   ├── HomeController.php              # 🚪 Controlador de página inicial
+│      │   │   ├── DashboardController.php         # 🚪 Controlador de painel administrativo
+│      │   │   └── ProductController.php           # 🚪 Controlador de produtos
+│      │   └── Api/                                # 🔌 Respostas em JSON (endpoints REST)
+│      │       └── ApiProductController.php        # 🔌 Controlador de produtos em JSON
+│      │
+│      ├── Mappers/                                # 🗺️ SQL Isolation — acesso ao banco de dados
+│      │   ├── MapperInterface.php                 # Contrato público dos Mappers
+│      │   ├── AbstractMapper.php                  # Base abstrata comum
+│      │   ├── BaseMapper.php                      # CRUD genérico via DataAccessObject
+│      │   ├── MapperFactory.php                   # 🏭 Fábrica central de instâncias
+│      │   ├── CollectionToArrayConverter.php      # Serialização de coleções de entidades
+│      │   ├── EntityMappers/                      # Um Mapper por entidade de domínio (75+)
+│      │   └── Observers/                          # 👁️ Side-effects de persistência
+│      │       ├── OrderObserverInterface.php      # 📧 Interface para observar eventos de pedido
+│      │       └── OrderEmailObserver.php          # 📧 Observer que envia e-mails quando um pedido é criado
+│      │
+│      ├── Model/                                  # 🏛️ Coração do domínio
+│      │   ├── DataAccessObject/                   # Abstração PDO, QueryBuilder, Transactions
+│      │   │   ├── DataAccessObject.php
+│      │   │   ├── ConnectionDB.php
+│      │   │   ├── QueryBuilder.php
+│      │   │   ├── UnitOfWork.php
+│      │   │   └── ProxyFactory.php
+│      │   ├── DataTransferObject/                 # Anotações e validações de entrada
+│      │   │   └── Attributes/
+│      │   │       ├── AllowHtml.php
+│      │   │       └── Validation.php
+│      │   └── Domain/                             # Entidades e regras de negócio puras
+│      │       ├── BaseEntity.php
+│      │       ├── InterfaceEntity.php
+│      │       ├── Attributes/                     # Atributos ORM (HasOne, ManyToMany, etc.)
+│      │       ├── Entities/                       # Objetos de domínio tipados (PHP 8.4)
+│      │       ├── DTOs/
+│      │       ├── Factory/
+│      │       ├── Repositories/                  # Abstração e regras de negócio por entidade
+│      │       └── Observers/
+│      │
+│      ├── Services/                              # ⚙️ Serviços de domínio e orquestração
+│      │   └── Shipping/                          # Cálculo e seleção de fretes
+│      │
+│      ├── Support/                               # 🛠️ Utilitários e helpers transversais
+│      │   ├── Cache/                             # Estratégias de cache (Filesystem)
+│      │   ├── Presenters/                        # Formatadores de saída (ImagePresenter)
+│      │   ├── Collection.php
+│      │   ├── LazyCollection.php
+│      │   ├── EntityHydrator.php
+│      │   ├── EvolutionGenerator.php
+│      │   ├── RequestHelper.php
+│      │   └── ViewHelper.php
+│      │
+│      └── View/                                  # 🖼️ Camada de apresentação (Twig/HTML) que substituirá os métodos legados
+│          └── ViewRenderer.php
+│      
 │── resources/views/                        # Novas telas Twig que estão substituindo as telas legadas do Opencart e adotando novos padrões: Atomic Design e Visual Components
 │      ├── components/                     <-- Pedaços de tela que se repetem (reutilizáveis)
 │      │   ├── atoms/                      <-- Elementos base (botão, input, tag)
@@ -185,13 +209,14 @@ Diferente do OpenCart padrão, onde o SQL fica espalhado pelos Models, este proj
 │      ├── layouts/             <-- Estruturas gerais da página
 │      │   └── base.html.twig
 │      └── pages/               <-- As páginas finais do sistema
-│        ├── home.html.twig
-│        └── users/
-│            ├── index.html.twig
-│            └── edit.html.twig
+│           ├── home.html.twig
+│           └── users/
+│                ├── index.html.twig
+│                └── edit.html.twig
 └─ public_html           # 🏛️ Única pasta apontada pelo Servidor
     ├── index.php        # 🏛️ Arquivo principal que inicializa a Aplicação
     └── .htaccess        # 🏛️ Arquivo de configuração do servidorApache
+ 
 
 catalog                 #  Pasta legada do Opencart que está sendo esvaziada.
 extension               #  Pasta legada do Opencart que está sendo esvaziada.

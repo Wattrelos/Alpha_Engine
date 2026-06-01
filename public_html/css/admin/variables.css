@@ -1,0 +1,32 @@
+/* Cores do painel (tons de cinza e azul) */
+:root {
+    --color-bg-body: #f1f5f9;
+    /* Cinza muito claro (fundo) */
+    --color-bg-sidebar: #1e293b;
+    /* Azul escuro (sidebar) */
+    --color-text-sidebar: #cbd5e1;
+    /* Cinza azulado (textos sidebar) */
+    --color-text-main: #212529;
+    /* Cinza escuro (textos gerais) */
+    --color-border: #e2e8f0;
+    /* Borda cinza */
+    --color-card-bg: #ffffff;
+    /* Fundo branco (cards) */
+    --color-primary: #2563eb;
+    /* Azul principal */
+    --color-primary-hover: #1d4ed8;
+    /* Hover azul */
+}
+
+/* Fontes */
+body {
+    font-family: 'Inter', sans-serif;
+    color: var(--color-text-main);
+}
+
+/* Dimensões padrão */
+:root {
+    --sidebar-width: 260px;
+    --topbar-height: 60px;
+    --border-radius: 6px;
+}

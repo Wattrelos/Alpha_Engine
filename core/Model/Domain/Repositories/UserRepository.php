@@ -53,11 +53,48 @@ class UserRepository extends AbstractRepository implements BaseRepositoryInterfa
 
     public function findBy(array $criteria, ?array $orderBy = null, ?int $limit = null, ?int $offset = null): array
     {
-        return $this->getMapper()->findBy($criteria, $orderBy, $limit, $offset);
+        return $this->getMapper()->search($criteria, $orderBy, $limit, $offset);
     }
     public function findOneBy(array $criteria): ?InterfaceEntity
     {
         $results = $this->getMapper()->search($criteria);
         return $results[0] ?? null;
+    }
+
+    public function getIndexData(array $filters = []): array
+    {
+        return $this->getMapper()->search($filters);
+    }
+
+    /**
+     * Obtém a quantidade de tentativas falhas de login.
+     */
+    public function getLoginAttempts(string $username): int
+    {
+        return $this->getMapper()->getLoginAttempts($username);
+    }
+
+    /**
+     * Verifica se a conta do administrador está bloqueada temporariamente.
+     */
+    public function isLockedOut(string $username, int $maxAttempts): bool
+    {
+        return $this->getLoginAttempts($username) >= $maxAttempts;
+    }
+
+    /**
+     * Registra uma tentativa de login falha.
+     */
+    public function addLoginAttempt(string $username, string $ip = ''): void
+    {
+        $this->getMapper()->addLoginAttempt($username, $ip);
+    }
+
+    /**
+     * Reseta as tentativas de login após autenticação bem-sucedida.
+     */
+    public function resetLoginAttempts(string $username): void
+    {
+        $this->getMapper()->deleteLoginAttempts($username);
     }
 }

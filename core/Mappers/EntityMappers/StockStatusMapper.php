@@ -4,6 +4,7 @@ namespace Alpha\Mappers\EntityMappers;
 
 use Alpha\Mappers\BaseMapper;
 use Alpha\Model\Domain\Entities\StockStatus;
+use Alpha\Model\DataAccessObject\QueryBuilder;
 
 /**
  * StockStatusMapper - Gerencia a recuperação das mensagens de status de estoque (Alpha Engine).
@@ -21,15 +22,15 @@ class StockStatusMapper extends BaseMapper {
      */
     public function getStockStatus(int $stock_status_id): ?array {
         $language_id = (int)$this->registry->get('config')->get('config_language_id');
-        $sql = "SELECT * FROM `" . $this->getFullTableName() . "` WHERE `id` = :stock_status_id AND `language_id` = :language_id";
         
-        $stmt = $this->db->prepare($sql);
-        $stmt->execute([
-            'stock_status_id' => $stock_status_id,
-            'language_id'     => $language_id
-        ]);
-        
-        $row = $stmt->fetch(\PDO::FETCH_ASSOC);
-        return $row ?: null;
+        $query = (new QueryBuilder())
+            ->select('*')
+            ->from($this->getFullTableName())
+            ->where("id = ?", [$stock_status_id])
+            ->where("language_id = ?", [$language_id])
+            ->limit(1);
+
+        $results = $this->dao->executeQuery($query);
+        return $results[0] ?? null;
     }
 }

@@ -94,6 +94,10 @@ class OrderMapper extends BaseMapper
             ->setDateAdded(date('Y-m-d H:i:s'));
 
         $this->dao->create($history);
+
+        // Alpha Engine: Também precisamos atualizar o order_status_id na tabela order correspondente!
+        $sql = "UPDATE `" . DB_PREFIX . "order` SET order_status_id = ?, date_modified = NOW() WHERE id = ?";
+        $this->dao->executeRawSQL($sql, [$orderStatusId, $orderId]);
     }
 
     /**
@@ -259,140 +263,153 @@ class OrderMapper extends BaseMapper
 
     public function getOrderArray(int $orderId, int $customerId = 0): array
     {
-        $sql = "SELECT *, id AS order_id FROM `" . DB_PREFIX . "order` WHERE id = :order_id AND order_status_id > '0'";
-        $params = ['order_id' => $orderId];
+        $query = (new QueryBuilder())
+            ->select('*', 'id AS order_id')
+            ->from(DB_PREFIX . "order")
+            ->where("id = ?", [$orderId])
+            ->where("order_status_id > '0'", []);
 
         if ($customerId > 0) {
-            $sql .= " AND customer_id = :customer_id";
-            $params['customer_id'] = $customerId;
+            $query->where("customer_id = ?", [$customerId]);
         }
 
-        $stmt = $this->db->prepare($sql);
-        $stmt->execute($params);
-        return $stmt->fetch(\PDO::FETCH_ASSOC) ?: [];
+        $results = $this->dao->executeQuery($query);
+        return $results[0] ?? [];
     }
 
     public function getOrdersArray(int $customerId, int $storeId, int $languageId, int $start = 0, int $limit = 20): array
     {
-        $sql = "SELECT o.id AS order_id, o.firstname, o.lastname, os.name as status, o.date_added, o.total, o.currency_code, o.currency_value, o.order_status_id 
-                FROM `" . DB_PREFIX . "order` o 
-                LEFT JOIN `" . DB_PREFIX . "order_status` os ON (o.order_status_id = os.id) 
-                WHERE o.customer_id = :customer_id AND o.order_status_id > '0' AND o.store_id = :store_id AND os.language_id = :language_id 
-                ORDER BY o.id DESC 
-                LIMIT :start, :limit";
+        $query = (new QueryBuilder())
+            ->select('o.id AS order_id', 'o.firstname', 'o.lastname', 'os.name as status', 'o.date_added', 'o.total', 'o.currency_code', 'o.currency_value', 'o.order_status_id')
+            ->from(DB_PREFIX . "order", "o")
+            ->leftJoin(DB_PREFIX . "order_status", "os", "o.order_status_id = os.id")
+            ->where("o.customer_id = ?", [$customerId])
+            ->where("o.order_status_id > '0'", [])
+            ->where("o.store_id = ?", [$storeId])
+            ->where("os.language_id = ?", [$languageId])
+            ->orderBy("o.id", "DESC")
+            ->limit($limit)
+            ->offset($start);
 
-        $stmt = $this->db->prepare($sql);
-        $stmt->bindValue(':customer_id', $customerId, \PDO::PARAM_INT);
-        $stmt->bindValue(':store_id', $storeId, \PDO::PARAM_INT);
-        $stmt->bindValue(':language_id', $languageId, \PDO::PARAM_INT);
-        $stmt->bindValue(':start', $start, \PDO::PARAM_INT);
-        $stmt->bindValue(':limit', $limit, \PDO::PARAM_INT);
-        $stmt->execute();
-        return $stmt->fetchAll(\PDO::FETCH_ASSOC);
+        return $this->dao->executeQuery($query);
     }
 
     public function getTotalOrdersCount(int $customerId, int $storeId): int
     {
-        $sql = "SELECT COUNT(*) AS total FROM `" . DB_PREFIX . "order` WHERE customer_id = :customer_id AND order_status_id > '0' AND store_id = :store_id";
-        $stmt = $this->db->prepare($sql);
-        $stmt->execute(['customer_id' => $customerId, 'store_id' => $storeId]);
-        $row = $stmt->fetch(\PDO::FETCH_ASSOC);
-        return (int)($row['total'] ?? 0);
+        $query = (new QueryBuilder())
+            ->from(DB_PREFIX . "order")
+            ->where("customer_id = ?", [$customerId])
+            ->where("order_status_id > '0'", [])
+            ->where("store_id = ?", [$storeId]);
+
+        return $this->dao->executeCount($query);
     }
 
     public function getTotalProductsByOrderId(int $orderId): int
     {
-        $sql = "SELECT COUNT(*) AS total FROM `" . DB_PREFIX . "order_product` WHERE order_id = :order_id";
-        $stmt = $this->db->prepare($sql);
-        $stmt->execute(['order_id' => $orderId]);
-        $row = $stmt->fetch(\PDO::FETCH_ASSOC);
-        return (int)($row['total'] ?? 0);
+        $query = (new QueryBuilder())
+            ->from(DB_PREFIX . "order_product")
+            ->where("order_id = ?", [$orderId]);
+
+        return $this->dao->executeCount($query);
     }
 
     public function getProductsArray(int $orderId): array
     {
-        $sql = "SELECT *, id AS order_product_id FROM `" . DB_PREFIX . "order_product` WHERE order_id = :order_id";
-        $stmt = $this->db->prepare($sql);
-        $stmt->execute(['order_id' => $orderId]);
-        return $stmt->fetchAll(\PDO::FETCH_ASSOC);
+        $query = (new QueryBuilder())
+            ->select('*', 'id AS order_product_id')
+            ->from(DB_PREFIX . "order_product")
+            ->where("order_id = ?", [$orderId]);
+
+        return $this->dao->executeQuery($query);
     }
 
     public function getOptionsArray(int $orderId, int $orderProductId): array
     {
-        $sql = "SELECT *, id AS order_option_id FROM `" . DB_PREFIX . "order_option` WHERE order_id = :order_id AND order_product_id = :order_product_id";
-        $stmt = $this->db->prepare($sql);
-        $stmt->execute(['order_id' => $orderId, 'order_product_id' => $orderProductId]);
-        return $stmt->fetchAll(\PDO::FETCH_ASSOC);
+        $query = (new QueryBuilder())
+            ->select('*', 'id AS order_option_id')
+            ->from(DB_PREFIX . "order_option")
+            ->where("order_id = ?", [$orderId])
+            ->where("order_product_id = ?", [$orderProductId]);
+
+        return $this->dao->executeQuery($query);
     }
 
     public function getVouchersArray(int $orderId): array
     {
-        $sql = "SELECT *, id AS order_voucher_id FROM `" . DB_PREFIX . "order_voucher` WHERE order_id = :order_id";
-        $stmt = $this->db->prepare($sql);
-        $stmt->execute(['order_id' => $orderId]);
-        return $stmt->fetchAll(\PDO::FETCH_ASSOC);
+        $query = (new QueryBuilder())
+            ->select('*', 'id AS order_voucher_id')
+            ->from(DB_PREFIX . "order_voucher")
+            ->where("order_id = ?", [$orderId]);
+
+        return $this->dao->executeQuery($query);
     }
 
     public function getTotalsArray(int $orderId): array
     {
-        $sql = "SELECT *, id AS order_total_id FROM `" . DB_PREFIX . "order_total` WHERE order_id = :order_id ORDER BY sort_order";
-        $stmt = $this->db->prepare($sql);
-        $stmt->execute(['order_id' => $orderId]);
-        return $stmt->fetchAll(\PDO::FETCH_ASSOC);
+        $query = (new QueryBuilder())
+            ->select('*', 'id AS order_total_id')
+            ->from(DB_PREFIX . "order_total")
+            ->where("order_id = ?", [$orderId])
+            ->orderBy("sort_order", "ASC");
+
+        return $this->dao->executeQuery($query);
     }
 
     public function getHistoriesArray(int $orderId, int $languageId): array
     {
-        $sql = "SELECT oh.date_added, os.name AS status, oh.comment, oh.notify 
-                FROM `" . DB_PREFIX . "order_history` oh 
-                LEFT JOIN `" . DB_PREFIX . "order_status` os ON (oh.order_status_id = os.id) 
-                WHERE oh.order_id = :order_id AND os.language_id = :language_id 
-                ORDER BY oh.date_added ASC";
-        
-        $stmt = $this->db->prepare($sql);
-        $stmt->execute(['order_id' => $orderId, 'language_id' => $languageId]);
-        return $stmt->fetchAll(\PDO::FETCH_ASSOC);
+        $query = (new QueryBuilder())
+            ->select('oh.date_added', 'os.name AS status', 'oh.comment', 'oh.notify')
+            ->from(DB_PREFIX . "order_history", "oh")
+            ->leftJoin(DB_PREFIX . "order_status", "os", "oh.order_status_id = os.id")
+            ->where("oh.order_id = ?", [$orderId])
+            ->where("os.language_id = ?", [$languageId])
+            ->orderBy("oh.date_added", "ASC");
+
+        return $this->dao->executeQuery($query);
     }
 
     public function getTotalHistoriesCount(int $orderId): int
     {
-        $sql = "SELECT COUNT(*) AS total FROM `" . DB_PREFIX . "order_history` WHERE order_id = :order_id";
-        $stmt = $this->db->prepare($sql);
-        $stmt->execute(['order_id' => $orderId]);
-        $row = $stmt->fetch(\PDO::FETCH_ASSOC);
-        return (int)($row['total'] ?? 0);
+        $query = (new QueryBuilder())
+            ->from(DB_PREFIX . "order_history")
+            ->where("order_id = ?", [$orderId]);
+
+        return $this->dao->executeCount($query);
     }
 
     public function getSubscriptionArray(int $orderId, int $orderProductId): array
     {
-        $sql = "SELECT *, id AS order_subscription_id FROM `" . DB_PREFIX . "order_subscription` WHERE order_id = :order_id AND order_product_id = :order_product_id";
-        $stmt = $this->db->prepare($sql);
-        $stmt->execute(['order_id' => $orderId, 'order_product_id' => $orderProductId]);
-        return $stmt->fetch(\PDO::FETCH_ASSOC) ?: [];
+        $query = (new QueryBuilder())
+            ->select('*', 'id AS order_subscription_id')
+            ->from(DB_PREFIX . "order_subscription")
+            ->where("order_id = ?", [$orderId])
+            ->where("order_product_id = ?", [$orderProductId])
+            ->limit(1);
+
+        $results = $this->dao->executeQuery($query);
+        return $results[0] ?? [];
     }
 
     public function getOrdersBySubscriptionIdArray(int $subscriptionId, int $start = 0, int $limit = 20): array
     {
-        $sql = "SELECT o.id AS order_id, o.total, o.currency_code, o.currency_value, o.date_added 
-                FROM `" . DB_PREFIX . "order` o 
-                WHERE o.subscription_id = :subscription_id 
-                ORDER BY o.id DESC 
-                LIMIT :start, :limit";
+        $query = (new QueryBuilder())
+            ->select('o.id AS order_id', 'o.total', 'o.currency_code', 'o.currency_value', 'o.date_added')
+            ->from(DB_PREFIX . "order", "o")
+            ->where("o.subscription_id = ?", [$subscriptionId])
+            ->orderBy("o.id", "DESC")
+            ->limit($limit)
+            ->offset($start);
 
-        $stmt = $this->db->prepare($sql);
-        $stmt->bindValue(':subscription_id', $subscriptionId, \PDO::PARAM_INT);
-        $stmt->bindValue(':start', $start, \PDO::PARAM_INT);
-        $stmt->bindValue(':limit', $limit, \PDO::PARAM_INT);
-        $stmt->execute();
-        return $stmt->fetchAll(\PDO::FETCH_ASSOC);
+        return $this->dao->executeQuery($query);
     }
 
     public function getTotalOrdersBySubscriptionIdCount(int $subscriptionId): int
     {
-        $sql = "SELECT COUNT(*) AS total FROM `" . DB_PREFIX . "order` WHERE subscription_id = :subscription_id";
-        $stmt = $this->db->prepare($sql);
-        $stmt->execute(['subscription_id' => $subscriptionId]);
-        $row = $stmt->fetch(\PDO::FETCH_ASSOC);
-        return (int)($row['total'] ?? 0);
+        $query = (new QueryBuilder())
+            ->from(DB_PREFIX . "order")
+            ->where("subscription_id = ?", [$subscriptionId]);
+
+        return $this->dao->executeCount($query);
     }
 }

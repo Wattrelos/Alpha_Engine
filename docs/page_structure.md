@@ -1,75 +1,93 @@
 ## 📦 Estrutura das páginas Twig
 
 
-### Página Header
-
-ag-header
-  └── egen-header__container   (max-width: 1320px, centralizado)
-       └── egen-header__grid   (grid: 1.5fr 1fr 1fr 1fr 1fr)
-            ├── egen-header__brand-col  (logo + desc + redes sociais)
-            ├── header-column × 4       (via molecule)
-  └── ag-header-bottom
-       └── egen-header__container
-            └── egen-header__bottom-row  (copyright ←→ pagamentos)
-
-
-### Página rodapé:
-ag-footer
-  └── egen-footer__container   (max-width: 1320px, centralizado)
-       └── egen-footer__grid   (grid: 1.5fr 1fr 1fr 1fr 1fr)
-            ├── egen-footer__brand-col  (logo + desc + redes sociais)
-            ├── footer-column × 4       (via molecule)
-  └── ag-footer-bottom
-       └── egen-footer__container
-            └── egen-footer__bottom-row  (copyright ←→ pagamentos)
-
-
-### 
-
-
-
-
-
-### HTML/Twig
+resources/views/
+├── admin/                                <-- Toda a interface do painel administrativo
+│    ├── auth/                            <-- Pasta focada no fluxo de acesso
+│    │   ├── login.html.twig              <-- A tela de login do painel
+│    │   ├── forgot_password.html.twig    <-- Tela de "Esqueci minha senha"
+│    │   └── reset_password.html.twig     <-- Tela de redefinição de senha
+│    ├── layouts/
+│    │   └── components/                  <-- Componentes exclusivos do admin
+│    │   │   ├── atoms/
+│    │   │   ├── molecules/
+│    │   │   └── organisms/
+│    │   └── layouts/
+│    │       ├── base_admin.html.twig         <-- Layout com o Dashboard completo (Sidebar, Topbar)
+│    │       └── base_auth.html.twig          <-- Novo layout limpo (apenas a caixa centralizada)
+│    └── pages/ 
+│              ├── dashboard/               # Métricas e visão geral do e-commerce
+│              ├── catalog/                 # Gestão de tudo que é vendido
+│              │   ├── products/            # Produtos
+│              ├── categories/          # Categorias
+│              │   │   ├── list.html.twig       <-- Listagem/Tabela de categorias
+│              │   │   ├── create.html.twig     <-- Formulário de nova categoria
+│              │   │   └── edit.html.twig       <-- Formulário de edição
+│              │   └── brands/              # Marcas / Fabricantes
+│              ├── sales/                   # Gestão do dinheiro e pedidos
+│              │   ├── orders/              # Pedidos feitos
+│              │   ├── transactions/        # Status de pagamentos (Gateway)
+│              │   └── vouchers/            # Cupons de desconto
+│              ├── customers/               # Gestão de usuários compradores
+│              ├── inventory/               # Controle físico de estoque e fornecedores
+│              ├── configurations/          # Configurações do sistema
+│              └── users/                   # Administradores do painel (gerentes, estoquistas)
+│ 
+│ 
+├── components/
+│   ├── atoms/        # Componentes atômicos (botões, inputs, cards)
+│   ├── molecules/    # Componentes moleculares (footer-column, navbar-item, product-card)
+│   └── organisms/    # Componentes orgânicos (header, footer, sidebar, full-product-card)
+├── layouts/
+│   └── base.html.twig  # Template base principal da aplicação
+└── pages/            # Estrutura de páginas do site
+     ├── cart/
+     │    ├── cart.twig             # Carrinho de compras principal
+     │    ├── checkout.twig         # Fluxo de checkout unificado
+     │    ├── payment_method.twig   # Métodos de pagamento do checkout
+     │    ├── shipping-address.twig # Endereço de entrega do checkout
+     │    └── success.twig          # Tela de sucesso pós-checkout
+     ├── category/
+     │    └── show.html.twig        # Listagem/Filtro de categoria (Aside de filtros, lupas de marcas)
+     ├── errors/
+     │    └── 404.html.twig         # Página de erro 404
+     ├── information/
+     │    ├── contact.twig          # Formulário de contato
+     │    ├── show.html.twig        # Páginas institucionais (Termos, etc.)
+     │    └── sitemap.twig          # Mapa do site
+     ├── product/
+     │    ├── search.html.twig      # Resultados da busca de produtos
+     │    └── show.html.twig        # Detalhe do produto (Preços, opções, botão comprar)
+     └── users/
+          ├── login.twig            # Login do cliente
+          ├── register.twig         # Registro de novo cliente
+          ├── edit.html.twig        # Edição de dados do cliente
+          ├── index.html.twig       # Página geral de conta
+          ├── return.twig           # Solicitações de devoluções
+          ├── accounts/             # Subtelas do painel do cliente
+          │    ├── account.twig       # Detalhes da conta principal
+          │    ├── newsletter.twig    # Configuração de Newsletter
+          │    ├── order-history.twig # Histórico detalhado de um pedido
+          │    ├── orders.twig        # Listagem de pedidos anteriores
+          │    └── wishlist.twig      # Lista de desejos
+          └── addresses/            # Gerenciamento de endereços do cliente
+               ├── create.twig        # Novo endereço
+               ├── edit.twig          # Edição de endereço existente
+               └── index.twig         # Listagem de endereços
 
 ### Assets
-public_html/css/      # CSS Compilado
-public_html/js/       # JS Compilado
-public_html/fonts/    # Fontes
-
-
-
-resources/views/
-├── components/
-│   ├── atoms/        # componentes atômicos (botões, inputs, cards)
-│   ├── molecules/    # componentes moleculares (footer-column, navbar-item, product-card)
-│   └── organisms/    # componentes orgânicos (header, footer, sidebar, full-product-card)
-├── utilities/        # classes utilitárias (helpers)
-└── pages/            # estilos específicos por página
-     └── category
-          ├── show.html.twig
-                    🏷️ Badge "Oferta" — gradiente vermelho-laranja quando prod.special existe
-                    🖼️ Overlay hover — rgba(99,102,241,0.75) + botão pill "Ver produto"
-                    💚 Preço especial — verde #4ade80, preço original riscado em cinza
-                    🛒 Botão carrinho — gradiente índigo/violeta com glow no hover, scale no click
-
-          ├── list.html.twig
-          └── search.html.twig
-     └── users 
-          ├── register.html.twig
-          ├── login.html.twig
-          ├── email-verification.html.twig
-          └── account-dashboard.html.twig
-        
-
+public_html/
+          ├── css/                         # CSS Compilado 
+          ├── js/                          # JS Compilado
+          └── fonts/                       # Fontes
+                └── fontawesome/           # FontAwesome 6 
 
 
 
 
 ### Fontes
 
-resources/fonts/
-└── fontawesome/      # FontAwesome 6
+
 
 ### Estilos
 

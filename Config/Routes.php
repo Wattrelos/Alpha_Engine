@@ -13,10 +13,16 @@ use Alpha\Controller\Actions\Customer\Auth\LogoutAction;
 use Alpha\Controller\Actions\Customer\Auth\AccountAction;
 use Alpha\Controller\Actions\Customer\OrdersAction;
 use Alpha\Controller\Actions\Customer\OrderHistoryAction;
+use Alpha\Controller\Actions\Customer\Addresses\ShowAddressesAction;
+use Alpha\Controller\Actions\Customer\Addresses\CreateAddressAction;
+use Alpha\Controller\Actions\Customer\Addresses\EditAddressAction;
+use Alpha\Controller\Actions\Customer\Addresses\DeleteAddressAction;
 use Alpha\Controller\Actions\Product\ShowProductAction;
 use Alpha\Controller\Actions\Category\ShowCategoryAction;
 use Alpha\Controller\Actions\Information\ShowInformationAction;
 use Alpha\Controller\Actions\Information\ShowSitemapAction;
+use Alpha\Controller\Actions\Information\ShowContactAction;
+use Alpha\Controller\Actions\Product\ProductReturnsAction;
 use Alpha\Controller\Actions\Product\SearchProductsAction;
 use Alpha\Controller\Actions\Cart\ShowCartAction;
 use Alpha\Controller\Actions\Cart\AddCartAction;
@@ -32,6 +38,22 @@ use Alpha\Controller\Actions\Location\GetZonesAction;
 return function (\Slim\App $app) {
 
     // ─────────────────────────────────────────────────────────
+    // ROTAS DO PAINEL ADMINISTRATIVO (ADMIN)
+    // ─────────────────────────────────────────────────────────
+    if (defined('APPLICATION') && APPLICATION === 'admin') {
+        $app->get('/', \Alpha\Admin\Controllers\Actions\Auth\ShowLoginAction::class)->setName('admin.login.form');
+        $app->post('/login', \Alpha\Admin\Controllers\Actions\Auth\LoginAction::class)->setName('admin.login.submit');
+        
+        // Grupo de rotas protegidas do painel administrativo
+        $app->group('', function (RouteCollectorProxy $group) {
+            $group->get('/dashboard', \Alpha\Admin\Controllers\Actions\Dashboard\ViewDashboardAction::class)->setName('admin.dashboard');
+            $group->get('/logout', \Alpha\Admin\Controllers\Actions\Auth\LogoutAction::class)->setName('admin.logout');
+        })->add(new \Alpha\Auth\Middleware\AdminSessionMiddleware());
+        
+        return;
+    }
+
+    // ─────────────────────────────────────────────────────────
     // 1. REDIRECIONAMENTOS DE COMPATIBILIDADE / FALLBACKS DE IDIOMA
     // ─────────────────────────────────────────────────────────
     // Redirecionamentos para o idioma padrão
@@ -41,6 +63,8 @@ return function (\Slim\App $app) {
     $app->get('/logout', RedirectToDefaultLanguageAction::class);
     $app->get('/carrinho', RedirectToDefaultLanguageAction::class);
     $app->get('/busca', RedirectToDefaultLanguageAction::class);
+    $app->map(['GET', 'POST'], '/contato', RedirectToDefaultLanguageAction::class);
+    $app->map(['GET', 'POST'], '/contact', RedirectToDefaultLanguageAction::class);
 
     $app->map(['GET', 'POST'], '/checkout', RedirectToDefaultLanguageAction::class);
 
@@ -48,6 +72,11 @@ return function (\Slim\App $app) {
         $account->get('', RedirectToDefaultLanguageAction::class);
         $account->get('/orders', RedirectToDefaultLanguageAction::class);
         $account->get('/order/history/{order_id}', RedirectToDefaultLanguageAction::class);
+        $account->get('/addresses', RedirectToDefaultLanguageAction::class);
+        $account->get('/address/create', RedirectToDefaultLanguageAction::class);
+        $account->get('/address/{address_id:[0-9]+}/edit', RedirectToDefaultLanguageAction::class);
+        $account->get('/address/{address_id:[0-9]+}/delete', RedirectToDefaultLanguageAction::class);
+        $account->get('/return', RedirectToDefaultLanguageAction::class);
     });
 
     // ─────────────────────────────────────────────────────────
@@ -61,6 +90,9 @@ return function (\Slim\App $app) {
 
     // API para buscar estados (zones) de um país específico
     $app->get('/api/paises/{country_id:[0-9]+}/estados', GetZonesAction::class);
+
+    // API para salvar dados de CEP/ViaCEP consultados
+    $app->post('/api/carrinho/salvar-cep', \Alpha\Controller\Actions\Cart\SaveShippingCepAction::class);
 
     // ─────────────────────────────────────────────────────────
     // 3. GRUPO DE ROTAS INTERNACIONALIZADAS
@@ -86,6 +118,15 @@ return function (\Slim\App $app) {
             $account->get('', AccountAction::class)->setName('account.index');
             $account->get('/orders', OrdersAction::class)->setName('account.orders');
             $account->get('/order/history/{order_id}', OrderHistoryAction::class)->setName('account.order.history');
+            $account->get('/return', ProductReturnsAction::class)->setName('account.returns');
+
+            // ── Endereços ────────────────────────────────────────────────────
+            $account->get('/addresses', ShowAddressesAction::class)->setName('account.addresses');
+            $account->get('/address/create', CreateAddressAction::class)->setName('account.address.create');
+            $account->post('/address/create', CreateAddressAction::class);
+            $account->get('/address/{address_id:[0-9]+}/edit',   EditAddressAction::class)->setName('account.address.edit');
+            $account->post('/address/{address_id:[0-9]+}/edit',  EditAddressAction::class);
+            $account->get('/address/{address_id:[0-9]+}/delete', DeleteAddressAction::class)->setName('account.address.delete');
         })->add(new SessionMiddleware());
 
         // Detalhe do Produto, Categoria e Institucional (SEO)
@@ -99,6 +140,12 @@ return function (\Slim\App $app) {
         $group->get('/informacao/sitemap', ShowSitemapAction::class);
         $group->get('/information/sitemap', ShowSitemapAction::class);
         $group->get('/infomation/sitemap', ShowSitemapAction::class);
+
+        // Contato (Contact)
+        $group->map(['GET', 'POST'], '/contato', ShowContactAction::class)->setName('contact');
+        $group->map(['GET', 'POST'], '/contact', ShowContactAction::class);
+        $group->map(['GET', 'POST'], '/informacao/contato', ShowContactAction::class);
+        $group->map(['GET', 'POST'], '/information/contact', ShowContactAction::class);
 
         // Busca de Produtos
         $group->get('/busca', SearchProductsAction::class)->setName('search');
@@ -114,5 +161,6 @@ return function (\Slim\App $app) {
         $group->post('/checkout', SubmitCheckoutAction::class)->setName('checkout.submit');
         $group->get('/checkout/sucesso', ShowSuccessAction::class)->setName('checkout.success');
     });
+
 };
 

@@ -1,16 +1,19 @@
 <!-- Formulário de Endereço de Entrega -->
-<div id="checkout-shipping-address" class="egen-checkout-form-hidden shipping-address-premium">
+<div
+	id="checkout-shipping-address" class="egen-checkout-form-hidden shipping-address-premium">
 	<!-- Campos do endereço -->
 	<div class="egen-form-grid-premium">
 		<div class="egen-form-group-premium">
 			<label for="input-shipping-firstname" class="egen-form-label-premium">
-				{{ entry_firstname }} <span class="text-danger">*</span>
+				{{ entry_firstname }}
+				<span class="text-danger">*</span>
 			</label>
 			<input type="text" name="shipping_firstname" value="{{ shipping_firstname }}" placeholder="{{ entry_firstname }}" id="input-shipping-firstname" class="egen-form-input-premium" required/>
 		</div>
 		<div class="egen-form-group-premium">
 			<label for="input-shipping-lastname" class="egen-form-label-premium">
-				{{ entry_lastname }} <span class="text-danger">*</span>
+				{{ entry_lastname }}
+				<span class="text-danger">*</span>
 			</label>
 			<input type="text" name="shipping_lastname" value="{{ shipping_lastname }}" placeholder="{{ entry_lastname }}" id="input-shipping-lastname" class="egen-form-input-premium" required/>
 		</div>
@@ -22,37 +25,22 @@
 			<input type="text" name="shipping_company" value="{{ shipping_company }}" placeholder="{{ entry_company }}" id="input-shipping-company" class="egen-form-input-premium"/>
 		</div>
 		<div class="egen-form-group-premium">
-			<label for="input-shipping-country" class="egen-form-label-premium">
-				{{ entry_country }} <span class="text-danger">*</span>
-			</label>
-			<div class="select-wrapper-premium">
-				<select name="shipping_country_id" id="input-shipping-country" class="egen-form-select-premium">
-					<option value="">{{ text_select }}</option>
-					{% for country in countries %}
-						{% if country.country_id == shipping_country_id or (shipping_country_id is empty and country.country_id == 30) %}
-							<option value="{{ country.country_id }}" selected>{{ country.name }}</option>
-						{% else %}
-							<option value="{{ country.country_id }}">{{ country.name }}</option>
-						{% endif %}
-					{% endfor %}
-				</select>
-				<span class="select-arrow-premium">
-					<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
-				</span>
-			</div>
+			<input type="hidden" name="shipping_country_id" id="input-shipping-country" value="30"/>
 		</div>
 	</div>
 
 	<div class="egen-form-grid-premium">
 		<div class="egen-form-group-premium">
 			<label for="input-shipping-postcode" class="egen-form-label-premium">
-				{{ entry_postcode }} <span class="text-danger">*</span>
+				{{ entry_postcode }}
+				<span class="text-danger">*</span>
 			</label>
 			<input type="text" name="shipping_postcode" value="{{ shipping_postcode }}" placeholder="{{ entry_postcode }}" id="input-shipping-postcode" class="egen-form-input-premium" required/>
 		</div>
 		<div class="egen-form-group-premium">
 			<label for="input-shipping-address-1" class="egen-form-label-premium">
-				{{ entry_address_1 }} <span class="text-danger">*</span>
+				{{ entry_address_1 }}
+				<span class="text-danger">*</span>
 			</label>
 			<input type="text" name="shipping_address_1" value="{{ shipping_address_1 }}" placeholder="{{ entry_address_1 }}" id="input-shipping-address-1" class="egen-form-input-premium" required/>
 		</div>
@@ -61,9 +49,10 @@
 	<div class="egen-form-grid-premium">
 		<div class="egen-form-group-premium">
 			<label for="input-shipping-number" class="egen-form-label-premium">
-				Número <span class="text-danger">*</span>
+				Número
+				<span class="text-danger">*</span>
 			</label>
-			<input type="text" name="shipping_number" value="{{ shipping_number }}" placeholder="Número" id="input-shipping-number" class="egen-form-input-premium" required/>
+			<input type="number" name="shipping_number" value="{{ shipping_number }}" placeholder="Número" id="input-shipping-number" class="egen-form-input-premium" required/>
 		</div>
 		<div class="egen-form-group-premium">
 			<label for="input-shipping-address-2" class="egen-form-label-premium">{{ entry_address_2 }}</label>
@@ -74,13 +63,15 @@
 	<div class="egen-form-grid-premium">
 		<div class="egen-form-group-premium">
 			<label for="input-shipping-neighborhood" class="egen-form-label-premium">
-				Bairro <span class="text-danger">*</span>
+				Bairro
+				<span class="text-danger">*</span>
 			</label>
 			<input type="text" name="shipping_neighborhood" value="{{ shipping_neighborhood }}" placeholder="Bairro" id="input-shipping-neighborhood" class="egen-form-input-premium" required/>
 		</div>
 		<div class="egen-form-group-premium">
 			<label for="input-shipping-city" class="egen-form-label-premium">
-				{{ entry_city }} <span class="text-danger">*</span>
+				{{ entry_city }}
+				<span class="text-danger">*</span>
 			</label>
 			<input type="text" name="shipping_city" value="{{ shipping_city }}" placeholder="{{ entry_city }}" id="input-shipping-city" class="egen-form-input-premium" required/>
 		</div>
@@ -89,16 +80,10 @@
 	<div class="egen-form-grid-premium">
 		<div class="egen-form-group-premium">
 			<label for="input-shipping-zone" class="egen-form-label-premium">
-				{{ entry_zone }} <span class="text-danger">*</span>
+				Estado
+				<span class="text-danger">*</span>
 			</label>
-			<div class="select-wrapper-premium">
-				<select name="shipping_zone_id" id="input-shipping-zone" class="egen-form-select-premium" data-selected-zone="{{ shipping_zone_id }}">
-					<option value="">{{ text_select }}</option>
-				</select>
-				<span class="select-arrow-premium">
-					<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
-				</span>
-			</div>
+			<input type="text" name="shipping_zone_id" id="input-shipping-zone" value="{{ shipping_zone_id }}" placeholder="Estado" class="egen-form-input-premium" readonly required/>
 		</div>
 		<div class="egen-form-group-premium"></div>
 	</div>

@@ -51,6 +51,55 @@ class Checkout implements ActionInterface
         // Mapear dados da sessão (se existirem)
         $session = $this->registry->get('session');
 
+        $paymentAddress = $session->data['payment_address'] ?? [];
+        $shippingAddress = $session->data['shipping_address'] ?? [];
+
+        // Se o cliente estiver logado, tenta recuperar o endereço padrão do banco de dados
+        $customer = $this->registry->get('customer');
+        if ($customer && $customer->isLogged()) {
+            $customerId = (int)$customer->getId();
+            if (empty($paymentAddress)) {
+                /** @var \Alpha\Model\Domain\Repositories\AddressRepository $addressRepository */
+                $addressRepository = $repositoryFactory->get(\Alpha\Model\Domain\Repositories\AddressRepository::class);
+                $defaultAddress = $addressRepository->getDefaultAddress($customerId);
+                if ($defaultAddress) {
+                    $paymentAddress = $addressRepository->getAddress($defaultAddress->getId());
+                }
+            }
+            if (empty($shippingAddress)) {
+                $shippingAddress = $paymentAddress;
+            }
+        }
+
+        // Se payment_address estiver vazio mas shipping_address tiver dados do ViaCEP/simulador
+        if (empty($paymentAddress) && !empty($shippingAddress)) {
+            $paymentAddress = $shippingAddress;
+        }
+        if (empty($shippingAddress) && !empty($paymentAddress)) {
+            $shippingAddress = $paymentAddress;
+        }
+
+        // Resolução de UF (código do estado como SP, RJ) a partir de IDs de estados, se necessário
+        /** @var \Alpha\Model\Domain\Repositories\ZoneRepository $zoneRepository */
+        $zoneRepository = $repositoryFactory->get(\Alpha\Model\Domain\Repositories\ZoneRepository::class);
+
+        $getZoneCode = function($address) use ($zoneRepository) {
+            if (isset($address['zone']) && !empty($address['zone']) && !is_numeric($address['zone'])) {
+                return $address['zone'];
+            }
+            if (isset($address['zone_id']) && !empty($address['zone_id'])) {
+                /** @var \Alpha\Model\Domain\Entities\Zone|null $zone */
+                $zone = $zoneRepository->find((int)$address['zone_id']);
+                if ($zone) {
+                    return $zone->getCode();
+                }
+            }
+            return '';
+        };
+
+        $paymentZoneCode = $getZoneCode($paymentAddress);
+        $shippingZoneCode = $getZoneCode($shippingAddress);
+
         $viewData = array_merge($languageData, [
             'breadcrumbs' => $breadcrumbs,
             'countries'   => $countries,
@@ -60,29 +109,29 @@ class Checkout implements ActionInterface
             'error_warning' => $session->data['error'] ?? '',
             
             // Valores padrão dos campos de endereço / cadastro
-            'payment_firstname' => $session->data['payment_address']['firstname'] ?? '',
-            'payment_lastname'  => $session->data['payment_address']['lastname'] ?? '',
-            'payment_company'   => $session->data['payment_address']['company'] ?? '',
-            'payment_address_1' => $session->data['payment_address']['address_1'] ?? '',
-            'payment_number'    => $session->data['payment_address']['number'] ?? '',
-            'payment_address_2' => $session->data['payment_address']['address_2'] ?? '',
-            'payment_neighborhood' => $session->data['payment_address']['neighborhood'] ?? '',
-            'payment_city'      => $session->data['payment_address']['city'] ?? '',
-            'payment_postcode'  => $session->data['payment_address']['postcode'] ?? '',
-            'payment_country_id'=> $session->data['payment_address']['country_id'] ?? $config->get('config_country_id'),
-            'payment_zone_id'   => $session->data['payment_address']['zone_id'] ?? $config->get('config_zone_id'),
+            'payment_firstname' => $paymentAddress['firstname'] ?? ($customer ? $customer->getFirstname() : ''),
+            'payment_lastname'  => $paymentAddress['lastname'] ?? ($customer ? $customer->getLastname() : ''),
+            'payment_company'   => $paymentAddress['company'] ?? '',
+            'payment_address_1' => $paymentAddress['address_1'] ?? '',
+            'payment_number'    => $paymentAddress['number'] ?? '',
+            'payment_address_2' => $paymentAddress['address_2'] ?? '',
+            'payment_neighborhood' => $paymentAddress['neighborhood'] ?? '',
+            'payment_city'      => $paymentAddress['city'] ?? '',
+            'payment_postcode'  => $paymentAddress['postcode'] ?? '',
+            'payment_country_id'=> $paymentAddress['country_id'] ?? $config->get('config_country_id'),
+            'payment_zone_id'   => !empty($paymentZoneCode) ? $paymentZoneCode : ($config->get('config_zone_id') ? $getZoneCode(['zone_id' => $config->get('config_zone_id')]) : ''),
             
-            'shipping_firstname' => $session->data['shipping_address']['firstname'] ?? '',
-            'shipping_lastname'  => $session->data['shipping_address']['lastname'] ?? '',
-            'shipping_company'   => $session->data['shipping_address']['company'] ?? '',
-            'shipping_address_1' => $session->data['shipping_address']['address_1'] ?? '',
-            'shipping_number'    => $session->data['shipping_address']['number'] ?? '',
-            'shipping_address_2' => $session->data['shipping_address']['address_2'] ?? '',
-            'shipping_neighborhood' => $session->data['shipping_address']['neighborhood'] ?? '',
-            'shipping_city'      => $session->data['shipping_address']['city'] ?? '',
-            'shipping_postcode'  => $session->data['shipping_address']['postcode'] ?? '',
-            'shipping_country_id'=> $session->data['shipping_address']['country_id'] ?? $config->get('config_country_id'),
-            'shipping_zone_id'   => $session->data['shipping_address']['zone_id'] ?? $config->get('config_zone_id'),
+            'shipping_firstname' => $shippingAddress['firstname'] ?? ($customer ? $customer->getFirstname() : ''),
+            'shipping_lastname'  => $shippingAddress['lastname'] ?? ($customer ? $customer->getLastname() : ''),
+            'shipping_company'   => $shippingAddress['company'] ?? '',
+            'shipping_address_1' => $shippingAddress['address_1'] ?? '',
+            'shipping_number'    => $shippingAddress['number'] ?? '',
+            'shipping_address_2' => $shippingAddress['address_2'] ?? '',
+            'shipping_neighborhood' => $shippingAddress['neighborhood'] ?? '',
+            'shipping_city'      => $shippingAddress['city'] ?? '',
+            'shipping_postcode'  => $shippingAddress['postcode'] ?? '',
+            'shipping_country_id'=> $shippingAddress['country_id'] ?? $config->get('config_country_id'),
+            'shipping_zone_id'   => !empty($shippingZoneCode) ? $shippingZoneCode : ($config->get('config_zone_id') ? $getZoneCode(['zone_id' => $config->get('config_zone_id')]) : ''),
         ]);
 
         unset($session->data['error']);

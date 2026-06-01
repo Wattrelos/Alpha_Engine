@@ -9,6 +9,7 @@ class Session
     public function __construct()
     {
         if (session_status() === PHP_SESSION_NONE && !headers_sent()) {
+            session_name('session_id');
             @session_start();
         }
         if (!isset($_SESSION) || !is_array($_SESSION)) {

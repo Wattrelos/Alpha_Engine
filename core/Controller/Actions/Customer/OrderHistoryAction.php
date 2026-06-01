@@ -27,6 +27,7 @@ class OrderHistoryAction implements ActionInterface
         $order_id = (int)($args['order_id'] ?? 0);
         
         // O método getOrder já filtra pelo ID do cliente logado internamente
+        // O método getOrder já filtra pelo ID do cliente logado internamente
         $order = $this->orderRepository->getOrder($order_id);
 
         if (!$order) {
@@ -46,9 +47,10 @@ class OrderHistoryAction implements ActionInterface
             ['text' => 'Início', 'href' => $routeParser->urlFor('home', ['lang' => $lang])],
             ['text' => 'Minha Conta', 'href' => $routeParser->urlFor('account.index', ['lang' => $lang])],
             ['text' => 'Meus Pedidos', 'href' => $routeParser->urlFor('account.orders', ['lang' => $lang])],
-            ['text' => 'Histórico do Pedido #' . $order_id, 'href' => $routeParser->urlFor('account.order.history', ['lang' => $lang, 'order_id' => (string)$order_id])]
+            ['text' => 'Pedido #' . $order_id, 'href' => $routeParser->urlFor('account.order.history', ['lang' => $lang, 'order_id' => (string)$order_id])]
         ];
 
+        // Histórico de status
         $historiesData = $this->orderRepository->getHistories($order_id);
         $histories = [];
         foreach ($historiesData as $history) {
@@ -59,16 +61,105 @@ class OrderHistoryAction implements ActionInterface
             ];
         }
 
+        // Produtos do Pedido
+        $productsData = $this->orderRepository->getProducts($order_id);
+        $products = [];
+        foreach ($productsData as $product) {
+            $optionsData = $this->orderRepository->getOptions($order_id, (int)$product['order_product_id']);
+            $options = [];
+            foreach ($optionsData as $option) {
+                $options[] = [
+                    'name'  => $option['name'],
+                    'value' => $option['value']
+                ];
+            }
+            $products[] = [
+                'name'     => $product['name'],
+                'model'    => $product['model'],
+                'quantity' => $product['quantity'],
+                'price'    => 'R$ ' . number_format((float)$product['price'], 2, ',', '.'),
+                'total'    => 'R$ ' . number_format((float)$product['total'], 2, ',', '.'),
+                'option'   => $options
+            ];
+        }
+
+        // Totais (Subtotal, Frete, Total etc.)
+        $totalsData = $this->orderRepository->getTotals($order_id);
+        $totals = [];
+        foreach ($totalsData as $total) {
+            $totals[] = [
+                'title' => $total['title'],
+                'text'  => 'R$ ' . number_format((float)$total['value'], 2, ',', '.')
+            ];
+        }
+
+        // Formatação dos Endereços
+        $paymentAddress = '';
+        if ($order['payment_firstname']) {
+            $paymentAddress = $order['payment_firstname'] . ' ' . $order['payment_lastname'] . '<br/>';
+            if ($order['payment_company']) {
+                $paymentAddress .= $order['payment_company'] . '<br/>';
+            }
+            $paymentAddress .= $order['payment_address_1'] . ($order['payment_number'] ? ', ' . $order['payment_number'] : '') . '<br/>';
+            if ($order['payment_address_2']) {
+                $paymentAddress .= $order['payment_address_2'] . '<br/>';
+            }
+            if ($order['payment_neighborhood']) {
+                $paymentAddress .= $order['payment_neighborhood'] . '<br/>';
+            }
+            $paymentAddress .= $order['payment_city'] . ' - ' . $order['payment_zone'] . '<br/>';
+            $paymentAddress .= $order['payment_postcode'];
+        }
+
+        $shippingAddress = '';
+        if ($order['shipping_firstname']) {
+            $shippingAddress = $order['shipping_firstname'] . ' ' . $order['shipping_lastname'] . '<br/>';
+            if ($order['shipping_company']) {
+                $shippingAddress .= $order['shipping_company'] . '<br/>';
+            }
+            $shippingAddress .= $order['shipping_address_1'] . ($order['shipping_number'] ? ', ' . $order['shipping_number'] : '') . '<br/>';
+            if ($order['shipping_address_2']) {
+                $shippingAddress .= $order['shipping_address_2'] . '<br/>';
+            }
+            if ($order['shipping_neighborhood']) {
+                $shippingAddress .= $order['shipping_neighborhood'] . '<br/>';
+            }
+            $shippingAddress .= $order['shipping_city'] . ' - ' . $order['shipping_zone'] . '<br/>';
+            $shippingAddress .= $order['shipping_postcode'];
+        }
+
         $data = [
-            'breadcrumbs'       => $breadcrumbs,
-            'column_date_added' => 'Data de Envio',
-            'column_comment'    => 'Comentários',
-            'column_status'     => 'Situação',
-            'text_no_results'   => 'Nenhum histórico encontrado para este pedido.',
-            'histories'         => $histories,
-            'continue'          => $routeParser->urlFor('account.orders', ['lang' => $lang]),
-            'pagination'        => '',
-            'results'           => ''
+            'breadcrumbs'          => $breadcrumbs,
+            'heading_title'        => 'Pedido #' . $order_id,
+            'order_id'             => $order_id,
+            'date_added'           => date('d/m/Y H:i:s', strtotime($order['date_added'])),
+            'payment_method'       => $order['payment_method'],
+            'shipping_method'      => $order['shipping_method'],
+            'payment_address'      => $paymentAddress,
+            'shipping_address'     => $shippingAddress,
+            'products'             => $products,
+            'totals'               => $totals,
+            'comment'              => nl2br(htmlspecialchars($order['comment'])),
+            
+            'column_date_added'    => 'Data de Envio',
+            'column_comment'       => 'Comentários',
+            'column_status'        => 'Situação',
+            'column_name'          => 'Nome do Produto',
+            'column_model'         => 'Modelo',
+            'column_quantity'      => 'Quantidade',
+            'column_price'         => 'Preço Unitário',
+            'column_total'         => 'Total',
+            'text_no_results'      => 'Nenhum histórico encontrado para este pedido.',
+            'text_order_detail'    => 'Detalhes do Pedido',
+            'text_instruction'     => 'Instruções / Comentários',
+            'text_history'         => 'Histórico de Situações',
+            'text_payment_address' => 'Endereço de Faturamento',
+            'text_shipping_address'=> 'Endereço de Entrega',
+            
+            'histories'            => $histories,
+            'continue'             => $routeParser->urlFor('account.orders', ['lang' => $lang]),
+            'pagination'           => '',
+            'results'              => ''
         ];
 
         $html = $this->twig->render('pages/users/accounts/order-history.twig', $data);

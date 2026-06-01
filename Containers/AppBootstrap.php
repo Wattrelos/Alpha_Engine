@@ -8,6 +8,7 @@ use Alpha\Model\Domain\Repositories\RepositoryFactory;
 use Alpha\Model\Domain\Repositories\SettingRepository;
 use Alpha\Model\Domain\Repositories\LanguageRepository;
 use Alpha\Model\Domain\Repositories\CustomerRepository;
+use Alpha\Model\Domain\Repositories\UserRepository;
 use Alpha\Model\Domain\Repositories\SessionRepository;
 use Alpha\Model\Domain\Repositories\CategoryRepository;
 use Alpha\Model\Domain\Repositories\ProductRepository;
@@ -16,9 +17,12 @@ use Alpha\Model\Domain\Repositories\InformationRepository;
 use Alpha\Model\Domain\Repositories\OrderRepository;
 use Alpha\Model\Domain\Repositories\CartRepository;
 use Alpha\Model\Domain\Repositories\SitemapRepository;
+use Alpha\Model\Domain\Repositories\OrderReturnRepository;
 use Alpha\Model\Domain\Repositories\ManufacturerRepository;
+use Alpha\Model\Domain\Repositories\AddressRepository;
 use Alpha\Session\AlphaSessionHandler;
-use Alpha\Auth\Services\AuthService;
+use Alpha\Auth\Services\CustomerAuthService;
+use Alpha\Auth\Services\AdminAuthService;
 use Alpha\Support\Config;
 use Alpha\Support\Language;
 use Alpha\Support\Session;
@@ -72,7 +76,9 @@ class AppBootstrap
         $settingRepository = new SettingRepository($mapperFactory, $this->registry);
         $this->languageRepository = new LanguageRepository($mapperFactory, $this->registry);
         $customerRepository = new CustomerRepository($mapperFactory, $this->registry);
-        $authService = new AuthService($customerRepository);
+        $userRepository = new UserRepository($mapperFactory, $this->registry);
+        $customerAuthService = new CustomerAuthService($customerRepository);
+        $adminAuthService = new AdminAuthService($userRepository);
 
         $sessionRepository = new SessionRepository($mapperFactory, $this->registry);
         $sessionHandler = new AlphaSessionHandler($sessionRepository);
@@ -101,7 +107,7 @@ class AppBootstrap
         $this->registry->set('language', $languageAdaptor);
         $this->registry->set('session', new Session());
         $this->registry->set('customer', new Customer());
-        $this->registry->set('tax', new Tax());
+        $this->registry->set('tax', new Tax($this->registry));
         $this->registry->set('currency', new Currency($languageAdaptor));
         $this->registry->set('weight', new Weight($this->registry));
         $this->registry->set('url', new Url());
@@ -116,6 +122,8 @@ class AppBootstrap
         $cartRepository = $repositoryFactory->get(CartRepository::class);
         $sitemapRepository = $repositoryFactory->get(SitemapRepository::class);
         $manufacturerRepository = $repositoryFactory->get(ManufacturerRepository::class);
+        $addressRepository = $repositoryFactory->get(AddressRepository::class);
+        $orderReturnRepository = $repositoryFactory->get(OrderReturnRepository::class);
 
         // Bindings no Container de Dependências
         $this->container
@@ -123,7 +131,9 @@ class AppBootstrap
             ->bind(SettingRepository::class, $settingRepository)
             ->bind(LanguageRepository::class, $this->languageRepository)
             ->bind(CustomerRepository::class, $customerRepository)
-            ->bind(AuthService::class, $authService)
+            ->bind(UserRepository::class, $userRepository)
+            ->bind(CustomerAuthService::class, $customerAuthService)
+            ->bind(AdminAuthService::class, $adminAuthService)
             ->bind(SessionRepository::class, $sessionRepository)
             ->bind(ProductRepository::class, $productRepository)
             ->bind(SeoUrlRepository::class, $this->seoUrlRepository)
@@ -132,6 +142,8 @@ class AppBootstrap
             ->bind(CartRepository::class, $cartRepository)
             ->bind(SitemapRepository::class, $sitemapRepository)
             ->bind(ManufacturerRepository::class, $manufacturerRepository)
+            ->bind(AddressRepository::class, $addressRepository)
+            ->bind(OrderReturnRepository::class, $orderReturnRepository)
             ->bind(Registry::class, $this->registry);
     }
 

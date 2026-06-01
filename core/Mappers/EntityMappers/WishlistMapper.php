@@ -20,13 +20,13 @@ class WishlistMapper extends BaseMapper {
      * @return array
      */
     public function getWishlist(int $customer_id, int $store_id): array {
-        $sql = "SELECT * FROM `" . $this->getFullTableName() . "` WHERE `customer_id` = :customer_id AND `store_id` = :store_id";
-        $stmt = $this->db->prepare($sql);
-        $stmt->execute([
-            'customer_id' => $customer_id,
-            'store_id'    => $store_id
-        ]);
-        return $stmt->fetchAll(\PDO::FETCH_ASSOC);
+        $query = (new QueryBuilder())
+            ->select('*')
+            ->from($this->getFullTableName())
+            ->where("customer_id = ?", [$customer_id])
+            ->where("store_id = ?", [$store_id]);
+
+        return $this->dao->executeQuery($query);
     }
 
     /**
@@ -42,8 +42,7 @@ class WishlistMapper extends BaseMapper {
         $this->deleteWishlist($customer_id, $product_id, $store_id);
 
         $sql = "INSERT INTO `" . $this->getFullTableName() . "` SET `customer_id` = :customer_id, `store_id` = :store_id, `product_id` = :product_id, `date_added` = NOW()";
-        $stmt = $this->db->prepare($sql);
-        $stmt->execute([
+        $this->dao->executeRawSQL($sql, [
             'customer_id' => $customer_id,
             'store_id'    => $store_id,
             'product_id'  => $product_id
@@ -63,19 +62,16 @@ class WishlistMapper extends BaseMapper {
             $store_id = (int)$this->registry->get('config')->get('config_store_id');
         }
 
-        $sql = "DELETE FROM `" . $this->getFullTableName() . "` WHERE `customer_id` = :customer_id AND `store_id` = :store_id";
-        $params = [
-            'customer_id' => $customer_id,
-            'store_id'    => $store_id
-        ];
+        $query = (new QueryBuilder())
+            ->delete($this->getFullTableName())
+            ->where("customer_id = ?", [$customer_id])
+            ->where("store_id = ?", [$store_id]);
 
         if ($product_id > 0) {
-            $sql .= " AND `product_id` = :product_id";
-            $params['product_id'] = $product_id;
+            $query->where("product_id = ?", [$product_id]);
         }
 
-        $stmt = $this->db->prepare($sql);
-        $stmt->execute($params);
+        $this->dao->execute($query);
     }
 
     /**
@@ -86,13 +82,11 @@ class WishlistMapper extends BaseMapper {
      * @return int
      */
     public function getTotalWishlist(int $customer_id, int $store_id = 0): int {
-        $sql = "SELECT COUNT(*) AS `total` FROM `" . $this->getFullTableName() . "` WHERE `customer_id` = :customer_id AND `store_id` = :store_id";
-        $stmt = $this->db->prepare($sql);
-        $stmt->execute([
-            'customer_id' => $customer_id,
-            'store_id'    => $store_id
-        ]);
-        $row = $stmt->fetch(\PDO::FETCH_ASSOC);
-        return (int)($row['total'] ?? 0);
+        $query = (new QueryBuilder())
+            ->from($this->getFullTableName())
+            ->where("customer_id = ?", [$customer_id])
+            ->where("store_id = ?", [$store_id]);
+
+        return $this->dao->executeCount($query);
     }
 }

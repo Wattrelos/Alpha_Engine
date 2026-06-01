@@ -1,8 +1,6 @@
 <?php
 // Determina o caminho raiz do projeto de forma dinâmica
 $root = str_replace('\\', '/', realpath(__DIR__)) . '/';
-// APPLICATION
-define('APPLICATION', 'Catalog');
 
 // HTTP
 define('HTTP_SERVER', 'http://' . ($_SERVER['HTTP_HOST'] ?? 'localhost') . '/');

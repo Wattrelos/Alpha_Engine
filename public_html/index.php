@@ -12,16 +12,23 @@ use Alpha\Auth\Middleware\LegacyRouteRedirectMiddleware;
 
 require __DIR__ . '/../vendor/autoload.php';
 
+// Redireciona caminhos do admin localizados (ex: /pt-br/LPDHED2dC7Gjrg2b/) de volta para o admin correto
+$requestUri = $_SERVER['REQUEST_URI'] ?? '';
+if (preg_match('#^/(pt-br|en|es)/LPDHED2dC7Gjrg2b(/.*)?$#i', $requestUri, $matches)) {
+    $remaining = $matches[2] ?? '';
+    header('Location: /LPDHED2dC7Gjrg2b' . $remaining, true, 302);
+    exit;
+}
+
 // ─────────────────────────────────────────────────────────
 // 1. BANCO DE DADOS
 //    config.php define apenas as constantes DB_* e DIR_*.
 //    Não inicializa o framework do OpenCart — apenas defines.
 // ─────────────────────────────────────────────────────────
-require_once __DIR__ . '/../config.php';
-
 if (!defined('APPLICATION')) {
     define('APPLICATION', 'catalog');
 }
+require_once __DIR__ . '/../config.php';
 
 // ─────────────────────────────────────────────────────────
 // 2. BOOTSTRAP DA ALPHA ENGINE

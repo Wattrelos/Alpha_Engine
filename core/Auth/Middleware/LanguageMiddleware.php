@@ -91,6 +91,13 @@ class LanguageMiddleware
             }
         }
 
+        $session = $this->registry->get('session');
+        $shippingCep = '';
+        if ($session && !empty($session->data['shipping_cep'])) {
+            $shippingCep = (string)$session->data['shipping_cep'];
+        }
+        $this->twig->addGlobal('shipping_cep', $shippingCep);
+
         return $handler->handle($request);
     }
 
@@ -125,7 +132,7 @@ class LanguageMiddleware
                 session_id($sessionId);
                 @session_start();
             }
-            $expire = $_SESSION['expire'] ?? 0;
+            $expire = $_SESSION['expire'] ?? $_SESSION['logged_user_expire'] ?? 0;
             if ($expire > time() && !empty($_SESSION['logged_user'])) {
                 return true;
             }

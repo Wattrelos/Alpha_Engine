@@ -29,8 +29,9 @@ vendor/
 composer.lock
 
 # Root:
+.agent/
 .aiexclude
-GEMINI.md
+.gemini/
 
 # Environment and IDEs
 .env
