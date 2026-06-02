@@ -2,7 +2,7 @@
 
 namespace Alpha\Services\Shipping;
 
-use Opencart\System\Engine\Registry;
+use Alpha\Support\Registry;
 
 /**
  * FreeShippingService - Gerencia a lógica de cálculo para o método de frete grátis.

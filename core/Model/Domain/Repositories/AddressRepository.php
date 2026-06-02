@@ -1,21 +1,32 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Alpha\Model\Domain\Repositories;
 
 use Alpha\Model\Domain\Entities\Address;
 use Alpha\Mappers\EntityMappers\AddressMapper;
 use Alpha\Model\Domain\InterfaceEntity;
-
 use Alpha\Model\Domain\Repositories\CountryRepository;
+use Alpha\Model\Domain\Repositories\CustomerRepository;
 use Alpha\Model\Domain\Repositories\ZoneRepository;
-use Alpha\Model\Domain\Repositories\CustomFieldRepository;
 
 /**
  * AddressRepository
- * Centraliza buscas seguras referentes aos endereços de clientes.
+ *
+ * Autoridade de domínio para o livro de endereços dos clientes.
+ * Centraliza busca, persistência e validação de regras de negócio para endereços.
+ *
+ * Nota: funções legadas do OpenCart (oc_validate_length, oc_validate_regex,
+ * CustomFieldRepository) foram removidas e substituídas por implementações
+ * puras em PHP 8+.
  */
 class AddressRepository extends AbstractRepository implements BaseRepositoryInterface
 {
+    // ─────────────────────────────────────────────────────────────────────────
+    // Consultas
+    // ─────────────────────────────────────────────────────────────────────────
+
     protected function getMapper(): AddressMapper
     {
         return $this->mapperFactory->get(AddressMapper::class);
@@ -27,9 +38,8 @@ class AddressRepository extends AbstractRepository implements BaseRepositoryInte
     }
 
     /**
-     * Busca a carteira de endereços completa de um cliente.
+     * Busca todos os endereços de um cliente.
      *
-     * @param int $customerId
      * @return Address[]
      */
     public function findByCustomerId(int $customerId): array
@@ -38,43 +48,51 @@ class AddressRepository extends AbstractRepository implements BaseRepositoryInte
     }
 
     /**
-     * Obtém o endereço padrão de um determinado cliente (usado como preenchimento ágil no Checkout).
-     *
-     * @param int $customerId
-     * @return Address|null
+     * Retorna o endereço marcado como padrão do cliente, ou null se não houver.
      */
     public function getDefaultAddress(int $customerId): ?Address
     {
         $addresses = $this->getMapper()->search([
             'customer_id' => $customerId,
-            'default'     => true
+            'default'     => true,
         ]);
 
-        // Retorna o primeiro endereço marcado como default, ou null se não houver
         return $addresses[0] ?? null;
     }
 
+    // ─────────────────────────────────────────────────────────────────────────
+    // DTOs planos (compatibilidade com Checkout e templates Twig)
+    // ─────────────────────────────────────────────────────────────────────────
+
     /**
-     * [LEGACY DTO] Retorna o endereço formatado como Array Plano para compatibilidade com o Checkout.
+     * Retorna um endereço como array plano (compatível com templates Twig e Checkout).
      */
     public function getAddress(int $addressId): array
     {
         $address = $this->find($addressId);
-        return $address ? $this->toLegacyDTO($address) : [];
+        return $address ? $this->toDTO($address) : [];
     }
 
     /**
-     * [LEGACY DTO] Retorna todos os endereços do cliente formatados.
+     * Retorna todos os endereços do cliente como array plano.
+     *
+     * @return array<int, array<string, mixed>>
      */
     public function getAddresses(int $customerId): array
     {
-        return array_map(fn($a) => $this->toLegacyDTO($a), $this->findByCustomerId($customerId));
+        return array_map(fn(Address $a) => $this->toDTO($a), $this->findByCustomerId($customerId));
     }
 
-    private function toLegacyDTO(Address $address): array
+    /**
+     * Converte uma entidade Address em array plano com todos os campos necessários
+     * para os templates Twig e para a camada de Checkout.
+     *
+     * @return array<string, mixed>
+     */
+    private function toDTO(Address $address): array
     {
         $country = $address->getCountry();
-        $zone = $address->getZone();
+        $zone    = $address->getZone();
 
         return [
             'address_id'     => $address->getId(),
@@ -89,35 +107,55 @@ class AddressRepository extends AbstractRepository implements BaseRepositoryInte
             'postcode'       => $address->getPostcode(),
             'city'           => $address->getCity(),
             'zone_id'        => $address->getZoneId(),
-            'zone'           => $zone ? $zone->getName() : '',
-            'zone_code'      => $zone ? $zone->getCode() : '',
+            'zone'           => $zone    ? $zone->getName()          : '',
+            'zone_code'      => $zone    ? $zone->getCode()          : '',
             'country_id'     => $address->getCountryId(),
-            'country'        => $country ? $country->getName() : '',
-            'iso_code_2'     => $country ? $country->getIsoCode2() : '',
-            'iso_code_3'     => $country ? $country->getIsoCode3() : '',
+            'country'        => $country ? $country->getName()       : '',
+            'iso_code_2'     => $country ? $country->getIsoCode2()   : '',
+            'iso_code_3'     => $country ? $country->getIsoCode3()   : '',
             'address_format' => $country ? $country->getAddressFormat() : '',
-            'custom_field'   => $address->getCustomFieldArray(), // Resolução nativa via Domínio!
-            'default'        => $address->isDefault()
+            'custom_field'   => $address->getCustomFieldArray(),
+            'default'        => $address->isDefault(),
         ];
     }
 
+    // ─────────────────────────────────────────────────────────────────────────
+    // Persistência
+    // ─────────────────────────────────────────────────────────────────────────
+
     /**
-     * Salva um endereço no banco de dados e gerencia a lógica de endereço padrão.
+     * Cria ou atualiza um endereço para o cliente.
+     *
+     * Normaliza as chaves `address_1`/`address_2` para `address1`/`address2`
+     * antes de repassar ao EntityHydrator, pois o hydrator resolve setters
+     * pelo nome camelCase do campo (setAddress1 → 'address1'), mas os formulários
+     * e sessões do Checkout usam a nomenclatura com underscore numérico.
+     *
+     * Se `$data['address_id']` ou `$data['id']` for fornecido, faz UPDATE;
+     * caso contrário, INSERT.
+     *
+     * @throws \RuntimeException se `address_id` pertencer a outro cliente.
      */
     public function save(array $data, int $customerId): int
     {
+        // ── Normalização de chaves (snake_case legado → camelCase da entidade) ──
+        if (isset($data['address_1']) && !isset($data['address1'])) {
+            $data['address1'] = $data['address_1'];
+        }
+        if (isset($data['address_2']) && !isset($data['address2'])) {
+            $data['address2'] = $data['address_2'];
+        }
+
         $addressId = (int)($data['id'] ?? $data['address_id'] ?? 0);
-        $address = $addressId > 0 ? $this->find($addressId) : new Address();
-        
-        if (!$address) {
+        $address   = $addressId > 0 ? $this->find($addressId) : null;
+
+        if ($address === null) {
             $address = new Address();
+        } elseif ($address->getCustomerId() !== $customerId) {
+            throw new \RuntimeException('Acesso negado: o endereço não pertence ao cliente informado.');
         }
 
-        if ($addressId > 0 && $address->getCustomerId() !== $customerId) {
-            throw new \RuntimeException("Acesso negado ao editar endereço.");
-        }
-
-        \Alpha\Model\DataTransferObject\EntityMapper::fillEntity($address, $data);
+        \Alpha\Support\EntityHydrator::fillEntity($address, $data);
         $address->setCustomerId($customerId);
 
         $isDefault = !empty($data['default']);
@@ -125,11 +163,16 @@ class AddressRepository extends AbstractRepository implements BaseRepositoryInte
 
         $savedId = $this->getMapper()->save($address);
 
+        // ── Gerência de endereço padrão ──────────────────────────────────────
+        // Desmarca os demais endereços e atualiza o ponteiro no perfil do cliente.
         if ($isDefault) {
             $conn = \Alpha\Model\DataAccessObject\ConnectionDB::getInstance()->getConnection();
-            $stmt = $conn->prepare("UPDATE `" . DB_PREFIX . "address` SET `default` = 0 WHERE customer_id = ? AND id != ?");
+            $stmt = $conn->prepare(
+                'UPDATE `' . DB_PREFIX . 'address` SET `default` = 0 WHERE customer_id = ? AND id != ?'
+            );
             $stmt->execute([$customerId, $savedId]);
 
+            /** @var CustomerRepository $customerRepo */
             $customerRepo = $this->registry->get('alpha_repository_factory')->get(CustomerRepository::class);
             $customer = $customerRepo->find($customerId);
             if ($customer) {
@@ -142,7 +185,9 @@ class AddressRepository extends AbstractRepository implements BaseRepositoryInte
     }
 
     /**
-     * Deleta um endereço verificando pertencimento.
+     * Exclui um endereço verificando o pertencimento ao cliente.
+     * Não lança exceção se o endereço não existir ou não pertencer ao cliente —
+     * use validateDelete() antes para obter mensagens de erro detalhadas.
      */
     public function delete(int $addressId, int $customerId): void
     {
@@ -152,57 +197,63 @@ class AddressRepository extends AbstractRepository implements BaseRepositoryInte
         }
     }
 
+    // ─────────────────────────────────────────────────────────────────────────
+    // Validação
+    // ─────────────────────────────────────────────────────────────────────────
+
     /**
-     * Valida os dados de cadastro de endereço e custom fields.
+     * Valida os dados do formulário de endereço.
+     *
+     * Retorna um array associativo campo → mensagem de erro.
+     * Array vazio significa dados válidos.
+     *
+     * Substitui as funções legadas oc_validate_length() e oc_validate_regex()
+     * por implementações puras em PHP 8+.
+     *
+     * @param  array<string, mixed> $data
+     * @return array<string, string>
      */
     public function validate(array $data): array
     {
         $errors = [];
-        $language = $this->registry->get('language');
-        $language->load('account/address');
 
-        if (!oc_validate_length($data['firstname'] ?? '', 1, 32)) {
-            $errors['firstname'] = $language->get('error_firstname');
+        // ── Dados pessoais ────────────────────────────────────────────────────
+        if (!$this->validateLength($data['firstname'] ?? '', 1, 32)) {
+            $errors['firstname'] = 'O nome deve ter entre 1 e 32 caracteres.';
         }
-        if (!oc_validate_length($data['lastname'] ?? '', 1, 32)) {
-            $errors['lastname'] = $language->get('error_lastname');
-        }
-        if (!oc_validate_length($data['address_1'] ?? '', 3, 128)) {
-            $errors['address_1'] = $language->get('error_address_1');
-        }
-        if (!oc_validate_length($data['city'] ?? '', 2, 128)) {
-            $errors['city'] = $language->get('error_city');
+        if (!$this->validateLength($data['lastname'] ?? '', 1, 32)) {
+            $errors['lastname'] = 'O sobrenome deve ter entre 1 e 32 caracteres.';
         }
 
+        // ── Endereço ─────────────────────────────────────────────────────────
+        if (!$this->validateLength($data['address_1'] ?? $data['address1'] ?? '', 3, 128)) {
+            $errors['address_1'] = 'O logradouro deve ter entre 3 e 128 caracteres.';
+        }
+        if (!$this->validateLength($data['city'] ?? '', 2, 128)) {
+            $errors['city'] = 'A cidade deve ter entre 2 e 128 caracteres.';
+        }
+
+        // ── País e CEP ────────────────────────────────────────────────────────
+        $countryId   = (int)($data['country_id'] ?? 0);
         $countryRepo = $this->registry->get('alpha_repository_factory')->get(CountryRepository::class);
-        $country = $countryRepo->find((int)($data['country_id'] ?? 0));
+        $country     = $countryRepo->find($countryId);
 
-        if ($country && $country->getPostcodeRequired() && !oc_validate_length($data['postcode'] ?? '', 2, 10)) {
-            $errors['postcode'] = $language->get('error_postcode');
-        }
         if (!$country) {
-            $errors['country'] = $language->get('error_country');
+            $errors['country_id'] = 'Selecione um país válido.';
+        } elseif ($country->getPostcodeRequired()) {
+            $postcode = preg_replace('/\D/', '', $data['postcode'] ?? '');
+            if (!$this->validateLength($postcode, 8, 8)) {
+                $errors['postcode'] = 'Informe um CEP válido com 8 dígitos.';
+            }
         }
 
-        $zoneRepo = $this->registry->get('alpha_repository_factory')->get(ZoneRepository::class);
-        $zoneTotal = $zoneRepo->getTotalZonesByCountryId((int)($data['country_id'] ?? 0));
+        // ── Estado / Zona ─────────────────────────────────────────────────────
+        if ($countryId > 0) {
+            $zoneRepo  = $this->registry->get('alpha_repository_factory')->get(ZoneRepository::class);
+            $zoneTotal = $zoneRepo->getTotalZonesByCountryId($countryId);
 
-        if ($zoneTotal && empty($data['zone_id'])) {
-            $errors['zone'] = $language->get('error_zone');
-        }
-
-        $customFieldRepo = $this->registry->get('alpha_repository_factory')->get(CustomFieldRepository::class);
-        $customer = $this->registry->get('customer');
-        $groupId = $customer->isLogged() ? $customer->getGroupId() : (int)$this->registry->get('config')->get('config_customer_group_id');
-        
-        $custom_fields = $customFieldRepo->getCustomFields($groupId);
-        foreach ($custom_fields as $custom_field) {
-            if ($custom_field['location'] == 'address') {
-                if ($custom_field['required'] && empty($data['custom_field'][$custom_field['custom_field_id']])) {
-                    $errors['custom_field_' . $custom_field['custom_field_id']] = sprintf($language->get('error_custom_field'), $custom_field['name']);
-                } elseif (($custom_field['type'] == 'text') && !empty($custom_field['validation']) && !oc_validate_regex($data['custom_field'][$custom_field['custom_field_id']] ?? '', $custom_field['validation'])) {
-                    $errors['custom_field_' . $custom_field['custom_field_id']] = sprintf($language->get('error_regex'), $custom_field['name']);
-                }
+            if ($zoneTotal > 0 && empty($data['zone_id'])) {
+                $errors['zone_id'] = 'Selecione um estado válido.';
             }
         }
 
@@ -210,43 +261,69 @@ class AddressRepository extends AbstractRepository implements BaseRepositoryInte
     }
 
     /**
-     * Valida as regras de negócio para deletar um endereço.
+     * Valida as regras de negócio para excluir um endereço.
+     *
+     * Retorna array vazio se a exclusão for permitida.
+     * Retorna array com chave 'warning' se não for.
+     *
+     * @return array<string, string>
      */
     public function validateDelete(int $customerId, int $addressId): array
     {
-        $errors = [];
-        $language = $this->registry->get('language');
-        $language->load('account/address');
-
         $address = $this->find($addressId);
 
         if (!$address || $address->getCustomerId() !== $customerId) {
-            $errors['warning'] = $language->get('error_address');
-            return $errors;
+            return ['warning' => 'Endereço não encontrado ou não pertence à sua conta.'];
         }
 
         $addresses = $this->findByCustomerId($customerId);
-        if (count($addresses) == 1) {
-            $errors['warning'] = $language->get('error_delete');
+        if (count($addresses) === 1) {
+            return ['warning' => 'Não é possível excluir o único endereço cadastrado.'];
         }
 
-        $customer = $this->registry->get('customer');
-        if ($customer->getAddressId() == $addressId) {
-            $errors['warning'] = $language->get('error_default');
+        /** @var CustomerRepository $customerRepo */
+        $customerRepo = $this->registry->get('alpha_repository_factory')->get(CustomerRepository::class);
+        $customer = $customerRepo->find($customerId);
+        if ($customer && (int)$customer->getAddressId() === $addressId) {
+            return ['warning' => 'Não é possível excluir o endereço padrão. Defina outro como padrão primeiro.'];
         }
 
-        return $errors;
+        return [];
     }
 
-    // BaseRepositoryInterface bindings
-    public function findAll(): array {
+    // ─────────────────────────────────────────────────────────────────────────
+    // BaseRepositoryInterface — bindings obrigatórios
+    // ─────────────────────────────────────────────────────────────────────────
+
+    public function findAll(): array
+    {
         return $this->getMapper()->findAll();
     }
-    public function findBy(array $criteria, ?array $orderBy = null, ?int $limit = null, ?int $offset = null): array { 
-        return $this->getMapper()->search($criteria, $orderBy, $limit, $offset); 
+
+    public function findBy(array $criteria, ?array $orderBy = null, ?int $limit = null, ?int $offset = null): array
+    {
+        return $this->getMapper()->search($criteria, $orderBy, $limit, $offset);
     }
-    public function findOneBy(array $criteria): ?InterfaceEntity { 
+
+    public function findOneBy(array $criteria): ?InterfaceEntity
+    {
         $results = $this->getMapper()->search($criteria);
         return $results[0] ?? null;
+    }
+
+    // ─────────────────────────────────────────────────────────────────────────
+    // Helpers privados
+    // ─────────────────────────────────────────────────────────────────────────
+
+    /**
+     * Verifica se o comprimento de uma string (em caracteres multibyte) está
+     * dentro do intervalo [min, max].
+     *
+     * Substitui oc_validate_length() do OpenCart.
+     */
+    private function validateLength(string $value, int $min, int $max): bool
+    {
+        $len = mb_strlen(trim($value), 'UTF-8');
+        return $len >= $min && $len <= $max;
     }
 }

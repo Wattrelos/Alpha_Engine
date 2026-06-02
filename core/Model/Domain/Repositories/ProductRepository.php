@@ -157,10 +157,11 @@ class ProductRepository extends AbstractRepository implements BaseRepositoryInte
         $data['tags'] = [];
         if (!empty($data['tag'])) {
             $tags = explode(',', $data['tag']);
+            $langCode = $this->config->get('config_language') ?: 'pt-br';
             foreach ($tags as $tag) {
                 $data['tags'][] = [
                     'tag'  => trim($tag),
-                    'href' => $this->url->link('product/search', 'language=' . $this->config->get('config_language') . '&tag=' . urlencode(trim($tag)))
+                    'href' => '/' . $langCode . '/busca?tag=' . urlencode(trim($tag))
                 ];
             }
         }
@@ -173,7 +174,7 @@ class ProductRepository extends AbstractRepository implements BaseRepositoryInte
         $data['heading_title'] = $data['name'];
         $data['stock'] = $data['stock_status_text'] ?? ($data['quantity'] > 0 ? $this->language->get('text_instock') : $this->language->get('text_out_of_stock'));
         $data['text_minimum'] = sprintf($this->language->get('text_minimum'), (!empty($data['minimum']) && $data['minimum'] > 0) ? $data['minimum'] : 1);
-        $data['text_login'] = sprintf($this->language->get('text_login'), $this->url->link('account/login', 'language=' . $this->config->get('config_language')), $this->url->link('account/register', 'language=' . $this->config->get('config_language')));
+        $data['text_login'] = sprintf($this->language->get('text_login'), '/login', '/cadastro');
         $data['text_reviews'] = sprintf($this->language->get('text_reviews'), (int)($data['reviews'] ?? 0));
 
         return $data;
@@ -190,7 +191,7 @@ class ProductRepository extends AbstractRepository implements BaseRepositoryInte
         $this->loadLanguage('product/search');
 
         $data = [];
-        $data['search']       = $filterData['filter_name'] ?? '';
+        $data['search']       = $filterData['search'] ?? $filterData['filter_name'] ?? '';
         $data['description']  = $filterData['filter_description'] ?? '';
         $data['category_id']  = $filterData['filter_category_id'] ?? 0;
         $data['sub_category'] = $filterData['filter_sub_category'] ?? '';
@@ -198,45 +199,47 @@ class ProductRepository extends AbstractRepository implements BaseRepositoryInte
         $data['order']        = $filterData['order'] ?? 'ASC';
         $data['limit']        = $filterData['limit'] ?? 10;
 
+        $langCode = $this->config->get('config_language') ?: 'pt-br';
+        $searchPath = '/' . $langCode . '/busca';
+
         // 1. Breadcrumbs
         $data['breadcrumbs'] = [];
         $data['breadcrumbs'][] = [
             'text' => $this->language->get('text_home') ?: 'Home',
-            'href' => $this->url->link('common/home', 'language=' . $this->config->get('config_language'))
+            'href' => '/'
         ];
         $data['breadcrumbs'][] = [
             'text' => $this->language->get('text_search') ?: 'Busca',
-            'href' => $this->url->link('product/search', 'language=' . $this->config->get('config_language'))
+            'href' => $searchPath
         ];
 
-        // 2. Dropdown de Categorias
-        /** @var \Alpha\Model\Domain\Repositories\CategoryRepository $categoryRepository */
-        $categoryRepository = $this->registry->get('alpha_repository_factory')->get(\Alpha\Model\Domain\Repositories\CategoryRepository::class);
+        // 2. Dropdown de Categorias (Otimizado: Fim do N+1 de categorias)
+        /** @var \Alpha\Mappers\EntityMappers\CategoryMapper $categoryMapper */
+        $categoryMapper = $this->mapperFactory->get(\Alpha\Mappers\EntityMappers\CategoryMapper::class);
+        $flatCategories = $categoryMapper->getAllCategories($this->language_id, $this->store_id);
+
+        $tree = [];
+        foreach ($flatCategories as $cat) {
+            $tree[(int)$cat['parent_id']][] = $cat;
+        }
+
         $data['categories'] = [];
-        $categories_1 = $categoryRepository->getCategories(0);
-        foreach ($categories_1 as $category_1) {
-            $data['categories'][] = [
-                'category_id' => $category_1['id'],
-                'name'        => $category_1['name']
-            ];
-            $categories_2 = $categoryRepository->getCategories((int)$category_1['id']);
-            foreach ($categories_2 as $category_2) {
-                $data['categories'][] = [
-                    'category_id' => $category_2['id'],
-                    'name'        => '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;' . $category_2['name']
-                ];
-                $categories_3 = $categoryRepository->getCategories((int)$category_2['id']);
-                foreach ($categories_3 as $category_3) {
+        $helper = function(int $parentId, string $indent) use (&$helper, &$tree, &$data) {
+            if (isset($tree[$parentId])) {
+                foreach ($tree[$parentId] as $cat) {
                     $data['categories'][] = [
-                        'category_id' => $category_3['id'],
-                        'name'        => '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;' . $category_3['name']
+                        'category_id' => (int)$cat['id'],
+                        'name'        => $indent . $cat['name']
                     ];
+                    $helper((int)$cat['id'], $indent . '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;');
                 }
             }
-        }
+        };
+        $helper(0, '');
 
         // 3. Produtos Filtrados
         $filter = $filterData;
+        $filter['filter_name'] = $data['search'];
         $filter['start'] = (($filterData['page'] ?? 1) - 1) * $data['limit'];
         $data['products'] = $this->getProducts($filter);
         $data['product_total'] = $this->getTotalProducts($filter);
@@ -249,15 +252,36 @@ class ProductRepository extends AbstractRepository implements BaseRepositoryInte
         if ($data['category_id']) $url .= '&category_id=' . $data['category_id'];
         if ($data['sub_category']) $url .= '&sub_category=' . $data['sub_category'];
 
+        // Memorização dos Filtros Facetados para Paginação e Ordenação
+        if (!empty($filterData['filter_categories']) && is_array($filterData['filter_categories'])) {
+            foreach ($filterData['filter_categories'] as $cat_id) {
+                $url .= '&filter_categories[]=' . (int)$cat_id;
+            }
+        }
+        if (!empty($filterData['filter_manufacturers']) && is_array($filterData['filter_manufacturers'])) {
+            foreach ($filterData['filter_manufacturers'] as $man_id) {
+                $url .= '&filter_manufacturers[]=' . (int)$man_id;
+            }
+        }
+        if (!empty($filterData['filter_price_min'])) {
+            $url .= '&filter_price_min=' . (float)$filterData['filter_price_min'];
+        }
+        if (!empty($filterData['filter_price_max'])) {
+            $url .= '&filter_price_max=' . (float)$filterData['filter_price_max'];
+        }
+        if (!empty($filterData['filter_rating'])) {
+            $url .= '&filter_rating=' . (int)$filterData['filter_rating'];
+        }
+
         $baseUrl = $url;
 
         // 5. Orquestração de Ordenações (Sorts) e Limites
         $data['sorts'] = [];
-        $data['sorts'][] = ['text' => $this->language->get('text_default') ?: 'Padrão', 'value' => 'p.sort_order-ASC', 'href' => $this->url->link('product/search', 'language=' . $this->config->get('config_language') . $baseUrl . '&sort=p.sort_order&order=ASC&limit=' . $data['limit'])];
-        $data['sorts'][] = ['text' => $this->language->get('text_name_asc') ?: 'Nome (A - Z)', 'value' => 'pd.name-ASC', 'href' => $this->url->link('product/search', 'language=' . $this->config->get('config_language') . $baseUrl . '&sort=pd.name&order=ASC&limit=' . $data['limit'])];
-        $data['sorts'][] = ['text' => $this->language->get('text_name_desc') ?: 'Nome (Z - A)', 'value' => 'pd.name-DESC', 'href' => $this->url->link('product/search', 'language=' . $this->config->get('config_language') . $baseUrl . '&sort=pd.name&order=DESC&limit=' . $data['limit'])];
-        $data['sorts'][] = ['text' => $this->language->get('text_price_asc') ?: 'Preço (Menor > Maior)', 'value' => 'p.price-ASC', 'href' => $this->url->link('product/search', 'language=' . $this->config->get('config_language') . $baseUrl . '&sort=p.price&order=ASC&limit=' . $data['limit'])];
-        $data['sorts'][] = ['text' => $this->language->get('text_price_desc') ?: 'Preço (Maior > Menor)', 'value' => 'p.price-DESC', 'href' => $this->url->link('product/search', 'language=' . $this->config->get('config_language') . $baseUrl . '&sort=p.price&order=DESC&limit=' . $data['limit'])];
+        $data['sorts'][] = ['text' => $this->language->get('text_default') ?: 'Padrão', 'value' => 'p.sort_order-ASC', 'href' => $searchPath . '?' . ltrim($baseUrl . '&sort=p.sort_order&order=ASC&limit=' . $data['limit'], '&')];
+        $data['sorts'][] = ['text' => $this->language->get('text_name_asc') ?: 'Nome (A - Z)', 'value' => 'pd.name-ASC', 'href' => $searchPath . '?' . ltrim($baseUrl . '&sort=pd.name&order=ASC&limit=' . $data['limit'], '&')];
+        $data['sorts'][] = ['text' => $this->language->get('text_name_desc') ?: 'Nome (Z - A)', 'value' => 'pd.name-DESC', 'href' => $searchPath . '?' . ltrim($baseUrl . '&sort=pd.name&order=DESC&limit=' . $data['limit'], '&')];
+        $data['sorts'][] = ['text' => $this->language->get('text_price_asc') ?: 'Preço (Menor > Maior)', 'value' => 'p.price-ASC', 'href' => $searchPath . '?' . ltrim($baseUrl . '&sort=p.price&order=ASC&limit=' . $data['limit'], '&')];
+        $data['sorts'][] = ['text' => $this->language->get('text_price_desc') ?: 'Preço (Maior > Menor)', 'value' => 'p.price-DESC', 'href' => $searchPath . '?' . ltrim($baseUrl . '&sort=p.price&order=DESC&limit=' . $data['limit'], '&')];
 
         $data['limits'] = [];
         $limits = array_unique([$this->config->get('config_pagination_catalog') ?: 10, 25, 50, 75, 100]);
@@ -266,7 +290,7 @@ class ProductRepository extends AbstractRepository implements BaseRepositoryInte
             $data['limits'][] = [
                 'text'  => $value,
                 'value' => $value,
-                'href'  => $this->url->link('product/search', 'language=' . $this->config->get('config_language') . $baseUrl . '&sort=' . $data['sort'] . '&order=' . $data['order'] . '&limit=' . $value)
+                'href'  => $searchPath . '?' . ltrim($baseUrl . '&sort=' . $data['sort'] . '&order=' . $data['order'] . '&limit=' . $value, '&')
             ];
         }
 
@@ -275,7 +299,7 @@ class ProductRepository extends AbstractRepository implements BaseRepositoryInte
             'total' => $data['product_total'],
             'page'  => $filterData['page'] ?? 1,
             'limit' => $data['limit'],
-            'url'   => $this->url->link('product/search', 'language=' . $this->config->get('config_language') . $baseUrl . '&sort=' . $data['sort'] . '&order=' . $data['order'] . '&page={page}')
+            'url'   => $searchPath . '?' . ltrim($baseUrl . '&sort=' . $data['sort'] . '&order=' . $data['order'] . '&page={page}', '&')
         ];
 
         return new ViewResponse($data);
@@ -333,8 +357,9 @@ class ProductRepository extends AbstractRepository implements BaseRepositoryInte
 
         $description = '';
         if (isset($result['description'])) {
-            $description = oc_substr(trim(strip_tags(html_entity_decode($result['description'], ENT_QUOTES, 'UTF-8'))), 0, $this->config->get('config_product_description_length')) . '..';
+            $description = \Alpha\Support\AlphaString::substr(trim(strip_tags(html_entity_decode($result['description'], ENT_QUOTES, 'UTF-8'))), 0, (int)$this->config->get('config_product_description_length')) . '..';
         }
+
 
         return [
             'product_id'      => $result['id'],
@@ -346,15 +371,15 @@ class ProductRepository extends AbstractRepository implements BaseRepositoryInte
             'tax'             => $tax,
             'minimum'         => (!empty($result['minimum']) && $result['minimum'] > 0) ? $result['minimum'] : 1,
             'rating'          => (int)($result['rating'] ?? $result['reviews'] ?? 0),
-            'href'            => $result['href'] ?? $this->url->link('product/product', 'language=' . $this->config->get('config_language') . '&product_id=' . $result['id']),
+            'href'            => $result['href'] ?? '/produto/' . $result['id'],
             'text_tax'        => $this->language->get('text_tax'),
             'button_cart'     => $this->language->get('button_cart'),
             'button_wishlist' => $this->language->get('button_wishlist'),
             'button_compare'  => $this->language->get('button_compare'),
-            'cart'            => $this->url->link('common/cart.info', 'language=' . $this->config->get('config_language')),
-            'cart_add'        => $this->url->link('checkout/cart.add', 'language=' . $this->config->get('config_language')),
-            'wishlist_add'    => $this->url->link('account/wishlist.add', 'language=' . $this->config->get('config_language')),
-            'compare_add'     => $this->url->link('product/compare.add', 'language=' . $this->config->get('config_language'))
+            'cart'            => '/carrinho',
+            'cart_add'        => '/carrinho/adicionar',
+            'wishlist_add'    => '/favoritos/adicionar',
+            'compare_add'     => '/comparar/adicionar'
         ];
     }
 

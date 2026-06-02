@@ -4,18 +4,16 @@ namespace Alpha\Model\DataAccessObject;
 use PDO;
 use PDOException;
 use Exception;
-use Opencart\System\Engine\Registry;
 
 /**
  * Refere-se a ConnectionDB.java
  * Adaptado para PHP 8.4.16
  * Implementa o padrão Singleton para gerenciar a conexão com o banco de dados via PDO nativo.
- * Mantém uma ponte para o Registry do OpenCart para acesso a serviços legados (Cache).
+ * Totalmente controlado pela Alpha Engine.
  */
 class ConnectionDB
 {
     private static ?ConnectionDB $instance = null;
-    private static ?Registry $registry = null;
     private ?PDO $connection = null;
 
     /**
@@ -39,9 +37,11 @@ class ConnectionDB
                 PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
                 // Alpha Engine Failsafe: Previne OOM e erro 2014 "Cannot execute queries while other unbuffered queries are active"
                 PDO::MYSQL_ATTR_USE_BUFFERED_QUERY => true,
-                PDO::ATTR_EMULATE_PREPARES => false // Garante tipos nativos no PDO, reduzindo footprint de memória drasticamente
+                PDO::ATTR_EMULATE_PREPARES => false, // Garante tipos nativos no PDO, reduzindo footprint de memória drasticamente
+                PDO::ATTR_STRINGIFY_FETCHES => false // Impede a conversão automática de tipos numéricos para string na leitura
             ]);
             $this->connection->exec("SET NAMES 'utf8mb4'");
+
 
         } catch (PDOException $e) {
             // Em caso de falha na conexão, loga o erro e lança uma exceção.
@@ -56,19 +56,6 @@ class ConnectionDB
     private function __clone() {}
 
     /**
-     * Alpha Engine: Ponte para o Registry do OpenCart (usado por Mappers para Cache/UoW).
-     */
-    public static function setRegistry(Registry $registry): void
-    {
-        self::$registry = $registry;
-    }
-
-    public static function getRegistry(): ?Registry
-    {
-        return self::$registry;
-    }
-
-    /**
      * Impede a desserialização da instância do Singleton.
      */
     public function __wakeup(): void
@@ -79,7 +66,7 @@ class ConnectionDB
     /**
      * Retorna a única instância da classe ConnectionDB.
      * 
-     * @param mixed $db Parâmetro mantido para compatibilidade de assinatura com Mappers legados.
+     * @param mixed $db Parâmetro opcional e ignorado, mantido apenas para compatibilidade de assinatura.
      * @return ConnectionDB
      */
     public static function getInstance($db = null): ConnectionDB

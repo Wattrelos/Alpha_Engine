@@ -3,6 +3,7 @@
 namespace Alpha\Model\Domain\Entities;
 
 use Alpha\Model\Domain\BaseEntity;
+use Alpha\Model\Domain\Attributes\ManyToOne;
 
 /**
  * Entidade UserToken

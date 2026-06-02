@@ -1,0 +1,13 @@
+RewriteEngine On
+
+# 1. BLOQUEIO LEVE E IMEDIATO (Sempre no topo)
+# Se alguém tentar acessar /admin, recebe um erro 403 proibido na hora, sem carregar o PHP
+Redirect 403 /admin
+
+# 2. REGRAS DO SLIM FRAMEWORK (Abaixo dos bloqueios)
+# Serve arquivos e diretórios estáticos (CSS, JS, imagens) diretamente
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+
+# Tudo o mais vai para o index.php (Entry Point do Slim)
+RewriteRule ^ index.php [QSA,L]

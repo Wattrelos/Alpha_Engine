@@ -1,7 +1,5 @@
 <?php
 
-namespace Alpha\Mappers\EntityMappers; // namespace fallback if required, mas será usado Alpha\Model\Domain\Repositories
-
 namespace Alpha\Model\Domain\Repositories;
 
 use Alpha\Mappers\EntityMappers\ProductOptionMapper;

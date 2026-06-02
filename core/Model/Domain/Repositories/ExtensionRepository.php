@@ -70,4 +70,26 @@ class ExtensionRepository extends AbstractRepository implements BaseRepositoryIn
 
         return $extensions;
     }
+
+    /**
+     * Retorna uma Extensão específica por tipo e código.
+     * 
+     * @param string $type
+     * @param string $code
+     * @return Extension|null
+     */
+    public function getExtensionByCode(string $type, string $code): ?Extension
+    {
+        return $this->getMapper()->getExtensionByCode($type, $code);
+    }
+
+    /**
+     * Retorna a lista de nomes das extensões instaladas.
+     * 
+     * @return array
+     */
+    public function getDistinctExtensions(): array
+    {
+        return $this->getMapper()->getDistinctExtensions();
+    }
 }

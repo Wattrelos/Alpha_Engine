@@ -5,7 +5,6 @@ use Alpha\Model\DataAccessObject\ConnectionDB;
 use Alpha\Model\DataAccessObject\DataAccessObject;
 use Alpha\Model\DataAccessObject\QueryBuilder;
 use Alpha\Model\Domain\InterfaceEntity;
-use Opencart\System\Engine\Registry;
 use ReflectionClass;
 
 /**
@@ -14,8 +13,7 @@ use ReflectionClass;
  */
 abstract class BaseMapper implements MapperInterface
  {
-    protected \PDO $db; 
-    protected ?Registry $registry = null;
+    protected mixed $registry = null;
     protected string $entityClass = '';
     protected string $tableName = '';
     protected string $table = ''; // Bridge de compatibilidade para mappers antigos
@@ -23,25 +21,12 @@ abstract class BaseMapper implements MapperInterface
     protected DataAccessObject $dao;
 
     /**
-     * @param Registry|object|null $registry O Registry do OpenCart ou conexão DB legada.
+     * @param mixed $registry O Registry, Container ou nulo.
      */
-    public function __construct($registry = null)
+    public function __construct(mixed $registry = null)
     {
-        if ($registry instanceof Registry) {
-            $this->registry = $registry;
-            $dbSource = $registry->get('db');
-        } else {
-            $dbSource = $registry;
-        }
-
-        $connection = ConnectionDB::getInstance($dbSource)->getConnection();
-        
-        if (!$connection instanceof \PDO) {
-            throw new \RuntimeException("Erro Alpha Engine: Mapper requer uma conexão PDO ativa.");
-        }
-
-        $this->db = $connection;
-        $this->dao = new DataAccessObject($this->db, $this->entityClass); // Passa a classe da entidade para o DAO
+        $this->registry = $registry;
+        $this->dao = new DataAccessObject();
     }
 
     /**
@@ -59,6 +44,14 @@ abstract class BaseMapper implements MapperInterface
     public function save(InterfaceEntity $entity): ?int
     {
         return ($entity->getId() > 0) ? $this->dao->update($entity) : $this->dao->create($entity);
+    }
+
+    /**
+     * Implementação padrão de atualização via DAO.
+     */
+    public function update(InterfaceEntity $entity): bool
+    {
+        return (bool)$this->dao->update($entity);
     }
 
     /**
@@ -81,12 +74,14 @@ abstract class BaseMapper implements MapperInterface
      */
     public function findById(int $id): ?InterfaceEntity
     {
-        $sql = "SELECT * FROM " . $this->getFullTableName() . " WHERE " . $this->primaryKey . " = :id";
-        $stmt = $this->db->prepare($sql);
-        $stmt->execute(['id' => $id]);
-        $row = $stmt->fetch();
+        $query = (new QueryBuilder())
+            ->select('*')
+            ->from($this->getFullTableName())
+            ->where($this->primaryKey . " = ?", [$id])
+            ->limit(1);
 
-        return $row ? $this->dao->hydrate($this->entityClass, $row) : null;
+        $results = $this->dao->executeQuery($query);
+        return $results ? $this->dao->hydrate($this->entityClass, $results[0]) : null;
     }
 
     /**
@@ -94,9 +89,11 @@ abstract class BaseMapper implements MapperInterface
      */
     public function findAll(): array
     {
-        $sql = "SELECT * FROM " . $this->getFullTableName();
-        $stmt = $this->db->query($sql);
-        $rows = $stmt->fetchAll();
+        $query = (new QueryBuilder())
+            ->select('*')
+            ->from($this->getFullTableName());
+
+        $rows = $this->dao->executeQuery($query);
 
         $entities = [];
         foreach ($rows as $row) {

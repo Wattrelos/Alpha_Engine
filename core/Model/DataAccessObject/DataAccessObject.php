@@ -1,8 +1,10 @@
 <?php
+
 namespace Alpha\Model\DataAccessObject;
 
 use PDO;
 use Exception;
+use Illuminate\Support\LazyCollection;
 use PDOException;
 use ReflectionClass;
 use ReflectionMethod;
@@ -23,27 +25,29 @@ class DataAccessObject
     private string $tablePrefix;
     private static array $identityMap = [];
 
-    public function __construct() {
+    public function __construct()
+    {
         $this->tablePrefix = (DB_PREFIX ?? 'table_');
-        
     }
 
     /**
      * Alpha Engine: Previne Memory Leaks em Daemons e Cron Jobs.
      * Limpa o Identity Map estático para permitir que o Garbage Collector do PHP libere a RAM.
      */
-    public static function clearIdentityMap(): void {
+    public static function clearIdentityMap(): void
+    {
         self::$identityMap = [];
     }
 
     /**
      * Executa a estrutura gerada pelo QueryBuilder
      */
-    public function executeQuery(QueryBuilder $builder): array {      
-        
-        $conn = ConnectionDB::getInstance()->getConnection();        
+    public function executeQuery(QueryBuilder $builder): array
+    {
+
+        $conn = ConnectionDB::getInstance()->getConnection();
         $stmt = $conn->prepare($builder->getSQL());
-        
+
         try {
             $startTime = microtime(true);
             $stmt->execute($builder->getParams());
@@ -70,16 +74,45 @@ class DataAccessObject
      * Alpha Engine: Executa comandos de escrita (DELETE, UPDATE, INSERT) de forma atômica
      * através do QueryBuilder, retornando o status de sucesso da operação.
      */
-    public function execute(QueryBuilder $builder): bool {
+    public function execute(QueryBuilder $builder): bool
+    {
         $conn = ConnectionDB::getInstance()->getConnection();
         $stmt = $conn->prepare($builder->getSQL());
         return $stmt->execute($builder->getParams());
     }
 
     /**
+     * Alpha Engine: Executa uma instrução SQL bruta com parâmetros.
+     * Útil para comandos customizados de escrita (como INSERT ... ON DUPLICATE KEY UPDATE).
+     * 
+     * @param string $sql
+     * @param array $params
+     * @return bool
+     */
+    public function executeRawSQL(string $sql, array $params = []): bool
+    {
+        $conn = ConnectionDB::getInstance()->getConnection();
+        $stmt = $conn->prepare($sql);
+
+        try {
+            $startTime = microtime(true);
+            $result = $stmt->execute($params);
+
+            $rowCount = $stmt->rowCount();
+            $this->logDebugQuery($sql, $params, $startTime, $rowCount, ['action' => 'RAW_WRITE']); // Para debug
+
+            return $result;
+        } catch (\PDOException $e) {
+            $this->logDebugQuery("[ERRO RAW SQL] " . $e->getMessage() . " | " . $sql, $params); // Para debug
+            throw $e;
+        }
+    }
+
+    /**
      * Executa a query de contagem e retorna o total absoluto de linhas
      */
-    public function executeCount(QueryBuilder $builder): int {
+    public function executeCount(QueryBuilder $builder): int
+    {
         $conn = ConnectionDB::getInstance()->getConnection();
         $stmt = $conn->prepare($builder->getCountSQL());
         $stmt->execute($builder->getParams());
@@ -89,7 +122,7 @@ class DataAccessObject
 
     // ---------------------------------------------------------------------------------------------------
     // Método create
-    
+
     public function create(InterfaceEntity $entity): ?int
     {
         $hierarchy = $this->getEntityHierarchy(get_class($entity));
@@ -116,7 +149,6 @@ class DataAccessObject
                 $conn->commit();
             }
             return $lastId;
-
         } catch (Exception $e) {
             if ($conn && $conn->inTransaction()) {
                 $conn->rollBack();
@@ -141,14 +173,14 @@ class DataAccessObject
         foreach ($methods as $method) {
             $name = $method->getName();
             if ($this->isGetter($method)) {
-                
+
                 // Em PHP, verificamos se o retorno seria um array (coleção)
                 // Como PHP não tem tipos genéricos fortes em runtime para arrays, 
                 // dependemos da lógica de negócio ou PHPDoc, mas aqui simplificamos:
                 if ($name === 'getId') continue;
 
                 $value = $method->invoke($entity);
-                
+
                 if (is_array($value)) continue;
 
                 $prefixLength = str_starts_with($name, 'is') ? 2 : 3;
@@ -177,7 +209,7 @@ class DataAccessObject
         foreach ($columnsMap as $col => $val) {
             $columns[] = "`$col`";
             $placeholders[] = "?";
-            
+
             if ($val instanceof \DateTimeInterface) {
                 $val = $val->format('Y-m-d H:i:s');
             }
@@ -192,13 +224,13 @@ class DataAccessObject
             $stmt->execute($values);
 
             $insertId = $parentId ?? (int)$conn->lastInsertId();
-            
-            $this->logDebugQuery($sql, $values, $startTime, $insertId, ['action' => 'CREATE']);
+
+            $this->logDebugQuery($sql, $values, $startTime, $insertId, ['action' => 'CREATE']); // Para debug
             return $insertId;
         } catch (PDOException $e) {
-            $this->logDebugQuery("[ERRO SQL CREATE] " . $e->getMessage() . " | " . $sql, $values);
+            $this->logDebugQuery("[ERRO SQL CREATE] " . $e->getMessage() . " | " . $sql, $values); // Para debug
             error_log("Erro na tabela " . $reflection->getShortName() . ": " . $e->getMessage());
-            
+
             if ($e->getCode() == 23000 || (isset($e->errorInfo[1]) && $e->errorInfo[1] == 1062)) {
                 throw new \DomainException("Alpha Engine [Violação de Integridade]: O banco de dados rejeitou a operação pois um registro com estes dados únicos (ex: e-mail) já existe.", 1062, $e);
             }
@@ -272,9 +304,9 @@ class DataAccessObject
                         $this->saveRecursiveInTransaction($conn, $item);
                     }
 
-                    $tableLink = $this->tablePrefix . $this->convertPascalCaseToSnakeCase($reflection->getShortName()) . 
-                                "_" . $this->convertPascalCaseToSnakeCase((new ReflectionClass($item))->getShortName());
-                    
+                    $tableLink = $this->tablePrefix . $this->convertPascalCaseToSnakeCase($reflection->getShortName()) .
+                        "_" . $this->convertPascalCaseToSnakeCase((new ReflectionClass($item))->getShortName());
+
                     $fkParent = $this->convertPascalCaseToSnakeCase($reflection->getShortName()) . "_id";
                     $fkChild = $this->convertPascalCaseToSnakeCase((new ReflectionClass($item))->getShortName()) . "_id";
 
@@ -285,7 +317,7 @@ class DataAccessObject
         }
     }
 
-     private function saveRecursiveInTransaction(\PDO $conn, InterfaceEntity $entity): int
+    private function saveRecursiveInTransaction(\PDO $conn, InterfaceEntity $entity): int
     {
         $hierarchy = $this->getEntityHierarchy(get_class($entity));
         $lastId = $entity->getId();
@@ -318,7 +350,7 @@ class DataAccessObject
             $conn = ConnectionDB::getInstance()->getConnection();
             $stmt = $conn->query($sql);
             $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
-            
+
             foreach ($rows as $row) {
                 $id = (int)($row['id'] ?? 0);
                 $instance = $this->getFromIdentityMap($clazz, $id);
@@ -353,12 +385,12 @@ class DataAccessObject
             $instance = $reflection->newInstance();
             $instance->setId($id);
             $this->addToIdentityMap($instance);
-            
+
             $conn = ConnectionDB::getInstance()->getConnection();
             $this->fillEntityRecursively($instance, $className, $row, $conn);
             $this->processAssociations($instance, $conn);
         }
-        
+
         return $instance;
     }
 
@@ -369,7 +401,7 @@ class DataAccessObject
     public function readByIds(string $className, array $ids): array
     {
         if (empty($ids)) return [];
-        
+
         $results = [];
         $toFetchIds = [];
 
@@ -408,11 +440,11 @@ class DataAccessObject
         }
         return $results;
     }
-    
+
     private function fillEntityRecursively(InterfaceEntity $instance, string $currentClazz, array $row, \PDO $conn): void
     {
         $reflection = new ReflectionClass($currentClazz);
-        
+
         foreach ($reflection->getMethods(ReflectionMethod::IS_PUBLIC) as $method) {
             if ($this->isSetter($method)) {
                 $params = $method->getParameters();
@@ -446,7 +478,7 @@ class DataAccessObject
                 // Caso contrário, usamos o nome derivado do método.
                 $derivedName = substr($method->getName(), 3);
                 $columnName = $this->convertPascalCaseToSnakeCase($foreignKey ?? $derivedName);
-                
+
                 // Tenta encontrar o valor na coluna exata ou com o sufixo _id (regra de negócio da Alpha Engine)
                 $value = $row[$columnName] ?? $row[$columnName . "_id"] ?? null;
 
@@ -454,7 +486,7 @@ class DataAccessObject
                     if ($paramType && is_subclass_of($paramType, InterfaceEntity::class)) {
                         $childId = (int)$value;
 
-                        // Alpha Engine: Defuse do Anti-Pattern "FK = 0" do OpenCart.
+                        // Alpha Engine: Defuse do Anti-Pattern "FK = 0" herdado de banco de dados legado.
                         // Se o ID estrangeiro for 0, consideramos que a relação não existe (ex: categoria raiz).
                         if ($childId === 0) {
                             continue;
@@ -464,19 +496,19 @@ class DataAccessObject
 
                         if (!$childInstance) {
                             // Alpha Engine: Injeta o Proxy nativo de ManyToOne para Lazy Loading (Deep Hydration).
-                            $childInstance = ProxyFactory::createProxy($paramType, $childId, function($proxy, $id) use ($paramType) {
+                            $childInstance = ProxyFactory::createProxy($paramType, $childId, function ($proxy, $id) use ($paramType) {
                                 $tableName = $this->tablePrefix . $this->convertPascalCaseToSnakeCase((new ReflectionClass($paramType))->getShortName());
                                 $conn = ConnectionDB::getInstance()->getConnection();
                                 $stmt = $conn->prepare("SELECT * FROM `$tableName` WHERE id = ?");
                                 $stmt->execute([$id]);
                                 $row = $stmt->fetch(\PDO::FETCH_ASSOC);
-                                
+
                                 if ($row) {
                                     $this->fillEntityRecursively($proxy, $paramType, $row, $conn);
                                     $this->processAssociations($proxy, $conn);
                                 }
                             });
-                            
+
                             $this->addToIdentityMap($childInstance); // Mantém a integridade referencial mesmo no proxy
                         }
                         $method->invoke($instance, $childInstance);
@@ -492,11 +524,11 @@ class DataAccessObject
         if ($parentClass && is_subclass_of($parentClass, InterfaceEntity::class)) {
             $currentId = $instance->getId() ?? (isset($row['id']) ? (int)$row['id'] : 0);
             $reflectionParent = new ReflectionClass($parentClass);
-            
+
             // Se a classe pai não for abstrata e tiver uma tabela própria, buscamos os dados
             // No ecossistema Alpha, a maioria herda de BaseEntity (abstrata),
             // então o DAO pula buscas desnecessárias.
-            if ($currentId > 0 && !$reflectionParent->isAbstract()) { 
+            if ($currentId > 0 && !$reflectionParent->isAbstract()) {
                 $instance->setId($currentId);
                 $parentTableName = $this->tablePrefix . $this->convertPascalCaseToSnakeCase((new ReflectionClass($parentClass))->getShortName());
                 $stmt = $conn->prepare("SELECT * FROM `$parentTableName` WHERE id = ?");
@@ -506,7 +538,7 @@ class DataAccessObject
                 }
             }
         }
-    }    
+    }
     private function readEntityComplete(InterfaceEntity $entity, \PDO $conn): void
     {
         $this->addToIdentityMap($entity);
@@ -534,7 +566,7 @@ class DataAccessObject
 
         try {
             $conn = ConnectionDB::getInstance()->getConnection();
-            
+
             if (!$conn->inTransaction()) {
                 $conn->beginTransaction();
                 $managedTransaction = true;
@@ -545,7 +577,7 @@ class DataAccessObject
             }
 
             $this->saveAssociations($conn, $entity);
-            
+
             if ($managedTransaction) {
                 $conn->commit();
             }
@@ -556,7 +588,7 @@ class DataAccessObject
             return null;
         }
     }
-    
+
     private function updateForClass(\PDO $conn, InterfaceEntity $entity, string $clazz): void
     {
         $columnsMap = [];
@@ -593,7 +625,7 @@ class DataAccessObject
         foreach ($columnsMap as $col => $val) {
             if ($val !== null) {
                 $setClauses[] = "`$col` = ?";
-                
+
                 if ($val instanceof \DateTimeInterface) {
                     $val = $val->format('Y-m-d H:i:s');
                 }
@@ -603,11 +635,11 @@ class DataAccessObject
 
         if (empty($setClauses)) return;
 
-        $sql = "UPDATE `" . $this->tablePrefix . $this->convertPascalCaseToSnakeCase($reflection->getShortName()) . 
-               "` SET " . implode(", ", $setClauses) . " WHERE id = ?";
-        
+        $sql = "UPDATE `" . $this->tablePrefix . $this->convertPascalCaseToSnakeCase($reflection->getShortName()) .
+            "` SET " . implode(", ", $setClauses) . " WHERE id = ?";
+
         $values[] = $entity->getId();
-        
+
         try {
             $conn->prepare($sql)->execute($values);
         } catch (PDOException $e) {
@@ -696,17 +728,19 @@ class DataAccessObject
     private function isGetter(ReflectionMethod $method): bool
     {
         $name = $method->getName();
-        return (str_starts_with($name, 'get') || str_starts_with($name, 'is')) 
-                && $method->getNumberOfParameters() === 0 
-                && $name !== 'getClass';
+        return (str_starts_with($name, 'get') || str_starts_with($name, 'is'))
+            && $method->getNumberOfParameters() === 0
+            && $name !== 'getClass';
     }
 
-    private function getFromIdentityMap(string $className, int $id): ?InterfaceEntity {
+    private function getFromIdentityMap(string $className, int $id): ?InterfaceEntity
+    {
         $key = $className . ':' . $id;
         return self::$identityMap[$key] ?? null;
     }
 
-    private function addToIdentityMap(InterfaceEntity $entity): void {
+    private function addToIdentityMap(InterfaceEntity $entity): void
+    {
         $id = $entity->getId();
         if ($id !== null && $id > 0) {
             $key = get_class($entity) . ':' . $id;
@@ -746,7 +780,7 @@ class DataAccessObject
                 $attrName = $attr->getName();
                 if (str_ends_with($attrName, 'OneToMany')) $isOneToMany = true;
                 if (str_ends_with($attrName, 'ManyToMany')) $isManyToMany = true;
-                
+
                 $args = $attr->getArguments();
                 $targetEntityClass = $args['targetEntity'] ?? null;
                 $foreignKey = $args['foreignKey'] ?? null;
@@ -757,7 +791,7 @@ class DataAccessObject
             if ($isOneToMany) {
                 // Cria uma instância da entidade alvo para servir de filtro
                 $targetInstance = (new ReflectionClass($targetEntityClass))->newInstance();
-                
+
                 // Define a chave estrangeira no objeto alvo
                 // Normalizamos para PascalCase para garantir que encontre o setter (ex: customer_id -> CustomerId)
                 $fkName = $foreignKey ?? ($reflection->getShortName() . "Id");
@@ -766,7 +800,7 @@ class DataAccessObject
 
                 if (method_exists($targetInstance, $setterName)) {
                     $targetInstance->$setterName($instance->getId());
-                    
+
                     // Também normaliza o setter da propriedade na entidade pai
                     $parentSetter = "set" . ucfirst(str_replace('_', '', ucwords($property->getName(), '_')));
 
@@ -785,9 +819,9 @@ class DataAccessObject
             } elseif ($isManyToMany) {
                 // Lógica para tabelas pivot (ex: category_to_layout)
                 $targetReflection = new ReflectionClass($targetEntityClass);
-                $tableLink = $this->tablePrefix . $this->convertPascalCaseToSnakeCase($reflection->getShortName()) . 
-                            "_" . $this->convertPascalCaseToSnakeCase($targetReflection->getShortName());
-                
+                $tableLink = $this->tablePrefix . $this->convertPascalCaseToSnakeCase($reflection->getShortName()) .
+                    "_" . $this->convertPascalCaseToSnakeCase($targetReflection->getShortName());
+
                 $fkParent = $this->convertPascalCaseToSnakeCase($reflection->getShortName()) . "_id";
                 $fkChild = $this->convertPascalCaseToSnakeCase($targetReflection->getShortName()) . "_id";
 
@@ -800,7 +834,7 @@ class DataAccessObject
             }
         }
     }
-    
+
     /**
      * Alpha Engine: Detecta se a associação deve ser carregada via Lazy Loading.
      * Analisa os argumentos do Atributo da propriedade (ex: #[OneToMany(fetch: 'LAZY')]).
@@ -819,7 +853,7 @@ class DataAccessObject
         }
         return false;
     }
-    
+
     /**
      * Executa a paginação retornando os registros mapeados e o total geral
      * * @param QueryBuilder $builder
@@ -827,7 +861,7 @@ class DataAccessObject
      * @param int $limit Quantidade de itens por página
      * @return array Contendo ['data' => [...], 'total' => int]
      */
-    public function paginate(QueryBuilder $builder, int $page = 1, int $limit = 10): array 
+    public function paginate(QueryBuilder $builder, int $page = 1, int $limit = 10): array
     {
 
         // 1. Calcula o deslocamento (Offset)
@@ -863,33 +897,34 @@ class DataAccessObject
      * Alpha Engine: Debugger Ultra-Leve (Crash-Proof & Memory Safe)
      * Centraliza a auditoria de queries para leitura e escrita.
      */
-    private function logDebugQuery(string $sql, array $params, ?float $startTime = null, ?int $affectedRowsOrId = null, array $sample = []): void {
+    private function logDebugQuery(string $sql, array $params, ?float $startTime = null, ?int $affectedRowsOrId = null, array $sample = []): void
+    {
         if (!defined('DIR_LOGS')) return;
 
         $logFile = DIR_LOGS . 'queries.php';
         if (!file_exists($logFile)) {
             file_put_contents($logFile, "<?php die('Acesso Restrito'); ?>\n\n");
         }
-        
+
         $runnableSql = $sql;
         foreach ($params as $param) {
-            $safeParam = (is_string($param) && strlen($param) > 500) 
-                ? substr($param, 0, 500) . '... [TRUNCATED, SIZE: ' . strlen($param) . ' bytes]' 
+            $safeParam = (is_string($param) && strlen($param) > 500)
+                ? substr($param, 0, 500) . '... [TRUNCATED, SIZE: ' . strlen($param) . ' bytes]'
                 : $param;
-            
+
             if ($safeParam === null) $value = 'NULL';
             elseif (is_bool($safeParam)) $value = $safeParam ? '1' : '0';
             elseif (is_numeric($safeParam) && !is_string($safeParam)) $value = (string)$safeParam;
             else $value = "'" . addslashes((string)$safeParam) . "'";
-            
+
             $pos = strpos($runnableSql, '?');
             if ($pos !== false) {
                 $runnableSql = substr_replace($runnableSql, $value, $pos, 1);
             }
         }
-        
+
         error_log("[" . date('Y-m-d H:i:s') . "] " . $runnableSql . "\n", 3, $logFile);
-        
+
         if ($startTime !== null) {
             $executionTime = round((microtime(true) - $startTime) * 1000, 2);
             $msg = "  -> [RETORNO] Tempo: {$executionTime}ms | " . ($affectedRowsOrId !== null ? "Linhas/ID: {$affectedRowsOrId} | " : "");

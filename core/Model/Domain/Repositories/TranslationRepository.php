@@ -6,34 +6,35 @@ use Alpha\Mappers\EntityMappers\TranslationMapper;
 use Alpha\Model\Domain\InterfaceEntity;
 
 /**
- * TranslationRepository - Gerencia traduções dinâmicas do banco de dados (Substitui design/translation).
+ * TranslationRepository - Autoridade de Domínio para Traduções Personalizadas de Layout.
+ * 
+ * Substitui o legado catalog/model/design/translation.php.
  */
 class TranslationRepository extends AbstractRepository implements BaseRepositoryInterface
 {
-    private array $loadedTranslations = [];
+    protected function getMapper(): TranslationMapper
+    {
+        return $this->mapperFactory->get(TranslationMapper::class);
+    }
 
-    /**
-     * Alpha Engine: Recupera as traduções do banco de dados para a rota e contexto atual.
-     * Utiliza cache em memória para evitar queries N+1 durante eventos da mesma página.
-     */
     public function getTranslations(string $route): array
     {
-        $key = "{$this->store_id}.{$this->language_id}.{$route}";
+        $cacheKey = 'translation.route.' . md5($route) . '.lang.' . $this->language_id . '.store.' . $this->store_id;
 
-        if (isset($this->loadedTranslations[$key])) {
-            return $this->loadedTranslations[$key];
+        if ($this->cache && $this->cache->has($cacheKey)) {
+            return $this->cache->get($cacheKey);
         }
 
-        /** @var TranslationMapper $mapper */
-        $mapper = $this->mapperFactory->get(TranslationMapper::class);
-        $results = $mapper->getRouteTranslations($route, $this->store_id, $this->language_id);
+        $results = $this->getMapper()->getRouteTranslations($route, $this->store_id, $this->language_id);
 
-        $this->loadedTranslations[$key] = $results;
+        if ($this->cache) {
+            $this->cache->set($cacheKey, $results);
+        }
 
         return $results;
     }
 
-    // Implementações obrigatórias da BaseRepositoryInterface
+    // BaseRepositoryInterface bindings
     public function find(int $id): ?InterfaceEntity { return null; }
     public function findAll(): array { return []; }
     public function findBy(array $criteria, ?array $orderBy = null, ?int $limit = null, ?int $offset = null): array { return []; }

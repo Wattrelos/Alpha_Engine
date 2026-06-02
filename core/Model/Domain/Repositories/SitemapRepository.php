@@ -46,11 +46,11 @@ class SitemapRepository extends AbstractRepository implements BaseRepositoryInte
 
         // 2. Links de Conta e Vendas
         $data['special']  = $this->url->link('product/special', $language_param);
-        $data['account']  = $this->url->link('account/account', $full_token, true);
+        $data['account']  = $this->url->link('account', $full_token, true);
         $data['edit']     = $this->url->link('account/edit', $full_token, true);
         $data['password'] = $this->url->link('account/password', $full_token, true);
         $data['address']  = $this->url->link('account/address', $full_token, true);
-        $data['history']  = $this->url->link('account/order', $full_token, true);
+        $data['history']  = $this->url->link('account/orders', $full_token, true);
         $data['download'] = $this->url->link('account/download', $full_token, true);
         $data['cart']     = $this->url->link('checkout/cart', $language_param);
         $data['checkout'] = $this->url->link('checkout/checkout', $language_param, true);

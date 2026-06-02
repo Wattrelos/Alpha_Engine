@@ -28,6 +28,11 @@ interface MapperInterface
     public function save(InterfaceEntity $entity): ?int;
 
     /**
+     * Atualiza uma entidade existente.
+     */
+    public function update(InterfaceEntity $entity): bool;
+
+    /**
      * Remove uma entidade pelo ID.
      */
     public function delete(int $id): bool;

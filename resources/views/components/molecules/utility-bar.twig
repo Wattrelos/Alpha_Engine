@@ -1,0 +1,38 @@
+<div id="top" class="egen-utility-bar">
+
+    {# Botão de Departamentos / Menu #}
+    <div class="egen-utility-bar__menu">
+        {% if menu %}
+            {{ menu }}
+        {% else %}
+            {% include 'components/organisms/department-menu.twig' %}
+        {% endif %}
+    </div>
+
+    {# Caixa de Busca — expande para ocupar o espaço restante #}
+    <div class="egen-utility-bar__search">
+        {% if search %}
+            {{ search }}
+        {% else %}
+            <form action="/{{ lang|default('pt-br') }}/busca" method="GET" class="search-bar">
+                <input type="text" name="search" placeholder="Buscar no site..." required>
+                <button type="submit">Buscar</button>
+            </form>
+        {% endif %}
+    </div>
+
+    {# Botão do Carrinho #}
+    <div class="egen-utility-bar__cart">
+        {% if cart %}
+            {{ cart }}
+        {% else %}
+            <a href="/carrinho" class="egen-btn-cart">
+                <i class="fa-solid fa-cart-shopping" aria-hidden="true"></i>
+                <span>Carrinho</span>
+                <span class="egen-cart-badge" id="egen-cart-count" style="display: {{ cart_count > 0 ? 'inline-flex' : 'none' }};">{{ cart_count|default(0) }}</span>
+            </a>
+
+        {% endif %}
+    </div>
+
+</div>

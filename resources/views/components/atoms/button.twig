@@ -1,0 +1,4 @@
+{# Um botão padrão que muda de cor e texto conforme os dados passados #}
+<button type="{{ html_type|default('button') }}" class="btn btn-{{ style|default(type)|default('primary') }} {{ class|default('menu-button-left') }}">
+    {{ text|default(label) }}
+</button>

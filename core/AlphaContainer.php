@@ -3,7 +3,7 @@
 namespace Alpha;
 
 use Opencart\System\Engine\Factory;
-use Opencart\System\Engine\Registry;
+use Alpha\Support\Registry;
 use Opencart\System\Library\Log;
 
 /**
@@ -17,6 +17,8 @@ class AlphaContainer extends Factory
     /**
      * Retorna a instância do logger de rastreamento (Trace).
      */
+
+/* Cógigo para debug. Usado com frequência (não apague)-------------------------------------------------------------
     private function getTraceLogger(): Log
     {
         static $traceLogger;
@@ -25,7 +27,8 @@ class AlphaContainer extends Factory
         }
         return $traceLogger;
     }
-
+// -----------------------------------------------------------------------------------------------------------------
+*/
     /**
      * Intercepta o carregamento de modelos.
      * 
@@ -35,11 +38,11 @@ class AlphaContainer extends Factory
     public function model(string $route): object
     {
         // Rastreamento de Fluxo (Trace)
-        $this->getTraceLogger()->write("[Alpha TRACE] Solicitado Model: '{$route}'");
+        // $this->getTraceLogger()->write("[Alpha TRACE] Solicitado Model: '{$route}'");
 
         // 1. Normaliza a rota para identificar o componente
         $sanitized_route = preg_replace('/[^a-zA-Z0-9_\/]/', '', $route);
-        
+
         // 2. Mapeamento de "Shortcuts": Se a rota do modelo coincidir com algo migrado
         // podemos retornar o Repositório diretamente do Registry.
         $repository_factory = $this->registry->get('alpha_repository_factory');
@@ -49,6 +52,19 @@ class AlphaContainer extends Factory
                 'account/customer'          => \Alpha\Model\Domain\Repositories\CustomerRepository::class,
                 'account/customer_group'    => \Alpha\Model\Domain\Repositories\CustomerGroupRepository::class,
                 'account/affiliate'         => \Alpha\Model\Domain\Repositories\CustomerAffiliateRepository::class,
+                'account/transaction'       => \Alpha\Model\Domain\Repositories\CustomerTransactionRepository::class,
+                'account/download'          => \Alpha\Model\Domain\Repositories\DownloadRepository::class,
+                'account/returns'           => \Alpha\Model\Domain\Repositories\OrderReturnRepository::class,
+                'account/reward'            => \Alpha\Model\Domain\Repositories\CustomerRewardRepository::class,
+                'account/order'             => \Alpha\Model\Domain\Repositories\OrderRepository::class,
+                'account/returns'           => \Alpha\Model\Domain\Repositories\OrderReturnRepository::class,
+                'account/reward'            => \Alpha\Model\Domain\Repositories\CustomerRewardRepository::class,
+                'account/orders'            => \Alpha\Model\Domain\Repositories\OrderRepository::class,
+                'account/subscription'      => \Alpha\Model\Domain\Repositories\SubscriptionRepository::class,
+                'account/wishlist'          => \Alpha\Model\Domain\Repositories\WishlistRepository::class,
+                'catalog/category'          => \Alpha\Model\Domain\Repositories\CategoryRepository::class,
+                'catalog/product'           => \Alpha\Model\Domain\Repositories\ProductRepository::class,
+
                 'account/wishlist'          => \Alpha\Model\Domain\Repositories\WishlistRepository::class,
                 'catalog/category'          => \Alpha\Model\Domain\Repositories\CategoryRepository::class,
                 'catalog/product'           => \Alpha\Model\Domain\Repositories\ProductRepository::class,
@@ -61,6 +77,7 @@ class AlphaContainer extends Factory
                 'localisation/language'     => \Alpha\Model\Domain\Repositories\LanguageRepository::class,
                 'localisation/country'      => \Alpha\Model\Domain\Repositories\CountryRepository::class,
                 'localisation/zone'         => \Alpha\Model\Domain\Repositories\ZoneRepository::class,
+                'localisation/address_format' => \Alpha\Model\Domain\Repositories\AddressFormatRepository::class,
                 'localisation/weight_class' => \Alpha\Model\Domain\Repositories\WeightClassRepository::class,
                 'localisation/length_class' => \Alpha\Model\Domain\Repositories\LengthClassRepository::class,
                 'localisation/tax_class'    => \Alpha\Model\Domain\Repositories\TaxClassRepository::class,
@@ -68,6 +85,7 @@ class AlphaContainer extends Factory
                 'localisation/tax_rule'     => \Alpha\Model\Domain\Repositories\TaxRuleRepository::class,
                 'setting/setting'           => \Alpha\Model\Domain\Repositories\SettingRepository::class,
                 'setting/extension'         => \Alpha\Model\Domain\Repositories\ExtensionRepository::class,
+                'setting/store'             => \Alpha\Model\Domain\Repositories\StoreRepository::class,
             ];
 
             if (isset($repositoriesMap[$sanitized_route])) {
@@ -122,7 +140,7 @@ class AlphaContainer extends Factory
     public function library(string $route, array $args = []): object
     {
         // Rastreamento de Fluxo (Trace)
-        $this->getTraceLogger()->write("[Alpha TRACE] Solicitada Library: '{$route}'");
+        // $this->getTraceLogger()->write("[Alpha TRACE] Solicitada Library: '{$route}'");
 
         // 1. Normaliza a rota
         $sanitized_route = preg_replace('/[^a-zA-Z0-9_\/]/', '', $route);
@@ -144,7 +162,7 @@ class AlphaContainer extends Factory
             // Verifica se a classe existe no padrão PSR-4 da Alpha antes de logar como legado
             // Isso ajuda a diferenciar o que é biblioteca nativa do OC e o que é Alpha.
             $alpha_class = 'Alpha\\Library\\' . str_replace(['_', '/'], ['', '\\'], ucwords($sanitized_route, '_/'));
-            
+
             if (!class_exists($alpha_class)) {
                 $log->write(sprintf(
                     "[Alpha DEPRECATION] Carregamento de Biblioteca Legada: '%s' | Originado na rota: '%s' | IP: %s",
@@ -171,7 +189,7 @@ class AlphaContainer extends Factory
     public function config(string $route): void
     {
         // Rastreamento de Fluxo (Trace)
-        $this->getTraceLogger()->write("[Alpha TRACE] Solicitada Config: '{$route}'");
+        // $this->getTraceLogger()->write("[Alpha TRACE] Solicitada Config: '{$route}'");
 
         // Log de depreciação da Alpha Engine
         if ($this->registry->get('config')->get('config_error_log')) {
@@ -184,5 +202,4 @@ class AlphaContainer extends Factory
         $repositoryFactory = $this->registry->get('alpha_repository_factory');
         $repositoryFactory->get(\Alpha\Model\Domain\Repositories\ConfigurationRepository::class)->loadFile($route);
     }
-
 }

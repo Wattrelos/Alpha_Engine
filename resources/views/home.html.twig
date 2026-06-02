@@ -1,0 +1,150 @@
+{% extends 'layouts/base.html.twig' %}
+
+{% block title %}Início | AgSonhos — Materiais de Construção
+{% endblock %}
+
+{% block content %}
+	<div class="stucco4">
+		<div id="common-home" class="container py-4">
+			<div class="row">
+				{% if column_left %}
+					<div class="col-lg-3 col-md-4 col-sm-12">
+						{{ column_left }}
+					</div>
+				{% endif %}
+
+				<div id="content" class="col">
+					{{ content_top }}
+
+					{# ── Seção Hero Premium ── #}
+					<section class="egen-hero-section mb-5">
+						<div class="egen-hero-card">
+							<div class="egen-hero-content">
+								<h1 class="egen-hero-title">Construa Seus Sonhos Com Excelência</h1>
+								<p class="egen-hero-subtitle">Os melhores materiais de construção, ferramentas e acabamentos com qualidade garantida e entrega rápida para sua obra.</p>
+							</div>
+						</div>
+					</section>
+
+					{# ── Diferenciais Premium ── #}
+					<section class="egen-advantages mb-5">
+						<div class="egen-advantage-card">
+							<span class="egen-advantage-icon">🚚</span>
+							<div class="egen-advantage-info">
+								<h4 class="egen-advantage-title">Entrega Rápida</h4>
+								<p class="egen-advantage-desc">Logística ágil e segura diretamente na sua obra.</p>
+							</div>
+						</div>
+						<div class="egen-advantage-card">
+							<span class="egen-advantage-icon">💳</span>
+							<div class="egen-advantage-info">
+								<h4 class="egen-advantage-title">Pagamento Facilitado</h4>
+								<p class="egen-advantage-desc">Parcele em até 10x sem juros ou pague via Pix com desconto.</p>
+							</div>
+						</div>
+						<div class="egen-advantage-card">
+							<span class="egen-advantage-icon">🛡️</span>
+							<div class="egen-advantage-info">
+								<h4 class="egen-advantage-title">Garantia de Qualidade</h4>
+								<p class="egen-advantage-desc">Produtos originais com garantia das melhores marcas.</p>
+							</div>
+						</div>
+						<div class="egen-advantage-card">
+							<span class="egen-advantage-icon">💬</span>
+							<div class="egen-advantage-info">
+								<h4 class="egen-advantage-title">Suporte Exclusivo</h4>
+								<p class="egen-advantage-desc">Fale diretamente com nossos especialistas pelo WhatsApp.</p>
+							</div>
+						</div>
+					</section>
+
+					{# ── Seção de destaque: grade de categorias principais ── #}
+					{% if featured_categories %}
+						<section class="home-categories mb-5" id="content-start">
+							<div class="egen-section-header">
+								<h2 class="section-title">Nossos Departamentos</h2>
+								<p class="egen-section-subtitle">Navegue pelas principais categorias e encontre tudo o que precisa para reformar ou construir.</p>
+							</div>
+							<div class="category-grid">
+								{% for cat in featured_categories %}
+									<a href="{{ cat.seo_keyword ? '/' ~ cat.seo_keyword : '/index.php?route=product/category&language=pt-br&path=' ~ cat.id }}" class="category-card">
+										{% if cat.image %}
+											<div class="category-card__image-wrapper">
+												<img src="/image/{{ cat.image }}" alt="{{ cat.name }}" loading="lazy">
+											</div>
+										{% else %}
+											<div class="category-card__no-image">🏗️</div>
+										{% endif %}
+										<div class="category-card__content">
+											<span class="category-card__name">{{ cat.name }}</span>
+											{% if cat.subcategory_count > 0 %}
+												<span class="category-card__count">{{ cat.subcategory_count }}
+													subcategorias</span>
+											{% endif %}
+										</div>
+									</a>
+								{% else %}
+									<p class="empty-state">Nenhuma categoria encontrada.</p>
+								{% endfor %}
+							</div>
+						</section>
+					{% endif %}
+
+					{# ── Banner da Home Injetado ── #}
+					{% if home_banner %}
+						<div class="swiper-viewport mb-4">
+							<div id="carousel-home" class="swiper">
+								<div class="swiper-wrapper">
+									{% for banner in home_banner %}
+										<div class="swiper-slide text-center">
+											{% if banner.link %}
+												<a href="{{ banner.link }}"><img src="{{ banner.image }}" alt="{{ banner.title }}" class="img-fluid"/></a>
+											{% else %}
+												<img src="{{ banner.image }}" alt="{{ banner.title }}" class="img-fluid"/>
+											{% endif %}
+										</div>
+									{% endfor %}
+								</div>
+							</div>
+						</div>
+					{% endif %}
+
+					{# ── Produtos em Destaque Injetados ── #}
+					{% if featured_products %}
+						<div class="egen-section-header">
+							<h3 class="section-title">{{ heading_title_featured|default('Destaques da Semana') }}</h3>
+							<p class="egen-section-subtitle">Ofertas selecionadas com condições especiais para você aproveitar hoje.</p>
+						</div>
+						<div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-xl-4 mb-5">
+							{% for product in featured_products %}
+								<div class="col">{{ product }}</div>
+							{% endfor %}
+						</div>
+					{% endif %}
+
+					{# ── Produtos Mais Recentes Injetados ── #}
+					{% if latest_products %}
+						<div class="egen-section-header">
+							<h3 class="section-title">{{ heading_title_latest|default('Novos Lançamentos') }}</h3>
+							<p class="egen-section-subtitle">Fique por dentro das novidades e tendências em materiais e acabamentos.</p>
+						</div>
+						<div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-xl-4 mb-5">
+							{% for product in latest_products %}
+								<div class="col">{{ product }}</div>
+							{% endfor %}
+						</div>
+					{% endif %}
+
+
+					{{ content_bottom }}
+				</div>
+
+				{% if column_right %}
+					<div class="col-lg-3 col-md-4 col-sm-12">
+						{{ column_right }}
+					</div>
+				{% endif %}
+			</div>
+		</div>
+	</div>
+{% endblock %}

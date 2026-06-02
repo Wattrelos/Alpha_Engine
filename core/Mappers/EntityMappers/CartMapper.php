@@ -4,7 +4,7 @@ namespace Alpha\Mappers\EntityMappers;
 
 use Alpha\Mappers\BaseMapper;
 use Alpha\Model\DataAccessObject\QueryBuilder;
-use Opencart\System\Engine\Registry;
+use Alpha\Support\Registry;
 
 /**
  * Class CartMapper

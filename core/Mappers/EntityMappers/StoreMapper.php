@@ -21,8 +21,8 @@ class StoreMapper extends BaseMapper
     {
         $query = (new QueryBuilder())
             ->from($this->getFullTableName())
-            ->where("`store_id` = ?", [$store_id])
-            ->select('DISTINCT *');
+            ->where("`id` = ?", [$store_id])
+            ->select('DISTINCT *, id AS store_id');
 
         $result = $this->dao->executeQuery($query);
         return $result[0] ?? [];
@@ -36,7 +36,7 @@ class StoreMapper extends BaseMapper
         $query = (new QueryBuilder())
             ->from($this->getFullTableName())
             ->where("REPLACE(`url`, 'www.', '') = ?", [$hostname])
-            ->select('*');
+            ->select('*, id AS store_id');
 
         $result = $this->dao->executeQuery($query);
         return $result[0] ?? null;
@@ -56,7 +56,7 @@ class StoreMapper extends BaseMapper
             $query = (new QueryBuilder())
                 ->from($this->getFullTableName())
                 ->orderBy("`url`", "ASC")
-                ->select('*');
+                ->select('*, id AS store_id');
 
             $store_data = $this->dao->executeQuery($query);
             if ($cache) $cache->set($cache_key, $store_data);

@@ -1,0 +1,1368 @@
+<!DOCTYPE html>
+<html dir="ltr" lang="pt-br"><head>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+		<meta charset="UTF-8">
+		<title>Minha Conta | AgSonhos</title>
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+					<meta name="description" content="Gerencie sua conta e compras.">
+								<!-- base href="minha-conta.html" -->
+
+				<link rel="stylesheet" href="Minha%20Conta%20produto_arquivos/all.min.css">
+
+				<link rel="stylesheet" href="Minha%20Conta%20produto_arquivos/app.css">
+		<link rel="stylesheet" href="Minha%20Conta%20produto_arquivos/personalizada.css">
+		<link rel="stylesheet" href="Minha%20Conta%20produto_arquivos/new-stylesheet.css">
+
+									</head>
+	<body data-logged="true" data-lang="pt-br">
+		<main>
+				<!-- O Header entra de forma automática em todas as páginas -->
+	<div class="telhado">
+    <header class="egen-header">
+        <div class="egen-header__container">
+
+                        <div class="egen-header__logo">
+                <div id="logo">
+			<a href="index.html"><img src="Minha%20Conta%20produto_arquivos/logo2.png" title="AG Sonhos e Construções" alt="AG Sonhos e Construções" class="img-fluid"></a>
+	</div>
+            </div>
+
+                        <div class="egen-header__content">
+
+                                <div class="egen-header__top-row">
+                    <nav class="egen-top-nav" aria-label="Barra de navegação utilitária">
+	<ul class="egen-top-nav__list">
+		<li class="egen-top-nav__item">
+			<a href="index.html" class="egen-top-nav__link">
+				<i class="fa-solid fa-house" aria-hidden="true"></i>
+				<span class="egen-top-nav__label">Principal</span>
+			</a>
+		</li>
+		<li class="egen-top-nav__item">
+			<a href="http://localhost/pt-br/information/contact" class="egen-top-nav__link">
+				<i class="fa-solid fa-phone" aria-hidden="true"></i>
+				<span class="egen-top-nav__label">Contato</span>
+			</a>
+		</li>
+		<li class="egen-top-nav__item egen-top-nav__item--dropdown">
+			<a href="#" class="egen-top-nav__link" aria-haspopup="true" aria-expanded="false">
+				<i class="fa-solid fa-user" aria-hidden="true"></i>
+				<span class="egen-top-nav__label">Minha conta</span>
+				<i class="fa-solid fa-caret-down egen-top-nav__caret" aria-hidden="true"></i>
+			</a>
+			<ul class="egen-top-nav__dropdown" role="menu">
+									<li role="none">
+						<a href="minha-conta.html" class="egen-top-nav__dropdown-item" role="menuitem">Minha conta</a>
+					</li>
+					<li role="none">
+						<a href="pedidos.html" class="egen-top-nav__dropdown-item" role="menuitem">Histórico de pedidos</a>
+					</li>
+					<li role="none">
+						<a href="http://localhost/pt-br/account/transaction" class="egen-top-nav__dropdown-item" role="menuitem">Transações</a>
+					</li>
+					<li role="none">
+						<a href="http://localhost/pt-br/logout" class="egen-top-nav__dropdown-item" role="menuitem">Sair</a>
+					</li>
+							</ul>
+		</li>
+		<li class="egen-top-nav__item">
+			<a class="egen-top-nav__link" href="http://localhost/pt-br/account/wishlist" id="wishlist-total" title="Lista de desejos">
+				<i class="fa-solid fa-heart" aria-hidden="true"></i>
+				<span class="egen-top-nav__label">Lista de desejos</span>
+			</a>
+		</li>
+		<li class="egen-top-nav__item">
+			<a class="egen-top-nav__link" href="carrinho.html" title="Carrinho de compras">
+				<i class="fa-solid fa-cart-shopping" aria-hidden="true"></i>
+				<span class="egen-top-nav__label">Carrinho de compras</span>
+				<span class="egen-cart-badge" id="egen-cart-count-top" style="display: none;">0</span>
+			</a>
+		</li>
+		<li class="egen-top-nav__item">
+			<a class="egen-top-nav__link" href="checkout.html" title="Finalizar pedido">
+				<i class="fa-solid fa-share" aria-hidden="true"></i>
+				<span class="egen-top-nav__label">Finalizar pedido</span>
+			</a>
+		</li>
+	</ul>
+</nav>
+                </div>
+
+                                <div id="top" class="egen-utility-bar">
+
+        <div class="egen-utility-bar__menu">
+                    <div class="ag-menu-container">        
+        <button class="menu-button-left" title="Navegue pelos nossos departamentos">
+    Departamentos
+</button>
+    
+        <ul class="dropdown-menu-recursive">
+        
+	
+			<li>
+			<a href="http://localhost/index.php?route=product/category&amp;language=pt-br&amp;path=17">
+				Ambiente
+									<i class="fa-solid fa-chevron-right ms-2" style="font-size: 0.8em; opacity: 0.7;"></i>
+							</a>
+
+										<ul class="submenu">
+						
+			<li>
+			<a href="http://localhost/index.php?route=product/category&amp;language=pt-br&amp;path=16">
+				Área de lazer
+									<i class="fa-solid fa-chevron-right ms-2" style="font-size: 0.8em; opacity: 0.7;"></i>
+							</a>
+
+										<ul class="submenu">
+						
+			<li>
+			<a href="http://localhost/index.php?route=product/category&amp;language=pt-br&amp;path=107">
+				Churrasqueira
+							</a>
+
+								</li>
+			<li>
+			<a href="http://localhost/index.php?route=product/category&amp;language=pt-br&amp;path=108">
+				Piscinas
+							</a>
+
+								</li>
+	
+				</ul>
+					</li>
+			<li>
+			<a href="http://localhost/index.php?route=product/category&amp;language=pt-br&amp;path=15">
+				Banheiros
+									<i class="fa-solid fa-chevron-right ms-2" style="font-size: 0.8em; opacity: 0.7;"></i>
+							</a>
+
+										<ul class="submenu">
+						
+			<li>
+			<a href="http://localhost/index.php?route=product/category&amp;language=pt-br&amp;path=106">
+				Acessórios
+							</a>
+
+								</li>
+			<li>
+			<a href="http://localhost/index.php?route=product/category&amp;language=pt-br&amp;path=103">
+				Assento para vaso sanitário
+							</a>
+
+								</li>
+			<li>
+			<a href="http://localhost/index.php?route=product/category&amp;language=pt-br&amp;path=105">
+				Gabinetes
+							</a>
+
+								</li>
+			<li>
+			<a href="http://localhost/index.php?route=product/category&amp;language=pt-br&amp;path=102">
+				Vaso sanitários
+							</a>
+
+								</li>
+	
+				</ul>
+					</li>
+			<li>
+			<a href="http://localhost/index.php?route=product/category&amp;language=pt-br&amp;path=109">
+				Brinquedos
+							</a>
+
+								</li>
+			<li>
+			<a href="http://localhost/index.php?route=product/category&amp;language=pt-br&amp;path=20">
+				Cozinha
+									<i class="fa-solid fa-chevron-right ms-2" style="font-size: 0.8em; opacity: 0.7;"></i>
+							</a>
+
+										<ul class="submenu">
+						
+			<li>
+			<a href="http://localhost/index.php?route=product/category&amp;language=pt-br&amp;path=104">
+				Pias
+							</a>
+
+								</li>
+	
+				</ul>
+					</li>
+			<li>
+			<a href="http://localhost/index.php?route=product/category&amp;language=pt-br&amp;path=14">
+				Jardinagem
+									<i class="fa-solid fa-chevron-right ms-2" style="font-size: 0.8em; opacity: 0.7;"></i>
+							</a>
+
+										<ul class="submenu">
+						
+			<li>
+			<a href="http://localhost/index.php?route=product/category&amp;language=pt-br&amp;path=101">
+				Ferramentas de jardinagem
+							</a>
+
+								</li>
+			<li>
+			<a href="http://localhost/index.php?route=product/category&amp;language=pt-br&amp;path=100">
+				Horta
+							</a>
+
+								</li>
+	
+				</ul>
+					</li>
+	
+				</ul>
+					</li>
+			<li>
+			<a href="categoria.html">
+				Construção
+									<i class="fa-solid fa-chevron-right ms-2" style="font-size: 0.8em; opacity: 0.7;"></i>
+							</a>
+
+										<ul class="submenu">
+						
+			<li>
+			<a href="http://localhost/index.php?route=product/category&amp;language=pt-br&amp;path=32">
+				Areia e brita
+							</a>
+
+								</li>
+			<li>
+			<a href="http://localhost/index.php?route=product/category&amp;language=pt-br&amp;path=33">
+				Argamassa
+							</a>
+
+								</li>
+			<li>
+			<a href="http://localhost/index.php?route=product/category&amp;language=pt-br&amp;path=8">
+				Esquadrias
+									<i class="fa-solid fa-chevron-right ms-2" style="font-size: 0.8em; opacity: 0.7;"></i>
+							</a>
+
+										<ul class="submenu">
+						
+			<li>
+			<a href="http://localhost/index.php?route=product/category&amp;language=pt-br&amp;path=71">
+				Janelas de Alumínio
+							</a>
+
+								</li>
+			<li>
+			<a href="http://localhost/index.php?route=product/category&amp;language=pt-br&amp;path=70">
+				Janelas de Madeira
+							</a>
+
+								</li>
+			<li>
+			<a href="http://localhost/index.php?route=product/category&amp;language=pt-br&amp;path=68">
+				Portas Corrediças
+							</a>
+
+								</li>
+			<li>
+			<a href="http://localhost/index.php?route=product/category&amp;language=pt-br&amp;path=67">
+				Portas de Aço
+							</a>
+
+								</li>
+			<li>
+			<a href="http://localhost/index.php?route=product/category&amp;language=pt-br&amp;path=65">
+				Portas de Alumínio
+							</a>
+
+								</li>
+			<li>
+			<a href="http://localhost/index.php?route=product/category&amp;language=pt-br&amp;path=66">
+				Portas de Madeira
+							</a>
+
+								</li>
+			<li>
+			<a href="http://localhost/index.php?route=product/category&amp;language=pt-br&amp;path=69">
+				Portas de Sanfonada
+							</a>
+
+								</li>
+	
+				</ul>
+					</li>
+			<li>
+			<a href="http://localhost/index.php?route=product/category&amp;language=pt-br&amp;path=34">
+				Forros
+							</a>
+
+								</li>
+			<li>
+			<a href="http://localhost/index.php?route=product/category&amp;language=pt-br&amp;path=35">
+				Impermeabilizantes
+							</a>
+
+								</li>
+			<li>
+			<a href="http://localhost/index.php?route=product/category&amp;language=pt-br&amp;path=36">
+				Madeira
+							</a>
+
+								</li>
+			<li>
+			<a href="http://localhost/index.php?route=product/category&amp;language=pt-br&amp;path=38">
+				Sacaria
+							</a>
+
+								</li>
+			<li>
+			<a href="http://localhost/index.php?route=product/category&amp;language=pt-br&amp;path=39">
+				Telhas
+							</a>
+
+								</li>
+			<li>
+			<a href="categoria.html">
+				Tijolos e blocos
+							</a>
+
+								</li>
+	
+				</ul>
+					</li>
+			<li>
+			<a href="http://localhost/index.php?route=product/category&amp;language=pt-br&amp;path=2">
+				Elétricos
+									<i class="fa-solid fa-chevron-right ms-2" style="font-size: 0.8em; opacity: 0.7;"></i>
+							</a>
+
+										<ul class="submenu">
+						
+			<li>
+			<a href="categoria.html">
+				Cabos
+							</a>
+
+								</li>
+			<li>
+			<a href="categoria.html">
+				Caixas
+							</a>
+
+								</li>
+			<li>
+			<a href="categoria.html">
+				Disjuntores
+							</a>
+
+								</li>
+			<li>
+			<a href="categoria.html">
+				Dutos
+							</a>
+
+								</li>
+			<li>
+			<a href="categoria.html">
+				Fitas isolantes
+							</a>
+
+								</li>
+			<li>
+			<a href="categoria.html">
+				Interruptores
+							</a>
+
+								</li>
+			<li>
+			<a href="categoria.html">
+				Tomadas
+							</a>
+
+								</li>
+	
+				</ul>
+					</li>
+			<li>
+			<a href="http://localhost/index.php?route=product/category&amp;language=pt-br&amp;path=10">
+				EPIs
+									<i class="fa-solid fa-chevron-right ms-2" style="font-size: 0.8em; opacity: 0.7;"></i>
+							</a>
+
+										<ul class="submenu">
+						
+			<li>
+			<a href="http://localhost/index.php?route=product/category&amp;language=pt-br&amp;path=95">
+				Botas de segurança
+							</a>
+
+								</li>
+			<li>
+			<a href="http://localhost/index.php?route=product/category&amp;language=pt-br&amp;path=96">
+				Luvas
+							</a>
+
+								</li>
+			<li>
+			<a href="http://localhost/index.php?route=product/category&amp;language=pt-br&amp;path=97">
+				Máscaras de proteção
+							</a>
+
+								</li>
+			<li>
+			<a href="http://localhost/index.php?route=product/category&amp;language=pt-br&amp;path=98">
+				Óculos de proteção
+							</a>
+
+								</li>
+			<li>
+			<a href="http://localhost/index.php?route=product/category&amp;language=pt-br&amp;path=99">
+				Outros EPIs
+							</a>
+
+								</li>
+	
+				</ul>
+					</li>
+			<li>
+			<a href="http://localhost/index.php?route=product/category&amp;language=pt-br&amp;path=13">
+				Ferragens
+									<i class="fa-solid fa-chevron-right ms-2" style="font-size: 0.8em; opacity: 0.7;"></i>
+							</a>
+
+										<ul class="submenu">
+						
+			<li>
+			<a href="http://localhost/index.php?route=product/category&amp;language=pt-br&amp;path=91">
+				Dobradiças
+							</a>
+
+								</li>
+			<li>
+			<a href="http://localhost/index.php?route=product/category&amp;language=pt-br&amp;path=92">
+				Fechaduras e travas
+									<i class="fa-solid fa-chevron-right ms-2" style="font-size: 0.8em; opacity: 0.7;"></i>
+							</a>
+
+										<ul class="submenu">
+						
+			<li>
+			<a href="http://localhost/index.php?route=product/category&amp;language=pt-br&amp;path=111">
+				cadeados
+							</a>
+
+								</li>
+			<li>
+			<a href="http://localhost/index.php?route=product/category&amp;language=pt-br&amp;path=113">
+				standard
+							</a>
+
+								</li>
+			<li>
+			<a href="http://localhost/index.php?route=product/category&amp;language=pt-br&amp;path=112">
+				tetrachave
+							</a>
+
+								</li>
+	
+				</ul>
+					</li>
+			<li>
+			<a href="http://localhost/index.php?route=product/category&amp;language=pt-br&amp;path=93">
+				Pregos
+							</a>
+
+								</li>
+			<li>
+			<a href="http://localhost/index.php?route=product/category&amp;language=pt-br&amp;path=94">
+				Puxadores
+							</a>
+
+								</li>
+	
+				</ul>
+					</li>
+			<li>
+			<a href="http://localhost/index.php?route=product/category&amp;language=pt-br&amp;path=1">
+				Ferramentas
+									<i class="fa-solid fa-chevron-right ms-2" style="font-size: 0.8em; opacity: 0.7;"></i>
+							</a>
+
+										<ul class="submenu">
+						
+			<li>
+			<a href="http://localhost/index.php?route=product/category&amp;language=pt-br&amp;path=12">
+				Ferramentas Elétricas
+									<i class="fa-solid fa-chevron-right ms-2" style="font-size: 0.8em; opacity: 0.7;"></i>
+							</a>
+
+										<ul class="submenu">
+						
+			<li>
+			<a href="http://localhost/index.php?route=product/category&amp;language=pt-br&amp;path=90">
+				Discos de Corte
+							</a>
+
+								</li>
+			<li>
+			<a href="http://localhost/index.php?route=product/category&amp;language=pt-br&amp;path=88">
+				Furadeira
+							</a>
+
+								</li>
+			<li>
+			<a href="http://localhost/index.php?route=product/category&amp;language=pt-br&amp;path=89">
+				Serra-mármore
+							</a>
+
+								</li>
+	
+				</ul>
+					</li>
+			<li>
+			<a href="http://localhost/index.php?route=product/category&amp;language=pt-br&amp;path=11">
+				Ferramentas manuais
+									<i class="fa-solid fa-chevron-right ms-2" style="font-size: 0.8em; opacity: 0.7;"></i>
+							</a>
+
+										<ul class="submenu">
+						
+			<li>
+			<a href="http://localhost/index.php?route=product/category&amp;language=pt-br&amp;path=81">
+				Alicates
+							</a>
+
+								</li>
+			<li>
+			<a href="http://localhost/index.php?route=product/category&amp;language=pt-br&amp;path=82">
+				Chaves combinadas
+							</a>
+
+								</li>
+			<li>
+			<a href="http://localhost/index.php?route=product/category&amp;language=pt-br&amp;path=83">
+				Chaves estrela
+							</a>
+
+								</li>
+			<li>
+			<a href="http://localhost/index.php?route=product/category&amp;language=pt-br&amp;path=84">
+				Cortadores de tubo
+							</a>
+
+								</li>
+			<li>
+			<a href="http://localhost/index.php?route=product/category&amp;language=pt-br&amp;path=85">
+				Escadas
+							</a>
+
+								</li>
+			<li>
+			<a href="http://localhost/index.php?route=product/category&amp;language=pt-br&amp;path=86">
+				Kits de ferramentas
+							</a>
+
+								</li>
+			<li>
+			<a href="http://localhost/index.php?route=product/category&amp;language=pt-br&amp;path=87">
+				Martelos
+							</a>
+
+								</li>
+	
+				</ul>
+					</li>
+	
+				</ul>
+					</li>
+			<li>
+			<a href="http://localhost/index.php?route=product/category&amp;language=pt-br&amp;path=3">
+				Hidráulica
+									<i class="fa-solid fa-chevron-right ms-2" style="font-size: 0.8em; opacity: 0.7;"></i>
+							</a>
+
+										<ul class="submenu">
+						
+			<li>
+			<a href="categoria.html">
+				Caixa d'água
+							</a>
+
+								</li>
+			<li>
+			<a href="categoria.html">
+				Calhas
+							</a>
+
+								</li>
+			<li>
+			<a href="http://localhost/index.php?route=product/category&amp;language=pt-br&amp;path=50">
+				Conexões
+							</a>
+
+								</li>
+			<li>
+			<a href="http://localhost/index.php?route=product/category&amp;language=pt-br&amp;path=51">
+				Sifão
+							</a>
+
+								</li>
+			<li>
+			<a href="http://localhost/index.php?route=product/category&amp;language=pt-br&amp;path=52">
+				Torneiras
+							</a>
+
+								</li>
+			<li>
+			<a href="http://localhost/index.php?route=product/category&amp;language=pt-br&amp;path=53">
+				Tubos
+							</a>
+
+								</li>
+			<li>
+			<a href="http://localhost/index.php?route=product/category&amp;language=pt-br&amp;path=54">
+				Válvula
+							</a>
+
+								</li>
+			<li>
+			<a href="http://localhost/index.php?route=product/category&amp;language=pt-br&amp;path=55">
+				Válvula de descarga
+							</a>
+
+								</li>
+	
+				</ul>
+					</li>
+			<li>
+			<a href="http://localhost/index.php?route=product/category&amp;language=pt-br&amp;path=9">
+				Higiene e Limpeza
+									<i class="fa-solid fa-chevron-right ms-2" style="font-size: 0.8em; opacity: 0.7;"></i>
+							</a>
+
+										<ul class="submenu">
+						
+			<li>
+			<a href="http://localhost/index.php?route=product/category&amp;language=pt-br&amp;path=75">
+				Baldes
+							</a>
+
+								</li>
+			<li>
+			<a href="http://localhost/index.php?route=product/category&amp;language=pt-br&amp;path=76">
+				Escovas
+							</a>
+
+								</li>
+			<li>
+			<a href="http://localhost/index.php?route=product/category&amp;language=pt-br&amp;path=77">
+				Materiais de Limpeza
+							</a>
+
+								</li>
+			<li>
+			<a href="http://localhost/index.php?route=product/category&amp;language=pt-br&amp;path=78">
+				Produtos de Higiene
+							</a>
+
+								</li>
+			<li>
+			<a href="http://localhost/index.php?route=product/category&amp;language=pt-br&amp;path=79">
+				Produtos de Limpeza
+							</a>
+
+								</li>
+			<li>
+			<a href="http://localhost/index.php?route=product/category&amp;language=pt-br&amp;path=80">
+				Sabão
+							</a>
+
+								</li>
+	
+				</ul>
+					</li>
+			<li>
+			<a href="http://localhost/index.php?route=product/category&amp;language=pt-br&amp;path=7">
+				Iluminação
+									<i class="fa-solid fa-chevron-right ms-2" style="font-size: 0.8em; opacity: 0.7;"></i>
+							</a>
+
+										<ul class="submenu">
+						
+			<li>
+			<a href="http://localhost/index.php?route=product/category&amp;language=pt-br&amp;path=72">
+				Arandelas
+							</a>
+
+								</li>
+			<li>
+			<a href="http://localhost/index.php?route=product/category&amp;language=pt-br&amp;path=73">
+				Lâmpadas
+							</a>
+
+								</li>
+			<li>
+			<a href="http://localhost/index.php?route=product/category&amp;language=pt-br&amp;path=74">
+				Luminárias
+							</a>
+
+								</li>
+	
+				</ul>
+					</li>
+			<li>
+			<a href="http://localhost/index.php?route=product/category&amp;language=pt-br&amp;path=5">
+				Pisos e Revestimentos
+									<i class="fa-solid fa-chevron-right ms-2" style="font-size: 0.8em; opacity: 0.7;"></i>
+							</a>
+
+										<ul class="submenu">
+						
+			<li>
+			<a href="http://localhost/index.php?route=product/category&amp;language=pt-br&amp;path=56">
+				Azulejos
+							</a>
+
+								</li>
+			<li>
+			<a href="http://localhost/index.php?route=product/category&amp;language=pt-br&amp;path=57">
+				Granitos
+							</a>
+
+								</li>
+			<li>
+			<a href="http://localhost/index.php?route=product/category&amp;language=pt-br&amp;path=58">
+				Laminados
+							</a>
+
+								</li>
+			<li>
+			<a href="http://localhost/index.php?route=product/category&amp;language=pt-br&amp;path=59">
+				Mármores
+							</a>
+
+								</li>
+			<li>
+			<a href="http://localhost/index.php?route=product/category&amp;language=pt-br&amp;path=60">
+				Pisos
+							</a>
+
+								</li>
+			<li>
+			<a href="http://localhost/index.php?route=product/category&amp;language=pt-br&amp;path=61">
+				Porcelanatos
+							</a>
+
+								</li>
+			<li>
+			<a href="http://localhost/index.php?route=product/category&amp;language=pt-br&amp;path=37">
+				Revestimentos
+							</a>
+
+								</li>
+	
+				</ul>
+					</li>
+			<li>
+			<a href="http://localhost/index.php?route=product/category&amp;language=pt-br&amp;path=6">
+				Tintas
+									<i class="fa-solid fa-chevron-right ms-2" style="font-size: 0.8em; opacity: 0.7;"></i>
+							</a>
+
+										<ul class="submenu">
+						
+			<li>
+			<a href="http://localhost/index.php?route=product/category&amp;language=pt-br&amp;path=64">
+				Acrílicas
+							</a>
+
+								</li>
+			<li>
+			<a href="http://localhost/index.php?route=product/category&amp;language=pt-br&amp;path=62">
+				Bases
+							</a>
+
+								</li>
+			<li>
+			<a href="http://localhost/index.php?route=product/category&amp;language=pt-br&amp;path=63">
+				Esmaltes
+							</a>
+
+								</li>
+	
+				</ul>
+					</li>
+	
+    </ul>
+</div>
+            </div>
+
+        <div class="egen-utility-bar__search">
+                    <div class="search-bar">
+                <input type="text" placeholder="Buscar no site...">
+                <button type="button">Buscar</button>
+            </div>
+            </div>
+
+        <div class="egen-utility-bar__cart">
+                    <a href="carrinho.html" class="egen-btn-cart">
+                <i class="fa-solid fa-cart-shopping" aria-hidden="true"></i>
+                <span>Carrinho</span>
+                <span class="egen-cart-badge" id="egen-cart-count" style="display: none;">0</span>
+            </a>
+
+            </div>
+
+</div>
+
+            </div>
+
+        </div>
+    </header>
+</div>
+
+	<div id="alert" class="container mt-2"></div>
+
+	<main class="main-content">
+		<div id="account-page">
+
+        <div class="account-hero">
+        <div class="account-hero-inner">
+            <nav class="account-breadcrumb" aria-label="Navegação">
+                                                            <a href="index.html">Início</a>
+                        <span class="sep">›</span>
+                                                                                <span class="current">Minha Conta</span>
+                                                </nav>
+            <div class="account-hero-content">
+                <div class="account-avatar">
+                    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                        <circle cx="12" cy="7" r="4"></circle>
+                    </svg>
+                </div>
+                <div>
+                    <h1 class="account-hero-title">Minha Conta</h1>
+                    <p class="account-hero-sub">Gerencie seus dados, pedidos e preferências</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+        <div class="account-wrapper">
+
+                <section class="account-section">
+            <div class="section-header">
+                <div class="section-icon section-icon--profile">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle>
+                    </svg>
+                </div>
+                <h2 class="section-title">Minha Conta</h2>
+            </div>
+            <div class="account-cards">
+                <a href="http://localhost/pt-br/account/edit" class="account-card" id="link-edit-account">
+                    <div class="card-icon">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+                            <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+                        </svg>
+                    </div>
+                    <div class="card-text">
+                        <span class="card-label">Alterar informações da minha conta</span>
+                        <span class="card-hint">Nome, e-mail, telefone</span>
+                    </div>
+                    <div class="card-arrow">›</div>
+                </a>
+
+                <a href="http://localhost/pt-br/account/password" class="account-card" id="link-change-password">
+                    <div class="card-icon">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                            <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+                        </svg>
+                    </div>
+                    <div class="card-text">
+                        <span class="card-label">Alterar minha senha</span>
+                        <span class="card-hint">Segurança da sua conta</span>
+                    </div>
+                    <div class="card-arrow">›</div>
+                </a>
+
+                <a href="enderecos.html" class="account-card" id="link-address">
+                    <div class="card-icon">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+                            <circle cx="12" cy="10" r="3"></circle>
+                        </svg>
+                    </div>
+                    <div class="card-text">
+                        <span class="card-label">Alterar meus endereços</span>
+                        <span class="card-hint">Endereços de entrega</span>
+                    </div>
+                    <div class="card-arrow">›</div>
+                </a>
+
+                <a href="http://localhost/pt-br/account/wishlist" class="account-card" id="link-wishlist">
+                    <div class="card-icon">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
+                        </svg>
+                    </div>
+                    <div class="card-text">
+                        <span class="card-label">Lista de desejos</span>
+                        <span class="card-hint">Produtos salvos</span>
+                    </div>
+                    <div class="card-arrow">›</div>
+                </a>
+            </div>
+        </section>
+
+                <section class="account-section">
+            <div class="section-header">
+                <div class="section-icon section-icon--orders">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path>
+                        <line x1="3" y1="6" x2="21" y2="6"></line>
+                        <path d="M16 10a4 4 0 0 1-8 0"></path>
+                    </svg>
+                </div>
+                <h2 class="section-title">Meus Pedidos</h2>
+            </div>
+            <div class="account-cards">
+                <a href="pedidos.html" class="account-card account-card--highlight" id="link-orders">
+                    <div class="card-icon">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <polyline points="9 11 12 14 22 4"></polyline>
+                            <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path>
+                        </svg>
+                    </div>
+                    <div class="card-text">
+                        <span class="card-label">Histórico de pedidos</span>
+                        <span class="card-hint">Ver todos os pedidos</span>
+                    </div>
+                    <div class="card-arrow">›</div>
+                </a>
+
+                <a href="http://localhost/pt-br/account/download" class="account-card" id="link-downloads">
+                    <div class="card-icon">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                            <polyline points="7 10 12 15 17 10"></polyline>
+                            <line x1="12" y1="15" x2="12" y2="3"></line>
+                        </svg>
+                    </div>
+                    <div class="card-text">
+                        <span class="card-label">Downloads</span>
+                        <span class="card-hint">Arquivos disponíveis</span>
+                    </div>
+                    <div class="card-arrow">›</div>
+                </a>
+
+                
+                <a href="http://localhost/pt-br/account/return" class="account-card" id="link-returns">
+                    <div class="card-icon">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <polyline points="1 4 1 10 7 10"></polyline>
+                            <path d="M3.51 15a9 9 0 1 0 .49-3.51"></path>
+                        </svg>
+                    </div>
+                    <div class="card-text">
+                        <span class="card-label">Solicitações de devolução</span>
+                        <span class="card-hint">Devoluções e trocas</span>
+                    </div>
+                    <div class="card-arrow">›</div>
+                </a>
+
+                <a href="http://localhost/pt-br/account/transaction" class="account-card" id="link-transactions">
+                    <div class="card-icon">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <line x1="12" y1="1" x2="12" y2="23"></line>
+                            <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
+                        </svg>
+                    </div>
+                    <div class="card-text">
+                        <span class="card-label">Transações</span>
+                        <span class="card-hint">Extrato financeiro</span>
+                    </div>
+                    <div class="card-arrow">›</div>
+                </a>
+            </div>
+        </section>
+
+                <section class="account-section">
+            <div class="section-header">
+                <div class="section-icon section-icon--news">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
+                        <polyline points="22,6 12,13 2,6"></polyline>
+                    </svg>
+                </div>
+                <h2 class="section-title">Novidades por E-mail</h2>
+            </div>
+            <div class="account-cards">
+                <a href="http://localhost/pt-br/account/newsletter" class="account-card" id="link-newsletter">
+                    <div class="card-icon">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
+                            <polyline points="22,6 12,13 2,6"></polyline>
+                        </svg>
+                    </div>
+                    <div class="card-text">
+                        <span class="card-label">Inscrever ou desinscrever-se na newsletter</span>
+                        <span class="card-hint">Preferências de comunicação</span>
+                    </div>
+                    <div class="card-arrow">›</div>
+                </a>
+            </div>
+        </section>
+
+                
+    </div></div>
+<style>
+/* ══════════════════════════════════════════════════
+   ACCOUNT PAGE — Alpha Engine Premium UI
+   ══════════════════════════════════════════════════ */
+
+#account-page {
+    min-height: 100vh;
+    background: #0d0f14;
+    color: #e2e8f0;
+    font-family: 'Inter', 'Outfit', system-ui, sans-serif;
+}
+
+/* ── Hero ── */
+.account-hero {
+    background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 50%, #0f172a 100%);
+    border-bottom: 1px solid rgba(99, 102, 241, 0.2);
+    padding: 3rem 2rem 2.5rem;
+}
+.account-hero-inner { max-width: 1100px; margin: 0 auto; }
+
+.account-breadcrumb {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.8rem;
+    color: #94a3b8;
+    margin-bottom: 1.75rem;
+}
+.account-breadcrumb a { color: #94a3b8; text-decoration: none; transition: color 0.2s; }
+.account-breadcrumb a:hover { color: #a5b4fc; }
+.account-breadcrumb .sep { color: #475569; }
+.account-breadcrumb .current { color: #a5b4fc; font-weight: 500; }
+
+.account-hero-content {
+    display: flex;
+    align-items: center;
+    gap: 1.25rem;
+}
+.account-avatar {
+    width: 64px; height: 64px;
+    background: linear-gradient(135deg, rgba(99,102,241,0.25), rgba(139,92,246,0.25));
+    border: 1px solid rgba(99, 102, 241, 0.4);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #a5b4fc;
+    flex-shrink: 0;
+}
+.account-hero-title {
+    font-size: clamp(1.5rem, 3vw, 2.2rem);
+    font-weight: 700;
+    color: #f1f5f9;
+    margin: 0 0 0.25rem;
+    letter-spacing: -0.02em;
+}
+.account-hero-sub { color: #94a3b8; font-size: 0.9rem; margin: 0; }
+
+/* ── Wrapper ── */
+.account-wrapper {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 2.5rem 1.5rem 5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 2.5rem;
+}
+
+/* ── Section ── */
+.account-section {}
+
+.section-header {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 1rem;
+}
+.section-icon {
+    width: 36px; height: 36px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+.section-icon--profile  { background: rgba(99,102,241,0.15); color: #a5b4fc; border: 1px solid rgba(99,102,241,0.25); }
+.section-icon--orders   { background: rgba(34,197,94,0.12);  color: #4ade80; border: 1px solid rgba(34,197,94,0.25); }
+.section-icon--news     { background: rgba(59,130,246,0.12); color: #60a5fa; border: 1px solid rgba(59,130,246,0.25); }
+.section-icon--affiliate{ background: rgba(245,158,11,0.12); color: #fbbf24; border: 1px solid rgba(245,158,11,0.25); }
+
+.section-title {
+    font-size: 0.7rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: #94a3b8;
+    margin: 0;
+}
+
+/* ── Cards grid ── */
+.account-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 0.75rem;
+}
+
+/* ── Single card ── */
+.account-card {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(255,255,255,0.07);
+    border-radius: 12px;
+    padding: 1rem 1.1rem;
+    text-decoration: none;
+    color: #e2e8f0;
+    transition: background 0.2s, border-color 0.2s, transform 0.2s, box-shadow 0.2s;
+    cursor: pointer;
+}
+.account-card:hover {
+    background: rgba(99, 102, 241, 0.08);
+    border-color: rgba(99, 102, 241, 0.3);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(0,0,0,0.3);
+    color: #e2e8f0;
+}
+.account-card--highlight {
+    border-color: rgba(34, 197, 94, 0.2);
+    background: rgba(34, 197, 94, 0.04);
+}
+.account-card--highlight:hover {
+    background: rgba(34, 197, 94, 0.1);
+    border-color: rgba(34, 197, 94, 0.4);
+}
+
+.card-icon {
+    width: 40px; height: 40px;
+    background: rgba(99, 102, 241, 0.12);
+    border: 1px solid rgba(99, 102, 241, 0.2);
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #a5b4fc;
+    flex-shrink: 0;
+    transition: background 0.2s;
+}
+.account-card--highlight .card-icon {
+    background: rgba(34, 197, 94, 0.12);
+    border-color: rgba(34, 197, 94, 0.25);
+    color: #4ade80;
+}
+.card-icon--gold { background: rgba(245,158,11,0.12); border-color: rgba(245,158,11,0.25); color: #fbbf24; }
+
+.account-card:hover .card-icon { background: rgba(99, 102, 241, 0.22); }
+.account-card--highlight:hover .card-icon { background: rgba(34, 197, 94, 0.22); }
+
+.card-text {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 0.15rem;
+    min-width: 0;
+}
+.card-label {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: #e2e8f0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+.card-hint {
+    font-size: 0.75rem;
+    color: #64748b;
+}
+
+.card-arrow {
+    color: #475569;
+    font-size: 1.1rem;
+    font-weight: 300;
+    transition: color 0.2s, transform 0.2s;
+    flex-shrink: 0;
+}
+.account-card:hover .card-arrow {
+    color: #a5b4fc;
+    transform: translateX(2px);
+}
+.account-card--highlight:hover .card-arrow { color: #4ade80; }
+
+/* ── Responsive ── */
+@media (max-width: 640px) {
+    .account-hero { padding: 2rem 1rem 1.5rem; }
+    .account-wrapper { padding: 1.5rem 1rem 4rem; gap: 2rem; }
+    .account-cards { grid-template-columns: 1fr; }
+    .account-hero-title { font-size: 1.4rem; }
+    .account-avatar { width: 52px; height: 52px; }
+}
+</style>
+	</main>
+
+	<!-- O Footer entra de forma automática em todas as páginas -->
+	
+
+        
+
+
+
+<footer class="ag-footer">
+  <div class="egen-footer__container">
+
+        <div class="egen-footer__grid">
+
+            <div class="egen-footer__brand-col">
+        <div class="egen-footer__brand">
+                      <img src="Minha%20Conta%20produto_arquivos/logo2.png" alt="AG Sonhos e Construções" class="egen-footer__logo">
+                    <p class="footer-desc">
+            A parceria ideal para a realização dos seus sonhos e da sua 
+obra. Materiais de construção com qualidade, agilidade e o melhor preço.
+          </p>
+        </div>
+
+                <div class="social-icons">
+          <a href="https://facebook.com/" target="_blank" rel="noopener" title="Facebook" aria-label="Facebook"><i class="fa-brands fa-facebook-f" aria-hidden="true"></i></a>
+          <a href="https://instagram.com/" target="_blank" rel="noopener" title="Instagram" aria-label="Instagram"><i class="fa-brands fa-instagram" aria-hidden="true"></i></a>
+          <a href="https://youtube.com/" target="_blank" rel="noopener" title="YouTube" aria-label="YouTube"><i class="fa-brands fa-youtube" aria-hidden="true"></i></a>
+          <a href="https://wa.me/5500000000000" target="_blank" rel="noopener" title="WhatsApp" aria-label="WhatsApp"><i class="fa-brands fa-whatsapp" aria-hidden="true"></i></a>
+        </div>
+      </div>
+
+                    <div class="egen-footer__col">
+  <h5 class="footer-column__title">Informações</h5>
+  <ul class="footer-column__list">
+                  <li class="footer-column__item">
+          <a href="http://localhost/pt-br/pagina/1" class="footer-column__link">
+            AG Sonho e Construções
+          </a>
+        </li>
+                        <li class="footer-column__item">
+          <a href="http://localhost/pt-br/pagina/termos-e-condicoes" class="footer-column__link">
+            Termos e Condições
+          </a>
+        </li>
+                        <li class="footer-column__item">
+          <a href="http://localhost/pt-br/pagina/3" class="footer-column__link">
+            Política de Privacidade
+          </a>
+        </li>
+                        <li class="footer-column__item">
+          <a href="http://localhost/pt-br/pagina/informacoes-entrega" class="footer-column__link">
+            Informações de entrega
+          </a>
+        </li>
+            </ul>
+</div>
+      
+            <div class="egen-footer__col">
+  <h5 class="footer-column__title">Atendimento</h5>
+  <ul class="footer-column__list">
+                  <li class="footer-column__item">
+          <a href="http://localhost/pt-br/information/contact" class="footer-column__link">
+            Fale Conosco
+          </a>
+        </li>
+                        <li class="footer-column__item">
+          <a href="http://localhost/pt-br/account/return" class="footer-column__link">
+            Solicitações de devolução
+          </a>
+        </li>
+                        <li class="footer-column__item">
+          <a href="http://localhost/pt-br/information/sitemap" class="footer-column__link">
+            Mapa do Site
+          </a>
+        </li>
+            </ul>
+</div>
+
+            <div class="egen-footer__col">
+  <h5 class="footer-column__title">Descubra</h5>
+  <ul class="footer-column__list">
+                  <li class="footer-column__item">
+          <a href="http://localhost/pt-br/product/manufacturer" class="footer-column__link">
+            Marcas/Fabricantes
+          </a>
+        </li>
+                        <li class="footer-column__item">
+          <a href="http://localhost/pt-br/product/special" class="footer-column__link">
+            Ofertas Especiais
+          </a>
+        </li>
+            </ul>
+</div>
+
+            <div class="egen-footer__col">
+  <h5 class="footer-column__title">Minha conta</h5>
+  <ul class="footer-column__list">
+                  <li class="footer-column__item">
+          <a href="minha-conta.html" class="footer-column__link">
+            Minha conta
+          </a>
+        </li>
+                        <li class="footer-column__item">
+          <a href="pedidos.html" class="footer-column__link">
+            Histórico de pedidos
+          </a>
+        </li>
+                        <li class="footer-column__item">
+          <a href="http://localhost/pt-br/account/wishlist" class="footer-column__link">
+            Lista de desejos
+          </a>
+        </li>
+                        <li class="footer-column__item">
+          <a href="http://localhost/pt-br/account/newsletter" class="footer-column__link">
+            Inscrever ou desinscrever-se na newsletter
+          </a>
+        </li>
+            </ul>
+</div>
+
+    </div>  </div>
+    <div class="ag-footer-bottom">
+    <div class="egen-footer__container">
+      <div class="egen-footer__bottom-row">
+
+        <p class="ag-footer-bottom__copy">
+          © 2026 AG Sonhos e Construções. Todos os direitos reservados.
+        </p>
+
+        <div class="payment-methods">
+          <span class="payment-methods__label">Formas de pagamento:</span>
+          <i class="fa-brands fa-cc-visa fa-2x" title="Visa" aria-label="Visa"></i>
+          <i class="fa-brands fa-cc-mastercard fa-2x" title="Mastercard" aria-label="Mastercard"></i>
+          <i class="fa-solid fa-barcode fa-2x" title="Boleto Bancário" aria-label="Boleto Bancário"></i>
+          <i class="fa-solid fa-money-bill-transfer fa-2x" title="Pix" aria-label="Pix"></i>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</footer>
+
+	<script src="Minha%20Conta%20produto_arquivos/form-validator.js"></script>
+	<script src="Minha%20Conta%20produto_arquivos/app.js"></script>
+	<script src="Minha%20Conta%20produto_arquivos/cart.js"></script>
+	<script src="Minha%20Conta%20produto_arquivos/checkout.js"></script>
+		</main>
+	
+
+
+</body></html>

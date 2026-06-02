@@ -1,0 +1,9 @@
+<nav class="main-navigation">
+    {% for link in links %}
+        {% include 'components/atoms/nav-link.twig' with {
+            'url': link.url,
+            'label': link.label,
+            'active': (current_route == link.route)
+        } %}
+    {% endfor %}
+</nav>

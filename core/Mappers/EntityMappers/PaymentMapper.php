@@ -25,13 +25,13 @@ class PaymentMapper extends BaseMapper {
     public function getMethods(array $payment_address): array {
         $payment_methods = [];
 
-        $extensionMapper = new ExtensionMapper($this->registry);
+        $extensionMapper = $this->registry->get('alpha_mapper_factory')->get(ExtensionMapper::class);
         $results = $extensionMapper->getExtensionsByType('payment');
 
         $sort_order = [];
 
         foreach ($results as $key => $value) {
-            $sort_order[$key] = (int)oc_config('payment_' . $value->getCode() . '_sort_order');
+            $sort_order[$key] = (int)$this->registry->get('config')->get('payment_' . $value->getCode() . '_sort_order');
         }
 
         array_multisort($sort_order, SORT_ASC, $results);
@@ -39,10 +39,9 @@ class PaymentMapper extends BaseMapper {
         /** @var \Alpha\Model\Domain\Entities\Extension $result */
         foreach ($results as $result) {
             // Alpha Engine: Verificação de status via config nativa
-            if (oc_config('payment_' . $result->getCode() . '_status')) {
+            if ($this->registry->get('config')->get('payment_' . $result->getCode() . '_status')) {
                 // Invocação dinâmica da extensão (enquanto as extensões de pagamento não são convertidas em Mappers)
-                $registry = \Alpha\Model\DataAccessObject\ConnectionDB::getRegistry();
-                $load = $registry->get('load');
+                $load = $this->registry->get('load');
                 
                 $extension_route = 'extension/' . $result->getExtension() . '/payment/' . $result->getCode();
                 
@@ -50,8 +49,8 @@ class PaymentMapper extends BaseMapper {
                 
                 $model_name = 'model_extension_' . $result->getExtension() . '_payment_' . $result->getCode();
                 
-                if ($registry->has($model_name)) {
-                    $method = $registry->get($model_name)->getMethods($payment_address);
+                if ($this->registry->has($model_name)) {
+                    $method = $this->registry->get($model_name)->getMethods($payment_address);
 
                     if ($method) {
                         $payment_methods[$result['code']] = $method;

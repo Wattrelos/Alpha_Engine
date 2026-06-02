@@ -26,6 +26,7 @@ class ProductMapper extends BaseMapper {
             ->leftJoin(DB_PREFIX . 'manufacturer', 'm', 'p.manufacturer_id = m.id')
             ->where("p.id = ?", [$product_id])
             ->where("p.status = ?", [1])
+            ->where("p.quantity > 0")
             ->where("p.date_available <= ?", [date('Y-m-d')])
             ->where("p2s.store_id = ?", [$store_id])
             ->where("pd.language_id = ?", [$language_id])
@@ -56,7 +57,7 @@ class ProductMapper extends BaseMapper {
         /** @var \Alpha\Model\Domain\Repositories\SeoUrlRepository $seoRepository */
         $seoRepository = $this->registry->get('alpha_repository_factory')->get(\Alpha\Model\Domain\Repositories\SeoUrlRepository::class);
         $keyword = $seoRepository->getKeywordByQuery('product_id', (string)$product_id, $store_id, $language_id);
-        $product['href'] = $keyword ?: 'index.php?route=product/product&product_id=' . $product_id;
+        $product['href'] = $keyword ? '/' . $keyword : '/produto/' . $product_id;
 
         return $product;
     }
@@ -101,9 +102,8 @@ class ProductMapper extends BaseMapper {
               ->where("p.quantity > 0");
 
         // Filtros de busca
-        if (!empty($data['filter_search'])) {
-            // Simplificado para o exemplo, mas segue a lógica de ORs do original
-            $query->where("(pd.name LIKE ? OR p.model = ?)", ["%".$data['filter_search']."%", $data['filter_search']]);
+        if (!empty($data['filter_name'])) {
+            $query->where("(pd.name LIKE ? OR p.model = ?)", ["%" . $data['filter_name'] . "%", $data['filter_name']]);
         }
 
         if (!empty($data['filter_manufacturer_id'])) {
@@ -114,12 +114,64 @@ class ProductMapper extends BaseMapper {
              $query->where(!empty($data['filter_sub_category']) ? "cp.path_id = ?" : "p2c.category_id = ?", [$data['filter_category_id']]);
         }
 
+        // Filtros facetados adicionais
+        if (empty($data['filter_category_id']) && !empty($data['filter_categories'])) {
+            $query->leftJoin(DB_PREFIX . 'product_to_category', 'p2c', 'p2c.product_id = p2s.product_id');
+        }
+
+        if (!empty($data['filter_categories']) && is_array($data['filter_categories'])) {
+            $categories = array_map('intval', $data['filter_categories']);
+            $placeholders = implode(',', array_fill(0, count($categories), '?'));
+            $query->where("p2c.category_id IN ($placeholders)", $categories);
+        }
+
+        if (!empty($data['filter_manufacturers']) && is_array($data['filter_manufacturers'])) {
+            $manufacturers = array_map('intval', $data['filter_manufacturers']);
+            $placeholders = implode(',', array_fill(0, count($manufacturers), '?'));
+            $query->where("p.manufacturer_id IN ($placeholders)", $manufacturers);
+        }
+
+        if (!empty($data['filter_price_min'])) {
+            $query->where("p.price >= ?", [(float)$data['filter_price_min']]);
+        }
+
+        if (!empty($data['filter_price_max'])) {
+            $query->where("p.price <= ?", [(float)$data['filter_price_max']]);
+        }
+
+        if (!empty($data['filter_rating'])) {
+            $query->where("(SELECT AVG(r.rating) FROM " . DB_PREFIX . "review r WHERE r.product_id = p.id AND r.status = 1) >= ?", [(int)$data['filter_rating']]);
+        }
+
         // Select e Ordenação
         $query->select('p.*', 'pd.name', 'pd.description', 'p.image', '(SELECT COUNT(*) FROM ' . DB_PREFIX . 'review r WHERE r.product_id = p.id AND r.status = 1) AS reviews');
         if (!empty($priceStatements)) {
             $query->select(...array_values($priceStatements));
         }
         $query->groupBy('p.id');
+
+        // Ordenação
+        $sort_data = [
+            'pd.name',
+            'p.model',
+            'p.quantity',
+            'p.price',
+            'rating',
+            'p.sort_order',
+            'p.date_added'
+        ];
+
+        if (isset($data['sort']) && in_array($data['sort'], $sort_data)) {
+            if ($data['sort'] == 'pd.name' || $data['sort'] == 'p.model') {
+                $query->orderBy("LCASE(" . $data['sort'] . ")", $data['order'] ?? 'ASC');
+            } elseif ($data['sort'] == 'p.price') {
+                $query->orderBy("(CASE WHEN special IS NOT NULL THEN special WHEN discount IS NOT NULL THEN discount ELSE p.price END)", $data['order'] ?? 'ASC');
+            } else {
+                $query->orderBy($data['sort'], $data['order'] ?? 'ASC');
+            }
+        } else {
+            $query->orderBy('p.sort_order', 'ASC');
+        }
 
         // Paginação
         $limit = (int)($data['limit'] ?? 20);
@@ -141,7 +193,7 @@ class ProductMapper extends BaseMapper {
                 $keyword = $seoRepository->getKeywordByQuery('product_id', (string)$productId, $store_id, $language_id);
                 
                 // Injeta o link amigável ou rota padrão
-                $result['href'] = $keyword ?: 'index.php?route=product/product&product_id=' . $productId;
+                $result['href'] = $keyword ? '/' . $keyword : '/produto/' . $productId;
             }
         }
 
@@ -155,6 +207,9 @@ class ProductMapper extends BaseMapper {
     public function getProductsByIds(array $product_ids, int $language_id, int $store_id, int $customer_group_id = 0, array $priceStatements = []): array {
         if (empty($product_ids)) return [];
         
+        // Alpha Engine: Desduplica os IDs para evitar repetição de Placeholders IN(?,?,?) na mesma query
+        $product_ids = array_values(array_unique($product_ids));
+        
         $placeholders = implode(',', array_fill(0, count($product_ids), '?'));
         
         $query = (new QueryBuilder())
@@ -163,6 +218,7 @@ class ProductMapper extends BaseMapper {
             ->leftJoin(DB_PREFIX . 'product_description', 'pd', 'p.id = pd.product_id')
             ->where("p.id IN ($placeholders)", $product_ids)
             ->where("p.status = ?", [1])
+            ->where("p.quantity > 0")
             ->where("p.date_available <= ?", [date('Y-m-d')])
             ->where("p2s.store_id = ?", [$store_id])
             ->where("pd.language_id = ?", [$language_id])
@@ -184,7 +240,7 @@ class ProductMapper extends BaseMapper {
                 $productId = (int)$result['id'];
                 $keyword = $seoRepository->getKeywordByQuery('product_id', (string)$productId, $store_id, $language_id);
                 
-                $result['href'] = $keyword ?: 'index.php?route=product/product&product_id=' . $productId;
+                $result['href'] = $keyword ? '/' . $keyword : '/produto/' . $productId;
             }
         }
 
@@ -218,12 +274,45 @@ class ProductMapper extends BaseMapper {
               ->where("pd.language_id = ?", [$language_id])
               ->where("p.quantity > 0");
 
+        if (!empty($data['filter_name'])) {
+            $query->where("(pd.name LIKE ? OR p.model = ?)", ["%" . $data['filter_name'] . "%", $data['filter_name']]);
+        }
+
         if (!empty($data['filter_category_id'])) {
             $query->where(!empty($data['filter_sub_category']) ? "cp.path_id = ?" : "p2c.category_id = ?", [$data['filter_category_id']]);
         }
 
         if (!empty($data['filter_manufacturer_id'])) {
             $query->where("p.manufacturer_id = ?", [$data['filter_manufacturer_id']]);
+        }
+
+        // Filtros facetados adicionais
+        if (empty($data['filter_category_id']) && !empty($data['filter_categories'])) {
+            $query->leftJoin(DB_PREFIX . 'product_to_category', 'p2c', 'p2c.product_id = p2s.product_id');
+        }
+
+        if (!empty($data['filter_categories']) && is_array($data['filter_categories'])) {
+            $categories = array_map('intval', $data['filter_categories']);
+            $placeholders = implode(',', array_fill(0, count($categories), '?'));
+            $query->where("p2c.category_id IN ($placeholders)", $categories);
+        }
+
+        if (!empty($data['filter_manufacturers']) && is_array($data['filter_manufacturers'])) {
+            $manufacturers = array_map('intval', $data['filter_manufacturers']);
+            $placeholders = implode(',', array_fill(0, count($manufacturers), '?'));
+            $query->where("p.manufacturer_id IN ($placeholders)", $manufacturers);
+        }
+
+        if (!empty($data['filter_price_min'])) {
+            $query->where("p.price >= ?", [(float)$data['filter_price_min']]);
+        }
+
+        if (!empty($data['filter_price_max'])) {
+            $query->where("p.price <= ?", [(float)$data['filter_price_max']]);
+        }
+
+        if (!empty($data['filter_rating'])) {
+            $query->where("(SELECT AVG(r.rating) FROM " . DB_PREFIX . "review r WHERE r.product_id = p.id AND r.status = 1) >= ?", [(int)$data['filter_rating']]);
         }
 
         return $this->dao->executeCount($query);
@@ -271,6 +360,7 @@ class ProductMapper extends BaseMapper {
             ->where('p2s.store_id = ?', [$store_id])
             ->where('pd.language_id = ?', [$language_id])
             ->where('p.status = 1')
+            ->where('p.quantity > 0')
             ->where('p.date_available <= ?', [date('Y-m-d')])
             ->select(
                 'p.*', 
@@ -296,7 +386,7 @@ class ProductMapper extends BaseMapper {
                 $productId = (int)$result['id'];
                 $keyword = $seoRepository->getKeywordByQuery('product_id', (string)$productId, $store_id, $language_id);
                 
-                $result['href'] = $keyword ?: 'index.php?route=product/product&product_id=' . $productId;
+                $result['href'] = $keyword ? '/' . $keyword : '/produto/' . $productId;
             }
         }
 

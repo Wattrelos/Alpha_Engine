@@ -74,4 +74,27 @@ class ManufacturerMapper {
         $results = $this->dao->executeQuery($query);
         return $results ? (int)$results[0]['layout_id'] : 0;
     }
+
+    /**
+     * Obtém fabricantes que possuem produtos em uma determinada categoria ou suas subcategorias
+     */
+    public function getManufacturersByCategory(int $category_id, int $store_id): array {
+        $query = (new QueryBuilder())
+            ->from(DB_PREFIX . 'product_to_category', 'p2c')
+            ->join(DB_PREFIX . 'category_path', 'cp', 'p2c.category_id = cp.category_id')
+            ->join(DB_PREFIX . 'product', 'p', 'p2c.product_id = p.id')
+            ->join(DB_PREFIX . 'product_to_store', 'p2s', 'p.id = p2s.product_id')
+            ->join(DB_PREFIX . 'manufacturer', 'm', 'p.manufacturer_id = m.id')
+            ->join(DB_PREFIX . 'manufacturer_to_store', 'm2s', 'm.id = m2s.manufacturer_id')
+            ->where('cp.path_id = ?', [$category_id])
+            ->where('p2s.store_id = ?', [$store_id])
+            ->where('m2s.store_id = ?', [$store_id])
+            ->where('p.status = 1')
+            ->where('p.quantity > 0')
+            ->groupBy('m.id')
+            ->orderBy('m.name', 'ASC')
+            ->select('m.*');
+
+        return $this->dao->executeQuery($query);
+    }
 }

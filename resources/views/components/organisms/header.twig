@@ -1,0 +1,25 @@
+<div class="telhado">
+    <header class="egen-header">
+        <div class="egen-header__container">
+
+            {# Logo — ancora à esquerda (Atom) #}
+            <div class="egen-header__logo">
+                {% include 'components/atoms/logo.twig' %}
+            </div>
+
+            {# Coluna direita: top-nav + utility-bar #}
+            <div class="egen-header__content">
+
+                {# Top Nav — alinhado à direita, acima da utility-bar #}
+                <div class="egen-header__top-row">
+                    {% include 'components/molecules/top-nav.twig' %}
+                </div>
+
+                {# Utility Bar — ocupa toda a largura da coluna direita #}
+                {% include 'components/molecules/utility-bar.twig' %}
+
+            </div>
+
+        </div>
+    </header>
+</div>

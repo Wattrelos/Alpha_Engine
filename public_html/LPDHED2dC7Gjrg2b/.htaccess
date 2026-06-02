@@ -1,0 +1,11 @@
+RewriteEngine On
+
+# Impede listagem de diretório
+Options -Indexes
+
+# Se o arquivo ou diretório físico existir, serve diretamente
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+
+# Caso contrário, envia para o index.php do admin
+RewriteRule ^ index.php [QSA,L]

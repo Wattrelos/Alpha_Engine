@@ -2,7 +2,7 @@
 
 namespace Alpha\Services\Shipping;
 
-use Opencart\System\Engine\Registry;
+use Alpha\Support\Registry;
 use Alpha\Model\Domain\Repositories\WeightClassRepository;
 use Alpha\Model\Domain\Repositories\GeoZoneRepository;
 use Alpha\Mappers\MapperFactory;

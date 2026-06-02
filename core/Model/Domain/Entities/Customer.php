@@ -29,6 +29,7 @@ class Customer extends BaseEntity
     private string $dateAdded = '';
     private string $cpfCnpj = '';     // Atributo personalizado
     private string $persontype = '';  // Atributo personalizado
+    private int    $addressId = 0;    // ID do endereço padrão
 
     // Associações Muitos-para-Um
 
@@ -82,6 +83,15 @@ class Customer extends BaseEntity
 
     public function setLanguageId(int $languageId): self {
         $this->languageId = $languageId;
+        return $this;
+    }
+
+    public function getAddressId(): int {
+        return $this->addressId;
+    }
+
+    public function setAddressId(int $addressId): self {
+        $this->addressId = $addressId;
         return $this;
     }
 

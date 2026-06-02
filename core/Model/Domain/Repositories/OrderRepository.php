@@ -2,36 +2,42 @@
 namespace Alpha\Model\Domain\Repositories;
 
 use Alpha\Model\Domain\DTOs\OrderDataDTO;
-use Alpha\Mappers\OrderMapper;
-use Alpha\Mappers\CartMapper;
+use Alpha\Mappers\EntityMappers\OrderMapper;
+use Alpha\Model\Domain\Repositories\CartRepository;
 use Alpha\Model\DataAccessObject\UnitOfWork;
-use Alpha\Support\Factories\MapperFactory;
-use Opencart\System\Engine\Registry;
+use Alpha\Model\Domain\InterfaceEntity;
+use Alpha\Mappers\MapperFactory;
+use Alpha\Support\Registry;
+use Alpha\Model\Domain\Repositories\CouponRepository;
 
 /**
  * Class OrderRepository
  * 
  * Gerencia a lógica de negócio e orquestração de persistência de pedidos.
  */
-class OrderRepository extends AbstractRepository {
+class OrderRepository extends AbstractRepository implements BaseRepositoryInterface {
 
     private UnitOfWork $unitOfWork;
-    private Registry $registry;
-    private MapperFactory $mapperFactory;
 
     /**
-     * Construtor com injeção de dependências rigorosa.
+     * Construtor da Alpha Engine.
      */
     public function __construct(
-        OrderMapper $mapper,
-        UnitOfWork $unitOfWork,
+        MapperFactory $mapperFactory,
         Registry $registry,
-        MapperFactory $mapperFactory
+        ?\Alpha\Support\Cache\CacheStrategyInterface $cache = null
     ) {
-        parent::__construct($mapper);
-        $this->unitOfWork = $unitOfWork;
-        $this->registry = $registry;
-        $this->mapperFactory = $mapperFactory;
+        parent::__construct($mapperFactory, $registry, $cache);
+        $this->unitOfWork = new UnitOfWork();
+        $this->mapperClass = OrderMapper::class;
+    }
+
+    /**
+     * Obtém o Mapper de pedidos.
+     */
+    protected function getMapper(): OrderMapper
+    {
+        return $this->mapperFactory->get(OrderMapper::class);
     }
 
     /**
@@ -94,7 +100,6 @@ class OrderRepository extends AbstractRepository {
         $session = $this->registry->get('session');
         $customer = $this->registry->get('customer');
         $config = $this->registry->get('config');
-        $cart = $this->registry->get('cart');
 
         $data = [];
 
@@ -135,14 +140,15 @@ class OrderRepository extends AbstractRepository {
         $data['shipping_method'] = $session->data['shipping_method']['title'] ?? '';
         $data['shipping_code'] = $session->data['shipping_method']['code'] ?? '';
 
-        // Itens do Carrinho via Mapper para garantir tipos Alpha Engine
-        /** @var CartMapper $cartMapper */
-        $cartMapper = $this->mapperFactory->get(CartMapper::class);
+        // Itens do Carrinho via CartRepository (garante hidratação completa com opções e descontos)
+        /** @var CartRepository $cartRepository */
+        $cartRepository = $this->registry->get('alpha_repository_factory')->get(CartRepository::class);
         
-        $data['products'] = $cartMapper->getProducts($data['customer_id'], $session->getId(), $data['language_id'], $data['store_id'], $data['customer_group_id']);
+        $data['products'] = $cartRepository->getProducts();
         $data['vouchers'] = $session->data['vouchers'] ?? [];
         $data['totals'] = $session->data['totals'] ?? [];
-        $data['total'] = $cart->getTotal();
+        $data['total'] = $cartRepository->getTotal();
+        $data['comment'] = $session->data['comment'] ?? '';
 
         // Alpha Engine: Coleta de Cupom para rastreamento de marketing e histórico de uso
         $coupon_code = $session->data['coupon'] ?? '';
@@ -150,11 +156,11 @@ class OrderRepository extends AbstractRepository {
         $data['coupon_amount'] = 0.0;
 
         if ($coupon_code) {
-            $db = $this->registry->get('db');
-            $query = $db->query("SELECT id FROM " . DB_PREFIX . "coupon WHERE code = '" . $db->escape($coupon_code) . "'");
+            $couponRepo = $this->registry->get('alpha_repository_factory')->get(CouponRepository::class);
+            $coupon = $couponRepo->findByCode($coupon_code);
             
-            if ($query->num_rows) {
-                $data['coupon_id'] = (int)$query->row['id'];
+            if ($coupon) {
+                $data['coupon_id'] = $coupon->getId();
                 
                 foreach ($data['totals'] as $total) {
                     if ($total['code'] === 'coupon') {
@@ -170,5 +176,110 @@ class OrderRepository extends AbstractRepository {
         $data['user_agent'] = $this->registry->get('request')->server['HTTP_USER_AGENT'] ?? '';
 
         return $data;
+    }
+
+    // --- Legacy Bridges (account/order) ---
+
+    public function getOrder(int $order_id): array {
+        return $this->getMapper()->getOrderArray($order_id, (int)$this->customer->getId());
+    }
+
+    public function getOrders(int $start = 0, int $limit = 20): array {
+        if ($start < 0) {
+            $start = 0;
+        }
+        if ($limit < 1) {
+            $limit = 20;
+        }
+        return $this->getMapper()->getOrdersArray(
+            (int)$this->customer->getId(),
+            (int)$this->config->get('config_store_id'),
+            (int)$this->config->get('config_language_id'),
+            $start,
+            $limit
+        );
+    }
+
+    public function getTotalOrders(): int {
+        return $this->getMapper()->getTotalOrdersCount(
+            (int)$this->customer->getId(),
+            (int)$this->config->get('config_store_id')
+        );
+    }
+
+    public function getTotalProductsByOrderId(int $order_id): int {
+        return $this->getMapper()->getTotalProductsByOrderId($order_id);
+    }
+
+    public function getProducts(int $order_id): array {
+        return $this->getMapper()->getProductsArray($order_id);
+    }
+
+    public function getOptions(int $order_id, int $order_product_id): array {
+        return $this->getMapper()->getOptionsArray($order_id, $order_product_id);
+    }
+
+    public function getVouchers(int $order_id): array {
+        return $this->getMapper()->getVouchersArray($order_id);
+    }
+
+    public function getTotals(int $order_id): array {
+        return $this->getMapper()->getTotalsArray($order_id);
+    }
+
+    public function getHistories(int $order_id): array {
+        return $this->getMapper()->getHistoriesArray($order_id, (int)$this->config->get('config_language_id'));
+    }
+
+    public function getTotalHistories(int $order_id): int {
+        return $this->getMapper()->getTotalHistoriesCount($order_id);
+    }
+
+    public function getSubscription(int $order_id, int $order_product_id): array {
+        return $this->getMapper()->getSubscriptionArray($order_id, $order_product_id);
+    }
+
+    public function getOrdersBySubscriptionId(int $subscription_id, int $start = 0, int $limit = 20): array {
+        if ($start < 0) {
+            $start = 0;
+        }
+        if ($limit < 1) {
+            $limit = 20;
+        }
+        return $this->getMapper()->getOrdersBySubscriptionIdArray($subscription_id, $start, $limit);
+    }
+
+    public function getTotalOrdersBySubscriptionId(int $subscription_id): int {
+        return $this->getMapper()->getTotalOrdersBySubscriptionIdCount($subscription_id);
+    }
+
+    // --- Implementações Obrigatórias da Interface BaseRepositoryInterface ---    
+
+    public function find(int $id): ?InterfaceEntity
+    {
+        $mapper = $this->getMapper();
+        return method_exists($mapper, 'findById') ? $mapper->findById($id) : null;
+    }
+
+    public function findAll(): array
+    {
+        $mapper = $this->getMapper();
+        return method_exists($mapper, 'findAll') ? $mapper->findAll() : [];
+    }
+
+    public function findBy(array $criteria, ?array $orderBy = null, ?int $limit = null, ?int $offset = null): array
+    {
+        $mapper = $this->getMapper();
+        return method_exists($mapper, 'search') ? $mapper->search($criteria, $orderBy, $limit, $offset) : [];
+    }
+
+    public function findOneBy(array $criteria): ?InterfaceEntity
+    {
+        $mapper = $this->getMapper();
+        if (method_exists($mapper, 'search')) {
+            $results = $mapper->search($criteria);
+            return $results[0] ?? null;
+        }
+        return null;
     }
 }

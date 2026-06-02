@@ -1,7 +1,7 @@
 <?php
 namespace Alpha\Support\Presenters;
 
-use Opencart\System\Engine\Registry;
+use Alpha\Support\Registry;
 
 /**
  * ImagePresenter
@@ -29,22 +29,59 @@ class ImagePresenter
      */
     public function resize(?string $filename, int $width, int $height, bool $fallback = true): string
     {
-        // Alpha Engine: Carrega sob demanda (Lazy Load) o model legado de imagem 
-        // para não quebrar a arquitetura base do OpenCart
-        if (!$this->registry->has('model_tool_image')) {
-            $this->registry->get('load')->model('tool/image');
+        if (empty($filename) || !is_file(DIR_IMAGE . html_entity_decode($filename, ENT_QUOTES, 'UTF-8'))) {
+            if ($fallback) {
+                $filename = 'placeholder.png';
+            } else {
+                return '';
+            }
         }
 
-        $imageModel = $this->registry->get('model_tool_image');
+        $filename = html_entity_decode($filename, ENT_QUOTES, 'UTF-8');
 
-        if (!empty($filename) && is_file(DIR_IMAGE . html_entity_decode($filename, ENT_QUOTES, 'UTF-8'))) {
-            return $imageModel->resize($filename, $width, $height);
+        if (!is_file(DIR_IMAGE . $filename) || substr(str_replace('\\', '/', realpath(DIR_IMAGE . $filename)), 0, strlen(DIR_IMAGE)) != DIR_IMAGE) {
+            return '';
         }
 
-        if ($fallback) {
-            return $imageModel->resize('placeholder.png', $width, $height);
+        $extension = pathinfo($filename, PATHINFO_EXTENSION);
+
+        $image_old = $filename;
+        $image_new = 'cache/' . \Alpha\Support\AlphaString::substr($filename, 0, \Alpha\Support\AlphaString::strrpos($filename, '.')) . '-' . (int)$width . 'x' . (int)$height . '.' . $extension;
+
+
+        if (!is_file(DIR_IMAGE . $image_new) || (filemtime(DIR_IMAGE . $image_old) > filemtime(DIR_IMAGE . $image_new))) {
+            [$width_orig, $height_orig, $image_type] = getimagesize(DIR_IMAGE . $image_old);
+
+            if (!in_array($image_type, [IMAGETYPE_PNG, IMAGETYPE_JPEG, IMAGETYPE_GIF, IMAGETYPE_WEBP])) {
+                return $this->registry->get('config')->get('config_url') . 'image/' . $image_old;
+            }
+
+            $path = '';
+            $directories = explode('/', dirname($image_new));
+
+            foreach ($directories as $directory) {
+                if (!$path) {
+                    $path = $directory;
+                } else {
+                    $path = $path . '/' . $directory;
+                }
+
+                if (!is_dir(DIR_IMAGE . $path)) {
+                    @mkdir(DIR_IMAGE . $path, 0777);
+                }
+            }
+
+            if ($width_orig != $width || $height_orig != $height) {
+                $image = new \Opencart\System\Library\Image(DIR_IMAGE . $image_old);
+                $image->resize($width, $height);
+                $image->save(DIR_IMAGE . $image_new);
+            } else {
+                copy(DIR_IMAGE . $image_old, DIR_IMAGE . $image_new);
+            }
         }
 
-        return '';
+        $image_new = str_replace(' ', '%20', $image_new);
+
+        return $this->registry->get('config')->get('config_url') . 'image/' . $image_new;
     }
 }

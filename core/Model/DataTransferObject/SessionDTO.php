@@ -38,7 +38,33 @@ class SessionDTO
      */
     public function getCustomerId(): int
     {
-        return (int)($this->items['customer_id'] ?? 0);
+        if (isset($this->items['customer_id'])) {
+            return (int)$this->items['customer_id'];
+        }
+        if (!empty($this->items['logged_user'])) {
+            $user = json_decode((string)$this->items['logged_user'], true);
+            if (isset($user['id'])) {
+                return (int)$user['id'];
+            }
+        }
+        return 0;
+    }
+
+    /**
+     * Retorna o ID do grupo do cliente logado na sessão.
+     */
+    public function getCustomerGroupId(): int
+    {
+        if (isset($this->items['customer_group_id'])) {
+            return (int)$this->items['customer_group_id'];
+        }
+        if (!empty($this->items['logged_user'])) {
+            $user = json_decode((string)$this->items['logged_user'], true);
+            if (isset($user['customer_group_id'])) {
+                return (int)$user['customer_group_id'];
+            }
+        }
+        return 1;
     }
 
     /**

@@ -4,14 +4,9 @@ namespace Alpha\Model\Domain\Repositories;
 
 use Alpha\Mappers\EntityMappers\ZoneMapper;
 use Alpha\Model\Domain\InterfaceEntity;
-use Alpha\Model\Domain\Entities\Zone;
 
 /**
  * ZoneRepository - Autoridade de Domínio para Zonas (Estados/Províncias).
- *
- * Aplica o padrão DTO Factory para retrocompatibilidade com o checkout legado,
- * garantindo que as chamadas AJAX do OpenCart não quebrem, enquanto fornece
- * Entidades ricas e Identity Map para o motor da Alpha Engine.
  */
 class ZoneRepository extends AbstractRepository implements BaseRepositoryInterface
 {
@@ -20,136 +15,52 @@ class ZoneRepository extends AbstractRepository implements BaseRepositoryInterfa
         return $this->mapperFactory->get(ZoneMapper::class);
     }
 
-    /**
-     * [DOMAIN] Busca a Entidade Rica da Zona pelo ID.
-     */
-    public function find(int $id): ?Zone
+    public function getZone(int $zoneId): array
     {
-        $cacheKey = "zone.entity.{$id}";
+        return $this->getMapper()->getZone($zoneId, $this->language_id);
+    }
 
-        if ($this->cache !== null && $this->cache->has($cacheKey)) {
+    public function getZonesByCountryId(int $countryId): array
+    {
+        $cacheKey = 'zone.country.' . $countryId . '.lang.' . $this->language_id;
+
+        if ($this->cache && $this->cache->has($cacheKey)) {
             return $this->cache->get($cacheKey);
         }
 
-        $zone = $this->getMapper()->findById($id);
+        $results = $this->getMapper()->getZonesByCountryId($countryId, $this->language_id);
 
-        if ($zone && $this->cache !== null) {
-            $this->cache->set($cacheKey, $zone, 86400);
+        if ($this->cache) {
+            $this->cache->set($cacheKey, $results);
         }
 
-        return $zone;
+        return $results;
     }
 
-    /**
-     * [DOMAIN] Lista todas as Entidades Ricas de zonas.
-     */
+    public function getTotalZonesByCountryId(int $countryId): int
+    {
+        return $this->getMapper()->getTotalZonesByCountryId($countryId);
+    }
+
+    // BaseRepositoryInterface bindings
+    public function find(int $id): ?InterfaceEntity
+    {
+        return $this->getMapper()->findById($id);
+    }
+
     public function findAll(): array
     {
-        $cacheKey = "zone.entity.all";
-
-        if ($this->cache !== null && $this->cache->has($cacheKey)) {
-            return $this->cache->get($cacheKey);
-        }
-
-        $zones = $this->getMapper()->findAll();
-
-        if ($this->cache !== null) {
-            $this->cache->set($cacheKey, $zones, 86400);
-        }
-
-        return $zones;
+        return $this->getMapper()->findAll();
     }
 
-    /**
-     * [DOMAIN] Lista Zonas por ID de País (Entidades Ricas).
-     */
-    public function findByCountryId(int $countryId): array
+    public function findBy(array $criteria, ?array $orderBy = null, ?int $limit = null, ?int $offset = null): array
     {
-        $cacheKey = "zone.entity.country.{$countryId}";
-
-        if ($this->cache !== null && $this->cache->has($cacheKey)) {
-            return $this->cache->get($cacheKey);
-        }
-
-        // Busca utilizando a camada de persistência abstrata
-        $zones = $this->getMapper()->findBy(['country_id' => $countryId]);
-
-        if ($this->cache !== null) {
-            $this->cache->set($cacheKey, $zones, 86400);
-        }
-
-        return $zones;
+        return $this->getMapper()->search($criteria, $orderBy, $limit, $offset);
     }
 
-    /**
-     * [LEGACY DTO] Retorna uma zona formatada como Array Plano para views.
-     */
-    public function getZone(int $zone_id): array
+    public function findOneBy(array $criteria): ?InterfaceEntity
     {
-        $zone = $this->find($zone_id);
-        return $zone ? $this->toLegacyDTO($zone) : [];
-    }
-
-    /**
-     * [LEGACY DTO] Retorna todas as zonas de um país como Arrays Planos para requisições AJAX do Checkout.
-     */
-    public function getZonesByCountryId(int $country_id): array
-    {
-        $zones = array_map(fn($z) => $this->toLegacyDTO($z), $this->findByCountryId($country_id));
-        
-        usort($zones, fn($a, $b) => strcasecmp($a['name'] ?? '', $b['name'] ?? ''));
-        
-        return $zones;
-    }
-
-    /**
-     * [LEGACY DTO] Retorna todas as zonas como Arrays Planos.
-     */
-    public function getZones(): array
-    {
-        $zones = array_map(fn($z) => $this->toLegacyDTO($z), $this->findAll());
-        
-        usort($zones, fn($a, $b) => strcasecmp($a['name'] ?? '', $b['name'] ?? ''));
-        
-        return $zones;
-    }
-
-    /**
-     * Converte a Entidade Zone num DTO reconhecido pelo padrão OpenCart.
-     * Extrai o nome traduzido nativamente e garante compatibilidade de tipos.
-     */
-    private function toLegacyDTO(Zone $zone): array
-    {
-        $name = method_exists($zone, 'getName') ? $zone->getName() : '';
-        
-        if (method_exists($zone, 'getDescriptions') && !empty($zone->getDescriptions())) {
-            $langId = property_exists($this, 'registry') && $this->registry 
-                        ? (int)$this->registry->get('config')->get('config_language_id') 
-                        : null;
-
-            foreach ($zone->getDescriptions() as $desc) {
-                if ($langId !== null && method_exists($desc, 'getLanguageId') && $desc->getLanguageId() === $langId) {
-                    $name = method_exists($desc, 'getName') ? $desc->getName() : $name;
-                    break;
-                }
-                $name = method_exists($desc, 'getName') ? $desc->getName() : $name;
-            }
-        }
-
-        return [
-            'zone_id'    => $zone->getId(),
-            'country_id' => method_exists($zone, 'getCountryId') ? $zone->getCountryId() : 0,
-            'name'       => $name,
-            'code'       => method_exists($zone, 'getCode') ? $zone->getCode() : '',
-            'status'     => method_exists($zone, 'getStatus') ? (int)$zone->getStatus() : 0,
-        ];
-    }
-
-    // BaseRepositoryInterface bindings remanescentes
-    public function findBy(array $criteria, ?array $orderBy = null, ?int $limit = null, ?int $offset = null): array { 
-        return $this->getMapper()->findBy($criteria, $orderBy, $limit, $offset); 
-    }
-    public function findOneBy(array $criteria): ?InterfaceEntity { 
-        return $this->getMapper()->findOneBy($criteria); 
+        $results = $this->getMapper()->search($criteria);
+        return $results[0] ?? null;
     }
 }

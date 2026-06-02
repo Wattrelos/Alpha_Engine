@@ -1,0 +1,10 @@
+<div id="logo">
+	{% if logo %}
+		<a href="{{ home|default('/') }}"><img src="{{ logo }}" title="{{ name|default('AgSonhos') }}" alt="{{ name|default('AgSonhos') }}" class="img-fluid"/></a>
+	{% else %}
+		<h1>
+			{# Inclui o logo #}
+			<a href="{{ home|default('/') }}">{{ name|default('AgSonhos') }}</a>
+		</h1>
+	{% endif %}
+</div>

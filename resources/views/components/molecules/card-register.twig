@@ -1,0 +1,13 @@
+<div class="egen-card-register">
+  <div class="egen-card-register__body">
+    <h2 class="egen-card-register__title">{{ title }}</h2>
+    <p class="egen-card-register__subtitle"><strong>{{ subtitle|default(text_register) }}</strong></p>
+    <p class="egen-card-register__desc">{{ description|default(text_register_account) }}</p>
+  </div>
+  <div class="egen-card-register__footer">
+    <a href="{{ url }}" class="egen-btn-primary">
+      <i class="fa-solid fa-user-plus" aria-hidden="true"></i>
+      {{ button_label }}
+    </a>
+  </div>
+</div>

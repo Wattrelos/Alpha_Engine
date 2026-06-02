@@ -1,19 +1,17 @@
 <?php
 // Determina o caminho raiz do projeto de forma dinâmica
 $root = str_replace('\\', '/', realpath(__DIR__)) . '/';
-// APPLICATION
-define('APPLICATION', 'Catalog');
 
 // HTTP
 define('HTTP_SERVER', 'http://' . ($_SERVER['HTTP_HOST'] ?? 'localhost') . '/');
 
 // DIR
-define('DIR_OPENCART', $root);
-define('DIR_APPLICATION', DIR_OPENCART . 'catalog/');
-define('DIR_EXTENSION',   DIR_OPENCART . 'extension/');
-define('DIR_IMAGE',       DIR_OPENCART . 'image/');
-define('DIR_SYSTEM',      DIR_OPENCART . 'system/');
-define('DIR_STORAGE',     DIR_OPENCART . 'storage/'); // Certifique-se que esta pasta existe
+define('DIR_ROOT', $root);
+define('DIR_APPLICATION', DIR_ROOT . 'catalog/');
+define('DIR_EXTENSION',   DIR_ROOT . 'extension/');
+define('DIR_IMAGE',       DIR_ROOT . 'image/');
+define('DIR_SYSTEM',      DIR_ROOT . 'system/');
+define('DIR_STORAGE',     DIR_ROOT . 'storage/'); // Certifique-se que esta pasta existe
 
 // Validação básica da pasta storage
 if (!is_dir(DIR_STORAGE) || !is_writable(DIR_STORAGE)) {
@@ -45,3 +43,4 @@ define('DB_SSL_CA', '');
 // Custom configuration
 define('HIDE_ZERO_STOCK', true);
 define('ENTITIES_PATH', 'Alpha.Model.Domain.Entities');
+define('ACTIONS_PATH', 'Alpha.Controller.Actions');

@@ -25,24 +25,23 @@ class TotalMapper extends BaseMapper {
      * @param float &$total  Valor acumulado final
      */
     public function getTotals(array &$totals, array &$taxes, float &$total): void {
-        $extensionMapper = new ExtensionMapper($this->registry);
+        $extensionMapper = $this->registry->get('alpha_mapper_factory')->get(ExtensionMapper::class);
         $results = $extensionMapper->getExtensionsByType('total');
 
         $sort_order = [];
 
         foreach ($results as $key => $value) {
-            $sort_order[$key] = (int)oc_config('total_' . $value->getCode() . '_sort_order');
+            $sort_order[$key] = (int)$this->registry->get('config')->get('total_' . $value->getCode() . '_sort_order');
         }
 
         array_multisort($sort_order, SORT_ASC, $results);
 
         foreach ($results as $result) {
             // Alpha Engine: Verificação de status via config nativa
-            if (oc_config('total_' . $result->getCode() . '_status')) {
+            if ($this->registry->get('config')->get('total_' . $result->getCode() . '_status')) {
                 // Invocação dinâmica da extensão (enquanto as extensões de total não são convertidas em Mappers)
                 // Utilizamos o Registry do OpenCart para manter a compatibilidade de execução
-                $registry = \Alpha\Model\DataAccessObject\ConnectionDB::getRegistry();
-                $load = $registry->get('load');
+                $load = $this->registry->get('load');
                 
                 $extension_route = 'extension/' . $result->getExtension() . '/total/' . $result->getCode();
                 
@@ -50,8 +49,8 @@ class TotalMapper extends BaseMapper {
                 
                 $model_name = 'model_extension_' . $result->getExtension() . '_total_' . $result->getCode();
                 
-                if ($registry->has($model_name)) {
-                    $registry->get($model_name)->getTotal($totals, $taxes, $total);
+                if ($this->registry->has($model_name)) {
+                    $this->registry->get($model_name)->getTotal($totals, $taxes, $total);
                 }
             }
         }

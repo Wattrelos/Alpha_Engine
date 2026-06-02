@@ -2,7 +2,7 @@
 
 namespace Alpha\Model\Domain\Repositories;
 
-use Opencart\System\Engine\Registry;
+use Alpha\Support\Registry;
 use Alpha\Mappers\MapperFactory;
 
 /**

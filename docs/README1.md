@@ -1,19 +1,20 @@
-# Alpha Engine - Modernização do OpenCart 4.x
+# Alpha Engine - Arquitetura de Software do E-commerce Standalone
 **Documentação Central de Arquitetura**
 
-Este projeto implementa uma camada de engenharia de software moderna sobre o núcleo do OpenCart, focando em separação de responsabilidades, segurança e manutenibilidade.
+Este projeto consiste em um sistema de e-commerce moderno e independente desenvolvido com a Alpha Engine. A arquitetura de execução do OpenCart foi completamente descontinuada e abandonada no runtime da aplicação. Todo o fluxo de execução — incluindo bootstrap, roteador de requisições, controllers e views — é implementado do zero, adotando as melhores práticas do mercado, enquanto os arquivos legados do OpenCart servem unicamente como referências conceituais e de dados.
 
 ## 📍 Status Atual (Checkpoint)
 
 * **Onde paramos (Última Conquista):** 
+  * **Saneamento Semântico (EntityMapper para EntityHydrator):** Renomeação da classe utilitária de preenchimento reflexivo e validação e sua realocação para `core/Support` (namespace `Alpha\Support`), eliminando o desvio conceitual de pastas de DTOs e Mappers de persistência.
   * Criamos os repositórios vitais de infraestrutura (`ConfigurationRepository`, `TranslationRepository`), eliminando a dependência do `loader.php` para configurações e traduções (i18n).
-  * O `AlphaContainer` foi refatorado para usar dicionários $O(1)$, interceptando mais de 25 modelos legados aposentados (`.old`) de forma performática e blindando o OpenCart contra quebras.
+  * O `AlphaContainer` foi refatorado para usar dicionários $O(1)$, interceptando mais de 25 modelos legados aposentados (`.old`) de forma performática e blindando a Alpha Engine contra quebras ao interagir com estruturas legadas.
   * Consolidamos a lógica do `CartRepository` (mesclagem de sessões, opções, cálculos de peso e impostos).
   * Refatoramos os Controladores de **Categoria** e **Busca** para atuarem puramente via `BaseController`, consumindo ViewResponses perfeitamente padronizadas.
   * Concluímos a blindagem dos modelos de configuração legados em `catalog/model/setting/` (`api`, `cron`, `event`, `extension`, `startup`, `store`), transformando-os em Proxies que delegam o acesso a dados de forma segura e cacheada para os novos Repositórios e Mappers da Alpha Engine.
   * **Resolução de Memory Leaks Nativos:** Consertamos o vazamento de memória do sistema de eventos de Idioma (`language.php`) trocando JSONs recursivos por Pilhas (Stacks) de arrays nativos.
   * **Alpha Failsafe nas Sessões:** Implementamos um escudo no `SessionMapper` e otimizamos o `ConnectionDB` (PDO) para evitar travamentos de servidor (Erro 500 / Erro 2014) causados por sessões corrompidas e superlotadas.
-  * **Defuse do Anti-Pattern de Chaves Estrangeiras:** O `DataAccessObject` (DAO) foi ensinado a ignorar Chaves Estrangeiras zeradas (`0`), convertendo-as para `null` nas entidades, protegendo o Padrão de Domínio sem quebrar o painel de administração legado.
+  * **Defuse do Anti-Pattern de Chaves Estrangeiras:** O `DataAccessObject` (DAO) foi ensinado a ignorar Chaves Estrangeiras zeradas (`0`), convertendo-as para `null` nas entidades, protegendo o Padrão de Domínio sem quebrar a consistência das tabelas compartilhadas.
   * **Otimização de N+1 Queries:** Refatoramos a busca do Menu e dos Pedidos para utilizarem o método `readByIds` (Batch Loading), evitando milhares de consultas repetidas.
   * **Testes Unitários:** O framework de testes via JSON foi atualizado para suportar o namespace FQCN (`Alpha\Model\...`) e processar `LazyCollections` com proteção total contra referências circulares em árvores (ex: subcategorias).
   * Avançamos na refatoração do **Fluxo de Checkout** (etapas de endereço de frete, endereço de pagamento, registro e métodos de entrega) migrando para a arquitetura `BaseController` e consumindo nativamente os Repositórios de Domínio (`AddressRepository`, `CountryRepository`, `CartRepository`, etc.).
@@ -41,9 +42,10 @@ Este projeto implementa uma camada de engenharia de software moderna sobre o nú
   * **Refatoração do Checkout e Área de Cliente (Lazy Loading):** Remoção de construtores pesados e engessados em `checkout.php`, `confirm.php`, `login.php` e `register.php`. Adoção estrita do *Lazy Loading* via `$this->getRepository()`, reduzindo drasticamente o *Memory Footprint* nas rotas críticas de conversão.
   * **Isolamento de Segurança de Domínio (Skinny Controllers):** O controlador de Login agora delega 100% da inteligência de `password_verify` e proteção contra força bruta ao `CustomerRepository`. A página de Contato teve sua vulnerabilidade de *Fatal Error* corrigida e delega validações ao domínio.
   * **Fragment Caching Bottom-Funnel:** Validação da página Home operando livre de consultas ao banco de dados com a *CacheStrategyInterface*. Aplicação de *Fragment Caching* no sub-widget de Produtos Relacionados na tela de Produto, blindando contra N+1 Queries a página de maior tráfego.
+  * **Saneamento e Correção do AuthService:** Resolução do bug de sintaxe e realocação de `AuthService.php` para seu caminho PSR-4 correto (`core/Auth/Services/`), incluindo correção de lógica de hashes de senha (`password_verify`), nomes de getters da entidade `Customer` e injeção de dependência via construtor.
 * **Status Atual:** **Sprint de Estabilização do Core Transacional e de UI.** A navegação global da loja (Home, Catálogo, Busca), além das rotas vitais de entrada de clientes (Login, Registro) e fechamento (Checkout Raiz), estão 100% blindadas, leves (operando via *Lazy Loading*) e obedecendo estritamente o padrão *Skinny Controller* da Alpha Engine.
 * **Próximos Passos (Retomada):** 
-  1. Encapsular as linhas residuais do `EntityMapper` e do fluxo de validação dentro do método `CustomerRepository->registerCustomer()`, isolando 100% o Registro.
+  1. Encapsular as linhas residuais do `EntityHydrator` e do fluxo de validação dentro do método `CustomerRepository->registerCustomer()`, isolando 100% o Registro.
   2. Refatorar o Painel Principal do Cliente (`account/account.php`), Endereços e Lista de Desejos, erradicando os últimos vazamentos lógicos da área logada.
   3. Escovar os sub-controladores AJAX assíncronos do Checkout (métodos de frete e pagamento) para concluir a estabilidade atômica das transações.
 
@@ -83,44 +85,69 @@ Diferente do OpenCart padrão, onde o SQL fica espalhado pelos Models, este proj
 *   ✅ **Clientes**: `Customer`, `CustomerApproval`, `CustomerHistory`, `CustomerLogin`, `CustomerOnline`, `CustomerPayment`, `CustomerReward`, `CustomerTransaction`, `Address`, `CustomerGroup`, `CustomField`, `CustomFieldDescription`, `CustomFieldValue`, `CustomFieldValueDescription`, `CustomFieldCustomerGroup`, `Notification`.
 *   ✅ **Módulos e Extensões**: `Extension`, `ExtensionInstall`, `ExtensionPath`, `Module`.
 
-*Controladores Refatorados (Alpha BaseController):*
-*   ✅ `common/home`
-*   ✅ `common/header`
-*   ✅ `common/menu`
-*   ✅ `common/footer`
-*   ✅ `common/cart`
-*   ✅ `common/language`
-*   ✅ `common/currency`
-*   ✅ `common/cookie`
-*   ✅ `common/search`
-*   ✅ `module/featured`
-*   ✅ `module/latest`
-*   ✅ `module/bestseller`
-*   ✅ `product/product`
-*   ✅ `product/category`
-*   ✅ `product/search`
-*   ✅ `information/information`
-*   ✅ `information/contact`
-*   ✅ `account/login`
-*   ✅ `account/register`
-*   ✅ `checkout/checkout`
-*   ✅ `checkout/confirm`
 
 ## 📦 Estrutura do Core
 
 ```text
-core/
-├── Mappers/               # Inteligência de dados (SQL Isolation)
-└── Model/
-    └── DataAccessObject/  # Camada de abstração de banco (PDO/Transactions)
-        ├── Controller/    # BaseController e Master Patterns
-    ├── Domain/
-    │   ├── Entities/      # Objetos de Domínio (PHP 8.4 Typed)
-    │   └── Repositories/  # Camada de Abstração e Lazy Loading
-    ├── Mappers/           # Inteligência de dados (SQL Isolation)
-    └── Support/           # Utilitários (Security, Logging, Helpers)
+## 📦 Estrutura do Core
+
+```text
+├── changelog/                              # 📝 Notas técnicas, registros de refatoração e log de IAs
+├── Config/                                 # 📂 Configurações da Aplicação
+│   └── Routes.php                          # 📁 Rotas PSR-15 centralizadas (Slim Framework)
+├── Containers/                             # 📂 Infraestrutura de Injeção de Dependências (DI)
+│   ├── AppContainer.php                    # 📦 Contêiner Pimple/PHP-DI com definições de classes
+│   └── AppBootstrap.php                    # 📦 Bootstrap de inicialização
+├── core/                                   # 🧠 Core da Alpha Engine (Backend Standalone)
+│   ├── Admin/                              # 🛡️ Módulo do Painel Administrativo
+│   │   ├── Controllers/Actions/            # Controladores Slim focados no Admin (Painel)
+│   │   ├── Mappers/                        # Mappers específicos da área administrativa
+│   │   └── ...                             # (Estrutura isolada de Backoffice)
+│   ├── Auth/                               # 🔐 Módulo de Autenticação e Segurança
+│   │   ├── Middleware/                     # Guards PSR-15 (Signature, Session, Language, Redirects)
+│   │   └── Services/                       # Regras de negócio de acesso (ex: CustomerAuthService)
+│   ├── Controller/                         # 🎮 Controladores (Skinny Controllers / Actions)
+│   │   ├── BaseController.php              # Controller abstrato base da aplicação
+│   │   └── Actions/                        # Ações HTTP no padrão ADR (Action-Domain-Responder)
+│   │       ├── Cart/                       # Rotas de Carrinho e Checkout
+│   │       ├── Customer/Auth/              # Rotas de Login, Registro e Conta Logada
+│   │       └── ...
+│   ├── Mappers/                            # 🗺️ Data Mappers (Acesso e isolamento de Banco de Dados)
+│   │   ├── EntityMappers/                  # Tradutores entre Banco e Entidades (ex: ProductMapper)
+│   │   └── Observers/                      # Padrão Observer para side-effects (ex: enviar emails)
+│   ├── Model/                              # 🏛️ Coração do Domínio (DDD)
+│   │   ├── DataAccessObject/               # Camada DAO (Conexões PDO, QueryBuilder, UnitOfWork)
+│   │   ├── DataTransferObject/             # DTOs de transporte (ex: ViewResponse)
+│   │   └── Domain/                         # Lógica de Domínio Estrutural
+│   │       ├── Entities/                   # Objetos de domínio puros e tipados (PHP 8.4)
+│   │       └── Repositories/               # Orquestradores de regras de negócio agregadas
+│   ├── Support/                            # 🛠️ Utilitários Transversais e Helpers Nativos
+│   │   ├── Session.php                     # Gerenciamento Nativo de Sessões PHP Standalone
+│   │   ├── EntityHydrator.php              # Padrão Hydrator para popular entidades reflexivamente
+│   │   ├── AlphaString.php                 # Sanitização moderna e validação de strings
+│   │   └── Presenters/                     # Formatadores visuais dedicados (ex: ImagePresenter)
+│   └── View/                               # 🖼️ Camada de Renderização
+│       └── ViewRenderer.php                # Motor renderizador base (integrado ao Twig)
+│
+├── docs/                                   # 📚 Arquivos de Documentação Arquitetural e Progresso
+├── resources/                              # 🎨 Recursos Estáticos Não-Compilados e Views
+│   └── views/                              # Templates Twig
+│       ├── admin/                          # Telas do Painel de Controle (Backoffice)
+│       ├── components/                     # Atomic Design (atoms, molecules, organisms)
+│       ├── layouts/                        # Estruturas base (header, footer, html base)
+│       └── pages/                          # Telas principais do E-commerce (catálogo, carrinho, user)
+│
+└── public_html/                            # 🌐 Webroot (Document Root exposto e servido para a Internet)
+    ├── index.php                           # Front Controller único da Aplicação (Bootstrap)
+    ├── .htaccess                           # Regras de URL Rewrite (Apache)
+    ├── css/                                # Folhas de estilo (Custom CSS compilado)
+    ├── js/                                 # Scripts Vanilla JS e integrações de formulário (AJAX)
+    └── fonts/                              # Tipografia e Ícones Locais
+
+
 
 ```
+
 
 ## ⚙️ Requisitos
 
@@ -134,14 +161,14 @@ Fazer essa pausa para documentar e versionar é uma excelente prática. No desen
 
 ## 💡 Filosofia do Projeto
 
-O objetivo não é apenas "fazer funcionar", mas criar uma estrutura onde o código seja autodocumentado, seguro por padrão e fácil de testar. A remoção de lógica complexa de dentro dos controllers e models do OpenCart permite que a interface se concentre apenas na apresentação e fluxo de dados.
+O objetivo não é apenas "fazer funcionar", mas criar uma estrutura standalone onde o código seja autodocumentado, seguro por padrão e fácil de testar. A remoção de lógica complexa e o descarte dos controllers e models do OpenCart permite que a interface se concentre apenas na apresentação e fluxo de dados nativos.
 
 ---
-*Trabalho em constante evolução para elevar o padrão de engenharia do ecossistema OpenCart.*
+*Trabalho em constante evolução para elevar o padrão de engenharia do ecossistema de e-commerce com a Alpha Engine.*
 
 ## Regras de negócio para a equipe de produção:
 1. Todas as chaves primárias tem nomo "id" para não confundir com as chaves estrangeiras FK que tem [nome da tabela pai] + "_id".
-2. Para prevenir estouro de índice (overflow), as chaves PK e FK terão o tipo inteiro longo.
+2. Para prevenir estouro de índice (overflow), as chaves PK e FK terão o tipo inteiro longo (BIGINT).
 2. No banco de dados, a nomecratura segue o padrão snake_case, porém, na aplicação, o padrão é PascalCase para nomes de classes e arquivos, enquanto o padrão camelCase para nomes de variáveis e métodos. A exceção é na camada View, onde os nomes de pastas e aquivos são quase todos minúsculos.
 3. **Nomecraturas:** Em desenvolvimento web, cada linguagem possui seu próprio padrão. Para HTML e CSS o mais recomendado é o kebab-case (separado por hífens), enquanto no JavaScript domina o camelCase (letras iniciais maiúsculas após a primeira) para variáveis e PascalCase para classes
     * HTML e CSS (Classes e IDs) O padrão oficial e mais adotado pela indústria (como no Guia de Estilo CSS da Airbnb) é o kebab-case. Ele facilita a leitura e se alinha à forma como o navegador interpreta o DOM.

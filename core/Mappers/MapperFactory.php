@@ -2,8 +2,6 @@
 
 namespace Alpha\Mappers;
 
-use Opencart\System\Engine\Registry;
-
 /**
  * MapperFactory - Centraliza a criação de Mappers na Alpha Engine.
  *
@@ -15,7 +13,7 @@ class MapperFactory
     private array $instances = [];
     private static ?self $instance = null;
 
-    public function __construct(private Registry $registry) {
+    public function __construct(private mixed $registry = null) {
         self::$instance = $this;
     }
 

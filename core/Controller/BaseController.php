@@ -3,10 +3,10 @@
 namespace Alpha\Controller;
 
 use Opencart\System\Engine\Controller;
-use Opencart\System\Engine\Registry;
+use Alpha\Support\Registry;
 use Alpha\Mappers\MapperFactory;
 use Alpha\Model\Domain\Repositories\RepositoryFactory;
-use Alpha\System\ViewRenderer;
+use Alpha\View\ViewRenderer;
 
 /**
  * BaseController
@@ -79,6 +79,16 @@ abstract class BaseController extends Controller
             : MapperFactory::getInstance();
 
         return $factory->get($class);
+    }
+
+    /**
+     * Retorna a instância do ImagePresenter.
+     * 
+     * @return \Alpha\Support\Presenters\ImagePresenter
+     */
+    protected function getImagePresenter(): \Alpha\Support\Presenters\ImagePresenter
+    {
+        return new \Alpha\Support\Presenters\ImagePresenter($this->registry);
     }
 
     /**
@@ -225,6 +235,19 @@ abstract class BaseController extends Controller
             
             return $renderedModules;
         }, 3600); // Memoriza os módulos compilados por 1 Hora!
+    }
+
+    /**
+     * Alpha Engine: Renderiza uma view e retorna seu HTML como string.
+     * Envelopa a chamada no ViewRenderer protegido contra WSOD.
+     * 
+     * @param string $route
+     * @param array $data
+     * @return string
+     */
+    protected function getTemplate(string $route, array $data = []): string
+    {
+        return $this->viewRenderer->render($route, $data);
     }
 
     /**

@@ -1,30 +1,91 @@
 <?php
+
 namespace Alpha\Mappers\EntityMappers;
 
+use Alpha\Mappers\BaseMapper;
+use Alpha\Model\DataAccessObject\QueryBuilder;
 use Alpha\Model\Domain\Entities\CustomerAffiliate;
 
 class CustomerAffiliateMapper extends BaseMapper
 {
-    protected string $tableName = 'customer_affiliate';
-    protected string $entityClass = CustomerAffiliate::class;
-
-    public function findById(int $id): ?CustomerAffiliate
+    protected function getFullTableName(): string
     {
-        $results = $this->search(['customer_id' => $id]);
-        return $results[0] ?? null;
+        return DB_PREFIX . 'customer_affiliate';
     }
 
-    public function save(CustomerAffiliate $entity): void
+    public function findByCustomerId(int $customerId): ?CustomerAffiliate
     {
-        $existing = $this->findById($entity->getCustomerId());
+        $query = (new QueryBuilder())
+            ->from($this->getFullTableName())
+            ->where('customer_id = ?', [$customerId])
+            ->limit(1);
 
-        if ($existing) {
-            $this->dao->updateForClass($this->tableName, $entity, ['customer_id' => $entity->getCustomerId()]);
-        } else {
-            if (!$entity->getDateAdded()) {
-                $entity->setDateAdded(date('Y-m-d H:i:s'));
-            }
-            $this->dao->insertForClass($this->tableName, $entity);
+        $result = $this->dao->executeQuery($query);
+
+        if (empty($result)) {
+            return null;
         }
+
+        return $this->hydrate($result[0]);
+    }
+
+
+    /**
+     * Método auxiliar para hidratar array diretamente para entidade.
+     */
+    private function hydrate(array $row): CustomerAffiliate
+    {
+        $entity = new CustomerAffiliate();
+
+        if (isset($row['customer_id'])) {
+            $entity->setCustomerId($row['customer_id']);
+        }
+        if (isset($row['company'])) {
+            $entity->setCompany($row['company']);
+        }
+        if (isset($row['website'])) {
+            $entity->setWebsite($row['website']);
+        }
+        if (isset($row['tracking'])) {
+            $entity->setTracking($row['tracking']);
+        }
+        if (isset($row['payment_method'])) {
+            $entity->setPaymentMethod($row['payment_method']);
+        }
+        if (isset($row['cheque'])) {
+            $entity->setCheque($row['cheque']);
+        }
+        if (isset($row['paypal'])) {
+            $entity->setPaypal($row['paypal']);
+        }
+        if (isset($row['bank_name'])) {
+            $entity->setBankName($row['bank_name']);
+        }
+        if (isset($row['bank_branch_number'])) {
+            $entity->setBankBranchNumber($row['bank_branch_number']);
+        }
+        if (isset($row['bank_swift_code'])) {
+            $entity->setBankSwiftCode($row['bank_swift_code']);
+        }
+        if (isset($row['bank_account_name'])) {
+            $entity->setBankAccountName($row['bank_account_name']);
+        }
+        if (isset($row['bank_account_number'])) {
+            $entity->setBankAccountNumber($row['bank_account_number']);
+        }
+        if (isset($row['commission'])) {
+            $entity->setCommission($row['commission']);
+        }
+        if (isset($row['tax'])) {
+            $entity->setTax($row['tax']);
+        }
+        if (isset($row['status'])) {
+            $entity->setStatus($row['status']);
+        }
+        if (isset($row['date_added'])) {
+            $entity->setDateAdded($row['date_added']);
+        }
+
+        return $entity;
     }
 }

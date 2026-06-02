@@ -48,6 +48,9 @@ class OrderProduct extends BaseEntity
     public function getName(): string { return $this->name; }
     public function setName(string $name): self { $this->name = $name; return $this; }
 
+    public function getModel(): string { return $this->model; }
+    public function setModel(string $model): self { $this->model = $model; return $this; }
+
     public function getQuantity(): int { return $this->quantity; }
     public function setQuantity(int $qty): self { $this->quantity = $qty; return $this; }
 

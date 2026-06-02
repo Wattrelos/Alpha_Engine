@@ -1,0 +1,52 @@
+{% extends 'admin/layouts/base_auth.html.twig' %}
+
+{% block title %}Aviso de Segurança | Painel Administrativo{% endblock %}
+
+{% block content %}
+<div class="auth-card" style="text-align: center;">
+    <div class="auth-logo" style="margin-bottom: 20px;">
+        <svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="#e02424" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-bottom: 15px; display: inline-block;">
+            <path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/>
+            <line x1="12" y1="9" x2="12" y2="13"/>
+            <line x1="12" y1="17" x2="12.01" y2="17"/>
+        </svg>
+        <h2>Falha na Autenticação</h2>
+        <p class="text-muted">Aviso de Segurança do Painel</p>
+    </div>
+
+    <div class="alert alert-error" style="background-color: #fde8e8; color: #9b1c1c; padding: 15px; border-radius: 8px; margin-bottom: 20px; font-weight: 500; border: 1px solid #f8b4b4;">
+        {{ error_message }}
+    </div>
+
+    {% if is_locked %}
+        <p style="color: #9b1c1c; font-weight: 600; margin-bottom: 20px;">
+            Acesso bloqueado temporariamente por segurança devido a excesso de tentativas. Por favor, tente novamente mais tarde.
+        </p>
+    {% else %}
+        <p style="margin-bottom: 25px; font-size: 0.95rem; color: #4b5563;">
+            Tentativas restantes para o usuário <strong>{{ username }}</strong>: <strong style="color: #e02424; font-size: 1.1rem;">{{ remaining_attempts }} de 5</strong>
+        </p>
+    {% endif %}
+
+    <div style="margin-top: 20px; font-size: 0.9rem; color: #6b7280;">
+        Você será redirecionado para a tela de login em <span id="countdown" style="font-weight: bold; color: #111827;">5</span> segundos...
+    </div>
+
+    <a href="{{ login_url }}" class="btn btn-secondary" style="display: block; text-decoration: none; margin-top: 25px; padding: 12px; font-size: 0.95rem; background-color: #f3f4f6; color: #374151; border: 1px solid #d1d5db; border-radius: 6px; font-weight: 500;">
+        Voltar para Login
+    </a>
+</div>
+
+<script>
+    let seconds = 5;
+    const countdownEl = document.getElementById('countdown');
+    const interval = setInterval(() => {
+        seconds--;
+        countdownEl.textContent = seconds;
+        if (seconds <= 0) {
+            clearInterval(interval);
+            window.location.href = "{{ login_url }}";
+        }
+    }, 1000);
+</script>
+{% endblock %}

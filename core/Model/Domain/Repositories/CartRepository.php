@@ -17,6 +17,8 @@ class CartRepository extends AbstractRepository implements BaseRepositoryInterfa
 {
     private array $data = [];
     private bool $isLoaded = false;
+    private ?float $cachedSubTotal = null;
+    private ?float $cachedWeight = null;
 
     protected function getMapper(): CartMapper
     {
@@ -85,6 +87,8 @@ class CartRepository extends AbstractRepository implements BaseRepositoryInterfa
 
         // Invalida o cache em memória para forçar a reconstrução na próxima leitura
         $this->isLoaded = false;
+        $this->cachedSubTotal = null;
+        $this->cachedWeight = null;
     }
 
     /**
@@ -94,6 +98,8 @@ class CartRepository extends AbstractRepository implements BaseRepositoryInterfa
     {
         $this->getMapper()->updateItem($cartId, $quantity, $this->getCustomerId(), $this->getSessionId());
         $this->isLoaded = false;
+        $this->cachedSubTotal = null;
+        $this->cachedWeight = null;
     }
 
     /**
@@ -103,6 +109,8 @@ class CartRepository extends AbstractRepository implements BaseRepositoryInterfa
     {
         $this->getMapper()->removeItem($cartId, $this->getCustomerId(), $this->getSessionId());
         $this->isLoaded = false;
+        $this->cachedSubTotal = null;
+        $this->cachedWeight = null;
     }
 
     /**
@@ -126,6 +134,8 @@ class CartRepository extends AbstractRepository implements BaseRepositoryInterfa
         $this->getMapper()->clearItems($this->getCustomerId(), $this->getSessionId(), $this->store_id);
         $this->data = [];
         $this->isLoaded = true;
+        $this->cachedSubTotal = null;
+        $this->cachedWeight = null;
     }
 
     /**
@@ -314,6 +324,7 @@ class CartRepository extends AbstractRepository implements BaseRepositoryInterfa
                     'subtract'              => $productInfo['subtract'],
                     'stock'                 => ($productInfo['quantity'] >= $item['quantity']),
                     'stock_status'          => ($productInfo['quantity'] >= $item['quantity']),
+                    'stock_quantity'        => (int)$productInfo['quantity'],
                     'price'                 => $price,
                     'price_text'            => $this->currency->format($taxPrice, $this->session->data['currency']),
                     'total'                 => $price * $item['quantity'],
@@ -341,6 +352,10 @@ class CartRepository extends AbstractRepository implements BaseRepositoryInterfa
      */
     public function getWeight(): float
     {
+        if ($this->cachedWeight !== null) {
+            return $this->cachedWeight;
+        }
+
         $weight = 0.0;
 
         foreach ($this->getProducts() as $product) {
@@ -354,6 +369,7 @@ class CartRepository extends AbstractRepository implements BaseRepositoryInterfa
             }
         }
 
+        $this->cachedWeight = $weight;
         return $weight;
     }
 
@@ -397,11 +413,16 @@ class CartRepository extends AbstractRepository implements BaseRepositoryInterfa
      */
     public function getSubTotal(): float
     {
+        if ($this->cachedSubTotal !== null) {
+            return $this->cachedSubTotal;
+        }
+
         $total = 0.0;
         foreach ($this->getProducts() as $product) {
             $total += $product['total'];
         }
-        return $total;
+        $this->cachedSubTotal = $total;
+        return $this->cachedSubTotal;
     }
 
     /**
@@ -633,7 +654,8 @@ class CartRepository extends AbstractRepository implements BaseRepositoryInterfa
             $data['weight'] = '';
         }
 
-        $data['edit'] = $this->url->link('checkout/cart.edit', 'language=' . $this->config->get('config_language'));
+        $langCode = $this->config->get('config_language') ?: 'pt-br';
+        $data['edit'] = '/' . $langCode . '/carrinho/editar';
 
         $price_status = $this->customer->isLogged() || !$this->config->get('config_customer_price');
 
@@ -647,8 +669,9 @@ class CartRepository extends AbstractRepository implements BaseRepositoryInterfa
                     $value = (string)($option['value'] ?? '');
                     $optionData[] = [
                         'name'  => $option['name'],
-                        'value' => (oc_strlen($value) > 20 ? oc_substr($value, 0, 20) . '..' : $value)
+                        'value' => (\Alpha\Support\AlphaString::strlen($value) > 20 ? \Alpha\Support\AlphaString::substr($value, 0, 20) . '..' : $value)
                     ];
+
                 }
             }
 
@@ -660,12 +683,15 @@ class CartRepository extends AbstractRepository implements BaseRepositoryInterfa
                 'option'       => $optionData,
                 'subscription' => $product['subscription'] ?? '',
                 'quantity'     => $product['quantity'],
+                'stock_quantity' => (int)$product['stock_quantity'],
                 'stock'        => $product['stock_status'] ? true : !(!$this->config->get('config_stock_checkout') || $this->config->get('config_stock_warning')),
                 'minimum'      => !$product['minimum_status'] ? sprintf($this->language->get('error_minimum'), $product['minimum']) : 0,
                 'price'        => $price_status ? $product['price_text'] : '',
                 'total'        => $price_status ? $product['total_text'] : '',
+                'price_raw'    => $price_status ? (float)$product['price'] : 0.0,
+                'total_raw'    => $price_status ? (float)$product['total'] : 0.0,
                 'href'         => $this->url->link('product/product', 'language=' . $this->config->get('config_language') . '&product_id=' . $product['product_id']),
-                'remove'       => $this->url->link('checkout/cart.remove', 'language=' . $this->config->get('config_language') . '&key=' . $product['cart_id'])
+                'remove'       => '/' . $langCode . '/carrinho/remover/' . $product['cart_id']
             ];
         }
 
@@ -675,6 +701,22 @@ class CartRepository extends AbstractRepository implements BaseRepositoryInterfa
             $taxes = $this->getTaxes();
             $total = 0;
             $this->getTotals($totals, $taxes, $total);
+            if (empty($totals)) {
+                $subTotalVal = $this->getSubTotal();
+                $totals[] = [
+                    'code'       => 'sub_total',
+                    'title'      => $this->language->get('text_sub_total') ?: 'Sub-Total',
+                    'value'      => $subTotalVal,
+                    'sort_order' => 1
+                ];
+                $totalVal = $this->getTotal();
+                $totals[] = [
+                    'code'       => 'total',
+                    'title'      => $this->language->get('text_total') ?: 'Total',
+                    'value'      => $totalVal,
+                    'sort_order' => 9
+                ];
+            }
             foreach ($totals as $result) {
                 $data['totals'][] = [
                     'title' => $result['title'],

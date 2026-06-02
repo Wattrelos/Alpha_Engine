@@ -29,6 +29,212 @@ class ManufacturerRepository extends AbstractRepository implements BaseRepositor
     }
 
     /**
+     * Alpha Engine: Recupera a lista de fabricantes/marcas ativos no sistema
+     *
+     * @param array $data Filtros/ordenamento
+     * @return array
+     */
+    public function getManufacturers(array $data = []): array
+    {
+        /** @var \Alpha\Mappers\EntityMappers\ManufacturerMapper $mapper */
+        $mapper = $this->mapperFactory->get(ManufacturerMapper::class);
+        return $mapper->getManufacturers($data, $this->store_id);
+    }
+
+    /**
+     * Alpha Engine: Agrupa os fabricantes alfabeticamente (A-Z, 0-9)
+     *
+     * @return array
+     */
+    public function getAllGrouped(): array
+    {
+        /** @var \Alpha\Mappers\EntityMappers\ManufacturerMapper $mapper */
+        $mapper = $this->mapperFactory->get(ManufacturerMapper::class);
+        $results = $mapper->getManufacturers([], $this->store_id);
+
+        /** @var \Alpha\Model\Domain\Repositories\SeoUrlRepository $seoRepository */
+        $seoRepository = $this->registry->get('alpha_repository_factory')->get(\Alpha\Model\Domain\Repositories\SeoUrlRepository::class);
+        $manufacturerIds = array_column($results, 'id');
+        $seoRepository->primeCache($manufacturerIds, 'manufacturer_id', $this->store_id, $this->language_id);
+
+        $categories = [];
+
+        foreach ($results as $result) {
+            if (!empty($result['name'])) {
+                $character = mb_substr($result['name'], 0, 1);
+
+                if (is_numeric($character)) {
+                    $key = '0 - 9';
+                } else {
+                    $key = mb_strtoupper($character);
+                }
+
+                if (!isset($categories[$key])) {
+                    $categories[$key] = [
+                        'name'         => $key,
+                        'href'         => '/marcas',
+                        'manufacturer' => []
+                    ];
+                }
+
+                $keyword = $seoRepository->getKeywordByQuery('manufacturer_id', (string)$result['id'], $this->store_id, $this->language_id);
+                $href = $keyword ? '/' . $keyword : '/marca/' . $result['id'];
+
+                $categories[$key]['manufacturer'][] = [
+                    'name' => $result['name'],
+                    'href' => $href
+                ];
+            }
+        }
+
+        ksort($categories);
+
+        return $categories;
+    }
+
+    /**
+     * Alpha Engine: Prepara o DTO de visualização para a página de detalhes de um fabricante.
+     *
+     * @param int $manufacturerId
+     * @param array $filterData
+     * @return \Alpha\Model\DataTransferObject\ViewResponse
+     */
+    public function getManufacturerData(int $manufacturerId, array $filterData): \Alpha\Model\DataTransferObject\ViewResponse
+    {
+        $this->loadLanguage('product/manufacturer');
+
+        $manufacturer_info = $this->getManufacturer($manufacturerId);
+
+        if (!$manufacturer_info) {
+            return new \Alpha\Model\DataTransferObject\ViewResponse([]);
+        }
+
+        $data = [];
+        $data['name'] = $manufacturer_info['name'];
+
+        /** @var \Alpha\Model\Domain\Repositories\SeoUrlRepository $seoRepository */
+        $seoRepository = $this->registry->get('alpha_repository_factory')->get(\Alpha\Model\Domain\Repositories\SeoUrlRepository::class);
+        $keyword = $seoRepository->getKeywordByQuery('manufacturer_id', (string)$manufacturerId, $this->store_id, $this->language_id);
+        $baseHref = $keyword ? '/' . $keyword : '/marca/' . $manufacturerId;
+
+        $data['breadcrumbs'] = [];
+        $data['breadcrumbs'][] = [
+            'text' => $this->language->get('text_brand') ?: 'Marcas',
+            'href' => '/marcas'
+        ];
+        $data['breadcrumbs'][] = [
+            'text' => $manufacturer_info['name'],
+            'href' => $baseHref
+        ];
+
+        /** @var \Alpha\Model\Domain\Repositories\ProductRepository $productRepository */
+        $productRepository = $this->registry->get('alpha_repository_factory')->get(\Alpha\Model\Domain\Repositories\ProductRepository::class);
+
+        $productFilter = [
+            'filter_manufacturer_id' => $manufacturerId,
+            'sort'                   => $filterData['sort'] ?? 'p.sort_order',
+            'order'                  => $filterData['order'] ?? 'ASC',
+            'start'                  => (($filterData['page'] ?? 1) - 1) * ($filterData['limit'] ?? 10),
+            'limit'                  => $filterData['limit'] ?? 10
+        ];
+
+        $results = $productRepository->getProducts($productFilter);
+        $product_total = $productRepository->getTotalProducts($productFilter);
+
+        $data['products'] = [];
+        foreach ($results as $result) {
+            $data['products'][] = $this->viewRenderer->render('product/thumb', $productRepository->getProductThumbData($result));
+        }
+
+        // Memorização dos Filtros para Paginação
+        $urlQuery = '';
+        if (isset($filterData['sort'])) $urlQuery .= '&sort=' . $filterData['sort'];
+        if (isset($filterData['order'])) $urlQuery .= '&order=' . $filterData['order'];
+
+        // Limites de página
+        $data['limits'] = [];
+        $limits = array_unique([$this->config->get('config_pagination_catalog') ?: 10, 25, 50, 75, 100]);
+        sort($limits);
+        foreach ($limits as $value) {
+            $data['limits'][] = [
+                'text'  => $value,
+                'value' => $value,
+                'href'  => $baseHref . '?' . ltrim($urlQuery . '&limit=' . $value, '&')
+            ];
+        }
+
+        // Ordenação
+        $urlWithLimit = '&limit=' . ($filterData['limit'] ?? 10);
+        $data['sorts'] = [];
+        $data['sorts'][] = [
+            'text'  => $this->language->get('text_default') ?: 'Padrão',
+            'value' => 'p.sort_order-ASC',
+            'href'  => $baseHref . '?sort=p.sort_order&order=ASC' . $urlWithLimit
+        ];
+        $data['sorts'][] = [
+            'text'  => $this->language->get('text_name_asc') ?: 'Nome (A - Z)',
+            'value' => 'pd.name-ASC',
+            'href'  => $baseHref . '?sort=pd.name&order=ASC' . $urlWithLimit
+        ];
+        $data['sorts'][] = [
+            'text'  => $this->language->get('text_name_desc') ?: 'Nome (Z - A)',
+            'value' => 'pd.name-DESC',
+            'href'  => $baseHref . '?sort=pd.name&order=DESC' . $urlWithLimit
+        ];
+        $data['sorts'][] = [
+            'text'  => $this->language->get('text_price_asc') ?: 'Preço (Menor > Maior)',
+            'value' => 'p.price-ASC',
+            'href'  => $baseHref . '?sort=p.price&order=ASC' . $urlWithLimit
+        ];
+        $data['sorts'][] = [
+            'text'  => $this->language->get('text_price_desc') ?: 'Preço (Maior > Menor)',
+            'value' => 'p.price-DESC',
+            'href'  => $baseHref . '?sort=p.price&order=DESC' . $urlWithLimit
+        ];
+        $data['sorts'][] = [
+            'text'  => $this->language->get('text_model_asc') ?: 'Modelo (A - Z)',
+            'value' => 'p.model-ASC',
+            'href'  => $baseHref . '?sort=p.model&order=ASC' . $urlWithLimit
+        ];
+        $data['sorts'][] = [
+            'text'  => $this->language->get('text_model_desc') ?: 'Modelo (Z - A)',
+            'value' => 'p.model-DESC',
+            'href'  => $baseHref . '?sort=p.model&order=DESC' . $urlWithLimit
+        ];
+
+        $data['sort']  = $filterData['sort'] ?? 'p.sort_order';
+        $data['order'] = $filterData['order'] ?? 'ASC';
+        $data['limit'] = $filterData['limit'] ?? 10;
+
+        // Paginação
+        $urlQueryLimit = $urlQuery;
+        if (isset($filterData['limit'])) $urlQueryLimit .= '&limit=' . $filterData['limit'];
+
+        $paginationRepository = $this->registry->get('alpha_repository_factory')->get(\Alpha\Model\Domain\Repositories\PaginationRepository::class);
+        $paginationData = $paginationRepository->prepare([
+            'total' => $product_total,
+            'page'  => $filterData['page'] ?? 1,
+            'limit' => $filterData['limit'] ?? 10,
+            'url'   => $baseHref . '?' . ltrim($urlQueryLimit . '&page={page}', '&')
+        ]);
+
+        $viewRenderer = new \Alpha\View\ViewRenderer($this->registry);
+        $data['pagination'] = $paginationData->shouldRender() 
+            ? $viewRenderer->render('common/pagination', $paginationData->toArray()) 
+            : '';
+
+        $data['results'] = sprintf(
+            $this->language->get('text_pagination'), 
+            ($product_total) ? (($filterData['page'] - 1) * $filterData['limit']) + 1 : 0, 
+            ((($filterData['page'] - 1) * $filterData['limit']) > ($product_total - $filterData['limit'])) ? $product_total : ((($filterData['page'] - 1) * $filterData['limit']) + $filterData['limit']), 
+            $product_total, 
+            ceil($product_total / $filterData['limit'])
+        );
+
+        return new \Alpha\Model\DataTransferObject\ViewResponse($data);
+    }
+
+    /**
      * Busca um fabricante pelo seu ID único.
      *
      * @param int $id
@@ -72,5 +278,18 @@ class ManufacturerRepository extends AbstractRepository implements BaseRepositor
     public function findOneBy(array $criteria): ?InterfaceEntity
     {
         return $this->mapperFactory->get(ManufacturerMapper::class)->findOneBy($criteria);
+    }
+
+    /**
+     * Alpha Engine: Recupera fabricantes associados aos produtos de uma categoria ou subcategorias
+     *
+     * @param int $categoryId
+     * @return array
+     */
+    public function getManufacturersByCategory(int $categoryId): array
+    {
+        /** @var \Alpha\Mappers\EntityMappers\ManufacturerMapper $mapper */
+        $mapper = $this->mapperFactory->get(ManufacturerMapper::class);
+        return $mapper->getManufacturersByCategory($categoryId, $this->store_id);
     }
 }

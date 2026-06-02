@@ -1,0 +1,251 @@
+{% extends 'layouts/base.html.twig' %}
+
+{% block title %}{{ seo.title }}{% endblock %}
+
+{% block content %}
+<div class="egen-product-page">
+    <!-- Breadcrumbs -->
+    <div class="egen-product-page__breadcrumbs">
+        {% include 'components/molecules/breadcrumbs.twig' with { items: [
+            { text: 'Início', href: '/' ~ lang },
+            { text: product.name, href: '' }
+        ] } %}
+    </div>
+
+    <div class="egen-product-layout">
+        <!-- Coluna da Esquerda: Imagens -->
+        <div class="egen-product-gallery">
+            <div class="egen-product-gallery__main">
+                {% if product.popup %}
+                    <a href="{{ product.popup }}" target="_blank" class="egen-product-gallery__main-link">
+                        <img src="{{ product.thumb }}" alt="{{ product.name }}" id="main-product-image" class="egen-product-gallery__main-img">
+                    </a>
+                {% else %}
+                    <img src="/img/no-image.png" alt="{{ product.name }}" class="egen-product-gallery__main-img">
+                {% endif %}
+            </div>
+
+            {% if product.images %}
+                <div class="egen-product-gallery__thumbs">
+                    {% for img in product.images %}
+                        <div class="egen-product-gallery__thumb-item">
+                            <a href="javascript:void(0);" onclick="document.getElementById('main-product-image').src = '{{ img.popup }}'" class="egen-product-gallery__thumb-link">
+                                <img src="{{ img.thumb }}" alt="Foto adicional" class="egen-product-gallery__thumb-img">
+                            </a>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        </div>
+
+        <!-- Coluna da Direita: Detalhes, Preço e Compra -->
+        <div class="egen-product-info">
+            <div class="egen-product-info__header">
+                <span class="egen-product-info__model-badge">{{ product.model }}</span>
+                <h1 class="egen-product-info__title">{{ product.name }}</h1>
+
+                <!-- Avaliações -->
+                {% if product.rating is not null %}
+                    <div class="egen-product-info__rating">
+                        <div class="egen-product-info__stars">
+                            {% for i in 1..5 %}
+                                <i class="{% if i <= product.rating %}fas{% else %}far{% endif %} fa-star"></i>
+                            {% endfor %}
+                        </div>
+                        <span class="egen-product-info__reviews-count">({{ product.reviews|default(0) }} avaliações)</span>
+                    </div>
+                {% endif %}
+            </div>
+
+            <!-- Bloco de Preço -->
+            <div class="egen-product-price-card">
+                <div class="egen-product-price-card__price-wrapper">
+                    {% if product.special %}
+                        <span class="egen-product-price-card__price-old">{{ product.price }}</span>
+                        <span class="egen-product-price-card__price-special">{{ product.special }}</span>
+                    {% else %}
+                        <span class="egen-product-price-card__price-normal">{{ product.price }}</span>
+                    {% endif %}
+                </div>
+                
+                {% if product.tax %}
+                    <div class="egen-product-price-card__tax">Sem impostos: {{ product.tax }}</div>
+                {% endif %}
+                
+                <div class="egen-product-price-card__stock">
+                    <i class="fas fa-check-circle"></i> Disponibilidade: <strong>{{ product.stock }}</strong>
+                </div>
+            </div>
+
+            <!-- Descrição Curta -->
+            <p class="egen-product-info__short-desc">
+                {{ product.description|raw|slice(0, 300) ~ '...' }}
+            </p>
+
+            <!-- Formulário de Compra/Opções -->
+            <form action="/{{ lang }}/carrinho/adicionar" method="POST" id="form-product-purchase" class="egen-product-purchase-form">
+                <input type="hidden" name="product_id" value="{{ product.id }}">
+
+                {% if product.options %}
+                    <div class="egen-product-options">
+                        <h4 class="egen-product-options__title">Opções Disponíveis</h4>
+                        {% for option in product.options %}
+                            <div class="egen-product-options__item">
+                                <label class="egen-form-label">{{ option.name }} {% if option.required %}<span class="text-danger">*</span>{% endif %}</label>
+                                
+                                {% if option.type == 'select' %}
+                                    <select name="option[{{ option.product_option_id }}]" class="egen-form-select" {% if option.required %}required{% endif %}>
+                                        <option value="">--- Selecione ---</option>
+                                        {% for value in option.product_option_value %}
+                                            <option value="{{ value.product_option_value_id }}">
+                                                {{ value.name }} 
+                                                {% if value.price %} ({{ value.price_prefix }}{{ value.price }}) {% endif %}
+                                            </option>
+                                        {% endfor %}
+                                    </select>
+                                {% elseif option.type == 'radio' %}
+                                    <div class="egen-product-options__inline-group">
+                                        {% for value in option.product_option_value %}
+                                            <div class="egen-product-options__inline-item">
+                                                <input class="egen-product-options__input-check" type="radio" name="option[{{ option.product_option_id }}]" id="opt-{{ value.product_option_value_id }}" value="{{ value.product_option_value_id }}" {% if option.required %}required{% endif %}>
+                                                <label class="egen-product-options__label-check" for="opt-{{ value.product_option_value_id }}">
+                                                    {{ value.name }}
+                                                    {% if value.price %} <span class="egen-product-options__price-prefix">({{ value.price_prefix }}{{ value.price }})</span> {% endif %}
+                                                </label>
+                                            </div>
+                                        {% endfor %}
+                                    </div>
+                                {% elseif option.type == 'checkbox' %}
+                                    <div class="egen-product-options__inline-group">
+                                        {% for value in option.product_option_value %}
+                                            <div class="egen-product-options__inline-item">
+                                                <input class="egen-product-options__input-check" type="checkbox" name="option[{{ option.product_option_id }}][]" id="opt-{{ value.product_option_value_id }}" value="{{ value.product_option_value_id }}">
+                                                <label class="egen-product-options__label-check" for="opt-{{ value.product_option_value_id }}">
+                                                    {{ value.name }}
+                                                    {% if value.price %} <span class="egen-product-options__price-prefix">({{ value.price_prefix }}{{ value.price }})</span> {% endif %}
+                                                </label>
+                                            </div>
+                                        {% endfor %}
+                                    </div>
+                                {% elseif option.type == 'text' %}
+                                    <input type="text" name="option[{{ option.product_option_id }}]" value="{{ option.value }}" placeholder="{{ option.name }}" class="egen-form-input" {% if option.required %}required{% endif %}>
+                                {% elseif option.type == 'textarea' %}
+                                    <textarea name="option[{{ option.product_option_id }}]" rows="3" placeholder="{{ option.name }}" class="egen-form-input" {% if option.required %}required{% endif %}>{{ option.value }}</textarea>
+                                {% endif %}
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+
+                <!-- Quantidade & Adicionar ao carrinho -->
+                <div class="egen-product-action-row">
+                    <div class="egen-product-qty">
+                        <label for="input-quantity" class="egen-form-label">Qtd</label>
+                        <div class="egen-product-qty__control">
+                            <button class="egen-product-qty__btn" type="button" onclick="var q = document.getElementById('input-quantity'); var val = parseInt(q.value) || 1; if(val > 1) q.value = val - 1;">-</button>
+                            <input type="number" name="quantity" value="{{ product.minimum|default(1) }}" min="1" max="{{ product.quantity }}" id="input-quantity" class="egen-product-qty__input" oninput="var max = parseInt(this.max); var val = parseInt(this.value); if(!isNaN(max) && val > max) this.value = max; if(val < 1) this.value = 1;">
+                            <button class="egen-product-qty__btn" type="button" onclick="var q = document.getElementById('input-quantity'); var max = parseInt(q.max) || 99999; var val = parseInt(q.value) || 1; if(val < max) q.value = val + 1;">+</button>
+                        </div>
+                    </div>
+                    <div class="egen-product-buy">
+                        <button type="submit" id="button-cart" class="egen-btn-primary egen-btn-buy">
+                            <i class="fas fa-shopping-cart"></i> Adicionar ao Carrinho
+                        </button>
+                        <a href="javascript:history.back();" class="egen-btn-secondary">
+                            <i class="fa-solid fa-arrow-left"></i> Voltar
+                        </a>
+                    </div>
+                </div>
+            </form>
+
+            <!-- Simulador de Frete -->
+            <div class="egen-shipping-simulator">
+                <h4 class="egen-shipping-simulator__title">
+                    <i class="fa-solid fa-truck egen-shipping-simulator__icon"></i> Calcular Frete e Prazo
+                </h4>
+                <div class="egen-shipping-simulator__form">
+                    <input type="text" id="shipping-cep" value="{% if shipping_cep %}{{ shipping_cep|slice(0, 5) ~ '-' ~ shipping_cep|slice(5) }}{% endif %}" placeholder="00000-000" maxlength="9" class="egen-form-input egen-shipping-simulator__input" oninput="this.value = this.value.replace(/\D/g, '').replace(/^(\d{5})(\d)/, '$1-$2')">
+                    <button type="button" id="btn-calculate-shipping" class="egen-btn-primary egen-shipping-simulator__btn">Calcular</button>
+                </div>
+                <div id="shipping-results" class="egen-shipping-simulator__results" style="display: none;">
+                    <div class="egen-shipping-simulator__result-item">
+                        <div>
+                            <span class="egen-shipping-simulator__result-title">Retirar na Loja</span>
+                            <span class="egen-shipping-simulator__result-desc">Disponível em até 1 dia útil</span>
+                        </div>
+                        <span class="egen-shipping-simulator__result-price">Grátis</span>
+                    </div>
+                </div>
+            </div>
+
+            {% if product.minimum > 1 %}
+                <div class="egen-alert egen-alert--info">
+                    <i class="fas fa-info-circle"></i> Este produto possui quantidade mínima de compra de {{ product.minimum }} unidades.
+                </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Abas / Detalhes de Descrição e Atributos -->
+    <div class="egen-product-tabs-wrapper">
+        <div class="egen-product-tabs-card">
+            <nav class="egen-product-tabs">
+                <button class="egen-tab-trigger egen-tab-trigger--active" data-target="nav-description" type="button">Descrição</button>
+                {% if product.attribute_groups %}
+                    <button class="egen-tab-trigger" data-target="nav-attributes" type="button">Especificações Técnicas</button>
+                {% endif %}
+            </nav>
+            
+            <div class="egen-tab-content">
+                <div class="egen-tab-pane egen-tab-pane--active" id="nav-description">
+                    {{ product.description|raw }}
+                </div>
+                
+                {% if product.attribute_groups %}
+                    <div class="egen-tab-pane" id="nav-attributes">
+                        <div class="egen-table-responsive">
+                            <table class="egen-spec-table">
+                                {% for group in product.attribute_groups %}
+                                    <thead>
+                                        <tr class="egen-spec-table__group-row">
+                                            <th colspan="2" class="egen-spec-table__group-title">{{ group.name }}</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for attr in group.attribute %}
+                                            <tr class="egen-spec-table__row">
+                                                <td class="egen-spec-table__label">{{ attr.name }}</td>
+                                                <td class="egen-spec-table__value">{{ attr.text }}</td>
+                                            </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                {% endfor %}
+                            </table>
+                        </div>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    document.querySelectorAll('.egen-tab-trigger').forEach(button => {
+        button.addEventListener('click', () => {
+            const targetId = button.getAttribute('data-target');
+            
+            // Remove active classes
+            document.querySelectorAll('.egen-tab-trigger').forEach(b => b.classList.remove('egen-tab-trigger--active'));
+            document.querySelectorAll('.egen-tab-pane').forEach(p => p.classList.remove('egen-tab-pane--active'));
+            
+            // Activate target
+            button.classList.add('egen-tab-trigger--active');
+            const pane = document.getElementById(targetId);
+            if (pane) pane.classList.add('egen-tab-pane--active');
+        });
+    });
+});
+</script>
+<script src="/js/custom/shipping-simulator.js"></script>
+{% endblock %}

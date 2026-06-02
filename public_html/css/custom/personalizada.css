@@ -1,0 +1,1009 @@
+:root {
+  --primary-color: #fc9003;
+  --primary-hover: #e07b00;
+  --accent-color: #ffc107;
+  --light-color-1: #ffffff;
+  --light-color-2: #f8f9fa;
+  --dark-color-1: #101418;
+  --dark-color-2: #1e2227;
+  --focus-color-1: #ffc107;
+  --transition-speed: 0.3s;
+}
+
+/************************************************************************************************************/
+/* Identidade Visual */
+
+.telhado {
+  background-image: url('/img/seamless/scandinavian-roof-tile-seamless.jpg');
+  background-repeat: repeat;
+  position: relative;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.35);
+  border-bottom: 3px solid var(--primary-color);
+  transition: all var(--transition-speed) ease;
+}
+
+.telhado::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(135deg, rgba(16, 20, 24, 0.8) 0%, rgba(16, 20, 24, 0.92) 100%);
+  z-index: 1;
+}
+
+.telhado>* {
+  position: relative;
+  z-index: 2;
+}
+
+.telhado header {
+  padding: 1.5rem 0;
+  transition: padding var(--transition-speed) ease;
+}
+
+.stucco4 {
+  background: url('/img/seamless/Stucco4.jpg');
+}
+
+.Roof01 {
+  padding: 10px;
+  background: url('/img/seamless/Roof01.jpg');
+}
+
+.roof02 {
+  background: url('/img/seamless/Roof02.jpg');
+  padding: 0 10px;
+}
+
+.roof02 .product-thumb {
+  background: white;
+}
+
+.roof02 h3 {
+  color: white;
+  text-align: center;
+}
+
+/* Botão 3D. Geralmente usados no menu */
+.btn-3d {
+  text-shadow: 0 -1px 0 rgba(255, 117, 24, 0.25);
+  background-color: #ff9900;
+  background-image: linear-gradient(to bottom, #fc9003, #9c4902);
+  background-repeat: repeat-x;
+  border-color: #f58d05 #994400 #442200;
+  border-radius: 50px;
+}
+
+/* Logo */
+#logo {
+  display: flex;
+  align-items: center;
+}
+
+#logo h1 {
+  margin: 0;
+  font-size: 2.2rem;
+  font-weight: 800;
+  letter-spacing: -0.5px;
+}
+
+#logo h1 a {
+  text-decoration: none;
+  background: linear-gradient(135deg, #ffffff 0%, var(--primary-color) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  transition: opacity var(--transition-speed) ease;
+}
+
+#logo h1 a:hover {
+  opacity: 0.9;
+}
+
+#logo img {
+  max-height: 70px;
+  width: auto;
+  transition: transform var(--transition-speed) ease;
+}
+
+#logo img:hover {
+  transform: scale(1.05);
+}
+
+/************************************************************************************************************/
+/* Layout do Header (egen-header)                                                                           */
+/************************************************************************************************************/
+
+/* Wrapper interno: logo à esquerda, conteúdo à direita */
+.egen-header {
+  padding: 1.25rem 0;
+  transition: padding var(--transition-speed) ease;
+}
+
+.egen-header__container {
+  display: flex;
+  flex-direction: row;
+  align-items: stretch;
+  /* logo e coluna direita têm mesma altura */
+  gap: 1.5rem;
+  width: 100%;
+  max-width: 1320px;
+  margin: 0 auto;
+  padding: 0 1.5rem;
+  box-sizing: border-box;
+}
+
+/* Logo — largura mínima, não encolhe */
+.egen-header__logo {
+  display: flex;
+  align-items: center;
+  flex: 0 0 auto;
+}
+
+/* Coluna direita — ocupa todo o espaço restante */
+.egen-header__content {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  flex: 1 1 0;
+  min-width: 0;
+  /* evita overflow em flex */
+  gap: 0.5rem;
+}
+
+/* Linha superior: top-nav alinhado à direita */
+.egen-header__top-row {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  width: 100%;
+}
+
+/* Estado sticky */
+.telhado.sticky .egen-header {
+  padding: 0.5rem 0;
+}
+
+.telhado.sticky #logo h1 {
+  font-size: 1.8rem;
+}
+
+.telhado.sticky #logo img {
+  max-height: 50px;
+}
+
+/************************************************************************************************************/
+/* Utility Bar (egen-utility-bar)                                                                           */
+/************************************************************************************************************/
+
+.egen-utility-bar {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 0.75rem;
+  width: 100%;
+}
+
+/* Botão de menu — largura mínima, não encolhe */
+.egen-utility-bar__menu {
+  flex: 0 0 auto;
+}
+
+/* Caixa de busca — expande para preencher o espaço */
+.egen-utility-bar__search {
+  flex: 1 1 0;
+  min-width: 0;
+}
+
+/* Carrinho — largura mínima, não encolhe */
+.egen-utility-bar__cart {
+  flex: 0 0 auto;
+}
+
+/* Botão do carrinho */
+.egen-btn-cart {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  background-color: var(--dark-color-1);
+  color: var(--light-color-1);
+  border: 2px solid var(--primary-color);
+  border-radius: 50px;
+  padding: 0.55rem 1.4rem;
+  font-weight: 600;
+  font-size: 0.9rem;
+  text-decoration: none;
+  white-space: nowrap;
+  transition: all var(--transition-speed) ease;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+}
+
+.egen-btn-cart:hover,
+.egen-btn-cart:focus-visible {
+  background-color: var(--primary-color);
+  border-color: var(--primary-hover);
+  color: var(--light-color-1);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 15px rgba(252, 144, 3, 0.35);
+  outline: none;
+}
+
+.egen-btn-cart i {
+  font-size: 1rem;
+}
+
+/************************************************************************************************************/
+/* Responsividade do Header                                                                                  */
+/************************************************************************************************************/
+
+@media (max-width: 991px) {
+  .egen-header {
+    padding: 1rem 0;
+  }
+
+  /* Em mobile: empilha logo acima do conteúdo */
+  .egen-header__container {
+    flex-direction: column;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0 1rem;
+  }
+
+  .egen-header__logo {
+    justify-content: center;
+  }
+
+  .egen-header__content {
+    width: 100%;
+  }
+
+  .egen-header__top-row {
+    justify-content: center;
+  }
+
+  /* Utility bar empilha verticalmente em telas muito pequenas */
+  .egen-utility-bar {
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  .egen-utility-bar__search {
+    flex: 1 1 100%;
+    /* busca ocupa linha inteira */
+    order: -1;
+    /* sobe para o topo */
+  }
+}
+
+/************************************************************************************************************/
+/** Menu de Navegação. menu-container       **/
+/**                                         **/
+/************************************************************************************************************/
+
+.ag-menu-container {
+  display: inline-flex;
+  position: relative;
+  font-family: var(--title-font), sans-serif;
+}
+
+.ag-menu-container ul {
+  border-radius: 8px;
+}
+
+/* Efeito ao passar o mouse sobre um item do menu principal ou quando ativo */
+.ag-menu-container:hover .dropdown-menu-recursive,
+.ag-menu-container:focus-within .dropdown-menu-recursive,
+.dropdown-menu-recursive.show {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+  transform: translateY(0);
+}
+
+.menu-button-left {
+  text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.2);
+  background-color: var(--primary-color);
+  background-image: linear-gradient(to bottom, var(--primary-color), var(--primary-hover));
+  border: 1px solid var(--primary-hover);
+  color: white;
+  font-size: 15px;
+  font-weight: 600;
+  line-height: 18px;
+  padding: 12px 24px;
+  border-radius: 50px;
+  white-space: nowrap;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.25);
+  transition: all var(--transition-speed) ease;
+  cursor: pointer;
+}
+
+.menu-button-left:hover {
+  background-image: linear-gradient(to bottom, var(--accent-color), var(--primary-color));
+  border-color: var(--primary-color);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 15px rgba(252, 144, 3, 0.4);
+}
+
+.dropdown-menu-recursive {
+  display: block;
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  position: absolute;
+  min-width: 220px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+  z-index: 1000;
+  list-style: none;
+  padding: 0.5rem 0;
+  margin: 0;
+  background: var(--light-color-1);
+  border: 1px solid rgba(252, 144, 3, 0.3);
+  border-radius: 10px;
+  top: 100%;
+  left: 0;
+  transform: translateY(15px);
+  transition: opacity var(--transition-speed) cubic-bezier(0.16, 1, 0.3, 1),
+    transform var(--transition-speed) cubic-bezier(0.16, 1, 0.3, 1),
+    visibility var(--transition-speed);
+}
+
+.dropdown-menu-recursive li {
+  width: 100%;
+  position: relative;
+  padding: 0;
+  cursor: pointer;
+  display: flex;
+  white-space: nowrap;
+  align-items: center;
+  background: var(--light-color-1);
+  transition: all 0.2s ease;
+}
+
+.dropdown-menu-recursive li:hover {
+  background: rgba(252, 144, 3, 0.1);
+}
+
+/* Mostra o submenu ao passar o mouse sobre um item do menu pai ou quando ativo */
+.dropdown-menu-recursive li:hover>.submenu,
+.dropdown-menu-recursive li:focus-within>.submenu,
+.submenu.show {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+  transform: translateX(0);
+}
+
+/* Link <a> ocupa todo o container */
+.dropdown-menu-recursive li a {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  color: var(--dark-color-1);
+  font-weight: 500;
+  padding: 0.7em 1.5em;
+  text-decoration: none;
+  transition: color var(--transition-speed) ease;
+}
+
+.dropdown-menu-recursive li a:hover {
+  color: var(--primary-color);
+}
+
+/* Oculta o submenu inicialmente */
+.submenu {
+  background-color: var(--light-color-1);
+  display: block;
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  position: absolute;
+  left: 100%;
+  top: 0;
+  min-width: 220px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+  z-index: 1001;
+  list-style: none;
+  padding: 0.5rem 0;
+  margin: 0;
+  border-radius: 8px;
+  border: 1px solid #e9ecef;
+  transform: translateX(15px);
+  transition: opacity var(--transition-speed) cubic-bezier(0.16, 1, 0.3, 1),
+    transform var(--transition-speed) cubic-bezier(0.16, 1, 0.3, 1),
+    visibility var(--transition-speed);
+}
+
+.submenu li {
+  background-color: var(--light-color-1);
+}
+
+.submenu li:hover {
+  background-color: rgba(252, 144, 3, 0.1);
+}
+
+/* Caixa de busca ----------------------*/
+.search-bar {
+  display: flex;
+  align-items: stretch;
+  width: 100%;
+  max-width: 600px;
+  margin: 0 auto;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+  border-radius: 50px;
+  overflow: hidden;
+  background: #ffffff;
+  border: 2px solid transparent;
+  transition: all var(--transition-speed) ease;
+}
+
+.search-bar:focus-within {
+  border-color: var(--primary-color);
+  box-shadow: 0 4px 15px rgba(252, 144, 3, 0.25);
+}
+
+.search-bar input {
+  flex-grow: 1;
+  border: none;
+  outline: none;
+  padding: 0.6rem 1.5rem;
+  font-size: 0.95rem;
+  color: #333333;
+  background: transparent;
+}
+
+.search-bar input::placeholder {
+  color: #999999;
+}
+
+.search-bar button {
+  background: var(--primary-color) !important;
+  color: var(--light-color-1) !important;
+  border: none;
+  padding: 0 1.8rem;
+  font-weight: 600;
+  transition: background-color var(--transition-speed) ease;
+  cursor: pointer;
+}
+
+.search-bar button:hover {
+  background: var(--primary-hover) !important;
+}
+
+/* Estilo para ícones de atalho para redes sociais -------------------------------------------------------------------------------------- */
+.ico-menu {
+  display: flex;
+  align-items: center;
+  white-space: nowrap;
+  padding: 0.5em;
+  background: var(--primary-color);
+  color: var(--light-color-1);
+  border-radius: 1em;
+}
+
+.ico-menu li {
+  display: inline-block;
+  list-style: none;
+  margin: 0 0.5em;
+}
+
+.ico-menu li a {
+  text-decoration: none;
+  color: #333;
+  display: flex;
+  align-items: center;
+}
+
+.ico-menu li img {
+  width: 1em;
+  height: 1em;
+  margin-right: 0.2em;
+}
+
+/* Ações do usuário */
+.user-actions {
+  display: flex;
+  white-space: nowrap;
+  align-items: center;
+  gap: 1.5rem;
+  padding-left: 1.5em;
+  padding-right: 1.5em;
+  border-radius: 1em;
+}
+
+.user-actions a {
+  text-decoration: none;
+  color: var(--light-color-1);
+  transition: color 0.3s;
+  position: relative;
+}
+
+.user-actions a:hover {
+  color: var(--focus-color-1);
+}
+
+.user-actions,
+.ico-menu {
+  background: var(--primary-color);
+  color: var(--light-color-1);
+  padding: 0.5em 1em;
+  height: 100%;
+}
+
+/************************************************************************************************************/
+/* Top Nav (egen-top-nav) — Barra utilitária superior do Header                                            */
+/************************************************************************************************************/
+
+.egen-top-nav {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  padding: 0;
+  margin: 0;
+}
+
+.egen-top-nav__list {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  align-items: center;
+  justify-content: space-around;
+  /* Distribuirá os itens com espaçamento uniforme ao redor */
+  width: 100%;
+  /* Permite que a lista ocupe toda a largura disponível da barra */
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+
+/* Cada item da lista */
+.egen-top-nav__item {
+  position: relative;
+  flex: 0 0 auto;
+}
+
+/* Link / botão de cada item */
+.egen-top-nav__link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  color: rgba(255, 255, 255, 0.9);
+  font-size: 0.875rem;
+  font-weight: 500;
+  text-decoration: none;
+  white-space: nowrap;
+  padding: 0.4rem 0.85rem;
+  border-radius: 20px;
+  transition: color var(--transition-speed) ease,
+    background var(--transition-speed) ease;
+}
+
+.egen-top-nav__link:hover,
+.egen-top-nav__link:focus-visible {
+  color: var(--accent-color);
+  background: rgba(252, 144, 3, 0.15);
+  outline: none;
+}
+
+/* Ícones FontAwesome dentro do link */
+.egen-top-nav__link i {
+  color: var(--primary-color);
+  font-size: 0.85rem;
+  flex-shrink: 0;
+}
+
+/* Texto (rótulo) — oculto em telas pequenas */
+.egen-top-nav__label {
+  display: inline;
+}
+
+/* Ícone da seta do dropdown */
+.egen-top-nav__caret {
+  font-size: 0.75rem;
+  transition: transform var(--transition-speed) ease;
+  display: inline-block;
+}
+
+/************************************************************************************************************/
+/* Dropdown do item "Minha Conta"                                                                           */
+/************************************************************************************************************/
+
+.egen-top-nav__dropdown {
+  display: block;
+  position: absolute;
+  top: calc(100% + 6px);
+  right: 0;
+  /* alinha pela direita do item-pai */
+  min-width: 180px;
+  list-style: none;
+  margin: 0;
+  padding: 0.4rem 0;
+  background-color: var(--dark-color-1);
+  border: 1px solid rgba(252, 144, 3, 0.3);
+  border-radius: 8px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+  z-index: 1050;
+  /* Oculto inicialmente */
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transform: translateY(8px);
+  transition: opacity var(--transition-speed) cubic-bezier(0.16, 1, 0.3, 1),
+    transform var(--transition-speed) cubic-bezier(0.16, 1, 0.3, 1),
+    visibility var(--transition-speed);
+}
+
+/* Abre no hover e no foco-interno */
+.egen-top-nav__item--dropdown:hover .egen-top-nav__dropdown,
+.egen-top-nav__item--dropdown:focus-within .egen-top-nav__dropdown {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+  transform: translateY(0);
+}
+
+/* Rotação da seta no hover */
+.egen-top-nav__item--dropdown:hover .egen-top-nav__caret,
+.egen-top-nav__item--dropdown:focus-within .egen-top-nav__caret {
+  transform: rotate(180deg);
+  color: var(--accent-color);
+}
+
+/* Itens do dropdown */
+.egen-top-nav__dropdown-item {
+  display: block;
+  padding: 0.5rem 1.2rem;
+  color: var(--light-color-2);
+  font-size: 0.875rem;
+  text-decoration: none;
+  white-space: nowrap;
+  transition: background var(--transition-speed) ease,
+    color var(--transition-speed) ease,
+    padding-left var(--transition-speed) ease;
+}
+
+.egen-top-nav__dropdown-item:hover,
+.egen-top-nav__dropdown-item:focus-visible {
+  background-color: var(--primary-color);
+  color: var(--light-color-1);
+  padding-left: 1.6rem;
+  outline: none;
+}
+
+
+/************************************************************************************************************/
+/* Responsividade do Top Nav                                                                                */
+/************************************************************************************************************/
+
+@media (max-width: 991px) {
+
+  /* Rótulos de texto nos links somem em mobile */
+  .egen-top-nav__label {
+    display: none;
+  }
+
+  .egen-top-nav {
+    justify-content: center;
+  }
+
+  .egen-top-nav__list {
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 0.25rem;
+  }
+
+  /* Dropdown abre para cima se estiver no fim da tela */
+  .egen-top-nav__dropdown {
+    right: auto;
+    left: 50%;
+    transform: translateX(-50%) translateY(8px);
+  }
+
+  .egen-top-nav__item--dropdown:hover .egen-top-nav__dropdown,
+  .egen-top-nav__item--dropdown:focus-within .egen-top-nav__dropdown {
+    transform: translateX(-50%) translateY(0);
+  }
+
+  .search-bar {
+    max-width: 100%;
+  }
+}
+
+/* Formatação do formulário de login ----------------------------------------------------------------------------------- */
+.dropdown {
+  position: relative;
+  display: inline-block;
+}
+
+.dropdown-content {
+  display: none;
+  position: absolute;
+  background-color: #f9f9f9;
+  min-width: 160px;
+  box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
+  z-index: 1;
+  padding: 10px;
+  border-radius: 5px;
+  transition: opacity 0.3s ease-in-out;
+}
+
+.dropdown:hover .dropdown-content {
+  display: block;
+  opacity: 1;
+}
+
+.dropdown-content input[type="text"],
+.dropdown-content input[type="email"],
+.dropdown-content input[type="password"],
+.dropdown-content input[type="submit"] {
+  margin-bottom: 10px;
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 3px;
+}
+
+.dropdown-content input[type="submit"] {
+  background-color: #4CAF50;
+  color: white;
+  cursor: pointer;
+}
+
+/* Checagem dos campos 'input' para marcar como válidos: */
+.input-container.valid input {
+  border-color: green;
+}
+
+.input-container.valid .checkmark {
+  display: inline;
+}
+
+/************************************************************************************************************/
+/* Rodapé (ag-footer + egen-footer__*)                                                                      */
+/************************************************************************************************************/
+
+/* ── Wrapper do rodapé ── */
+.ag-footer {
+  background-color: var(--dark-color-1);
+  color: var(--light-color-2);
+  border-top: 4px solid var(--primary-color);
+  padding: 4rem 0 0 0;
+  font-family: inherit;
+}
+
+/* ── Container centralizado (reutilizado no bottom bar) ── */
+.egen-footer__container {
+  width: 100%;
+  max-width: 1320px;
+  margin: 0 auto;
+  padding: 0 1.5rem;
+  box-sizing: border-box;
+}
+
+/* ── Grid de colunas — logo + 4 colunas de links ── */
+.egen-footer__grid {
+  display: grid;
+  grid-template-columns: 1.5fr repeat(4, 1fr);
+  /* coluna da marca maior */
+  gap: 2rem 3rem;
+  padding-bottom: 1rem;
+}
+
+/* ── Coluna da Marca (logo, descrição, redes) ── */
+.egen-footer__brand-col {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.egen-footer__logo {
+  max-height: 50px;
+  width: auto;
+  display: block;
+}
+
+.egen-footer__brand-name {
+  color: var(--light-color-1);
+  font-weight: 700;
+  font-size: 1.4rem;
+  margin: 0 0 0.5rem 0;
+}
+
+.footer-desc {
+  color: #a0aab5;
+  font-size: 0.9rem;
+  line-height: 1.6;
+  margin: 0;
+}
+
+/* ── Ícones de redes sociais ── */
+.social-icons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.ag-footer .social-icons a {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  background: var(--dark-color-2);
+  color: var(--light-color-2);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  text-decoration: none;
+  transition: background var(--transition-speed) ease,
+    color var(--transition-speed) ease,
+    transform var(--transition-speed) ease,
+    box-shadow var(--transition-speed) ease;
+}
+
+.ag-footer .social-icons a:hover {
+  background: var(--primary-color);
+  color: var(--light-color-1);
+  transform: translateY(-3px) rotate(360deg);
+  box-shadow: 0 4px 10px rgba(252, 144, 3, 0.4);
+}
+
+/* ── Coluna individual de links (molecule footer-column) ── */
+.egen-footer__col {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+/* Título da coluna */
+.footer-column__title {
+  color: var(--light-color-1);
+  font-weight: 700;
+  font-size: 1rem;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  position: relative;
+  padding-bottom: 0.6rem;
+  margin: 0;
+}
+
+.footer-column__title::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 28px;
+  height: 2px;
+  background-color: var(--primary-color);
+  transition: width var(--transition-speed) ease;
+}
+
+.egen-footer__col:hover .footer-column__title::after {
+  width: 48px;
+}
+
+/* Lista de links */
+.footer-column__list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.footer-column__item {
+  margin: 0;
+  padding: 0;
+}
+
+.footer-column__link {
+  color: #a0aab5;
+  font-size: 0.9rem;
+  text-decoration: none;
+  display: inline-block;
+  transition: color var(--transition-speed) ease,
+    transform var(--transition-speed) ease;
+}
+
+.footer-column__link:hover,
+.footer-column__link:focus-visible {
+  color: var(--primary-color);
+  transform: translateX(5px);
+  outline: none;
+}
+
+/* ── Barra inferior: copyright + pagamentos ── */
+.ag-footer-bottom {
+  background-color: var(--dark-color-2);
+  margin-top: 3rem;
+  padding: 1.5rem 0;
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.egen-footer__bottom-row {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.ag-footer-bottom__copy {
+  color: #7d8794;
+  font-size: 0.85rem;
+  margin: 0;
+}
+
+/* Ícones de formas de pagamento */
+.payment-methods {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.payment-methods__label {
+  color: #7d8794;
+  font-size: 0.8rem;
+}
+
+.payment-methods i {
+  color: #7d8794;
+  transition: color var(--transition-speed) ease,
+    transform var(--transition-speed) ease;
+}
+
+.payment-methods i:hover {
+  color: var(--primary-color);
+  transform: scale(1.15);
+}
+
+/* ── Responsividade do Rodapé ── */
+@media (max-width: 1199px) {
+
+  /* Em telas médias: 2 colunas (marca + 2 / 2 + 2) */
+  .egen-footer__grid {
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+  }
+
+  .egen-footer__brand-col {
+    grid-column: 1 / -1;
+    /* marca ocupa linha inteira */
+    flex-direction: row;
+    align-items: flex-start;
+    gap: 2rem;
+    padding-bottom: 1.5rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+  }
+
+  .social-icons {
+    margin-top: 0.5rem;
+  }
+}
+
+@media (max-width: 639px) {
+
+  /* Mobile: coluna única */
+  .egen-footer__grid {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+
+  .egen-footer__brand-col {
+    flex-direction: column;
+  }
+
+  .egen-footer__bottom-row {
+    flex-direction: column;
+    text-align: center;
+    align-items: center;
+  }
+
+  .payment-methods {
+    justify-content: center;
+  }
+}
