@@ -108,103 +108,17 @@
 					{% if category.products %}
 						<div class="egen-cat-grid" id="products-grid">
 							{% for prod in category.products %}
-								<article
-									class="egen-prod-card" id="product-{{ prod.product_id }}">
-									{# Badge de promoção #}
-									{% if prod.special %}
-										<div class="egen-prod-badge egen-prod-badge--sale">Oferta</div>
-									{% endif %}
-
-									{# Imagem #}
-									<a href="{{ prod.href }}" class="egen-prod-card-img-wrap" tabindex="-1" aria-hidden="true">
-										<img src="{{ prod.thumb ?: '/img/no-image.png' }}" alt="{{ prod.name }}" class="egen-prod-card-img" loading="lazy">
-										<div class="egen-prod-card-img-overlay">
-											<span class="egen-prod-overlay-btn">Ver produto</span>
-										</div>
-									</a>
-
-									{# Corpo #}
-									<div class="egen-prod-card-body">
-										<h3 class="egen-prod-card-title">
-											<a href="{{ prod.href }}" class="egen-prod-card-title-link">{{ prod.name }}</a>
-										</h3>
-
-										{% if prod.description %}
-											<p class="egen-prod-card-desc">{{ prod.description|striptags|slice(0, 80) }}
-												{% if prod.description|striptags|length > 80 %}…
-												{% endif %}
-											</p>
-										{% endif %}
-
-										{# Preços #}
-										<div class="egen-prod-card-price-block">
-											{% if prod.special %}
-												<span class="egen-prod-price-old">{{ prod.price }}</span>
-												<span class="egen-prod-price-special">{{ prod.special }}</span>
-											{% else %}
-												<span class="egen-prod-price">{{ prod.price }}</span>
-											{% endif %}
-										</div>
-
-										{# Ação #}
-										<form action="{{ prod.cart_add }}" method="POST" class="egen-prod-card-form">
-											<input type="hidden" name="product_id" value="{{ prod.product_id }}">
-											<input type="hidden" name="quantity" value="{{ prod.minimum }}">
-											<a href="{{ prod.href }}" class="egen-prod-btn-details">Ver detalhes</a>
-											<button type="submit" class="egen-prod-btn-cart" title="Adicionar ao carrinho">
-												<svg width="16" height="16" viewbox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-													<circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/>
-													<path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/>
-												</svg>
-											</button>
-										</form>
-									</div>
-								</article>
+								{% include 'pages/product/product-card.html.twig' with {'prod': prod} %}
 							{% endfor %}
 						</div>
 
 						{# ── Paginação ── #}
-						{% if category.product_total > category.limit %}
-							<div class="egen-cat-pagination-wrap">
-								<nav class="egen-cat-pagination" aria-label="Navegação de páginas">
-									{% set total_pages = (category.product_total / category.limit)|round(0, 'ceil') %}
-									{% set current_page = category.pagination.page %}
-									{% set range = 2 %}
-
-									{% if current_page > 1 %}
-										<a class="egen-cat-page-btn" href="{{ category.pagination.url|replace({'{page}': 1}) }}" title="Primeira">
-											<svg width="14" height="14" viewbox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="11 17 6 12 11 7"/><polyline points="18 17 13 12 18 7"/></svg>
-										</a>
-										<a class="egen-cat-page-btn" href="{{ category.pagination.url|replace({'{page}': current_page - 1}) }}" title="Anterior">
-											<svg width="14" height="14" viewbox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
-										</a>
-									{% endif %}
-
-									{% if current_page - range > 1 %}
-										<span class="egen-cat-page-sep">…</span>
-									{% endif %}
-
-									{% for page in 1..total_pages %}
-										{% if page >= current_page - range and page <= current_page + range %}
-											<a class="egen-cat-page-btn {% if page == current_page %}egen-cat-page-btn--active{% endif %}" href="{{ category.pagination.url|replace({'{page}': page}) }}">{{ page }}</a>
-										{% endif %}
-									{% endfor %}
-
-									{% if current_page + range < total_pages %}
-										<span class="egen-cat-page-sep">…</span>
-									{% endif %}
-
-									{% if current_page < total_pages %}
-										<a class="egen-cat-page-btn" href="{{ category.pagination.url|replace({'{page}': current_page + 1}) }}" title="Próxima">
-											<svg width="14" height="14" viewbox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
-										</a>
-										<a class="egen-cat-page-btn" href="{{ category.pagination.url|replace({'{page}': total_pages}) }}" title="Última">
-											<svg width="14" height="14" viewbox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="13 17 18 12 13 7"/><polyline points="6 17 11 12 6 7"/></svg>
-										</a>
-									{% endif %}
-								</nav>
-							</div>
-						{% endif %}
+						{% include 'components/molecules/pagination.html.twig' with {
+							'total': category.product_total,
+							'limit': category.limit,
+							'current_page': category.pagination.page,
+							'url': category.pagination.url
+						} %}
 
 					{% else %}
 						{# ── Estado vazio ── #}

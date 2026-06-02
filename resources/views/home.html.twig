@@ -67,7 +67,7 @@
 							</div>
 							<div class="category-grid">
 								{% for cat in featured_categories %}
-									<a href="{{ cat.seo_keyword ? '/' ~ cat.seo_keyword : '/index.php?route=product/category&language=pt-br&path=' ~ cat.id }}" class="category-card">
+									<a href="{{ url_for('category.detail', {'lang': lang, 'slug': cat.seo_keyword ?: cat.id}) }}" class="category-card">
 										{% if cat.image %}
 											<div class="category-card__image-wrapper">
 												<img src="/image/{{ cat.image }}" alt="{{ cat.name }}" loading="lazy">
@@ -117,7 +117,9 @@
 						</div>
 						<div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-xl-4 mb-5">
 							{% for product in featured_products %}
-								<div class="col">{{ product }}</div>
+								<div class="col">
+									{% include 'pages/product/product-card.html.twig' with {'prod': product} %}
+								</div>
 							{% endfor %}
 						</div>
 					{% endif %}
@@ -130,7 +132,9 @@
 						</div>
 						<div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-xl-4 mb-5">
 							{% for product in latest_products %}
-								<div class="col">{{ product }}</div>
+								<div class="col">
+									{% include 'pages/product/product-card.html.twig' with {'prod': product} %}
+								</div>
 							{% endfor %}
 						</div>
 					{% endif %}

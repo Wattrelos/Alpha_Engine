@@ -202,40 +202,55 @@ class DataAccessObject
             }
         }
 
-        $columns = [];
-        $placeholders = [];
-        $values = [];
+        $attempts = 0;
+        while ($attempts < 5) {
+            $columns = [];
+            $placeholders = [];
+            $values = [];
 
-        foreach ($columnsMap as $col => $val) {
-            $columns[] = "`$col`";
-            $placeholders[] = "?";
+            foreach ($columnsMap as $col => $val) {
+                $columns[] = "`$col`";
+                $placeholders[] = "?";
 
-            if ($val instanceof \DateTimeInterface) {
-                $val = $val->format('Y-m-d H:i:s');
+                if ($val instanceof \DateTimeInterface) {
+                    $val = $val->format('Y-m-d H:i:s');
+                }
+                $values[] = is_bool($val) ? (int)$val : $val;
             }
-            $values[] = is_bool($val) ? (int)$val : $val;
-        }
 
-        $sql = $this->buildInsertSql($clazz, $columns, $placeholders);
+            $sql = $this->buildInsertSql($clazz, $columns, $placeholders);
 
-        try {
-            $startTime = microtime(true);
-            $stmt = $conn->prepare($sql);
-            $stmt->execute($values);
+            try {
+                $startTime = microtime(true);
+                $stmt = $conn->prepare($sql);
+                $stmt->execute($values);
 
-            $insertId = $parentId ?? (int)$conn->lastInsertId();
+                $insertId = $parentId ?? (int)$conn->lastInsertId();
 
-            $this->logDebugQuery($sql, $values, $startTime, $insertId, ['action' => 'CREATE']); // Para debug
-            return $insertId;
-        } catch (PDOException $e) {
-            $this->logDebugQuery("[ERRO SQL CREATE] " . $e->getMessage() . " | " . $sql, $values); // Para debug
-            error_log("Erro na tabela " . $reflection->getShortName() . ": " . $e->getMessage());
+                $this->logDebugQuery($sql, $values, $startTime, $insertId, ['action' => 'CREATE']); // Para debug
+                return $insertId;
+            } catch (PDOException $e) {
+                // Auto-Healing: Resiliência contra colunas legadas inexistentes (ex: address_id em bancos migrados)
+                if ($e->getCode() == '42S22' && preg_match('/Unknown column \'([^\']+)\'/', $e->getMessage(), $matches)) {
+                    $missingCol = trim($matches[1], '`');
+                    if (array_key_exists($missingCol, $columnsMap)) {
+                        error_log("Alpha Engine [Auto-Healing]: Coluna '{$missingCol}' ausente no BD. Ignorando e reprocessando a Inserção...");
+                        unset($columnsMap[$missingCol]);
+                        $attempts++;
+                        continue;
+                    }
+                }
 
-            if ($e->getCode() == 23000 || (isset($e->errorInfo[1]) && $e->errorInfo[1] == 1062)) {
-                throw new \DomainException("Alpha Engine [Violação de Integridade]: O banco de dados rejeitou a operação pois um registro com estes dados únicos (ex: e-mail) já existe.", 1062, $e);
+                $this->logDebugQuery("[ERRO SQL CREATE] " . $e->getMessage() . " | " . $sql, $values); // Para debug
+                error_log("Erro na tabela " . $reflection->getShortName() . ": " . $e->getMessage());
+
+                if ($e->getCode() == 23000 || (isset($e->errorInfo[1]) && $e->errorInfo[1] == 1062)) {
+                    throw new \DomainException("Alpha Engine [Violação de Integridade]: O banco de dados rejeitou a operação pois um registro com estes dados únicos (ex: e-mail) já existe.", 1062, $e);
+                }
+                throw $e;
             }
-            throw $e;
         }
+        return null;
     }
 
     private function getEntityHierarchy(string $startClass): array
@@ -619,34 +634,53 @@ class DataAccessObject
             }
         }
 
-        $setClauses = [];
-        $values = [];
+        $attempts = 0;
+        while ($attempts < 5) {
+            $setClauses = [];
+            $values = [];
 
-        foreach ($columnsMap as $col => $val) {
-            if ($val !== null) {
-                $setClauses[] = "`$col` = ?";
+            foreach ($columnsMap as $col => $val) {
+                if ($val !== null) {
+                    $setClauses[] = "`$col` = ?";
 
-                if ($val instanceof \DateTimeInterface) {
-                    $val = $val->format('Y-m-d H:i:s');
+                    if ($val instanceof \DateTimeInterface) {
+                        $val = $val->format('Y-m-d H:i:s');
+                    }
+                    $values[] = is_bool($val) ? (int)$val : $val;
                 }
-                $values[] = is_bool($val) ? (int)$val : $val;
             }
-        }
 
-        if (empty($setClauses)) return;
+            if (empty($setClauses)) return;
 
-        $sql = "UPDATE `" . $this->tablePrefix . $this->convertPascalCaseToSnakeCase($reflection->getShortName()) .
-            "` SET " . implode(", ", $setClauses) . " WHERE id = ?";
+            $sql = "UPDATE `" . $this->tablePrefix . $this->convertPascalCaseToSnakeCase($reflection->getShortName()) .
+                "` SET " . implode(", ", $setClauses) . " WHERE id = ?";
 
-        $values[] = $entity->getId();
+            $values[] = $entity->getId();
 
-        try {
-            $conn->prepare($sql)->execute($values);
-        } catch (PDOException $e) {
-            if ($e->getCode() == 23000 || (isset($e->errorInfo[1]) && $e->errorInfo[1] == 1062)) {
-                throw new \DomainException("Alpha Engine [Violação de Integridade]: Atualização rejeitada. Os dados informados entram em conflito com registros únicos já existentes.", 1062, $e);
+            try {
+                $startTime = microtime(true);
+                $conn->prepare($sql)->execute($values);
+                $this->logDebugQuery($sql, $values, $startTime, $entity->getId(), ['action' => 'UPDATE']);
+                return;
+            } catch (PDOException $e) {
+                // Auto-Healing: Resiliência contra colunas legadas inexistentes
+                if ($e->getCode() == '42S22' && preg_match('/Unknown column \'([^\']+)\'/', $e->getMessage(), $matches)) {
+                    $missingCol = trim($matches[1], '`');
+                    if (array_key_exists($missingCol, $columnsMap)) {
+                        error_log("Alpha Engine [Auto-Healing]: Coluna '{$missingCol}' ausente no BD. Ignorando e reprocessando Atualização...");
+                        unset($columnsMap[$missingCol]);
+                        $attempts++;
+                        continue;
+                    }
+                }
+
+                $this->logDebugQuery("[ERRO SQL UPDATE] " . $e->getMessage() . " | " . $sql, $values);
+
+                if ($e->getCode() == 23000 || (isset($e->errorInfo[1]) && $e->errorInfo[1] == 1062)) {
+                    throw new \DomainException("Alpha Engine [Violação de Integridade]: Atualização rejeitada. Os dados informados entram em conflito com registros únicos já existentes.", 1062, $e);
+                }
+                throw $e;
             }
-            throw $e;
         }
     }
 
@@ -903,7 +937,7 @@ class DataAccessObject
 
         $logFile = DIR_LOGS . 'queries.php';
         if (!file_exists($logFile)) {
-            file_put_contents($logFile, "<?php die('Acesso Restrito'); ?>\n\n");
+            @file_put_contents($logFile, "<?php die('Acesso Restrito'); ?>\n\n");
         }
 
         $runnableSql = $sql;
@@ -923,13 +957,13 @@ class DataAccessObject
             }
         }
 
-        error_log("[" . date('Y-m-d H:i:s') . "] " . $runnableSql . "\n", 3, $logFile);
+        @error_log("[" . date('Y-m-d H:i:s') . "] " . $runnableSql . "\n", 3, $logFile);
 
         if ($startTime !== null) {
             $executionTime = round((microtime(true) - $startTime) * 1000, 2);
             $msg = "  -> [RETORNO] Tempo: {$executionTime}ms | " . ($affectedRowsOrId !== null ? "Linhas/ID: {$affectedRowsOrId} | " : "");
             if (!empty($sample)) $msg .= "Amostra/Detalhes: " . json_encode($sample);
-            error_log($msg . "\n", 3, $logFile);
+            @error_log($msg . "\n", 3, $logFile);
         }
     }
 }
