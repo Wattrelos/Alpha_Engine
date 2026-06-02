@@ -8,6 +8,9 @@ Para facilitar a navegação, a documentação detalhada foi dividida nos seguin
 
 ### 1. Arquitetura Geral
 Visão geral da estrutura de pastas em `core/`, separação de camadas e princípios de design aplicados.
+*   Arquitetura e Engenharia de Software da Alpha Engine
+*   Documentação Central de Arquitetura Standalone
+*   Débitos Técnicos e Anti-Patterns Sanados
 
 ### 2. Modelos de Domínio e Entidades
 Detalhamento das árvores de agregação e grafos de objetos:
@@ -24,6 +27,8 @@ Detalhamento das árvores de agregação e grafos de objetos:
 
 ### 3. Infraestrutura e Banco de Dados
 Explicação técnica sobre o `DataAccessObject` (DAO), abstração de transações aninhadas e segurança com PDO. (Ver Diagrama)
+*   Segurança, Sistema e Infraestrutura
+*   Desacoplamento do Sistema de Sessões
 
 ### 4. Persistência (Mappers & Repositories)
 Fluxo de salvamento e recuperação de dados, incluindo o ciclo de vida de uma entidade do domínio até o banco de dados.
@@ -50,8 +55,16 @@ Estudos de impacto para decisões arquiteturais de banco de dados e infraestrutu
 ### 11. Subsistema do Carrinho de Compras e Checkout (Alpha Engine)
 Substituição completa da biblioteca de carrinho legada pelo `CartRepository` e `CartMapper` desacoplados. Registro do helper de pesos `Weight` no Registry global e ativação da rota de checkout dinâmica `/{lang}/checkout` com interface responsiva e interativa no padrão BEM/CSS. (Ver [Progresso do Carrinho](file:///var/www/html/agsonhos/docs/cart_progress.md))
 
+Substituição completa da biblioteca de carrinho legada pelo `CartRepository` e `CartMapper` desacoplados. Registro do helper de pesos `Weight` no Registry global e ativação da rota de checkout dinâmica `/{lang}/checkout` com interface responsiva e interativa no padrão BEM/CSS. (Ver Progresso do Carrinho)
+
+### 12. Subsistema de Autenticação e Cadastro (Auth)
+Refatoração integral do fluxo de login, registro e gerenciamento de conta via middlewares (Slim) e abstração `AuthService`. (Ver Progresso de Autenticação)
+
+### 13. Componentização e Apresentação Visual (Twig)
+Mapeamento da estrutura visual adotando *Atomic Design* (Atoms, Molecules, Organisms, Layouts e Pages) e reestruturação da interface de usuário em subdiretórios. (Ver Estrutura de Páginas)
+
+### 14. Subsistemas Auxiliares e Transversais
+*   Refatoração da Biblioteca de Moedas (Currency)
 
 ---
 *Nota: Este índice foi gerado para organizar o conteúdo distribuído. Os arquivos `.md` mencionados acima devem ser mantidos em sincronia com as evoluções do código em `core/`.*
-
-

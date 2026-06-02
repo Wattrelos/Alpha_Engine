@@ -52,6 +52,11 @@ class ManufacturerRepository extends AbstractRepository implements BaseRepositor
         $mapper = $this->mapperFactory->get(ManufacturerMapper::class);
         $results = $mapper->getManufacturers([], $this->store_id);
 
+        /** @var \Alpha\Model\Domain\Repositories\SeoUrlRepository $seoRepository */
+        $seoRepository = $this->registry->get('alpha_repository_factory')->get(\Alpha\Model\Domain\Repositories\SeoUrlRepository::class);
+        $manufacturerIds = array_column($results, 'id');
+        $seoRepository->primeCache($manufacturerIds, 'manufacturer_id', $this->store_id, $this->language_id);
+
         $categories = [];
 
         foreach ($results as $result) {
@@ -67,14 +72,17 @@ class ManufacturerRepository extends AbstractRepository implements BaseRepositor
                 if (!isset($categories[$key])) {
                     $categories[$key] = [
                         'name'         => $key,
-                        'href'         => $this->url->link('product/manufacturer', 'language=' . $this->config->get('config_language')),
+                        'href'         => '/marcas',
                         'manufacturer' => []
                     ];
                 }
 
+                $keyword = $seoRepository->getKeywordByQuery('manufacturer_id', (string)$result['id'], $this->store_id, $this->language_id);
+                $href = $keyword ? '/' . $keyword : '/marca/' . $result['id'];
+
                 $categories[$key]['manufacturer'][] = [
                     'name' => $result['name'],
-                    'href' => $this->url->link('product/manufacturer/info', 'language=' . $this->config->get('config_language') . '&manufacturer_id=' . $result['id'])
+                    'href' => $href
                 ];
             }
         }
@@ -104,14 +112,19 @@ class ManufacturerRepository extends AbstractRepository implements BaseRepositor
         $data = [];
         $data['name'] = $manufacturer_info['name'];
 
+        /** @var \Alpha\Model\Domain\Repositories\SeoUrlRepository $seoRepository */
+        $seoRepository = $this->registry->get('alpha_repository_factory')->get(\Alpha\Model\Domain\Repositories\SeoUrlRepository::class);
+        $keyword = $seoRepository->getKeywordByQuery('manufacturer_id', (string)$manufacturerId, $this->store_id, $this->language_id);
+        $baseHref = $keyword ? '/' . $keyword : '/marca/' . $manufacturerId;
+
         $data['breadcrumbs'] = [];
         $data['breadcrumbs'][] = [
             'text' => $this->language->get('text_brand') ?: 'Marcas',
-            'href' => $this->url->link('product/manufacturer', 'language=' . $this->config->get('config_language'))
+            'href' => '/marcas'
         ];
         $data['breadcrumbs'][] = [
             'text' => $manufacturer_info['name'],
-            'href' => $this->url->link('product/manufacturer/info', 'language=' . $this->config->get('config_language') . '&manufacturer_id=' . $manufacturerId)
+            'href' => $baseHref
         ];
 
         /** @var \Alpha\Model\Domain\Repositories\ProductRepository $productRepository */
@@ -133,8 +146,10 @@ class ManufacturerRepository extends AbstractRepository implements BaseRepositor
             $data['products'][] = $this->viewRenderer->render('product/thumb', $productRepository->getProductThumbData($result));
         }
 
-        // URL base para ordenação/limite
-        $baseUrl = '&manufacturer_id=' . $manufacturerId;
+        // Memorização dos Filtros para Paginação
+        $urlQuery = '';
+        if (isset($filterData['sort'])) $urlQuery .= '&sort=' . $filterData['sort'];
+        if (isset($filterData['order'])) $urlQuery .= '&order=' . $filterData['order'];
 
         // Limites de página
         $data['limits'] = [];
@@ -144,47 +159,47 @@ class ManufacturerRepository extends AbstractRepository implements BaseRepositor
             $data['limits'][] = [
                 'text'  => $value,
                 'value' => $value,
-                'href'  => $this->url->link('product/manufacturer/info', 'language=' . $this->config->get('config_language') . $baseUrl . '&limit=' . $value)
+                'href'  => $baseHref . '?' . ltrim($urlQuery . '&limit=' . $value, '&')
             ];
         }
 
         // Ordenação
-        $urlWithLimit = $baseUrl . '&limit=' . ($filterData['limit'] ?? 10);
+        $urlWithLimit = '&limit=' . ($filterData['limit'] ?? 10);
         $data['sorts'] = [];
         $data['sorts'][] = [
             'text'  => $this->language->get('text_default') ?: 'Padrão',
             'value' => 'p.sort_order-ASC',
-            'href'  => $this->url->link('product/manufacturer/info', 'language=' . $this->config->get('config_language') . '&sort=p.sort_order&order=ASC' . $urlWithLimit)
+            'href'  => $baseHref . '?sort=p.sort_order&order=ASC' . $urlWithLimit
         ];
         $data['sorts'][] = [
             'text'  => $this->language->get('text_name_asc') ?: 'Nome (A - Z)',
             'value' => 'pd.name-ASC',
-            'href'  => $this->url->link('product/manufacturer/info', 'language=' . $this->config->get('config_language') . '&sort=pd.name&order=ASC' . $urlWithLimit)
+            'href'  => $baseHref . '?sort=pd.name&order=ASC' . $urlWithLimit
         ];
         $data['sorts'][] = [
             'text'  => $this->language->get('text_name_desc') ?: 'Nome (Z - A)',
             'value' => 'pd.name-DESC',
-            'href'  => $this->url->link('product/manufacturer/info', 'language=' . $this->config->get('config_language') . '&sort=pd.name&order=DESC' . $urlWithLimit)
+            'href'  => $baseHref . '?sort=pd.name&order=DESC' . $urlWithLimit
         ];
         $data['sorts'][] = [
             'text'  => $this->language->get('text_price_asc') ?: 'Preço (Menor > Maior)',
             'value' => 'p.price-ASC',
-            'href'  => $this->url->link('product/manufacturer/info', 'language=' . $this->config->get('config_language') . '&sort=p.price&order=ASC' . $urlWithLimit)
+            'href'  => $baseHref . '?sort=p.price&order=ASC' . $urlWithLimit
         ];
         $data['sorts'][] = [
             'text'  => $this->language->get('text_price_desc') ?: 'Preço (Maior > Menor)',
             'value' => 'p.price-DESC',
-            'href'  => $this->url->link('product/manufacturer/info', 'language=' . $this->config->get('config_language') . '&sort=p.price&order=DESC' . $urlWithLimit)
+            'href'  => $baseHref . '?sort=p.price&order=DESC' . $urlWithLimit
         ];
         $data['sorts'][] = [
             'text'  => $this->language->get('text_model_asc') ?: 'Modelo (A - Z)',
             'value' => 'p.model-ASC',
-            'href'  => $this->url->link('product/manufacturer/info', 'language=' . $this->config->get('config_language') . '&sort=p.model&order=ASC' . $urlWithLimit)
+            'href'  => $baseHref . '?sort=p.model&order=ASC' . $urlWithLimit
         ];
         $data['sorts'][] = [
             'text'  => $this->language->get('text_model_desc') ?: 'Modelo (Z - A)',
             'value' => 'p.model-DESC',
-            'href'  => $this->url->link('product/manufacturer/info', 'language=' . $this->config->get('config_language') . '&sort=p.model&order=DESC' . $urlWithLimit)
+            'href'  => $baseHref . '?sort=p.model&order=DESC' . $urlWithLimit
         ];
 
         $data['sort']  = $filterData['sort'] ?? 'p.sort_order';
@@ -192,17 +207,15 @@ class ManufacturerRepository extends AbstractRepository implements BaseRepositor
         $data['limit'] = $filterData['limit'] ?? 10;
 
         // Paginação
-        $url = '';
-        if (isset($filterData['sort'])) $url .= '&sort=' . $filterData['sort'];
-        if (isset($filterData['order'])) $url .= '&order=' . $filterData['order'];
-        if (isset($filterData['limit'])) $url .= '&limit=' . $filterData['limit'];
+        $urlQueryLimit = $urlQuery;
+        if (isset($filterData['limit'])) $urlQueryLimit .= '&limit=' . $filterData['limit'];
 
         $paginationRepository = $this->registry->get('alpha_repository_factory')->get(\Alpha\Model\Domain\Repositories\PaginationRepository::class);
         $paginationData = $paginationRepository->prepare([
             'total' => $product_total,
             'page'  => $filterData['page'] ?? 1,
             'limit' => $filterData['limit'] ?? 10,
-            'url'   => $this->url->link('product/manufacturer/info', 'language=' . $this->config->get('config_language') . '&manufacturer_id=' . $manufacturerId . $url . '&page={page}')
+            'url'   => $baseHref . '?' . ltrim($urlQueryLimit . '&page={page}', '&')
         ]);
 
         $viewRenderer = new \Alpha\View\ViewRenderer($this->registry);

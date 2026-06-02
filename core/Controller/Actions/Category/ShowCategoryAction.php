@@ -84,6 +84,19 @@ class ShowCategoryAction implements ActionInterface
         $routeParser = $routeContext->getRouteParser();
         $lang = $request->getAttribute('lang', 'pt-br');
 
+        // Mapeamento inteligente de URLs amigáveis (SEO) para os produtos da categoria
+        if (isset($data['products']) && is_array($data['products'])) {
+            foreach ($data['products'] as &$product) {
+                $prodId = (int)($product['product_id'] ?? $product['id'] ?? 0);
+                $keyword = $prodId > 0 ? $this->seoRepository->getKeywordByQuery('product_id', $prodId, 0, $languageId) : '';
+                
+                $slug = !empty($keyword) ? $keyword : (!empty($product['keyword']) ? $product['keyword'] : $prodId);
+                $product['slug'] = $slug;
+                $product['href'] = $routeParser->urlFor('product.detail', ['lang' => $lang, 'slug' => (string)$slug]);
+            }
+            unset($product);
+        }
+
         // SEO tags
         $seoData = [
             'title'       => ($data['meta_title'] ?? $data['name']) . ' | AgSonhos',
@@ -121,7 +134,8 @@ class ShowCategoryAction implements ActionInterface
             'keywords'           => $seoData['keywords'],
             'lista_categorias'   => $listaCategorias,
             'lista_manufacturers'=> $listaManufacturers,
-            'filtros_ativos'     => $filtrosAtivos
+            'filtros_ativos'     => $filtrosAtivos,
+            'lang'               => $lang
         ]);
 
         $response->getBody()->write($html);

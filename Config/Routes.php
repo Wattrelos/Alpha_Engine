@@ -130,9 +130,9 @@ return function (\Slim\App $app) {
         })->add(new SessionMiddleware());
 
         // Detalhe do Produto, Categoria e Institucional (SEO)
-        $group->get('/produto/{slug}', ShowProductAction::class)->setName('product.detail');
+        $group->get('/produto/{slug}',   ShowProductAction::class)->setName('product.detail');
         $group->get('/categoria/{slug}', ShowCategoryAction::class)->setName('category.detail');
-        $group->get('/pagina/{slug}', ShowInformationAction::class)->setName('info.page');
+        $group->get('/pagina/{slug}',    ShowInformationAction::class)->setName('info.page');
 
         // Mapa do Site (Sitemap)
         $group->get('/mapa-do-site', ShowSitemapAction::class)->setName('sitemap');
@@ -163,4 +163,3 @@ return function (\Slim\App $app) {
     });
 
 };
-

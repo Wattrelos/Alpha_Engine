@@ -89,139 +89,61 @@ Diferente do OpenCart padrão, onde o SQL fica espalhado pelos Models, este proj
 ## 📦 Estrutura do Core
 
 ```text
-├── Config/                                 # 📂 Configurações da Aplicação
-│   └── Routes.php                          # 📁 Rotas PSR-15 centralizadas (Anti-Bootstrap  )
-├── Containers/                             # 📂 Nova pasta de infraestrutura do roteador
-│   ├── AppContainer.php                    # 📦 Fábrica central que monta as Actions (com Twig/Redis)
-│   └── AppBootstrap.php                    # 📦 Bootstrap da aplicação
-├── core/
-│      ├── Admin/Controllers/Actions/        # Domínio de administração do sistema
-│      │                       ├── Auth/                            # Fluxo de acesso ao painel
-│      │                       │    ├── LoginAction.php              # Executa a tentativa de login (POST)
-│      │                       │    ├── LogoutAction.php             # Destrói a sessão do admin
-│      │                       │    └── ResetPasswordAction.php      # Processa a nova senha
-│      │                       ├── Dashboard/
-│      │                       │   └── ViewDashboardAction.php      # Renderiza a tela inicial e métricas
-│      │                       ├── Catalog/                         # Gerenciamento do catálogo
-│      │                       │   ├── Product/
-│      │                       │   │   ├── ListProductsAction.php   # Busca e lista os produtos
-│      │                       │   │   ├── CreateProductAction.php  # Salva o novo produto no banco
-│      │                       │   │   ├── UpdateProductAction.php  # Atualiza o produto existente
-│      │                       │   │   └── DeleteProductAction.php  # Remove/Inativa o produto
-│      │                       │   └── Category/
-│      │                       │       ├── ListCategoriesAction.php
-│      │                       │       ├── CreateCategoryAction.php
-│      │                       │       └── UpdateCategoryAction.php
-│      │                       └── Sales/                           # Gerenciamento de pedidos e finanças
-│      │                            ├── Order/
-│      │                            │   ├── ListOrdersAction.php
-│      │                            │   ├── ViewOrderDetailsAction.php
-│      │                            │   └── UpdateOrderStatusAction.php # Altera status (ex: de Pago para Enviado)
-│      │                            └── Voucher/
-│      │                                 ├── ListVouchersAction.php
-│      │                                 └── CreateVoucherAction.php│
-│      └────  Controllers
-│      │       ├── Auth/                                   # 🔐 Domínio de autenticação e segurança (novo método de autenticação que substituirá os métodos legados)
-│      │       │   ├── Middleware/                         # 🛡️ Guards PSR-15 do Router
-│      │       │   │   ├── SignatureMiddleware.php         # Valida assinatura HMAC da requisição
-│      │       │   │   └── SessionMiddleware.php           # Valida sessão ativa no Redis
-│      │       └── Services/                           # 🧠 Lógica de negócio de autenticação
-│      │              └── AuthService.php                 # Autentica credenciais, cria/destroi sessão
-│      │
-│      │
-│      │
-│      │
-│      ├── Controller/                             # 🎮 Orquestradores de requisição HTTP (novo controller que substituirá os métodos legados)
-│      │   ├── BaseController.php                  # 🧱 Injeção de Mappers, Repos e helpers JSON
-│      │   ├── Auth/                               # Controladores de acesso
-│      │   │   ├── LoginController.php             # 🚪 Processa formulário de login
-│      │   │   └── LogoutController.php            # 🚪 Destroi sessão e expira cookie
-│      │   ├── Web/                                # 📄 Respostas em HTML (páginas do site)
-│      │   │   ├── HomeController.php              # 🚪 Controlador de página inicial
-│      │   │   ├── DashboardController.php         # 🚪 Controlador de painel administrativo
-│      │   │   └── ProductController.php           # 🚪 Controlador de produtos
-│      │   └── Api/                                # 🔌 Respostas em JSON (endpoints REST)
-│      │       └── ApiProductController.php        # 🔌 Controlador de produtos em JSON
-│      │
-│      ├── Mappers/                                # 🗺️ SQL Isolation — acesso ao banco de dados
-│      │   ├── MapperInterface.php                 # Contrato público dos Mappers
-│      │   ├── AbstractMapper.php                  # Base abstrata comum
-│      │   ├── BaseMapper.php                      # CRUD genérico via DataAccessObject
-│      │   ├── MapperFactory.php                   # 🏭 Fábrica central de instâncias
-│      │   ├── CollectionToArrayConverter.php      # Serialização de coleções de entidades
-│      │   ├── EntityMappers/                      # Um Mapper por entidade de domínio (75+)
-│      │   └── Observers/                          # 👁️ Side-effects de persistência
-│      │       ├── OrderObserverInterface.php      # 📧 Interface para observar eventos de pedido
-│      │       └── OrderEmailObserver.php          # 📧 Observer que envia e-mails quando um pedido é criado
-│      │
-│      ├── Model/                                  # 🏛️ Coração do domínio
-│      │   ├── DataAccessObject/                   # Abstração PDO, QueryBuilder, Transactions
-│      │   │   ├── DataAccessObject.php
-│      │   │   ├── ConnectionDB.php
-│      │   │   ├── QueryBuilder.php
-│      │   │   ├── UnitOfWork.php
-│      │   │   └── ProxyFactory.php
-│      │   ├── DataTransferObject/                 # Anotações e validações de entrada
-│      │   │   └── Attributes/
-│      │   │       ├── AllowHtml.php
-│      │   │       └── Validation.php
-│      │   └── Domain/                             # Entidades e regras de negócio puras
-│      │       ├── BaseEntity.php
-│      │       ├── InterfaceEntity.php
-│      │       ├── Attributes/                     # Atributos ORM (HasOne, ManyToMany, etc.)
-│      │       ├── Entities/                       # Objetos de domínio tipados (PHP 8.4)
-│      │       ├── DTOs/
-│      │       ├── Factory/
-│      │       ├── Repositories/                  # Abstração e regras de negócio por entidade
-│      │       └── Observers/
-│      │
-│      ├── Services/                              # ⚙️ Serviços de domínio e orquestração
-│      │   └── Shipping/                          # Cálculo e seleção de fretes
-│      │
-│      ├── Support/                               # 🛠️ Utilitários e helpers transversais
-│      │   ├── Cache/                             # Estratégias de cache (Filesystem)
-│      │   ├── Presenters/                        # Formatadores de saída (ImagePresenter)
-│      │   ├── Collection.php
-│      │   ├── LazyCollection.php
-│      │   ├── EntityHydrator.php
-│      │   ├── EvolutionGenerator.php
-│      │   ├── RequestHelper.php
-│      │   └── ViewHelper.php
-│      │
-│      └── View/                                  # 🖼️ Camada de apresentação (Twig/HTML) que substituirá os métodos legados
-│          └── ViewRenderer.php
-│      
-│── resources/views/                        # Novas telas Twig que estão substituindo as telas legadas do Opencart e adotando novos padrões: Atomic Design e Visual Components
-│      ├── components/                     <-- Pedaços de tela que se repetem (reutilizáveis)
-│      │   ├── atoms/                      <-- Elementos base (botão, input, tag)
-│      │   │    ├── logo.twig              <-- Apenas a imagem/link da logo
-│      │   │    ├── nav-link.twig          <-- Um link individual do menu
-│      │   │    └── menu-button.twig       <-- O botão "Departamentos"
-│      │   ├── molecules/                  <-- Junção de átomos (barra de busca, card)
-│      │   │    ├── nav-menu.twig          <-- A lista com todos os links do menu juntos
-│      │   │    ├── card-user.twig
-│      │   │    └── dropdown-recursive.twig    <-- A lista que se repete sozinha
-│      │   └── organism/                   <-- Combinação de moléculas (formulário de busca, header completo)
-│      │        ├── header.html.twig       <-- Header completo com logo + menu
-│      │        ├── department-menu.twig   <-- O bloco completo (Container)
-│      │        └── footer.html.twig       <-- Footer completo
-│      │ 
-│      ├── layouts/             <-- Estruturas gerais da página
-│      │   └── base.html.twig
-│      └── pages/               <-- As páginas finais do sistema
-│           ├── home.html.twig
-│           └── users/
-│                ├── index.html.twig
-│                └── edit.html.twig
-└─ public_html           # 🏛️ Única pasta apontada pelo Servidor
-    ├── index.php        # 🏛️ Arquivo principal que inicializa a Aplicação
-    └── .htaccess        # 🏛️ Arquivo de configuração do servidorApache
- 
+## 📦 Estrutura do Core
 
-catalog                 #  Pasta legada do Opencart que está sendo esvaziada.
-extension               #  Pasta legada do Opencart que está sendo esvaziada.
-image                   #  Pasta legada do Opencart que está sendo esvaziada.
-system                  #  Pasta legada do Opencart que está sendo esvaziada.
+```text
+├── changelog/                              # 📝 Notas técnicas, registros de refatoração e log de IAs
+├── Config/                                 # 📂 Configurações da Aplicação
+│   └── Routes.php                          # 📁 Rotas PSR-15 centralizadas (Slim Framework)
+├── Containers/                             # 📂 Infraestrutura de Injeção de Dependências (DI)
+│   ├── AppContainer.php                    # 📦 Contêiner Pimple/PHP-DI com definições de classes
+│   └── AppBootstrap.php                    # 📦 Bootstrap de inicialização
+├── core/                                   # 🧠 Core da Alpha Engine (Backend Standalone)
+│   ├── Admin/                              # 🛡️ Módulo do Painel Administrativo
+│   │   ├── Controllers/Actions/            # Controladores Slim focados no Admin (Painel)
+│   │   ├── Mappers/                        # Mappers específicos da área administrativa
+│   │   └── ...                             # (Estrutura isolada de Backoffice)
+│   ├── Auth/                               # 🔐 Módulo de Autenticação e Segurança
+│   │   ├── Middleware/                     # Guards PSR-15 (Signature, Session, Language, Redirects)
+│   │   └── Services/                       # Regras de negócio de acesso (ex: CustomerAuthService)
+│   ├── Controller/                         # 🎮 Controladores (Skinny Controllers / Actions)
+│   │   ├── BaseController.php              # Controller abstrato base da aplicação
+│   │   └── Actions/                        # Ações HTTP no padrão ADR (Action-Domain-Responder)
+│   │       ├── Cart/                       # Rotas de Carrinho e Checkout
+│   │       ├── Customer/Auth/              # Rotas de Login, Registro e Conta Logada
+│   │       └── ...
+│   ├── Mappers/                            # 🗺️ Data Mappers (Acesso e isolamento de Banco de Dados)
+│   │   ├── EntityMappers/                  # Tradutores entre Banco e Entidades (ex: ProductMapper)
+│   │   └── Observers/                      # Padrão Observer para side-effects (ex: enviar emails)
+│   ├── Model/                              # 🏛️ Coração do Domínio (DDD)
+│   │   ├── DataAccessObject/               # Camada DAO (Conexões PDO, QueryBuilder, UnitOfWork)
+│   │   ├── DataTransferObject/             # DTOs de transporte (ex: ViewResponse)
+│   │   └── Domain/                         # Lógica de Domínio Estrutural
+│   │       ├── Entities/                   # Objetos de domínio puros e tipados (PHP 8.4)
+│   │       └── Repositories/               # Orquestradores de regras de negócio agregadas
+│   ├── Support/                            # 🛠️ Utilitários Transversais e Helpers Nativos
+│   │   ├── Session.php                     # Gerenciamento Nativo de Sessões PHP Standalone
+│   │   ├── EntityHydrator.php              # Padrão Hydrator para popular entidades reflexivamente
+│   │   ├── AlphaString.php                 # Sanitização moderna e validação de strings
+│   │   └── Presenters/                     # Formatadores visuais dedicados (ex: ImagePresenter)
+│   └── View/                               # 🖼️ Camada de Renderização
+│       └── ViewRenderer.php                # Motor renderizador base (integrado ao Twig)
+│
+├── docs/                                   # 📚 Arquivos de Documentação Arquitetural e Progresso
+├── resources/                              # 🎨 Recursos Estáticos Não-Compilados e Views
+│   └── views/                              # Templates Twig
+│       ├── admin/                          # Telas do Painel de Controle (Backoffice)
+│       ├── components/                     # Atomic Design (atoms, molecules, organisms)
+│       ├── layouts/                        # Estruturas base (header, footer, html base)
+│       └── pages/                          # Telas principais do E-commerce (catálogo, carrinho, user)
+│
+└── public_html/                            # 🌐 Webroot (Document Root exposto e servido para a Internet)
+    ├── index.php                           # Front Controller único da Aplicação (Bootstrap)
+    ├── .htaccess                           # Regras de URL Rewrite (Apache)
+    ├── css/                                # Folhas de estilo (Custom CSS compilado)
+    ├── js/                                 # Scripts Vanilla JS e integrações de formulário (AJAX)
+    └── fonts/                              # Tipografia e Ícones Locais
+
 
 
 ```

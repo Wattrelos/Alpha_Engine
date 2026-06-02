@@ -1,0 +1,40 @@
+{% set total_pages = (total / limit)|round(0, 'ceil') %}
+{% set range = 2 %}
+
+{% if total_pages > 1 %}
+	<div class="egen-cat-pagination-wrap">
+		<nav class="egen-cat-pagination" aria-label="Navegação de páginas">
+			{% if current_page > 1 %}
+				<a class="egen-cat-page-btn" href="{{ url|replace({'{page}': 1}) }}" title="Primeira">
+					<svg width="14" height="14" viewbox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="11 17 6 12 11 7"/><polyline points="18 17 13 12 18 7"/></svg>
+				</a>
+				<a class="egen-cat-page-btn" href="{{ url|replace({'{page}': current_page - 1}) }}" title="Anterior">
+					<svg width="14" height="14" viewbox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+				</a>
+			{% endif %}
+
+			{% if current_page - range > 1 %}
+				<span class="egen-cat-page-sep">…</span>
+			{% endif %}
+
+			{% for page in 1..total_pages %}
+				{% if page >= current_page - range and page <= current_page + range %}
+					<a class="egen-cat-page-btn {% if page == current_page %}egen-cat-page-btn--active{% endif %}" href="{{ url|replace({'{page}': page}) }}">{{ page }}</a>
+				{% endif %}
+			{% endfor %}
+
+			{% if current_page + range < total_pages %}
+				<span class="egen-cat-page-sep">…</span>
+			{% endif %}
+
+			{% if current_page < total_pages %}
+				<a class="egen-cat-page-btn" href="{{ url|replace({'{page}': current_page + 1}) }}" title="Próxima">
+					<svg width="14" height="14" viewbox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+				</a>
+				<a class="egen-cat-page-btn" href="{{ url|replace({'{page}': total_pages}) }}" title="Última">
+					<svg width="14" height="14" viewbox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="13 17 18 12 13 7"/><polyline points="6 17 11 12 6 7"/></svg>
+				</a>
+			{% endif %}
+		</nav>
+	</div>
+{% endif %}

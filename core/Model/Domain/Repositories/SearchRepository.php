@@ -16,9 +16,10 @@ class SearchRepository extends AbstractRepository
     public function getSearchDisplayData(): ViewResponse
     {
         $response = new ViewResponse();
+        $langCode = $this->config->get('config_language') ?: 'pt-br';
 
         $response->set('text_search', $this->language->get('text_search'));
-        $response->set('action', $this->url->link('common/search.redirect', 'language=' . $this->config->get('config_language')));
+        $response->set('action', '/' . $langCode . '/busca');
         $response->set('search', $this->request->get['search'] ?? '');
 
         return $response;
@@ -30,8 +31,9 @@ class SearchRepository extends AbstractRepository
     public function getSearchUrl(string $search): string
     {
         $search = urlencode(html_entity_decode($search, ENT_QUOTES, 'UTF-8'));
+        $langCode = $this->config->get('config_language') ?: 'pt-br';
 
-        return $this->url->link('product/search', 'language=' . $this->config->get('config_language') . '&search=' . $search, true);
+        return '/' . $langCode . '/busca?search=' . $search;
     }
 
     // Implementações obrigatórias da Interface

@@ -57,7 +57,7 @@ class ProductMapper extends BaseMapper {
         /** @var \Alpha\Model\Domain\Repositories\SeoUrlRepository $seoRepository */
         $seoRepository = $this->registry->get('alpha_repository_factory')->get(\Alpha\Model\Domain\Repositories\SeoUrlRepository::class);
         $keyword = $seoRepository->getKeywordByQuery('product_id', (string)$product_id, $store_id, $language_id);
-        $product['href'] = $keyword ?: 'index.php?route=product/product&product_id=' . $product_id;
+        $product['href'] = $keyword ? '/' . $keyword : '/produto/' . $product_id;
 
         return $product;
     }
@@ -102,9 +102,8 @@ class ProductMapper extends BaseMapper {
               ->where("p.quantity > 0");
 
         // Filtros de busca
-        if (!empty($data['filter_search'])) {
-            // Simplificado para o exemplo, mas segue a lógica de ORs do original
-            $query->where("(pd.name LIKE ? OR p.model = ?)", ["%".$data['filter_search']."%", $data['filter_search']]);
+        if (!empty($data['filter_name'])) {
+            $query->where("(pd.name LIKE ? OR p.model = ?)", ["%" . $data['filter_name'] . "%", $data['filter_name']]);
         }
 
         if (!empty($data['filter_manufacturer_id'])) {
@@ -151,6 +150,29 @@ class ProductMapper extends BaseMapper {
         }
         $query->groupBy('p.id');
 
+        // Ordenação
+        $sort_data = [
+            'pd.name',
+            'p.model',
+            'p.quantity',
+            'p.price',
+            'rating',
+            'p.sort_order',
+            'p.date_added'
+        ];
+
+        if (isset($data['sort']) && in_array($data['sort'], $sort_data)) {
+            if ($data['sort'] == 'pd.name' || $data['sort'] == 'p.model') {
+                $query->orderBy("LCASE(" . $data['sort'] . ")", $data['order'] ?? 'ASC');
+            } elseif ($data['sort'] == 'p.price') {
+                $query->orderBy("(CASE WHEN special IS NOT NULL THEN special WHEN discount IS NOT NULL THEN discount ELSE p.price END)", $data['order'] ?? 'ASC');
+            } else {
+                $query->orderBy($data['sort'], $data['order'] ?? 'ASC');
+            }
+        } else {
+            $query->orderBy('p.sort_order', 'ASC');
+        }
+
         // Paginação
         $limit = (int)($data['limit'] ?? 20);
         $start = (int)($data['start'] ?? 0);
@@ -171,7 +193,7 @@ class ProductMapper extends BaseMapper {
                 $keyword = $seoRepository->getKeywordByQuery('product_id', (string)$productId, $store_id, $language_id);
                 
                 // Injeta o link amigável ou rota padrão
-                $result['href'] = $keyword ?: 'index.php?route=product/product&product_id=' . $productId;
+                $result['href'] = $keyword ? '/' . $keyword : '/produto/' . $productId;
             }
         }
 
@@ -218,7 +240,7 @@ class ProductMapper extends BaseMapper {
                 $productId = (int)$result['id'];
                 $keyword = $seoRepository->getKeywordByQuery('product_id', (string)$productId, $store_id, $language_id);
                 
-                $result['href'] = $keyword ?: 'index.php?route=product/product&product_id=' . $productId;
+                $result['href'] = $keyword ? '/' . $keyword : '/produto/' . $productId;
             }
         }
 
@@ -251,6 +273,10 @@ class ProductMapper extends BaseMapper {
               ->where("p.date_available <= ?", [date('Y-m-d')])
               ->where("pd.language_id = ?", [$language_id])
               ->where("p.quantity > 0");
+
+        if (!empty($data['filter_name'])) {
+            $query->where("(pd.name LIKE ? OR p.model = ?)", ["%" . $data['filter_name'] . "%", $data['filter_name']]);
+        }
 
         if (!empty($data['filter_category_id'])) {
             $query->where(!empty($data['filter_sub_category']) ? "cp.path_id = ?" : "p2c.category_id = ?", [$data['filter_category_id']]);
@@ -360,7 +386,7 @@ class ProductMapper extends BaseMapper {
                 $productId = (int)$result['id'];
                 $keyword = $seoRepository->getKeywordByQuery('product_id', (string)$productId, $store_id, $language_id);
                 
-                $result['href'] = $keyword ?: 'index.php?route=product/product&product_id=' . $productId;
+                $result['href'] = $keyword ? '/' . $keyword : '/produto/' . $productId;
             }
         }
 

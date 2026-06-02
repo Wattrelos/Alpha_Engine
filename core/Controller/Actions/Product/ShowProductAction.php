@@ -74,6 +74,23 @@ class ShowProductAction implements ActionInterface
         $routeParser = $routeContext->getRouteParser();
         $lang = $request->getAttribute('lang', 'pt-br');
 
+        // Mapeamento inteligente de URLs amigáveis (SEO) para os produtos relacionados.
+        // Varre as chaves comuns ('related' ou 'related_products') para hidratar os links.
+        $relatedKeys = ['related', 'related_products'];
+        foreach ($relatedKeys as $relKey) {
+            if (isset($product[$relKey]) && is_array($product[$relKey])) {
+                foreach ($product[$relKey] as &$relProd) {
+                    $relId = (int)($relProd['product_id'] ?? $relProd['id'] ?? 0);
+                    $keyword = $relId > 0 ? $this->seoRepository->getKeywordByQuery('product_id', $relId, 0, $languageId) : '';
+                    
+                    $relSlug = !empty($keyword) ? $keyword : (!empty($relProd['keyword']) ? $relProd['keyword'] : $relId);
+                    $relProd['slug'] = $relSlug;
+                    $relProd['href'] = $routeParser->urlFor('product.detail', ['lang' => $lang, 'slug' => (string)$relSlug]);
+                }
+                unset($relProd);
+            }
+        }
+
         // SEO tags e cabeçalhos
         $seoData = [
             'title'       => ($product['meta_title'] ?? $product['name']) . ' | AgSonhos',
@@ -106,11 +123,11 @@ class ShowProductAction implements ActionInterface
             'title'        => $seoData['title'],
             'description'  => $seoData['description'],
             'keywords'     => $seoData['keywords'],
-            'shipping_cep' => $shippingCep
+            'shipping_cep' => $shippingCep,
+            'lang'         => $lang
         ]);
 
         $response->getBody()->write($html);
         return $response;
     }
 }
-

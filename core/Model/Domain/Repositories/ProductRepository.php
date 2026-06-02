@@ -190,7 +190,7 @@ class ProductRepository extends AbstractRepository implements BaseRepositoryInte
         $this->loadLanguage('product/search');
 
         $data = [];
-        $data['search']       = $filterData['filter_name'] ?? '';
+        $data['search']       = $filterData['search'] ?? $filterData['filter_name'] ?? '';
         $data['description']  = $filterData['filter_description'] ?? '';
         $data['category_id']  = $filterData['filter_category_id'] ?? 0;
         $data['sub_category'] = $filterData['filter_sub_category'] ?? '';
@@ -235,8 +235,13 @@ class ProductRepository extends AbstractRepository implements BaseRepositoryInte
 
         // 3. Produtos Filtrados
         $filter = $filterData;
+        $filter['filter_name'] = $data['search'];
         $filter['start'] = (($filterData['page'] ?? 1) - 1) * $data['limit'];
-        $data['products'] = $this->getProducts($filter);
+        $results = $this->getProducts($filter);
+        $data['products'] = [];
+        foreach ($results as $result) {
+            $data['products'][] = $this->getProductThumbData($result);
+        }
         $data['product_total'] = $this->getTotalProducts($filter);
 
         // 4. Montagem das URLs de Base
