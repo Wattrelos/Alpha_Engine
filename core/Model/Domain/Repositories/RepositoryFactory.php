@@ -9,10 +9,12 @@ class RepositoryFactory
 {
     private array $instances = [];
     private static ?self $instance = null;
+    private ?\Alpha\Support\Cache\CacheStrategyInterface $cache = null;
 
     public function __construct(private MapperFactory $mapperFactory, private Registry $registry)
     {
         self::$instance = $this;
+        $this->cache = new \Alpha\Support\Cache\FilesystemCacheStrategy();
     }
 
     /**
@@ -29,7 +31,7 @@ class RepositoryFactory
     public function get(string $className): mixed
     {
         if (!isset($this->instances[$className])) {
-            $this->instances[$className] = new $className($this->mapperFactory, $this->registry);
+            $this->instances[$className] = new $className($this->mapperFactory, $this->registry, $this->cache);
         }
         return $this->instances[$className];
     }

@@ -117,6 +117,7 @@ class CalculateVisitorCartAction implements ActionInterface
                 'model'      => $productInfo['model'],
                 'option'     => $optionData,
                 'quantity'   => $quantity,
+                'stock_quantity' => (int)$productInfo['quantity'],
                 'option_raw' => $optionStr,
                 'price'      => $currency->format($unitPrice, $currencyCode),
                 'total'      => $currency->format($totalPrice, $currencyCode),

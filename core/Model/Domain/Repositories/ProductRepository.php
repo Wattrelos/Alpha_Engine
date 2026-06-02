@@ -209,31 +209,29 @@ class ProductRepository extends AbstractRepository implements BaseRepositoryInte
             'href' => $this->url->link('product/search', 'language=' . $this->config->get('config_language'))
         ];
 
-        // 2. Dropdown de Categorias
-        /** @var \Alpha\Model\Domain\Repositories\CategoryRepository $categoryRepository */
-        $categoryRepository = $this->registry->get('alpha_repository_factory')->get(\Alpha\Model\Domain\Repositories\CategoryRepository::class);
+        // 2. Dropdown de Categorias (Otimizado: Fim do N+1 de categorias)
+        /** @var \Alpha\Mappers\EntityMappers\CategoryMapper $categoryMapper */
+        $categoryMapper = $this->mapperFactory->get(\Alpha\Mappers\EntityMappers\CategoryMapper::class);
+        $flatCategories = $categoryMapper->getAllCategories($this->language_id, $this->store_id);
+
+        $tree = [];
+        foreach ($flatCategories as $cat) {
+            $tree[(int)$cat['parent_id']][] = $cat;
+        }
+
         $data['categories'] = [];
-        $categories_1 = $categoryRepository->getCategories(0);
-        foreach ($categories_1 as $category_1) {
-            $data['categories'][] = [
-                'category_id' => $category_1['id'],
-                'name'        => $category_1['name']
-            ];
-            $categories_2 = $categoryRepository->getCategories((int)$category_1['id']);
-            foreach ($categories_2 as $category_2) {
-                $data['categories'][] = [
-                    'category_id' => $category_2['id'],
-                    'name'        => '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;' . $category_2['name']
-                ];
-                $categories_3 = $categoryRepository->getCategories((int)$category_2['id']);
-                foreach ($categories_3 as $category_3) {
+        $helper = function(int $parentId, string $indent) use (&$helper, &$tree, &$data) {
+            if (isset($tree[$parentId])) {
+                foreach ($tree[$parentId] as $cat) {
                     $data['categories'][] = [
-                        'category_id' => $category_3['id'],
-                        'name'        => '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;' . $category_3['name']
+                        'category_id' => (int)$cat['id'],
+                        'name'        => $indent . $cat['name']
                     ];
+                    $helper((int)$cat['id'], $indent . '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;');
                 }
             }
-        }
+        };
+        $helper(0, '');
 
         // 3. Produtos Filtrados
         $filter = $filterData;

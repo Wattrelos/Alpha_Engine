@@ -23,7 +23,7 @@ use Alpha\Controller\Actions\Information\ShowInformationAction;
 use Alpha\Controller\Actions\Information\ShowSitemapAction;
 use Alpha\Controller\Actions\Information\ShowContactAction;
 use Alpha\Controller\Actions\Product\ProductReturnsAction;
-use Alpha\Controller\Actions\Product\SearchProductsAction;
+use Alpha\Controller\Actions\Product\SearchAction;
 use Alpha\Controller\Actions\Cart\ShowCartAction;
 use Alpha\Controller\Actions\Cart\AddCartAction;
 use Alpha\Controller\Actions\Cart\EditCartAction;
@@ -148,7 +148,7 @@ return function (\Slim\App $app) {
         $group->map(['GET', 'POST'], '/information/contact', ShowContactAction::class);
 
         // Busca de Produtos
-        $group->get('/busca', SearchProductsAction::class)->setName('search');
+        $group->get('/busca', SearchAction::class)->setName('search');
 
         // Carrinho de Compras
         $group->get('/carrinho', ShowCartAction::class)->setName('cart.index');

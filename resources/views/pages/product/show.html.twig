@@ -83,8 +83,8 @@
             </p>
 
             <!-- Formulário de Compra/Opções -->
-            <form action="/{{ lang }}/carrinho/adicionar" method="POST" id="form-product-purchase" data-oc-toggle="ajax" class="egen-product-purchase-form">
-                <input type="hidden" name="product_id" value="{{ product.product_id }}">
+            <form action="/{{ lang }}/carrinho/adicionar" method="POST" id="form-product-purchase" class="egen-product-purchase-form">
+                <input type="hidden" name="product_id" value="{{ product.id }}">
 
                 {% if product.options %}
                     <div class="egen-product-options">
@@ -142,9 +142,9 @@
                     <div class="egen-product-qty">
                         <label for="input-quantity" class="egen-form-label">Qtd</label>
                         <div class="egen-product-qty__control">
-                            <button class="egen-product-qty__btn" type="button" onclick="var q = document.getElementById('input-quantity'); if(parseInt(q.value) > 1) q.value = parseInt(q.value) - 1;">-</button>
-                            <input type="text" name="quantity" value="{{ product.minimum|default(1) }}" size="2" id="input-quantity" class="egen-product-qty__input">
-                            <button class="egen-product-qty__btn" type="button" onclick="var q = document.getElementById('input-quantity'); q.value = parseInt(q.value) + 1;">+</button>
+                            <button class="egen-product-qty__btn" type="button" onclick="var q = document.getElementById('input-quantity'); var val = parseInt(q.value) || 1; if(val > 1) q.value = val - 1;">-</button>
+                            <input type="number" name="quantity" value="{{ product.minimum|default(1) }}" min="1" max="{{ product.quantity }}" id="input-quantity" class="egen-product-qty__input" oninput="var max = parseInt(this.max); var val = parseInt(this.value); if(!isNaN(max) && val > max) this.value = max; if(val < 1) this.value = 1;">
+                            <button class="egen-product-qty__btn" type="button" onclick="var q = document.getElementById('input-quantity'); var max = parseInt(q.max) || 99999; var val = parseInt(q.value) || 1; if(val < max) q.value = val + 1;">+</button>
                         </div>
                     </div>
                     <div class="egen-product-buy">

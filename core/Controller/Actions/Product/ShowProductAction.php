@@ -6,6 +6,8 @@ use Psr\Http\Message\ServerRequestInterface as Request;
 use Psr\Http\Message\ResponseInterface as Response;
 use Alpha\Model\Domain\Repositories\ProductRepository;
 use Alpha\Model\Domain\Repositories\SeoUrlRepository;
+use Alpha\Model\Domain\Repositories\AddressRepository;
+use Alpha\Support\Registry;
 use Twig\Environment as TwigEnvironment;
 use Alpha\Controller\Actions\ActionInterface;
 use Slim\Routing\RouteContext;
@@ -14,15 +16,21 @@ class ShowProductAction implements ActionInterface
 {
     private ProductRepository $productRepository;
     private SeoUrlRepository $seoRepository;
+    private AddressRepository $addressRepository;
+    private Registry $registry;
     private TwigEnvironment $twig;
 
     public function __construct(
         ProductRepository $productRepository,
         SeoUrlRepository $seoRepository,
+        AddressRepository $addressRepository,
+        Registry $registry,
         TwigEnvironment $twig
     ) {
         $this->productRepository = $productRepository;
         $this->seoRepository = $seoRepository;
+        $this->addressRepository = $addressRepository;
+        $this->registry = $registry;
         $this->twig = $twig;
     }
 
@@ -75,12 +83,30 @@ class ShowProductAction implements ActionInterface
             'canonical'   => $routeParser->urlFor('product.detail', ['lang' => $lang, 'slug' => $slug])
         ];
 
+        // Tenta recuperar o CEP do cliente logado ou da sessão
+        $shippingCep = '';
+        $customer = $this->registry->get('customer');
+        if ($customer && $customer->isLogged()) {
+            $defaultAddress = $this->addressRepository->getDefaultAddress($customer->getId());
+            if ($defaultAddress) {
+                $shippingCep = preg_replace('/\D/', '', $defaultAddress->getPostcode());
+            }
+        }
+
+        if (empty($shippingCep)) {
+            $session = $this->registry->get('session');
+            if ($session && !empty($session->data['shipping_address']['postcode'])) {
+                $shippingCep = preg_replace('/\D/', '', $session->data['shipping_address']['postcode']);
+            }
+        }
+
         $html = $this->twig->render('pages/product/show.html.twig', [
-            'product'     => $product,
-            'seo'         => $seoData,
-            'title'       => $seoData['title'],
-            'description' => $seoData['description'],
-            'keywords'    => $seoData['keywords']
+            'product'      => $product,
+            'seo'          => $seoData,
+            'title'        => $seoData['title'],
+            'description'  => $seoData['description'],
+            'keywords'     => $seoData['keywords'],
+            'shipping_cep' => $shippingCep
         ]);
 
         $response->getBody()->write($html);

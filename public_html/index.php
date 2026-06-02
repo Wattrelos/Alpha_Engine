@@ -76,7 +76,10 @@ $twigEnv->addGlobal('direction',  'ltr');
 $mapperFactory = $registry->get('alpha_mapper_factory');
 $informationMapper = $mapperFactory->get(InformationMapper::class);
 $informations = [];
-foreach ($informationMapper->getInformations($languageId, 0) as $result) {
+$rawInfos = $informationMapper->getInformations($languageId, 0);
+$infoIds = array_column($rawInfos, 'id');
+$seoUrlRepository->primeCache($infoIds, 'information_id', 0, $languageId);
+foreach ($rawInfos as $result) {
     $keyword = $seoUrlRepository->getKeywordByQuery('information_id', (string)$result['id'], 0, $languageId);
     $informations[] = [
         'title' => $result['title'],

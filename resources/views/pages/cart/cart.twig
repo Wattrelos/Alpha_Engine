@@ -118,9 +118,11 @@
                                             name="quantity[{{ product.cart_id }}]"
                                             value="{{ product.quantity }}"
                                             min="1"
+                                            max="{{ product.stock_quantity }}"
                                             class="cart-qty-input cart-qty-input-server"
                                             data-cart-id="{{ product.cart_id }}"
                                             id="qty-{{ product.cart_id }}"
+                                            oninput="var max = parseInt(this.max); var val = parseInt(this.value); if(!isNaN(max) && val > max) this.value = max; if(val < 1) this.value = 1;"
                                         >
                                         <button type="submit" class="cart-btn-update" title="{{ button_update|default('Atualizar') }}">
                                             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">

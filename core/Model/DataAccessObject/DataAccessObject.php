@@ -62,10 +62,10 @@ class DataAccessObject
                 }
             }
 
-            // $this->logDebugQuery($builder->getSQL(), $builder->getParams() ?? [], $startTime, $rowCount, $sample);
+            $this->logDebugQuery($builder->getSQL(), $builder->getParams() ?? [], $startTime, $rowCount, $sample);
             return $results;
         } catch (\PDOException $e) {
-            // $this->logDebugQuery("[ERRO SQL] " . $e->getMessage() . " | " . $builder->getSQL(), $builder->getParams() ?? []);
+            $this->logDebugQuery("[ERRO SQL] " . $e->getMessage() . " | " . $builder->getSQL(), $builder->getParams() ?? []);
             throw $e;
         }
     }
@@ -99,11 +99,11 @@ class DataAccessObject
             $result = $stmt->execute($params);
 
             $rowCount = $stmt->rowCount();
-            // $this->logDebugQuery($sql, $params, $startTime, $rowCount, ['action' => 'RAW_WRITE']); // Para debug
+            $this->logDebugQuery($sql, $params, $startTime, $rowCount, ['action' => 'RAW_WRITE']); // Para debug
 
             return $result;
         } catch (\PDOException $e) {
-            // $this->logDebugQuery("[ERRO RAW SQL] " . $e->getMessage() . " | " . $sql, $params); // Para debug
+            $this->logDebugQuery("[ERRO RAW SQL] " . $e->getMessage() . " | " . $sql, $params); // Para debug
             throw $e;
         }
     }
@@ -225,10 +225,10 @@ class DataAccessObject
 
             $insertId = $parentId ?? (int)$conn->lastInsertId();
 
-            // $this->logDebugQuery($sql, $values, $startTime, $insertId, ['action' => 'CREATE']); // Para debug
+            $this->logDebugQuery($sql, $values, $startTime, $insertId, ['action' => 'CREATE']); // Para debug
             return $insertId;
         } catch (PDOException $e) {
-            // $this->logDebugQuery("[ERRO SQL CREATE] " . $e->getMessage() . " | " . $sql, $values); // Para debug
+            $this->logDebugQuery("[ERRO SQL CREATE] " . $e->getMessage() . " | " . $sql, $values); // Para debug
             error_log("Erro na tabela " . $reflection->getShortName() . ": " . $e->getMessage());
 
             if ($e->getCode() == 23000 || (isset($e->errorInfo[1]) && $e->errorInfo[1] == 1062)) {

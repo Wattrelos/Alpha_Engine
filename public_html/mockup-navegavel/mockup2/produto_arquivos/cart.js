@@ -6,6 +6,20 @@
  * dinâmica da página de carrinho e do contador de cabeçalho.
  */
 
+function objectsAreEqual(obj1, obj2) {
+    const keys1 = Object.keys(obj1 || {});
+    const keys2 = Object.keys(obj2 || {});
+    if (keys1.length !== keys2.length) {
+        return false;
+    }
+    for (let key of keys1) {
+        if (String(obj1[key]) !== String(obj2[key])) {
+            return false;
+        }
+    }
+    return true;
+}
+
 const guestCart = {
     getKey() {
         return 'egen_cart';
@@ -53,18 +67,42 @@ const guestCart = {
 
     remove(productId, optionString) {
         let items = this.getItems();
+        let targetOption = {};
+        try {
+            targetOption = JSON.parse(optionString) || {};
+        } catch (e) {
+            targetOption = {};
+        }
+        if (Array.isArray(targetOption) && targetOption.length === 0) {
+            targetOption = {};
+        }
         items = items.filter(item => {
-            const itemOptStr = JSON.stringify(item.option || {});
-            return !(item.product_id === productId && itemOptStr === optionString);
+            let itemOpt = item.option || {};
+            if (Array.isArray(itemOpt) && itemOpt.length === 0) {
+                itemOpt = {};
+            }
+            return !(item.product_id === productId && objectsAreEqual(itemOpt, targetOption));
         });
         this.saveItems(items);
     },
 
     updateQuantity(productId, optionString, quantity) {
         let items = this.getItems();
+        let targetOption = {};
+        try {
+            targetOption = JSON.parse(optionString) || {};
+        } catch (e) {
+            targetOption = {};
+        }
+        if (Array.isArray(targetOption) && targetOption.length === 0) {
+            targetOption = {};
+        }
         for (let item of items) {
-            const itemOptStr = JSON.stringify(item.option || {});
-            if (item.product_id === productId && itemOptStr === optionString) {
+            let itemOpt = item.option || {};
+            if (Array.isArray(itemOpt) && itemOpt.length === 0) {
+                itemOpt = {};
+            }
+            if (item.product_id === productId && objectsAreEqual(itemOpt, targetOption)) {
                 item.quantity = Math.max(1, quantity);
                 break;
             }
@@ -280,7 +318,7 @@ function renderGuestCartPage() {
                     <td>${p.model}</td>
                     <td class="text-center">
                         <div class="egen-cart-qty-wrapper">
-                            <input type="number" value="${p.quantity}" min="1" class="egen-form-input egen-cart-qty-input guest-qty-input" />
+                            <input type="number" value="${p.quantity}" min="1" max="${p.stock_quantity}" class="egen-form-input egen-cart-qty-input guest-qty-input" oninput="var max = parseInt(this.max); var val = parseInt(this.value); if(!isNaN(max) && val > max) this.value = max; if(val < 1) this.value = 1;" />
                             <div class="egen-cart-actions-btn">
                                 <button type="button" title="Atualizar" class="egen-btn-icon egen-btn-icon--update guest-btn-update">
                                     <i class="fa-solid fa-rotate"></i>
@@ -391,7 +429,12 @@ function attachGuestCartActions() {
                 const productId = parseInt(tr.getAttribute('data-product-id'));
                 const optionRaw = tr.getAttribute('data-option-raw');
                 const qtyInput = tr.querySelector('.guest-qty-input');
-                const quantity = parseInt(qtyInput ? qtyInput.value : '1');
+                let quantity = parseInt(qtyInput ? qtyInput.value : '1');
+                const max = parseInt(qtyInput ? qtyInput.max : '');
+                if (!isNaN(max) && quantity > max) {
+                    quantity = max;
+                    if (qtyInput) qtyInput.value = max;
+                }
 
                 guestCart.updateQuantity(productId, optionRaw, quantity);
                 showCartAlert('Quantidade atualizada.', 'success');

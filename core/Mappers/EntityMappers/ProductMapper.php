@@ -26,6 +26,7 @@ class ProductMapper extends BaseMapper {
             ->leftJoin(DB_PREFIX . 'manufacturer', 'm', 'p.manufacturer_id = m.id')
             ->where("p.id = ?", [$product_id])
             ->where("p.status = ?", [1])
+            ->where("p.quantity > 0")
             ->where("p.date_available <= ?", [date('Y-m-d')])
             ->where("p2s.store_id = ?", [$store_id])
             ->where("pd.language_id = ?", [$language_id])
@@ -195,6 +196,7 @@ class ProductMapper extends BaseMapper {
             ->leftJoin(DB_PREFIX . 'product_description', 'pd', 'p.id = pd.product_id')
             ->where("p.id IN ($placeholders)", $product_ids)
             ->where("p.status = ?", [1])
+            ->where("p.quantity > 0")
             ->where("p.date_available <= ?", [date('Y-m-d')])
             ->where("p2s.store_id = ?", [$store_id])
             ->where("pd.language_id = ?", [$language_id])
@@ -332,6 +334,7 @@ class ProductMapper extends BaseMapper {
             ->where('p2s.store_id = ?', [$store_id])
             ->where('pd.language_id = ?', [$language_id])
             ->where('p.status = 1')
+            ->where('p.quantity > 0')
             ->where('p.date_available <= ?', [date('Y-m-d')])
             ->select(
                 'p.*', 
