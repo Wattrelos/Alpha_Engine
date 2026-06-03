@@ -55,7 +55,7 @@ class ProductMapper extends BaseMapper {
         
         // Resolve SEO URL para produto único
         /** @var \Alpha\Model\Domain\Repositories\SeoUrlRepository $seoRepository */
-        $seoRepository = $this->registry->get('alpha_repository_factory')->get(\Alpha\Model\Domain\Repositories\SeoUrlRepository::class);
+        $seoRepository = \Alpha\Model\Domain\Repositories\RepositoryFactory::getInstance()->get(\Alpha\Model\Domain\Repositories\SeoUrlRepository::class);
         $keyword = $seoRepository->getKeywordByQuery('product_id', (string)$product_id, $store_id, $language_id);
         $product['href'] = $keyword ? '/' . $keyword : '/produto/' . $product_id;
 
@@ -185,7 +185,7 @@ class ProductMapper extends BaseMapper {
         if ($results) {
             $productIds = array_column($results, 'id');
             /** @var \Alpha\Model\Domain\Repositories\SeoUrlRepository $seoRepository */
-            $seoRepository = $this->registry->get('alpha_repository_factory')->get(\Alpha\Model\Domain\Repositories\SeoUrlRepository::class);
+            $seoRepository = \Alpha\Model\Domain\Repositories\RepositoryFactory::getInstance()->get(\Alpha\Model\Domain\Repositories\SeoUrlRepository::class);
             $seoRepository->primeCache($productIds, 'product_id', $store_id, $language_id);
 
             foreach ($results as &$result) {
@@ -233,7 +233,7 @@ class ProductMapper extends BaseMapper {
         // Alpha Engine: Resolve slugs em lote para os destaques
         if ($results) {
             /** @var \Alpha\Model\Domain\Repositories\SeoUrlRepository $seoRepository */
-            $seoRepository = $this->registry->get('alpha_repository_factory')->get(\Alpha\Model\Domain\Repositories\SeoUrlRepository::class);
+            $seoRepository = \Alpha\Model\Domain\Repositories\RepositoryFactory::getInstance()->get(\Alpha\Model\Domain\Repositories\SeoUrlRepository::class);
             $seoRepository->primeCache($product_ids, 'product_id', $store_id, $language_id);
 
             foreach ($results as &$result) {
@@ -379,7 +379,7 @@ class ProductMapper extends BaseMapper {
         if ($results) {
             $productIds = array_column($results, 'id');
             /** @var \Alpha\Model\Domain\Repositories\SeoUrlRepository $seoRepository */
-            $seoRepository = $this->registry->get('alpha_repository_factory')->get(\Alpha\Model\Domain\Repositories\SeoUrlRepository::class);
+            $seoRepository = \Alpha\Model\Domain\Repositories\RepositoryFactory::getInstance()->get(\Alpha\Model\Domain\Repositories\SeoUrlRepository::class);
             $seoRepository->primeCache($productIds, 'product_id', $store_id, $language_id);
 
             foreach ($results as &$result) {

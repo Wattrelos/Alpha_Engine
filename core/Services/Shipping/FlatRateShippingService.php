@@ -2,11 +2,10 @@
 
 namespace Alpha\Services\Shipping;
 
-use Alpha\Support\Registry;
+use Psr\Container\ContainerInterface;
 use Alpha\Model\Domain\Repositories\WeightClassRepository;
 use Alpha\Model\Domain\Repositories\LengthClassRepository;
 use Alpha\Model\Domain\Repositories\GeoZoneRepository;
-use Alpha\Mappers\MapperFactory;
 
 /**
  * FlatRateShippingService - Gerencia a lógica de cálculo para o método de frete fixo.
@@ -18,20 +17,19 @@ use Alpha\Mappers\MapperFactory;
  */
 class FlatRateShippingService
 {
-    private Registry $registry;
+    private ContainerInterface $container;
     private WeightClassRepository $weightClassRepository;
     private LengthClassRepository $lengthClassRepository;
     private GeoZoneRepository $geoZoneRepository;
 
-    public function __construct(Registry $registry)
+    public function __construct(ContainerInterface $container)
     {
-        $this->registry = $registry;
+        $this->container = $container;
 
-        /** @var MapperFactory $mapperFactory */
-        $mapperFactory = $registry->get('mapperFactory');
-        $this->weightClassRepository = $mapperFactory->get(WeightClassRepository::class);
-        $this->lengthClassRepository = $mapperFactory->get(LengthClassRepository::class);
-        $this->geoZoneRepository = $mapperFactory->get(GeoZoneRepository::class);
+        $repositoryFactory = \Alpha\Model\Domain\Repositories\RepositoryFactory::getInstance();
+        $this->weightClassRepository = $repositoryFactory->get(WeightClassRepository::class);
+        $this->lengthClassRepository = $repositoryFactory->get(LengthClassRepository::class);
+        $this->geoZoneRepository = $repositoryFactory->get(GeoZoneRepository::class);
     }
 
     /**
@@ -44,11 +42,11 @@ class FlatRateShippingService
      */
     public function getQuote(array $address, float $totalWeight, int $weightClassId): ?array
     {
-        $config = $this->registry->get('config');
-        $language = $this->registry->get('language');
-        $currency = $this->registry->get('currency');
-        $session = $this->registry->get('session');
-        $tax = $this->registry->get('tax');
+        $config = $this->container->get('config');
+        $language = $this->container->get('language');
+        $currency = $this->container->get('currency');
+        $session = $this->container->get('session');
+        $tax = $this->container->get('tax');
 
         // Validação de Geo Zone via Alpha Engine
         $geoZoneId = (int)$config->get('shipping_flat_geo_zone_id');

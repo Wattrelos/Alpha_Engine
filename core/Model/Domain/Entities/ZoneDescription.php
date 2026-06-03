@@ -32,8 +32,11 @@ class ZoneDescription extends BaseEntity
     public function setZoneId(int $zoneId): self
     {
         $this->zoneId = $zoneId;
-        if ($this->zone) {
-            $this->zone->setId($zoneId);
+        
+        // Alpha Engine: Previne corrupção do Identity Map.
+        // Se houver uma entidade carregada e o novo ID for diferente, desanexa.
+        if ($this->zone && $this->zone->getId() !== $zoneId) {
+            $this->zone = null;
         }
         return $this;
     }
@@ -46,8 +49,9 @@ class ZoneDescription extends BaseEntity
     public function setLanguageId(int $languageId): self
     {
         $this->languageId = $languageId;
-        if ($this->language) {
-            $this->language->setId($languageId);
+        
+        if ($this->language && $this->language->getId() !== $languageId) {
+            $this->language = null;
         }
         return $this;
     }
@@ -60,7 +64,9 @@ class ZoneDescription extends BaseEntity
     {
         $this->zone = $zone;
         if ($zone) {
-            $this->zoneId = $zone->getId();
+            $this->zoneId = (int)$zone->getId();
+        } else {
+            $this->zoneId = 0;
         }
         return $this;
     }
@@ -70,7 +76,9 @@ class ZoneDescription extends BaseEntity
     {
         $this->language = $language;
         if ($language) {
-            $this->languageId = $language->getId();
+            $this->languageId = (int)$language->getId();
+        } else {
+            $this->languageId = 0;
         }
         return $this;
     }

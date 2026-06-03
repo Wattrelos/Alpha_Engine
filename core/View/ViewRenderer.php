@@ -3,6 +3,7 @@ namespace Alpha\View;
 
 use RuntimeException;
 use Throwable;
+use Psr\Container\ContainerInterface;
 
 /**
  * Class ViewRenderer
@@ -12,10 +13,10 @@ use Throwable;
  * Envelopa a execução do Twig e eventos nativos em um rastreador rigoroso de falhas.
  */
 class ViewRenderer {
-    private $registry;
+    private ContainerInterface $container;
 
-    public function __construct($registry) {
-        $this->registry = $registry;
+    public function __construct(ContainerInterface $container) {
+        $this->container = $container;
     }
 
     /**
@@ -28,8 +29,7 @@ class ViewRenderer {
      * @throws RuntimeException
      */
     public function render(string $route, array $data = [], string $code = ''): string {
-        $event = $this->registry->get('event');
-        $config = $this->registry->get('config');
+        $event = $this->container->get('event');
 
         try {
             // Dispara evento nativo 'before' para compatibilidade com extensões (ex: injeção de scripts)
@@ -41,7 +41,7 @@ class ViewRenderer {
             ob_start();
 
             // Recupera a instância global do Template (já configurada com os paths no framework.php)
-            $template = $this->registry->get('template');
+            $template = $this->container->get('template');
 
             // Processa o template usando a assinatura do OpenCart 4
             $output = $template->render($route, $data, $code);

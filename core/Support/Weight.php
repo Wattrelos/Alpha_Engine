@@ -17,27 +17,22 @@ class Weight
 
     private function loadWeights(): void
     {
-        if ($this->registry && method_exists($this->registry, 'get')) {
-            $factory = $this->registry->get('alpha_repository_factory');
-            if ($factory) {
-                try {
-                    /** @var WeightClassRepository $weightRepository */
-                    $weightRepository = $factory->get(WeightClassRepository::class);
-                    $results = $weightRepository->getAllByCurrentLanguage();
-                    foreach ($results as $result) {
-                        $descriptions = $result->getDescriptions();
-                        $description = !empty($descriptions) ? $descriptions[0] : null;
-                        $this->weights[$result->getId()] = [
-                            'weight_class_id' => $result->getId(),
-                            'title'           => $description ? $description->getTitle() : '',
-                            'unit'            => $description ? $description->getUnit() : '',
-                            'value'           => $result->getValue()
-                        ];
-                    }
-                } catch (\Exception $e) {
-                    // Fallback se ocorrer erro antes de o DB estar pronto
-                }
+        try {
+            /** @var WeightClassRepository $weightRepository */
+            $weightRepository = \Alpha\Model\Domain\Repositories\RepositoryFactory::getInstance()->get(WeightClassRepository::class);
+            $results = $weightRepository->getAllByCurrentLanguage();
+            foreach ($results as $result) {
+                $descriptions = $result->getDescriptions();
+                $description = !empty($descriptions) ? $descriptions[0] : null;
+                $this->weights[$result->getId()] = [
+                    'weight_class_id' => $result->getId(),
+                    'title'           => $description ? $description->getTitle() : '',
+                    'unit'            => $description ? $description->getUnit() : '',
+                    'value'           => $result->getValue()
+                ];
             }
+        } catch (\Exception $e) {
+            // Fallback se ocorrer erro antes de o DB estar pronto
         }
     }
 

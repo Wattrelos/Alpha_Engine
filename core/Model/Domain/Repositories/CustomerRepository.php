@@ -23,16 +23,13 @@ class CustomerRepository extends AbstractRepository implements BaseRepositoryInt
 
     private function getConfigValue(string $key, mixed $default = null): mixed
     {
-        if ($this->registry && method_exists($this->registry, 'get') && $this->registry->has('config')) {
-            $config = $this->registry->get('config');
-            if ($config) {
-                return $config->get($key);
-            }
+        if ($this->config) {
+            return $this->config->get($key) ?? $default;
         }
+
         if ($this->configSettings === null) {
             try {
-                $repoFactory = RepositoryFactory::getInstance();
-                $settingRepo = $repoFactory->get(\Alpha\Model\Domain\Repositories\SettingRepository::class);
+                $settingRepo = RepositoryFactory::getInstance()->get(\Alpha\Model\Domain\Repositories\SettingRepository::class);
                 $this->configSettings = $settingRepo->getSetting('config', 0);
             } catch (\Throwable) {
                 $this->configSettings = [];
@@ -43,12 +40,9 @@ class CustomerRepository extends AbstractRepository implements BaseRepositoryInt
 
     private function getTranslation(string $key, string $route, string $default = ''): string
     {
-        if ($this->registry && method_exists($this->registry, 'get') && $this->registry->has('language')) {
-            $language = $this->registry->get('language');
-            if ($language) {
-                $language->load($route);
-                return (string)$language->get($key);
-            }
+        $langData = $this->loadLanguage($route);
+        if (isset($langData[$key])) {
+            return (string)$langData[$key];
         }
 
         if (!isset($this->languageCache[$route])) {
@@ -170,9 +164,7 @@ class CustomerRepository extends AbstractRepository implements BaseRepositoryInt
 
         $customerGroupRepo = null;
         try {
-            $repoFactory = ($this->registry && method_exists($this->registry, 'get') && $this->registry->has('alpha_repository_factory'))
-                ? $this->registry->get('alpha_repository_factory')
-                : RepositoryFactory::getInstance();
+            $repoFactory = RepositoryFactory::getInstance();
             $customerGroupRepo = $repoFactory->get(\Alpha\Model\Domain\Repositories\CustomerGroupRepository::class);
         } catch (\Throwable) {
             // Fallback silencioso
@@ -267,9 +259,7 @@ class CustomerRepository extends AbstractRepository implements BaseRepositoryInt
         // Aceite dos Termos de Uso
         $informationRepo = null;
         try {
-            $repoFactory = ($this->registry && method_exists($this->registry, 'get') && $this->registry->has('alpha_repository_factory'))
-                ? $this->registry->get('alpha_repository_factory')
-                : RepositoryFactory::getInstance();
+            $repoFactory = RepositoryFactory::getInstance();
             $informationRepo = $repoFactory->get(\Alpha\Model\Domain\Repositories\InformationRepository::class);
         } catch (\Throwable) {
         }
@@ -402,9 +392,7 @@ class CustomerRepository extends AbstractRepository implements BaseRepositoryInt
             return $this->getTranslation($key, 'account/register', $default);
         };
 
-        $repoFactory = ($this->registry && method_exists($this->registry, 'get') && $this->registry->has('alpha_repository_factory'))
-            ? $this->registry->get('alpha_repository_factory')
-            : RepositoryFactory::getInstance();
+        $repoFactory = RepositoryFactory::getInstance();
 
         $customFieldRepo = $repoFactory->get(\Alpha\Model\Domain\Repositories\CustomFieldRepository::class);
         $custom_fields = $customFieldRepo->getCustomFields($customerGroupId);

@@ -1,0 +1,168 @@
+{% extends 'layouts/main.twig' %}
+
+{% block content %}
+<div class="egen-hero-premium">
+    <div class="egen-container">
+        <div class="egen-hero-content">
+            <h1 class="egen-hero-title">
+                <i class="fas fa-heart egen-hero-icon"></i> {{ title }}
+            </h1>
+            {% include 'components/molecules/breadcrumbs.twig' %}
+        </div>
+    </div>
+</div>
+
+<div class="egen-container egen-page-spacing">
+    {% if wishlist_items %}
+        <div class="egen-wishlist-grid">
+            {% for item in wishlist_items %}
+                <div class="egen-wishlist-card egen-glass-panel">
+                    <div class="egen-wishlist-card__image">
+                        {% if item.thumb %}
+                            <a href="{{ item.href }}">
+                                <img src="{{ item.thumb }}" alt="{{ item.name }}" title="{{ item.name }}" class="img-responsive" />
+                            </a>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="egen-wishlist-card__details">
+                        <h3 class="egen-wishlist-card__title">
+                            <a href="{{ item.href }}">{{ item.name }}</a>
+                        </h3>
+                        <div class="egen-wishlist-card__meta">
+                            <span class="egen-badge egen-badge--dark">Mod: {{ item.model }}</span>
+                            <span class="egen-badge egen-badge--status">Estoque: {{ item.stock }}</span>
+                        </div>
+                        
+                        <div class="egen-wishlist-card__price-box">
+                            {% if item.price %}
+                                {% if not item.special %}
+                                    <span class="egen-price-regular">{{ item.price }}</span>
+                                {% else %}
+                                    <span class="egen-price-old">{{ item.price }}</span>
+                                    <span class="egen-price-special">{{ item.special }}</span>
+                                {% endif %}
+                            {% endif %}
+                        </div>
+                    </div>
+                    
+                    <div class="egen-wishlist-card__actions">
+                        <button type="button" onclick="cart.add('{{ item.product_id }}');" class="egen-btn egen-btn-primary" title="Adicionar ao Carrinho">
+                            <i class="fas fa-shopping-cart"></i> Mover p/ Carrinho
+                        </button>
+                        <a href="{{ item.remove }}" class="egen-btn egen-btn-danger-icon" title="Remover da Lista">
+                            <i class="fas fa-trash-alt"></i>
+                        </a>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="egen-empty-state egen-glass-panel">
+            <div class="egen-empty-icon-wrap">
+                <i class="fas fa-heart-broken egen-empty-icon"></i>
+            </div>
+            <h2 class="egen-empty-title">Sua lista de desejos está vazia</h2>
+            <p class="egen-empty-text">Você ainda não salvou nenhum produto para comprar depois. Navegue por nossos departamentos e adicione seus favoritos aqui!</p>
+            <a href="{{ continue_url }}" class="egen-btn egen-btn-primary">Explorar Produtos</a>
+        </div>
+    {% endif %}
+</div>
+
+<style>
+    /* ==========================================================================
+       Premium Dark Mode: Wishlist Styles
+       ========================================================================== */
+    .egen-wishlist-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+        gap: 1.5rem;
+        margin-top: 2rem;
+    }
+
+    .egen-wishlist-card {
+        display: flex;
+        flex-direction: column;
+        padding: 1.5rem;
+        border-radius: 16px;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        background: rgba(25, 25, 35, 0.6);
+        border: 1px solid rgba(255, 255, 255, 0.05);
+        backdrop-filter: blur(10px);
+    }
+
+    .egen-wishlist-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+        border-color: rgba(138, 43, 226, 0.4);
+    }
+
+    .egen-wishlist-card__image {
+        text-align: center;
+        margin-bottom: 1.25rem;
+        border-radius: 12px;
+        overflow: hidden;
+        background: rgba(0, 0, 0, 0.2);
+        padding: 1rem;
+    }
+
+    .egen-wishlist-card__image img {
+        max-height: 180px;
+        object-fit: contain;
+        transition: transform 0.4s ease;
+    }
+
+    .egen-wishlist-card:hover .egen-wishlist-card__image img {
+        transform: scale(1.08);
+    }
+
+    .egen-wishlist-card__title {
+        font-size: 1.1rem;
+        font-weight: 600;
+        margin-bottom: 0.75rem;
+        line-height: 1.4;
+    }
+
+    .egen-wishlist-card__title a {
+        color: #f8f9fa;
+        text-decoration: none;
+        transition: color 0.2s ease;
+    }
+
+    .egen-wishlist-card__title a:hover {
+        color: #a855f7; /* Roxo vibrante */
+    }
+
+    .egen-wishlist-card__meta {
+        display: flex;
+        gap: 0.5rem;
+        margin-bottom: 1rem;
+        flex-wrap: wrap;
+    }
+
+    .egen-wishlist-card__actions {
+        display: flex;
+        gap: 0.75rem;
+        margin-top: auto;
+        padding-top: 1rem;
+        border-top: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    .egen-btn-danger-icon {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        background: rgba(239, 68, 68, 0.1);
+        color: #ef4444;
+        border: 1px solid rgba(239, 68, 68, 0.2);
+        padding: 0.75rem 1rem;
+        border-radius: 8px;
+        transition: all 0.2s ease;
+    }
+
+    .egen-btn-danger-icon:hover {
+        background: #ef4444;
+        color: #fff;
+    }
+</style>
+{% endblock %}

@@ -6,26 +6,30 @@ use Psr\Http\Message\ServerRequestInterface as Request;
 use Psr\Http\Message\ResponseInterface as Response;
 use Twig\Environment;
 use Alpha\Controller\Actions\ActionInterface;
-use Alpha\Support\Registry;
+use Containers\AppContainer;
 use Alpha\Model\Domain\Repositories\CountryRepository;
 use Slim\Routing\RouteContext;
 
 class Checkout implements ActionInterface
 {
     private Environment $twig;
-    private Registry $registry;
+    private AppContainer $container;
 
-    public function __construct(Environment $twig, Registry $registry)
+    public function __construct(Environment $twig, AppContainer $container)
     {
         $this->twig = $twig;
-        $this->registry = $registry;
+        $this->container = $container;
     }
 
     public function __invoke(Request $request, Response $response, array $args): Response
     {
-        $language = $this->registry->get('language');
-        $languageData = $language ? $language->load('checkout/checkout') : [];
-        $config = $this->registry->get('config');
+        $configSettings = $this->container->get('configSettings');
+        $repositoryFactory = $this->container->get('alpha_repository_factory');
+
+        $languageData = [
+            'text_home' => 'Principal',
+            'heading_title' => 'Finalizar Compra'
+        ];
 
         $routeContext = RouteContext::fromRequest($request);
         $routeParser = $routeContext->getRouteParser();
@@ -43,21 +47,21 @@ class Checkout implements ActionInterface
         ];
 
         // Buscar Países para o select de endereço
-        $repositoryFactory = $this->registry->get('alpha_repository_factory');
         /** @var CountryRepository $countryRepository */
         $countryRepository = $repositoryFactory->get(CountryRepository::class);
         $countries = $countryRepository->getCountries();
 
         // Mapear dados da sessão (se existirem)
-        $session = $this->registry->get('session');
-
-        $paymentAddress = $session->data['payment_address'] ?? [];
-        $shippingAddress = $session->data['shipping_address'] ?? [];
+        $paymentAddress = $_SESSION['payment_address'] ?? [];
+        $shippingAddress = $_SESSION['shipping_address'] ?? [];
 
         // Se o cliente estiver logado, tenta recuperar o endereço padrão do banco de dados
-        $customer = $this->registry->get('customer');
-        if ($customer && $customer->isLogged()) {
-            $customerId = (int)$customer->getId();
+        $customerId = (int)($_SESSION['customer_id'] ?? 0);
+        /** @var \Alpha\Model\Domain\Repositories\CustomerRepository $customerRepository */
+        $customerRepository = $repositoryFactory->get(\Alpha\Model\Domain\Repositories\CustomerRepository::class);
+        $customer = $customerId > 0 ? $customerRepository->find($customerId) : null;
+
+        if ($customer) {
             if (empty($paymentAddress)) {
                 /** @var \Alpha\Model\Domain\Repositories\AddressRepository $addressRepository */
                 $addressRepository = $repositoryFactory->get(\Alpha\Model\Domain\Repositories\AddressRepository::class);
@@ -104,9 +108,9 @@ class Checkout implements ActionInterface
             'breadcrumbs' => $breadcrumbs,
             'countries'   => $countries,
             'action'      => $routeParser->urlFor('checkout.submit', ['lang' => $lang]),
-            'login_email' => $session->data['email'] ?? '',
+            'login_email' => $_SESSION['email'] ?? '',
             'forgotten'   => '/' . $lang . '/forgotten', // Rota pública de esqueci a senha
-            'error_warning' => $session->data['error'] ?? '',
+            'error_warning' => $_SESSION['error'] ?? '',
             
             // Valores padrão dos campos de endereço / cadastro
             'payment_firstname' => $paymentAddress['firstname'] ?? ($customer ? $customer->getFirstname() : ''),
@@ -118,8 +122,8 @@ class Checkout implements ActionInterface
             'payment_neighborhood' => $paymentAddress['neighborhood'] ?? '',
             'payment_city'      => $paymentAddress['city'] ?? '',
             'payment_postcode'  => $paymentAddress['postcode'] ?? '',
-            'payment_country_id'=> $paymentAddress['country_id'] ?? $config->get('config_country_id'),
-            'payment_zone_id'   => !empty($paymentZoneCode) ? $paymentZoneCode : ($config->get('config_zone_id') ? $getZoneCode(['zone_id' => $config->get('config_zone_id')]) : ''),
+            'payment_country_id'=> $paymentAddress['country_id'] ?? ($configSettings['config_country_id'] ?? 30),
+            'payment_zone_id'   => !empty($paymentZoneCode) ? $paymentZoneCode : (isset($configSettings['config_zone_id']) ? $getZoneCode(['zone_id' => $configSettings['config_zone_id']]) : ''),
             
             'shipping_firstname' => $shippingAddress['firstname'] ?? ($customer ? $customer->getFirstname() : ''),
             'shipping_lastname'  => $shippingAddress['lastname'] ?? ($customer ? $customer->getLastname() : ''),
@@ -130,11 +134,11 @@ class Checkout implements ActionInterface
             'shipping_neighborhood' => $shippingAddress['neighborhood'] ?? '',
             'shipping_city'      => $shippingAddress['city'] ?? '',
             'shipping_postcode'  => $shippingAddress['postcode'] ?? '',
-            'shipping_country_id'=> $shippingAddress['country_id'] ?? $config->get('config_country_id'),
-            'shipping_zone_id'   => !empty($shippingZoneCode) ? $shippingZoneCode : ($config->get('config_zone_id') ? $getZoneCode(['zone_id' => $config->get('config_zone_id')]) : ''),
+            'shipping_country_id'=> $shippingAddress['country_id'] ?? ($configSettings['config_country_id'] ?? 30),
+            'shipping_zone_id'   => !empty($shippingZoneCode) ? $shippingZoneCode : (isset($configSettings['config_zone_id']) ? $getZoneCode(['zone_id' => $configSettings['config_zone_id']]) : ''),
         ]);
 
-        unset($session->data['error']);
+        unset($_SESSION['error']);
 
         $title = $languageData['heading_title'] ?? 'Finalizar Compra';
         $seoData = [

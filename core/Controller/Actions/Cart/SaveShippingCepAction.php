@@ -5,18 +5,18 @@ namespace Alpha\Controller\Actions\Cart;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Psr\Http\Message\ResponseInterface as Response;
 use Alpha\Controller\Actions\ActionInterface;
-use Alpha\Support\Registry;
+use Psr\Container\ContainerInterface;
 
 /**
  * SaveShippingCepAction - Salva o CEP e os dados de endereço do ViaCEP na sessão.
  */
 class SaveShippingCepAction implements ActionInterface
 {
-    private Registry $registry;
+    private ContainerInterface $container;
 
-    public function __construct(Registry $registry)
+    public function __construct(ContainerInterface $container)
     {
-        $this->registry = $registry;
+        $this->container = $container;
     }
 
     public function __invoke(Request $request, Response $response, array $args): Response
@@ -33,7 +33,7 @@ class SaveShippingCepAction implements ActionInterface
             return $response->withHeader('Content-Type', 'application/json')->withStatus(400);
         }
 
-        $session = $this->registry->get('session');
+        $session = $this->container->get('session');
         if ($session) {
             $session->data['shipping_cep'] = preg_replace('/\D/', '', $cep);
             

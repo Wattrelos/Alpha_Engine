@@ -7,7 +7,7 @@ namespace Alpha\Controller\Actions\Customer\Addresses;
 use Alpha\Controller\Actions\ActionInterface;
 use Alpha\Model\Domain\Repositories\AddressRepository;
 use Alpha\Model\Domain\Repositories\ZoneRepository;
-use Alpha\Support\Registry;
+use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Psr\Http\Message\ResponseInterface as Response;
 use Twig\Environment as TwigEnvironment;
@@ -21,12 +21,12 @@ class CreateAddressAction implements ActionInterface
     public function __construct(
         private readonly TwigEnvironment   $twig,
         private readonly AddressRepository $addressRepository,
-        private readonly Registry          $registry,
+        private readonly ContainerInterface $container,
     ) {}
 
     public function __invoke(Request $request, Response $response, array $args): Response
     {
-        $customer = $this->registry->get('customer');
+        $customer = $this->container->get('customer');
 
         // Segurança extra (SessionMiddleware já protege a rota)
         if (!$customer || !$customer->isLogged()) {
@@ -191,9 +191,8 @@ class CreateAddressAction implements ActionInterface
         if (empty($code)) {
             return 0;
         }
-        $repositoryFactory = $this->registry->get('alpha_repository_factory');
         /** @var ZoneRepository $zoneRepository */
-        $zoneRepository = $repositoryFactory->get(ZoneRepository::class);
+        $zoneRepository = \RepositoryFactory::getInstance()->get(ZoneRepository::class);
         $zone = $zoneRepository->findOneBy(['code' => strtoupper(trim($code))]);
         return $zone ? (int)$zone->getId() : 0;
     }

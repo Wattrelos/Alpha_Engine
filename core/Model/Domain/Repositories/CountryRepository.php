@@ -104,12 +104,10 @@ class CountryRepository extends AbstractRepository implements BaseRepositoryInte
         
         // Sobrescreve com o nome traduzido de CountryDescription, respeitando o Idioma atual da loja
         if (method_exists($country, 'getDescriptions') && !empty($country->getDescriptions())) {
-            $langId = property_exists($this, 'registry') && $this->registry 
-                        ? (int)$this->registry->get('config')->get('config_language_id') 
-                        : null;
+            $langId = $this->language_id;
 
             foreach ($country->getDescriptions() as $desc) {
-                if ($langId !== null && $desc->getLanguageId() === $langId) {
+                if ($desc->getLanguageId() === $langId) {
                     $name = $desc->getName();
                     break;
                 }

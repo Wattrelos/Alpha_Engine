@@ -60,16 +60,16 @@
             <!-- Bloco de Preço -->
             <div class="egen-product-price-card">
                 <div class="egen-product-price-card__price-wrapper">
-                    {% if product.special %}
-                        <span class="egen-product-price-card__price-old">{{ product.price }}</span>
-                        <span class="egen-product-price-card__price-special">{{ product.special }}</span>
+                    {% if product.special_formatted %}
+                        <span class="egen-product-price-card__price-old">{{ product.price_formatted }}</span>
+                        <span class="egen-product-price-card__price-special">{{ product.special_formatted }}</span>
                     {% else %}
-                        <span class="egen-product-price-card__price-normal">{{ product.price }}</span>
+                        <span class="egen-product-price-card__price-normal">{{ product.price_formatted }}</span>
                     {% endif %}
                 </div>
                 
-                {% if product.tax %}
-                    <div class="egen-product-price-card__tax">Sem impostos: {{ product.tax }}</div>
+                {% if product.tax_formatted %}
+                    <div class="egen-product-price-card__tax">Sem impostos: {{ product.tax_formatted }}</div>
                 {% endif %}
                 
                 <div class="egen-product-price-card__stock">
@@ -99,7 +99,7 @@
                                         {% for value in option.product_option_value %}
                                             <option value="{{ value.product_option_value_id }}">
                                                 {{ value.name }} 
-                                                {% if value.price %} ({{ value.price_prefix }}{{ value.price }}) {% endif %}
+                                                {% if value.price_formatted %} ({{ value.price_prefix }}{{ value.price_formatted }}) {% endif %}
                                             </option>
                                         {% endfor %}
                                     </select>
@@ -110,7 +110,7 @@
                                                 <input class="egen-product-options__input-check" type="radio" name="option[{{ option.product_option_id }}]" id="opt-{{ value.product_option_value_id }}" value="{{ value.product_option_value_id }}" {% if option.required %}required{% endif %}>
                                                 <label class="egen-product-options__label-check" for="opt-{{ value.product_option_value_id }}">
                                                     {{ value.name }}
-                                                    {% if value.price %} <span class="egen-product-options__price-prefix">({{ value.price_prefix }}{{ value.price }})</span> {% endif %}
+                                                    {% if value.price_formatted %} <span class="egen-product-options__price-prefix">({{ value.price_prefix }}{{ value.price_formatted }})</span> {% endif %}
                                                 </label>
                                             </div>
                                         {% endfor %}
@@ -122,7 +122,7 @@
                                                 <input class="egen-product-options__input-check" type="checkbox" name="option[{{ option.product_option_id }}][]" id="opt-{{ value.product_option_value_id }}" value="{{ value.product_option_value_id }}">
                                                 <label class="egen-product-options__label-check" for="opt-{{ value.product_option_value_id }}">
                                                     {{ value.name }}
-                                                    {% if value.price %} <span class="egen-product-options__price-prefix">({{ value.price_prefix }}{{ value.price }})</span> {% endif %}
+                                                    {% if value.price_formatted %} <span class="egen-product-options__price-prefix">({{ value.price_prefix }}{{ value.price_formatted }})</span> {% endif %}
                                                 </label>
                                             </div>
                                         {% endfor %}

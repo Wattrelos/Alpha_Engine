@@ -173,7 +173,7 @@ class AddressRepository extends AbstractRepository implements BaseRepositoryInte
             $stmt->execute([$customerId, $savedId]);
 
             /** @var CustomerRepository $customerRepo */
-            $customerRepo = $this->registry->get('alpha_repository_factory')->get(CustomerRepository::class);
+            $customerRepo = \Alpha\Model\Domain\Repositories\RepositoryFactory::getInstance()->get(CustomerRepository::class);
             $customer = $customerRepo->find($customerId);
             if ($customer) {
                 $customer->setAddressId($savedId);
@@ -235,7 +235,7 @@ class AddressRepository extends AbstractRepository implements BaseRepositoryInte
 
         // ── País e CEP ────────────────────────────────────────────────────────
         $countryId   = (int)($data['country_id'] ?? 0);
-        $countryRepo = $this->registry->get('alpha_repository_factory')->get(CountryRepository::class);
+        $countryRepo = \Alpha\Model\Domain\Repositories\RepositoryFactory::getInstance()->get(CountryRepository::class);
         $country     = $countryRepo->find($countryId);
 
         if (!$country) {
@@ -249,7 +249,7 @@ class AddressRepository extends AbstractRepository implements BaseRepositoryInte
 
         // ── Estado / Zona ─────────────────────────────────────────────────────
         if ($countryId > 0) {
-            $zoneRepo  = $this->registry->get('alpha_repository_factory')->get(ZoneRepository::class);
+            $zoneRepo  = \Alpha\Model\Domain\Repositories\RepositoryFactory::getInstance()->get(ZoneRepository::class);
             $zoneTotal = $zoneRepo->getTotalZonesByCountryId($countryId);
 
             if ($zoneTotal > 0 && empty($data['zone_id'])) {
@@ -282,7 +282,7 @@ class AddressRepository extends AbstractRepository implements BaseRepositoryInte
         }
 
         /** @var CustomerRepository $customerRepo */
-        $customerRepo = $this->registry->get('alpha_repository_factory')->get(CustomerRepository::class);
+        $customerRepo = \Alpha\Model\Domain\Repositories\RepositoryFactory::getInstance()->get(CustomerRepository::class);
         $customer = $customerRepo->find($customerId);
         if ($customer && (int)$customer->getAddressId() === $addressId) {
             return ['warning' => 'Não é possível excluir o endereço padrão. Defina outro como padrão primeiro.'];

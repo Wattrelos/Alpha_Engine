@@ -5,9 +5,10 @@ namespace Alpha\Controller\Actions\Cart;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Psr\Http\Message\ResponseInterface as Response;
 use Alpha\Controller\Actions\ActionInterface;
-use Alpha\Support\Registry;
+use Containers\AppContainer;
 use Alpha\Model\Domain\Repositories\OrderRepository;
 use Alpha\Model\Domain\Repositories\CartRepository;
+use Alpha\Model\Domain\DTOs\OrderDataDTO;
 use Slim\Routing\RouteContext;
 
 /**
@@ -15,18 +16,18 @@ use Slim\Routing\RouteContext;
  */
 class SubmitCheckoutAction implements ActionInterface
 {
-    private Registry $registry;
+    private AppContainer $container;
 
-    public function __construct(Registry $registry)
+    public function __construct(AppContainer $container)
     {
-        $this->registry = $registry;
+        $this->container = $container;
     }
 
     public function __invoke(Request $request, Response $response, array $args): Response
     {
-        $session = $this->registry->get('session');
         $parsedBody = $request->getParsedBody();
-        $repositoryFactory = $this->registry->get('alpha_repository_factory');
+        $repositoryFactory = $this->container->get('alpha_repository_factory');
+        $configSettings = $this->container->get('configSettings');
 
         // Buscar ZoneRepository para obter IDs a partir de siglas/UF
         /** @var \Alpha\Model\Domain\Repositories\ZoneRepository $zoneRepository */
@@ -47,7 +48,7 @@ class SubmitCheckoutAction implements ActionInterface
         }
 
         // 1. Guardar dados de endereço de cobrança na sessão
-        $session->data['payment_address'] = [
+        $_SESSION['payment_address'] = [
             'firstname'    => $parsedBody['payment_firstname'] ?? '',
             'lastname'     => $parsedBody['payment_lastname'] ?? '',
             'company'      => $parsedBody['payment_company'] ?? '',
@@ -77,7 +78,7 @@ class SubmitCheckoutAction implements ActionInterface
 
         // 2. Guardar dados de endereço de entrega na sessão (mesmo ou diferente)
         if (isset($parsedBody['shipping_firstname']) && !empty($parsedBody['shipping_firstname'])) {
-            $session->data['shipping_address'] = [
+            $_SESSION['shipping_address'] = [
                 'firstname'    => $parsedBody['shipping_firstname'] ?? '',
                 'lastname'     => $parsedBody['shipping_lastname'] ?? '',
                 'company'      => $parsedBody['shipping_company'] ?? '',
@@ -92,12 +93,11 @@ class SubmitCheckoutAction implements ActionInterface
             ];
         } else {
             // Se for igual, copia do endereço de cobrança
-            $session->data['shipping_address'] = $session->data['payment_address'];
+            $_SESSION['shipping_address'] = $_SESSION['payment_address'];
         }
 
         // 3. Se o cliente estiver logado, persistir o(s) endereço(s) na tabela address
-        $customer = $this->registry->get('customer');
-        $customerId = $customer ? (int)$customer->getId() : 0;
+        $customerId = (int)($_SESSION['customer_id'] ?? 0);
 
         if ($customerId > 0) {
             /** @var \Alpha\Model\Domain\Repositories\AddressRepository $addressRepository */
@@ -125,17 +125,17 @@ class SubmitCheckoutAction implements ActionInterface
             };
 
             // Persiste o endereço de cobrança como default
-            $paymentAddressData = array_merge($session->data['payment_address'], [
+            $paymentAddressData = array_merge($_SESSION['payment_address'], [
                 'default'    => true,
-                'address_id' => $findMatchId($session->data['payment_address']),
+                'address_id' => $findMatchId($_SESSION['payment_address']),
             ]);
             $addressRepository->save($paymentAddressData, $customerId);
 
             // Se o endereço de entrega for diferente, persiste ele também
             if (isset($parsedBody['shipping_firstname']) && !empty($parsedBody['shipping_firstname'])) {
-                $shippingAddressData = array_merge($session->data['shipping_address'], [
+                $shippingAddressData = array_merge($_SESSION['shipping_address'], [
                     'default'    => false,
-                    'address_id' => $findMatchId($session->data['shipping_address']),
+                    'address_id' => $findMatchId($_SESSION['shipping_address']),
                 ]);
                 $addressRepository->save($shippingAddressData, $customerId);
             }
@@ -153,20 +153,19 @@ class SubmitCheckoutAction implements ActionInterface
             $paymentMethodTitle = 'Gerar Link de Pagamento';
         }
 
-        $session->data['payment_method'] = [
+        $_SESSION['payment_method'] = [
             'title' => $paymentMethodTitle,
             'code'  => $paymentMethodCode
         ];
 
-        $session->data['comment'] = $parsedBody['payment_note'] ?? '';
+        $_SESSION['comment'] = $parsedBody['payment_note'] ?? '';
 
-        $session->data['shipping_method'] = [
+        $_SESSION['shipping_method'] = [
             'title' => 'Retirar na Loja',
             'code'  => 'pickup'
         ];
 
-        // 3. Salvar o pedido via OrderRepository
-        $repositoryFactory = $this->registry->get('alpha_repository_factory');
+        // 4. Salvar o pedido via OrderRepository
         /** @var OrderRepository $orderRepository */
         $orderRepository = $repositoryFactory->get(OrderRepository::class);
 
@@ -175,32 +174,95 @@ class SubmitCheckoutAction implements ActionInterface
         $lang = $request->getAttribute('lang', 'pt-br');
 
         try {
-            $orderId = $orderRepository->createFromSession();
-            
-            // Alpha Engine: Confirma o pedido transicionando de 0 (Não confirmado) para o status padrão (Pendente)
-            $config = $this->registry->get('config');
-            $defaultOrderStatusId = $config ? (int)$config->get('config_order_status_id') : 1;
-            if ($defaultOrderStatusId <= 0) {
-                $defaultOrderStatusId = 1;
-            }
-            $orderRepository->confirm($orderId, $defaultOrderStatusId, 'Pedido realizado com sucesso via checkout.');
-
-            // Limpa o carrinho de compras
+            // 4. Montar o DTO do Pedido manualmente (Removido do Repositório)
             /** @var CartRepository $cartRepository */
             $cartRepository = $repositoryFactory->get(CartRepository::class);
             $cartRepository->initializeContext();
+
+            $orderData = [];
+            $orderData['store_id'] = (int)($configSettings['config_store_id'] ?? 0);
+            $orderData['language_id'] = (int)($configSettings['config_language_id'] ?? 2);
+            $orderData['currency_id'] = (int)($configSettings['config_currency_id'] ?? 1);
+            
+            $orderData['customer_id'] = $customerId;
+            $orderData['customer_group_id'] = $customerId > 0 ? ($_SESSION['customer_group_id'] ?? 1) : (int)($configSettings['config_customer_group_id'] ?? 1);
+            
+            $orderData['firstname'] = $parsedBody['payment_firstname'] ?? $_SESSION['payment_address']['firstname'] ?? '';
+            $orderData['lastname']  = $parsedBody['payment_lastname'] ?? $_SESSION['payment_address']['lastname'] ?? '';
+            $orderData['email']     = $parsedBody['email'] ?? $_SESSION['email'] ?? '';
+            $orderData['telephone'] = $parsedBody['telephone'] ?? $_SESSION['telephone'] ?? '';
+
+            $orderData['payment_firstname'] = $_SESSION['payment_address']['firstname'] ?? '';
+            $orderData['payment_lastname']  = $_SESSION['payment_address']['lastname'] ?? '';
+            $orderData['payment_address_1'] = $_SESSION['payment_address']['address_1'] ?? '';
+            $orderData['payment_city']      = $_SESSION['payment_address']['city'] ?? '';
+            $orderData['payment_postcode']  = $_SESSION['payment_address']['postcode'] ?? '';
+            $orderData['payment_country_id']= (int)($_SESSION['payment_address']['country_id'] ?? 0);
+            $orderData['payment_zone_id']   = (int)($_SESSION['payment_address']['zone_id'] ?? 0);
+            $orderData['payment_method']    = $_SESSION['payment_method']['title'] ?? '';
+            $orderData['payment_code']      = $_SESSION['payment_method']['code'] ?? '';
+
+            $orderData['shipping_firstname'] = $_SESSION['shipping_address']['firstname'] ?? '';
+            $orderData['shipping_lastname']  = $_SESSION['shipping_address']['lastname'] ?? '';
+            $orderData['shipping_address_1'] = $_SESSION['shipping_address']['address_1'] ?? '';
+            $orderData['shipping_city']      = $_SESSION['shipping_address']['city'] ?? '';
+            $orderData['shipping_postcode']  = $_SESSION['shipping_address']['postcode'] ?? '';
+            $orderData['shipping_country_id']= (int)($_SESSION['shipping_address']['country_id'] ?? 0);
+            $orderData['shipping_zone_id']   = (int)($_SESSION['shipping_address']['zone_id'] ?? 0);
+            $orderData['shipping_method']    = $_SESSION['shipping_method']['title'] ?? '';
+            $orderData['shipping_code']      = $_SESSION['shipping_method']['code'] ?? '';
+
+            $orderData['products'] = $cartRepository->getProducts();
+            $orderData['vouchers'] = $_SESSION['vouchers'] ?? [];
+            $orderData['totals']   = $_SESSION['totals'] ?? [];
+            $orderData['total']    = $cartRepository->getTotal();
+            $orderData['comment']  = $_SESSION['comment'] ?? '';
+            
+            $coupon_code = $_SESSION['coupon'] ?? '';
+            $orderData['coupon_id'] = 0;
+            $orderData['coupon_amount'] = 0.0;
+
+            if ($coupon_code) {
+                /** @var \Alpha\Model\Domain\Repositories\CouponRepository $couponRepo */
+                $couponRepo = $repositoryFactory->get(\Alpha\Model\Domain\Repositories\CouponRepository::class);
+                $coupon = $couponRepo->findByCode($coupon_code);
+                if ($coupon) {
+                    $orderData['coupon_id'] = $coupon->getId();
+                    foreach ($orderData['totals'] as $total) {
+                        if ($total['code'] === 'coupon') {
+                            $orderData['coupon_amount'] = abs((float)$total['value']);
+                            break;
+                        }
+                    }
+                }
+            }
+
+            $orderData['ip'] = $request->getServerParams()['REMOTE_ADDR'] ?? '';
+            $orderData['user_agent'] = $request->getServerParams()['HTTP_USER_AGENT'] ?? '';
+
+            $orderDto = new OrderDataDTO($orderData);
+            if (!$orderDto->isValid()) {
+                throw new \Exception('Alpha Engine: Dados insuficientes para criar o pedido.');
+            }
+
+            $orderId = $orderRepository->save($orderDto);
+
+            // Alpha Engine: Confirma o pedido transicionando de 0 (Não confirmado) para o status padrão (Pendente)
+            $defaultOrderStatusId = (int)($configSettings['config_order_status_id'] ?? 1);
+            $orderRepository->confirm($orderId, $defaultOrderStatusId, 'Pedido realizado com sucesso via checkout.');
+
+            // Limpa o carrinho de compras
             $cartRepository->clear();
 
             // Grava o order_id na sessão para consulta futura na página de sucesso
-            $session->data['last_order_id'] = $orderId;
+            $_SESSION['last_order_id'] = $orderId;
 
             $successUrl = $routeParser->urlFor('checkout.success', ['lang' => $lang]);
             return $response->withHeader('Location', $successUrl)->withStatus(302);
         } catch (\Exception $e) {
-            $session->data['error'] = 'Erro ao processar o seu pedido: ' . $e->getMessage();
+            $_SESSION['error'] = 'Erro ao processar o seu pedido: ' . $e->getMessage();
             $errorUrl = $routeParser->urlFor('checkout.index', ['lang' => $lang]);
             return $response->withHeader('Location', $errorUrl)->withStatus(302);
         }
     }
 }
-

@@ -92,6 +92,7 @@ Diferente do OpenCart padrão, onde o SQL fica espalhado pelos Models, este proj
 ## 📦 Estrutura do Core
 
 ```text
+├── catalog/                                # Pasta legada do Opencart. Não está mais sendo utilizada.
 ├── changelog/                              # 📝 Notas técnicas, registros de refatoração e log de IAs
 ├── Config/                                 # 📂 Configurações da Aplicação
 │   └── Routes.php                          # 📁 Rotas PSR-15 centralizadas (Slim Framework)

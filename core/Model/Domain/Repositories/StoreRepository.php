@@ -4,7 +4,6 @@ namespace Alpha\Model\Domain\Repositories;
 
 use Alpha\Mappers\EntityMappers\StoreMapper;
 use Alpha\Model\Domain\InterfaceEntity;
-use Alpha\Support\Registry;
 
 /**
  * StoreRepository - Autoridade de Domínio para Lojas (Store).
@@ -40,15 +39,15 @@ class StoreRepository extends AbstractRepository implements BaseRepositoryInterf
      *
      * @throws \Exception
      *
-     * @return Registry
+     * @return \Opencart\System\Engine\Registry
      */
-    public function createStoreInstance(int $store_id = 0, string $language = '', string $session_id = ''): Registry
+    public function createStoreInstance(int $store_id = 0, string $language = '', string $session_id = ''): \Opencart\System\Engine\Registry
     {
         // Autoloader
         $this->autoloader->register('Opencart\Catalog', DIR_APPLICATION);
 
         // Registry
-        $registry = new Registry();
+        $registry = new \Opencart\System\Engine\Registry();
         $registry->set('autoloader', $this->autoloader);
 
         // Config

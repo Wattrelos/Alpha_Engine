@@ -13,27 +13,11 @@ class SearchRepository extends AbstractRepository
     /**
      * Recupera os dados necessários para o componente de busca na interface.
      */
-    public function getSearchDisplayData(): ViewResponse
+    public function getSearchDisplayData(string $currentSearch = ''): ViewResponse
     {
         $response = new ViewResponse();
-        $langCode = $this->config->get('config_language') ?: 'pt-br';
-
-        $response->set('text_search', $this->language->get('text_search'));
-        $response->set('action', '/' . $langCode . '/busca');
-        $response->set('search', $this->request->get['search'] ?? '');
-
+        $response->set('search', $currentSearch);
         return $response;
-    }
-
-    /**
-     * Alpha Engine: Centraliza a construção da URL de busca amigável.
-     */
-    public function getSearchUrl(string $search): string
-    {
-        $search = urlencode(html_entity_decode($search, ENT_QUOTES, 'UTF-8'));
-        $langCode = $this->config->get('config_language') ?: 'pt-br';
-
-        return '/' . $langCode . '/busca?search=' . $search;
     }
 
     // Implementações obrigatórias da Interface

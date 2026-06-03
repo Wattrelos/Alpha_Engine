@@ -6,7 +6,7 @@ namespace Alpha\Controller\Actions\Customer\Addresses;
 
 use Alpha\Controller\Actions\ActionInterface;
 use Alpha\Model\Domain\Repositories\AddressRepository;
-use Alpha\Support\Registry;
+use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Psr\Http\Message\ResponseInterface as Response;
 use Twig\Environment as TwigEnvironment;
@@ -16,21 +16,21 @@ class ShowAddressesAction implements ActionInterface
 {
     private TwigEnvironment $twig;
     private AddressRepository $addressRepository;
-    private Registry $registry;
+    private ContainerInterface $container;
 
     public function __construct(
         TwigEnvironment $twig,
         AddressRepository $addressRepository,
-        Registry $registry
+        ContainerInterface $container
     ) {
         $this->twig              = $twig;
         $this->addressRepository = $addressRepository;
-        $this->registry          = $registry;
+        $this->container         = $container;
     }
 
     public function __invoke(Request $request, Response $response, array $args): Response
     {
-        $customer = $this->registry->get('customer');
+        $customer = $this->container->get('customer');
 
         // Segurança: redireciona se não logado (SessionMiddleware já protege,
         // mas garantimos aqui também)

@@ -2,7 +2,6 @@
 
 namespace Alpha\Model\Domain\Repositories;
 
-use Alpha\Support\Registry;
 use Alpha\Mappers\MapperFactory;
 
 /**
@@ -26,9 +25,10 @@ class ConfigurationRepository extends AbstractRepository
             $_ = [];
             require($file);
 
-            $config = $this->registry->get('config');
-            foreach ($_ as $key => $value) {
-                $config->set($key, $value);
+            if ($this->config) {
+                foreach ($_ as $key => $value) {
+                    $this->config->set($key, $value);
+                }
             }
         } else {
             throw new \Exception(sprintf('Alpha Engine Erro: Arquivo de configuração %s não encontrado.', $file));
@@ -40,7 +40,7 @@ class ConfigurationRepository extends AbstractRepository
      */
     public function getDatabaseSetting(string $key, int $storeId = 0): string
     {
-        return $this->registry->get('alpha_repository_factory')
+        return RepositoryFactory::getInstance()
             ->get(SettingRepository::class)
             ->getValue($key, $storeId);
     }

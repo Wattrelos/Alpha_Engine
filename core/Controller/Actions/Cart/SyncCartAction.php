@@ -5,7 +5,7 @@ namespace Alpha\Controller\Actions\Cart;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Psr\Http\Message\ResponseInterface as Response;
 use Alpha\Controller\Actions\ActionInterface;
-use Alpha\Support\Registry;
+use Psr\Container\ContainerInterface;
 use Alpha\Model\Domain\Repositories\CartRepository;
 use Slim\Routing\RouteContext;
 
@@ -16,23 +16,22 @@ use Slim\Routing\RouteContext;
  */
 class SyncCartAction implements ActionInterface
 {
-    private Registry $registry;
+    private ContainerInterface $container;
 
-    public function __construct(Registry $registry)
+    public function __construct(ContainerInterface $container)
     {
-        $this->registry = $registry;
+        $this->container = $container;
     }
 
     public function __invoke(Request $request, Response $response, array $args): Response
     {
-        $customer = $this->registry->get('customer');
+        $customer = $this->container->get('customer');
 
         $body = json_decode($request->getBody()->getContents(), true);
         $items = $body['items'] ?? [];
 
-        $repositoryFactory = $this->registry->get('alpha_repository_factory');
         /** @var CartRepository $cartRepository */
-        $cartRepository = $repositoryFactory->get(CartRepository::class);
+        $cartRepository = \RepositoryFactory::getInstance()->get(CartRepository::class);
         $cartRepository->initializeContext();
 
         // Se for visitante (não logado), limpamos o carrinho da sessão atual

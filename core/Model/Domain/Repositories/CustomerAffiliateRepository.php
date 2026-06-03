@@ -54,10 +54,9 @@ class CustomerAffiliateRepository extends AbstractRepository implements BaseRepo
             $affiliate->setCustomerId($customerId);
             $affiliate->setTracking(oc_token(36));
             
-            $config = $this->registry->get('config');
-            $affiliate->setCommission((float)$config->get('config_affiliate_commission'));
+            $affiliate->setCommission((float)$this->config->get('config_affiliate_commission'));
             
-            $approvalRequired = $config->get('config_affiliate_approval');
+            $approvalRequired = $this->config->get('config_affiliate_approval');
             $affiliate->setStatus(!$approvalRequired);
         }
 

@@ -14,19 +14,19 @@ use Alpha\Support\Cache\CacheStrategyInterface;
 abstract class AbstractRepository
 {
     protected MapperFactory $mapperFactory;
-    protected mixed $registry = null;
+    protected ?\Containers\AppContainer $container = null;
     protected ?CacheStrategyInterface $cache = null;
     protected string $mapperClass = ''; // Definido nas classes filhas para uso genérico do getIndexData
 
     /**
      * @param MapperFactory $mapperFactory
-     * @param mixed $registry O Registry, Container ou nulo.
+     * @param \Containers\AppContainer|null $container O Container de Dependências (PSR-11)
      * @param CacheStrategyInterface|null $cache Driver de cache opcional para otimização de consultas.
      */
-    public function __construct(MapperFactory $mapperFactory, mixed $registry = null, ?CacheStrategyInterface $cache = null)
+    public function __construct(MapperFactory $mapperFactory, ?\Containers\AppContainer $container = null, ?CacheStrategyInterface $cache = null)
     {
         $this->mapperFactory = $mapperFactory;
-        $this->registry = $registry;
+        $this->container = $container;
         $this->cache = $cache;
     }
 
@@ -46,8 +46,8 @@ abstract class AbstractRepository
      */
     protected function loadLanguage(string $route): array
     {
-        if ($this->registry && method_exists($this->registry, 'get')) {
-            $lang = $this->registry->get('language');
+        if ($this->container && $this->container->has('language')) {
+            $lang = $this->container->get('language');
             return $lang ? $lang->load($route) : [];
         }
         return [];
@@ -58,8 +58,8 @@ abstract class AbstractRepository
      */
     protected function loadConfig(string $filename): void
     {
-        if ($this->registry && method_exists($this->registry, 'get')) {
-            $factory = $this->registry->get('alpha_repository_factory');
+        if ($this->container && $this->container->has('alpha_repository_factory')) {
+            $factory = $this->container->get('alpha_repository_factory');
             if ($factory) {
                 $factory->get(ConfigurationRepository::class)->loadFile($filename);
             }
@@ -71,16 +71,20 @@ abstract class AbstractRepository
      */
     public function __get(string $key): mixed
     {
-        if ($this->registry && method_exists($this->registry, 'get')) {
+        if ($this->container) {
             if ($key === 'store_id') {
-                $config = $this->registry->get('config');
-                return $config ? (int)$config->get('config_store_id') : 0;
+                if ($this->container->has('configSettings')) {
+                    $settings = $this->container->get('configSettings');
+                    return (int)($settings['config_store_id'] ?? 0);
+                }
+                return 0;
             }
             if ($key === 'language_id') {
-                $config = $this->registry->get('config');
-                return $config ? (int)$config->get('config_language_id') : 2;
+                return $this->container->has('languageId') ? (int)$this->container->get('languageId') : 2;
             }
-            return $this->registry->get($key);
+            if ($this->container->has($key)) {
+                return $this->container->get($key);
+            }
         }
         return null;
     }

@@ -5,7 +5,7 @@ namespace Alpha\Model\Domain\Repositories;
 use Alpha\Mappers\EntityMappers\CartMapper;
 use Alpha\Mappers\EntityMappers\ProductMapper;
 use Alpha\Model\Domain\InterfaceEntity;
-use Alpha\Model\DataTransferObject\ViewResponse;
+use Alpha\Support\AlphaString;
 
 /**
  * CartRepository - Orquestra a lógica de negócios do Carrinho de Compras.
@@ -146,7 +146,7 @@ class CartRepository extends AbstractRepository implements BaseRepositoryInterfa
     {
         if ($this->customer->isLogged() && empty($this->session->data['shipping_address']) && empty($this->session->data['payment_address'])) {
             /** @var \Alpha\Model\Domain\Repositories\AddressRepository $addressRepo */
-            $addressRepo = $this->registry->get('alpha_repository_factory')->get(\Alpha\Model\Domain\Repositories\AddressRepository::class);
+            $addressRepo = \Alpha\Model\Domain\Repositories\RepositoryFactory::getInstance()->get(\Alpha\Model\Domain\Repositories\AddressRepository::class);
             $defaultAddress = $addressRepo->getDefaultAddress($this->getCustomerId());
             
             if ($defaultAddress) {
@@ -155,7 +155,7 @@ class CartRepository extends AbstractRepository implements BaseRepositoryInterfa
                 $this->session->data['shipping_address'] = $addressDTO;
                 $this->session->data['payment_address'] = $addressDTO;
                 
-                if ($this->registry->has('tax')) {
+                if ($this->tax) {
                     $this->tax->setShippingAddress($defaultAddress->getCountryId(), $defaultAddress->getZoneId());
                     $this->tax->setPaymentAddress($defaultAddress->getCountryId(), $defaultAddress->getZoneId());
                 }
@@ -195,7 +195,7 @@ class CartRepository extends AbstractRepository implements BaseRepositoryInterfa
         }
 
         /** @var \Alpha\Model\Domain\Repositories\PriceRepository $priceRepo */
-        $priceRepo = $this->registry->get('alpha_repository_factory')->get(\Alpha\Model\Domain\Repositories\PriceRepository::class);
+        $priceRepo = \Alpha\Model\Domain\Repositories\RepositoryFactory::getInstance()->get(\Alpha\Model\Domain\Repositories\PriceRepository::class);
         $priceStatements = $priceRepo->getPriceStatements($customerGroupId);
 
         /** @var ProductMapper $productMapper */
@@ -221,7 +221,7 @@ class CartRepository extends AbstractRepository implements BaseRepositoryInterfa
         $allOptionValueIds = array_unique($allOptionValueIds);
 
         // Alpha Engine: Consumo Inteligente O(1) das Opções e Descontos via Repositórios de Domínio
-        $repositoryFactory = $this->registry->get('alpha_repository_factory');
+        $repositoryFactory = \Alpha\Model\Domain\Repositories\RepositoryFactory::getInstance();
         $optionRepo = $repositoryFactory->get(\Alpha\Model\Domain\Repositories\ProductOptionValueRepository::class);
         $productRepo = $repositoryFactory->get(\Alpha\Model\Domain\Repositories\ProductRepository::class);
         $discountRepo = $repositoryFactory->get(\Alpha\Model\Domain\Repositories\ProductDiscountRepository::class);
@@ -326,9 +326,9 @@ class CartRepository extends AbstractRepository implements BaseRepositoryInterfa
                     'stock_status'          => ($productInfo['quantity'] >= $item['quantity']),
                     'stock_quantity'        => (int)$productInfo['quantity'],
                     'price'                 => $price,
-                    'price_text'            => $this->currency->format($taxPrice, $this->session->data['currency']),
+                    'tax_price'             => $taxPrice,
                     'total'                 => $price * $item['quantity'],
-                    'total_text'            => $this->currency->format($taxTotal, $this->session->data['currency']),
+                    'tax_total'             => $taxTotal,
                     'reward'                => (int)$productInfo['reward'] * $item['quantity'],
                     'points'                => $points * $item['quantity'],
                     'weight'                => $weight,
@@ -556,188 +556,7 @@ class CartRepository extends AbstractRepository implements BaseRepositoryInterfa
         unset($this->session->data['payment_method']);
         unset($this->session->data['payment_methods']);
         unset($this->session->data['reward']);
-    }
-
-    /**
-     * Alpha Engine: Prepara o DTO da página inteira do Carrinho (Breadcrumbs, Título).
-     */
-    public function getCartPageData(): ViewResponse
-    {
-        $this->loadLanguage('checkout/cart');
-        $this->document->setTitle($this->language->get('heading_title'));
-
-        $data['breadcrumbs'] = [];
-        $data['breadcrumbs'][] = ['text' => $this->language->get('text_home'), 'href' => $this->url->link('common/home', 'language=' . $this->config->get('config_language'))];
-        $data['breadcrumbs'][] = ['text' => $this->language->get('heading_title'), 'href' => $this->url->link('checkout/cart', 'language=' . $this->config->get('config_language'))];
-        $data['language'] = $this->config->get('config_language');
-
-        return new ViewResponse($data);
-    }
-
-    /**
-     * Alpha Engine: Prepara o DTO (Data Transfer Object) para exibição do carrinho (Header/Mini-Cart).
-     */
-    public function getCartDisplayData(): object
-    {
-        $this->loadLanguage('common/cart');
-
-        $products = [];
-        
-        // Alpha Engine: Utiliza o novo Presenter para processamento padronizado de imagens
-        $imagePresenter = new \Alpha\Support\Presenters\ImagePresenter($this->registry);
-
-        foreach ($this->getProducts() as $product) {
-            $thumb = $imagePresenter->resize($product['image'], (int)$this->config->get('config_image_cart_width') ?: 47, (int)$this->config->get('config_image_cart_height') ?: 47);
-
-            $products[] = [
-                'cart_id'      => $product['cart_id'],
-                'thumb'        => $thumb,
-                'name'         => $product['name'],
-                'model'        => $product['model'],
-                'option'       => $product['option'],
-                'subscription' => $product['subscription'],
-                'quantity'     => $product['quantity'],
-                'price'        => $product['price_text'],
-                'total'        => $product['total_text'],
-                'href'         => $this->url->link('product/product', 'language=' . $this->config->get('config_language') . '&product_id=' . $product['product_id'])
-            ];
-        }
-
-        $data = [
-            'text_items' => sprintf($this->language->get('text_items'), $this->countProducts(), $this->currency->format($this->getTotal(), $this->session->data['currency'])),
-            'products'   => $products,
-            'vouchers'   => [], // Stub para interoperabilidade com Vouchers futuros
-            'cart'       => $this->url->link('checkout/cart', 'language=' . $this->config->get('config_language')),
-            'checkout'   => $this->url->link('checkout/checkout', 'language=' . $this->config->get('config_language'))
-        ];
-
-        // Retorna um Proxy Class (DTO) que atende a conversão "toArray()" usada no BaseController
-        return new class($data) {
-            private array $data;
-            public function __construct(array $data) { $this->data = $data; }
-            public function toArray(): array { return $this->data; }
-            public function get(string $key): mixed { return $this->data[$key] ?? null; }
-        };
-    }
-
-    /**
-     * Alpha Engine: Consolida o DTO completo para a listagem assíncrona do Carrinho.
-     * Centraliza a formatação de opções, alertas de estoque e links (ViewResponse).
-     */
-    public function getCartListDisplayData(): ViewResponse
-    {
-        $this->loadLanguage('checkout/cart');
-
-        $data = [];
-
-        $data['error_warning'] = $this->session->data['error'] ?? '';
-        unset($this->session->data['error']);
-
-        $data['success'] = $this->session->data['success'] ?? '';
-        unset($this->session->data['success']);
-
-        if (!$this->hasStock() && (!$this->config->get('config_stock_checkout') || $this->config->get('config_stock_warning'))) {
-            $data['error_stock'] = $this->language->get('error_stock');
-        } else {
-            $data['error_stock'] = '';
-        }
-
-        if ($this->config->get('config_customer_price') && !$this->customer->isLogged()) {
-            $data['attention'] = sprintf($this->language->get('text_login'), $this->url->link('account/login', 'language=' . $this->config->get('config_language')), $this->url->link('account/register', 'language=' . $this->config->get('config_language')));
-        } else {
-            $data['attention'] = '';
-        }
-
-        if ($this->config->get('config_cart_weight')) {
-            $data['weight'] = $this->weight->format($this->getWeight(), $this->config->get('config_weight_class_id'), $this->language->get('decimal_point'), $this->language->get('thousand_point'));
-        } else {
-            $data['weight'] = '';
-        }
-
-        $langCode = $this->config->get('config_language') ?: 'pt-br';
-        $data['edit'] = '/' . $langCode . '/carrinho/editar';
-
-        $price_status = $this->customer->isLogged() || !$this->config->get('config_customer_price');
-
-        $data['products'] = [];
-        $imagePresenter = new \Alpha\Support\Presenters\ImagePresenter($this->registry);
-
-        foreach ($this->getProducts() as $product) {
-            $optionData = [];
-            if (!empty($product['option'])) {
-                foreach ($product['option'] as $option) {
-                    $value = (string)($option['value'] ?? '');
-                    $optionData[] = [
-                        'name'  => $option['name'],
-                        'value' => (\Alpha\Support\AlphaString::strlen($value) > 20 ? \Alpha\Support\AlphaString::substr($value, 0, 20) . '..' : $value)
-                    ];
-
-                }
-            }
-
-            $data['products'][] = [
-                'cart_id'      => $product['cart_id'],
-                'thumb'        => $imagePresenter->resize($product['image'], (int)$this->config->get('config_image_cart_width') ?: 47, (int)$this->config->get('config_image_cart_height') ?: 47),
-                'name'         => $product['name'],
-                'model'        => $product['model'],
-                'option'       => $optionData,
-                'subscription' => $product['subscription'] ?? '',
-                'quantity'     => $product['quantity'],
-                'stock_quantity' => (int)$product['stock_quantity'],
-                'stock'        => $product['stock_status'] ? true : !(!$this->config->get('config_stock_checkout') || $this->config->get('config_stock_warning')),
-                'minimum'      => !$product['minimum_status'] ? sprintf($this->language->get('error_minimum'), $product['minimum']) : 0,
-                'price'        => $price_status ? $product['price_text'] : '',
-                'total'        => $price_status ? $product['total_text'] : '',
-                'price_raw'    => $price_status ? (float)$product['price'] : 0.0,
-                'total_raw'    => $price_status ? (float)$product['total'] : 0.0,
-                'href'         => $this->url->link('product/product', 'language=' . $this->config->get('config_language') . '&product_id=' . $product['product_id']),
-                'remove'       => '/' . $langCode . '/carrinho/remover/' . $product['cart_id']
-            ];
-        }
-
-        $data['totals'] = [];
-        if ($price_status) {
-            $totals = [];
-            $taxes = $this->getTaxes();
-            $total = 0;
-            $this->getTotals($totals, $taxes, $total);
-            if (empty($totals)) {
-                $subTotalVal = $this->getSubTotal();
-                $totals[] = [
-                    'code'       => 'sub_total',
-                    'title'      => $this->language->get('text_sub_total') ?: 'Sub-Total',
-                    'value'      => $subTotalVal,
-                    'sort_order' => 1
-                ];
-                $totalVal = $this->getTotal();
-                $totals[] = [
-                    'code'       => 'total',
-                    'title'      => $this->language->get('text_total') ?: 'Total',
-                    'value'      => $totalVal,
-                    'sort_order' => 9
-                ];
-            }
-            foreach ($totals as $result) {
-                $data['totals'][] = [
-                    'title' => $result['title'],
-                    'text'  => $this->currency->format($result['value'], $this->session->data['currency'])
-                ] + $result;
-            }
-        }
-
-        /** @var \Alpha\Mappers\EntityMappers\ExtensionMapper $extensionMapper */
-        $extensionMapper = $this->mapperFactory->get(\Alpha\Mappers\EntityMappers\ExtensionMapper::class);
-        $data['total_extensions'] = $extensionMapper->getExtensionsByType('total');
-
-        if ($this->hasProducts()) {
-            $data['continue'] = $this->url->link('common/home', 'language=' . $this->config->get('config_language'));
-            $data['checkout'] = $this->url->link('checkout/checkout', 'language=' . $this->config->get('config_language'));
-        } else {
-            $data['continue'] = $this->url->link('common/home', 'language=' . $this->config->get('config_language'));
-        }
-
-        return new ViewResponse($data);
-    }
+    }   
 
     /**
      * Alpha Engine: Orquestra a renderização e o cálculo dos módulos de totalização do carrinho.
@@ -786,15 +605,14 @@ class CartRepository extends AbstractRepository implements BaseRepositoryInterfa
      */
     public function validateAddition(int $productId, array $option, int $subscriptionPlanId): array
     {
-        $this->loadLanguage('checkout/cart');
         $result = ['error' => []];
 
         /** @var \Alpha\Model\Domain\Repositories\ProductRepository $productRepository */
-        $productRepository = $this->registry->get('alpha_repository_factory')->get(\Alpha\Model\Domain\Repositories\ProductRepository::class);
+        $productRepository = \Alpha\Model\Domain\Repositories\RepositoryFactory::getInstance()->get(\Alpha\Model\Domain\Repositories\ProductRepository::class);
         $product_info = $productRepository->getProduct($productId);
 
         if (!$product_info) {
-            $result['error']['warning'] = $this->language->get('error_product');
+            $result['error']['warning'] = 'error_product';
             return $result;
         }
 
@@ -818,19 +636,19 @@ class CartRepository extends AbstractRepository implements BaseRepositoryInterfa
 
         foreach ($productRepository->getOptions($productId) as $product_option) {
             if ($product_option['required'] && empty($option[$product_option['product_option_id']])) {
-                $result['error']['option_' . $product_option['product_option_id']] = sprintf($this->language->get('error_required'), $product_option['name']);
-            } elseif (($product_option['type'] == 'text') && !empty($product_option['validation']) && !oc_validate_regex($option[$product_option['product_option_id']], $product_option['validation'])) {
-                $result['error']['option_' . $product_option['product_option_id']] = sprintf($this->language->get('error_regex'), $product_option['name']);
+                $result['error']['option_' . $product_option['product_option_id']] = 'error_required';
+            } elseif (($product_option['type'] == 'text') && !empty($product_option['validation']) && !AlphaString::validateRegex($option[$product_option['product_option_id']], $product_option['validation'])) {
+                $result['error']['option_' . $product_option['product_option_id']] = 'error_regex';
             }
         }
 
         $subscriptions = $productRepository->getSubscriptions($productId);
         if ($subscriptions && (!$subscriptionPlanId || !in_array($subscriptionPlanId, array_column($subscriptions, 'subscription_plan_id')))) {
-            $result['error']['subscription'] = $this->language->get('error_subscription');
+            $result['error']['subscription'] = 'error_subscription';
         }
 
         if (!empty($result['error'])) {
-            $result['redirect'] = $this->url->link('product/product', 'language=' . $this->config->get('config_language') . '&product_id=' . $productId, true);
+            $result['redirect'] = true;
         }
 
         return $result;

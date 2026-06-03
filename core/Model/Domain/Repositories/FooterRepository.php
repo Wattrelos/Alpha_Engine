@@ -37,7 +37,8 @@ class FooterRepository extends AbstractRepository implements BaseRepositoryInter
             'order'        => $this->url->link('account/orders', $language_param, true),
             'wishlist'     => $this->url->link('account/wishlist', $language_param, true),
             'newsletter'   => $this->url->link('account/newsletter', $language_param, true),
-            'powered'      => sprintf($this->language->get('text_powered'), $this->config->get('config_name'), date('Y', time())),
+            'store_name'   => $this->config->get('config_name'),
+            'current_year' => date('Y'),
             'scripts'      => $this->document->getScripts('footer'),
             'extensions'   => $this->getFooterModules()
         ];

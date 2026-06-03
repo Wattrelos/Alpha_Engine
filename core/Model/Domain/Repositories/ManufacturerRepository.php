@@ -52,11 +52,6 @@ class ManufacturerRepository extends AbstractRepository implements BaseRepositor
         $mapper = $this->mapperFactory->get(ManufacturerMapper::class);
         $results = $mapper->getManufacturers([], $this->store_id);
 
-        /** @var \Alpha\Model\Domain\Repositories\SeoUrlRepository $seoRepository */
-        $seoRepository = $this->registry->get('alpha_repository_factory')->get(\Alpha\Model\Domain\Repositories\SeoUrlRepository::class);
-        $manufacturerIds = array_column($results, 'id');
-        $seoRepository->primeCache($manufacturerIds, 'manufacturer_id', $this->store_id, $this->language_id);
-
         $categories = [];
 
         foreach ($results as $result) {
@@ -72,17 +67,13 @@ class ManufacturerRepository extends AbstractRepository implements BaseRepositor
                 if (!isset($categories[$key])) {
                     $categories[$key] = [
                         'name'         => $key,
-                        'href'         => '/marcas',
                         'manufacturer' => []
                     ];
                 }
 
-                $keyword = $seoRepository->getKeywordByQuery('manufacturer_id', (string)$result['id'], $this->store_id, $this->language_id);
-                $href = $keyword ? '/' . $keyword : '/marca/' . $result['id'];
-
                 $categories[$key]['manufacturer'][] = [
-                    'name' => $result['name'],
-                    'href' => $href
+                    'id'   => (int)$result['id'],
+                    'name' => $result['name']
                 ];
             }
         }
@@ -101,34 +92,17 @@ class ManufacturerRepository extends AbstractRepository implements BaseRepositor
      */
     public function getManufacturerData(int $manufacturerId, array $filterData): \Alpha\Model\DataTransferObject\ViewResponse
     {
-        $this->loadLanguage('product/manufacturer');
-
         $manufacturer_info = $this->getManufacturer($manufacturerId);
 
         if (!$manufacturer_info) {
             return new \Alpha\Model\DataTransferObject\ViewResponse([]);
         }
 
-        $data = [];
+        $data = $manufacturer_info;
         $data['name'] = $manufacturer_info['name'];
 
-        /** @var \Alpha\Model\Domain\Repositories\SeoUrlRepository $seoRepository */
-        $seoRepository = $this->registry->get('alpha_repository_factory')->get(\Alpha\Model\Domain\Repositories\SeoUrlRepository::class);
-        $keyword = $seoRepository->getKeywordByQuery('manufacturer_id', (string)$manufacturerId, $this->store_id, $this->language_id);
-        $baseHref = $keyword ? '/' . $keyword : '/marca/' . $manufacturerId;
-
-        $data['breadcrumbs'] = [];
-        $data['breadcrumbs'][] = [
-            'text' => $this->language->get('text_brand') ?: 'Marcas',
-            'href' => '/marcas'
-        ];
-        $data['breadcrumbs'][] = [
-            'text' => $manufacturer_info['name'],
-            'href' => $baseHref
-        ];
-
         /** @var \Alpha\Model\Domain\Repositories\ProductRepository $productRepository */
-        $productRepository = $this->registry->get('alpha_repository_factory')->get(\Alpha\Model\Domain\Repositories\ProductRepository::class);
+        $productRepository = \Alpha\Model\Domain\Repositories\RepositoryFactory::getInstance()->get(\Alpha\Model\Domain\Repositories\ProductRepository::class);
 
         $productFilter = [
             'filter_manufacturer_id' => $manufacturerId,
@@ -138,98 +112,13 @@ class ManufacturerRepository extends AbstractRepository implements BaseRepositor
             'limit'                  => $filterData['limit'] ?? 10
         ];
 
-        $results = $productRepository->getProducts($productFilter);
-        $product_total = $productRepository->getTotalProducts($productFilter);
-
-        $data['products'] = [];
-        foreach ($results as $result) {
-            $data['products'][] = $this->viewRenderer->render('product/thumb', $productRepository->getProductThumbData($result));
-        }
-
-        // Memorização dos Filtros para Paginação
-        $urlQuery = '';
-        if (isset($filterData['sort'])) $urlQuery .= '&sort=' . $filterData['sort'];
-        if (isset($filterData['order'])) $urlQuery .= '&order=' . $filterData['order'];
-
-        // Limites de página
-        $data['limits'] = [];
-        $limits = array_unique([$this->config->get('config_pagination_catalog') ?: 10, 25, 50, 75, 100]);
-        sort($limits);
-        foreach ($limits as $value) {
-            $data['limits'][] = [
-                'text'  => $value,
-                'value' => $value,
-                'href'  => $baseHref . '?' . ltrim($urlQuery . '&limit=' . $value, '&')
-            ];
-        }
-
-        // Ordenação
-        $urlWithLimit = '&limit=' . ($filterData['limit'] ?? 10);
-        $data['sorts'] = [];
-        $data['sorts'][] = [
-            'text'  => $this->language->get('text_default') ?: 'Padrão',
-            'value' => 'p.sort_order-ASC',
-            'href'  => $baseHref . '?sort=p.sort_order&order=ASC' . $urlWithLimit
-        ];
-        $data['sorts'][] = [
-            'text'  => $this->language->get('text_name_asc') ?: 'Nome (A - Z)',
-            'value' => 'pd.name-ASC',
-            'href'  => $baseHref . '?sort=pd.name&order=ASC' . $urlWithLimit
-        ];
-        $data['sorts'][] = [
-            'text'  => $this->language->get('text_name_desc') ?: 'Nome (Z - A)',
-            'value' => 'pd.name-DESC',
-            'href'  => $baseHref . '?sort=pd.name&order=DESC' . $urlWithLimit
-        ];
-        $data['sorts'][] = [
-            'text'  => $this->language->get('text_price_asc') ?: 'Preço (Menor > Maior)',
-            'value' => 'p.price-ASC',
-            'href'  => $baseHref . '?sort=p.price&order=ASC' . $urlWithLimit
-        ];
-        $data['sorts'][] = [
-            'text'  => $this->language->get('text_price_desc') ?: 'Preço (Maior > Menor)',
-            'value' => 'p.price-DESC',
-            'href'  => $baseHref . '?sort=p.price&order=DESC' . $urlWithLimit
-        ];
-        $data['sorts'][] = [
-            'text'  => $this->language->get('text_model_asc') ?: 'Modelo (A - Z)',
-            'value' => 'p.model-ASC',
-            'href'  => $baseHref . '?sort=p.model&order=ASC' . $urlWithLimit
-        ];
-        $data['sorts'][] = [
-            'text'  => $this->language->get('text_model_desc') ?: 'Modelo (Z - A)',
-            'value' => 'p.model-DESC',
-            'href'  => $baseHref . '?sort=p.model&order=DESC' . $urlWithLimit
-        ];
-
+        $data['products'] = $productRepository->getProducts($productFilter);
+        $data['product_total'] = $productRepository->getTotalProducts($productFilter);
+        
         $data['sort']  = $filterData['sort'] ?? 'p.sort_order';
         $data['order'] = $filterData['order'] ?? 'ASC';
         $data['limit'] = $filterData['limit'] ?? 10;
-
-        // Paginação
-        $urlQueryLimit = $urlQuery;
-        if (isset($filterData['limit'])) $urlQueryLimit .= '&limit=' . $filterData['limit'];
-
-        $paginationRepository = $this->registry->get('alpha_repository_factory')->get(\Alpha\Model\Domain\Repositories\PaginationRepository::class);
-        $paginationData = $paginationRepository->prepare([
-            'total' => $product_total,
-            'page'  => $filterData['page'] ?? 1,
-            'limit' => $filterData['limit'] ?? 10,
-            'url'   => $baseHref . '?' . ltrim($urlQueryLimit . '&page={page}', '&')
-        ]);
-
-        $viewRenderer = new \Alpha\View\ViewRenderer($this->registry);
-        $data['pagination'] = $paginationData->shouldRender() 
-            ? $viewRenderer->render('common/pagination', $paginationData->toArray()) 
-            : '';
-
-        $data['results'] = sprintf(
-            $this->language->get('text_pagination'), 
-            ($product_total) ? (($filterData['page'] - 1) * $filterData['limit']) + 1 : 0, 
-            ((($filterData['page'] - 1) * $filterData['limit']) > ($product_total - $filterData['limit'])) ? $product_total : ((($filterData['page'] - 1) * $filterData['limit']) + $filterData['limit']), 
-            $product_total, 
-            ceil($product_total / $filterData['limit'])
-        );
+        $data['page']  = $filterData['page'] ?? 1;
 
         return new \Alpha\Model\DataTransferObject\ViewResponse($data);
     }

@@ -20,18 +20,10 @@ class MenuRepository extends AbstractRepository implements BaseRepositoryInterfa
      */
     public function getMenuData(): Collection
     {
-        // Alpha Engine: Resolvendo dependências explicitamente via Registry
-        $cache  = $this->registry->get('cache');
-        $config = $this->registry->get('config');
-        $url    = $this->registry->get('url');
-
-        $store_id    = (int)$config->get('config_store_id');
-        $language_id = (int)$config->get('config_language_id');
-
         // Alpha Engine: Implementação de cache para evitar processamento recursivo custoso
-        $cache_key = 'menu.categories.' . $store_id . '.' . $language_id;
+        $cache_key = 'menu.categories.' . $this->store_id . '.' . $this->language_id;
 
-        $cached_data = $cache->get($cache_key);
+        $cached_data = $this->cache ? $this->cache->get($cache_key) : null;
 
         if ($cached_data !== null) {
             return new Collection([
@@ -40,22 +32,22 @@ class MenuRepository extends AbstractRepository implements BaseRepositoryInterfa
         }
 
         /** @var CategoryMapper $categoryMapper */
-        $categoryMapper = $this->registry->get('alpha_mapper_factory')->get(CategoryMapper::class);
+        $categoryMapper = $this->mapperFactory->get(CategoryMapper::class);
         
         $categories = [];
         
         // 1. Busca categorias de nível 0 (raiz)
         // Alpha Engine: Agora utiliza o filtro 'top' nativo no Mapper para performance
-        $results = $categoryMapper->getSubCategories(0, $language_id, $store_id, true);
+        $results = $categoryMapper->getSubCategories(0, $this->language_id, $this->store_id, true);
 
         foreach ($results as $result) {
             $children_data = [];
-            $children = $categoryMapper->getSubCategories((int)$result['id'], $language_id, $store_id);
+            $children = $categoryMapper->getSubCategories((int)$result['id'], $this->language_id, $this->store_id);
 
             foreach ($children as $child) {
                 $children_data[] = [
                     'name' => $child['name'],
-                    'href' => $url->link('product/category', 'language=' . $config->get('config_language') . '&path=' . $result['id'] . '_' . $child['id'])
+                    'href' => $this->url->link('product/category', 'language=' . $this->config->get('config_language') . '&path=' . $result['id'] . '_' . $child['id'])
                 ];
             }
 
@@ -63,12 +55,14 @@ class MenuRepository extends AbstractRepository implements BaseRepositoryInterfa
                 'name'     => $result['name'],
                 'children' => $children_data,
                 'column'   => 1, // Padrão OpenCart
-                'href'     => $url->link('product/category', 'language=' . $config->get('config_language') . '&path=' . $result['id'])
+                'href'     => $this->url->link('product/category', 'language=' . $this->config->get('config_language') . '&path=' . $result['id'])
             ];
         }
 
         // Alpha Engine: Armazena o resultado no cache
-        $cache->set($cache_key, $categories);
+        if ($this->cache) {
+            $this->cache->set($cache_key, $categories);
+        }
 
         return new Collection([
             'categories' => $categories

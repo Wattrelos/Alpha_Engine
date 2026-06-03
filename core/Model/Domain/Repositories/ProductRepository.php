@@ -34,7 +34,7 @@ class ProductRepository extends AbstractRepository implements BaseRepositoryInte
         }
 
         /** @var \Alpha\Model\Domain\Repositories\PriceRepository $priceRepo */
-        $priceRepo = $this->registry->get('alpha_repository_factory')->get(PriceRepository::class);
+        $priceRepo = RepositoryFactory::getInstance()->get(PriceRepository::class);
         $priceStatements = $priceRepo->getPriceStatements($customerGroupId);
 
         /** @var \Alpha\Mappers\EntityMappers\ProductMapper $mapper */
@@ -69,79 +69,26 @@ class ProductRepository extends AbstractRepository implements BaseRepositoryInte
         $languageId = $this->language_id;
         $customerGroupId = $this->customer->isLogged() ? (int)$this->customer->getGroupId() : (int)$this->config->get('config_customer_group_id');
 
-        // Alpha Engine: Image Presenter centraliza e limpa a resolução de imagens e placeholders
-        $imagePresenter = new \Alpha\Support\Presenters\ImagePresenter($this->registry);
-
         $data = $product_info;
 
-        // Formatação de Imagens (Popup e Thumb)
-        $data['popup'] = $imagePresenter->resize($data['image'], (int)$this->config->get('config_image_popup_width'), (int)$this->config->get('config_image_popup_height'), false);
-        $data['thumb'] = $imagePresenter->resize($data['image'], (int)$this->config->get('config_image_thumb_width'), (int)$this->config->get('config_image_thumb_height'), false);
+        // Galeria de Imagens Adicionais (Brutas)
+        $data['images'] = $mapper->getImages($productId);
 
-        // Galeria de Imagens Adicionais
-        $data['images'] = [];
-        foreach ($mapper->getImages($productId) as $result) {
-            if ($result['image']) {
-                $popup = $imagePresenter->resize($result['image'], (int)$this->config->get('config_image_popup_width'), (int)$this->config->get('config_image_popup_height'), false);
-                if ($popup) {
-                    $data['images'][] = [
-                        'popup' => $popup,
-                        'thumb' => $imagePresenter->resize($result['image'], (int)$this->config->get('config_image_additional_width'), (int)$this->config->get('config_image_additional_height'), false)
-                    ];
-                }
-            }
+        // Regra de Negócio: Ocultar preços se configurado para visitantes
+        $showPrice = $this->customer->isLogged() || !$this->config->get('config_customer_price');
+        if (!$showPrice) {
+            $data['price']   = false;
+            $data['special'] = false;
         }
 
-        // Formatação de Preços e Impostos
-        $data['price_raw']   = $data['price'] ?? 0.0;
-        $data['special_raw'] = $data['special'] ?? false;
-        
-        $data['price'] = false;
-        $data['special'] = false;
-        $data['tax'] = false;
-
-        if ($this->customer->isLogged() || !$this->config->get('config_customer_price')) {
-            $data['price'] = $this->currency->format($this->tax->calculate($data['price_raw'], $data['tax_class_id'] ?? 0, $this->config->get('config_tax')), $this->session->data['currency']);
-            
-            if ((float)$data['special_raw']) {
-                $data['special'] = $this->currency->format($this->tax->calculate($data['special_raw'], $data['tax_class_id'] ?? 0, $this->config->get('config_tax')), $this->session->data['currency']);
-            }
-
-            if ($this->config->get('config_tax')) {
-                $data['tax'] = $this->currency->format((float)$data['special_raw'] ? (float)$data['special_raw'] : (float)$data['price_raw'], $this->session->data['currency']);
-            }
-        }
-
-        // Descontos Progressivos
+        // Descontos Progressivos (Brutos)
         $data['discounts'] = [];
-        if ($this->customer->isLogged() || !$this->config->get('config_customer_price')) {
-            foreach ($mapper->getDiscounts($productId, $customerGroupId) as $discount) {
-                $data['discounts'][] = [
-                    'quantity' => $discount['quantity'],
-                    'price'    => $this->currency->format($this->tax->calculate($discount['price'], $data['tax_class_id'] ?? 0, $this->config->get('config_tax')), $this->session->data['currency'])
-                ] + $discount;
-            }
+        if ($showPrice) {
+            $data['discounts'] = $mapper->getDiscounts($productId, $customerGroupId);
         }
 
-        // Opções Dinâmicas (Batch Loading de valores e modificadores de preço)
-        $data['options'] = [];
-        foreach ($mapper->getOptions($productId, $languageId) as $option) {
-            $product_option_value_data = [];
-            foreach ($option['product_option_value'] as $option_value) {
-                if (!$option_value['subtract'] || ($option_value['quantity'] > 0)) {
-                    $price = false;
-                    if ((($this->config->get('config_customer_price') && $this->customer->isLogged()) || !$this->config->get('config_customer_price')) && (float)$option_value['price']) {
-                        $price = $this->currency->format($this->tax->calculate($option_value['price'], $data['tax_class_id'] ?? 0, $this->config->get('config_tax')), $this->session->data['currency']);
-                    }
-                    
-                    $product_option_value_data[] = [
-                        'image' => $imagePresenter->resize($option_value['image'], 50, 50, false),
-                        'price' => $price
-                    ] + $option_value;
-                }
-            }
-            $data['options'][] = ['product_option_value' => $product_option_value_data] + $option;
-        }
+        // Opções Dinâmicas (Brutas)
+        $data['options'] = $mapper->getOptions($productId, $languageId);
 
         // Atributos Técnicos e Códigos (EAN, ISBN)
         $data['attribute_groups'] = $mapper->getAttributes($productId, $languageId);
@@ -153,28 +100,17 @@ class ProductRepository extends AbstractRepository implements BaseRepositoryInte
             }
         }
 
-        // Tags SEO
+        // Tags (Strings cruas)
         $data['tags'] = [];
         if (!empty($data['tag'])) {
             $tags = explode(',', $data['tag']);
             foreach ($tags as $tag) {
-                $data['tags'][] = [
-                    'tag'  => trim($tag),
-                    'href' => $this->url->link('product/search', 'language=' . $this->config->get('config_language') . '&tag=' . urlencode(trim($tag)))
-                ];
+                $data['tags'][] = trim($tag);
             }
         }
 
         // Assinaturas
         $data['subscription_plans'] = $this->getSubscriptions($productId);
-
-        // Textos Dinâmicos Base
-        $this->loadLanguage('product/product');
-        $data['heading_title'] = $data['name'];
-        $data['stock'] = $data['stock_status_text'] ?? ($data['quantity'] > 0 ? $this->language->get('text_instock') : $this->language->get('text_out_of_stock'));
-        $data['text_minimum'] = sprintf($this->language->get('text_minimum'), (!empty($data['minimum']) && $data['minimum'] > 0) ? $data['minimum'] : 1);
-        $data['text_login'] = sprintf($this->language->get('text_login'), $this->url->link('account/login', 'language=' . $this->config->get('config_language')), $this->url->link('account/register', 'language=' . $this->config->get('config_language')));
-        $data['text_reviews'] = sprintf($this->language->get('text_reviews'), (int)($data['reviews'] ?? 0));
 
         return $data;
     }
@@ -187,8 +123,6 @@ class ProductRepository extends AbstractRepository implements BaseRepositoryInte
      */
     public function getSearchData(array $filterData): ViewResponse
     {
-        $this->loadLanguage('product/search');
-
         $data = [];
         $data['search']       = $filterData['search'] ?? $filterData['filter_name'] ?? '';
         $data['description']  = $filterData['filter_description'] ?? '';
@@ -197,89 +131,20 @@ class ProductRepository extends AbstractRepository implements BaseRepositoryInte
         $data['sort']         = $filterData['sort'] ?? 'p.sort_order';
         $data['order']        = $filterData['order'] ?? 'ASC';
         $data['limit']        = $filterData['limit'] ?? 10;
+        $data['page']         = $filterData['page'] ?? 1;
 
-        // 1. Breadcrumbs
-        $data['breadcrumbs'] = [];
-        $data['breadcrumbs'][] = [
-            'text' => $this->language->get('text_home') ?: 'Home',
-            'href' => $this->url->link('common/home', 'language=' . $this->config->get('config_language'))
-        ];
-        $data['breadcrumbs'][] = [
-            'text' => $this->language->get('text_search') ?: 'Busca',
-            'href' => $this->url->link('product/search', 'language=' . $this->config->get('config_language'))
-        ];
-
-        // 2. Dropdown de Categorias (Otimizado: Fim do N+1 de categorias)
+        // 1. Dropdown de Categorias (Otimizado: Fim do N+1 de categorias, Dados Brutos)
         /** @var \Alpha\Mappers\EntityMappers\CategoryMapper $categoryMapper */
         $categoryMapper = $this->mapperFactory->get(\Alpha\Mappers\EntityMappers\CategoryMapper::class);
-        $flatCategories = $categoryMapper->getAllCategories($this->language_id, $this->store_id);
+        $data['categories'] = $categoryMapper->getAllCategories($this->language_id, $this->store_id);
 
-        $tree = [];
-        foreach ($flatCategories as $cat) {
-            $tree[(int)$cat['parent_id']][] = $cat;
-        }
-
-        $data['categories'] = [];
-        $helper = function(int $parentId, string $indent) use (&$helper, &$tree, &$data) {
-            if (isset($tree[$parentId])) {
-                foreach ($tree[$parentId] as $cat) {
-                    $data['categories'][] = [
-                        'category_id' => (int)$cat['id'],
-                        'name'        => $indent . $cat['name']
-                    ];
-                    $helper((int)$cat['id'], $indent . '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;');
-                }
-            }
-        };
-        $helper(0, '');
-
-        // 3. Produtos Filtrados
+        // 2. Produtos Filtrados Brutos
         $filter = $filterData;
         $filter['filter_name'] = $data['search'];
-        $filter['start'] = (($filterData['page'] ?? 1) - 1) * $data['limit'];
-        $results = $this->getProducts($filter);
-        $data['products'] = [];
-        foreach ($results as $result) {
-            $data['products'][] = $this->getProductThumbData($result);
-        }
+        $filter['start'] = ($data['page'] - 1) * $data['limit'];
+        
+        $data['products'] = $this->getProducts($filter);
         $data['product_total'] = $this->getTotalProducts($filter);
-
-        // 4. Montagem das URLs de Base
-        $url = '';
-        if ($data['search']) $url .= '&search=' . urlencode(html_entity_decode($data['search'], ENT_QUOTES, 'UTF-8'));
-        if (!empty($filterData['filter_tag'])) $url .= '&tag=' . urlencode(html_entity_decode($filterData['filter_tag'], ENT_QUOTES, 'UTF-8'));
-        if ($data['description']) $url .= '&description=' . $data['description'];
-        if ($data['category_id']) $url .= '&category_id=' . $data['category_id'];
-        if ($data['sub_category']) $url .= '&sub_category=' . $data['sub_category'];
-
-        $baseUrl = $url;
-
-        // 5. Orquestração de Ordenações (Sorts) e Limites
-        $data['sorts'] = [];
-        $data['sorts'][] = ['text' => $this->language->get('text_default') ?: 'Padrão', 'value' => 'p.sort_order-ASC', 'href' => $this->url->link('product/search', 'language=' . $this->config->get('config_language') . $baseUrl . '&sort=p.sort_order&order=ASC&limit=' . $data['limit'])];
-        $data['sorts'][] = ['text' => $this->language->get('text_name_asc') ?: 'Nome (A - Z)', 'value' => 'pd.name-ASC', 'href' => $this->url->link('product/search', 'language=' . $this->config->get('config_language') . $baseUrl . '&sort=pd.name&order=ASC&limit=' . $data['limit'])];
-        $data['sorts'][] = ['text' => $this->language->get('text_name_desc') ?: 'Nome (Z - A)', 'value' => 'pd.name-DESC', 'href' => $this->url->link('product/search', 'language=' . $this->config->get('config_language') . $baseUrl . '&sort=pd.name&order=DESC&limit=' . $data['limit'])];
-        $data['sorts'][] = ['text' => $this->language->get('text_price_asc') ?: 'Preço (Menor > Maior)', 'value' => 'p.price-ASC', 'href' => $this->url->link('product/search', 'language=' . $this->config->get('config_language') . $baseUrl . '&sort=p.price&order=ASC&limit=' . $data['limit'])];
-        $data['sorts'][] = ['text' => $this->language->get('text_price_desc') ?: 'Preço (Maior > Menor)', 'value' => 'p.price-DESC', 'href' => $this->url->link('product/search', 'language=' . $this->config->get('config_language') . $baseUrl . '&sort=p.price&order=DESC&limit=' . $data['limit'])];
-
-        $data['limits'] = [];
-        $limits = array_unique([$this->config->get('config_pagination_catalog') ?: 10, 25, 50, 75, 100]);
-        sort($limits);
-        foreach($limits as $value) {
-            $data['limits'][] = [
-                'text'  => $value,
-                'value' => $value,
-                'href'  => $this->url->link('product/search', 'language=' . $this->config->get('config_language') . $baseUrl . '&sort=' . $data['sort'] . '&order=' . $data['order'] . '&limit=' . $value)
-            ];
-        }
-
-        // 6. Dados Brutos para o Paginated Component
-        $data['pagination'] = [
-            'total' => $data['product_total'],
-            'page'  => $filterData['page'] ?? 1,
-            'limit' => $data['limit'],
-            'url'   => $this->url->link('product/search', 'language=' . $this->config->get('config_language') . $baseUrl . '&sort=' . $data['sort'] . '&order=' . $data['order'] . '&page={page}')
-        ];
 
         return new ViewResponse($data);
     }
@@ -310,59 +175,6 @@ class ProductRepository extends AbstractRepository implements BaseRepositoryInte
     }
 
     /**
-     * Alpha Engine: Prepara o DTO de exibição do Thumbnail (Vitrines, Categorias, Buscas).
-     * Elimina a necessidade de carregar o controlador legado 'product/thumb' em loop (Fim do N+1 Controllers).
-     */
-    public function getProductThumbData(array $result): array
-    {
-        $this->loadLanguage('product/thumb');
-        $imagePresenter = new \Alpha\Support\Presenters\ImagePresenter($this->registry);
-
-        $price = false;
-        $special = false;
-        $tax = false;
-
-        if ($this->customer->isLogged() || !$this->config->get('config_customer_price')) {
-            $price = $this->currency->format($this->tax->calculate($result['price'] ?? 0, $result['tax_class_id'] ?? 0, $this->config->get('config_tax')), $this->session->data['currency']);
-            
-            if (!empty($result['special']) && (float)$result['special']) {
-                $special = $this->currency->format($this->tax->calculate($result['special'], $result['tax_class_id'] ?? 0, $this->config->get('config_tax')), $this->session->data['currency']);
-            }
-
-            if ($this->config->get('config_tax')) {
-                $tax = $this->currency->format(!empty($result['special']) && (float)$result['special'] ? (float)$result['special'] : (float)($result['price'] ?? 0), $this->session->data['currency']);
-            }
-        }
-
-        $description = '';
-        if (isset($result['description'])) {
-            $description = \Alpha\Support\AlphaString::substr(trim(strip_tags(html_entity_decode($result['description'], ENT_QUOTES, 'UTF-8'))), 0, (int)$this->config->get('config_product_description_length')) . '..';
-        }
-
-
-        return [
-            'product_id'      => $result['id'],
-            'thumb'           => $imagePresenter->resize($result['image'], (int)$this->config->get('config_image_product_width'), (int)$this->config->get('config_image_product_height')),
-            'name'            => $result['name'],
-            'description'     => $description,
-            'price'           => $price,
-            'special'         => $special,
-            'tax'             => $tax,
-            'minimum'         => (!empty($result['minimum']) && $result['minimum'] > 0) ? $result['minimum'] : 1,
-            'rating'          => (int)($result['rating'] ?? $result['reviews'] ?? 0),
-            'href'            => $result['href'] ?? $this->url->link('product/product', 'language=' . $this->config->get('config_language') . '&product_id=' . $result['id']),
-            'text_tax'        => $this->language->get('text_tax'),
-            'button_cart'     => $this->language->get('button_cart'),
-            'button_wishlist' => $this->language->get('button_wishlist'),
-            'button_compare'  => $this->language->get('button_compare'),
-            'cart'            => $this->url->link('common/cart.info', 'language=' . $this->config->get('config_language')),
-            'cart_add'        => '/' . $this->config->get('config_language') . '/carrinho/adicionar',
-            'wishlist_add'    => $this->url->link('account/wishlist.add', 'language=' . $this->config->get('config_language')),
-            'compare_add'     => $this->url->link('product/compare.add', 'language=' . $this->config->get('config_language'))
-        ];
-    }
-
-    /**
      * Alpha Engine: Registra visualização de produto.
      */
     public function addReport(int $productId, string $ip): void
@@ -384,7 +196,7 @@ class ProductRepository extends AbstractRepository implements BaseRepositoryInte
             : (int)$this->config->get('config_customer_group_id');
 
         /** @var \Alpha\Model\Domain\Repositories\PriceRepository $priceRepo */
-        $priceRepo = $this->registry->get('alpha_repository_factory')->get(PriceRepository::class);
+        $priceRepo = RepositoryFactory::getInstance()->get(PriceRepository::class);
         $priceStatements = $priceRepo->getPriceStatements($customerGroupId);
 
         /** @var \Alpha\Mappers\EntityMappers\ProductMapper $mapper */

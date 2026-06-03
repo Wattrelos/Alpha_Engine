@@ -5,7 +5,7 @@ namespace Alpha\Controller\Actions\Cart;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Psr\Http\Message\ResponseInterface as Response;
 use Alpha\Controller\Actions\ActionInterface;
-use Alpha\Support\Registry;
+use Psr\Container\ContainerInterface;
 use Alpha\Model\Domain\Repositories\PriceRepository;
 use Alpha\Model\Domain\Repositories\ProductOptionValueRepository;
 use Alpha\Mappers\EntityMappers\ProductMapper;
@@ -20,11 +20,11 @@ use Slim\Routing\RouteContext;
  */
 class CalculateVisitorCartAction implements ActionInterface
 {
-    private Registry $registry;
+    private ContainerInterface $container;
 
-    public function __construct(Registry $registry)
+    public function __construct(ContainerInterface $container)
     {
-        $this->registry = $registry;
+        $this->container = $container;
     }
 
     public function __invoke(Request $request, Response $response, array $args): Response
@@ -35,19 +35,16 @@ class CalculateVisitorCartAction implements ActionInterface
         $products = [];
         $subtotal = 0;
 
-        $repositoryFactory = $this->registry->get('alpha_repository_factory');
-        $mapperFactory = $this->registry->get('alpha_mapper_factory');
+        $priceRepository = \RepositoryFactory::getInstance()->get(PriceRepository::class);
+        $optionValueRepo = \RepositoryFactory::getInstance()->get(ProductOptionValueRepository::class);
+        $productMapper   = \MapperFactory::getInstance()->get(ProductMapper::class);
 
-        $priceRepository = $repositoryFactory->get(PriceRepository::class);
-        $productMapper = $mapperFactory->get(ProductMapper::class);
-        $optionValueRepo = $repositoryFactory->get(ProductOptionValueRepository::class);
-
-        $langId = (int)$this->registry->get('config')->get('config_language_id') ?: 2;
+        $langId = (int)$this->container->get('config')->get('config_language_id') ?: 2;
         $storeId = 0;
         $customerGroupId = 1;
         $priceStatements = $priceRepository->getPriceStatements($customerGroupId);
 
-        $currency = $this->registry->get('currency');
+        $currency = $this->container->get('currency');
         $currencyCode = $_SESSION['currency'] ?? 'BRL';
 
         $productIds = array_unique(array_column($items, 'product_id'));
@@ -57,7 +54,7 @@ class CalculateVisitorCartAction implements ActionInterface
             $productDataMap = array_column($productDataMap, null, 'id');
         }
 
-        $imagePresenter = new ImagePresenter($this->registry);
+        $imagePresenter = new ImagePresenter($this->container->get('config')->get('config_url'));
 
         $routeContext = RouteContext::fromRequest($request);
         $routeParser = $routeContext->getRouteParser();
@@ -145,4 +142,3 @@ class CalculateVisitorCartAction implements ActionInterface
         return $response->withHeader('Content-Type', 'application/json');
     }
 }
-

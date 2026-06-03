@@ -7,20 +7,20 @@ use Psr\Http\Server\RequestHandlerInterface as Handler;
 use Psr\Http\Message\ResponseInterface as Response;
 use Slim\Routing\RouteContext;
 use Alpha\Model\Domain\Repositories\LanguageRepository;
-use Alpha\Support\Registry;
+use Psr\Container\ContainerInterface;
 use Twig\Environment as TwigEnvironment;
 
 class LanguageMiddleware
 {
     private LanguageRepository $languageRepository;
     private TwigEnvironment $twig;
-    private Registry $registry;
+    private ContainerInterface $container;
 
-    public function __construct(LanguageRepository $languageRepository, TwigEnvironment $twig, Registry $registry)
+    public function __construct(LanguageRepository $languageRepository, TwigEnvironment $twig, ContainerInterface $container)
     {
         $this->languageRepository = $languageRepository;
         $this->twig = $twig;
-        $this->registry = $registry;
+        $this->container = $container;
     }
 
     public function __invoke(Request $request, Handler $handler): Response
@@ -43,7 +43,7 @@ class LanguageMiddleware
         $langCode = $language ? $language->getCode() : 'pt-br';
 
         // Atualiza o tradutor no Registry
-        $translator = $this->registry->get('language');
+        $translator = $this->container->get('language');
         if ($translator && method_exists($translator, 'setCode')) {
             $translator->setCode($langCode);
         }
@@ -60,14 +60,11 @@ class LanguageMiddleware
         // Resolve a contagem do carrinho para o usuário (se logado)
         $cartCount = 0;
         if ($isLogged) {
-            $repositoryFactory = $this->registry->get('alpha_repository_factory');
-            if ($repositoryFactory) {
-                /** @var \Alpha\Model\Domain\Repositories\CartRepository $cartRepo */
-                $cartRepo = $repositoryFactory->get(\Alpha\Model\Domain\Repositories\CartRepository::class);
-                if ($cartRepo) {
-                    $cartRepo->initializeContext();
-                    $cartCount = $cartRepo->countProducts();
-                }
+            /** @var \Alpha\Model\Domain\Repositories\CartRepository $cartRepo */
+            $cartRepo = \RepositoryFactory::getInstance()->get(\Alpha\Model\Domain\Repositories\CartRepository::class);
+            if ($cartRepo) {
+                $cartRepo->initializeContext();
+                $cartCount = $cartRepo->countProducts();
             }
         }
         $this->twig->addGlobal('cart_count', $cartCount);
@@ -78,7 +75,7 @@ class LanguageMiddleware
             
             // Resolve a quantidade de itens na lista de desejos (wishlist) da sessão
             $wishlistCount = 0;
-            $session = $this->registry->get('session');
+            $session = $this->container->get('session');
             if ($session && isset($session->data['wishlist']) && is_array($session->data['wishlist'])) {
                 $wishlistCount = count($session->data['wishlist']);
             }
@@ -91,7 +88,7 @@ class LanguageMiddleware
             }
         }
 
-        $session = $this->registry->get('session');
+        $session = $this->container->get('session');
         $shippingCep = '';
         if ($session && !empty($session->data['shipping_cep'])) {
             $shippingCep = (string)$session->data['shipping_cep'];
@@ -141,5 +138,3 @@ class LanguageMiddleware
         return false;
     }
 }
-
-

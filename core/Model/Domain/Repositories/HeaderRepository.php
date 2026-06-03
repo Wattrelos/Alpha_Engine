@@ -22,26 +22,16 @@ class HeaderRepository extends AbstractRepository implements BaseRepositoryInter
      */
     public function getHeaderData(): Collection
     {
-        // 1. Configuração de metadados do documento (Lógica de Domínio)
-        $this->document->setTitle($this->config->get('config_meta_title'));
-        $this->document->setDescription($this->config->get('config_meta_description'));
-        $this->document->setKeywords($this->config->get('config_meta_keyword'));
-
-        // 2. Agregação de dados para o template
+        // Alpha Engine (Slim Context): O Repositório deve retornar apenas dados brutos.
+        // Resolução de rotas, protocolo HTTP, meta tags no Document e Dicionários de Idioma
+        // foram delegados para os Controllers Slim e ViewRenderer (Twig).
         $data = [
-            'title'       => $this->document->getTitle(),
-            'description' => $this->document->getDescription(),
-            'keywords'    => $this->document->getKeywords(),
-            'links'       => $this->document->getLinks(),
-            'styles'      => $this->document->getStyles(),
-            'scripts'     => $this->document->getScripts('header'),
-            'lang'        => $this->language->get('code'),
-            'direction'   => $this->language->get('direction'),
+            'title'       => $this->config->get('config_meta_title') ?: $this->config->get('config_name'),
+            'description' => $this->config->get('config_meta_description'),
+            'keywords'    => $this->config->get('config_meta_keyword'),
             'name'        => $this->config->get('config_name'),
-            'base'        => $this->config->get('config_url'),
-            'home'        => $this->url->link('common/home', 'language=' . $this->config->get('config_language')),
-            'logo'        => $this->config->get('config_logo') ? HTTP_SERVER . 'image/' . $this->config->get('config_logo') : '',
-            'icon'        => $this->config->get('config_icon') ? HTTP_SERVER . 'image/' . $this->config->get('config_icon') : ''
+            'logo'        => $this->config->get('config_logo') ?: '',
+            'icon'        => $this->config->get('config_icon') ?: ''
         ];
 
         // 3. Busca de extensões de analytics ativas via Mapper

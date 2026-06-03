@@ -30,9 +30,9 @@ class OrderMapper extends BaseMapper
     /** @var OrderObserverInterface[] */
     private array $observers = [];
 
-    public function __construct($registry = null)
+    public function __construct($container = null)
     {
-        parent::__construct($registry);
+        parent::__construct($container);
     }
 
     /**

@@ -2,10 +2,9 @@
 
 namespace Alpha\Services\Shipping;
 
-use Alpha\Support\Registry;
+use Psr\Container\ContainerInterface;
 use Alpha\Model\Domain\Repositories\WeightClassRepository;
 use Alpha\Model\Domain\Repositories\GeoZoneRepository;
-use Alpha\Mappers\MapperFactory;
 
 /**
  * WeightBasedShippingService - Gerencia a lógica de cálculo para frete baseado em peso.
@@ -15,18 +14,17 @@ use Alpha\Mappers\MapperFactory;
  */
 class WeightBasedShippingService
 {
-    private Registry $registry;
+    private ContainerInterface $container;
     private WeightClassRepository $weightClassRepository;
     private GeoZoneRepository $geoZoneRepository;
 
-    public function __construct(Registry $registry)
+    public function __construct(ContainerInterface $container)
     {
-        $this->registry = $registry;
+        $this->container = $container;
         
-        /** @var MapperFactory $mapperFactory */
-        $mapperFactory = $registry->get('mapperFactory');
-        $this->weightClassRepository = $mapperFactory->get(WeightClassRepository::class);
-        $this->geoZoneRepository = $mapperFactory->get(GeoZoneRepository::class);
+        $repositoryFactory = \Alpha\Model\Domain\Repositories\RepositoryFactory::getInstance();
+        $this->weightClassRepository = $repositoryFactory->get(WeightClassRepository::class);
+        $this->geoZoneRepository = $repositoryFactory->get(GeoZoneRepository::class);
     }
 
     /**
@@ -39,10 +37,10 @@ class WeightBasedShippingService
      */
     public function getQuote(array $address, float $totalWeight, int $weightClassId): ?array
     {
-        $config = $this->registry->get('config');
-        $language = $this->registry->get('language');
-        $currency = $this->registry->get('currency');
-        $session = $this->registry->get('session');
+        $config = $this->container->get('config');
+        $language = $this->container->get('language');
+        $currency = $this->container->get('currency');
+        $session = $this->container->get('session');
 
         $language->load('extension/opencart/shipping/weight');
 
@@ -85,14 +83,14 @@ class WeightBasedShippingService
 
             // Se um custo foi estabelecido, adiciona esta zona geográfica como opção de frete
             if ((string)$cost != '') {
-                $weightText = $this->registry->get('weight')->format($normalizedWeight, $storeWeightClassId);
+                $weightText = $this->container->get('weight')->format($normalizedWeight, $storeWeightClassId);
                 
                 $quote_data['weight_' . $result['geo_zone_id']] = [
                     'code'         => 'weight.weight_' . $result['geo_zone_id'],
                     'title'        => $result['name'] . '  (' . $language->get('text_weight') . ' ' . $weightText . ')',
                     'cost'         => $cost,
                     'tax_class_id' => $config->get('shipping_weight_tax_class_id'),
-                    'text'         => $currency->format($this->registry->get('tax')->calculate($cost, $config->get('shipping_weight_tax_class_id'), $config->get('config_tax')), $session->data['currency'])
+                    'text'         => $currency->format($this->container->get('tax')->calculate($cost, $config->get('shipping_weight_tax_class_id'), $config->get('config_tax')), $session->data['currency'])
                 ];
             }
         }

@@ -58,9 +58,9 @@ class WishlistMapper extends BaseMapper {
      * @return void
      */
     public function deleteWishlist(int $customer_id, int $product_id, int $store_id = 0): void {
-        if ($store_id === 0 && $this->registry !== null) {
-            $store_id = (int)$this->registry->get('config')->get('config_store_id');
-        }
+        // Alpha Engine: Removido o acoplamento com o Registry legado.
+        // O store_id default (0) atende à loja principal. Em ambientes multi-loja,
+        // a Action chamadora (Controller) deve prover o store_id explicitamente.
 
         $query = (new QueryBuilder())
             ->delete($this->getFullTableName())

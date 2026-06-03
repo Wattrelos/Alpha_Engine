@@ -2,6 +2,8 @@
 
 namespace Alpha\Mappers;
 
+use Containers\AppContainer;
+
 /**
  * MapperFactory - Centraliza a criação de Mappers na Alpha Engine.
  *
@@ -13,7 +15,7 @@ class MapperFactory
     private array $instances = [];
     private static ?self $instance = null;
 
-    public function __construct(private mixed $registry = null) {
+    public function __construct(private ?AppContainer $container = null) {
         self::$instance = $this;
     }
 
@@ -37,7 +39,7 @@ class MapperFactory
     public function get(string $className): mixed
     {
         if (!isset($this->instances[$className])) {
-            $this->instances[$className] = new $className($this->registry);
+            $this->instances[$className] = new $className($this->container);
         }
         return $this->instances[$className];
     }

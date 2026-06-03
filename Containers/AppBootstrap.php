@@ -2,7 +2,6 @@
 
 namespace Containers;
 
-use Alpha\Support\Registry;
 use Alpha\Mappers\MapperFactory;
 use Alpha\Model\Domain\Repositories\RepositoryFactory;
 use Alpha\Model\Domain\Repositories\SettingRepository;
@@ -23,15 +22,6 @@ use Alpha\Model\Domain\Repositories\AddressRepository;
 use Alpha\Session\AlphaSessionHandler;
 use Alpha\Auth\Services\CustomerAuthService;
 use Alpha\Auth\Services\AdminAuthService;
-use Alpha\Support\Config;
-use Alpha\Support\Language;
-use Alpha\Support\Session;
-use Alpha\Support\Customer;
-use Alpha\Support\Tax;
-use Alpha\Support\Currency;
-use Alpha\Support\Weight;
-use Alpha\Support\Url;
-use Alpha\Support\Document;
 
 /**
  * AppBootstrap - Orquestrador de serviços e inicialização de dependências.
@@ -41,7 +31,6 @@ use Alpha\Support\Document;
  */
 class AppBootstrap
 {
-    private Registry $registry;
     private AppContainer $container;
     private array $configSettings = [];
     private string $languageCode = 'pt-br';
@@ -55,7 +44,6 @@ class AppBootstrap
 
     public function __construct()
     {
-        $this->registry = new Registry();
         $this->container = new AppContainer();
         $this->initializeServices();
     }
@@ -67,20 +55,20 @@ class AppBootstrap
 
     private function initializeServices(): void
     {
-        $mapperFactory = new MapperFactory($this->registry);
-        $repositoryFactory = new RepositoryFactory($mapperFactory, $this->registry);
+        $mapperFactory = new MapperFactory($this->container);
+        $repositoryFactory = new RepositoryFactory($mapperFactory, $this->container);
 
-        $this->registry->set('alpha_mapper_factory', $mapperFactory);
-        $this->registry->set('alpha_repository_factory', $repositoryFactory);
+        $this->container->bind('alpha_mapper_factory', $mapperFactory);
+        $this->container->bind('alpha_repository_factory', $repositoryFactory);
 
-        $settingRepository = new SettingRepository($mapperFactory, $this->registry);
-        $this->languageRepository = new LanguageRepository($mapperFactory, $this->registry);
-        $customerRepository = new CustomerRepository($mapperFactory, $this->registry);
-        $userRepository = new UserRepository($mapperFactory, $this->registry);
+        $settingRepository = new SettingRepository($mapperFactory, $this->container);
+        $this->languageRepository = new LanguageRepository($mapperFactory, $this->container);
+        $customerRepository = new CustomerRepository($mapperFactory, $this->container);
+        $userRepository = new UserRepository($mapperFactory, $this->container);
         $customerAuthService = new CustomerAuthService($customerRepository);
         $adminAuthService = new AdminAuthService($userRepository);
 
-        $sessionRepository = new SessionRepository($mapperFactory, $this->registry);
+        $sessionRepository = new SessionRepository($mapperFactory, $this->container);
         $sessionHandler = new AlphaSessionHandler($sessionRepository);
         session_set_save_handler($sessionHandler, true);
 
@@ -94,27 +82,20 @@ class AppBootstrap
         }
         $this->languageId = $this->language ? $this->language->getId() : 2;
 
-        // Injetando adaptadores no Registry
-        $this->registry->set('config', new Config(array_merge([
-            'config_customer_group_id' => 1,
-            'config_tax' => false,
-            'config_customer_price' => false,
-            'config_language' => $this->languageCode,
-            'config_language_id' => $this->languageId,
-        ], $this->configSettings)));
+        // Disponibiliza as configurações essenciais direto no Container PSR-11
+        $this->container->bind('configSettings', $this->configSettings);
+        $this->container->bind('languageCode', $this->languageCode);
+        $this->container->bind('languageId', $this->languageId);
 
-        $languageAdaptor = new Language($this->languageCode);
-        $this->registry->set('language', $languageAdaptor);
-        $this->registry->set('session', new Session());
-        $this->registry->set('customer', new Customer());
-        $this->registry->set('tax', new Tax($this->registry));
-        $this->registry->set('currency', new Currency($languageAdaptor));
-        $this->registry->set('weight', new Weight($this->registry));
-        $this->registry->set('url', new Url());
-        $this->registry->set('document', new Document());
+        // Vincula as chaves legadas utilizadas por Middlewares em transição
+        $this->container->bind('language', $this->language);
+        
+        $sessionMock = new \stdClass();
+        $sessionMock->data = []; // Evita erros de "property of non-object" no legado
+        $this->container->bind('session', $sessionMock);
 
         // Repositórios de Domínio
-        $this->categoryRepository = new CategoryRepository($mapperFactory, $this->registry);
+        $this->categoryRepository = new CategoryRepository($mapperFactory, $this->container);
         $productRepository = $repositoryFactory->get(ProductRepository::class);
         $this->seoUrlRepository = $repositoryFactory->get(SeoUrlRepository::class);
         $this->informationRepository = $repositoryFactory->get(InformationRepository::class);
@@ -144,15 +125,20 @@ class AppBootstrap
             ->bind(ManufacturerRepository::class, $manufacturerRepository)
             ->bind(AddressRepository::class, $addressRepository)
             ->bind(OrderReturnRepository::class, $orderReturnRepository)
-            ->bind(Registry::class, $this->registry);
-    }
-
-    public function getRegistry(): Registry
-    {
-        return $this->registry;
+            ->bind(MapperFactory::class, $mapperFactory)
+            ->bind(RepositoryFactory::class, $repositoryFactory);
     }
 
     public function getContainer(): AppContainer
+    {
+        return $this->container;
+    }
+
+    /**
+     * Alias de retrocompatibilidade para componentes que esperam um "Registry".
+     * Como o AppContainer implementa PSR-11 (get/has), ele atua perfeitamente no lugar do Registry legado.
+     */
+    public function getRegistry(): AppContainer
     {
         return $this->container;
     }

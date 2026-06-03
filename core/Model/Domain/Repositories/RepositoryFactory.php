@@ -3,7 +3,7 @@
 namespace Alpha\Model\Domain\Repositories;
 
 use Alpha\Mappers\MapperFactory;
-use Alpha\Support\Registry;
+use Containers\AppContainer;
 
 class RepositoryFactory
 {
@@ -11,7 +11,7 @@ class RepositoryFactory
     private static ?self $instance = null;
     private ?\Alpha\Support\Cache\CacheStrategyInterface $cache = null;
 
-    public function __construct(private MapperFactory $mapperFactory, private Registry $registry)
+    public function __construct(private MapperFactory $mapperFactory, private AppContainer $container)
     {
         self::$instance = $this;
         $this->cache = new \Alpha\Support\Cache\FilesystemCacheStrategy();
@@ -31,7 +31,7 @@ class RepositoryFactory
     public function get(string $className): mixed
     {
         if (!isset($this->instances[$className])) {
-            $this->instances[$className] = new $className($this->mapperFactory, $this->registry, $this->cache);
+            $this->instances[$className] = new $className($this->mapperFactory, $this->container, $this->cache);
         }
         return $this->instances[$className];
     }

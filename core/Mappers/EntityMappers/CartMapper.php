@@ -4,7 +4,6 @@ namespace Alpha\Mappers\EntityMappers;
 
 use Alpha\Mappers\BaseMapper;
 use Alpha\Model\DataAccessObject\QueryBuilder;
-use Alpha\Support\Registry;
 
 /**
  * Class CartMapper

@@ -7,7 +7,7 @@ use Alpha\Model\Domain\Repositories\CartRepository;
 use Alpha\Model\DataAccessObject\UnitOfWork;
 use Alpha\Model\Domain\InterfaceEntity;
 use Alpha\Mappers\MapperFactory;
-use Alpha\Support\Registry;
+use Containers\AppContainer;
 use Alpha\Model\Domain\Repositories\CouponRepository;
 
 /**
@@ -24,10 +24,10 @@ class OrderRepository extends AbstractRepository implements BaseRepositoryInterf
      */
     public function __construct(
         MapperFactory $mapperFactory,
-        Registry $registry,
+        ?AppContainer $container = null,
         ?\Alpha\Support\Cache\CacheStrategyInterface $cache = null
     ) {
-        parent::__construct($mapperFactory, $registry, $cache);
+        parent::__construct($mapperFactory, $container, $cache);
         $this->unitOfWork = new UnitOfWork();
         $this->mapperClass = OrderMapper::class;
     }
@@ -63,27 +63,6 @@ class OrderRepository extends AbstractRepository implements BaseRepositoryInterf
     }
 
     /**
-     * Cria um pedido a partir do estado atual da sessão do usuário.
-     * 
-     * @return int ID do pedido criado.
-     * @throws \Exception
-     */
-    public function createFromSession(): int {
-        // 1. Coleta e sanitização dos dados brutos do contexto da aplicação
-        $orderData = $this->collectDataFromContext();
-
-        // 2. Encapsulamento em um DTO (Isolamento da camada de dados)
-        $dto = new OrderDataDTO($orderData);
-
-        if (!$dto->isValid()) {
-            throw new \Exception('Alpha Engine: Tentativa de criar pedido com dados insuficientes na sessão.');
-        }
-
-        // 3. Persistência delegada
-        return $this->save($dto);
-    }
-
-    /**
      * Persiste o DTO de pedido no banco de dados através do Mapper.
      */
     public function save(OrderDataDTO $dto): int {
@@ -93,98 +72,13 @@ class OrderRepository extends AbstractRepository implements BaseRepositoryInterf
         return $mapper->insert($dto);
     }
 
-    /**
-     * Coleta informações do cliente, carrinho, endereços e totais do Registry.
-     */
-    private function collectDataFromContext(): array {
-        $session = $this->registry->get('session');
-        $customer = $this->registry->get('customer');
-        $config = $this->registry->get('config');
-
-        $data = [];
-
-        // Configurações Contextuais
-        $data['store_id'] = (int)$config->get('config_store_id');
-        $data['language_id'] = (int)$config->get('config_language_id');
-        $data['currency_id'] = (int)$config->get('config_currency_id');
-
-        // Dados do Cliente (Fallback para sessão se não logado)
-        $data['customer_id'] = (int)$customer->getId();
-        $data['customer_group_id'] = (int)$customer->getGroupId();
-        $data['firstname'] = $customer->getFirstName() ?: ($session->data['payment_address']['firstname'] ?? '');
-        $data['lastname'] = $customer->getLastName() ?: ($session->data['payment_address']['lastname'] ?? '');
-        $data['email'] = $customer->getEmail() ?: ($session->data['email'] ?? '');
-        $data['telephone'] = $customer->getTelephone() ?: ($session->data['telephone'] ?? '');
-
-        // Endereços e Métodos (Extraídos da sessão de checkout)
-        $payment_address = $session->data['payment_address'] ?? [];
-        $shipping_address = $session->data['shipping_address'] ?? [];
-
-        $data['payment_firstname'] = $payment_address['firstname'] ?? '';
-        $data['payment_lastname'] = $payment_address['lastname'] ?? '';
-        $data['payment_address_1'] = $payment_address['address_1'] ?? '';
-        $data['payment_city'] = $payment_address['city'] ?? '';
-        $data['payment_postcode'] = $payment_address['postcode'] ?? '';
-        $data['payment_country_id'] = (int)($payment_address['country_id'] ?? 0);
-        $data['payment_zone_id'] = (int)($payment_address['zone_id'] ?? 0);
-        $data['payment_method'] = $session->data['payment_method']['title'] ?? '';
-        $data['payment_code'] = $session->data['payment_method']['code'] ?? '';
-
-        $data['shipping_firstname'] = $shipping_address['firstname'] ?? '';
-        $data['shipping_lastname'] = $shipping_address['lastname'] ?? '';
-        $data['shipping_address_1'] = $shipping_address['address_1'] ?? '';
-        $data['shipping_city'] = $shipping_address['city'] ?? '';
-        $data['shipping_postcode'] = $shipping_address['postcode'] ?? '';
-        $data['shipping_country_id'] = (int)($shipping_address['country_id'] ?? 0);
-        $data['shipping_zone_id'] = (int)($shipping_address['zone_id'] ?? 0);
-        $data['shipping_method'] = $session->data['shipping_method']['title'] ?? '';
-        $data['shipping_code'] = $session->data['shipping_method']['code'] ?? '';
-
-        // Itens do Carrinho via CartRepository (garante hidratação completa com opções e descontos)
-        /** @var CartRepository $cartRepository */
-        $cartRepository = $this->registry->get('alpha_repository_factory')->get(CartRepository::class);
-        
-        $data['products'] = $cartRepository->getProducts();
-        $data['vouchers'] = $session->data['vouchers'] ?? [];
-        $data['totals'] = $session->data['totals'] ?? [];
-        $data['total'] = $cartRepository->getTotal();
-        $data['comment'] = $session->data['comment'] ?? '';
-
-        // Alpha Engine: Coleta de Cupom para rastreamento de marketing e histórico de uso
-        $coupon_code = $session->data['coupon'] ?? '';
-        $data['coupon_id'] = 0;
-        $data['coupon_amount'] = 0.0;
-
-        if ($coupon_code) {
-            $couponRepo = $this->registry->get('alpha_repository_factory')->get(CouponRepository::class);
-            $coupon = $couponRepo->findByCode($coupon_code);
-            
-            if ($coupon) {
-                $data['coupon_id'] = $coupon->getId();
-                
-                foreach ($data['totals'] as $total) {
-                    if ($total['code'] === 'coupon') {
-                        $data['coupon_amount'] = abs((float)$total['value']);
-                        break;
-                    }
-                }
-            }
-        }
-        
-        // Metadados de Auditoria
-        $data['ip'] = $this->registry->get('request')->server['REMOTE_ADDR'];
-        $data['user_agent'] = $this->registry->get('request')->server['HTTP_USER_AGENT'] ?? '';
-
-        return $data;
-    }
-
     // --- Legacy Bridges (account/order) ---
 
-    public function getOrder(int $order_id): array {
-        return $this->getMapper()->getOrderArray($order_id, (int)$this->customer->getId());
+    public function getOrder(int $order_id, int $customer_id = 0): array {
+        return $this->getMapper()->getOrderArray($order_id, $customer_id);
     }
 
-    public function getOrders(int $start = 0, int $limit = 20): array {
+    public function getOrders(int $customer_id, int $start = 0, int $limit = 20): array {
         if ($start < 0) {
             $start = 0;
         }
@@ -192,18 +86,18 @@ class OrderRepository extends AbstractRepository implements BaseRepositoryInterf
             $limit = 20;
         }
         return $this->getMapper()->getOrdersArray(
-            (int)$this->customer->getId(),
-            (int)$this->config->get('config_store_id'),
-            (int)$this->config->get('config_language_id'),
+            $customer_id,
+            $this->store_id,
+            $this->language_id,
             $start,
             $limit
         );
     }
 
-    public function getTotalOrders(): int {
+    public function getTotalOrders(int $customer_id): int {
         return $this->getMapper()->getTotalOrdersCount(
-            (int)$this->customer->getId(),
-            (int)$this->config->get('config_store_id')
+            $customer_id,
+            $this->store_id
         );
     }
 
@@ -228,7 +122,7 @@ class OrderRepository extends AbstractRepository implements BaseRepositoryInterf
     }
 
     public function getHistories(int $order_id): array {
-        return $this->getMapper()->getHistoriesArray($order_id, (int)$this->config->get('config_language_id'));
+        return $this->getMapper()->getHistoriesArray($order_id, $this->language_id);
     }
 
     public function getTotalHistories(int $order_id): int {

@@ -75,7 +75,7 @@ class CategoryRepository extends AbstractRepository implements BaseRepositoryInt
 
         // 2. Prime Cache de SEO: Pré-carrega TODAS as URLs Amigáveis para a RAM!
         $categoryIds = array_column($flatCategories, 'id');
-        $seoUrlRepository = $this->registry->get('alpha_repository_factory')->get(SeoUrlRepository::class);
+        $seoUrlRepository = \Alpha\Model\Domain\Repositories\RepositoryFactory::getInstance()->get(SeoUrlRepository::class);
         $seoUrlRepository->primeCache($categoryIds, 'category_id', $this->store_id, $this->language_id);
 
         // 3. Constrói a árvore de dependência relacional no PHP (Complexidade O(N))
@@ -130,182 +130,42 @@ class CategoryRepository extends AbstractRepository implements BaseRepositoryInt
             return new \Alpha\Model\DataTransferObject\ViewResponse([]); // Retorna vazio para engatilhar o erro 404
         }
 
-        // Carrega o arquivo de idiomas para o catálogo/categoria
-        $languageData = $this->loadLanguage('product/category');
-        $data = array_merge($categoryInfo, $languageData);
+        $data = $categoryInfo;
+        $data['description'] = html_entity_decode($categoryInfo['description'] ?? '', ENT_QUOTES, 'UTF-8');
 
-        
-        // 2. SEO e Metadados
-        $this->document->setTitle($categoryInfo['meta_title'] ?: $categoryInfo['name']);
-        $this->document->setDescription($categoryInfo['meta_description']);
-        $this->document->setKeywords($categoryInfo['meta_keyword']);
+        // 2. Breadcrumbs Brutos (Sem HTML ou roteamento físico)
+        $data['breadcrumbs'] = $this->mapperFactory->get(\Alpha\Mappers\EntityMappers\CategoryMapper::class)->getBreadcrumbs($categoryId, $this->language_id, $this->store_id);
 
-        // 3. Imagem da Categoria
-        if ($categoryInfo['image'] && is_file(DIR_IMAGE . html_entity_decode($categoryInfo['image'], ENT_QUOTES, 'UTF-8'))) {
-            $data['thumb'] = $this->registry->get('model_tool_image')->resize($categoryInfo['image'], $this->config->get('config_image_category_width'), $this->config->get('config_image_category_height'));
-        } else {
-            $data['thumb'] = '';
-        }
+        // 3. Subcategorias Brutas
+        $data['categories'] = $this->getCategories($categoryId);
 
-        $data['description'] = html_entity_decode($categoryInfo['description'], ENT_QUOTES, 'UTF-8');
-
-        // 3.5 Breadcrumbs Alpha Engine: Usando a tabela category_path
-        $data['breadcrumbs'] = [];
-        $data['breadcrumbs'][] = [
-            'text' => $this->language->get('text_home') ?: 'Home',
-            'href' => $this->url->link('common/home', 'language=' . $this->config->get('config_language'))
-        ];
-        $breadcrumbs = $this->mapperFactory->get(\Alpha\Mappers\EntityMappers\CategoryMapper::class)->getBreadcrumbs($categoryId, $this->language_id, $this->store_id);
-        foreach ($breadcrumbs as $crumb) {
-            $data['breadcrumbs'][] = ['text' => $crumb['name'], 'href' => $crumb['href']];
-        }
-
-        // 4. Subcategorias
-        $data['categories'] = [];
-        $subcategories = $this->getCategories($categoryId);
-        
-        foreach ($subcategories as $result) {
-            $data['categories'][] = [
-                'name' => $result['name'],
-                'href' => $this->url->link('product/category', 'language=' . $this->config->get('config_language') . '&path=' . $filterData['path'] . '_' . $result['id'])
-            ];
-        }
-
-        // 5. Otimização de Produtos via Repositório de Domínio (Fim do N+1 Queries)
+        // 4. Produtos via Repositório de Domínio (Fim do N+1 Queries)
         /** @var \Alpha\Model\Domain\Repositories\ProductRepository $productRepository */
-        $productRepository = $this->registry->get('alpha_repository_factory')->get(\Alpha\Model\Domain\Repositories\ProductRepository::class);
+        $productRepository = \Alpha\Model\Domain\Repositories\RepositoryFactory::getInstance()->get(\Alpha\Model\Domain\Repositories\ProductRepository::class);
         
         $productFilter = [
             'filter_category_id'   => $categoryId,
             'filter_sub_category'  => true,
-            'filter_filter'        => $filterData['filter_filter'],
+            'filter_filter'        => $filterData['filter_filter'] ?? null,
             'filter_categories'    => $filterData['categories'] ?? [],
             'filter_manufacturers' => $filterData['manufacturers'] ?? [],
             'filter_price_min'     => $filterData['price_min'] ?? null,
             'filter_price_max'     => $filterData['price_max'] ?? null,
             'filter_rating'        => $filterData['rating'] ?? null,
-            'sort'                 => $filterData['sort'],
-            'order'                => $filterData['order'],
-            'start'                => ($filterData['page'] - 1) * $filterData['limit'],
-            'limit'                => $filterData['limit']
+            'sort'                 => $filterData['sort'] ?? 'p.sort_order',
+            'order'                => $filterData['order'] ?? 'ASC',
+            'start'                => (($filterData['page'] ?? 1) - 1) * ($filterData['limit'] ?? 10),
+            'limit'                => $filterData['limit'] ?? 10
         ];
 
-        // Delega ao Repositório do Produto a resolução de loja, idioma e descontos
-        $rawProducts = $productRepository->getProducts($productFilter);
-        $data['products'] = [];
-        foreach ($rawProducts as $product) {
-            $data['products'][] = $productRepository->getProductThumbData($product);
-        }
+        $data['products'] = $productRepository->getProducts($productFilter);
         $data['product_total'] = $productRepository->getTotalProducts($productFilter);
 
-
-        // 6. Montagem para o componente visual de Paginação
-        $url = '';
-        if (isset($filterData['filter_filter'])) $url .= '&filter=' . $filterData['filter_filter'];
-        if (isset($filterData['sort'])) $url .= '&sort=' . $filterData['sort'];
-        if (isset($filterData['order'])) $url .= '&order=' . $filterData['order'];
-        if (isset($filterData['limit'])) $url .= '&limit=' . $filterData['limit'];
-
-        // Injetar filtros facetados na URL da paginação
-        if (!empty($filterData['categories'])) {
-            foreach ($filterData['categories'] as $catId) {
-                $url .= '&category[]=' . (int)$catId;
-            }
-        }
-        if (!empty($filterData['manufacturers'])) {
-            foreach ($filterData['manufacturers'] as $brandId) {
-                $url .= '&manufacturer[]=' . (int)$brandId;
-            }
-        }
-        if (!empty($filterData['price_min'])) $url .= '&price_min=' . urlencode($filterData['price_min']);
-        if (!empty($filterData['price_max'])) $url .= '&price_max=' . urlencode($filterData['price_max']);
-        if (!empty($filterData['rating'])) $url .= '&rating=' . urlencode($filterData['rating']);
-
-        $langCode = $this->config->get('config_language') ?: 'pt-br';
-        $categoryPath = '/' . $langCode . '/categoria/' . $filterData['path'];
-
-        $data['pagination'] = [
-            'total' => $data['product_total'],
-            'page'  => $filterData['page'],
-            'limit' => $filterData['limit'],
-            'url'   => $categoryPath . '?' . ltrim($url . '&page={page}', '&')
-        ];
-
-        // URL base para os selects de ordenação e limite
-        $baseUrl = '';
-        if (isset($filterData['filter_filter'])) $baseUrl .= '&filter=' . $filterData['filter_filter'];
-
-        // Injetar filtros facetados também no baseUrl para selects (ordenar e exibir)
-        if (!empty($filterData['categories'])) {
-            foreach ($filterData['categories'] as $catId) {
-                $baseUrl .= '&category[]=' . (int)$catId;
-            }
-        }
-        if (!empty($filterData['manufacturers'])) {
-            foreach ($filterData['manufacturers'] as $brandId) {
-                $baseUrl .= '&manufacturer[]=' . (int)$brandId;
-            }
-        }
-        if (!empty($filterData['price_min'])) $baseUrl .= '&price_min=' . urlencode($filterData['price_min']);
-        if (!empty($filterData['price_max'])) $baseUrl .= '&price_max=' . urlencode($filterData['price_max']);
-        if (!empty($filterData['rating'])) $baseUrl .= '&rating=' . urlencode($filterData['rating']);
-
-        // Limits
-        $data['limits'] = [];
-        $limits = array_unique([$this->config->get('config_pagination_catalog') ?: 10, 25, 50, 75, 100]);
-        sort($limits);
-        foreach($limits as $value) {
-            $data['limits'][] = [
-                'text'  => $value,
-                'value' => $value,
-                'href'  => $categoryPath . '?' . ltrim($baseUrl . '&limit=' . $value, '&')
-            ];
-        }
-
-        // Sorts
-        $urlWithLimit = $baseUrl . '&limit=' . $filterData['limit'];
-        $data['sorts'] = [];
-        $data['sorts'][] = [
-            'text'  => $this->language->get('text_default') ?: 'Padrão',
-            'value' => 'p.sort_order-ASC',
-            'href'  => $categoryPath . '?' . ltrim('&sort=p.sort_order&order=ASC' . $urlWithLimit, '&')
-        ];
-        $data['sorts'][] = [
-            'text'  => $this->language->get('text_name_asc') ?: 'Nome (A - Z)',
-            'value' => 'pd.name-ASC',
-            'href'  => $categoryPath . '?' . ltrim('&sort=pd.name&order=ASC' . $urlWithLimit, '&')
-        ];
-        $data['sorts'][] = [
-            'text'  => $this->language->get('text_name_desc') ?: 'Nome (Z - A)',
-            'value' => 'pd.name-DESC',
-            'href'  => $categoryPath . '?' . ltrim('&sort=pd.name&order=DESC' . $urlWithLimit, '&')
-        ];
-        $data['sorts'][] = [
-            'text'  => $this->language->get('text_price_asc') ?: 'Preço (Menor > Maior)',
-            'value' => 'p.price-ASC',
-            'href'  => $categoryPath . '?' . ltrim('&sort=p.price&order=ASC' . $urlWithLimit, '&')
-        ];
-        $data['sorts'][] = [
-            'text'  => $this->language->get('text_price_desc') ?: 'Preço (Maior > Menor)',
-            'value' => 'p.price-DESC',
-            'href'  => $categoryPath . '?' . ltrim('&sort=p.price&order=DESC' . $urlWithLimit, '&')
-        ];
-        $data['sorts'][] = [
-            'text'  => $this->language->get('text_model_asc') ?: 'Modelo (A - Z)',
-            'value' => 'p.model-ASC',
-            'href'  => $categoryPath . '?' . ltrim('&sort=p.model&order=ASC' . $urlWithLimit, '&')
-        ];
-        $data['sorts'][] = [
-            'text'  => $this->language->get('text_model_desc') ?: 'Modelo (Z - A)',
-            'value' => 'p.model-DESC',
-            'href'  => $categoryPath . '?' . ltrim('&sort=p.model&order=DESC' . $urlWithLimit, '&')
-        ];
-
-
-        // Current filters for view
-        $data['sort']  = $filterData['sort'];
-        $data['order'] = $filterData['order'];
-        $data['limit'] = $filterData['limit'];
+        // Parâmetros estritos de exibição
+        $data['sort']  = $filterData['sort'] ?? 'p.sort_order';
+        $data['order'] = $filterData['order'] ?? 'ASC';
+        $data['limit'] = $filterData['limit'] ?? 10;
+        $data['page']  = $filterData['page'] ?? 1;
 
         return new \Alpha\Model\DataTransferObject\ViewResponse($data);
     }
@@ -389,11 +249,8 @@ class CategoryRepository extends AbstractRepository implements BaseRepositoryInt
         }
 
         $langCode = 'pt-br';
-        if ($this->registry && method_exists($this->registry, 'get')) {
-            $config = $this->registry->get('config');
-            if ($config) {
-                $langCode = $config->get('config_language') ?: 'pt-br';
-            }
+        if ($this->config) {
+            $langCode = $this->config->get('config_language') ?: 'pt-br';
         }
 
         return '/index.php?route=product/category&language=' . $langCode . '&path=' . $row['id'];

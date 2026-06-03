@@ -20,7 +20,7 @@ class SubscriptionMapper extends BaseMapper
      */
     public function getSubscriptions(array $data): array
     {
-        $languageId = $this->registry ? (int)$this->registry->get('config')->get('config_language_id') : 1;
+        $languageId = $this->container ? (int)$this->container->get('config')->get('config_language_id') : 1;
         
         $query = (new QueryBuilder())
             ->from(DB_PREFIX . "subscription", "s")

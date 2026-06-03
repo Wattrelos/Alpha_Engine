@@ -1,8 +1,6 @@
 <?php
 namespace Alpha\Support\Presenters;
 
-use Alpha\Support\Registry;
-
 /**
  * ImagePresenter
  * 
@@ -11,11 +9,19 @@ use Alpha\Support\Registry;
  */
 class ImagePresenter 
 {
-    private Registry $registry;
+    private string $baseUrl;
 
-    public function __construct(Registry $registry)
+    public function __construct(mixed $registryOrBaseUrl = null)
     {
-        $this->registry = $registry;
+        if (is_string($registryOrBaseUrl)) {
+            $this->baseUrl = $registryOrBaseUrl;
+        } elseif (is_object($registryOrBaseUrl) && method_exists($registryOrBaseUrl, 'get') && $registryOrBaseUrl->get('config')) {
+            // Legacy Bridge: Mantém compatibilidade caso injetado via controller antigo
+            $this->baseUrl = $registryOrBaseUrl->get('config')->get('config_url');
+        } else {
+            // Alpha Engine Standalone
+            $this->baseUrl = defined('HTTPS_SERVER') ? HTTPS_SERVER : (defined('HTTP_SERVER') ? HTTP_SERVER : '/');
+        }
     }
 
     /**
@@ -53,7 +59,7 @@ class ImagePresenter
             [$width_orig, $height_orig, $image_type] = getimagesize(DIR_IMAGE . $image_old);
 
             if (!in_array($image_type, [IMAGETYPE_PNG, IMAGETYPE_JPEG, IMAGETYPE_GIF, IMAGETYPE_WEBP])) {
-                return $this->registry->get('config')->get('config_url') . 'image/' . $image_old;
+                return $this->baseUrl . 'image/' . $image_old;
             }
 
             $path = '';
@@ -82,6 +88,6 @@ class ImagePresenter
 
         $image_new = str_replace(' ', '%20', $image_new);
 
-        return $this->registry->get('config')->get('config_url') . 'image/' . $image_new;
+        return $this->baseUrl . 'image/' . $image_new;
     }
 }

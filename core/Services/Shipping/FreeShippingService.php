@@ -2,7 +2,7 @@
 
 namespace Alpha\Services\Shipping;
 
-use Alpha\Support\Registry;
+use Psr\Container\ContainerInterface;
 
 /**
  * FreeShippingService - Gerencia a lógica de cálculo para o método de frete grátis.
@@ -12,11 +12,11 @@ use Alpha\Support\Registry;
  */
 class FreeShippingService
 {
-    private Registry $registry;
+    private ContainerInterface $container;
 
-    public function __construct(Registry $registry)
+    public function __construct(ContainerInterface $container)
     {
-        $this->registry = $registry;
+        $this->container = $container;
     }
 
     /**
@@ -28,10 +28,10 @@ class FreeShippingService
      */
     public function getQuote(array $address, float $cartTotal): ?array
     {
-        $config = $this->registry->get('config');
-        $language = $this->registry->get('language');
-        $currency = $this->registry->get('currency');
-        $session = $this->registry->get('session');
+        $config = $this->container->get('config');
+        $language = $this->container->get('language');
+        $currency = $this->container->get('currency');
+        $session = $this->container->get('session');
 
         // Regra Alpha Engine: Verifica o valor mínimo para frete grátis
         $minTotal = (float)$config->get('shipping_free_total');

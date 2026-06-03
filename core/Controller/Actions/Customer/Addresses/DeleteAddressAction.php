@@ -6,7 +6,7 @@ namespace Alpha\Controller\Actions\Customer\Addresses;
 
 use Alpha\Controller\Actions\ActionInterface;
 use Alpha\Model\Domain\Repositories\AddressRepository;
-use Alpha\Support\Registry;
+use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Psr\Http\Message\ResponseInterface as Response;
 use Slim\Routing\RouteContext;
@@ -23,7 +23,7 @@ class DeleteAddressAction implements ActionInterface
 {
     public function __construct(
         private readonly AddressRepository $addressRepository,
-        private readonly Registry          $registry,
+        private readonly ContainerInterface $container,
     ) {}
 
     public function __invoke(Request $request, Response $response, array $args): Response
@@ -35,7 +35,7 @@ class DeleteAddressAction implements ActionInterface
         $backUrl = $routeParser->urlFor('account.addresses', ['lang' => $lang]);
 
         // ── Segurança extra (SessionMiddleware já protege a rota) ─────────
-        $customer = $this->registry->get('customer');
+        $customer = $this->container->get('customer');
         if (!$customer || !$customer->isLogged()) {
             return $response
                 ->withHeader('Location', '/' . $lang . '/login')

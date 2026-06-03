@@ -3,7 +3,7 @@
 namespace Alpha\Controller;
 
 use Opencart\System\Engine\Controller;
-use Alpha\Support\Registry;
+use Opencart\System\Engine\Registry;
 use Alpha\Mappers\MapperFactory;
 use Alpha\Model\Domain\Repositories\RepositoryFactory;
 use Alpha\View\ViewRenderer;
@@ -39,7 +39,7 @@ abstract class BaseController extends Controller
                 $this->registry->set('layout', $this->getRepository(\Alpha\Model\Domain\Repositories\LayoutRepository::class));
             } else {
                 // Mock fallback para desobstruir o layout e não quebrar a página enquanto a classe não existe
-                $this->registry->set('layout', new class($this->registry->get('document')) {
+                $this->registry->set('layout', new class($this->document) {
                     private $document;
                     public function __construct($document) { $this->document = $document; }
                     public function getModulesByRoute(string $route, string $type): array { return []; }
@@ -59,11 +59,7 @@ abstract class BaseController extends Controller
      */
     protected function getRepository(string $class): mixed
     {
-        $factory = $this->registry->has('repositoryFactory') 
-            ? $this->registry->get('repositoryFactory') 
-            : RepositoryFactory::getInstance();
-            
-        return $factory->get($class);
+        return RepositoryFactory::getInstance()->get($class);
     }
 
     /**
@@ -74,11 +70,7 @@ abstract class BaseController extends Controller
      */
     protected function getMapper(string $class): mixed
     {
-        $factory = $this->registry->has('mapperFactory') 
-            ? $this->registry->get('mapperFactory') 
-            : MapperFactory::getInstance();
-
-        return $factory->get($class);
+        return MapperFactory::getInstance()->get($class);
     }
 
     /**
@@ -88,7 +80,8 @@ abstract class BaseController extends Controller
      */
     protected function getImagePresenter(): \Alpha\Support\Presenters\ImagePresenter
     {
-        return new \Alpha\Support\Presenters\ImagePresenter($this->registry);
+        $url = $this->config ? (string)$this->config->get('config_url') : '';
+        return new \Alpha\Support\Presenters\ImagePresenter($url);
     }
 
     /**
@@ -138,7 +131,7 @@ abstract class BaseController extends Controller
     protected function renderFragment(string $cacheKey, callable $generator, int $ttl = 3600): string
     {
         // Obtém o driver de Cache Alpha (se definido) ou cai pro nativo do OpenCart
-        $cache = $this->registry->has('alpha_cache') ? $this->registry->get('alpha_cache') : $this->registry->get('cache');
+        $cache = $this->registry->has('alpha_cache') ? $this->alpha_cache : $this->cache;
 
         // Garante o isolamento do cache por loja e idioma para não misturar moedas/traduções
         $namespacedKey = sprintf('%s.s%d.l%d', $cacheKey, $this->storeId, $this->languageId);
@@ -168,7 +161,7 @@ abstract class BaseController extends Controller
      */
     protected function remember(string $cacheKey, callable $generator, int $ttl = 3600): mixed
     {
-        $cache = $this->registry->has('alpha_cache') ? $this->registry->get('alpha_cache') : $this->registry->get('cache');
+        $cache = $this->registry->has('alpha_cache') ? $this->alpha_cache : $this->cache;
         $namespacedKey = sprintf('%s.s%d.l%d', $cacheKey, $this->storeId, $this->languageId);
 
         $output = $cache->get($namespacedKey);
@@ -202,7 +195,7 @@ abstract class BaseController extends Controller
         $cacheKey = sprintf('layout_pos_v2.%s.%s.c%s.cg%d', str_replace(['/', '.'], '_', $route), $position, $currencyCode, $customerGroupId);
 
         return $this->remember($cacheKey, function() use ($route, $position) {
-            $layoutModules = $this->registry->get('layout')->getModulesForRoute($route);
+            $layoutModules = $this->layout->getModulesForRoute($route);
             
             $modules = $layoutModules[$position] ?? [];
             $renderedModules = [];

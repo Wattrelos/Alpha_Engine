@@ -48,9 +48,7 @@ class StoreMapper extends BaseMapper
     public function getStores(): array
     {
         $cache_key = 'store.all';
-        $cache = $this->registry ? $this->registry->get('cache') : null;
-        
-        $store_data = $cache ? $cache->get($cache_key) : null;
+        $store_data = $this->cache ? $this->cache->get($cache_key) : null;
 
         if (!$store_data) {
             $query = (new QueryBuilder())
@@ -59,7 +57,7 @@ class StoreMapper extends BaseMapper
                 ->select('*, id AS store_id');
 
             $store_data = $this->dao->executeQuery($query);
-            if ($cache) $cache->set($cache_key, $store_data);
+            if ($this->cache) $this->cache->set($cache_key, $store_data);
         }
 
         return $store_data;

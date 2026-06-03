@@ -1,6 +1,6 @@
 <?php
 
-namespace Alpha\Model\Domain\Entities\Geo\Supplier;
+namespace Alpha\Model\Domain\Entities\Supplier;
 
 use Alpha\Model\Domain\BaseEntity;
 use Alpha\Model\Domain\Attributes\ManyToOne;
@@ -8,7 +8,7 @@ use Alpha\Model\Domain\Entities\Geo\Country;
 use Alpha\Model\Domain\Entities\Geo\Zone;
 use Alpha\Model\Domain\Entities\Geo\City;
 
-class Address extends BaseEntity
+class Addresses extends BaseEntity
 {
     public const TABLE_NAME = 'agsc_supplier_addresses';
 

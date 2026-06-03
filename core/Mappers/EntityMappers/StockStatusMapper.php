@@ -21,7 +21,7 @@ class StockStatusMapper extends BaseMapper {
      * @return array|null
      */
     public function getStockStatus(int $stock_status_id): ?array {
-        $language_id = (int)$this->registry->get('config')->get('config_language_id');
+        $language_id = (int)$this->container->get('config')->get('config_language_id');
         
         $query = (new QueryBuilder())
             ->select('*')

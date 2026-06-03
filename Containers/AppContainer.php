@@ -24,7 +24,7 @@ class AppContainer implements \Psr\Container\ContainerInterface
      */
     public function has(string $id): bool
     {
-        if (isset($this->bindings[$id])) {
+        if (array_key_exists($id, $this->bindings)) {
             return true;
         }
 
@@ -45,7 +45,7 @@ class AppContainer implements \Psr\Container\ContainerInterface
      * Registry de serviços disponíveis para injeção automática.
      * A chave é o FQCN da classe ou interface (ex: Twig\Environment::class).
      *
-     * @var array<string, object>
+     * @var array<string, mixed>
      */
     private array $bindings = [];
 
@@ -53,15 +53,17 @@ class AppContainer implements \Psr\Container\ContainerInterface
      * Registra um serviço disponível para injeção.
      * Interface fluente: $container->bind(...)->bind(...)
      */
-    public function bind(string $type, object $instance): self
+    public function bind(string $type, mixed $instance): self
     {
         $this->bindings[$type] = $instance;
 
         // Registra também pelas interfaces implementadas pelo serviço,
         // permitindo que actions tipar por interface em vez de classe concreta
-        foreach (class_implements($instance) as $interface) {
-            if (!isset($this->bindings[$interface])) {
-                $this->bindings[$interface] = $instance;
+        if (is_object($instance)) {
+            foreach (class_implements($instance) as $interface) {
+                if (!array_key_exists($interface, $this->bindings)) {
+                    $this->bindings[$interface] = $instance;
+                }
             }
         }
 
@@ -79,9 +81,9 @@ class AppContainer implements \Psr\Container\ContainerInterface
      *
      * @throws RuntimeException
      */
-    public function get(string $className): object
+    public function get(string $className): mixed
     {
-        if (isset($this->bindings[$className])) {
+        if (array_key_exists($className, $this->bindings)) {
             return $this->bindings[$className];
         }
 
@@ -139,7 +141,7 @@ class AppContainer implements \Psr\Container\ContainerInterface
             $type     = $param->getType();
             $typeName = $type?->getName();
 
-            if ($typeName && isset($this->bindings[$typeName])) {
+            if ($typeName && array_key_exists($typeName, $this->bindings)) {
                 // Dependência encontrada no registry
                 $args[] = $this->bindings[$typeName];
             } elseif ($param->isDefaultValueAvailable()) {
