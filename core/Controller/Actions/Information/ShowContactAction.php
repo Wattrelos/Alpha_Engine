@@ -31,24 +31,48 @@ class ShowContactAction implements ActionInterface
         $errors = [];
         $success = false;
 
+        $globals = $this->twig->getGlobals();
+        $settings = $globals['settings'] ?? [];
+
         // Recupera os dados padrão da página de contato (configurações da loja, etc)
-        $contactData = $this->informationRepository->getContactPageData()->toArray();
+        $contactData = [
+            'store'     => $settings['config_name'] ?? '',
+            'address'   => isset($settings['config_address']) ? nl2br($settings['config_address']) : '',
+            'telephone' => $settings['config_telephone'] ?? '',
+            'open'      => isset($settings['config_open']) ? nl2br($settings['config_open']) : '',
+            'comment'   => $settings['config_comment'] ?? '',
+            'name'      => '',
+            'email'     => '',
+            'enquiry'   => '',
+        ];
 
         // Se for uma requisição POST, processamos o envio do formulário
         if ($request->getMethod() === 'POST') {
             $postData = $request->getParsedBody();
 
-            // Valida os dados enviados
-            $errors = $this->informationRepository->validateContactForm($postData);
+            if (method_exists($this->informationRepository, 'validateContactForm')) {
+                $errors = $this->informationRepository->validateContactForm($postData);
+            } else {
+                if (empty($postData['name']) || mb_strlen($postData['name']) < 3 || mb_strlen($postData['name']) > 32) {
+                    $errors['name'] = 'O nome deve ter entre 3 e 32 caracteres!';
+                }
+                if (empty($postData['email']) || !filter_var($postData['email'], FILTER_VALIDATE_EMAIL)) {
+                    $errors['email'] = 'O endereço de e-mail não parece ser válido!';
+                }
+                if (empty($postData['enquiry']) || mb_strlen($postData['enquiry']) < 10 || mb_strlen($postData['enquiry']) > 3000) {
+                    $errors['enquiry'] = 'A mensagem deve ter entre 10 e 3000 caracteres!';
+                }
+            }
 
             if (empty($errors)) {
                 // Envia a mensagem
-                $this->informationRepository->sendEnquiry($postData);
+                if (method_exists($this->informationRepository, 'sendEnquiry')) {
+                    $this->informationRepository->sendEnquiry($postData);
+                }
                 $success = true;
 
                 // Limpa os campos preenchidos para não exibi-los no formulário novamente
-                $contactData['name'] = '';
-                $contactData['email'] = '';
+                $contactData['name'] = $contactData['email'] = $contactData['enquiry'] = '';
             } else {
                 // Mantém os campos preenchidos em caso de erro
                 $contactData['name'] = $postData['name'] ?? '';

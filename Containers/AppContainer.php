@@ -144,6 +144,12 @@ class AppContainer implements \Psr\Container\ContainerInterface
             if ($typeName && array_key_exists($typeName, $this->bindings)) {
                 // Dependência encontrada no registry
                 $args[] = $this->bindings[$typeName];
+            } elseif ($typeName === \Psr\Container\ContainerInterface::class) {
+                // Auto-injeção do próprio container (PSR-11)
+                $args[] = $this;
+            } elseif ($typeName && str_contains($typeName, '\\Repositories\\') && class_exists('RepositoryFactory')) {
+                // Fallback inteligente: resolve Repositórios não mapeados via RepositoryFactory
+                $args[] = \RepositoryFactory::getInstance()->get($typeName);
             } elseif ($param->isDefaultValueAvailable()) {
                 // Parâmetro opcional: usa o valor padrão declarado na assinatura
                 $args[] = $param->getDefaultValue();

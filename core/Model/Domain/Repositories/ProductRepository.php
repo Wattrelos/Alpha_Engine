@@ -22,9 +22,7 @@ class ProductRepository extends AbstractRepository implements BaseRepositoryInte
      */
     public function getProduct(int $productId): ?array
     {
-        $customerGroupId = $this->customer->isLogged() 
-            ? (int)$this->customer->getGroupId() 
-            : (int)$this->config->get('config_customer_group_id');
+        $customerGroupId = $this->getCustomerGroupId();
 
         // CacheStrategy: Variação por ID, Idioma, Loja e Grupo de Desconto
         $cacheKey = "product.{$productId}.{$this->language_id}.{$this->store_id}.{$customerGroupId}";
@@ -67,7 +65,7 @@ class ProductRepository extends AbstractRepository implements BaseRepositoryInte
         /** @var \Alpha\Mappers\EntityMappers\ProductMapper $mapper */
         $mapper = $this->mapperFactory->get(ProductMapper::class);
         $languageId = $this->language_id;
-        $customerGroupId = $this->customer->isLogged() ? (int)$this->customer->getGroupId() : (int)$this->config->get('config_customer_group_id');
+        $customerGroupId = $this->getCustomerGroupId();
 
         $data = $product_info;
 
@@ -75,7 +73,7 @@ class ProductRepository extends AbstractRepository implements BaseRepositoryInte
         $data['images'] = $mapper->getImages($productId);
 
         // Regra de Negócio: Ocultar preços se configurado para visitantes
-        $showPrice = $this->customer->isLogged() || !$this->config->get('config_customer_price');
+        $showPrice = $this->shouldShowPrice();
         if (!$showPrice) {
             $data['price']   = false;
             $data['special'] = false;
@@ -191,9 +189,7 @@ class ProductRepository extends AbstractRepository implements BaseRepositoryInte
      */
     public function getProducts(array $filterData): array
     {
-        $customerGroupId = $this->customer->isLogged() 
-            ? (int)$this->customer->getGroupId() 
-            : (int)$this->config->get('config_customer_group_id');
+        $customerGroupId = $this->getCustomerGroupId();
 
         /** @var \Alpha\Model\Domain\Repositories\PriceRepository $priceRepo */
         $priceRepo = RepositoryFactory::getInstance()->get(PriceRepository::class);
@@ -251,5 +247,47 @@ class ProductRepository extends AbstractRepository implements BaseRepositoryInte
     {
         $results = $this->mapperFactory->get(ProductMapper::class)->search($criteria);
         return $results[0] ?? null;
+    }
+
+    /**
+     * Alpha Engine: Fallback seguro para verificação de login do cliente (Runtime Híbrido)
+     */
+    private function isCustomerLogged(): bool
+    {
+        return $this->customer && method_exists($this->customer, 'isLogged') && $this->customer->isLogged();
+    }
+
+    /**
+     * Alpha Engine: Fallback seguro para resgatar o grupo do cliente (Runtime Híbrido)
+     */
+    private function getCustomerGroupId(): int
+    {
+        if ($this->isCustomerLogged()) {
+            return (int)$this->customer->getGroupId();
+        }
+        if (isset($this->configSettings) && isset($this->configSettings['config_customer_group_id'])) {
+            return (int)$this->configSettings['config_customer_group_id'];
+        }
+        if (isset($this->config) && $this->config && method_exists($this->config, 'get')) {
+            return (int)$this->config->get('config_customer_group_id');
+        }
+        return 1;
+    }
+
+    /**
+     * Alpha Engine: Fallback seguro para resgatar configuração de exibição de preço
+     */
+    private function shouldShowPrice(): bool
+    {
+        if ($this->isCustomerLogged()) {
+            return true;
+        }
+        if (isset($this->configSettings) && isset($this->configSettings['config_customer_price'])) {
+            return !$this->configSettings['config_customer_price'];
+        }
+        if (isset($this->config) && $this->config && method_exists($this->config, 'get')) {
+            return !$this->config->get('config_customer_price');
+        }
+        return true;
     }
 }
