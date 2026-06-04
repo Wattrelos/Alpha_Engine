@@ -31,16 +31,16 @@ class ShowContactAction implements ActionInterface
         $errors = [];
         $success = false;
 
-        $globals = $this->twig->getGlobals();
-        $settings = $globals['settings'] ?? [];
+        // Recupera as configurações de contato formatadas e cacheadas via repositório
+        $storeData = $this->informationRepository->getContactSettings();
 
         // Recupera os dados padrão da página de contato (configurações da loja, etc)
         $contactData = [
-            'store'     => $settings['config_name'] ?? '',
-            'address'   => isset($settings['config_address']) ? nl2br($settings['config_address']) : '',
-            'telephone' => $settings['config_telephone'] ?? '',
-            'open'      => isset($settings['config_open']) ? nl2br($settings['config_open']) : '',
-            'comment'   => $settings['config_comment'] ?? '',
+            'store'     => $storeData['name'] ?? '',
+            'address'   => isset($storeData['address']) ? nl2br($storeData['address']) : '',
+            'telephone' => $storeData['telephone'] ?? '',
+            'open'      => isset($storeData['open']) ? nl2br($storeData['open']) : '',
+            'comment'   => $storeData['raw']['comment'] ?? '',
             'name'      => '',
             'email'     => '',
             'enquiry'   => '',
@@ -50,25 +50,11 @@ class ShowContactAction implements ActionInterface
         if ($request->getMethod() === 'POST') {
             $postData = $request->getParsedBody();
 
-            if (method_exists($this->informationRepository, 'validateContactForm')) {
-                $errors = $this->informationRepository->validateContactForm($postData);
-            } else {
-                if (empty($postData['name']) || mb_strlen($postData['name']) < 3 || mb_strlen($postData['name']) > 32) {
-                    $errors['name'] = 'O nome deve ter entre 3 e 32 caracteres!';
-                }
-                if (empty($postData['email']) || !filter_var($postData['email'], FILTER_VALIDATE_EMAIL)) {
-                    $errors['email'] = 'O endereço de e-mail não parece ser válido!';
-                }
-                if (empty($postData['enquiry']) || mb_strlen($postData['enquiry']) < 10 || mb_strlen($postData['enquiry']) > 3000) {
-                    $errors['enquiry'] = 'A mensagem deve ter entre 10 e 3000 caracteres!';
-                }
-            }
+            $errors = $this->informationRepository->validateContactForm($postData);
 
             if (empty($errors)) {
                 // Envia a mensagem
-                if (method_exists($this->informationRepository, 'sendEnquiry')) {
-                    $this->informationRepository->sendEnquiry($postData);
-                }
+                $this->informationRepository->sendEnquiry($postData);
                 $success = true;
 
                 // Limpa os campos preenchidos para não exibi-los no formulário novamente
@@ -106,7 +92,8 @@ class ShowContactAction implements ActionInterface
             'seo'         => $seoData,
             'errors'      => $errors,
             'success'     => $success,
-            'action'      => $routeParser->urlFor('contact', ['lang' => $lang])
+            'action'      => $routeParser->urlFor('contact', ['lang' => $lang]),
+            'store'       => $storeData
         ]);
 
         $html = $this->twig->render('pages/information/contact.twig', $templateData);

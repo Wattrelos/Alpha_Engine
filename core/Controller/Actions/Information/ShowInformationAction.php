@@ -37,7 +37,7 @@ class ShowInformationAction implements ActionInterface
             $informationId = (int)$slug;
         } else {
             // Resolve via seo_url
-            $queryStr = $this->seoRepository->getQueryByKeyword($slug, 0, $languageId);
+            $queryStr = $this->seoRepository->getQueryByKeyword($slug, 1, $languageId);
             if (!empty($queryStr)) {
                 parse_str($queryStr, $resolvedParams);
                 if (isset($resolvedParams['information_id'])) {

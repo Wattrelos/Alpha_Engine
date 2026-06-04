@@ -65,6 +65,7 @@ A abordagem correta — e adotada — é **manter ao menos um registro válido e
    - [`BaseController.php`](file:///var/www/html/agsonhos/core/Controller/BaseController.php)
    - [`ThemeMapper.php`](file:///var/www/html/agsonhos/core/Mappers/EntityMappers/ThemeMapper.php)
    - [`SubmitCheckoutAction.php`](file:///var/www/html/agsonhos/core/Controller/Actions/Cart/SubmitCheckoutAction.php)
+5. ✅ **Saneamento de `store_id = 0` residual**: Corrigida a carga do bootstrap em [`AppBootstrap.php`](file:///var/www/html/agsonhos/Containers/AppBootstrap.php), menu institucional em [`index.php`](file:///var/www/html/agsonhos/public_html/index.php) e resolvedor de SEO em [`ShowInformationAction.php`](file:///var/www/html/agsonhos/core/Controller/Actions/Information/ShowInformationAction.php) para referenciar a loja principal real `store_id = 1` ao invés da inexistente loja `0`. Mapeada também a hidratação em [`InformationRepository.php`](file:///var/www/html/agsonhos/core/Model/Domain/Repositories/InformationRepository.php).
 
 ---
 

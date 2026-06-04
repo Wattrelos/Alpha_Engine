@@ -9,7 +9,7 @@
 		<li class="egen-top-nav__item">
 			<a href="{{ contact|default(url('information/contact', {}, lang)) }}" class="egen-top-nav__link">
 				<i class="fa-solid fa-phone" aria-hidden="true"></i>
-				<span class="egen-top-nav__label">{{ telephone|default(Common.header.contact)|default('Contato') }}</span>
+				<span class="egen-top-nav__label">{{ store.telephone|default(telephone)|default(Common.header.contact)|default('Contato') }}</span>
 			</a>
 		</li>
 		<li class="egen-top-nav__item egen-top-nav__item--dropdown">

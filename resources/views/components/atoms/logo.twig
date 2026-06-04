@@ -1,10 +1,17 @@
-<div id="logo">
-	{% if logo %}
-		<a href="{{ home|default('/') }}"><img src="{{ logo }}" title="{{ name|default('AgSonhos') }}" alt="{{ name|default('AgSonhos') }}" class="img-fluid"/></a>
-	{% else %}
-		<h1>
-			{# Inclui o logo #}
-			<a href="{{ home|default('/') }}">{{ name|default('AgSonhos') }}</a>
-		</h1>
-	{% endif %}
+<div id="logo" class="egen-logo" itemscope itemtype="http://schema.org/Organization">
+    <a href="{{ home|default('/') }}" 
+       class="egen-logo__link" 
+       aria-label="Ir para a página inicial da {{ name|default('AgSonhos') }}"
+       itemprop="url">
+        {% if logo %}
+            <img src="{{ logo }}" 
+                 alt="Logotipo {{ name|default('AgSonhos') }}" 
+                 class="egen-logo__image img-fluid"
+                 fetchpriority="high"
+                 decoding="async"
+                 itemprop="logo" />
+        {% else %}
+            <span class="egen-logo__text h2 m-0" itemprop="name">{{ name|default('AgSonhos') }}</span>
+        {% endif %}
+    </a>
 </div>

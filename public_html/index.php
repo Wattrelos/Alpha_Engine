@@ -64,10 +64,14 @@ if (!empty($configSettings['config_logo'])) {
 }
 
 // ── Twig Globals: disponíveis em TODOS os templates
+$storeSettingsHelper = new \Alpha\Support\StoreSettings($configSettings, $languageId);
+$storeData = $storeSettingsHelper->getFormattedSettings();
+
 $twigEnv->addGlobal('categories', $categoryRepository->getMenuTree());
 $twigEnv->addGlobal('settings',   $configSettings);
-$twigEnv->addGlobal('name',       $configSettings['config_name'] ?? 'AG Sonhos e Construções');
-$twigEnv->addGlobal('logo',       $logo);
+$twigEnv->addGlobal('name',       $storeData['name']);
+$twigEnv->addGlobal('logo',       $storeData['logo']);
+$twigEnv->addGlobal('store',      $storeData);
 $twigEnv->addGlobal('home',       '/');
 $twigEnv->addGlobal('lang',       $language ? $language->getCode() : 'pt-br');
 $twigEnv->addGlobal('direction',  'ltr');
@@ -76,11 +80,11 @@ $twigEnv->addGlobal('direction',  'ltr');
 $mapperFactory = $registry->get('alpha_mapper_factory');
 $informationMapper = $mapperFactory->get(InformationMapper::class);
 $informations = [];
-$rawInfos = $informationMapper->getInformations($languageId, 0);
+$rawInfos = $informationMapper->getInformations($languageId, 1);
 $infoIds = array_column($rawInfos, 'id');
-$seoUrlRepository->primeCache($infoIds, 'information_id', 0, $languageId);
+$seoUrlRepository->primeCache($infoIds, 'information_id', 1, $languageId);
 foreach ($rawInfos as $result) {
-    $keyword = $seoUrlRepository->getKeywordByQuery('information_id', (string)$result['id'], 0, $languageId);
+    $keyword = $seoUrlRepository->getKeywordByQuery('information_id', (string)$result['id'], 1, $languageId);
     $informations[] = [
         'title' => $result['title'],
         'href'  => $keyword ? '/' . $languageCode . '/pagina/' . $keyword : '/' . $languageCode . '/pagina/' . $result['id']

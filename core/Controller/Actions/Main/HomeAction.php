@@ -70,17 +70,21 @@ class HomeAction implements ActionInterface
         $routeParser = $routeContext->getRouteParser();
         $lang = $request->getAttribute('lang', 'pt-br');
 
+        $storeSettingsHelper = new \Alpha\Support\StoreSettings($configSettings, $language ? $language->getId() : 2);
+        $storeData = $storeSettingsHelper->getFormattedSettings();
+
         $html = $this->twig->render('home.html.twig', [
             'direction'           => 'ltr',
             'lang'                => $language ? $language->getCode() : 'pt-br',
-            'title'               => $configSettings['config_meta_title'] ?? 'Início | AgSonhos',
-            'description'         => $configSettings['config_meta_description'] ?? '',
-            'keywords'            => $configSettings['config_meta_keyword'] ?? '',
+            'title'               => $storeData['metaTitle'],
+            'description'         => $storeData['metaDescription'],
+            'keywords'            => $storeData['metaKeyword'],
             'language'            => $language,
             'featured_categories' => $featuredCategories,
             'settings'            => $configSettings,
-            'logo'                => $logo,
-            'name'                => $configSettings['config_name'] ?? 'AG Sonhos e Construções',
+            'store'               => $storeData,
+            'logo'                => $storeData['logo'],
+            'name'                => $storeData['name'],
             'home'                => $routeParser->urlFor('home', ['lang' => $lang]),
             // Próximas expansões:
             // 'featured_products' => $this->productRepository->getFeatured(),

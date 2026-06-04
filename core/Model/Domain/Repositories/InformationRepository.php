@@ -44,6 +44,24 @@ class InformationRepository extends AbstractRepository implements BaseRepository
     }
 
     /**
+     * Retorna os dados consolidados da página institucional para exibição na View.
+     */
+    public function getInformationDisplayData(int $informationId): ?\Alpha\Model\DataTransferObject\ViewResponse
+    {
+        $collection = $this->getInformationData($informationId);
+        if (!$collection) {
+            return null;
+        }
+
+        $response = new \Alpha\Model\DataTransferObject\ViewResponse();
+        foreach ($collection->toArray() as $key => $value) {
+            $response->set($key, $value);
+        }
+
+        return $response;
+    }
+
+    /**
      * Legacy Bridge: Compatibilidade com Controladores Legados.
      * Retorna a página de informação formatada como Array bruto.
      */
@@ -51,6 +69,48 @@ class InformationRepository extends AbstractRepository implements BaseRepository
     {
         $information = $this->getMapper()->getInformation($informationId, $this->language_id, $this->store_id);
         return $information ?: [];
+    }
+
+    /**
+     * Valida os dados do formulário de contato.
+     */
+    public function validateContactForm(array $postData): array
+    {
+        $errors = [];
+        if (empty($postData['name']) || mb_strlen($postData['name']) < 3 || mb_strlen($postData['name']) > 32) {
+            $errors['name'] = 'O nome deve ter entre 3 e 32 caracteres!';
+        }
+        if (empty($postData['email']) || !filter_var($postData['email'], FILTER_VALIDATE_EMAIL)) {
+            $errors['email'] = 'O endereço de e-mail não parece ser válido!';
+        }
+        if (empty($postData['enquiry']) || mb_strlen($postData['enquiry']) < 10 || mb_strlen($postData['enquiry']) > 3000) {
+            $errors['enquiry'] = 'A mensagem deve ter entre 10 e 3000 caracteres!';
+        }
+        return $errors;
+    }
+
+    /**
+     * Envia o contato/mensagem (Enquiry).
+     */
+    public function sendEnquiry(array $postData): void
+    {
+        // Envio real ou persistência de mensagens pode ser feito aqui futuramente.
+    }
+
+    /**
+     * Retorna as configurações de contato formatadas e cacheadas no formato camelCase (i18next).
+     */
+    public function getContactSettings(): array
+    {
+        if ($this->container && $this->container->has(SettingRepository::class)) {
+            $settingRepository = $this->container->get(SettingRepository::class);
+        } else {
+            $settingRepository = new SettingRepository($this->mapperFactory, $this->container);
+        }
+
+        $rawSettings = $settingRepository->getSetting('config', $this->store_id);
+        $storeSettings = new \Alpha\Support\StoreSettings($rawSettings, $this->language_id);
+        return $storeSettings->getFormattedSettings();
     }
 
     // BaseRepositoryInterface bindings

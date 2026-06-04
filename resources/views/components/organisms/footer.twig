@@ -44,10 +44,10 @@
       {# Coluna Institucional — Logo, Resumo e Redes Sociais #}
       <div class="egen-footer__brand-col">
         <div class="egen-footer__brand">
-          {% if logo %}
-            <img src="{{ logo }}" alt="{{ name }}" class="egen-footer__logo">
+          {% if store.logo %}
+            <img src="{{ store.logo }}" alt="{{ store.name }}" class="egen-footer__logo">
           {% else %}
-            <h3 class="egen-footer__brand-name">{{ name }}</h3>
+            <h3 class="egen-footer__brand-name">{{ store.name }}</h3>
           {% endif %}
           <p class="footer-desc">
             A parceria ideal para a realização dos seus sonhos e da sua obra. Materiais de construção com qualidade, agilidade e o melhor preço.
@@ -56,10 +56,10 @@
 
         {# Redes Sociais #}
         <div class="social-icons">
-          <a href="https://facebook.com" target="_blank" rel="noopener" title="Facebook" aria-label="Facebook"><i class="fa-brands fa-facebook-f" aria-hidden="true"></i></a>
-          <a href="https://instagram.com" target="_blank" rel="noopener" title="Instagram" aria-label="Instagram"><i class="fa-brands fa-instagram" aria-hidden="true"></i></a>
-          <a href="https://youtube.com" target="_blank" rel="noopener" title="YouTube" aria-label="YouTube"><i class="fa-brands fa-youtube" aria-hidden="true"></i></a>
-          <a href="https://wa.me/5500000000000" target="_blank" rel="noopener" title="WhatsApp" aria-label="WhatsApp"><i class="fa-brands fa-whatsapp" aria-hidden="true"></i></a>
+          <a href="{{ store.social.facebook }}" target="_blank" rel="noopener" title="Facebook" aria-label="Facebook"><i class="fa-brands fa-facebook-f" aria-hidden="true"></i></a>
+          <a href="{{ store.social.instagram }}" target="_blank" rel="noopener" title="Instagram" aria-label="Instagram"><i class="fa-brands fa-instagram" aria-hidden="true"></i></a>
+          <a href="{{ store.social.youtube }}" target="_blank" rel="noopener" title="YouTube" aria-label="YouTube"><i class="fa-brands fa-youtube" aria-hidden="true"></i></a>
+          <a href="{{ store.social.whatsapp }}" target="_blank" rel="noopener" title="WhatsApp" aria-label="WhatsApp"><i class="fa-brands fa-whatsapp" aria-hidden="true"></i></a>
         </div>
       </div>
 

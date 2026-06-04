@@ -1,6 +1,6 @@
 {% extends 'layouts/base.html.twig' %}
 
-{% block title %}{{ Home.metaTitle|default('Início | AgSonhos — Materiais de Construção') }}{% endblock %}
+{% block title %}{{ store.metaTitle|default(Home.metaTitle)|default('Início | AgSonhos — Materiais de Construção') }}{% endblock %}
 
 {% block content %}
 	<div class="stucco4">

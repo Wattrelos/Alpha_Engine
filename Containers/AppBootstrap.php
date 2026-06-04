@@ -74,7 +74,7 @@ class AppBootstrap
         session_set_save_handler($sessionHandler, true);
 
         // Configurações e Idioma
-        $this->configSettings = $settingRepository->getSetting('config', 0);
+        $this->configSettings = $settingRepository->getSetting('config', 1);
         $this->languageCode = $this->configSettings['config_language_catalog'] ?? 'pt-br';
 
         $this->language = $this->languageRepository->getByCode($this->languageCode);

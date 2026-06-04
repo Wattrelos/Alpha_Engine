@@ -221,19 +221,23 @@
 					<h2 class="section-title">{{ text.myNewsletter }}</h2>
 				</div>
 				<div class="account-cards">
-					<a href="{{ newsletter }}" class="account-card" id="link-newsletter">
-						<div class="card-icon">
-							<svg width="20" height="20" viewbox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-								<path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
-								<polyline points="22,6 12,13 2,6"/>
-							</svg>
+					<form id="form-newsletter" action="{{ newsletter_action_url|default('#') }}" method="post">
+						<div class="account-card account-card--toggle">
+							<div class="card-icon">
+								<svg width="20" height="20" viewbox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+									<path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
+									<polyline points="22,6 12,13 2,6"/>
+								</svg>
+							</div>
+							<div class="card-text">
+								<span class="card-label">{{ text.newsletter }}</span>
+								<span class="card-hint" id="newsletter-hint">{{ newsletter_status ? 'Você recebe nossas ofertas e novidades' : 'Receba ofertas e novidades por e-mail' }}</span>
+							</div>
+							<div class="card-toggle">
+								<input type="checkbox" id="newsletter-toggle" name="newsletter" value="1" {% if newsletter_status %}checked{% endif %} aria-label="Newsletter subscription toggle">
+							</div>
 						</div>
-						<div class="card-text">
-							<span class="card-label">{{ text.newsletter }}</span>
-							<span class="card-hint">Preferências de comunicação</span>
-						</div>
-						<div class="card-arrow">›</div>
-					</a>
+					</form>
 				</div>
 			</section>
 
@@ -560,5 +564,90 @@
 			}
 		}
 
+		/* ── Toggle Switch Component ── */
+		.account-card--toggle {
+			cursor: default;
+		}
+		.account-card--toggle:hover {
+			background: rgba(255, 255, 255, 0.03);
+			border-color: rgba(255, 255, 255, 0.07);
+			transform: none;
+			box-shadow: none;
+		}
+		.card-toggle {
+			margin-left: auto;
+			flex-shrink: 0;
+		}
+		#newsletter-toggle {
+			-webkit-appearance: none;
+			-moz-appearance: none;
+			appearance: none;
+			position: relative;
+			display: inline-block;
+			width: 44px;
+			height: 24px;
+			border-radius: 24px;
+			background-color: #334155;
+			transition: background-color 0.3s ease;
+			cursor: pointer;
+			border: 1px solid rgba(255, 255, 255, 0.1);
+		}
+		#newsletter-toggle::before {
+			content: "";
+			position: absolute;
+			top: 2px;
+			left: 2px;
+			width: 18px;
+			height: 18px;
+			border-radius: 50%;
+			background-color: #94a3b8;
+			transition: transform 0.3s ease, background-color 0.3s ease;
+		}
+		#newsletter-toggle:checked {
+			background-color: #22c55e; /* green-500 */
+			border-color: transparent;
+		}
+		#newsletter-toggle:checked::before {
+			background-color: white;
+			transform: translateX(20px);
+		}
+
 	</style>
+
+	<script>
+		document.addEventListener('DOMContentLoaded', function () {
+const toggle = document.getElementById('newsletter-toggle');
+if (!toggle) 
+return;
+
+const hint = document.getElementById('newsletter-hint');
+const form = toggle.closest('form');
+
+toggle.addEventListener('change', function () {
+const isChecked = this.checked;
+const formData = new FormData();
+formData.append('newsletter', isChecked ? '1' : '0');
+
+const originalHint = hint.textContent;
+hint.textContent = isChecked ? 'Você recebe nossas ofertas e novidades' : 'Receba ofertas e novidades por e-mail';
+
+fetch(form.action, {
+method: 'POST',
+body: formData,
+headers: {
+'X-Requested-With': 'XMLHttpRequest'
+}
+}).then(response => response.json()).then(data => {
+if (!data.success) {
+throw new Error(data.error || 'Falha ao atualizar status.');
+}
+}).catch(error => {
+console.error('Error:', error);
+toggle.checked = !isChecked;
+hint.textContent = originalHint;
+alert('Ocorreu um erro de comunicação. Tente novamente.');
+});
+});
+		});
+	</script>
 {% endblock %}
