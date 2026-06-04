@@ -77,6 +77,8 @@ return function (\Slim\App $app) {
         $account->get('/address/{address_id:[0-9]+}/edit', RedirectToDefaultLanguageAction::class);
         $account->get('/address/{address_id:[0-9]+}/delete', RedirectToDefaultLanguageAction::class);
         $account->get('/return', RedirectToDefaultLanguageAction::class);
+        $account->get('/wishlist', RedirectToDefaultLanguageAction::class);
+        $account->get('/edit', RedirectToDefaultLanguageAction::class);
     });
 
     // ─────────────────────────────────────────────────────────
@@ -119,6 +121,15 @@ return function (\Slim\App $app) {
             $account->get('/orders', OrdersAction::class)->setName('account.orders');
             $account->get('/order/history/{order_id}', OrderHistoryAction::class)->setName('account.order.history');
             $account->get('/return', ProductReturnsAction::class)->setName('account.returns');
+
+            // ── Editar Conta ─────────────────────────────────────────────────
+            $account->get('/edit', \Alpha\Controller\Actions\Customer\Account\UpdateAction::class)->setName('account.edit');
+            $account->post('/edit', \Alpha\Controller\Actions\Customer\Account\UpdateAction::class);
+
+            // ── Lista de Desejos (Wishlist) ──────────────────────────────────
+            $account->get('/wishlist', \Alpha\Controller\Actions\Customer\Account\WishlistAction::class)->setName('account.wishlist');
+            $account->post('/wishlist/add', \Alpha\Controller\Actions\Customer\Account\WishlistAddAction::class)->setName('account.wishlist.add');
+            $account->get('/wishlist/remove/{product_id:[0-9]+}', \Alpha\Controller\Actions\Customer\Account\WishlistRemoveAction::class)->setName('account.wishlist.remove');
 
             // ── Endereços ────────────────────────────────────────────────────
             $account->get('/addresses', ShowAddressesAction::class)->setName('account.addresses');

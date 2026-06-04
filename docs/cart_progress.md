@@ -5,7 +5,7 @@ Este documento registra o avanço na reestruturação arquitetural do módulo de
 ## O que foi implementado nesta rodada:
 
 1. **A Ponte Legada (`cart.php`)**
-   - Transformação da pesada biblioteca originaldo código legado em um *Proxy* leve que atua apenas para manter a retrocompatibilidade com extensões antigas, delegando todo o processamento para o `CartRepository`.
+   - Transformação da pesada biblioteca original do código legado em um código totalmente novo para não comprometer em nenhum aspecto o projeto, delegando todo o processamento para o `CartRepository`.
 
 2. **Persistência Isolada (`CartMapper.php`)**
    - Todo o SQL do carrinho foi extraído e movido para métodos unitários no Mapper. Funcionalidades complexas, como limpeza de carrinhos abandonados e mesclagem de itens de visitantes após o login, agora ocorrem de forma explícita e controlada.

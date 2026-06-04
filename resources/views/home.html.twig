@@ -1,7 +1,6 @@
 {% extends 'layouts/base.html.twig' %}
 
-{% block title %}Início | AgSonhos — Materiais de Construção
-{% endblock %}
+{% block title %}{{ Home.metaTitle|default('Início | AgSonhos — Materiais de Construção') }}{% endblock %}
 
 {% block content %}
 	<div class="stucco4">
@@ -20,8 +19,8 @@
 					<section class="egen-hero-section mb-5">
 						<div class="egen-hero-card">
 							<div class="egen-hero-content">
-								<h1 class="egen-hero-title">Construa Seus Sonhos Com Excelência</h1>
-								<p class="egen-hero-subtitle">Os melhores materiais de construção, ferramentas e acabamentos com qualidade garantida e entrega rápida para sua obra.</p>
+								<h1 class="egen-hero-title">{{ Home.hero.title }}</h1>
+								<p class="egen-hero-subtitle">{{ Home.hero.subtitle }}</p>
 							</div>
 						</div>
 					</section>
@@ -31,29 +30,29 @@
 						<div class="egen-advantage-card">
 							<span class="egen-advantage-icon">🚚</span>
 							<div class="egen-advantage-info">
-								<h4 class="egen-advantage-title">Entrega Rápida</h4>
-								<p class="egen-advantage-desc">Logística ágil e segura diretamente na sua obra.</p>
+								<h4 class="egen-advantage-title">{{ Home.advantages.shipping.title }}</h4>
+								<p class="egen-advantage-desc">{{ Home.advantages.shipping.desc }}</p>
 							</div>
 						</div>
 						<div class="egen-advantage-card">
 							<span class="egen-advantage-icon">💳</span>
 							<div class="egen-advantage-info">
-								<h4 class="egen-advantage-title">Pagamento Facilitado</h4>
-								<p class="egen-advantage-desc">Parcele em até 10x sem juros ou pague via Pix com desconto.</p>
+								<h4 class="egen-advantage-title">{{ Home.advantages.payment.title }}</h4>
+								<p class="egen-advantage-desc">{{ Home.advantages.payment.desc }}</p>
 							</div>
 						</div>
 						<div class="egen-advantage-card">
 							<span class="egen-advantage-icon">🛡️</span>
 							<div class="egen-advantage-info">
-								<h4 class="egen-advantage-title">Garantia de Qualidade</h4>
-								<p class="egen-advantage-desc">Produtos originais com garantia das melhores marcas.</p>
+								<h4 class="egen-advantage-title">{{ Home.advantages.quality.title }}</h4>
+								<p class="egen-advantage-desc">{{ Home.advantages.quality.desc }}</p>
 							</div>
 						</div>
 						<div class="egen-advantage-card">
 							<span class="egen-advantage-icon">💬</span>
 							<div class="egen-advantage-info">
-								<h4 class="egen-advantage-title">Suporte Exclusivo</h4>
-								<p class="egen-advantage-desc">Fale diretamente com nossos especialistas pelo WhatsApp.</p>
+								<h4 class="egen-advantage-title">{{ Home.advantages.support.title }}</h4>
+								<p class="egen-advantage-desc">{{ Home.advantages.support.desc }}</p>
 							</div>
 						</div>
 					</section>
@@ -62,8 +61,8 @@
 					{% if featured_categories %}
 						<section class="home-categories mb-5" id="content-start">
 							<div class="egen-section-header">
-								<h2 class="section-title">Nossos Departamentos</h2>
-								<p class="egen-section-subtitle">Navegue pelas principais categorias e encontre tudo o que precisa para reformar ou construir.</p>
+								<h2 class="section-title">{{ Home.departments.title }}</h2>
+								<p class="egen-section-subtitle">{{ Home.departments.subtitle }}</p>
 							</div>
 							<div class="category-grid">
 								{% for cat in featured_categories %}
@@ -79,12 +78,12 @@
 											<span class="category-card__name">{{ cat.name }}</span>
 											{% if cat.subcategory_count > 0 %}
 												<span class="category-card__count">{{ cat.subcategory_count }}
-													subcategorias</span>
+													{{ Home.departments.subcategories }}</span>
 											{% endif %}
 										</div>
 									</a>
 								{% else %}
-									<p class="empty-state">Nenhuma categoria encontrada.</p>
+									<p class="empty-state">{{ Home.departments.empty }}</p>
 								{% endfor %}
 							</div>
 						</section>
@@ -112,8 +111,8 @@
 					{# ── Produtos em Destaque Injetados ── #}
 					{% if featured_products %}
 						<div class="egen-section-header">
-							<h3 class="section-title">{{ heading_title_featured|default('Destaques da Semana') }}</h3>
-							<p class="egen-section-subtitle">Ofertas selecionadas com condições especiais para você aproveitar hoje.</p>
+							<h3 class="section-title">{{ Home.headingTitleFeatured|default(Home.featured.title) }}</h3>
+							<p class="egen-section-subtitle">{{ Home.featured.subtitle }}</p>
 						</div>
 						<div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-xl-4 mb-5">
 							{% for product in featured_products %}
@@ -127,8 +126,8 @@
 					{# ── Produtos Mais Recentes Injetados ── #}
 					{% if latest_products %}
 						<div class="egen-section-header">
-							<h3 class="section-title">{{ heading_title_latest|default('Novos Lançamentos') }}</h3>
-							<p class="egen-section-subtitle">Fique por dentro das novidades e tendências em materiais e acabamentos.</p>
+							<h3 class="section-title">{{ Home.headingTitleLatest|default(Home.latest.title) }}</h3>
+							<p class="egen-section-subtitle">{{ Home.latest.subtitle }}</p>
 						</div>
 						<div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-xl-4 mb-5">
 							{% for product in latest_products %}

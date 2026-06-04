@@ -86,76 +86,20 @@ Diferentedo código legado padrão, onde o SQL fica espalhado pelos Models, este
 *   ✅ **Módulos e Extensões**: `Extension`, `ExtensionInstall`, `ExtensionPath`, `Module`.
 
 
-## 📦 Estrutura do Core
-
-```text
-## 📦 Estrutura do Core
-
-```text
-  ├── catalog/                                # Pasta legadado código legado. Não está mais sendo utilizada.
-  ├── changelog/                              # 📝 Notas técnicas, registros de refatoração e log de IAs
-  ├── Config/                                 # 📂 Configurações da Aplicação
-  │   └── Routes.php                          # 📁 Rotas PSR-15 centralizadas (Slim Framework)
-  ├── Containers/                             # 📂 Infraestrutura de Injeção de Dependências (DI)
-  │   ├── AppContainer.php                    # 📦 Contêiner Pimple/PHP-DI com definições de classes
-  │   └── AppBootstrap.php                    # 📦 Bootstrap de inicialização
-  ├── core/                                   # 🧠 Core da Alpha Engine (Backend Standalone)
-  │   ├── Admin/                              # 🛡️ Módulo do Painel Administrativo
-  │   │   ├── Controllers/Actions/            # Controladores Slim focados no Admin (Painel)
-  │   │   ├── Mappers/                        # Mappers específicos da área administrativa
-  │   │   └── ...                             # (Estrutura isolada de Backoffice)
-  │   ├── Auth/                               # 🔐 Módulo de Autenticação e Segurança
-  │   │   ├── Middleware/                     # Guards PSR-15 (Signature, Session, Language, Redirects)
-  │   │   └── Services/                       # Regras de negócio de acesso (ex: CustomerAuthService)
-  │   ├── Controller/                         # 🎮 Controladores (Skinny Controllers / Actions)
-  │   │   ├── BaseController.php              # Controller abstrato base da aplicação
-  │   │   └── Actions/                        # Ações HTTP no padrão ADR (Action-Domain-Responder)
-  │   │       ├── Cart/                       # Rotas de Carrinho e Checkout
-  │   │       ├── Customer/Auth/              # Rotas de Login, Registro e Conta Logada
-  │   │       └── ...
-  │   ├── Mappers/                            # 🗺️ Data Mappers (Acesso e isolamento de Banco de Dados)
-  │   │   ├── EntityMappers/                  # Tradutores entre Banco e Entidades (ex: ProductMapper)
-  │   │   └── Observers/                      # Padrão Observer para side-effects (ex: enviar emails)
-  │   ├── Model/                              # 🏛️ Coração do Domínio (DDD)
-  │   │   ├── DataAccessObject/               # Camada DAO (Conexões PDO, QueryBuilder, UnitOfWork)
-  │   │   ├── DataTransferObject/             # DTOs de transporte (ex: ViewResponse)
-  │   │   └── Domain/                         # Lógica de Domínio Estrutural
-  │   │       ├── Entities/                   # Objetos de domínio puros e tipados (PHP 8.4)
-  │   │       └── Repositories/               # Orquestradores de regras de negócio agregadas
-  │   ├── Support/                            # 🛠️ Utilitários Transversais e Helpers Nativos
-  │   │   ├── Session.php                     # Gerenciamento Nativo de Sessões PHP Standalone
-  │   │   ├── EntityHydrator.php              # Padrão Hydrator para popular entidades reflexivamente
-  │   │   ├── AlphaString.php                 # Sanitização moderna e validação de strings
-  │   │   └── Presenters/                     # Formatadores visuais dedicados (ex: ImagePresenter)
-  │   └── View/                               # 🖼️ Camada de Renderização
-  │       └── ViewRenderer.php                # Motor renderizador base (integrado ao Twig)
-  │
-  ├── docs/                                   # 📚 Arquivos de Documentação Arquitetural e Progresso
-  ├── resources/                              # 🎨 Recursos Estáticos Não-Compilados e Views
-  │   └── views/                              # Templates Twig
-  │       ├── admin/                          # Telas do Painel de Controle (Backoffice)
-  │       ├── components/                     # Atomic Design (atoms, molecules, organisms)
-  │       ├── layouts/                        # Estruturas base (header, footer, html base)
-  │       └── pages/                          # Telas principais do E-commerce (catálogo, carrinho, user)
-  │
-  └── public_html/                            # 🌐 Webroot (Document Root exposto e servido para a Internet)
-      ├── index.php                           # Front Controller único da Aplicação (Bootstrap)
-      ├── .htaccess                           # Regras de URL Rewrite (Apache)
-      ├── css/                                # Folhas de estilo (Custom CSS compilado)
-      ├── js/                                 # Scripts Vanilla JS e integrações de formulário (AJAX)
-      └── fonts/                              # Tipografia e Ícones Locais
-
-
-
-```
-
-
 ## ⚙️ Requisitos
 
 *   PHP 8.2+ (Otimizado para PHP 8.4)
-*   MySQL 8.0+
+*   MariaDB 10.11+ (Compatível com MySQL 8.0+)
 *   Composer (Autoloader PSR-4 configurado para o namespace `Alpha`)
 *   Twig
+*   Motor de idiomas padrão i18next (namespaces).
+*   Slim Framework 5.14
+*   Unit of Work
+*   Data Mapper
+*   Repository Pattern
+*   BaseController
+*   Modernização de Banco de Dados: Padronização de chaves `id` (PK) e `tabela_id` (FK) com tipos inteiros longos.
+
 
 ## A imporftância da documentação:
 Fazer essa pausa para documentar e versionar é uma excelente prática. No desenvolvimento de sistemas complexos, o código é apenas uma parte da solução; o conhecimento sobre o porquê das decisões arquiteturais é o que garante a longevidade do projeto. Repósitórios, tais como o GitHub é o teu maior aliado para rastrear essa evolução da Alpha Engine.
@@ -170,15 +114,13 @@ O objetivo não é apenas "fazer funcionar", mas criar uma estrutura standalone 
 ## Regras de negócio para a equipe de produção:
 1. Todas as chaves primárias tem nomo "id" para não confundir com as chaves estrangeiras FK que tem [nome da tabela pai] + "_id".
 2. Para prevenir estouro de índice (overflow), as chaves PK e FK terão o tipo inteiro longo (BIGINT).
-2. No banco de dados, a nomecratura segue o padrão snake_case, porém, na aplicação, o padrão é PascalCase para nomes de classes e arquivos, enquanto o padrão camelCase para nomes de variáveis e métodos. A exceção é na camada View, onde os nomes de pastas e aquivos são quase todos minúsculos.
-3. **Nomecraturas:** Em desenvolvimento web, cada linguagem possui seu próprio padrão. Para HTML e CSS o mais recomendado é o kebab-case (separado por hífens), enquanto no JavaScript domina o camelCase (letras iniciais maiúsculas após a primeira) para variáveis e PascalCase para classes
+3. No banco de dados, a nomecratura segue o padrão snake_case (snake_case estrito ao banco de dados), porém, na aplicação, o padrão é PascalCase para nomes de classes e arquivos, enquanto o padrão camelCase para nomes de variáveis e métodos. A exceção é na camada View, onde os nomes de pastas e aquivos são quase todos minúsculos.
+4. **Nomecraturas:** Em desenvolvimento web, cada linguagem possui seu próprio padrão. Para HTML e CSS o mais recomendado é o kebab-case (separado por hífens), enquanto no JavaScript domina o camelCase (letras iniciais maiúsculas após a primeira) para variáveis e PascalCase para classes
     * HTML e CSS (Classes e IDs) O padrão oficial e mais adotado pela indústria (como no Guia de Estilo CSS da Airbnb) é o kebab-case. Ele facilita a leitura e se alinha à forma como o navegador interpreta o DOM.
       Exemplo: <div class="menu-navegacao principal-ativo"></div>Por que evitar camelCase: menuNavegação no HTML pode ser lido de forma inconsistente por certas ferramentas de busca e bibliotecas.
     * JavaScript O JavaScript é sensível a maiúsculas e minúsculas, e a comunidade segue diretrizes estritas (conforme o Guia de Estilo da Airbnb):
         Variáveis, Funções e Propriedades: camelCase (a primeira letra é minúscula, e as demais palavras iniciam com maiúscula). Exemplo: let totalItens = 10; ou function calcularPreco() {}Classes e Construtores: PascalCase (todas as palavras começam com letra maiúscula).Exemplo: class UsuarioAutenticado {}Constantes Globais (Fixas): UPPER_SNAKE_CASE (todas maiúsculas com _ underline).Exemplo: const TAXA_DE_JUROS = 0.05;
     Apesar de não quebrarem o código se escritos de forma diferente, manter a consistência melhora a legibilidade, ajuda a manutenção em equipe e garante que teu código funcione perfeitamente com os linters (ferramentas de análise de código) e frameworks atuais. Evite sempre o uso de acentos e caracteres especiais nos nomes.
-
-
 
 
 Padrões de projetos (Patterns) utilizados nessa aplicação:

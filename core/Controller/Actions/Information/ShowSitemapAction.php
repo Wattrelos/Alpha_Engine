@@ -13,13 +13,16 @@ class ShowSitemapAction implements ActionInterface
 {
     private SitemapRepository $sitemapRepository;
     private TwigEnvironment $twig;
+    private \Alpha\Support\Language $translator;
 
     public function __construct(
         SitemapRepository $sitemapRepository,
-        TwigEnvironment $twig
+        TwigEnvironment $twig,
+        \Alpha\Support\Language $translator
     ) {
         $this->sitemapRepository = $sitemapRepository;
         $this->twig = $twig;
+        $this->translator = $translator;
     }
 
     public function __invoke(Request $request, Response $response, array $args): Response
@@ -27,6 +30,10 @@ class ShowSitemapAction implements ActionInterface
         $routeContext = RouteContext::fromRequest($request);
         $routeParser = $routeContext->getRouteParser();
         $lang = $request->getAttribute('lang', 'pt-br');
+
+        // Carrega as traduções do sitemap
+        $this->translator->load('information/sitemap');
+        $this->twig->addGlobal('Sitemap', $this->translator->getNestedData('information/sitemap'));
 
         // 1. Obtém todos os dados consolidados do sitemap
         $sitemapData = $this->sitemapRepository->getSitemapData()->toArray();

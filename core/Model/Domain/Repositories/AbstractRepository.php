@@ -73,11 +73,11 @@ abstract class AbstractRepository
     {
         if ($this->container) {
             if ($key === 'store_id') {
-                if ($this->container->has('configSettings')) {
-                    $settings = $this->container->get('configSettings');
-                    return (int)($settings['config_store_id'] ?? 0);
+                if (!$this->container->has('configSettings')) {
+                    return 1;
                 }
-                return 0;
+                $settings = $this->container->get('configSettings');
+                return (int)($settings['config_store_id'] ?? 1);
             }
             if ($key === 'language_id') {
                 return $this->container->has('languageId') ? (int)$this->container->get('languageId') : 2;

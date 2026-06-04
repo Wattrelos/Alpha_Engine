@@ -35,20 +35,17 @@ document.addEventListener('DOMContentLoaded', () => {
     const logged = document.body.getAttribute('data-logged') === 'true';
     const path = window.location.pathname;
 
-    // Se estiver na página de checkout e for visitante, valida o carrinho e sincroniza com o banco de dados
+    // Se estiver na página de checkout e for visitante, sincroniza com o banco de dados
     if (path.includes('/checkout') && !logged) {
-        if (!guestCheckout.checkCartBeforeCheckout()) {
-            // Se o carrinho estiver vazio, redireciona o visitante de volta para o carrinho
-            const lang = document.body.getAttribute('data-lang') || 'pt-br';
-            window.location.href = `/${lang}/carrinho`;
-        } else {
+        const items = guestCart.getItems();
+        if (items.length > 0) {
             // Sincroniza o carrinho local de visitante com a sessão do banco de dados
             fetch('/api/carrinho/sincronizar', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
                 },
-                body: JSON.stringify({ items: guestCart.getItems() })
+                body: JSON.stringify({ items: items })
             })
                 .then(res => res.json())
                 .then(syncData => {

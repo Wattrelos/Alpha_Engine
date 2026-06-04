@@ -77,8 +77,9 @@ class CategoryMapper extends BaseMapper
             // Resolve o slug amigável via cache
             $keyword = $seoMapper->getKeywordByQuery('category_id', (string)$pathId, $storeId, $languageId);
             
-            // Se houver keyword, o link é o slug; caso contrário, usa a rota padrão
-            $href = $keyword ?: 'index.php?route=product/category&path=' . $path;
+            // Se houver keyword, o link é o slug; caso contrário, usa a nova rota Slim
+            $langCode = ($languageId === 1) ? 'en' : 'pt-br';
+            $href = $keyword ? "/{$langCode}/categoria/{$keyword}" : "/{$langCode}/categoria/{$pathId}";
 
             $breadcrumbs[] = [
                 'name' => $row['name'],

@@ -1,0 +1,45 @@
+{
+  "metaTitle": "Home | AgSonhos — Building Materials",
+  "metaDescription": "The best building materials, tools, and finishes with guaranteed quality and fast delivery for your construction project.",
+  "metaKeywords": "building materials, hardware, paints, floors, tools, agsonhos",
+  "headingTitle": "Your Store",
+  "headingTitleFeatured": "Featured Products",
+  "headingTitleLatest": "New Arrivals & Releases",
+  "textEmpty": "No product found.",
+  "hero": {
+    "title": "Build Your Dreams With Excellence",
+    "subtitle": "The best building materials, tools, and finishes with guaranteed quality and fast delivery for your construction project."
+  },
+  "advantages": {
+    "shipping": {
+      "title": "Fast Delivery",
+      "desc": "Agile and secure logistics directly to your building site."
+    },
+    "payment": {
+      "title": "Easy Payment",
+      "desc": "Installments up to 10x interest-free or pay via Pix/Bank Transfer with discount."
+    },
+    "quality": {
+      "title": "Quality Guarantee",
+      "desc": "Original products with warranty from the best brands."
+    },
+    "support": {
+      "title": "Exclusive Support",
+      "desc": "Talk directly with our specialists via WhatsApp."
+    }
+  },
+  "departments": {
+    "title": "Our Departments",
+    "subtitle": "Browse through our main categories and find everything you need to renovate or build.",
+    "empty": "No category found.",
+    "subcategories": "subcategories"
+  },
+  "featured": {
+    "title": "Deals of the Week",
+    "subtitle": "Selected offers with special conditions for you to enjoy today."
+  },
+  "latest": {
+    "title": "New Releases",
+    "subtitle": "Stay up to date with new trends in materials and finishes."
+  }
+}

@@ -1,0 +1,18 @@
+{
+  "breadcrumbHome": "Home",
+  "breadcrumbAccount": "My Account",
+  "breadcrumbReturns": "Returns",
+  "headingTitle": "Returns and Exchanges",
+  "textSubtitle": "Track your return and exchange requests",
+  "textRequestSingular": "request",
+  "textRequestPlural": "requests",
+  "columnReturnId": "Return ID",
+  "columnOrderId": "Order ID",
+  "columnStatus": "Status",
+  "columnDateAdded": "Date Requested",
+  "textPending": "Pending",
+  "textEmptyTitle": "No returns found",
+  "textNoResults": "You have not made any previous returns!",
+  "buttonAccount": "Go to my account",
+  "buttonContinue": "Continue"
+}

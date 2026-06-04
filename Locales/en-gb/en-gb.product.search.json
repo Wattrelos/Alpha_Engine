@@ -1,0 +1,21 @@
+{
+  "breadcrumbHome": "Home",
+  "breadcrumbSearch": "Search",
+  "headingTitle": "Product Search",
+  "searchPlaceholder": "Type search terms...",
+  "buttonSearch": "Search",
+  "textProductSingular": "product",
+  "textProductPlural": "products",
+  "textFoundSingular": "found",
+  "textFoundPlural": "found",
+  "textResultFor": "Result for",
+  "textShowing": "Showing",
+  "textOf": "of",
+  "textSort": "Sort By",
+  "textLimit": "Show",
+  "textNoResults": "No product found",
+  "textEmptyDesc": "There are no products that match the search criteria for \"%s\". Try different keywords or categories.",
+  "textSale": "Sale",
+  "textViewProduct": "View product",
+  "textViewDetails": "View details"
+}

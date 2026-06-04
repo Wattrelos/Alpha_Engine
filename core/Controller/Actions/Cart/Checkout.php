@@ -15,25 +15,43 @@ class Checkout implements ActionInterface
     private Environment $twig;
     private ContainerInterface $container;
 
-    public function __construct(Environment $twig, ContainerInterface $container)
+    private \Alpha\Support\Language $translator;
+
+    public function __construct(Environment $twig, ContainerInterface $container, \Alpha\Support\Language $translator)
     {
         $this->twig = $twig;
         $this->container = $container;
+        $this->translator = $translator;
     }
 
     public function __invoke(Request $request, Response $response, array $args): Response
     {
+        $this->translator->load('checkout');
+        $this->twig->addGlobal('Checkout', $this->translator->getNestedData('checkout'));
+
         $configSettings = $this->container->get('configSettings');
         $repositoryFactory = $this->container->get('alpha_repository_factory');
 
-        $languageData = [
-            'text_home' => 'Principal',
-            'heading_title' => 'Finalizar Compra'
-        ];
+        /** @var \Alpha\Model\Domain\Repositories\CartRepository $cartRepository */
+        $cartRepository = $repositoryFactory->get(\Alpha\Model\Domain\Repositories\CartRepository::class);
+        $cartRepository->initializeContext();
 
         $routeContext = RouteContext::fromRequest($request);
         $routeParser = $routeContext->getRouteParser();
         $lang = $request->getAttribute('lang', 'pt-br');
+
+        // Se o carrinho estiver vazio, redireciona de volta para a página de carrinho
+        if (!$cartRepository->hasProducts()) {
+            return $response->withHeader('Location', $routeParser->urlFor('cart.index', ['lang' => $lang]))->withStatus(302);
+        }
+
+        $languageData = $this->translator->load('checkout/checkout');
+        if (!isset($languageData['text_home'])) {
+            $languageData['text_home'] = 'Principal';
+        }
+        if (!isset($languageData['heading_title'])) {
+            $languageData['heading_title'] = 'Finalizar Compra';
+        }
 
         // Breadcrumbs
         $breadcrumbs = [];

@@ -57,7 +57,10 @@ class CartRepository extends AbstractRepository implements BaseRepositoryInterfa
     private function getStoreId(): int
     {
         $config = $this->getConfig();
-        return (int)($config ? $config->get('config_store_id') : 0);
+        if ($config && $config->get('config_store_id')) {
+            return (int)$config->get('config_store_id');
+        }
+        return 1;
     }
 
     private function getLanguageId(): int
@@ -200,21 +203,56 @@ class CartRepository extends AbstractRepository implements BaseRepositoryInterfa
         $session = $this->getSession();
         $tax = $this->getTax();
 
-        if ($customer && $customer->isLogged() && $session && empty($session->data['shipping_address']) && empty($session->data['payment_address'])) {
-            /** @var \Alpha\Model\Domain\Repositories\AddressRepository $addressRepo */
-            $addressRepo = \Alpha\Model\Domain\Repositories\RepositoryFactory::getInstance()->get(\Alpha\Model\Domain\Repositories\AddressRepository::class);
-            $defaultAddress = $addressRepo->getDefaultAddress($this->getCustomerId());
-            
-            if ($defaultAddress) {
-                $addressDTO = $addressRepo->getAddress($defaultAddress->getId());
+        if (!$session) {
+            return;
+        }
+
+        if ($customer && $customer->isLogged()) {
+            if (empty($session->data['shipping_address']) || empty($session->data['payment_address'])) {
+                /** @var \Alpha\Model\Domain\Repositories\AddressRepository $addressRepo */
+                $addressRepo = \Alpha\Model\Domain\Repositories\RepositoryFactory::getInstance()->get(\Alpha\Model\Domain\Repositories\AddressRepository::class);
+                $defaultAddress = $addressRepo->getDefaultAddress($this->getCustomerId());
                 
-                $session->data['shipping_address'] = $addressDTO;
-                $session->data['payment_address'] = $addressDTO;
-                
-                if ($tax) {
-                    $tax->setShippingAddress($defaultAddress->getCountryId(), $defaultAddress->getZoneId());
-                    $tax->setPaymentAddress($defaultAddress->getCountryId(), $defaultAddress->getZoneId());
+                if ($defaultAddress) {
+                    $addressDTO = $addressRepo->getAddress($defaultAddress->getId());
+                    
+                    if (empty($session->data['shipping_address'])) {
+                        $session->data['shipping_address'] = $addressDTO;
+                    }
+                    if (empty($session->data['payment_address'])) {
+                        $session->data['payment_address'] = $addressDTO;
+                    }
                 }
+            }
+        }
+
+        // Sincroniza com as propriedades tributárias de impostos se houver endereço na sessão (logados ou anônimos)
+        if (!empty($session->data['shipping_address'])) {
+            $shippingAddr = $session->data['shipping_address'];
+            $countryId = (int)($shippingAddr['country_id'] ?? 30);
+            $zoneId = (int)($shippingAddr['zone_id'] ?? 0);
+
+            // Se o zone_id for 0 mas tivermos a sigla do estado em 'zone', tenta resolver o zone_id via banco
+            if ($zoneId === 0 && !empty($shippingAddr['zone'])) {
+                try {
+                    $repositoryFactory = \Alpha\Model\Domain\Repositories\RepositoryFactory::getInstance();
+                    /** @var \Alpha\Model\Domain\Repositories\ZoneRepository $zoneRepository */
+                    $zoneRepository = $repositoryFactory->get(\Alpha\Model\Domain\Repositories\ZoneRepository::class);
+                    $zone = $zoneRepository->findOneBy(['code' => trim((string)$shippingAddr['zone'])]);
+                    if ($zone) {
+                        $zoneId = $zone->getId();
+                        $countryId = $zone->getCountryId();
+                        $session->data['shipping_address']['zone_id'] = $zoneId;
+                        $session->data['shipping_address']['country_id'] = $countryId;
+                    }
+                } catch (\Exception $e) {
+                    // Ignora silenciosamente
+                }
+            }
+
+            if ($tax) {
+                $tax->setShippingAddress($countryId, $zoneId);
+                $tax->setPaymentAddress($countryId, $zoneId);
             }
         }
     }

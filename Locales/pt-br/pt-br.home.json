@@ -1,0 +1,45 @@
+{
+  "metaTitle": "Início | AgSonhos — Materiais de Construção",
+  "metaDescription": "Os melhores materiais de construção, ferramentas e acabamentos com qualidade garantida e entrega rápida para sua obra.",
+  "metaKeywords": "materiais de construção, ferragens, tintas, pisos, ferramentas, agsonhos",
+  "headingTitle": "Sua Loja",
+  "headingTitleFeatured": "Em Destaque",
+  "headingTitleLatest": "Novidades e Lançamentos",
+  "textEmpty": "Nenhum produto encontrado.",
+  "hero": {
+    "title": "Construa Seus Sonhos Com Excelência",
+    "subtitle": "Os melhores materiais de construção, ferramentas e acabamentos com qualidade garantida e entrega rápida para sua obra."
+  },
+  "advantages": {
+    "shipping": {
+      "title": "Entrega Rápida",
+      "desc": "Logística ágil e segura diretamente na sua obra."
+    },
+    "payment": {
+      "title": "Pagamento Facilitado",
+      "desc": "Parcele em até 10x sem juros ou pague via Pix com desconto."
+    },
+    "quality": {
+      "title": "Garantia de Qualidade",
+      "desc": "Produtos originais com garantia das melhores marcas."
+    },
+    "support": {
+      "title": "Suporte Exclusivo",
+      "desc": "Fale diretamente com nossos especialistas pelo WhatsApp."
+    }
+  },
+  "departments": {
+    "title": "Nossos Departamentos",
+    "subtitle": "Navegue pelas principais categorias e encontre tudo o que precisa para reformar ou construir.",
+    "empty": "Nenhuma categoria encontrada.",
+    "subcategories": "subcategorias"
+  },
+  "featured": {
+    "title": "Destaques da Semana",
+    "subtitle": "Ofertas selecionadas com condições especiais para você aproveitar hoje."
+  },
+  "latest": {
+    "title": "Novos Lançamentos",
+    "subtitle": "Fique por dentro das novidades e tendências em materiais e acabamentos."
+  }
+}

@@ -1,11 +1,13 @@
-{% extends 'layouts/main.twig' %}
+{% extends 'layouts/base.html.twig' %}
+
+{% block page_title %}{{ title }}{% endblock %}
 
 {% block content %}
 	<div class="egen-hero-premium">
 		<div class="egen-container">
 			<div class="egen-hero-content">
 				<h1 class="egen-hero-title">
-					<i class="fas fa-heart egen-hero-icon"></i>
+					<i class="fas fa-heart egen-hero-icon" style="color: var(--egen-primary-color, #e056fd);"></i>
 					{{ title }}
 				</h1>
 				{% include 'components/molecules/breadcrumbs.twig' %}
@@ -13,28 +15,41 @@
 		</div>
 	</div>
 
-	<div class="egen-container egen-page-spacing">
+	<div class="egen-container egen-page-spacing" style="margin-top: 2rem; margin-bottom: 4rem;">
+		{# Exibição de alertas de sucesso/erro vindos da sessão #}
+		{% if success %}
+			<div class="egen-alert egen-alert--success" style="margin-bottom: 2rem; animation: slideDown 0.3s ease-out;">
+				<i class="fa-solid fa-circle-check"></i>
+				{{ success }}
+			</div>
+		{% endif %}
+		{% if error_warning %}
+			<div class="egen-alert egen-alert--danger" style="margin-bottom: 2rem; animation: slideDown 0.3s ease-out;">
+				<i class="fa-solid fa-circle-exclamation"></i>
+				{{ error_warning }}
+			</div>
+		{% endif %}
+
 		{% if wishlist_items %}
 			<div class="egen-wishlist-grid">
 				{% for item in wishlist_items %}
-					<div class="egen-wishlist-card egen-glass-panel">
+					<div class="egen-wishlist-card">
 						<div class="egen-wishlist-card__image">
 							{% if item.thumb %}
 								<a href="{{ item.href }}">
-									<img src="{{ item.thumb }}" alt="{{ item.name }}" title="{{ item.name }}" class="img-responsive"/>
+									<img src="{{ item.thumb }}" alt="{{ item.name }}" title="{{ item.name }}"/>
 								</a>
 							{% endif %}
 						</div>
 
 						<div class="egen-wishlist-card__details">
-							<h3 class="egen-wishlist-card__title">
-								<a href="{{ item.href }}">{{ item.name }}</a>
-							</h3>
-							<div class="egen-wishlist-card__meta">
-								<span class="egen-badge egen-badge--dark">Mod:
-									{{ item.model }}</span>
-								<span class="egen-badge egen-badge--status">Estoque:
-									{{ item.stock }}</span>
+							<div>
+								<h3 class="egen-wishlist-card__title">
+									<a href="{{ item.href }}">{{ item.name }}</a>
+								</h3>
+								<div class="egen-wishlist-card__meta">
+									<span class="egen-badge">Mod: {{ item.model }}</span>
+								</div>
 							</div>
 
 							<div class="egen-wishlist-card__price-box">
@@ -50,11 +65,15 @@
 						</div>
 
 						<div class="egen-wishlist-card__actions">
-							<button type="button" onclick="cart.add('{{ item.product_id }}');" class="egen-btn egen-btn-primary" title="Adicionar ao Carrinho">
-								<i class="fas fa-shopping-cart"></i>
-								Mover p/ Carrinho
-							</button>
-							<a href="{{ item.remove }}" class="egen-btn egen-btn-danger-icon" title="Remover da Lista">
+							<form action="/{{ lang }}/carrinho/adicionar" method="POST" class="egen-wishlist-card__buy-form">
+								<input type="hidden" name="product_id" value="{{ item.product_id }}">
+								<input type="hidden" name="quantity" value="{{ item.minimum|default(1) }}">
+								<button type="submit" class="egen-btn egen-btn-primary">
+									<i class="fas fa-shopping-cart"></i>
+									Comprar
+								</button>
+							</form>
+							<a href="{{ item.remove }}" class="egen-btn-danger-icon" title="Remover da Lista">
 								<i class="fas fa-trash-alt"></i>
 							</a>
 						</div>
@@ -62,15 +81,14 @@
 				{% endfor %}
 			</div>
 		{% else %}
-			<div class="egen-empty-state egen-glass-panel">
-				<div class="egen-empty-icon-wrap">
+			<div class="egen-empty-state">
+				<div class="egen-empty-state__icon">
 					<i class="fas fa-heart-broken egen-empty-icon"></i>
 				</div>
-				<h2 class="egen-empty-title">Sua lista de desejos está vazia</h2>
-				<p class="egen-empty-text">Você ainda não salvou nenhum produto para comprar depois. Navegue por nossos departamentos e adicione seus favoritos aqui!</p>
+				<h2 class="egen-empty-state__title">Sua lista de desejos está vazia</h2>
+				<p class="egen-empty-state__text">Você ainda não salvou nenhum produto para comprar depois. Navegue por nossos departamentos e adicione seus favoritos aqui!</p>
 				<a href="{{ continue_url }}" class="egen-btn egen-btn-primary">Explorar Produtos</a>
 			</div>
 		{% endif %}
 	</div>
-
 {% endblock %}

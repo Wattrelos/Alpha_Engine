@@ -50,6 +50,13 @@ class AppContainer implements \Psr\Container\ContainerInterface
     private array $bindings = [];
 
     /**
+     * Cache de instâncias de ReflectionClass para otimização de performance.
+     *
+     * @var array<string, ReflectionClass>
+     */
+    private array $reflectionCache = [];
+
+    /**
      * Registra um serviço disponível para injeção.
      * Interface fluente: $container->bind(...)->bind(...)
      */
@@ -128,7 +135,11 @@ class AppContainer implements \Psr\Container\ContainerInterface
      */
     private function resolve(string $targetClass): ActionInterface
     {
-        $reflection  = new ReflectionClass($targetClass);
+        if (!isset($this->reflectionCache[$targetClass])) {
+            $this->reflectionCache[$targetClass] = new ReflectionClass($targetClass);
+        }
+        $reflection = $this->reflectionCache[$targetClass];
+
         $constructor = $reflection->getConstructor();
 
         // Se a Action não tem construtor ou não tem parâmetros, instancia diretamente
@@ -147,9 +158,9 @@ class AppContainer implements \Psr\Container\ContainerInterface
             } elseif ($typeName === \Psr\Container\ContainerInterface::class) {
                 // Auto-injeção do próprio container (PSR-11)
                 $args[] = $this;
-            } elseif ($typeName && str_contains($typeName, '\\Repositories\\') && class_exists('RepositoryFactory')) {
+            } elseif ($typeName && str_contains($typeName, '\\Repositories\\') && class_exists(\Alpha\Model\Domain\Repositories\RepositoryFactory::class)) {
                 // Fallback inteligente: resolve Repositórios não mapeados via RepositoryFactory
-                $args[] = \RepositoryFactory::getInstance()->get($typeName);
+                $args[] = \Alpha\Model\Domain\Repositories\RepositoryFactory::getInstance()->get($typeName);
             } elseif ($param->isDefaultValueAvailable()) {
                 // Parâmetro opcional: usa o valor padrão declarado na assinatura
                 $args[] = $param->getDefaultValue();

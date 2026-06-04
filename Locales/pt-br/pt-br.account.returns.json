@@ -1,0 +1,18 @@
+{
+  "breadcrumbHome": "Início",
+  "breadcrumbAccount": "Minha Conta",
+  "breadcrumbReturns": "Devoluções",
+  "headingTitle": "Devoluções e Trocas",
+  "textSubtitle": "Acompanhe suas solicitações de trocas e devoluções",
+  "textRequestSingular": "solicitação",
+  "textRequestPlural": "solicitações",
+  "columnReturnId": "ID da Devolução",
+  "columnOrderId": "ID do Pedido",
+  "columnStatus": "Situação",
+  "columnDateAdded": "Data de Solicitação",
+  "textPending": "Pendente",
+  "textEmptyTitle": "Nenhuma devolução encontrada",
+  "textNoResults": "Você ainda não possui solicitações de devolução.",
+  "buttonAccount": "Ir para minha conta",
+  "buttonContinue": "Continuar"
+}

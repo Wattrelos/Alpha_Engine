@@ -62,15 +62,13 @@ class ProductRepository extends AbstractRepository implements BaseRepositoryInte
             return null;
         }
 
-        /** @var \Alpha\Mappers\EntityMappers\ProductMapper $mapper */
-        $mapper = $this->mapperFactory->get(ProductMapper::class);
         $languageId = $this->language_id;
         $customerGroupId = $this->getCustomerGroupId();
 
         $data = $product_info;
 
         // Galeria de Imagens Adicionais (Brutas)
-        $data['images'] = $mapper->getImages($productId);
+        $data['images'] = $this->getProductImages($productId);
 
         // Regra de Negócio: Ocultar preços se configurado para visitantes
         $showPrice = $this->shouldShowPrice();
@@ -79,20 +77,20 @@ class ProductRepository extends AbstractRepository implements BaseRepositoryInte
             $data['special'] = false;
         }
 
-        // Descontos Progressivos (Brutos)
+        // Descontos Progressivos (Cached)
         $data['discounts'] = [];
         if ($showPrice) {
-            $data['discounts'] = $mapper->getDiscounts($productId, $customerGroupId);
+            $data['discounts'] = $this->getProductDiscounts($productId, $customerGroupId);
         }
 
-        // Opções Dinâmicas (Brutas)
-        $data['options'] = $mapper->getOptions($productId, $languageId);
+        // Opções Dinâmicas (Cached)
+        $data['options'] = $this->getOptions($productId);
 
-        // Atributos Técnicos e Códigos (EAN, ISBN)
-        $data['attribute_groups'] = $mapper->getAttributes($productId, $languageId);
+        // Atributos Técnicos e Códigos (EAN, ISBN) (Cached)
+        $data['attribute_groups'] = $this->getProductAttributes($productId);
         
         $data['product_codes'] = [];
-        foreach ($mapper->getCodes($productId) as $result) {
+        foreach ($this->getProductCodes($productId) as $result) {
             if ($result['status']) {
                 $data['product_codes'][] = $result;
             }
@@ -121,6 +119,17 @@ class ProductRepository extends AbstractRepository implements BaseRepositoryInte
      */
     public function getSearchData(array $filterData): ViewResponse
     {
+        $customerGroupId = $this->getCustomerGroupId();
+        
+        $filterContext = $filterData;
+        ksort($filterContext); // Ordena as chaves para garantir consistência no hash
+        $cacheHash = md5(json_encode($filterContext));
+        $cacheKey = "product.search.{$cacheHash}.l{$this->language_id}.s{$this->store_id}.cg{$customerGroupId}";
+
+        if ($this->cache !== null && $this->cache->has($cacheKey)) {
+            return new ViewResponse((array)$this->cache->get($cacheKey));
+        }
+
         $data = [];
         $data['search']       = $filterData['search'] ?? $filterData['filter_name'] ?? '';
         $data['description']  = $filterData['filter_description'] ?? '';
@@ -144,6 +153,11 @@ class ProductRepository extends AbstractRepository implements BaseRepositoryInte
         $data['products'] = $this->getProducts($filter);
         $data['product_total'] = $this->getTotalProducts($filter);
 
+        if ($this->cache !== null) {
+            // TTL Curto (5 min) devido à volatilidade de estoque, preço e status
+            $this->cache->set($cacheKey, $data, 300);
+        }
+
         return new ViewResponse($data);
     }
 
@@ -153,9 +167,19 @@ class ProductRepository extends AbstractRepository implements BaseRepositoryInte
      */
     public function getOptions(int $productId): array
     {
+        $cacheKey = "product.options.p{$productId}.l{$this->language_id}";
+        if ($this->cache !== null && $this->cache->has($cacheKey)) {
+            return (array)$this->cache->get($cacheKey);
+        }
+
         /** @var \Alpha\Mappers\EntityMappers\ProductMapper $mapper */
         $mapper = $this->mapperFactory->get(ProductMapper::class);
-        return $mapper->getOptions($productId, $this->language_id);
+        $options = $mapper->getOptions($productId, $this->language_id);
+
+        if ($this->cache !== null) {
+            $this->cache->set($cacheKey, $options, 3600);
+        }
+        return $options;
     }
 
     /**
@@ -163,13 +187,130 @@ class ProductRepository extends AbstractRepository implements BaseRepositoryInte
      */
     public function getSubscriptions(int $productId): array
     {
+        $cacheKey = "product.subscriptions.p{$productId}.l{$this->language_id}";
+        if ($this->cache !== null && $this->cache->has($cacheKey)) {
+            return (array)$this->cache->get($cacheKey);
+        }
+
         /** @var \Alpha\Mappers\EntityMappers\ProductMapper $mapper */
         $mapper = $this->mapperFactory->get(ProductMapper::class);
         
+        $subscriptions = [];
         if (method_exists($mapper, 'getSubscriptions')) {
-            return $mapper->getSubscriptions($productId, $this->language_id);
+            $subscriptions = $mapper->getSubscriptions($productId, $this->language_id);
         }
-        return [];
+
+        if ($this->cache !== null) {
+            $this->cache->set($cacheKey, $subscriptions, 3600);
+        }
+        return $subscriptions;
+    }
+
+    /**
+     * Alpha Engine: Recupera atributos com Cache-Aside (O(1) memory hit)
+     */
+    public function getProductAttributes(int $productId): array
+    {
+        $cacheKey = "product.attributes.p{$productId}.l{$this->language_id}";
+        if ($this->cache !== null && $this->cache->has($cacheKey)) {
+            return (array)$this->cache->get($cacheKey);
+        }
+
+        /** @var \Alpha\Mappers\EntityMappers\ProductMapper $mapper */
+        $mapper = $this->mapperFactory->get(ProductMapper::class);
+        $attributes = $mapper->getAttributes($productId, $this->language_id);
+
+        if ($this->cache !== null) {
+            $this->cache->set($cacheKey, $attributes, 3600);
+        }
+        return $attributes;
+    }
+
+    /**
+     * Alpha Engine: Recupera imagens adicionais com Cache-Aside
+     */
+    public function getProductImages(int $productId): array
+    {
+        $cacheKey = "product.images.p{$productId}";
+        if ($this->cache !== null && $this->cache->has($cacheKey)) {
+            return (array)$this->cache->get($cacheKey);
+        }
+
+        /** @var \Alpha\Mappers\EntityMappers\ProductMapper $mapper */
+        $mapper = $this->mapperFactory->get(ProductMapper::class);
+        $images = $mapper->getImages($productId);
+
+        if ($this->cache !== null) {
+            $this->cache->set($cacheKey, $images, 3600);
+        }
+        return $images;
+    }
+
+    /**
+     * Alpha Engine: Recupera descontos progressivos com Cache-Aside
+     */
+    public function getProductDiscounts(int $productId, int $customerGroupId): array
+    {
+        $cacheKey = "product.discounts.p{$productId}.cg{$customerGroupId}";
+        if ($this->cache !== null && $this->cache->has($cacheKey)) {
+            return (array)$this->cache->get($cacheKey);
+        }
+
+        /** @var \Alpha\Mappers\EntityMappers\ProductMapper $mapper */
+        $mapper = $this->mapperFactory->get(ProductMapper::class);
+        $discounts = $mapper->getDiscounts($productId, $customerGroupId);
+
+        if ($this->cache !== null) {
+            $this->cache->set($cacheKey, $discounts, 3600);
+        }
+        return $discounts;
+    }
+
+    /**
+     * Alpha Engine: Recupera códigos de barras (EAN, ISBN) com Cache-Aside
+     */
+    public function getProductCodes(int $productId): array
+    {
+        $cacheKey = "product.codes.p{$productId}";
+        if ($this->cache !== null && $this->cache->has($cacheKey)) {
+            return (array)$this->cache->get($cacheKey);
+        }
+
+        /** @var \Alpha\Mappers\EntityMappers\ProductMapper $mapper */
+        $mapper = $this->mapperFactory->get(ProductMapper::class);
+        $codes = $mapper->getCodes($productId);
+
+        if ($this->cache !== null) {
+            $this->cache->set($cacheKey, $codes, 3600);
+        }
+        return $codes;
+    }
+
+    /**
+     * Alpha Engine: Recupera produtos relacionados com preços aplicados (Cache-Aside)
+     */
+    public function getRelatedProducts(int $productId): array
+    {
+        $customerGroupId = $this->getCustomerGroupId();
+        $cacheKey = "product.related.p{$productId}.l{$this->language_id}.s{$this->store_id}.cg{$customerGroupId}";
+
+        if ($this->cache !== null && $this->cache->has($cacheKey)) {
+            return (array)$this->cache->get($cacheKey);
+        }
+
+        /** @var \Alpha\Model\Domain\Repositories\PriceRepository $priceRepo */
+        $priceRepo = RepositoryFactory::getInstance()->get(PriceRepository::class);
+        $priceStatements = $priceRepo->getPriceStatements($customerGroupId);
+
+        /** @var \Alpha\Mappers\EntityMappers\ProductMapper $mapper */
+        $mapper = $this->mapperFactory->get(ProductMapper::class);
+        $related = $mapper->getRelated($productId, $this->language_id, $this->store_id, $customerGroupId, $priceStatements);
+
+        if ($this->cache !== null) {
+            $this->cache->set($cacheKey, $related, 3600);
+        }
+
+        return $related;
     }
 
     /**
@@ -190,6 +331,15 @@ class ProductRepository extends AbstractRepository implements BaseRepositoryInte
     public function getProducts(array $filterData): array
     {
         $customerGroupId = $this->getCustomerGroupId();
+        
+        $filterContext = $filterData;
+        ksort($filterContext);
+        $cacheHash = md5(json_encode($filterContext));
+        $cacheKey = "products.list.{$cacheHash}.l{$this->language_id}.s{$this->store_id}.cg{$customerGroupId}";
+
+        if ($this->cache !== null && $this->cache->has($cacheKey)) {
+            return (array)$this->cache->get($cacheKey);
+        }
 
         /** @var \Alpha\Model\Domain\Repositories\PriceRepository $priceRepo */
         $priceRepo = RepositoryFactory::getInstance()->get(PriceRepository::class);
@@ -197,7 +347,12 @@ class ProductRepository extends AbstractRepository implements BaseRepositoryInte
 
         /** @var \Alpha\Mappers\EntityMappers\ProductMapper $mapper */
         $mapper = $this->mapperFactory->get(ProductMapper::class);
-        return $mapper->getProducts($filterData, $this->language_id, $this->store_id, $customerGroupId, $priceStatements);
+        $products = $mapper->getProducts($filterData, $this->language_id, $this->store_id, $customerGroupId, $priceStatements);
+
+        if ($this->cache !== null) {
+            $this->cache->set($cacheKey, $products, 300);
+        }
+        return $products;
     }
 
     /**
@@ -205,9 +360,23 @@ class ProductRepository extends AbstractRepository implements BaseRepositoryInte
      */
     public function getTotalProducts(array $filterData): int
     {
+        $filterContext = $filterData;
+        ksort($filterContext);
+        $cacheHash = md5(json_encode($filterContext));
+        $cacheKey = "products.total.{$cacheHash}.l{$this->language_id}.s{$this->store_id}";
+
+        if ($this->cache !== null && $this->cache->has($cacheKey)) {
+            return (int)$this->cache->get($cacheKey);
+        }
+
         /** @var \Alpha\Mappers\EntityMappers\ProductMapper $mapper */
         $mapper = $this->mapperFactory->get(ProductMapper::class);
-        return $mapper->getTotalProducts($filterData, $this->language_id, $this->store_id);
+        $total = $mapper->getTotalProducts($filterData, $this->language_id, $this->store_id);
+
+        if ($this->cache !== null) {
+            $this->cache->set($cacheKey, $total, 300);
+        }
+        return $total;
     }
 
     /**

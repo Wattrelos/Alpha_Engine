@@ -13,15 +13,20 @@ class ShowSuccessAction implements ActionInterface
 {
     private TwigEnvironment $twig;
     private ContainerInterface $container;
+    private \Alpha\Support\Language $translator;
 
-    public function __construct(TwigEnvironment $twig, ContainerInterface $container)
+    public function __construct(TwigEnvironment $twig, ContainerInterface $container, \Alpha\Support\Language $translator)
     {
         $this->twig = $twig;
         $this->container = $container;
+        $this->translator = $translator;
     }
 
     public function __invoke(Request $request, Response $response, array $args): Response
     {
+        $this->translator->load('order/success');
+        $this->twig->addGlobal('Order', $this->translator->getNestedData('order/success'));
+
         $session = $this->container->get('session');
 
         $orderId = $session->data['last_order_id'] ?? $session->data['order_id'] ?? 0;

@@ -15,19 +15,25 @@ class SearchAction implements ActionInterface
     private ProductRepository $productRepository;
     private SeoUrlRepository $seoRepository;
     private TwigEnvironment $twig;
+    private \Alpha\Support\Language $translator;
 
     public function __construct(
         ProductRepository $productRepository,
         SeoUrlRepository $seoRepository,
-        TwigEnvironment $twig
+        TwigEnvironment $twig,
+        \Alpha\Support\Language $translator
     ) {
         $this->productRepository = $productRepository;
         $this->seoRepository = $seoRepository;
         $this->twig = $twig;
+        $this->translator = $translator;
     }
 
     public function __invoke(Request $request, Response $response, array $args): Response
     {
+        $this->translator->load('product/search');
+        $this->twig->addGlobal('Search', $this->translator->getNestedData('product/search'));
+
         $queryParams = $request->getQueryParams();
         
         $filterData = array_merge($queryParams, [

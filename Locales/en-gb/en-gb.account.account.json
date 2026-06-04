@@ -1,0 +1,26 @@
+{
+  "headingTitle": "My Account",
+  "text": {
+    "account": "Account",
+    "myAccount": "My Account",
+    "myOrders": "My Orders",
+    "myAffiliate": "My Affiliate Account",
+    "myNewsletter": "Newsletter",
+    "edit": "Edit your account information",
+    "password": "Change your password",
+    "address": "Modify your address book entries",
+    "paymentMethod": "Stored payment methods",
+    "wishlist": "Modify your wish list",
+    "order": "View your order history",
+    "subscription": "Subscriptions",
+    "download": "Downloads",
+    "reward": "Your Reward Points",
+    "return": "View your return requests",
+    "transaction": "Your Transactions",
+    "newsletter": "Subscribe / unsubscribe to newsletter",
+    "transactions": "Transactions",
+    "affiliateAdd": "Register for an affiliate account",
+    "affiliateEdit": "Edit your affiliate information",
+    "tracking": "Custom Affiliate Tracking Code"
+  }
+}

@@ -1,0 +1,18 @@
+{
+  "availability": "Disponibilidade:",
+  "tax": "Sem impostos:",
+  "optionsTitle": "Opções Disponíveis",
+  "select": "--- Selecione ---",
+  "quantity": "Quantidade",
+  "buy": "Comprar",
+  "description": "Descrição",
+  "specification": "Especificação",
+  "reviews": "Avaliações (%s)",
+  "noReviews": "Não há comentários para este produto.",
+  "writeReview": "Escreva um comentário",
+  "rating": "Avaliação",
+  "entryName": "Seu nome",
+  "entryReview": "Seu comentário",
+  "buttonSubmit": "Enviar",
+  "relatedProducts": "Produtos relacionados"
+}

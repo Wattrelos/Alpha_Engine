@@ -1,0 +1,26 @@
+{
+  "headingTitle": "Minha Conta",
+  "text": {
+    "account": "Minha Conta",
+    "myAccount": "Minha Conta",
+    "myOrders": "Meus Pedidos",
+    "myAffiliate": "Minha Conta de Afiliado",
+    "myNewsletter": "Novidades por E-mail",
+    "edit": "Alterar informações da minha conta",
+    "password": "Alterar minha senha",
+    "address": "Alterar meus endereços",
+    "paymentMethod": "Formas de pagamento salvas",
+    "wishlist": "Lista de desejos",
+    "order": "Histórico de pedidos",
+    "subscription": "Assinaturas",
+    "download": "Downloads",
+    "reward": "Pontos de fidelidade",
+    "return": "Solicitações de devolução",
+    "transaction": "Transações",
+    "newsletter": "Inscrever ou desinscrever-se na newsletter",
+    "transactions": "Transações",
+    "affiliateAdd": "Cadastre-se como afiliado",
+    "affiliateEdit": "Alterar informações de afiliado",
+    "tracking": "Gerador de links de afiliado"
+  }
+}

@@ -1,0 +1,120 @@
+{% extends 'layouts/base.html.twig' %}
+
+{% block title %}
+	{{ heading_title|default('Editar Informações') }} | AgSonhos
+{% endblock %}
+
+{% block content %}
+	<div class="egen-hero-premium">
+		<div class="egen-container">
+			<div class="egen-hero-content">
+				<h1 class="egen-hero-title">
+					<i class="fas fa-user-edit egen-hero-icon" style="color: var(--egen-primary-color, #e056fd);"></i>
+					{{ heading_title|default('Editar Informações') }}
+				</h1>
+				{% include 'components/molecules/breadcrumbs.twig' with { items: breadcrumbs } %}
+			</div>
+		</div>
+	</div>
+
+	<div class="egen-container egen-page-spacing egen-account-page">
+		{% if errors.warning %}
+			<div class="egen-alert egen-alert--danger">
+				<i class="fa-solid fa-circle-exclamation"></i>
+				{{ errors.warning }}
+			</div>
+		{% endif %}
+
+		<div class="egen-account-card">
+			<form id="form-edit-account" action="{{ action }}" method="post" class="egen-form">
+				<fieldset class="egen-fieldset">
+					<legend class="egen-legend">{{ text_your_details|default('Seus Dados Pessoais') }}</legend>
+
+					<div class="egen-form-grid-premium">
+						{# Nome #}
+						<div class="egen-form-group-premium">
+							<label for="input-firstname" class="egen-form-label-premium">
+								{{ entry_firstname|default('Nome') }} <span class="egen-required-star">*</span>
+							</label>
+							<input type="text" name="firstname" value="{{ formData.firstname }}" placeholder="{{ entry_firstname|default('Nome') }}" id="input-firstname" class="egen-form-input-premium" required/>
+							{% if errors.firstname %}
+								<div class="egen-invalid-feedback">{{ errors.firstname }}</div>
+							{% endif %}
+						</div>
+
+						{# Sobrenome #}
+						<div class="egen-form-group-premium">
+							<label for="input-lastname" class="egen-form-label-premium">
+								{{ entry_lastname|default('Sobrenome') }} <span class="egen-required-star">*</span>
+							</label>
+							<input type="text" name="lastname" value="{{ formData.lastname }}" placeholder="{{ entry_lastname|default('Sobrenome') }}" id="input-lastname" class="egen-form-input-premium" required/>
+							{% if errors.lastname %}
+								<div class="egen-invalid-feedback">{{ errors.lastname }}</div>
+							{% endif %}
+						</div>
+					</div>
+
+					<div class="egen-form-grid-premium">
+						{# E-mail #}
+						<div class="egen-form-group-premium">
+							<label for="input-email" class="egen-form-label-premium">
+								{{ entry_email|default('E-mail') }} <span class="egen-required-star">*</span>
+							</label>
+							<input type="email" name="email" value="{{ formData.email }}" placeholder="{{ entry_email|default('E-mail') }}" id="input-email" class="egen-form-input-premium" required/>
+							{% if errors.email %}
+								<div class="egen-invalid-feedback">{{ errors.email }}</div>
+							{% endif %}
+						</div>
+
+						{# Telefone #}
+						<div class="egen-form-group-premium">
+							<label for="input-telephone" class="egen-form-label-premium">
+								{{ entry_telephone|default('Telefone') }} {% if config_telephone_required %}<span class="egen-required-star">*</span>{% endif %}
+							</label>
+							<input type="tel" name="telephone" value="{{ formData.telephone }}" placeholder="{{ entry_telephone|default('Telefone') }}" id="input-telephone" class="egen-form-input-premium" {% if config_telephone_required %}required{% endif %}/>
+							{% if errors.telephone %}
+								<div class="egen-invalid-feedback">{{ errors.telephone }}</div>
+							{% endif %}
+						</div>
+					</div>
+
+					{% if formData.cpf_cnpj %}
+						<div class="egen-form-grid-premium">
+							{# Tipo de Pessoa #}
+							<div class="egen-form-group-premium select-wrapper-premium">
+								<label for="input-persontype" class="egen-form-label-premium">
+									Tipo de Pessoa
+								</label>
+								<select name="persontype" id="input-persontype" class="egen-form-select-premium">
+									<option value="F" {% if formData.persontype == 'F' %}selected{% endif %}>Pessoa Física</option>
+									<option value="J" {% if formData.persontype == 'J' %}selected{% endif %}>Pessoa Jurídica</option>
+								</select>
+								<i class="fa-solid fa-chevron-down select-arrow-premium"></i>
+							</div>
+
+							{# CPF / CNPJ #}
+							<div class="egen-form-group-premium">
+								<label for="input-cpf-cnpj" class="egen-form-label-premium">
+									Documento (CPF / CNPJ)
+								</label>
+								<input type="text" name="cpf_cnpj" value="{{ formData.cpf_cnpj }}" placeholder="Documento" id="input-cpf-cnpj" class="egen-form-input-premium"/>
+								{% if errors.cpf_cnpj %}
+									<div class="egen-invalid-feedback">{{ errors.cpf_cnpj }}</div>
+								{% endif %}
+							</div>
+						</div>
+					{% endif %}
+				</fieldset>
+
+				<div class="egen-form-footer">
+					<a href="{{ back }}" class="egen-btn-secondary">
+						<i class="fa-solid fa-arrow-left"></i> Voltar
+					</a>
+					<button type="submit" class="egen-btn-primary">
+						Salvar Alterações <i class="fa-solid fa-check"></i>
+					</button>
+				</div>
+			</form>
+		</div>
+	</div>
+{% endblock %}

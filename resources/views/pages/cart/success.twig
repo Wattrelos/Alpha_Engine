@@ -1,16 +1,19 @@
 {% extends "layouts/base.html.twig" %}
 
-{% block title %}Pedido Confirmado! | AgSonhos{% endblock %}
+{% block title %}
+	{{ Order.headingTitle|default('Pedido Realizado com Sucesso!') }}
+	| AgSonhos
+{% endblock %}
 
 {% block content %}
-<div class="egen-cart-page">
-    <div class="egen-cart-container" style="text-align: center; padding: 4rem 2rem;">
-        <div class="egen-cart-empty__icon" style="color: var(--egen-primary-color); font-size: 4rem; margin-bottom: 1.5rem;">
-            <i class="fa-solid fa-circle-check"></i>
-        </div>
-        <h1 class="egen-cart-title" style="margin-bottom: 1rem;">Pedido Realizado com Sucesso!</h1>
-        <p style="color: var(--egen-text-muted); margin-bottom: 2rem;">Agradecemos pela preferência. O número do seu pedido é <strong>#{{ order_id }}</strong>.</p>
-        <a href="/" class="egen-btn-primary">Voltar para a Página Inicial</a>
-    </div>
-</div>
+	<div class="egen-cart-page">
+		<div class="egen-cart-container" style="text-align: center; padding: 4rem 2rem;">
+			<div class="egen-cart-empty__icon" style="color: var(--egen-primary-color); font-size: 4rem; margin-bottom: 1.5rem;">
+				<i class="fa-solid fa-circle-check"></i>
+			</div>
+			<h1 class="egen-cart-title" style="margin-bottom: 1rem;">{{ Order.headingTitle|default('Pedido Realizado com Sucesso!') }}</h1>
+			<p style="color: var(--egen-text-muted); margin-bottom: 2rem;">{{ Order.textMessage|format(order_id)|raw }}</p>
+			<a href="{{ continue_url|default('/') }}" class="egen-btn-primary">{{ Order.buttonContinue|default('Voltar para a Página Inicial') }}</a>
+		</div>
+	</div>
 {% endblock %}

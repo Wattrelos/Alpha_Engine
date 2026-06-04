@@ -1,0 +1,18 @@
+{
+  "availability": "Availability:",
+  "tax": "Ex Tax:",
+  "optionsTitle": "Available Options",
+  "select": "--- Please Select ---",
+  "quantity": "Qty",
+  "buy": "Add to Cart",
+  "description": "Description",
+  "specification": "Specification",
+  "reviews": "Reviews (%s)",
+  "noReviews": "There are no reviews for this product.",
+  "writeReview": "Write a review",
+  "rating": "Rating",
+  "entryName": "Your Name",
+  "entryReview": "Your Review",
+  "buttonSubmit": "Submit",
+  "relatedProducts": "Related Products"
+}

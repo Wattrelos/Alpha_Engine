@@ -22,13 +22,16 @@ class ShowProductAction implements ActionInterface
     private TwigEnvironment $twig;
     private ImagePresenter $imagePresenter;
 
+    private \Alpha\Support\Language $translator;
+
     public function __construct(
         ProductRepository $productRepository,
         SeoUrlRepository $seoRepository,
         AddressRepository $addressRepository,
         ContainerInterface $container,
         TwigEnvironment $twig,
-        ImagePresenter $imagePresenter
+        ImagePresenter $imagePresenter,
+        \Alpha\Support\Language $translator
     ) {
         $this->productRepository = $productRepository;
         $this->seoRepository = $seoRepository;
@@ -36,10 +39,14 @@ class ShowProductAction implements ActionInterface
         $this->container = $container;
         $this->twig = $twig;
         $this->imagePresenter = $imagePresenter;
+        $this->translator = $translator;
     }
 
     public function __invoke(Request $request, Response $response, array $args): Response
     {
+        $this->translator->load('product');
+        $this->twig->addGlobal('Product', $this->translator->getNestedData('product'));
+
         $slug = $args['slug'] ?? '';
         $languageId = $request->getAttribute('language_id', 2);
         $productId = 0;

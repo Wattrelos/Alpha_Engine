@@ -55,6 +55,8 @@ class ShowCartAction implements ActionInterface
         $translator = $this->container->has('language') ? $this->container->get('language') : null;
         $translations = [];
         if ($translator && method_exists($translator, 'load')) {
+            $translator->load('cart');
+            $this->twig->addGlobal('Cart', $translator->getNestedData('cart'));
             $translations = $translator->load('checkout/cart');
         }
 

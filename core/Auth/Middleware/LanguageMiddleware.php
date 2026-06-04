@@ -71,15 +71,26 @@ class LanguageMiddleware
 
         // Carrega as traduções do cabeçalho globalmente para o Twig
         if ($translator && method_exists($translator, 'load')) {
-            $headerTranslations = $translator->load('common/header');
-            
-            // Resolve a quantidade de itens na lista de desejos (wishlist) da sessão
             $wishlistCount = 0;
             $session = $this->container->get('session');
             if ($session && isset($session->data['wishlist']) && is_array($session->data['wishlist'])) {
                 $wishlistCount = count($session->data['wishlist']);
             }
 
+            // Novo sistema de tradução: carrega o namespace 'common'
+            $translator->load('common');
+            if (method_exists($translator, 'getNestedData')) {
+                $commonData = $translator->getNestedData('common');
+                if (!empty($commonData)) {
+                    if (isset($commonData['header']['wishlist'])) {
+                        $commonData['header']['wishlist'] = sprintf($commonData['header']['wishlist'], $wishlistCount);
+                    }
+                    $this->twig->addGlobal('Common', $commonData);
+                }
+            }
+
+            // Retrocompatibilidade: carrega o cabeçalho legado
+            $headerTranslations = $translator->load('common/header');
             foreach ($headerTranslations as $key => $value) {
                 if ($key === 'text_wishlist') {
                     $value = sprintf($value, $wishlistCount);

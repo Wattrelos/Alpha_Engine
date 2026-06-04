@@ -94,6 +94,7 @@ class AppBootstrap
 
         // Vincula o tradutor nativo ao container
         $this->container->bind('language', $translator);
+        $this->container->bind(\Alpha\Support\Language::class, $translator);
         $this->container->bind('languageEntity', $this->language);
         
         $sessionMock = new \stdClass();

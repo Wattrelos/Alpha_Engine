@@ -1,7 +1,7 @@
 {% extends 'layouts/base.html.twig' %}
 
 {% block title %}
-	{{ seo.title|default('Mapa do Site | AgSonhos') }}
+	{{ Sitemap.headingTitle|default(seo.title)|default('Mapa do Site') }} | AgSonhos
 {% endblock %}
 
 {% block content %}
@@ -30,8 +30,8 @@
 					</svg>
 				</div>
 				<div>
-					<h1 class="egen-sitemap-title">{{ heading_title }}</h1>
-					<p class="egen-sitemap-subtitle">Navegue facilmente por todas as seções da nossa loja</p>
+					<h1 class="egen-sitemap-title">{{ Sitemap.headingTitle }}</h1>
+					<p class="egen-sitemap-subtitle">{{ Sitemap.subtitle }}</p>
 				</div>
 			</div>
 
@@ -50,7 +50,7 @@
 								<svg width="16" height="16" viewbox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
 									<path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path>
 								</svg>
-								Departamentos e Categorias
+								{{ Sitemap.departmentsTitle }}
 							</h2>
 							<ul class="egen-sitemap-list">
 								{% for category_1 in categories %}
@@ -86,43 +86,43 @@
 									<path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
 									<circle cx="12" cy="7" r="4"></circle>
 								</svg>
-								Páginas e Conta do Usuário
+								{{ Sitemap.pagesTitle }}
 							</h2>
 							<ul class="egen-sitemap-list">
 								<li class="egen-sitemap-item depth-1">
-									<a href="{{ special }}">{{ text_special }}</a>
+									<a href="{{ special }}">{{ Sitemap.textSpecial }}</a>
 								</li>
 								<li class="egen-sitemap-item depth-1">
-									<a href="{{ account }}">{{ text_account }}</a>
+									<a href="{{ account }}">{{ Sitemap.textAccount }}</a>
 									<ul class="egen-sitemap-sublist">
 										<li class="egen-sitemap-item depth-2">
-											<a href="{{ edit }}">{{ text_edit }}</a>
+											<a href="{{ edit }}">{{ Sitemap.textEdit }}</a>
 										</li>
 										<li class="egen-sitemap-item depth-2">
-											<a href="{{ password }}">{{ text_password }}</a>
+											<a href="{{ password }}">{{ Sitemap.textPassword }}</a>
 										</li>
 										<li class="egen-sitemap-item depth-2">
-											<a href="{{ address }}">{{ text_address }}</a>
+											<a href="{{ address }}">{{ Sitemap.textAddress }}</a>
 										</li>
 										<li class="egen-sitemap-item depth-2">
-											<a href="{{ history }}">{{ text_history }}</a>
+											<a href="{{ history }}">{{ Sitemap.textHistory }}</a>
 										</li>
 										<li class="egen-sitemap-item depth-2">
-											<a href="{{ download }}">{{ text_download }}</a>
+											<a href="{{ download }}">{{ Sitemap.textDownload }}</a>
 										</li>
 									</ul>
 								</li>
 								<li class="egen-sitemap-item depth-1">
-									<a href="{{ cart }}">{{ text_cart }}</a>
+									<a href="{{ cart }}">{{ Sitemap.textCart }}</a>
 								</li>
 								<li class="egen-sitemap-item depth-1">
-									<a href="{{ checkout }}">{{ text_checkout }}</a>
+									<a href="{{ checkout }}">{{ Sitemap.textCheckout }}</a>
 								</li>
 								<li class="egen-sitemap-item depth-1">
-									<a href="{{ search }}">{{ text_search }}</a>
+									<a href="{{ search }}">{{ Sitemap.textSearch }}</a>
 								</li>
 								<li class="egen-sitemap-item depth-1 has-children">
-									<span class="egen-sitemap-label">{{ text_information }}</span>
+									<span class="egen-sitemap-label">{{ Sitemap.textInformation }}</span>
 									<ul class="egen-sitemap-sublist">
 										{% for information in informations %}
 											<li class="egen-sitemap-item depth-2">
@@ -130,7 +130,7 @@
 											</li>
 										{% endfor %}
 										<li class="egen-sitemap-item depth-2">
-											<a href="{{ contact }}">{{ text_contact }}</a>
+											<a href="{{ contact }}">{{ Sitemap.textContact }}</a>
 										</li>
 									</ul>
 								</li>

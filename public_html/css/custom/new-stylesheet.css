@@ -3566,16 +3566,27 @@
 }
 
 .egen-wishlist-card__image {
-    text-align: center;
-    margin-bottom: 1.25rem;
-    border-radius: 12px;
+    position: relative;
+    padding-bottom: 100%;
+    background: #000;
     overflow: hidden;
-    background: rgba(0, 0, 0, 0.2);
-    padding: 1rem;
+    border-radius: 12px;
+}
+
+.egen-wishlist-card__image a {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .egen-wishlist-card__image img {
-    max-height: 180px;
+    max-width: 100%;
+    max-height: 100%;
     object-fit: contain;
     transition: transform 0.4s ease;
 }
@@ -3617,6 +3628,34 @@
     border-top: 1px solid rgba(255, 255, 255, 0.05);
 }
 
+.egen-wishlist-card__details {
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+    justify-content: space-between;
+}
+
+.egen-wishlist-card__price-box {
+    margin-bottom: 1rem;
+    font-size: 1.25rem;
+    font-weight: 700;
+}
+
+.egen-wishlist-card__price-box .egen-price-regular {
+    color: var(--egen-primary-color, #e056fd);
+}
+
+.egen-wishlist-card__price-box .egen-price-old {
+    text-decoration: line-through;
+    color: #888;
+    font-size: 0.95rem;
+    margin-right: 0.5rem;
+}
+
+.egen-wishlist-card__price-box .egen-price-special {
+    color: #ff7675;
+}
+
 .egen-btn-danger-icon {
     display: inline-flex;
     align-items: center;
@@ -3632,4 +3671,671 @@
 .egen-btn-danger-icon:hover {
     background: #ef4444;
     color: #fff;
+}
+
+.egen-prod-btn-wishlist {
+    width: 38px;
+    height: 38px;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 8px;
+    color: #f43f5e;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    transition: all 0.2s;
+}
+
+.egen-prod-btn-wishlist:hover {
+    background: rgba(244, 63, 94, 0.15);
+    border-color: rgba(244, 63, 94, 0.4);
+    transform: scale(1.08);
+}
+
+.egen-prod-btn-wishlist:active {
+    transform: scale(0.96);
+}
+
+/* Premium Form Grid and Groups */
+.egen-form-grid-premium {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1.25rem 1.5rem;
+    margin-bottom: 1.25rem;
+}
+
+@media(min-width: 768px) {
+    .egen-form-grid-premium {
+        grid-template-columns: 1fr 1fr;
+    }
+}
+
+.egen-form-group-premium {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.egen-form-label-premium {
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: #94a3b8;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+}
+
+.egen-form-input-premium,
+.egen-form-select-premium {
+    width: 100%;
+    background: rgba(255, 255, 255, 0.03) !important;
+    border: 1px solid rgba(255, 255, 255, 0.08) !important;
+    border-radius: 8px !important;
+    padding: 0.8rem 1rem !important;
+    color: #f1f5f9 !important;
+    font-family: inherit !important;
+    font-size: 0.95rem !important;
+    transition: all 0.2s ease !important;
+    box-sizing: border-box;
+}
+
+.egen-form-input-premium::placeholder {
+    color: #475569 !important;
+}
+
+.egen-form-input-premium:focus,
+.egen-form-select-premium:focus {
+    outline: none !important;
+    background: rgba(99, 102, 241, 0.04) !important;
+    border-color: rgba(99, 102, 241, 0.4) !important;
+    box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.15) !important;
+}
+
+/* Custom Select Arrow */
+.select-wrapper-premium {
+    position: relative;
+    display: flex;
+    align-items: center;
+    width: 100%;
+}
+
+.select-wrapper-premium select {
+    padding-right: 2.5rem !important;
+    appearance: none !important;
+    -webkit-appearance: none !important;
+}
+
+.select-arrow-premium {
+    position: absolute;
+    right: 1rem;
+    color: #64748b;
+    pointer-events: none;
+    display: flex;
+    align-items: center;
+}
+
+/* Premium Checkout Steps Layout */
+.egen-checkout-page {
+    min-height: 100vh;
+    background: #0d0f14;
+    color: #e2e8f0;
+    font-family: 'Inter', system-ui, sans-serif;
+    padding: 3rem 1.5rem 5rem;
+}
+
+.egen-checkout-container {
+    max-width: 900px;
+    margin: 0 auto;
+}
+
+.egen-checkout-title {
+    font-size: clamp(1.8rem, 4vw, 2.4rem);
+    font-weight: 800;
+    color: #f1f5f9;
+    margin-bottom: 2.5rem;
+    letter-spacing: -0.02em;
+    background: linear-gradient(135deg, #ffffff 0%, #a5b4fc 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.egen-checkout-step {
+    background: rgba(255, 255, 255, 0.02);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    border-radius: 16px;
+    padding: 1.5rem 2rem;
+    margin-bottom: 1.5rem;
+    transition: all 0.3s ease;
+}
+
+.egen-checkout-step.active {
+    background: rgba(255, 255, 255, 0.04);
+    border-color: rgba(99, 102, 241, 0.25);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+}
+
+.egen-checkout-step-title {
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: #f1f5f9;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin: 0 0 1.5rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    padding-bottom: 1rem;
+}
+
+.egen-checkout-step-title i {
+    color: #a5b4fc;
+}
+
+.egen-checkout-progress {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: relative;
+    margin-bottom: 3.5rem;
+    padding: 0 1rem;
+}
+
+.egen-checkout-progress__line {
+    position: absolute;
+    top: 20px;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: rgba(255, 255, 255, 0.08);
+    z-index: 1;
+}
+
+.egen-checkout-progress__step {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.75rem;
+    position: relative;
+    z-index: 2;
+}
+
+.egen-checkout-progress__circle {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: #1e293b;
+    border: 2px solid rgba(255, 255, 255, 0.08);
+    color: #94a3b8;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 0.95rem;
+    transition: all 0.3s ease;
+}
+
+.egen-checkout-progress__step.active .egen-checkout-progress__circle {
+    background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+    border-color: #a5b4fc;
+    color: #ffffff;
+    box-shadow: 0 0 15px rgba(99, 102, 241, 0.4);
+}
+
+.egen-checkout-progress__label {
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: #64748b;
+    transition: color 0.3s ease;
+}
+
+.egen-checkout-progress__step.active .egen-checkout-progress__label {
+    color: #a5b4fc;
+}
+
+/* Nav Buttons & Form Buttons */
+.egen-checkout-step-nav {
+    display: flex;
+    justify-content: flex-end;
+    gap: 1rem;
+    margin-top: 2rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.05);
+    padding-top: 1.5rem;
+}
+
+.egen-btn-primary {
+    background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%) !important;
+    color: #ffffff !important;
+    border: none !important;
+    border-radius: 8px !important;
+    padding: 0.75rem 1.75rem !important;
+    font-weight: 700 !important;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    box-shadow: 0 4px 14px rgba(99, 102, 241, 0.3) !important;
+    transition: all 0.2s ease !important;
+}
+
+.egen-btn-primary:hover {
+    transform: translateY(-1px) !important;
+    box-shadow: 0 6px 20px rgba(99, 102, 241, 0.4) !important;
+}
+
+.egen-btn-secondary {
+    background: rgba(255, 255, 255, 0.04) !important;
+    border: 1px solid rgba(255, 255, 255, 0.08) !important;
+    color: #e2e8f0 !important;
+    padding: 0.75rem 1.5rem !important;
+    border-radius: 8px !important;
+    font-weight: 600 !important;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    transition: all 0.2s ease !important;
+}
+
+.egen-btn-secondary:hover {
+    background: rgba(255, 255, 255, 0.08) !important;
+    border-color: rgba(255, 255, 255, 0.15) !important;
+}
+
+/* Identity button choices */
+.egen-checkout-identity-options,
+.egen-checkout-address-options {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+}
+
+@media(min-width: 640px) {
+
+    .egen-checkout-identity-options,
+    .egen-checkout-address-options {
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    }
+}
+
+.egen-checkout-identity-options button,
+.egen-checkout-address-options button {
+    padding: 1.25rem !important;
+    border-radius: 12px !important;
+    justify-content: center;
+    background: rgba(255, 255, 255, 0.02) !important;
+    border: 1px solid rgba(255, 255, 255, 0.06) !important;
+}
+
+.egen-checkout-identity-options button:hover,
+.egen-checkout-address-options button:hover {
+    border-color: rgba(99, 102, 241, 0.3) !important;
+    background: rgba(99, 102, 241, 0.04) !important;
+}
+
+/* Alert styles */
+.egen-alert {
+    background: rgba(239, 68, 68, 0.1);
+    border: 1px solid rgba(239, 68, 68, 0.2);
+    color: #fca5a5;
+    padding: 1rem;
+    border-radius: 8px;
+    margin-bottom: 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+/* ==========================================================================
+       Premium Dark Mode: Account Pages (Edit, Wishlist, etc.)
+       ========================================================================== */
+
+.egen-account-page {
+    margin-top: 3rem;
+    margin-bottom: 5rem;
+    max-width: 800px;
+}
+
+.egen-account-card {
+    padding: 2.5rem;
+    border-radius: 16px;
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    background: rgba(255, 255, 255, 0.02);
+    backdrop-filter: blur(10px);
+}
+
+.egen-account-card .egen-fieldset {
+    border: none;
+    padding: 0;
+    margin: 0 0 2rem 0;
+}
+
+.egen-account-card .egen-legend {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: #fff;
+    margin-bottom: 1.5rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    padding-bottom: 0.75rem;
+    width: 100%;
+}
+
+.egen-account-card .egen-legend::after {
+    display: none;
+    /* Remove a linha laranja do estilo genérico de legend */
+}
+
+.egen-required-star {
+    color: #ff7675;
+}
+
+.egen-account-card .egen-invalid-feedback {
+    color: #ff7675;
+    font-size: 0.8rem;
+    margin-top: 0.25rem;
+    display: block;
+    /* Garante que seja exibido quando presente */
+}
+
+.egen-account-card .egen-form-grid-premium {
+    margin-top: 1.5rem;
+}
+
+.egen-account-card .egen-form-grid-premium:first-of-type {
+    margin-top: 0;
+}
+
+.egen-account-card .egen-form-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-top: 1px solid rgba(255, 255, 255, 0.05);
+    padding-top: 1.5rem;
+    margin-top: 2.5rem;
+}
+
+.egen-account-card .egen-form-footer .egen-btn-secondary {
+    text-decoration: none;
+}
+
+.egen-alert {
+    margin-bottom: 2rem;
+    animation: slideDown 0.3s ease-out;
+}
+
+@keyframes slideDown {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.egen-wishlist-card .egen-badge {
+    background: rgba(255, 255, 255, 0.1);
+    padding: 0.2rem 0.6rem;
+    border-radius: 4px;
+    font-size: 0.75rem;
+    color: #ccc;
+    display: inline-block;
+}
+
+.egen-wishlist-card__buy-form {
+    flex-grow: 1;
+    display: flex;
+}
+
+.egen-wishlist-card__buy-form .egen-btn-primary {
+    width: 100%;
+    justify-content: center;
+    background: var(--egen-primary-color) !important;
+    /* Override gradient for a solid color */
+    gap: 0.5rem;
+}
+
+/* ==========================================================================
+       Premium Dark Mode: Order History & Details
+       ========================================================================== */
+.egen-order-page {
+    margin-top: 3rem;
+    margin-bottom: 5rem;
+    max-width: 1100px;
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+}
+
+.egen-order-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+}
+
+@media (min-width: 768px) {
+    .egen-order-grid {
+        grid-template-columns: 1fr 1fr;
+    }
+}
+
+.egen-order-card-title {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: #f1f5f9;
+    margin: 0 0 1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    padding-bottom: 0.75rem;
+}
+
+.egen-order-card-content {
+    font-size: 0.9rem;
+    color: #cbd5e1;
+    line-height: 1.6;
+}
+
+.egen-order-meta {
+    margin-top: 1rem;
+    padding-top: 0.75rem;
+    border-top: 1px dashed rgba(255, 255, 255, 0.06);
+    font-size: 0.85rem;
+    color: #94a3b8;
+}
+
+.egen-order-meta strong {
+    color: var(--egen-primary-color);
+}
+
+.egen-order-products {
+    padding: 0;
+    overflow: hidden;
+}
+
+.egen-order-products .egen-order-card-title {
+    padding: 1.25rem 1.5rem;
+    background: rgba(252, 144, 3, 0.05);
+    margin: 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+}
+
+.egen-cart-table .col-center {
+    text-align: center;
+}
+
+.egen-cart-table .col-right {
+    text-align: right;
+}
+
+.egen-order-totals {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    padding: 1.5rem;
+    background: rgba(0, 0, 0, 0.15);
+    border-top: 1px solid rgba(255, 255, 255, 0.05);
+    gap: 0.75rem;
+}
+
+.egen-order-total-row {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    max-width: 320px;
+    font-size: 0.9rem;
+    color: #cbd5e1;
+}
+
+.egen-order-total-row span {
+    color: #94a3b8;
+}
+
+.egen-order-total-row strong {
+    color: #f1f5f9;
+    font-weight: 600;
+}
+
+.egen-order-total-row--final {
+    font-size: 1.2rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    padding-top: 0.75rem;
+    margin-top: 0.25rem;
+}
+
+.egen-order-total-row--final span {
+    color: var(--egen-primary-color);
+    font-weight: 700;
+}
+
+.egen-order-total-row--final strong {
+    color: #ffffff;
+    font-weight: 800;
+}
+
+.egen-timeline-wrap {
+    padding: 1rem 0 0 0;
+}
+
+.egen-timeline {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+}
+
+.egen-timeline::before {
+    content: '';
+    position: absolute;
+    left: 7px;
+    top: 5px;
+    bottom: 5px;
+    width: 2px;
+    background: rgba(255, 255, 255, 0.06);
+}
+
+.egen-timeline-item {
+    position: relative;
+    padding-left: 2rem;
+}
+
+.egen-timeline-dot {
+    position: absolute;
+    left: 0;
+    top: 6px;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background: var(--egen-bg-card);
+    border: 3px solid rgba(252, 144, 3, 0.5);
+    z-index: 2;
+    transition: all 0.3s ease;
+}
+
+.egen-timeline-item:hover .egen-timeline-dot {
+    border-color: var(--egen-accent-color);
+    background: var(--egen-primary-color);
+    box-shadow: 0 0 10px rgba(252, 144, 3, 0.6);
+}
+
+.egen-timeline-content {
+    background: rgba(255, 255, 255, 0.015);
+    border: 1px solid rgba(255, 255, 255, 0.04);
+    border-radius: 12px;
+    padding: 1.25rem;
+}
+
+.egen-timeline-header {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.5rem;
+    margin-bottom: 0.75rem;
+}
+
+.egen-status-pill {
+    display: inline-block;
+    padding: 0.25rem 0.75rem;
+    border-radius: 100px;
+    font-size: 0.78rem;
+    font-weight: 600;
+    letter-spacing: 0.03em;
+    background: rgba(245, 158, 11, 0.15);
+    color: #fbbf24;
+    border: 1px solid rgba(245, 158, 11, 0.3);
+}
+
+.egen-status-pill.status-completo,
+.egen-status-pill.status-entregue {
+    background: rgba(34, 197, 94, 0.12);
+    color: #4ade80;
+    border-color: rgba(34, 197, 94, 0.3);
+}
+
+.egen-status-pill.status-cancelado,
+.egen-status-pill.status-recusado {
+    background: rgba(239, 68, 68, 0.12);
+    color: #f87171;
+    border-color: rgba(239, 68, 68, 0.3);
+}
+
+.egen-status-pill.status-enviado,
+.egen-status-pill.status-em-transporte {
+    background: rgba(59, 130, 246, 0.12);
+    color: #60a5fa;
+    border-color: rgba(59, 130, 246, 0.3);
+}
+
+.egen-timeline-date {
+    font-size: 0.8rem;
+    color: #64748b;
+}
+
+.egen-timeline-comment {
+    font-size: 0.88rem;
+    color: #94a3b8;
+    line-height: 1.5;
+    background: rgba(0, 0, 0, 0.15);
+    padding: 0.75rem 1rem;
+    border-radius: 8px;
+    border-left: 3px solid rgba(252, 144, 3, 0.4);
+}
+
+.egen-timeline-empty {
+    text-align: center;
+    color: #94a3b8;
+    margin: 0;
+    padding: 1rem 0;
+}
+
+.font-tabular {
+    font-variant-numeric: tabular-nums;
 }

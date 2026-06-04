@@ -180,7 +180,10 @@ class SubmitCheckoutAction implements ActionInterface
             $cartRepository->initializeContext();
 
             $orderData = [];
-            $orderData['store_id'] = (int)($configSettings['config_store_id'] ?? 0);
+            if (!isset($configSettings['config_store_id'])) {
+                throw new \RuntimeException('[Alpha Engine] config_store_id ausente nas configura\u00e7\u00f5es do checkout. Falha de bootstrap.');
+            }
+            $orderData['store_id']    = (int)$configSettings['config_store_id'];
             $orderData['language_id'] = (int)($configSettings['config_language_id'] ?? 2);
             $orderData['currency_id'] = (int)($configSettings['config_currency_id'] ?? 1);
             

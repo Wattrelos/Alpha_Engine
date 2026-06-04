@@ -1,0 +1,31 @@
+{
+  "headingTitle": "Shopping Cart",
+  "textEmpty": "Your shopping cart is empty.",
+  "textEmptyDesc": "Add products to the cart to continue.",
+  "exploreProducts": "Explore products",
+  "columnImage": "Image",
+  "columnName": "Product",
+  "columnModel": "Model",
+  "columnQuantity": "Quantity",
+  "columnPrice": "Unit Price",
+  "columnTotal": "Total",
+  "buttonUpdate": "Update",
+  "buttonRemove": "Remove",
+  "buttonShopping": "Continue Shopping",
+  "buttonCheckout": "Checkout",
+  "textNext": "What would you like to do next?",
+  "textNextChoice": "Choose if you have a discount code or would like to estimate your delivery cost.",
+  "textSubscription": "Subscription",
+  "textSummary": "Order Summary",
+  "secureCheckout": "Secure Checkout",
+  "dataProtection": "Data Protection",
+  "outOfStock": "Out of stock",
+  "shippingEstimate": {
+    "title": "Estimate Shipping & Taxes",
+    "desc": "Enter your postcode to get a shipping estimate.",
+    "entryCep": "Postcode",
+    "buttonQuote": "Calculate",
+    "textSelectCountry": "Select Country",
+    "textSelectZone": "Select State/Region"
+  }
+}

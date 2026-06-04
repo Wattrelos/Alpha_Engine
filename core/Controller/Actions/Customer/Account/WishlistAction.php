@@ -70,11 +70,27 @@ class WishlistAction implements ActionInterface
             ];
         }
 
-        $html = $this->twig->render('pages/account/wishlist.twig', [
+        $success = '';
+        $errorWarning = '';
+
+        if ($session) {
+            if (isset($session->data['success'])) {
+                $success = $session->data['success'];
+                unset($session->data['success']);
+            }
+            if (isset($session->data['error_warning'])) {
+                $errorWarning = $session->data['error_warning'];
+                unset($session->data['error_warning']);
+            }
+        }
+
+        $html = $this->twig->render('pages/users/accounts/wishlist.twig', [
             'title'          => 'Minha Lista de Desejos',
             'wishlist_items' => $formattedItems,
             'continue_url'   => $routeParser->urlFor('account.index', ['lang' => $lang]),
-            'lang'           => $lang
+            'lang'           => $lang,
+            'success'        => $success,
+            'error_warning'  => $errorWarning
         ]);
 
         $response->getBody()->write($html);

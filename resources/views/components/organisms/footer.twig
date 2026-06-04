@@ -5,7 +5,7 @@
 {# 1. Links de Informações Institucionais #}
 {% set info_links = [] %}
 {% if blog %}
-  {% set info_links = info_links|merge([{ href: blog, label: text_blog|default('Blog') }]) %}
+  {% set info_links = info_links|merge([{ href: blog, label: Common.footer.blog|default('Blog') }]) %}
 {% endif %}
 {% for info in informations %}
   {% set info_links = info_links|merge([{ href: info.href, label: info.title }]) %}
@@ -13,26 +13,26 @@
 
 {# 2. Links de Atendimento/Suporte #}
 {% set service_links = [
-  { href: contact|default(url('information/contact', {}, lang)), label: text_contact|default('Fale Conosco') },
-  { href: return|default(url('account/return/add', {}, lang)), label: text_return|default('Devoluções') },
-  { href: sitemap|default(url('information/sitemap', {}, lang)), label: text_sitemap|default('Mapa do Site') }
+  { href: contact|default(url('information/contact', {}, lang)), label: Common.footer.contact|default('Fale Conosco') },
+  { href: return|default(url('account/return/add', {}, lang)), label: Common.footer.return|default('Devoluções') },
+  { href: sitemap|default(url('information/sitemap', {}, lang)), label: Common.footer.sitemap|default('Mapa do Site') }
 ] %}
 
 {# 3. Links Extras #}
 {% set extra_links = [
-  { href: manufacturer|default(url('product/manufacturer', {}, lang)), label: text_manufacturer|default('Marcas/Fabricantes') }
+  { href: manufacturer|default(url('product/manufacturer', {}, lang)), label: Common.footer.manufacturer|default('Marcas/Fabricantes') }
 ] %}
 {% if affiliate %}
-  {% set extra_links = extra_links|merge([{ href: affiliate|default(url('account/affiliate', {}, lang)), label: text_affiliate|default('Afiliados') }]) %}
+  {% set extra_links = extra_links|merge([{ href: affiliate|default(url('account/affiliate', {}, lang)), label: Common.footer.affiliate|default('Afiliados') }]) %}
 {% endif %}
-{% set extra_links = extra_links|merge([{ href: special|default(url('product/special', {}, lang)), label: text_special|default('Ofertas Especiais') }]) %}
+{% set extra_links = extra_links|merge([{ href: special|default(url('product/special', {}, lang)), label: Common.footer.special|default('Ofertas Especiais') }]) %}
 
 {# 4. Links de Minha Conta #}
 {% set account_links = [
-  { href: account|default(url('account', {}, lang)), label: text_account|default('Minha Conta') },
-  { href: order|default(url('account/orders', {}, lang)), label: text_order|default('Histórico de Pedidos') },
-  { href: wishlist|default(url('account/wishlist', {}, lang)), label: text_wishlist|default('Lista de Desejos') },
-  { href: newsletter|default(url('account/newsletter', {}, lang)), label: text_newsletter|default('Informativo') }
+  { href: account|default(url('account', {}, lang)), label: Common.footer.account|default('Minha Conta') },
+  { href: order|default(url('account/orders', {}, lang)), label: Common.footer.order|default('Histórico de Pedidos') },
+  { href: wishlist|default(url('account/wishlist', {}, lang)), label: Common.footer.wishlist|default('Lista de Desejos') },
+  { href: newsletter|default(url('account/newsletter', {}, lang)), label: Common.footer.newsletter|default('Informativo') }
 ] %}
 
 <footer class="ag-footer">
@@ -66,26 +66,26 @@
       {# Coluna 1: Informações (Molécula) #}
       {% if info_links is not empty %}
         {% include 'components/molecules/footer-column.twig' with {
-          title: text_information|default('Informações'),
+          title: Common.footer.information|default('Informações'),
           links: info_links
         } %}
       {% endif %}
 
       {# Coluna 2: Atendimento (Molécula) #}
       {% include 'components/molecules/footer-column.twig' with {
-        title: text_service|default('Atendimento'),
+        title: Common.footer.service|default('Atendimento'),
         links: service_links
       } %}
 
       {# Coluna 3: Extras (Molécula) #}
       {% include 'components/molecules/footer-column.twig' with {
-        title: text_extra|default('Descubra'),
+        title: Common.footer.extra|default('Descubra'),
         links: extra_links
       } %}
 
       {# Coluna 4: Minha Conta (Molécula) #}
       {% include 'components/molecules/footer-column.twig' with {
-        title: text_account|default('Minha Conta'),
+        title: Common.footer.account|default('Minha Conta'),
         links: account_links
       } %}
 
@@ -98,7 +98,7 @@
       <div class="egen-footer__bottom-row">
 
         <p class="ag-footer-bottom__copy">
-          {{ powered|default('&copy; ' ~ "now"|date("Y") ~ ' ' ~ name ~ '. Todos os direitos reservados.')|raw }}
+          {{ Common.footer.powered|default(powered)|format('Alpha Engine', "now"|date("Y"))|raw }}
         </p>
 
         <div class="payment-methods">

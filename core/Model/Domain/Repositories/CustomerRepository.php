@@ -30,7 +30,7 @@ class CustomerRepository extends AbstractRepository implements BaseRepositoryInt
         if ($this->configSettings === null) {
             try {
                 $settingRepo = RepositoryFactory::getInstance()->get(\Alpha\Model\Domain\Repositories\SettingRepository::class);
-                $this->configSettings = $settingRepo->getSetting('config', 0);
+                $this->configSettings = $settingRepo->getSetting('config', 1);
             } catch (\Throwable) {
                 $this->configSettings = [];
             }
@@ -47,7 +47,7 @@ class CustomerRepository extends AbstractRepository implements BaseRepositoryInt
 
         if (!isset($this->languageCache[$route])) {
             $this->languageCache[$route] = [];
-            $file = '/var/www/html/agsonhos/core/language/pt-br/' . $route . '.php';
+            $file = '/var/www/html/agsonhos/core/language_legacy/pt-br/' . $route . '.php';
             if (is_file($file)) {
                 $_ = [];
                 include $file;
@@ -155,7 +155,7 @@ class CustomerRepository extends AbstractRepository implements BaseRepositoryInt
     public function registerCustomer(array $data): array
     {
         // Inicialização de fallbacks resilientes para rodar tantono código legado quanto no Slim standalone
-        $storeId = (int)$this->getConfigValue('config_store_id', 0);
+        $storeId = (int)$this->getConfigValue('config_store_id', 1);
         $languageId = (int)$this->getConfigValue('config_language_id', 2);
         $defaultGroupId = (int)$this->getConfigValue('config_customer_group_id', 1);
 
@@ -317,7 +317,7 @@ class CustomerRepository extends AbstractRepository implements BaseRepositoryInt
         if ($docError) $errors['cpf_cnpj'] = $docError;
 
         $customer = $this->find($customerId);
-        $customerGroupId = $customer ? $customer->getGroupId() : (int)$this->getConfigValue('config_customer_group_id', 1);
+        $customerGroupId = $customer ? $customer->getCustomerGroupId() : (int)$this->getConfigValue('config_customer_group_id', 1);
         $errors = array_merge($errors, $this->getCustomFieldsErrors($data, $customerGroupId));
 
         return $errors;

@@ -16,35 +16,48 @@ class WishlistRepository extends AbstractRepository implements BaseRepositoryInt
     public function getWishlist(?int $customerId = null): array {
         // No Alpha Engine Slim, resolvemos o cliente dinamicamente se não for passado (ex: via Session AuthContext)
         $customerId = $customerId ?? $this->getCustomerId();
-        $storeId = $this->getStoreId();
         
         /** @var WishlistMapper $wishlistMapper */
         $wishlistMapper = $this->mapperFactory->get(WishlistMapper::class);
         /** @var ProductRepository $productRepository */
         $productRepository = $this->alpha_repository_factory->get(ProductRepository::class);
 
-        $results = $wishlistMapper->getWishlist($customerId, $storeId);
+        $results = $wishlistMapper->getWishlist($customerId, $this->store_id);
+        
+        if (!$results) {
+            return [];
+        }
+
+        // Otimização N+1 (Leitura): Coleta todos os IDs e busca os produtos em uma única query.
+        $productIds = array_column($results, 'product_id');
+        $productsData = $productRepository->getProducts(['filter_product_id' => $productIds]);
+
+        // Re-indexa os produtos por ID para acesso O(1) no loop.
+        $productsById = [];
+        foreach ($productsData as $product) {
+            $productsById[$product['product_id']] = $product;
+        }
 
         $products = [];
+        $productsToRemove = [];
+
         foreach ($results as $result) {
-            $product_info = $productRepository->getProduct($result['product_id']);
+            $productId = $result['product_id'];
+            $product_info = $productsById[$productId] ?? null;
 
             if ($product_info) {
-                // Higienizamos o DTO sem formatações legadas (moeda, URLs, redimensionamento de imagens)
-                // A formatação de exibição foi delegada para os Controllers/Twig no novo sistema Slim.
-                $products[] = [
-                    'product_id' => $product_info['product_id'] ?? $product_info['id'],
-                    'name'       => $product_info['name'],
-                    'model'      => $product_info['model'],
-                    'image'      => $product_info['image'] ?? '',
-                    'quantity'   => $product_info['quantity'],
-                    'price'      => $product_info['price'],
-                    'special'    => $product_info['special'] ?? null,
-                    'tax_class_id' => $product_info['tax_class_id'] ?? 0,
-                    'minimum'    => $product_info['minimum'] > 0 ? $product_info['minimum'] : 1
-                ];
+                // O produto existe e está ativo. O DTO já vem higienizado do ProductRepository.
+                $products[] = $product_info;
             } else {
-                $wishlistMapper->deleteWishlist($customerId, $result['product_id'], $storeId);
+                // O produto não foi encontrado (inativo, deletado), marca para remoção da wishlist.
+                $productsToRemove[] = $productId;
+            }
+        }
+
+        // Remoção dos produtos inválidos da wishlist utilizando o método existente.
+        if (!empty($productsToRemove)) {
+            foreach ($productsToRemove as $productIdToRemove) {
+                $wishlistMapper->deleteWishlist($customerId, $productIdToRemove, $this->store_id);
             }
         }
 
@@ -58,7 +71,7 @@ class WishlistRepository extends AbstractRepository implements BaseRepositoryInt
         $customerId = $customerId ?? $this->getCustomerId();
         /** @var WishlistMapper $mapper */
         $mapper = $this->mapperFactory->get(WishlistMapper::class);
-        return $mapper->getTotalWishlist($customerId, $this->getStoreId());
+        return $mapper->getTotalWishlist($customerId, $this->store_id);
     }
 
     /**
@@ -68,7 +81,7 @@ class WishlistRepository extends AbstractRepository implements BaseRepositoryInt
         $customerId = $customerId ?? $this->getCustomerId();
         /** @var WishlistMapper $mapper */
         $mapper = $this->mapperFactory->get(WishlistMapper::class);
-        $mapper->addWishlist($customerId, $productId, $this->getStoreId());
+        $mapper->addWishlist($customerId, $productId, $this->store_id);
     }
 
     /**
@@ -78,7 +91,7 @@ class WishlistRepository extends AbstractRepository implements BaseRepositoryInt
         $customerId = $customerId ?? $this->getCustomerId();
         /** @var WishlistMapper $mapper */
         $mapper = $this->mapperFactory->get(WishlistMapper::class);
-        $mapper->deleteWishlist($customerId, $productId, $this->getStoreId());
+        $mapper->deleteWishlist($customerId, $productId, $this->store_id);
     }
 
     // Métodos obrigatórios da interface BaseRepositoryInterface
@@ -96,5 +109,10 @@ class WishlistRepository extends AbstractRepository implements BaseRepositoryInt
 
     public function findOneBy(array $criteria): ?InterfaceEntity {
         return null;
+    }
+
+    private function getCustomerId(): int {
+        $customer = $this->container && $this->container->has('customer') ? $this->container->get('customer') : null;
+        return ($customer && $customer->isLogged()) ? (int)$customer->getId() : 0;
     }
 }

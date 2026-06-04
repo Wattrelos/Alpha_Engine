@@ -38,7 +38,7 @@ class ConfigurationRepository extends AbstractRepository
     /**
      * Exemplo de atalho para acessar o SettingRepository já existente
      */
-    public function getDatabaseSetting(string $key, int $storeId = 0): string
+    public function getDatabaseSetting(string $key, int $storeId = 1): string
     {
         return RepositoryFactory::getInstance()
             ->get(SettingRepository::class)

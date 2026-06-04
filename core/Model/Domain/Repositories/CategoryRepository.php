@@ -63,6 +63,11 @@ class CategoryRepository extends AbstractRepository implements BaseRepositoryInt
      */
     public function getMenuHtml(): string
     {
+        $cacheKey = "category_menu_html.s{$this->store_id}.l{$this->language_id}";
+        if ($this->cache && $this->cache->has($cacheKey)) {
+            return (string)$this->cache->get($cacheKey);
+        }
+
         /** @var CategoryMapper $mapper */
         $mapper = $this->mapperFactory->get(CategoryMapper::class);
         
@@ -84,7 +89,13 @@ class CategoryRepository extends AbstractRepository implements BaseRepositoryInt
             $tree[$cat['parent_id']][] = $cat;
         }
 
-        return $this->buildHtmlTree($tree, 0, '', clone $seoUrlRepository);
+        $html = $this->buildHtmlTree($tree, 0, '', clone $seoUrlRepository);
+
+        if ($this->cache) {
+            $this->cache->set($cacheKey, $html, 3600);
+        }
+
+        return $html;
     }
 
     private function buildHtmlTree(array &$tree, int $parentId, string $path, SeoUrlRepository $seoUrlRepository): string
@@ -100,8 +111,9 @@ class CategoryRepository extends AbstractRepository implements BaseRepositoryInt
             $newPath = $path === '' ? (string)$catId : $path . '_' . $catId;
             
             // Resolução de URL relâmpago via Memória (Zero Queries Adicionais)
+            $langCode = $this->config ? ($this->config->get('config_language') ?: 'pt-br') : 'pt-br';
             $keyword = $seoUrlRepository->getKeywordByQuery('category_id', (string)$catId, $this->store_id, $this->language_id);
-            $href = $keyword ?: $this->url->link('product/category', 'language=' . $this->config->get('config_language') . '&path=' . $newPath);
+            $href = $keyword ? "/{$langCode}/categoria/{$keyword}" : "/{$langCode}/categoria/{$catId}";
 
             $html .= '<li>';
             $html .= '<a href="' . $href . '">' . htmlspecialchars($category['name'], ENT_QUOTES, 'UTF-8') . '</a>';
@@ -179,11 +191,21 @@ class CategoryRepository extends AbstractRepository implements BaseRepositoryInt
      */
     public function getMenuTree(): array
     {
+        $cacheKey = "category_menu_tree.s{$this->store_id}.l{$this->language_id}";
+        if ($this->cache && $this->cache->has($cacheKey)) {
+            return (array)$this->cache->get($cacheKey);
+        }
+
         /** @var CategoryMapper $mapper */
         $mapper = $this->mapperFactory->get(CategoryMapper::class);
         $rows = $mapper->getMenuTreeData($this->language_id, $this->store_id);
 
-        return $this->buildTree($rows);
+        $tree = $this->buildTree($rows);
+        
+        if ($this->cache) {
+            $this->cache->set($cacheKey, $tree, 3600);
+        }
+        return $tree;
     }
 
     /**
@@ -194,9 +216,18 @@ class CategoryRepository extends AbstractRepository implements BaseRepositoryInt
     public function getFeaturedCategories(int $limit = 8): array
     {
         $limitInt = max(1, (int)$limit);
+        $cacheKey = "category_featured.s{$this->store_id}.l{$this->language_id}.limit{$limitInt}";
+        if ($this->cache && $this->cache->has($cacheKey)) {
+            return (array)$this->cache->get($cacheKey);
+        }
+
         /** @var CategoryMapper $mapper */
         $mapper = $this->mapperFactory->get(CategoryMapper::class);
-        return $mapper->getFeaturedCategoriesData($limitInt, $this->language_id, $this->store_id);
+        $categories = $mapper->getFeaturedCategoriesData($limitInt, $this->language_id, $this->store_id);
+        if ($this->cache) {
+            $this->cache->set($cacheKey, $categories, 3600);
+        }
+        return $categories;
     }
 
     /**
@@ -244,16 +275,16 @@ class CategoryRepository extends AbstractRepository implements BaseRepositoryInt
      */
     private function resolveUrl(array $row): string
     {
-        if (!empty($row['seo_keyword'])) {
-            return '/' . ltrim($row['seo_keyword'], '/');
-        }
-
         $langCode = 'pt-br';
         if ($this->config) {
             $langCode = $this->config->get('config_language') ?: 'pt-br';
         }
 
-        return '/index.php?route=product/category&language=' . $langCode . '&path=' . $row['id'];
+        if (!empty($row['seo_keyword'])) {
+            return "/{$langCode}/categoria/" . ltrim($row['seo_keyword'], '/');
+        }
+
+        return "/{$langCode}/categoria/" . $row['id'];
     }
 
     // Implementações obrigatórias da BaseRepositoryInterface

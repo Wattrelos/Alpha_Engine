@@ -397,41 +397,53 @@ class ProductMapper extends BaseMapper {
      * Obtém os atributos (especificações técnicas) do produto agrupados
      */
     public function getAttributes(int $product_id, int $language_id): array {
-        $group_query = (new QueryBuilder())
+        // Alpha Engine: Otimização N+1. Em vez de buscar grupos e depois atributos em loop,
+        // buscamos tudo em uma única query e agrupamos em PHP.
+        $query = (new QueryBuilder())
             ->from(DB_PREFIX . 'product_attribute', 'pa')
             ->leftJoin(DB_PREFIX . 'attribute', 'a', 'pa.attribute_id = a.id')
+            ->leftJoin(DB_PREFIX . 'attribute_description', 'ad', 'a.id = ad.attribute_id')
             ->leftJoin(DB_PREFIX . 'attribute_group', 'ag', 'a.attribute_group_id = ag.id')
             ->leftJoin(DB_PREFIX . 'attribute_group_description', 'agd', 'ag.id = agd.attribute_group_id')
             ->where('pa.product_id = ?', [$product_id])
+            ->where('pa.language_id = ?', [$language_id])
+            ->where('ad.language_id = ?', [$language_id])
             ->where('agd.language_id = ?', [$language_id])
-            ->groupBy('ag.id')
             ->orderBy('ag.sort_order', 'ASC')
             ->orderBy('agd.name', 'ASC')
-            ->select('ag.id AS attribute_group_id', 'agd.name');
+            ->orderBy('a.sort_order', 'ASC')
+            ->orderBy('ad.name', 'ASC')
+            ->select(
+                'ag.id AS attribute_group_id',
+                'agd.name AS group_name',
+                'a.id AS attribute_id',
+                'ad.name AS attribute_name',
+                'pa.text'
+            );
 
-        $groups = $this->dao->executeQuery($group_query);
-        $data = [];
+        $results = $this->dao->executeQuery($query);
 
-        foreach ($groups as $group) {
-            $attr_query = (new QueryBuilder())
-                ->from(DB_PREFIX . 'product_attribute', 'pa')
-                ->leftJoin(DB_PREFIX . 'attribute', 'a', 'pa.attribute_id = a.id')
-                ->leftJoin(DB_PREFIX . 'attribute_description', 'ad', 'a.id = ad.attribute_id')
-                ->where('pa.product_id = ?', [$product_id])
-                ->where('a.attribute_group_id = ?', [(int)$group['attribute_group_id']])
-                ->where('ad.language_id = ?', [$language_id])
-                ->where('pa.language_id = ?', [$language_id])
-                ->orderBy('a.sort_order', 'ASC')
-                ->orderBy('ad.name', 'ASC')
-                ->select('a.id AS attribute_id', 'ad.name', 'pa.text');
-            
-            $data[] = [
-                'attribute_group_id' => $group['attribute_group_id'],
-                'name'               => $group['name'],
-                'attribute'          => $this->dao->executeQuery($attr_query)
+        if (empty($results)) {
+            return [];
+        }
+
+        $groupedData = [];
+        foreach ($results as $row) {
+            $groupId = $row['attribute_group_id'];
+            if (!isset($groupedData[$groupId])) {
+                $groupedData[$groupId] = [
+                    'attribute_group_id' => $groupId,
+                    'name'               => $row['group_name'],
+                    'attribute'          => []
+                ];
+            }
+            $groupedData[$groupId]['attribute'][] = [
+                'attribute_id' => $row['attribute_id'],
+                'name'         => $row['attribute_name'],
+                'text'         => $row['text']
             ];
         }
-        return $data;
+        return array_values($groupedData);
     }
 
     /**

@@ -25,17 +25,28 @@ class HomeAction implements ActionInterface
     private CategoryRepository  $categoryRepository;
     private SettingRepository   $settingRepository;
     private LanguageRepository  $languageRepository;
+    private \Alpha\Support\Language $translator;
 
-    public function __construct(TwigEnvironment $twig, CategoryRepository $categoryRepository, SettingRepository $settingRepository, LanguageRepository $languageRepository)
-    {
+    public function __construct(
+        TwigEnvironment $twig,
+        CategoryRepository $categoryRepository,
+        SettingRepository $settingRepository,
+        LanguageRepository $languageRepository,
+        \Alpha\Support\Language $translator
+    ) {
         $this->twig               = $twig;
         $this->categoryRepository = $categoryRepository;
         $this->settingRepository  = $settingRepository;
         $this->languageRepository = $languageRepository;
+        $this->translator         = $translator;
     }
 
     public function __invoke(Request $request, Response $response, array $args): Response
     {
+        // Carrega o namespace 'home' e disponibiliza no Twig
+        $this->translator->load('home');
+        $this->twig->addGlobal('Home', $this->translator->getNestedData('home'));
+
         // Categorias em destaque para a grade visual da home page
         // (as categorias do menu já estão disponíveis como Twig global via index.php)
         $featuredCategories = $this->categoryRepository->getFeaturedCategories();

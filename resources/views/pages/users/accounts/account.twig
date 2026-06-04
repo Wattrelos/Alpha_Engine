@@ -29,7 +29,7 @@
 						</svg>
 					</div>
 					<div>
-						<h1 class="account-hero-title">{{ text_my_account }}</h1>
+						<h1 class="account-hero-title">{{ text.myAccount }}</h1>
 						<p class="account-hero-sub">Gerencie seus dados, pedidos e preferências</p>
 					</div>
 				</div>
@@ -40,6 +40,20 @@
 		<div
 			class="account-wrapper">
 
+			{# Exibição de alertas de sucesso/erro vindos da sessão #}
+			{% if success %}
+				<div class="egen-alert egen-alert--success" style="margin-bottom: 2rem; animation: slideDown 0.3s ease-out;">
+					<i class="fa-solid fa-circle-check"></i>
+					{{ success }}
+				</div>
+			{% endif %}
+			{% if error_warning %}
+				<div class="egen-alert egen-alert--danger" style="margin-bottom: 2rem; animation: slideDown 0.3s ease-out;">
+					<i class="fa-solid fa-circle-exclamation"></i>
+					{{ error_warning }}
+				</div>
+			{% endif %}
+
 			{# ── Seção: Minha Conta ── #}
 			<section class="account-section">
 				<div class="section-header">
@@ -48,7 +62,7 @@
 							<path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/>
 						</svg>
 					</div>
-					<h2 class="section-title">{{ text_my_account }}</h2>
+					<h2 class="section-title">{{ text.myAccount }}</h2>
 				</div>
 				<div class="account-cards">
 					<a href="{{ edit }}" class="account-card" id="link-edit-account">
@@ -59,7 +73,7 @@
 							</svg>
 						</div>
 						<div class="card-text">
-							<span class="card-label">{{ text_edit }}</span>
+							<span class="card-label">{{ text.edit }}</span>
 							<span class="card-hint">Nome, e-mail, telefone</span>
 						</div>
 						<div class="card-arrow">›</div>
@@ -73,7 +87,7 @@
 							</svg>
 						</div>
 						<div class="card-text">
-							<span class="card-label">{{ text_password }}</span>
+							<span class="card-label">{{ text.password }}</span>
 							<span class="card-hint">Segurança da sua conta</span>
 						</div>
 						<div class="card-arrow">›</div>
@@ -87,7 +101,7 @@
 							</svg>
 						</div>
 						<div class="card-text">
-							<span class="card-label">{{ text_address }}</span>
+							<span class="card-label">{{ text.address }}</span>
 							<span class="card-hint">Endereços de entrega</span>
 						</div>
 						<div class="card-arrow">›</div>
@@ -100,7 +114,7 @@
 							</svg>
 						</div>
 						<div class="card-text">
-							<span class="card-label">{{ text_wishlist }}</span>
+							<span class="card-label">{{ text.wishlist }}</span>
 							<span class="card-hint">Produtos salvos</span>
 						</div>
 						<div class="card-arrow">›</div>
@@ -118,7 +132,7 @@
 							<path d="M16 10a4 4 0 0 1-8 0"/>
 						</svg>
 					</div>
-					<h2 class="section-title">{{ text_my_orders }}</h2>
+					<h2 class="section-title">{{ text.myOrders }}</h2>
 				</div>
 				<div class="account-cards">
 					<a href="{{ order }}" class="account-card account-card--highlight" id="link-orders">
@@ -129,7 +143,7 @@
 							</svg>
 						</div>
 						<div class="card-text">
-							<span class="card-label">{{ text_order }}</span>
+							<span class="card-label">{{ text.order }}</span>
 							<span class="card-hint">Ver todos os pedidos</span>
 						</div>
 						<div class="card-arrow">›</div>
@@ -158,7 +172,7 @@
 								</svg>
 							</div>
 							<div class="card-text">
-								<span class="card-label">{{ text_reward }}</span>
+								<span class="card-label">{{ text.reward }}</span>
 								<span class="card-hint">Seus pontos acumulados</span>
 							</div>
 							<div class="card-arrow">›</div>
@@ -173,7 +187,7 @@
 							</svg>
 						</div>
 						<div class="card-text">
-							<span class="card-label">{{ text_return }}</span>
+							<span class="card-label">{{ text.return }}</span>
 							<span class="card-hint">Devoluções e trocas</span>
 						</div>
 						<div class="card-arrow">›</div>
@@ -187,7 +201,7 @@
 							</svg>
 						</div>
 						<div class="card-text">
-							<span class="card-label">{{ text_transaction }}</span>
+							<span class="card-label">{{ text.transaction }}</span>
 							<span class="card-hint">Extrato financeiro</span>
 						</div>
 						<div class="card-arrow">›</div>
@@ -204,7 +218,7 @@
 							<polyline points="22,6 12,13 2,6"/>
 						</svg>
 					</div>
-					<h2 class="section-title">{{ text_my_newsletter }}</h2>
+					<h2 class="section-title">{{ text.myNewsletter }}</h2>
 				</div>
 				<div class="account-cards">
 					<a href="{{ newsletter }}" class="account-card" id="link-newsletter">
@@ -215,7 +229,7 @@
 							</svg>
 						</div>
 						<div class="card-text">
-							<span class="card-label">{{ text_newsletter }}</span>
+							<span class="card-label">{{ text.newsletter }}</span>
 							<span class="card-hint">Preferências de comunicação</span>
 						</div>
 						<div class="card-arrow">›</div>
@@ -234,7 +248,7 @@
 								<line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/>
 							</svg>
 						</div>
-						<h2 class="section-title">{{ text_my_affiliate }}</h2>
+						<h2 class="section-title">{{ text.myAffiliate }}</h2>
 					</div>
 					<div class="account-cards">
 						{% if not tracking %}
@@ -245,7 +259,7 @@
 									</svg>
 								</div>
 								<div class="card-text">
-									<span class="card-label">{{ text_affiliate_add }}</span>
+									<span class="card-label">{{ text.affiliateAdd }}</span>
 									<span class="card-hint">Comece a ganhar comissões</span>
 								</div>
 								<div class="card-arrow">›</div>
@@ -259,7 +273,7 @@
 									</svg>
 								</div>
 								<div class="card-text">
-									<span class="card-label">{{ text_affiliate_edit }}</span>
+									<span class="card-label">{{ text.affiliateEdit }}</span>
 									<span class="card-hint">Dados do afiliado</span>
 								</div>
 								<div class="card-arrow">›</div>
@@ -272,7 +286,7 @@
 									</svg>
 								</div>
 								<div class="card-text">
-									<span class="card-label">{{ text_tracking }}</span>
+									<span class="card-label">{{ text.tracking }}</span>
 									<span class="card-hint">Gere seu link de afiliado</span>
 								</div>
 								<div class="card-arrow">›</div>

@@ -11,6 +11,7 @@ use Alpha\Model\Domain\Repositories\LanguageRepository;
 use Alpha\Model\Domain\Repositories\SettingRepository;
 use Twig\Environment as TwigEnvironment;
 use Slim\Routing\RouteContext;
+use Psr\Container\ContainerInterface;
 
 class AccountAction implements ActionInterface
 {
@@ -18,8 +19,12 @@ class AccountAction implements ActionInterface
     private SettingRepository $settingRepository;
     private LanguageRepository $languageRepository;
 
-    public function __construct(TwigEnvironment $twig, SettingRepository $settingRepository, LanguageRepository $languageRepository)
-    {
+    public function __construct(
+        TwigEnvironment $twig,
+        SettingRepository $settingRepository,
+        LanguageRepository $languageRepository,
+        private readonly ContainerInterface $container
+    ) {
         $this->twig = $twig;
         $this->settingRepository = $settingRepository;
         $this->languageRepository = $languageRepository;
@@ -44,42 +49,22 @@ class AccountAction implements ActionInterface
             ['text' => 'Minha Conta', 'href' => $routeParser->urlFor('account.index', ['lang' => $lang])]
         ];
 
+        $translator = $this->container->get('language');
+        $translator->load('account/account');
+        $translationData = $translator->getNestedData('account/account');
+
         // Tradução e variáveis do template da conta
-        $data = [
+        $data = array_merge([
             'direction' => 'ltr',
             'lang' => $language ? $language->getCode() : 'pt-br',
-            'title' => 'Minha Conta | AgSonhos',
+            'title' => ($translationData['headingTitle'] ?? 'Minha Conta') . ' | AgSonhos',
             'description' => 'Gerencie sua conta e compras.',
             'breadcrumbs' => $breadcrumbs,
-
-            // Textos de tradução
-            'text_my_account' => 'Minha Conta',
-            'text_edit' => 'Alterar informações da minha conta',
-            'text_password' => 'Alterar minha senha',
-            'text_payment_method' => 'Formas de pagamento salvas',
-            'text_address' => 'Alterar meus endereços',
-            'text_wishlist' => 'Lista de desejos',
-
-            'text_my_orders' => 'Meus Pedidos',
-            'text_order' => 'Histórico de pedidos',
-            'text_subscription' => 'Assinaturas',
-            'text_download' => 'Downloads',
-            'text_reward' => 'Pontos de fidelidade',
-            'text_return' => 'Solicitações de devolução',
-            'text_transaction' => 'Transações',
-
-            'text_my_affiliate' => 'Minha Conta de Afiliado',
-            'text_affiliate_add' => 'Cadastre-se como afiliado',
-            'text_affiliate_edit' => 'Alterar informações de afiliado',
-            'text_tracking' => 'Gerador de links de afiliado',
-
-            'text_my_newsletter' => 'Novidades por E-mail',
-            'text_newsletter' => 'Inscrever ou desinscrever-se na newsletter',
 
             // Links das rotas
             'edit'          => '/' . $lang . '/account/edit',
             'password'      => '/' . $lang . '/account/password',
-            'payment_method'=> '/' . $lang . '/account/payment',
+            'payment_method' => '/' . $lang . '/account/payment',
             'address'       => $routeParser->urlFor('account.addresses', ['lang' => $lang]),
             'wishlist'      => '/' . $lang . '/account/wishlist',
             'order'         => $routeParser->urlFor('account.orders',    ['lang' => $lang]),
@@ -99,7 +84,23 @@ class AccountAction implements ActionInterface
             'content_bottom' => '',
             'reward' => false, // Ocultar se não implementado
             'affiliate' => false // Ocultar se não implementado
-        ];
+        ], $translationData);
+
+        $session = $this->container->has('session') ? $this->container->get('session') : null;
+        $success = '';
+        $errorWarning = '';
+        if ($session) {
+            if (isset($session->data['success'])) {
+                $success = $session->data['success'];
+                unset($session->data['success']);
+            }
+            if (isset($session->data['error_warning'])) {
+                $errorWarning = $session->data['error_warning'];
+                unset($session->data['error_warning']);
+            }
+        }
+        $data['success'] = $success;
+        $data['error_warning'] = $errorWarning;
 
         // Renderiza o template Twig moderno correspondente
         $html = $this->twig->render('pages/users/accounts/account.twig', $data);

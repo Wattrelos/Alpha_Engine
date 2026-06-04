@@ -1,6 +1,6 @@
 {% extends 'layouts/base.html.twig' %}
 
-{% block title %}Devoluções | AgSonhos{% endblock %}
+{% block title %}{{ Returns.headingTitle }} | AgSonhos{% endblock %}
 
 {% block content %}
 <div id="account-returns-page">
@@ -20,9 +20,9 @@
             </nav>
             <h1 class="returns-title">
                 <span class="returns-title-icon">🔄</span>
-                Devoluções e Trocas
+                {{ Returns.headingTitle }}
             </h1>
-            <p class="returns-subtitle">Acompanhe suas solicitações de trocas e devoluções</p>
+            <p class="returns-subtitle">{{ Returns.textSubtitle }}</p>
         </div>
     </div>
 
@@ -34,7 +34,7 @@
             <div class="returns-stats">
                 <div class="stat-chip">
                     <span class="stat-chip-value">{{ returns|length }}</span>
-                    <span class="stat-chip-label">solicitação{{ returns|length != 1 ? 'ões' : 'ão' }}</span>
+                    <span class="stat-chip-label">{{ returns|length != 1 ? Returns.textRequestPlural : Returns.textRequestSingular }}</span>
                 </div>
             </div>
 
@@ -44,10 +44,10 @@
                     <table class="returns-table" id="returns-table">
                         <thead>
                             <tr>
-                                <th class="col-id">{{ column_return_id }}</th>
-                                <th class="col-order">{{ column_order_id }}</th>
-                                <th class="col-status">{{ column_status }}</th>
-                                <th class="col-date">{{ column_date_added }}</th>
+                                <th class="col-id">{{ Returns.columnReturnId }}</th>
+                                <th class="col-order">{{ Returns.columnOrderId }}</th>
+                                <th class="col-status">{{ Returns.columnStatus }}</th>
+                                <th class="col-date">{{ Returns.columnDateAdded }}</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -61,7 +61,7 @@
                                 </td>
                                 <td class="col-status">
                                     <span class="status-pill status-{{ ret.status|lower|replace({' ': '-'}) }}">
-                                        {{ ret.status ?: 'Pendente' }}
+                                        {{ ret.status ?: Returns.textPending }}
                                     </span>
                                 </td>
                                 <td class="col-date">
@@ -78,9 +78,9 @@
             {# ── Empty State ── #}
             <div class="returns-empty">
                 <div class="empty-icon">🔄</div>
-                <h2 class="empty-title">Nenhuma devolução encontrada</h2>
-                <p class="empty-desc">{{ text_no_results }}</p>
-                <a href="{{ continue }}" class="btn-shop">Ir para minha conta</a>
+                <h2 class="empty-title">{{ Returns.textEmptyTitle }}</h2>
+                <p class="empty-desc">{{ Returns.textNoResults }}</p>
+                <a href="{{ continue }}" class="btn-shop">{{ Returns.buttonAccount }}</a>
             </div>
         {% endif %}
 
@@ -90,7 +90,7 @@
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                     <polyline points="15 18 9 12 15 6"/>
                 </svg>
-                Continuar
+                {{ Returns.buttonContinue }}
             </a>
         </div>
 

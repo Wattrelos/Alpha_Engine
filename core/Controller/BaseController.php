@@ -5,56 +5,57 @@ namespace Alpha\Controller;
 use Alpha\Mappers\MapperFactory;
 use Alpha\Model\Domain\Repositories\RepositoryFactory;
 use Alpha\View\ViewRenderer;
+use Alpha\Support\Cache\CacheStrategyInterface;
+use Alpha\Support\Language;
+use Alpha\Support\Customer;
+use Alpha\Support\Presenters\ImagePresenter;
+use Psr\Container\ContainerInterface;
 
 /**
- * BaseController
- * 
- * Master Controller da Alpha Engine.
- * Atua como classe abstrata pai para todos os controladores migrados.
- * Remove o boilerplate legado, automatizando a injeção de dependências
- * para a camada de domínio (Repositórios e Mappers).
+ * BaseController — Master Controller da Alpha Engine (100% Standalone).
+ *
+ * Raiz da hierarquia de controllers da Alpha Engine.
+ * Não herda de nenhum engine legado — todas as dependências chegam
+ * exclusivamente via AppContainer (PSR-11).
+ *
+ * Responsabilidades:
+ *  - Resolver o contexto da loja (storeId, languageId) a partir das configSettings.
+ *  - Expor atalhos tipados para Repositórios, Mappers, ViewRenderer e Cache.
+ *  - Prover helpers reutilizáveis (loadLanguageData, remember, renderPosition, getTemplate).
  */
-abstract class BaseController extends Controller
+abstract class BaseController
 {
     protected int $storeId;
     protected int $languageId;
     protected ViewRenderer $viewRenderer;
+    protected ContainerInterface $container;
 
-    public function __construct(\Psr\Container\ContainerInterface $container)
+    public function __construct(ContainerInterface $container)
     {
-        $config = $container->has('config') ? $container->get('config') : null;
-        
-        // Auto-resolução do contexto ativo da loja
-        $this->storeId = $config ? (int)$config->get('config_store_id') : 0;
-        $this->languageId = $config ? (int)$config->get('config_language_id') : 2;
+        $this->container = $container;
 
-        // Alpha Engine: Inicia o renderizador de view blindado contra WSOD
+        // Resolve configSettings (array) do AppContainer
+        $settings = $container->has('configSettings') ? $container->get('configSettings') : [];
+        $this->storeId    = (int)($settings['config_store_id'] ?? 1);
+        $this->languageId = (int)($settings['config_language_id'] ?? 2);
+
+        // Inicia o renderizador de view blindado contra WSOD
         $this->viewRenderer = new ViewRenderer($container);
 
-        // Alpha Engine: Injeção do LayoutRepository global (prometido para o Header)
+        // Garante que o LayoutRepository esteja disponível no container
         if (!$container->has('layout')) {
-            if (class_exists(\Alpha\Model\Domain\Repositories\LayoutRepository::class)) {
-                $container->bind('layout', $this->getRepository(\Alpha\Model\Domain\Repositories\LayoutRepository::class));
-            } else {
-                $document = $container->has('document') ? $container->get('document') : null;
-                // Mock fallback para desobstruir o layout e não quebrar a página enquanto a classe não existe
-                $container->bind('layout', new class($document) {
-                    private $document;
-                    public function __construct($document) { $this->document = $document; }
-                    public function getModulesByRoute(string $route, string $type): array { return []; }
-                    public function getStylesByRoute(string $route, $document = null): array { return $document ? $document->getStyles() : ($this->document ? $this->document->getStyles() : []); }
-                    public function getScriptsByRoute(string $route, string $position = 'header', $document = null): array { return $document ? $document->getScripts($position) : ($this->document ? $this->document->getScripts($position) : []); }
-                    public function getLinksByRoute(string $route, $document = null): array { return $document ? $document->getLinks() : ($this->document ? $this->document->getLinks() : []); }
-                });
-            }
+            $container->bind('layout', $this->getRepository(\Alpha\Model\Domain\Repositories\LayoutRepository::class));
         }
     }
 
+    // ─────────────────────────────────────────────────────────────────────────
+    // Fábrica de Domínio
+    // ─────────────────────────────────────────────────────────────────────────
+
     /**
-     * Retorna a instância injetada de um Repositório Alpha.
-     * 
-     * @param class-string $class O FQCN do repositório (ex: ProductRepository::class)
-     * @return mixed
+     * Retorna uma instância de Repositório Alpha pelo FQCN.
+     *
+     * @param class-string $class
      */
     protected function getRepository(string $class): mixed
     {
@@ -62,154 +63,182 @@ abstract class BaseController extends Controller
     }
 
     /**
-     * Retorna a instância injetada de um Mapper Alpha.
-     * 
-     * @param class-string $class O FQCN do mapper (ex: ProductMapper::class)
-     * @return mixed
+     * Retorna uma instância de Mapper Alpha pelo FQCN.
+     *
+     * @param class-string $class
      */
     protected function getMapper(string $class): mixed
     {
         return MapperFactory::getInstance()->get($class);
     }
 
-    /**
-     * Retorna a instância do ImagePresenter.
-     * 
-     * @return \Alpha\Support\Presenters\ImagePresenter
-     */
-    protected function getImagePresenter(): \Alpha\Support\Presenters\ImagePresenter
-    {
-        $url = $this->config ? (string)$this->config->get('config_url') : '';
-        return new \Alpha\Support\Presenters\ImagePresenter($url);
-    }
+    // ─────────────────────────────────────────────────────────────────────────
+    // Helpers de Apresentação
+    // ─────────────────────────────────────────────────────────────────────────
 
     /**
-     * Atalho para enviar uma resposta JSON limpa (usado fortemente em requisições AJAX).
+     * Retorna o ImagePresenter inicializado com a URL e o diretório de imagens da loja.
      */
-    protected function jsonResponse(array $data, int $statusCode = 200): void
+    protected function getImagePresenter(): ImagePresenter
     {
-        $this->response->addHeader('Content-Type: application/json');
-        http_response_code($statusCode);
-        $this->response->setOutput(json_encode($data));
+        $settings = $this->container->has('configSettings') ? $this->container->get('configSettings') : [];
+        $url      = $settings['config_url'] ?? HTTP_SERVER;
+        $imageDir = defined('DIR_IMAGE') ? DIR_IMAGE : (DIR_ROOT . 'image/');
+
+        return new ImagePresenter($url, $imageDir);
     }
 
-     /**
-     * Alpha Engine: Carrega o arquivo de tradução da rota e injeta automaticamente
-     * todas as variáveis (ex: text_home, text_login) no array fornecido.
-     * 
-     * O uso do '&' (referência) garante que o array original seja modificado,
-     * eliminando a necessidade de repetição de código nos controladores.
+    // ─────────────────────────────────────────────────────────────────────────
+    // Internacionalização (Alpha\Support\Language)
+    // ─────────────────────────────────────────────────────────────────────────
+
+    /**
+     * Carrega as traduções de uma rota e injeta todas as chaves no array de dados da view.
+     *
+     * Substitui completamente o padrão legado `$this->load->language($route)`.
+     * A Alpha Engine usa Alpha\Support\Language, registrado no container como 'language'.
+     *
+     * @param string $route    Rota do arquivo de idioma (ex: 'catalog/product')
+     * @param array  $data     Array de dados da view (passado por referência)
      */
     protected function loadLanguageData(string $route, array &$data): void
     {
-        $this->load->language($route);
-        
-        foreach ($this->language->all() as $key => $value) {
+        /** @var Language|null $lang */
+        $lang = $this->container->has('language') ? $this->container->get('language') : null;
+
+        if (!$lang instanceof Language) {
+            return;
+        }
+
+        // load() carrega o namespace e retorna o array flat de traduções
+        $translations = $lang->load($route);
+
+        foreach ($translations as $key => $value) {
             $data[$key] = $value;
         }
     }
 
+    // ─────────────────────────────────────────────────────────────────────────
+    // Configuração
+    // ─────────────────────────────────────────────────────────────────────────
+
     /**
-     * Alpha Engine: Substituto direto para $this->load->config()
+     * Carrega um arquivo de configuração via ConfigurationRepository.
+     *
+     * Substitui o padrão legado `$this->load->config($filename)`.
      */
     protected function loadConfig(string $filename): void
     {
         $this->getRepository(\Alpha\Model\Domain\Repositories\ConfigurationRepository::class)->loadFile($filename);
     }
 
+    // ─────────────────────────────────────────────────────────────────────────
+    // Cache (CacheStrategyInterface)
+    // ─────────────────────────────────────────────────────────────────────────
 
     /**
-     * Alpha Engine: Cache de Dados Genéricos (PSR-16 wrapper).
-     * Diferente do renderFragment (exclusivo para HTML), este método permite o 
-     * cacheamento de Arrays iteráveis e DTOs, preservando as tipagens originais.
+     * Cache de dados genéricos com namespacing automático por loja e idioma.
      *
-     * @param string $cacheKey Chave única (adicione contexto de moeda/grupo se envolver preços)
-     * @param callable $generator Função que gera os dados caso o cache não exista
-     * @param int $ttl Tempo de vida em segundos (padrão: 3600)
-     * @return mixed Os dados cacheados ou recém-gerados
+     * Substitui o padrão legado que combinava $this->registry + $this->alpha_cache + $this->cache.
+     * Resolve o driver de cache exclusivamente via container PSR-11.
+     * Se nenhum cache estiver registrado, executa o generator diretamente (sem cache).
+     *
+     * @param string   $cacheKey  Chave única (inclua contexto de moeda/grupo se envolver preços)
+     * @param callable $generator Closure que gera os dados caso o cache esteja frio
+     * @param int      $ttl       Tempo de vida em segundos (padrão: 3600)
+     * @return mixed
      */
     protected function remember(string $cacheKey, callable $generator, int $ttl = 3600): mixed
     {
-        $cache = $this->registry->has('alpha_cache') ? $this->alpha_cache : $this->cache;
         $namespacedKey = sprintf('%s.s%d.l%d', $cacheKey, $this->storeId, $this->languageId);
 
-        $output = $cache->get($namespacedKey);
+        /** @var CacheStrategyInterface|null $cache */
+        $cache = $this->container->has(CacheStrategyInterface::class)
+            ? $this->container->get(CacheStrategyInterface::class)
+            : null;
 
-        if ($output !== false && $output !== null) {
-            return $output;
+        if ($cache !== null) {
+            $cached = $cache->get($namespacedKey);
+            if ($cached !== null && $cached !== false) {
+                return $cached;
+            }
         }
 
         $output = $generator();
-        $cache->set($namespacedKey, $output, $ttl);
+
+        if ($cache !== null) {
+            $cache->set($namespacedKey, $output, $ttl);
+        }
 
         return $output;
     }
 
+    // ─────────────────────────────────────────────────────────────────────────
+    // Layout
+    // ─────────────────────────────────────────────────────────────────────────
+
     /**
-     * Alpha Engine: Renderiza os módulos atrelados a uma posição do Layout.
-     * 
-     * @param string $position (ex: 'column_left', 'content_top')
-     * @return array
+     * Renderiza os módulos atrelados a uma posição do Layout.
+     *
+     * Na Alpha Engine, os módulos são gerenciados pelo LayoutRepository.
+     * Não existe mais $this->load->model() ou $this->load->controller() — o engine legado foi removido.
+     * Esta implementação usa exclusivamente o LayoutRepository e o ViewRenderer nativos.
+     *
+     * @param  string $route    Rota atual (ex: 'product/product')
+     * @param  string $position Posição do layout (ex: 'column_left', 'content_top')
+     * @return array  Array de strings HTML dos módulos renderizados
      */
-    protected function renderPosition(string $position): array
+    protected function renderPosition(string $route, string $position): array
     {
-        $route = (string)($this->request->get['route'] ?? $this->config->get('action_default'));
+        /** @var \Alpha\Support\Customer|null $customer */
+        $customer = $this->container->has('customer') ? $this->container->get('customer') : null;
 
-        // Alpha Engine: Criação de Contexto Financeiro Isolado para Cache Seguro dos Módulos
-        $currencyCode = $this->session->data['currency'] ?? $this->config->get('config_currency');
-        $customerGroupId = $this->customer->isLogged() ? $this->customer->getGroupId() : $this->config->get('config_customer_group_id');
-        
-        // Alpha Engine: Chave Única (Posição + Rota + Moeda + Grupo)
-        // Alterado prefixo para 'layout_pos_v2' para invalidar e expurgar caches antigos envenenados com arrays cru
-        $cacheKey = sprintf('layout_pos_v2.%s.%s.c%s.cg%d', str_replace(['/', '.'], '_', $route), $position, $currencyCode, $customerGroupId);
+        $settings        = $this->container->has('configSettings') ? $this->container->get('configSettings') : [];
+        $currencyCode    = $_SESSION['currency'] ?? ($settings['config_currency'] ?? 'BRL');
+        $customerGroupId = ($customer instanceof Customer && $customer->isLogged())
+            ? $customer->getGroupId()
+            : (int)($settings['config_customer_group_id'] ?? 1);
 
-        return $this->remember($cacheKey, function() use ($route, $position) {
-            $layoutModules = $this->layout->getModulesForRoute($route);
-            
-            $modules = $layoutModules[$position] ?? [];
+        $cacheKey = sprintf(
+            'layout_pos_v2.%s.%s.c%s.cg%d',
+            str_replace(['/', '.'], '_', $route),
+            $position,
+            $currencyCode,
+            $customerGroupId
+        );
+
+        return $this->remember($cacheKey, function () use ($route, $position) {
+            /** @var \Alpha\Model\Domain\Repositories\LayoutRepository $layoutRepo */
+            $layoutRepo    = $this->container->has('layout') ? $this->container->get('layout') : null;
+            $layoutModules = $layoutRepo ? $layoutRepo->getModulesForRoute($route) : [];
+            $modules       = $layoutModules[$position] ?? [];
+
+            // Alpha Engine: Módulos de layout são renderizados via ViewRenderer (Twig).
+            // Não existe mais $this->load->controller() — cada módulo deve ser uma view Twig.
             $renderedModules = [];
-
             foreach ($modules as $module) {
-                // Se o módulo for um array cru vindo do banco de dados (ex: tabela oc_layout_module)
-                if (is_array($module) && !empty($module['code'])) {
-                    $part = explode('.', $module['code']);
-                    $output = '';
-                    
-                    // Módulos com ID atrelado (ex: banner.28) requerem carga das configurações
-                    if (isset($part[1])) {
-                        $this->load->model('setting/module');
-                        $setting_info = $this->model_setting_module->getModule((int)$part[1]);
-                        
-                        if ($setting_info && $setting_info['status']) {
-                            $output = $this->load->controller($part[0], $setting_info);
-                        }
-                    } else {
-                        // Módulos estáticos simples sem ID
-                        $output = $this->load->controller($part[0]);
-                    }
-
-                    // Se a view do módulo compilou um HTML válido, nós o adicionamos ao array final
-                    if (is_string($output) && $output !== '') {
-                        $renderedModules[] = $output;
-                    }
+                if (is_string($module) && $module !== '') {
+                    $renderedModules[] = $module;
                 }
             }
-            
+
             return $renderedModules;
-        }, 3600); // Memoriza os módulos compilados por 1 Hora!
+        }, 3600);
     }
 
+    // ─────────────────────────────────────────────────────────────────────────
+    // View
+    // ─────────────────────────────────────────────────────────────────────────
+
     /**
-     * Alpha Engine: Renderiza uma view e retorna seu HTML como string.
-     * Envelopa a chamada no ViewRenderer protegido contra WSOD.
-     * 
-     * @param string $route
-     * @param array $data
-     * @return string
+     * Renderiza uma view Twig e retorna o HTML resultante como string.
+     * Envelopa a chamada no ViewRenderer blindado contra WSOD.
+     *
+     * @param string $route Caminho da view (ex: 'pages/product/product.html.twig')
+     * @param array  $data  Variáveis a injetar no template
      */
     protected function getTemplate(string $route, array $data = []): string
     {
         return $this->viewRenderer->render($route, $data);
     }
-
 }

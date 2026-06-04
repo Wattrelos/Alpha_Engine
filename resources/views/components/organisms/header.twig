@@ -4,7 +4,11 @@
 
             {# Logo — ancora à esquerda (Atom) #}
             <div class="egen-header__logo">
-                {% include 'components/atoms/logo.twig' %}
+                {% include 'components/atoms/logo.twig' with {
+                    'logo': logo|default('/img/logo.png'),
+                    'home': home|default('/pt-br'),
+                    'name': name|default('AG Sonhos e Construções')
+                } %}
             </div>
 
             {# Coluna direita: top-nav + utility-bar #}

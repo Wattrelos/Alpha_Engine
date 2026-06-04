@@ -20,7 +20,10 @@ class ThemeMapper extends BaseMapper
     public function getTheme(string $route, string $theme): ?array
     {
         // Alpha Engine: Pega o Store ID de forma dinâmica pelo contexto global da loja
-        $storeId = $this->container ? (int)$this->container->get('config')->get('config_store_id') : 0;
+        if (!$this->container) {
+            throw new \RuntimeException('[Alpha Engine] Container não disponível no ThemeMapper. Falha de bootstrap.');
+        }
+        $storeId = (int)$this->container->get('config')->get('config_store_id');
 
         $query = (new QueryBuilder())
             ->select('*')

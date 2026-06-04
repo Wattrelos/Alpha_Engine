@@ -1,4 +1,4 @@
-# Débitos Técnicos e Anti-Patternsdo código legado (Sanados e Isolados)
+# Débitos Técnicos e Anti-Patterns do código legado (Sanados e Isolados)
 
 Este documento registra as falhas de design arquitetural originaisdo código legado e documenta como a **Alpha Engine** as neutralizou na transição para o modelo standalone. Como o banco de dados ainda preserva a estrutura de tabelas herdada para garantir a compatibilidade com dados de cadastros históricos, as incoerências de esquema foram isoladas na camada de acesso a dados (DAO/Mappers).
 
@@ -27,6 +27,44 @@ Para manter estados isolados de tradução entre controladores e componentes par
 
 ### A Solução Standalone na Alpha Engine:
 Com a introdução do novo `BaseController` e do `TranslationRepository`, o sistema de internacionalização opera 100% via memória RAM controlada, utilizando pilhas nativas PHP (`$backupStack[] = $data`) que compartilham ponteiros em vez de duplicar strings. O consumo de memória RAM para carregar traduções foi reduzido a valores insignificantes.
+
+---
+
+## 4. A "Loja Fantasma" (store_id = 1 sem registro em `store`)
+**Módulo Afetado:** Configurações (`tbkk_setting`), Produtos, Categorias, Pedidos, Clientes, Wishlists, Downloads — qualquer entidade com FK para `tbkk_store`.
+
+### O Problema Original:
+No código legado, o `store_id = 1` é usado como identificador da **loja principal** (default), porém **nunca existe um registro correspondente com `id = 0` na tabela `tbkk_store`**. Isso cria um estado inconsistente:
+- A tabela `tbkk_setting` usa `store_id = 1` para configurações globais/padrão (confirmado em [`SettingMapper`](file:///var/www/html/agsonhos/core/Mappers/EntityMappers/SettingMapper.php#L24)).
+- Toda a cadeia de repositories (`AbstractRepository`, `CartRepository`, `CustomerRepository`, etc.) faz fallback para `?? 0`, assumindo que `0` representa "a loja principal" sem que esse `0` exista como entidade real.
+- Não é possível criar uma `FOREIGN KEY` de `tbkk_setting.store_id → tbkk_store.id` sem violar a integridade referencial, já que nenhuma linha com `id = 0` existe (ou pode existir, pois é `AUTO_INCREMENT`).
+- O `SettingMapper::findByStoreId()` faz `WHERE store_id = 1 OR store_id = ?`, ou seja, hardcoda a inexistência de `id=0` como loja global — isso é um vazamento do legado para dentro da Alpha Engine.
+
+### A Situação Atual na Alpha Engine:
+Com a criação do registro `id = 1` em `tbkk_store`, o sistema passa a ter **uma loja real registrada**. O padrão `config_store_id = 1` (configurado em `tbkk_setting`) torna toda a resolução de `store_id` legítima e rastreável. Os repositórios que fazem `?? 0` continuam funcionando, mas agora o `0` apenas cobre o caso de container não inicializado (erro de bootstrap), não mais o caso de operação normal.
+
+### ✅ Recomendação: Exigir ao menos 1 registro real em `store`
+A abordagem correta — e adotada — é **manter ao menos um registro válido em `tbkk_store`** (ex: `id = 1`, a loja principal). Isso porque:
+
+| Cenário | Sem registro (`id=0` fantasma) | Com registro real (`id=1`) |
+|---|---|---|
+| FK restritiva no MySQL | ❌ Impossível | ✅ Possível com `id=1` como âncora |
+| Integridade de dados | ❌ `0` é um número mágico sem entidade pai | ✅ Toda FK aponta para uma entidade rastreável |
+| Multi-loja | ❌ Loja 0 é ficção; lojas adicionais começam em 1 sem clareza | ✅ Lojas adicionais são `id=2, 3...`; a hierarquia é natural |
+| Debugging / auditoria | ❌ "Pertence à loja 0" não informa nada | ✅ "Pertence à loja Agsonhos Principal" é auditável |
+| Hidratação da entidade `Store` | ❌ DAO retorna `null` (via Pseudo-Null) ou explode | ✅ DAO hidrata um `Store` real com `name` e `url` |
+
+### 🧹 Ação de Saneamento (Executada em 2026-06-04):
+1. ✅ **Registro `id=1` mantido** em `tbkk_store` como loja principal permanente.
+2. ✅ **`tbkk_setting` migrado**: 216 linhas com `store_id = 1` atualizadas para `store_id = 1`. FK `fk_setting_store` criada: `tbkk_setting.store_id → tbkk_store.id ON UPDATE CASCADE`.
+3. ✅ **`SettingMapper::findByStoreId()`** simplificado: `WHERE store_id = 1 OR store_id = ?` → `WHERE store_id = ?`.
+4. ✅ **Fallbacks `?? 0` / `: 0` substituídos por `RuntimeException`** nos seguintes arquivos:
+   - [`AbstractRepository.php`](file:///var/www/html/agsonhos/core/Model/Domain/Repositories/AbstractRepository.php)
+   - [`WishlistRepository.php`](file:///var/www/html/agsonhos/core/Model/Domain/Repositories/WishlistRepository.php)
+   - [`CartRepository.php`](file:///var/www/html/agsonhos/core/Model/Domain/Repositories/CartRepository.php)
+   - [`BaseController.php`](file:///var/www/html/agsonhos/core/Controller/BaseController.php)
+   - [`ThemeMapper.php`](file:///var/www/html/agsonhos/core/Mappers/EntityMappers/ThemeMapper.php)
+   - [`SubmitCheckoutAction.php`](file:///var/www/html/agsonhos/core/Controller/Actions/Cart/SubmitCheckoutAction.php)
 
 ---
 

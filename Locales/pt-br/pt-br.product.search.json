@@ -1,0 +1,21 @@
+{
+  "breadcrumbHome": "Início",
+  "breadcrumbSearch": "Busca",
+  "headingTitle": "Pesquisa de Produtos",
+  "searchPlaceholder": "Digite o que procura...",
+  "buttonSearch": "Buscar",
+  "textProductSingular": "produto",
+  "textProductPlural": "produtos",
+  "textFoundSingular": "encontrado",
+  "textFoundPlural": "encontrados",
+  "textResultFor": "Resultado para",
+  "textShowing": "Exibindo",
+  "textOf": "de",
+  "textSort": "Ordenar",
+  "textLimit": "Exibir",
+  "textNoResults": "Nenhum produto encontrado",
+  "textEmptyDesc": "Não encontramos resultados para \"%s\". Tente utilizar termos diferentes ou categorias.",
+  "textSale": "Oferta",
+  "textViewProduct": "Ver produto",
+  "textViewDetails": "Ver detalhes"
+}

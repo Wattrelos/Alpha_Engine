@@ -1,0 +1,31 @@
+{
+  "headingTitle": "Carrinho de compras",
+  "textEmpty": "Seu carrinho de compras está vazio.",
+  "textEmptyDesc": "Adicione produtos ao carrinho para continuar.",
+  "exploreProducts": "Explorar produtos",
+  "columnImage": "Imagem",
+  "columnName": "Produto",
+  "columnModel": "Modelo",
+  "columnQuantity": "Quantidade",
+  "columnPrice": "Preço Unitário",
+  "columnTotal": "Total",
+  "buttonUpdate": "Atualizar",
+  "buttonRemove": "Remover",
+  "buttonShopping": "Continuar Comprando",
+  "buttonCheckout": "Finalizar Compra",
+  "textNext": "O que você gostaria de fazer em seguida?",
+  "textNextChoice": "Escolha se você possui um código de desconto ou se prefere simular o frete.",
+  "textSubscription": "Assinatura",
+  "textSummary": "Resumo do Pedido",
+  "secureCheckout": "Compra segura",
+  "dataProtection": "Dados protegidos",
+  "outOfStock": "Sem estoque",
+  "shippingEstimate": {
+    "title": "Calcular Frete e Prazo",
+    "desc": "Digite seu CEP para obter uma estimativa de custo de entrega.",
+    "entryCep": "00000-000",
+    "buttonQuote": "Calcular",
+    "textSelectCountry": "Selecione o País",
+    "textSelectZone": "Selecione o Estado"
+  }
+}

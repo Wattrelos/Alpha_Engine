@@ -57,7 +57,7 @@ class WishlistMapper extends BaseMapper {
      * @param int $store_id
      * @return void
      */
-    public function deleteWishlist(int $customer_id, int $product_id, int $store_id = 0): void {
+    public function deleteWishlist(int $customer_id, int $product_id, int $store_id = 1): void {
         // Alpha Engine: Removido o acoplamento com o Registry legado.
         // O store_id default (0) atende à loja principal. Em ambientes multi-loja,
         // a Action chamadora (Controller) deve prover o store_id explicitamente.
@@ -81,7 +81,7 @@ class WishlistMapper extends BaseMapper {
      * @param int $store_id
      * @return int
      */
-    public function getTotalWishlist(int $customer_id, int $store_id = 0): int {
+    public function getTotalWishlist(int $customer_id, int $store_id = 1): int {
         $query = (new QueryBuilder())
             ->from($this->getFullTableName())
             ->where("customer_id = ?", [$customer_id])

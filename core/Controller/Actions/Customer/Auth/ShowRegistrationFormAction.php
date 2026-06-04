@@ -102,7 +102,7 @@ class ShowRegistrationFormAction implements ActionInterface
     private function loadLanguageData(string $route, string $languageCode): array
     {
         $data = [];
-        $file = '/var/www/html/agsonhos/core/language/' . $languageCode . '/' . $route . '.php';
+        $file = '/var/www/html/agsonhos/core/language_legacy/' . $languageCode . '/' . $route . '.php';
         
         if (is_file($file)) {
             $_ = [];

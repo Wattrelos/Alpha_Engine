@@ -233,6 +233,61 @@ function initCartSystem() {
         }
     });
 
+    // 2.5 Interceptar cliques no botão de adicionar à lista de desejos
+    document.addEventListener('click', (e) => {
+        const btn = e.target.closest('.add-to-wishlist-btn');
+        if (btn) {
+            e.preventDefault();
+            e.stopPropagation();
+
+            const productId = btn.getAttribute('data-product-id');
+            if (!productId) return;
+
+            // Extrai o idioma a partir da URL
+            const pathParts = window.location.pathname.split('/');
+            const currentLang = (pathParts[1] && ['pt-br', 'en', 'es'].includes(pathParts[1])) ? pathParts[1] : 'pt-br';
+
+            fetch(`/${currentLang}/account/wishlist/add`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                    'X-Requested-With': 'XMLHttpRequest'
+                },
+                body: new URLSearchParams({
+                    'product_id': productId
+                })
+            })
+            .then(res => {
+                if (res.status === 401) {
+                    return res.json().then(data => {
+                        showCartAlert(data.error || 'Por favor, faça login para usar a lista de desejos.', 'danger');
+                        if (data.redirect) {
+                            setTimeout(() => {
+                                window.location.href = data.redirect;
+                            }, 1500);
+                        }
+                    });
+                }
+                return res.json().then(data => {
+                    if (data.success) {
+                        showCartAlert(data.message || 'Produto adicionado à sua lista de desejos!', 'success');
+                        const badges = document.querySelectorAll('.egen-wishlist-badge');
+                        badges.forEach(badge => {
+                            badge.textContent = data.total;
+                            badge.style.display = data.total > 0 ? 'inline-flex' : 'none';
+                        });
+                    } else {
+                        showCartAlert(data.error || 'Erro ao adicionar à lista de desejos.', 'danger');
+                    }
+                });
+            })
+            .catch(err => {
+                console.error('Erro ao adicionar à lista de desejos:', err);
+                showCartAlert('Erro de rede ou servidor ao processar a lista de desejos.', 'danger');
+            });
+        }
+    });
+
     // 3. Renderização Dinâmica da Página de Carrinho (/carrinho) para Visitantes
     const path = window.location.pathname;
     if (path.includes('/carrinho') && !logged) {
