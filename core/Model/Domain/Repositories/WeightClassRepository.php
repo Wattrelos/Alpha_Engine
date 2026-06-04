@@ -117,7 +117,7 @@ class WeightClassRepository extends AbstractRepository implements BaseRepository
         }
 
         // Cálculo: (Valor / Valor de Referência da Origem) * Valor de Referência do Destino
-        // No OpenCart/Alpha, a base é definida pela unidade com value = 1.0000
+        //no código legado/Alpha, a base é definida pela unidade com value = 1.0000
         $fromValue = $from->getValue() > 0 ? $from->getValue() : 1;
         $toValue = $to->getValue();
 

@@ -43,11 +43,11 @@ class EntityHydrator
                 // Transforma setNomeCompleto -> nomeCompleto
                 $fieldName = lcfirst($propertyName);
                 
-                // Alpha Engine (Anti-Corruption Layer): Transforma camelCase para snake_case (OpenCart Legacy)
+                // Alpha Engine (Anti-Corruption Layer): Transforma camelCase para snake_case
                 // ex: customerGroupId -> customer_group_id
                 $snakeCaseField = strtolower(preg_replace('/(?<!^)[A-Z]/', '_$0', $fieldName));
                 
-                // Prioriza o padrão camelCase, com fallback elegante para o padrão do OpenCart
+                // Prioriza o padrão camelCase, com fallback elegante para o padrão
                 $requestKey = null;
                 if (isset($request[$fieldName])) {
                     $requestKey = $fieldName;

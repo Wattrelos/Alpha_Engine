@@ -15,7 +15,7 @@ use Slim\Routing\RouteContext;
 /**
  * HomeAction — Página inicial pública.
  *
- * Usa o novo CategoryRepository (Slim, sem OpenCart Registry).
+ * Usa o novo CategoryRepository (Slim, sem o código legado Registry).
  * As categorias do menu são carregadas uma única vez como Twig global em index.php
  * e os destaques da home são carregados por esta Action.
  */

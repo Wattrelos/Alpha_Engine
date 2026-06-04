@@ -7,7 +7,7 @@ use Psr\Http\Message\ResponseInterface as Response;
 use Alpha\Containers\AppContainer; // 👈 Nossa fábrica de comandos
 
 /*
-* Este novo controller será responsável pelas novas rotas a serem implementas para substituir as antigas rotas legadas do OpenCart.
+* Este novo controller será responsável pelas novas rotas a serem implementas para substituir as antigas rotas legadasdo código legado.
 *
 */
 

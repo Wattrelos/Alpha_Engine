@@ -1,0 +1,176 @@
+@startfiles
+.
+├── Config/
+├── Containers/
+├── LogsPersonalizados/
+├── core/
+│   ├── Admin/
+│   │   ├── Controllers/
+│   │   │   └── Actions/
+│   │   │       ├── Auth/
+│   │   │       ├── Catalog/
+│   │   │       │   ├── Category/
+│   │   │       │   └── Product/
+│   │   │       ├── Dashboard/
+│   │   │       └── Sales/
+│   │   │           ├── Order/
+│   │   │           └── Voucher/
+│   │   └── Repositories/
+│   ├── Auth/
+│   │   ├── Middleware/
+│   │   └── Services/
+│   ├── Controller/
+│   │   ├── Actions/
+│   │   │   ├── Cart/
+│   │   │   ├── Category/
+│   │   │   ├── Customer/
+│   │   │   │   ├── Account/
+│   │   │   │   ├── Addresses/
+│   │   │   │   └── Auth/
+│   │   │   ├── Information/
+│   │   │   ├── Location/
+│   │   │   ├── Main/
+│   │   │   └── Product/
+│   │   ├── Api/
+│   │   ├── Auth/
+│   │   └── Web/
+│   ├── Mappers/
+│   │   ├── EntityMappers/
+│   │   └── Observers/
+│   ├── Model/
+│   │   ├── DataAccessObject/
+│   │   ├── DataTransferObject/
+│   │   │   └── Attributes/
+│   │   └── Domain/
+│   │       ├── Attributes/
+│   │       ├── DTOs/
+│   │       ├── Entities/
+│   │       │   ├── Customer/
+│   │       │   ├── Geo/
+│   │       │   └── Supplier/
+│   │       ├── Factory/
+│   │       ├── Observers/
+│   │       └── Repositories/
+│   ├── Services/
+│   │   ├── Menu/
+│   │   └── Shipping/
+│   ├── Session/
+│   ├── Support/
+│   │   ├── Cache/
+│   │   ├── Presenters/
+│   │   └── Twig/
+│   ├── View/
+│   │   └── Errors/
+│   └── language/
+│       ├── en-gb/
+│       │   ├── account/
+│       │   ├── api/
+│       │   ├── checkout/
+│       │   ├── cms/
+│       │   ├── common/
+│       │   ├── cron/
+│       │   ├── error/
+│       │   ├── information/
+│       │   ├── mail/
+│       │   ├── product/
+│       │   └── tool/
+│       ├── fr-fr/
+│       │   ├── account/
+│       │   ├── api/
+│       │   ├── checkout/
+│       │   ├── cms/
+│       │   ├── common/
+│       │   ├── cron/
+│       │   ├── error/
+│       │   ├── information/
+│       │   ├── mail/
+│       │   ├── product/
+│       │   └── tool/
+│       └── pt-br/
+│           ├── account/
+│           ├── affiliate/
+│           ├── api/
+│           ├── checkout/
+│           ├── common/
+│           ├── error/
+│           ├── extension/
+│           │   ├── captcha/
+│           │   ├── credit_card/
+│           │   ├── module/
+│           │   ├── openbay/
+│           │   ├── payment/
+│           │   ├── recurring/
+│           │   ├── shipping/
+│           │   └── total/
+│           ├── information/
+│           ├── mail/
+│           ├── product/
+│           └── tool/
+├── data_base_new_schema/
+├── diagrams/
+├── docs/
+├── lib/
+├── public_html/
+│   ├── LPDHED2dC7Gjrg2b/
+│   ├── css/
+│   │   ├── admin/
+│   │   ├── assets/
+│   │   │   └── css/
+│   │   └── custom/
+│   ├── fonts/
+│   │   └── fontawesome/
+│   │       ├── css/
+│   │       └── webfonts/
+│   ├── img/
+│   │   ├── banners/
+│   │   ├── manufacturer/
+│   │   ├── product/
+│   │   │   ├── cimento_liz/
+│   │   │   └── votoran/
+│   │   └── seamless/
+│   ├── js/
+│   │   ├── cart/
+│   │   └── custom/
+│   └── mockup-navegavel/
+│       └── mockup2/
+│           ├── carrinho_arquivos/
+│           ├── categoria_arquivos/
+│           ├── checkout2_arquivos/
+│           ├── checkout3_arquivos/
+│           ├── checkout_arquivos/
+│           ├── editar-endereco_arquivos/
+│           ├── enderecos_arquivos/
+│           ├── index_arquivos/
+│           ├── minha-conta_arquivos/
+│           ├── novo-endereco_arquivos/
+│           ├── pedido-14_arquivos/
+│           ├── pedidos_arquivos/
+│           ├── produto_arquivos/
+│           └── sucesso_arquivos/
+├── resources/
+│   └── views/
+│       ├── admin/
+│       │   ├── auth/
+│       │   ├── components/
+│       │   │   └── organisms/
+│       │   ├── layouts/
+│       │   └── pages/
+│       │       └── dashboard/
+│       ├── components/
+│       │   ├── atoms/
+│       │   ├── molecules/
+│       │   └── organisms/
+│       ├── layouts/
+│       └── pages/
+│           ├── cart/
+│           ├── category/
+│           ├── errors/
+│           ├── information/
+│           ├── product/
+│           └── users/
+│               ├── accounts/
+│               └── addresses/
+└── tests/
+    └── scripts_uteis/
+        └── NovoEnderecamento/
+@endfiles

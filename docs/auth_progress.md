@@ -1,6 +1,6 @@
 # Refatoração do Fluxo de Autenticação e Cadastro (Auth) - Alpha Engine
 
-Este documento registra o avanço na reestruturação e desacoplamento do módulo de Autenticação (Login e Cadastro), operando de forma 100% autônoma sob a **Alpha Engine** rodando no Slim standalone, sem dependência do framework legado do OpenCart.
+Este documento registra o avanço na reestruturação e desacoplamento do módulo de Autenticação (Login e Cadastro), operando de forma 100% autônoma sob a **Alpha Engine** rodando no Slim standalone, sem dependência do framework legadodo código legado.
 
 ## O que foi implementado:
 
@@ -26,7 +26,7 @@ Este documento registra o avanço na reestruturação e desacoplamento do módul
 
 ### 4. Correção de Integridade e Fallbacks (Esta Rodada)
 - **Resiliência do CustomerRepository contra Registry Nulo**:
-  - Implementação dos métodos utilitários privados `getConfigValue` e `getTranslation` que fornecem caminhos alternativos de injeção (usando `SettingRepository` e arquivos físicos locais PHP de idioma) quando serviços clássicos do OpenCart como `config` e `language` não estão presentes no `Registry` da aplicação standalone.
+  - Implementação dos métodos utilitários privados `getConfigValue` e `getTranslation` que fornecem caminhos alternativos de injeção (usando `SettingRepository` e arquivos físicos locais PHP de idioma) quando serviços clássicosdo código legado como `config` e `language` não estão presentes no `Registry` da aplicação standalone.
   - Saneamento de chamadas diretas que disparavam `Call to a member function get() on null` nos fluxos de validação de CPF/CNPJ, campos customizados e validações de tamanho de senha.
 - **Bootstrap da Aplicação**:
   - Inclusão dos helpers nativos de validação (`general.php`, `filter.php`, `validation.php`) no bootstrap `public_html/index.php`.

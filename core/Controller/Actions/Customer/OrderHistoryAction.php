@@ -15,20 +15,29 @@ class OrderHistoryAction implements ActionInterface
 {
     private TwigEnvironment $twig;
     private OrderRepository $orderRepository;
+    private \Alpha\Support\Customer $customer;
 
-    public function __construct(TwigEnvironment $twig, OrderRepository $orderRepository)
+    public function __construct(TwigEnvironment $twig, OrderRepository $orderRepository, \Alpha\Support\Customer $customer)
     {
         $this->twig = $twig;
         $this->orderRepository = $orderRepository;
+        $this->customer = $customer;
     }
 
     public function __invoke(Request $request, Response $response, array $args): Response
     {
+        $lang = $request->getAttribute('lang', 'pt-br');
+        $customerId = $this->customer->isLogged() ? (int)$this->customer->getId() : 0;
+        if (!$customerId) {
+            return $response
+                ->withHeader('Location', '/' . $lang . '/login')
+                ->withStatus(302);
+        }
+
         $order_id = (int)($args['order_id'] ?? 0);
         
-        // O método getOrder já filtra pelo ID do cliente logado internamente
-        // O método getOrder já filtra pelo ID do cliente logado internamente
-        $order = $this->orderRepository->getOrder($order_id);
+        // O método getOrder filtra pelo ID do cliente logado internamente
+        $order = $this->orderRepository->getOrder($order_id, $customerId);
 
         if (!$order) {
             $html = $this->twig->render('pages/errors/404.html.twig', [

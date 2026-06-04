@@ -1,0 +1,58 @@
+flowchart BT
+    %% Estilos de Camadas
+    classDef database fill:#f9f9f9,stroke:#333,stroke-width:2px;
+    classDef dao fill:#e1f5fe,stroke:#039be5,stroke-width:1px;
+    classDef domain fill:#e8f5e9,stroke:#43a047,stroke-width:1px;
+    classDef presentation fill:#fff3e0,stroke:#fb8c00,stroke-width:1px;
+    classDef view fill:#fce4ec,stroke:#e91e63,stroke-width:1px;
+    classDef cache fill:#e0f7fa,stroke:#00bcd4,stroke-width:2px;
+
+    DB[(Banco de Dados Relacional)]:::database
+    RedisProxy["@Cacheable Proxy <br> Spring Cache + Redis"]:::cache
+    
+    subgraph Camada de Acesso a Dados
+        direction LR
+        DAO[DAO / QueryBuilder <br> JDBC]:::dao
+        Hydrator[Hydrator <br> Popula Objetos sem Setters]:::dao
+    end
+    
+    subgraph Camada de Domínio
+        direction LR
+        Entities[Domain Entities <br> Regras de Negócio Core]:::domain
+        DTOs[Read Models / DTOs <br> Java Records]:::domain
+        Repo[Repository <br> Orquestrador de Dados]:::domain
+        InputDTO[Input DTO / Command <br> Dados de Entrada]:::domain
+        Service[Service / Use Case <br> Regras de Aplicação]:::domain
+    end
+    
+    subgraph Camada de Apresentação e Controle
+        direction LR
+        Presenter[Presenter / View Model <br> Formatador Visual]:::presentation
+        Controller[Spring MVC Controller <br> Orquestrador Web]:::presentation
+        ReqHydrator[Request Hydrator <br> Data Binder]:::presentation
+    end
+    
+    subgraph Camada de View
+        Thymeleaf[Thymeleaf Template <br> View HTML]:::view
+    end
+
+    DB -->|ResultSet| DAO
+    DAO -->|Dados Brutos| Hydrator
+    Hydrator -->|Reflection / Factory| Entities
+    Hydrator -->|Mapeia Dados| DTOs
+    Entities -->|Devolve Instância| Repo
+    DTOs -->|Devolve Instância| Repo
+    
+    %% Fluxo de Leitura (Saída para a Tela)
+    Repo -->|Retorno Interceptado| RedisProxy
+    RedisProxy -->|"@Cacheable: Hit ou Gravação"| Service
+    Service -.->|Cache Miss: Invoca Método| Repo
+    Service -->|Repassa DTOs de Leitura| Presenter
+    Presenter -->|Model.addAttribute| Controller
+    Controller -->|Injeta Variáveis| Thymeleaf
+    
+    %% Fluxo de Escrita (Entrada de Formulário HTML)
+    Thymeleaf -.->|Form POST / Dados Brutos| ReqHydrator
+    ReqHydrator -->|Reflection: Valida e Popula| InputDTO
+    InputDTO -->|Inicia Transação| Service
+    Service -->|Executa Lógica e Salva| Repo

@@ -38,8 +38,8 @@ class SearchAction implements ActionInterface
             'filter_sub_category'=> $queryParams['sub_category'] ?? '',
             'sort'               => $queryParams['sort'] ?? 'p.sort_order',
             'order'              => $queryParams['order'] ?? 'ASC',
-            'page'               => (int)($queryParams['page'] ?? 1),
-            'limit'              => (int)($queryParams['limit'] ?? 12)
+            'page'               => max(1, (int)($queryParams['page'] ?? 1)),
+            'limit'              => max(1, (int)($queryParams['limit'] ?? 12))
         ]);
 
         // Obtém dados de busca do repositório
@@ -56,14 +56,38 @@ class SearchAction implements ActionInterface
         if (isset($data['products']) && is_array($data['products'])) {
             foreach ($data['products'] as &$product) {
                 $productId = (int)($product['product_id'] ?? $product['id'] ?? 0);
+
+                // Normaliza a chave para que o template acesse prod.product_id independente do nome da coluna no BD
+                if (!isset($product['product_id']) && isset($product['id'])) {
+                    $product['product_id'] = $product['id'];
+                }
+
                 $keyword = $productId > 0 ? $this->seoRepository->getKeywordByQuery('product_id', $productId, 0, $languageId) : '';
                 
-                $slug = !empty($keyword) ? $keyword : (!empty($product['keyword']) ? $product['keyword'] : $productId);
-                $product['slug'] = $slug;
-                $product['href'] = $routeParser->urlFor('product.detail', ['lang' => $lang, 'slug' => (string)$slug]);
+                $productSlug = !empty($keyword) ? $keyword : (!empty($product['keyword']) ? $product['keyword'] : $productId);
+                $product['slug'] = $productSlug;
+                $product['href'] = $routeParser->urlFor('product.detail', ['lang' => $lang, 'slug' => (string)$productSlug]);
             }
             unset($product);
         }
+
+        // Estrutura de Paginação para a View
+        $baseUrlParams = $queryParams;
+        unset($baseUrlParams['page'], $baseUrlParams['sort'], $baseUrlParams['order'], $baseUrlParams['limit']);
+        
+        $buildSearchUrl = function(array $newParams) use ($routeParser, $lang, $baseUrlParams) {
+            return $routeParser->urlFor('search', ['lang' => $lang], array_merge($baseUrlParams, $newParams));
+        };
+
+        $data['pagination'] = [
+            'page' => $filterData['page'],
+            'url'  => str_replace('%7Bpage%7D', '{page}', $buildSearchUrl([
+                'page'  => '{page}',
+                'sort'  => $filterData['sort'],
+                'order' => $filterData['order'],
+                'limit' => $filterData['limit']
+            ]))
+        ];
 
         // SEO tags
         $seoData = [

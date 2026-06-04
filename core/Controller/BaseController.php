@@ -2,8 +2,6 @@
 
 namespace Alpha\Controller;
 
-use Opencart\System\Engine\Controller;
-use Opencart\System\Engine\Registry;
 use Alpha\Mappers\MapperFactory;
 use Alpha\Model\Domain\Repositories\RepositoryFactory;
 use Alpha\View\ViewRenderer;
@@ -22,24 +20,25 @@ abstract class BaseController extends Controller
     protected int $languageId;
     protected ViewRenderer $viewRenderer;
 
-    public function __construct(Registry $registry)
+    public function __construct(\Psr\Container\ContainerInterface $container)
     {
-        parent::__construct($registry);
-
+        $config = $container->has('config') ? $container->get('config') : null;
+        
         // Auto-resolução do contexto ativo da loja
-        $this->storeId = (int)$this->config->get('config_store_id');
-        $this->languageId = (int)$this->config->get('config_language_id');
+        $this->storeId = $config ? (int)$config->get('config_store_id') : 0;
+        $this->languageId = $config ? (int)$config->get('config_language_id') : 2;
 
         // Alpha Engine: Inicia o renderizador de view blindado contra WSOD
-        $this->viewRenderer = new ViewRenderer($registry);
+        $this->viewRenderer = new ViewRenderer($container);
 
         // Alpha Engine: Injeção do LayoutRepository global (prometido para o Header)
-        if (!$this->registry->has('layout')) {
+        if (!$container->has('layout')) {
             if (class_exists(\Alpha\Model\Domain\Repositories\LayoutRepository::class)) {
-                $this->registry->set('layout', $this->getRepository(\Alpha\Model\Domain\Repositories\LayoutRepository::class));
+                $container->bind('layout', $this->getRepository(\Alpha\Model\Domain\Repositories\LayoutRepository::class));
             } else {
+                $document = $container->has('document') ? $container->get('document') : null;
                 // Mock fallback para desobstruir o layout e não quebrar a página enquanto a classe não existe
-                $this->registry->set('layout', new class($this->document) {
+                $container->bind('layout', new class($document) {
                     private $document;
                     public function __construct($document) { $this->document = $document; }
                     public function getModulesByRoute(string $route, string $type): array { return []; }
@@ -118,36 +117,6 @@ abstract class BaseController extends Controller
         $this->getRepository(\Alpha\Model\Domain\Repositories\ConfigurationRepository::class)->loadFile($filename);
     }
 
-    /**
-     * Alpha Engine: Renderizador de Fragmentos com Cache PSR-16.
-     * Envelopa a renderização de blocos pesados (ex: Menus, Rodapés, Árvores)
-     * para retornar o HTML diretamente da RAM/Redis, pulando processamento MVC.
-     *
-     * @param string $cacheKey Chave única do bloco (ex: 'menu_categorias')
-     * @param callable $generator Função anônima que gera e retorna o HTML
-     * @param int $ttl Tempo de vida em segundos (padrão: 3600 = 1 hora)
-     * @return string O HTML processado
-     */
-    protected function renderFragment(string $cacheKey, callable $generator, int $ttl = 3600): string
-    {
-        // Obtém o driver de Cache Alpha (se definido) ou cai pro nativo do OpenCart
-        $cache = $this->registry->has('alpha_cache') ? $this->alpha_cache : $this->cache;
-
-        // Garante o isolamento do cache por loja e idioma para não misturar moedas/traduções
-        $namespacedKey = sprintf('%s.s%d.l%d', $cacheKey, $this->storeId, $this->languageId);
-
-        $output = $cache->get($namespacedKey);
-
-        // Alpha Engine: Validação is_string previne Warning se o driver de cache nativo retornar arrays legados
-        if (is_string($output) && $output !== '') {
-            return $output;
-        }
-
-        $output = (string)$generator();
-        $cache->set($namespacedKey, $output, $ttl);
-
-        return $output;
-    }
 
     /**
      * Alpha Engine: Cache de Dados Genéricos (PSR-16 wrapper).
@@ -243,25 +212,4 @@ abstract class BaseController extends Controller
         return $this->viewRenderer->render($route, $data);
     }
 
-    /**
-     * Método utilitário para renderizar a View.
-     * Injeta automaticamente os componentes globais (Header, Footer, Colunas) 
-     * caso eles já não tenham sido definidos no array de dados.
-     */
-    protected function render(string $route, array $data = []): void
-    {
-        $data['column_left']    = $data['column_left'] ?? (new \Opencart\Catalog\Controller\Common\ColumnLeft($this->registry))->index();
-        $data['column_right']   = $data['column_right'] ?? (new \Opencart\Catalog\Controller\Common\ColumnRight($this->registry))->index();
-        $data['content_top']    = $data['content_top'] ?? (new \Opencart\Catalog\Controller\Common\ContentTop($this->registry))->index();
-        $data['content_bottom'] = $data['content_bottom'] ?? (new \Opencart\Catalog\Controller\Common\ContentBottom($this->registry))->index();
-        
-        // Alpha Engine: Aplica o Cache de Fragmento nativamente no Footer (Conteúdo Estático e Pesado)
-        $data['footer']         = $data['footer'] ?? $this->renderFragment('layout_footer', function() {
-            return (new \Opencart\Catalog\Controller\Common\Footer($this->registry))->index();
-        }, 86400); // Cache de 24 horas para o rodapé
-
-        $data['header']         = $data['header'] ?? (new \Opencart\Catalog\Controller\Common\Header($this->registry))->index();
-
-        $this->response->setOutput($this->viewRenderer->render($route, $data));
-    }
 }

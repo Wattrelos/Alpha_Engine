@@ -19,7 +19,8 @@ class WishlistAction implements ActionInterface
     public function __construct(
         private readonly TwigEnvironment $twig,
         private readonly WishlistRepository $wishlistRepository,
-        private readonly ContainerInterface $container
+        private readonly ContainerInterface $container,
+        private readonly ImagePresenter $imagePresenter
     ) {
     }
 
@@ -38,29 +39,29 @@ class WishlistAction implements ActionInterface
         }
 
         // Serviços Legados Injetados de forma isolada via Container PSR-11
-        $currency = $this->container->get('currency');
-        $config   = $this->container->get('config');
-        $session  = $this->container->get('session');
-        $tax      = $this->container->get('tax');
+        $config   = $this->container->has('config') ? $this->container->get('config') : null;
+        $currency = $this->container->has('currency') ? $this->container->get('currency') : null;
+        $session  = $this->container->has('session') ? $this->container->get('session') : null;
+        $tax      = $this->container->has('tax') ? $this->container->get('tax') : null;
 
-        $currencyCode = $session->data['currency'] ?? $config->get('config_currency');
+        $currencyCode = ($session && isset($session->data['currency'])) ? $session->data['currency'] : ($config ? $config->get('config_currency') : 'BRL');
         $wishlistItems = $this->wishlistRepository->getWishlist();
 
-        $imagePresenter = new ImagePresenter($config ? (string)$config->get('config_url') : '');
+        $imagePresenter = $this->imagePresenter;
         $formattedItems = [];
 
         // Formatação Visual Restrita à Camada de Controller/Action
         foreach ($wishlistItems as $item) {
-            $priceBase   = $tax ? $tax->calculate($item['price'], $item['tax_class_id'], $config->get('config_tax')) : $item['price'];
-            $specialBase = $item['special'] && $tax ? $tax->calculate($item['special'], $item['tax_class_id'], $config->get('config_tax')) : $item['special'];
+            $priceBase   = ($tax && $config) ? $tax->calculate($item['price'], $item['tax_class_id'], $config->get('config_tax')) : $item['price'];
+            $specialBase = ($item['special'] && $tax && $config) ? $tax->calculate($item['special'], $item['tax_class_id'], $config->get('config_tax')) : $item['special'];
 
             $formattedItems[] = [
                 'product_id' => $item['product_id'],
                 'name'       => $item['name'],
                 'model'      => $item['model'],
-                'thumb'      => $imagePresenter->resize($item['image'] ?? '', (int)$config->get('config_image_wishlist_width'), (int)$config->get('config_image_wishlist_height'), false),
-                'price'      => $currency->format($priceBase, $currencyCode),
-                'special'    => $item['special'] ? $currency->format($specialBase, $currencyCode) : false,
+                'thumb'      => $imagePresenter->resize($item['image'] ?? '', $config ? (int)$config->get('config_image_wishlist_width') : 80, $config ? (int)$config->get('config_image_wishlist_height') : 80, false),
+                'price'      => $currency ? $currency->format($priceBase, $currencyCode) : 'R$ ' . number_format($priceBase, 2, ',', '.'),
+                'special'    => ($item['special'] && $currency) ? $currency->format($specialBase, $currencyCode) : false,
                 'quantity'   => $item['quantity'],
                 'minimum'    => $item['minimum'],
                 // Geração de URLs amigáveis controladas nativamente pelo motor de rotas Slim

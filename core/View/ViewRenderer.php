@@ -9,7 +9,7 @@ use Psr\Container\ContainerInterface;
  * Class ViewRenderer
  * 
  * Carregador de Views proprietário da Alpha Engine.
- * Substitui o problemático $this->load->view() do OpenCart para prevenir WSOD (Erros Fantasmas).
+ * Substitui o problemático $this->load->view()do código legado para prevenir WSOD (Erros Fantasmas).
  * Envelopa a execução do Twig e eventos nativos em um rastreador rigoroso de falhas.
  */
 class ViewRenderer {
@@ -43,7 +43,7 @@ class ViewRenderer {
             // Recupera a instância global do Template (já configurada com os paths no framework.php)
             $template = $this->container->get('template');
 
-            // Processa o template usando a assinatura do OpenCart 4
+            // Processa o template usando a assinaturado código legado 4
             $output = $template->render($route, $data, $code);
 
             // Limpa o buffer com sucesso

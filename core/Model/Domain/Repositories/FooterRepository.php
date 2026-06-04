@@ -3,27 +3,24 @@
 namespace Alpha\Model\Domain\Repositories;
 
 use Alpha\Mappers\EntityMappers\InformationMapper;
-use Alpha\Mappers\EntityMappers\ExtensionMapper;
 use Alpha\Model\Domain\InterfaceEntity;
 use Alpha\Support\Collection;
 
 /**
  * FooterRepository - Orquestra a infraestrutura do rodapé global.
- * 
- * Melhoras Alpha Engine:
+ *
  * - Navigation Aggregator: Consolida links de Informação, Atendimento e Conta.
  * - Multi-Store Logic: Filtra páginas de informação específicas para a loja atual.
- * - Extension Management: Resolve módulos de rodapé de forma Loader-Free.
  */
 class FooterRepository extends AbstractRepository implements BaseRepositoryInterface
 {
     /**
-     * Alpha Engine: Consolida todos os links e dados para o rodapé.
+     * Consolida todos os links e dados para o rodapé.
      */
     public function getFooterData(): Collection
     {
         $language_param = 'language=' . $this->config->get('config_language');
-        
+
         $data = [
             'informations' => $this->getInformationLinks(),
             'contact'      => $this->url->link('information/contact', $language_param),
@@ -40,7 +37,6 @@ class FooterRepository extends AbstractRepository implements BaseRepositoryInter
             'store_name'   => $this->config->get('config_name'),
             'current_year' => date('Y'),
             'scripts'      => $this->document->getScripts('footer'),
-            'extensions'   => $this->getFooterModules()
         ];
 
         return new Collection($data);
@@ -53,11 +49,10 @@ class FooterRepository extends AbstractRepository implements BaseRepositoryInter
     {
         /** @var InformationMapper $informationMapper */
         $informationMapper = $this->mapperFactory->get(InformationMapper::class);
-        
+
         $informations = [];
         $language_param = 'language=' . $this->config->get('config_language');
 
-        // Alpha Engine: Buscamos as informações ativas (filtro 'bottom' removido pois a coluna não existe no banco)
         foreach ($informationMapper->getInformations($this->language_id, $this->store_id) as $result) {
             $informations[] = [
                 'title' => $result['title'],
@@ -66,48 +61,6 @@ class FooterRepository extends AbstractRepository implements BaseRepositoryInter
         }
 
         return $informations;
-    }
-
-    /**
-     * Alpha Engine: Resolve e renderiza módulos de rodapé via PSR-4 (Loader-Free).
-     */
-    private function getFooterModules(): array
-    {
-        $modules = [];
-        $extensions = $this->getFooterExtensions();
-
-        foreach ($extensions as $extension) {
-            $code = $extension->getCode();
-            
-            if ($this->config->get('footer_' . $code . '_status')) {
-                // Alpha Engine: Mapeamento de Namespace para instanciamento direto
-                $namespace = 'Opencart\Catalog\Controller\Extension\\' . 
-                             str_replace('_', '', ucwords($extension->getExtension(), '_')) . 
-                             '\Footer\\' . 
-                             str_replace('_', '', ucwords($code, '_'));
-
-                if (class_exists($namespace)) {
-                    // Executamos o controlador sem passar pelo sistema de proxy do Loader
-                    $result = (new $namespace($this->registry))->index();
-                    
-                    if ($result) {
-                        $modules[] = $result;
-                    }
-                }
-            }
-        }
-
-        return $modules;
-    }
-
-    /**
-     * Alpha Engine: Busca extensões específicas do rodapé via Mapper.
-     */
-    public function getFooterExtensions(): array
-    {
-        /** @var ExtensionMapper $extensionMapper */
-        $extensionMapper = $this->mapperFactory->get(ExtensionMapper::class);
-        return $extensionMapper->getExtensionsByType('footer');
     }
 
     public function find(int $id): ?InterfaceEntity { return null; }

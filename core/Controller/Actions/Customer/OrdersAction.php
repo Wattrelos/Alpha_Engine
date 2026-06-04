@@ -17,12 +17,18 @@ class OrdersAction implements ActionInterface
     private TwigEnvironment $twig;
     private OrderRepository $orderRepository;
     private SettingRepository $settingRepository;
+    private \Alpha\Support\Customer $customer;
 
-    public function __construct(TwigEnvironment $twig, OrderRepository $orderRepository, SettingRepository $settingRepository)
-    {
+    public function __construct(
+        TwigEnvironment $twig,
+        OrderRepository $orderRepository,
+        SettingRepository $settingRepository,
+        \Alpha\Support\Customer $customer
+    ) {
         $this->twig = $twig;
         $this->orderRepository = $orderRepository;
         $this->settingRepository = $settingRepository;
+        $this->customer = $customer;
     }
 
     public function __invoke(Request $request, Response $response, array $args): Response
@@ -31,6 +37,13 @@ class OrdersAction implements ActionInterface
         $routeParser = $routeContext->getRouteParser();
         $lang = $request->getAttribute('lang', 'pt-br');
 
+        $customerId = $this->customer->isLogged() ? (int)$this->customer->getId() : 0;
+        if (!$customerId) {
+            return $response
+                ->withHeader('Location', '/' . $lang . '/login')
+                ->withStatus(302);
+        }
+
         $breadcrumbs = [
             ['text' => 'Início', 'href' => $routeParser->urlFor('home', ['lang' => $lang])],
             ['text' => 'Minha Conta', 'href' => $routeParser->urlFor('account.index', ['lang' => $lang])],
@@ -38,7 +51,7 @@ class OrdersAction implements ActionInterface
         ];
 
         // Busca pedidos do cliente logado
-        $ordersData = $this->orderRepository->getOrders(0, 20);
+        $ordersData = $this->orderRepository->getOrders($customerId, 0, 20);
         $orders = [];
 
         foreach ($ordersData as $order) {

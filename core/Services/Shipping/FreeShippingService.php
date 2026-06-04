@@ -2,61 +2,36 @@
 
 namespace Alpha\Services\Shipping;
 
-use Psr\Container\ContainerInterface;
-
 /**
- * FreeShippingService - Gerencia a lógica de cálculo para o método de frete grátis.
- * 
- * Implementa a regra de negócio para oferecer frete grátis com base no valor
- * total do carrinho e na zona geográfica.
+ * FreeShippingService - Lógica de cálculo para o método de frete grátis.
+ *
+ * Verifica se o valor do carrinho atinge o mínimo configurado,
+ * retornando dados brutos para a camada de apresentação (Action/Twig).
  */
 class FreeShippingService
 {
-    private ContainerInterface $container;
-
-    public function __construct(ContainerInterface $container)
-    {
-        $this->container = $container;
-    }
-
     /**
-     * Verifica se o frete grátis é aplicável e retorna a cotação.
-     * 
-     * @param array $address Endereço de entrega.
-     * @param float $cartTotal Valor total do carrinho para comparação.
-     * @return array|null Dados da cotação ou null se não aplicável.
+     * Verifica se o frete grátis é aplicável e retorna os dados brutos da cotação.
+     *
+     * @param float $cartTotal   Valor total do carrinho.
+     * @param float $minTotal    Valor mínimo para frete grátis (vindo da config).
+     * @param int   $sortOrder   Ordem de exibição.
+     * @return array|null Dados brutos da cotação ou null se não aplicável.
      */
-    public function getQuote(array $address, float $cartTotal): ?array
-    {
-        $config = $this->container->get('config');
-        $language = $this->container->get('language');
-        $currency = $this->container->get('currency');
-        $session = $this->container->get('session');
-
-        // Regra Alpha Engine: Verifica o valor mínimo para frete grátis
-        $minTotal = (float)$config->get('shipping_free_total');
-        
+    public function getQuote(
+        float $cartTotal,
+        float $minTotal,
+        int   $sortOrder = 0
+    ): ?array {
         if ($cartTotal < $minTotal) {
-            return null; // Não atingiu o valor mínimo
+            return null;
         }
 
-        $language->load('extension/opencart/shipping/free');
-
-        // Retorno formatado seguindo o padrão OpenCart para compatibilidade transparente com o checkout
         return [
-            'code'       => 'free.free',
-            'title'      => $language->get('text_title') ?: 'Frete Grátis',
-            'quote'      => [
-                'free' => [
-                    'code'         => 'free.free',
-                    'title'        => $language->get('text_description') ?: 'Frete Grátis',
-                    'cost'         => 0.00,
-                    'tax_class_id' => 0,
-                    'text'         => $currency->format(0.00, $session->data['currency'])
-                ]
-            ],
-            'sort_order' => (int)$config->get('shipping_free_sort_order'),
-            'error'      => false
+            'code'         => 'free.free',
+            'cost'         => 0.00,
+            'tax_class_id' => 0,
+            'sort_order'   => $sortOrder,
         ];
     }
 }

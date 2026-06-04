@@ -6,7 +6,7 @@ use Alpha\Model\Domain\DTOs\PaginationDataDTO;
 use Alpha\Model\Domain\InterfaceEntity;
 
 /**
- * PaginationRepository - Abstrai a lógica de cálculo de páginas do OpenCart.
+ * PaginationRepository - Abstrai a lógica de cálculo de páginasdo código legado.
  */
 class PaginationRepository extends AbstractRepository
 {

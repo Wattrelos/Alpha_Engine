@@ -5,7 +5,7 @@ namespace Alpha\Controller\Actions\Cart;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Psr\Http\Message\ResponseInterface as Response;
 use Alpha\Controller\Actions\ActionInterface;
-use Containers\AppContainer;
+use Psr\Container\ContainerInterface;
 use Alpha\Model\Domain\Repositories\OrderRepository;
 use Alpha\Model\Domain\Repositories\CartRepository;
 use Alpha\Model\Domain\DTOs\OrderDataDTO;
@@ -16,9 +16,9 @@ use Slim\Routing\RouteContext;
  */
 class SubmitCheckoutAction implements ActionInterface
 {
-    private AppContainer $container;
+    private ContainerInterface $container;
 
-    public function __construct(AppContainer $container)
+    public function __construct(ContainerInterface $container)
     {
         $this->container = $container;
     }

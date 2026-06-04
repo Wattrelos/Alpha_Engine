@@ -21,7 +21,7 @@ class LegacyRouteRedirectMiddleware
     {
         $queryParams = $request->getQueryParams();
 
-        // Se contiver o parâmetro 'route', é uma rota antiga do OpenCart
+        // Se contiver o parâmetro 'route', é uma rota antigado código legado
         if (isset($queryParams['route'])) {
             $route = $queryParams['route'];
             $lang = $queryParams['language'] ?? 'pt-br';

@@ -23,7 +23,7 @@ if (preg_match('#^/(pt-br|en|es)/LPDHED2dC7Gjrg2b(/.*)?$#i', $requestUri, $match
 // ─────────────────────────────────────────────────────────
 // 1. BANCO DE DADOS
 //    config.php define apenas as constantes DB_* e DIR_*.
-//    Não inicializa o framework do OpenCart — apenas defines.
+//    Não inicializa o frameworkdo código legado — apenas defines.
 // ─────────────────────────────────────────────────────────
 if (!defined('APPLICATION')) {
     define('APPLICATION', 'catalog');

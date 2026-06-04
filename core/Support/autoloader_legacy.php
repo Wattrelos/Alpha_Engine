@@ -6,7 +6,7 @@ namespace Alpha\Support;
  * Autoloader Legado de Compatibilidade da Alpha Engine.
  * 
  * Este arquivo é carregado pelo autoloader do Composer e se encarrega de mapear
- * os namespaces clássicos do OpenCart que seguem convenções de arquivo em minúsculo
+ * os namespaces clássicosdo código legado que seguem convenções de arquivo em minúsculo
  * (como snake_case para arquivos em system/library/ ou controllers antigos).
  */
 
@@ -20,7 +20,7 @@ spl_autoload_register(function (string $class): void {
 
     foreach ($paths as $nsPrefix => $directory) {
         if (strpos($class, $nsPrefix) === 0) {
-            // Conversão de camelCase para snake_case e lowercase, idêntico à regra do OpenCart original
+            // Conversão de camelCase para snake_case e lowercase, idêntico à regrado código legado original
             $relativeClass = substr($class, strlen($nsPrefix));
             $convertedPath = trim(str_replace('\\', '/', strtolower(preg_replace('~([a-z])([A-Z]|[0-9])~', '\1_\2', $relativeClass))), '/');
             $file = $directory . $convertedPath . '.php';

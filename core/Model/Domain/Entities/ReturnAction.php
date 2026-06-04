@@ -6,7 +6,7 @@ use Alpha\Model\Domain\Attributes\ManyToOne;
 
 /**
  * Entidade ReturnAction - Define ações (ex: Reembolso, Troca).
- * O OpenCart não utiliza tabela _description para esta entidade,
+ * O código legado não utiliza tabela _description para esta entidade,
  * portanto o language_id reside diretamente aqui.
  */
 class ReturnAction extends BaseEntity

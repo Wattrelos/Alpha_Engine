@@ -109,28 +109,33 @@
                                     </strong>
                                 </div>
 
-                                {# Qty + ações #}
                                 <div class="cart-item-qty-row">
-                                    <input type="hidden" name="key" value="{{ product.cart_id }}">
-                                    <div class="cart-qty-group">
-                                        <input
-                                            type="number"
-                                            name="quantity[{{ product.cart_id }}]"
-                                            value="{{ product.quantity }}"
-                                            min="1"
-                                            max="{{ product.stock_quantity }}"
-                                            class="cart-qty-input cart-qty-input-server"
-                                            data-cart-id="{{ product.cart_id }}"
-                                            id="qty-{{ product.cart_id }}"
-                                            oninput="var max = parseInt(this.max); var val = parseInt(this.value); if(!isNaN(max) && val > max) this.value = max; if(val < 1) this.value = 1;"
-                                        >
-                                        <button type="submit" class="cart-btn-update" title="{{ button_update|default('Atualizar') }}">
-                                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                                <polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/>
-                                                <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/>
-                                            </svg>
-                                        </button>
-                                    </div>
+                                     <input type="hidden" name="key" value="{{ product.cart_id }}">
+                                     <div class="cart-qty-group">
+                                         <button type="button" class="cart-qty-btn cart-qty-btn-minus" data-target="qty-{{ product.cart_id }}" title="Diminuir">
+                                             <i class="fa-solid fa-minus"></i>
+                                         </button>
+                                         <input
+                                             type="number"
+                                             name="quantity[{{ product.cart_id }}]"
+                                             value="{{ product.quantity }}"
+                                             min="1"
+                                             max="{{ product.stock_quantity }}"
+                                             class="cart-qty-input cart-qty-input-server"
+                                             data-cart-id="{{ product.cart_id }}"
+                                             id="qty-{{ product.cart_id }}"
+                                             oninput="var max = parseInt(this.max); var val = parseInt(this.value); if(!isNaN(max) && val > max) this.value = max; if(val < 1) this.value = 1;"
+                                         >
+                                         <button type="button" class="cart-qty-btn cart-qty-btn-plus" data-target="qty-{{ product.cart_id }}" title="Aumentar">
+                                             <i class="fa-solid fa-plus"></i>
+                                         </button>
+                                         <button type="submit" class="cart-btn-update" title="{{ button_update|default('Atualizar') }}">
+                                             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                                 <polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/>
+                                                 <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/>
+                                             </svg>
+                                         </button>
+                                     </div>
                                     <a href="{{ product.remove }}" class="cart-btn-remove" title="{{ button_remove|default('Remover') }}">
                                         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                             <polyline points="3 6 5 6 21 6"/>
@@ -455,8 +460,31 @@
     border-radius: 8px;
     overflow: hidden;
 }
+.cart-qty-btn {
+    width: 32px;
+    height: 34px;
+    background: transparent;
+    border: none;
+    color: #94a3b8;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.2s, color 0.2s;
+    font-size: 0.75rem;
+}
+.cart-qty-btn:hover {
+    background: rgba(255, 255, 255, 0.05);
+    color: #e2e8f0;
+}
+.cart-qty-btn-minus {
+    border-right: 1px solid rgba(255, 255, 255, 0.08);
+}
+.cart-qty-btn-plus {
+    border-left: 1px solid rgba(255, 255, 255, 0.08);
+}
 .cart-qty-input {
-    width: 52px;
+    width: 44px;
     background: transparent;
     border: none;
     outline: none;
@@ -629,6 +657,29 @@
 
 <script>
 document.addEventListener('DOMContentLoaded', () => {
+    // Botões de incremento/decremento
+    document.querySelectorAll('.cart-qty-btn').forEach(btn => {
+        btn.addEventListener('click', function(e) {
+            e.preventDefault();
+            const targetId = this.getAttribute('data-target');
+            const input = document.getElementById(targetId);
+            if (!input) return;
+
+            let val = parseInt(input.value) || 1;
+            const min = parseInt(input.min) || 1;
+            const max = parseInt(input.max) || Infinity;
+
+            if (this.classList.contains('cart-qty-btn-plus')) {
+                if (val < max) val++;
+            } else {
+                if (val > min) val--;
+            }
+
+            input.value = val;
+            input.dispatchEvent(new Event('input', { bubbles: true }));
+        });
+    });
+
     const formatBRL = (value) => {
         return 'R$ ' + value.toFixed(2).replace('.', ',').replace(/\B(?=(\d{3})+(?!\d))/g, ".");
     };

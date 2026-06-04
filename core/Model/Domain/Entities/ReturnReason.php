@@ -6,7 +6,7 @@ use Alpha\Model\Domain\Attributes\ManyToOne;
 
 /**
  * Entidade ReturnReason - Define os motivos da devolução (ex: Defeito).
- * O OpenCart não utiliza tabela _description para esta entidade,
+ * O código legado não utiliza tabela _description para esta entidade,
  * portanto o language_id reside diretamente aqui.
  */
 class ReturnReason extends BaseEntity

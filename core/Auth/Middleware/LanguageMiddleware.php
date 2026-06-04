@@ -60,8 +60,8 @@ class LanguageMiddleware
         // Resolve a contagem do carrinho para o usuário (se logado)
         $cartCount = 0;
         if ($isLogged) {
-            /** @var \Alpha\Model\Domain\Repositories\CartRepository $cartRepo */
-            $cartRepo = \RepositoryFactory::getInstance()->get(\Alpha\Model\Domain\Repositories\CartRepository::class);
+            /** @var \Alpha\Model\Domain\Repositories\CartRepository|null $cartRepo */
+            $cartRepo = $this->container->has(\Alpha\Model\Domain\Repositories\CartRepository::class) ? $this->container->get(\Alpha\Model\Domain\Repositories\CartRepository::class) : null;
             if ($cartRepo) {
                 $cartRepo->initializeContext();
                 $cartCount = $cartRepo->countProducts();

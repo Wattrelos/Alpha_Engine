@@ -20,19 +20,22 @@ class ShowCategoryAction implements ActionInterface
     private ManufacturerRepository $manufacturerRepository;
     private TwigEnvironment $twig;
     private ContainerInterface $container;
+    private ImagePresenter $imagePresenter;
 
     public function __construct(
         CategoryRepository $categoryRepository,
         SeoUrlRepository $seoRepository,
         ManufacturerRepository $manufacturerRepository,
         TwigEnvironment $twig,
-        ContainerInterface $container
+        ContainerInterface $container,
+        ImagePresenter $imagePresenter
     ) {
         $this->categoryRepository = $categoryRepository;
         $this->seoRepository = $seoRepository;
         $this->manufacturerRepository = $manufacturerRepository;
         $this->twig = $twig;
         $this->container = $container;
+        $this->imagePresenter = $imagePresenter;
     }
 
     public function __invoke(Request $request, Response $response, array $args): Response
@@ -66,8 +69,8 @@ class ShowCategoryAction implements ActionInterface
             'filter_filter' => $queryParams['filter'] ?? null,
             'sort'          => $queryParams['sort'] ?? 'p.sort_order',
             'order'         => $queryParams['order'] ?? 'ASC',
-            'page'          => (int)($queryParams['page'] ?? 1),
-            'limit'         => (int)($queryParams['limit'] ?? 12),
+            'page'          => max(1, (int)($queryParams['page'] ?? 1)),
+            'limit'         => max(1, (int)($queryParams['limit'] ?? 12)),
             
             // Filtros facetados
             'categories'    => $queryParams['category'] ?? [],
@@ -89,13 +92,13 @@ class ShowCategoryAction implements ActionInterface
         $routeParser = $routeContext->getRouteParser();
         $lang = $request->getAttribute('lang', 'pt-br');
 
-        $config = $this->container->get('config');
-        $currency = $this->container->get('currency');
-        $tax = $this->container->get('tax');
-        $session = $this->container->get('session');
+        $config = $this->container->has('config') ? $this->container->get('config') : null;
+        $currency = $this->container->has('currency') ? $this->container->get('currency') : null;
+        $tax = $this->container->has('tax') ? $this->container->get('tax') : null;
+        $session = $this->container->has('session') ? $this->container->get('session') : null;
         $currencyCode = $session->data['currency'] ?? ($config ? $config->get('config_currency') : 'BRL');
-        $imagePresenter = new ImagePresenter($config ? $config->get('config_url') : null);
-
+        $imagePresenter = $this->imagePresenter;
+        
         // Imagem principal da categoria via Presenter
         $data['thumb'] = !empty($data['image']) ? $imagePresenter->resize($data['image'], $config ? (int)$config->get('config_image_category_width') : 870, $config ? (int)$config->get('config_image_category_height') : 330) : '';
 
@@ -117,11 +120,17 @@ class ShowCategoryAction implements ActionInterface
         if (isset($data['products']) && is_array($data['products'])) {
             foreach ($data['products'] as &$product) {
                 $prodId = (int)($product['product_id'] ?? $product['id'] ?? 0);
+
+                // Normaliza a chave para que o template acesse prod.product_id independente do nome da coluna no BD
+                if (!isset($product['product_id']) && isset($product['id'])) {
+                    $product['product_id'] = $product['id'];
+                }
+
                 $keyword = $prodId > 0 ? $this->seoRepository->getKeywordByQuery('product_id', $prodId, 0, $languageId) : '';
                 
-                $slug = !empty($keyword) ? $keyword : (!empty($product['keyword']) ? $product['keyword'] : $prodId);
-                $product['slug'] = $slug;
-                $product['href'] = $routeParser->urlFor('product.detail', ['lang' => $lang, 'slug' => (string)$slug]);
+                $productSlug = !empty($keyword) ? $keyword : (!empty($product['keyword']) ? $product['keyword'] : $prodId);
+                $product['slug'] = $productSlug;
+                $product['href'] = $routeParser->urlFor('product.detail', ['lang' => $lang, 'slug' => (string)$productSlug]);
 
                 // Formatação visual da miniatura
                 $product['thumb'] = $imagePresenter->resize($product['image'] ?? '', $config ? (int)$config->get('config_image_product_width') : 228, $config ? (int)$config->get('config_image_product_height') : 228);
@@ -199,6 +208,16 @@ class ShowCategoryAction implements ActionInterface
             'price_min'    => $filterData['price_min'],
             'price_max'    => $filterData['price_max'],
             'rating'       => $filterData['rating']
+        ];
+
+        $data['pagination'] = [
+            'page' => $filterData['page'],
+            'url'  => str_replace('%7Bpage%7D', '{page}', $buildUrl([
+                'page'  => '{page}',
+                'sort'  => $filterData['sort'],
+                'order' => $filterData['order'],
+                'limit' => $filterData['limit']
+            ]))
         ];
 
         $html = $this->twig->render('pages/category/show.html.twig', [

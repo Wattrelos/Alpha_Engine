@@ -224,7 +224,7 @@ class EditAddressAction implements ActionInterface
             return 0;
         }
         /** @var ZoneRepository $zoneRepository */
-        $zoneRepository = \RepositoryFactory::getInstance()->get(ZoneRepository::class);
+        $zoneRepository = \Alpha\Model\Domain\Repositories\RepositoryFactory::getInstance()->get(ZoneRepository::class);
         $zone = $zoneRepository->findOneBy(['code' => strtoupper(trim($code))]);
         return $zone ? (int)$zone->getId() : 0;
     }
@@ -239,7 +239,7 @@ class EditAddressAction implements ActionInterface
             return '';
         }
         /** @var ZoneRepository $zoneRepository */
-        $zoneRepository = \RepositoryFactory::getInstance()->get(ZoneRepository::class);
+        $zoneRepository = \Alpha\Model\Domain\Repositories\RepositoryFactory::getInstance()->get(ZoneRepository::class);
         $zone = $zoneRepository->find($zoneId);
         // Zone entity deve ter getCode() — confirmado no SubmitCheckoutAction existente
         return $zone && method_exists($zone, 'getCode') ? $zone->getCode() : '';

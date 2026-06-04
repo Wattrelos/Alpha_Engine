@@ -74,7 +74,7 @@ class ShippingMapper extends BaseMapper
                 $model_name = 'model_extension_' . $result->getExtension() . '_shipping_' . $result->getCode();
 
                 if ($this->container->has($model_name)) {
-                    // Alpha Engine: Correção para o padrão OpenCart (extensões de frete usam getQuote)
+                    // Alpha Engine: Correção para o código legado (extensões de frete usam getQuote)
                     $quote = $this->container->get($model_name)->getQuote($shipping_address);
 
                     if ($quote) {

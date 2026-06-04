@@ -16,7 +16,7 @@ class LayoutMapper extends BaseMapper
 
     /**
      * Resolve o ID do Layout baseado na Rota e na Loja atual.
-     * Suporta a lógica de wildcards (curingas) nativa do OpenCart (ex: product/%).
+     * Suporta a lógica de wildcards (curingas) legadas (ex: product/%).
      * 
      * @param string $route Ex: 'product/product', 'checkout/cart'
      * @param int $storeId ID da loja atual

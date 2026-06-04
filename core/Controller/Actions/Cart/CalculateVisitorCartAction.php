@@ -11,6 +11,8 @@ use Alpha\Model\Domain\Repositories\ProductOptionValueRepository;
 use Alpha\Mappers\EntityMappers\ProductMapper;
 use Alpha\Support\Presenters\ImagePresenter;
 use Slim\Routing\RouteContext;
+use Alpha\Model\Domain\Repositories\RepositoryFactory;
+use Alpha\Mappers\MapperFactory;
 
 /**
  * CalculateVisitorCartAction - Processa a API de cálculo de carrinho do visitante
@@ -21,10 +23,12 @@ use Slim\Routing\RouteContext;
 class CalculateVisitorCartAction implements ActionInterface
 {
     private ContainerInterface $container;
+    private ImagePresenter $imagePresenter;
 
-    public function __construct(ContainerInterface $container)
+    public function __construct(ContainerInterface $container, ImagePresenter $imagePresenter)
     {
         $this->container = $container;
+        $this->imagePresenter = $imagePresenter;
     }
 
     public function __invoke(Request $request, Response $response, array $args): Response
@@ -35,16 +39,17 @@ class CalculateVisitorCartAction implements ActionInterface
         $products = [];
         $subtotal = 0;
 
-        $priceRepository = \RepositoryFactory::getInstance()->get(PriceRepository::class);
-        $optionValueRepo = \RepositoryFactory::getInstance()->get(ProductOptionValueRepository::class);
-        $productMapper   = \MapperFactory::getInstance()->get(ProductMapper::class);
+        $priceRepository = RepositoryFactory::getInstance()->get(PriceRepository::class);
+        $optionValueRepo = RepositoryFactory::getInstance()->get(ProductOptionValueRepository::class);
+        $productMapper   = MapperFactory::getInstance()->get(ProductMapper::class);
 
-        $langId = (int)$this->container->get('config')->get('config_language_id') ?: 2;
+        $config = $this->container->has('config') ? $this->container->get('config') : null;
+        $langId = $config ? (int)$config->get('config_language_id') : 2;
         $storeId = 0;
         $customerGroupId = 1;
         $priceStatements = $priceRepository->getPriceStatements($customerGroupId);
 
-        $currency = $this->container->get('currency');
+        $currency = $this->container->has('currency') ? $this->container->get('currency') : null;
         $currencyCode = $_SESSION['currency'] ?? 'BRL';
 
         $productIds = array_unique(array_column($items, 'product_id'));
@@ -54,7 +59,7 @@ class CalculateVisitorCartAction implements ActionInterface
             $productDataMap = array_column($productDataMap, null, 'id');
         }
 
-        $imagePresenter = new ImagePresenter($this->container->get('config')->get('config_url'));
+        $imagePresenter = $this->imagePresenter;
 
         $routeContext = RouteContext::fromRequest($request);
         $routeParser = $routeContext->getRouteParser();
@@ -116,8 +121,8 @@ class CalculateVisitorCartAction implements ActionInterface
                 'quantity'   => $quantity,
                 'stock_quantity' => (int)$productInfo['quantity'],
                 'option_raw' => $optionStr,
-                'price'      => $currency->format($unitPrice, $currencyCode),
-                'total'      => $currency->format($totalPrice, $currencyCode),
+                'price'      => $currency ? $currency->format($unitPrice, $currencyCode) : 'R$ ' . number_format($unitPrice, 2, ',', '.'),
+                'total'      => $currency ? $currency->format($totalPrice, $currencyCode) : 'R$ ' . number_format($totalPrice, 2, ',', '.'),
                 'href'       => $routeParser->urlFor('product.detail', ['lang' => $lang, 'slug' => ($productInfo['keyword'] ?? (string)$productId)])
             ];
         }
@@ -125,11 +130,11 @@ class CalculateVisitorCartAction implements ActionInterface
         $totals = [
             [
                 'title' => 'Sub-Total',
-                'text'  => $currency->format($subtotal, $currencyCode)
+                'text'  => $currency ? $currency->format($subtotal, $currencyCode) : 'R$ ' . number_format($subtotal, 2, ',', '.')
             ],
             [
                 'title' => 'Total',
-                'text'  => $currency->format($subtotal, $currencyCode)
+                'text'  => $currency ? $currency->format($subtotal, $currencyCode) : 'R$ ' . number_format($subtotal, 2, ',', '.')
             ]
         ];
 

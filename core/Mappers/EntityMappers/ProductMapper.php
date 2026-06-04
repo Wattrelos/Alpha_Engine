@@ -174,8 +174,8 @@ class ProductMapper extends BaseMapper {
         }
 
         // Paginação
-        $limit = (int)($data['limit'] ?? 20);
-        $start = (int)($data['start'] ?? 0);
+        $limit = max(1, (int)($data['limit'] ?? 20));
+        $start = max(0, (int)($data['start'] ?? 0));
         
         $query->limit($limit)->offset($start);
 

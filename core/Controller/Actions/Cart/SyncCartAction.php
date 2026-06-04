@@ -31,7 +31,7 @@ class SyncCartAction implements ActionInterface
         $items = $body['items'] ?? [];
 
         /** @var CartRepository $cartRepository */
-        $cartRepository = \RepositoryFactory::getInstance()->get(CartRepository::class);
+        $cartRepository = \Alpha\Model\Domain\Repositories\RepositoryFactory::getInstance()->get(CartRepository::class);
         $cartRepository->initializeContext();
 
         // Se for visitante (não logado), limpamos o carrinho da sessão atual

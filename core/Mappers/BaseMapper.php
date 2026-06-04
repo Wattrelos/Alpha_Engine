@@ -13,7 +13,6 @@ use ReflectionClass;
  */
 abstract class BaseMapper implements MapperInterface
  {
-    protected mixed $registry = null;
     protected string $entityClass = '';
     protected string $tableName = '';
     protected string $table = ''; // Bridge de compatibilidade para mappers antigos
@@ -25,7 +24,6 @@ abstract class BaseMapper implements MapperInterface
      */
     public function __construct(mixed $registry = null)
     {
-        $this->registry = $registry;
         $this->dao = new DataAccessObject();
     }
 

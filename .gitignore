@@ -44,12 +44,12 @@ composer.lock
 .DS_Store
 Thumbs.db
 
-# Application Specific
-tests/scripts_uteis/DicionarioNomesDeClasses.php
-tests/scripts_uteis/DicionarioNomesDeCaminhos.php
 
 # Keep directories but ignore content
 !system/storage/cache/index.html
 !system/storage/download/index.html
 !system/storage/logs/index.html
 !image/cache/index.html
+
+# Diversos
+changelog/

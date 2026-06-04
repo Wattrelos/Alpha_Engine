@@ -3,6 +3,7 @@
 namespace Containers;
 
 use Alpha\Mappers\MapperFactory;
+use Alpha\Support\Presenters\ImagePresenter;
 use Alpha\Model\Domain\Repositories\RepositoryFactory;
 use Alpha\Model\Domain\Repositories\SettingRepository;
 use Alpha\Model\Domain\Repositories\LanguageRepository;
@@ -87,12 +88,28 @@ class AppBootstrap
         $this->container->bind('languageCode', $this->languageCode);
         $this->container->bind('languageId', $this->languageId);
 
-        // Vincula as chaves legadas utilizadas por Middlewares em transição
-        $this->container->bind('language', $this->language);
+        // Alpha Engine: Inicializa o Tradutor Support\Language e carrega o idioma principal
+        $translator = new \Alpha\Support\Language($this->languageCode);
+        $translator->load($this->languageCode);
+
+        // Vincula o tradutor nativo ao container
+        $this->container->bind('language', $translator);
+        $this->container->bind('languageEntity', $this->language);
         
         $sessionMock = new \stdClass();
         $sessionMock->data = []; // Evita erros de "property of non-object" no legado
         $this->container->bind('session', $sessionMock);
+
+        // Alpha Engine: Instancia e vincula o helper de dados do cliente
+        $customerHelper = new \Alpha\Support\Customer();
+        $this->container->bind('customer', $customerHelper);
+        $this->container->bind(\Alpha\Support\Customer::class, $customerHelper);
+
+        // Alpha Engine: Disponibiliza o ImagePresenter para injeção via Container
+        $configUrl  = $this->configSettings['config_url'] ?? HTTP_SERVER;
+        $imageDir   = defined('DIR_IMAGE') ? DIR_IMAGE : (DIR_ROOT . 'image/');
+        $imagePresenter = new ImagePresenter($configUrl, $imageDir);
+        $this->container->bind(ImagePresenter::class, $imagePresenter);
 
         // Repositórios de Domínio
         $this->categoryRepository = new CategoryRepository($mapperFactory, $this->container);

@@ -6,16 +6,16 @@ use Psr\Http\Message\ServerRequestInterface as Request;
 use Psr\Http\Message\ResponseInterface as Response;
 use Twig\Environment;
 use Alpha\Controller\Actions\ActionInterface;
-use Containers\AppContainer;
+use Psr\Container\ContainerInterface;
 use Alpha\Model\Domain\Repositories\CountryRepository;
 use Slim\Routing\RouteContext;
 
 class Checkout implements ActionInterface
 {
     private Environment $twig;
-    private AppContainer $container;
+    private ContainerInterface $container;
 
-    public function __construct(Environment $twig, AppContainer $container)
+    public function __construct(Environment $twig, ContainerInterface $container)
     {
         $this->twig = $twig;
         $this->container = $container;

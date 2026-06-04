@@ -68,7 +68,7 @@ class CollectionToArrayConverter
 
             $value = $property->getValue($entity);
 
-            // Converte camelCase (POO) para snake_case (Padrão OpenCart/DB)
+            // Converte camelCase (POO) para snake_case
             $key = strtolower(preg_replace('/(?<!^)([A-Z])/', '_$1', $name));
 
             $data[$key] = self::convertValue($value, $visited);

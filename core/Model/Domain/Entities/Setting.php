@@ -74,7 +74,7 @@ class Setting extends BaseEntity
 
     /**
      * Apontamento Técnico:
-     * No OpenCart 4, configurações complexas são armazenadas como JSON.
+     *no código legado 4, configurações complexas são armazenadas como JSON.
      * O Mapper deve garantir que, se 'serialized' for true, o valor seja
      * tratado corretamente antes de chegar à aplicação.
      */

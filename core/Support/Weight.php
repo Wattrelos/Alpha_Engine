@@ -6,12 +6,12 @@ use Alpha\Model\Domain\Repositories\WeightClassRepository;
 
 class Weight
 {
-    private mixed $registry;
+    private ?\Psr\Container\ContainerInterface $container = null;
     private array $weights = [];
 
-    public function __construct(mixed $registry)
+    public function __construct(?\Psr\Container\ContainerInterface $container = null)
     {
-        $this->registry = $registry;
+        $this->container = $container;
         $this->loadWeights();
     }
 

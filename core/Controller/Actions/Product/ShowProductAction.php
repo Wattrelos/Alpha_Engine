@@ -20,19 +20,22 @@ class ShowProductAction implements ActionInterface
     private AddressRepository $addressRepository;
     private ContainerInterface $container;
     private TwigEnvironment $twig;
+    private ImagePresenter $imagePresenter;
 
     public function __construct(
         ProductRepository $productRepository,
         SeoUrlRepository $seoRepository,
         AddressRepository $addressRepository,
         ContainerInterface $container,
-        TwigEnvironment $twig
+        TwigEnvironment $twig,
+        ImagePresenter $imagePresenter
     ) {
         $this->productRepository = $productRepository;
         $this->seoRepository = $seoRepository;
         $this->addressRepository = $addressRepository;
         $this->container = $container;
         $this->twig = $twig;
+        $this->imagePresenter = $imagePresenter;
     }
 
     public function __invoke(Request $request, Response $response, array $args): Response
@@ -75,12 +78,12 @@ class ShowProductAction implements ActionInterface
         $routeParser = $routeContext->getRouteParser();
         $lang = $request->getAttribute('lang', 'pt-br');
 
-        $config = $this->container->get('config');
-        $currency = $this->container->get('currency');
-        $tax = $this->container->get('tax');
-        $session = $this->container->get('session');
+        $config = $this->container->has('config') ? $this->container->get('config') : null;
+        $currency = $this->container->has('currency') ? $this->container->get('currency') : null;
+        $tax = $this->container->has('tax') ? $this->container->get('tax') : null;
+        $session = $this->container->has('session') ? $this->container->get('session') : null;
         $currencyCode = $session->data['currency'] ?? ($config ? $config->get('config_currency') : 'BRL');
-        $imagePresenter = new ImagePresenter($config ? $config->get('config_url') : null);
+        $imagePresenter = $this->imagePresenter;
 
         // 1. Formatação Visual de Imagens (Principal e Adicionais)
         $product['popup'] = !empty($product['image']) ? $imagePresenter->resize($product['image'], $config ? (int)$config->get('config_image_popup_width') : 500, $config ? (int)$config->get('config_image_popup_height') : 500) : '';
@@ -175,7 +178,7 @@ class ShowProductAction implements ActionInterface
 
         // Tenta recuperar o CEP do cliente logado ou da sessão
         $shippingCep = '';
-        $customer = $this->container->get('customer');
+        $customer = $this->container->has('customer') ? $this->container->get('customer') : null;
         if ($customer && $customer->isLogged()) {
             $defaultAddress = $this->addressRepository->getDefaultAddress($customer->getId());
             if ($defaultAddress) {

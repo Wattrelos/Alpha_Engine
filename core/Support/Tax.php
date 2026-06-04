@@ -13,7 +13,7 @@ use Alpha\Model\DataAccessObject\QueryBuilder;
  */
 class Tax
 {
-    private mixed $registry = null;
+    private ?\Psr\Container\ContainerInterface $container = null;
     private ?object $config = null;
     private ?object $customer = null;
     
@@ -24,12 +24,12 @@ class Tax
     private int $store_country_id = 0;
     private int $store_zone_id = 0;
 
-    public function __construct(mixed $registry = null)
+    public function __construct(?\Psr\Container\ContainerInterface $container = null)
     {
-        $this->registry = $registry;
-        if ($registry) {
-            $this->config = $registry->get('config');
-            $this->customer = $registry->get('customer');
+        $this->container = $container;
+        if ($container) {
+            $this->config = $container->has('config') ? $container->get('config') : null;
+            $this->customer = $container->has('customer') ? $container->get('customer') : null;
             
             if ($this->config) {
                 $this->store_country_id = (int)$this->config->get('config_country_id');

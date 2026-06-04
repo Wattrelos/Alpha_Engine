@@ -1,7 +1,7 @@
 # Alpha Engine - Arquitetura de Software do E-commerce Standalone
 **Documentação Central de Arquitetura**
 
-Este projeto consiste em um sistema de e-commerce moderno e independente desenvolvido com a Alpha Engine. A arquitetura de execução do OpenCart foi completamente descontinuada e abandonada no runtime da aplicação. Todo o fluxo de execução — incluindo bootstrap, roteador de requisições, controllers e views — é implementado do zero, adotando as melhores práticas do mercado, enquanto os arquivos legados do OpenCart servem unicamente como referências conceituais e de dados.
+Este projeto consiste em um sistema de e-commerce moderno e independente desenvolvido com a Alpha Engine. A arquitetura de execuçãodo código legado foi completamente descontinuada e abandonada no runtime da aplicação. Todo o fluxo de execução — incluindo bootstrap, roteador de requisições, controllers e views — é implementado do zero, adotando as melhores práticas do mercado, enquanto os arquivos legadosdo código legado servem unicamente como referências conceituais e de dados.
 
 ## 📍 Status Atual (Checkpoint)
 
@@ -21,7 +21,7 @@ Este projeto consiste em um sistema de e-commerce moderno e independente desenvo
   * **Isolamento de Widgets (Fim do Loop Infinito de Memória):** Corrigimos uma falha de design onde componentes parciais (como `Cart` e `Menu`) invocavam o método `render()` do controlador base, gerando um loop recursivo com o `Header` e estourando a memória RAM (512MB). Widgets agora usam o renderizador direto de fragmentos.
   * **Menu Dropdown Nativo (Zero-Twig):** Implementamos a renderização de HTML do menu departamental diretamente no `MenuRepository` (convertendo arrays recursivos em classes utilitárias do Bootstrap 5), alcançando tempo de resposta de sub-milissegundos e contornando a ausência de métodos mágicos no padrão DAO.
   * **Injeção de Dicionário Global:** Restauramos o carregamento da camada de Idiomas no cabeçalho central, retornando os textos dinâmicos e ícones da interface sem depender do Loader legado.
-  * **Ponte de Componentes Visuais (View Presenters):** Construímos a lógica de adaptação no controlador da Home e nos Módulos (`Featured`, `Latest`, `Bestseller`) para pegar os dados puros, tipados e performáticos da Alpha Engine e formatá-los para o componente visual `Thumb` legado do OpenCart (injeção de `no_image.png`, cache de redimensionamento e cálculo de impostos nativo).
+  * **Ponte de Componentes Visuais (View Presenters):** Construímos a lógica de adaptação no controlador da Home e nos Módulos (`Featured`, `Latest`, `Bestseller`) para pegar os dados puros, tipados e performáticos da Alpha Engine e formatá-los para o componente visual `Thumb` legadodo código legado (injeção de `no_image.png`, cache de redimensionamento e cálculo de impostos nativo).
   * **Gestão Global de Assets:** Injeção correta da identidade visual (`personalizada.css`) e scripts estruturais (`bootstrap.bundle.min.js`) de forma centralizada pelo `Header`, evitando redundância e falhas nos dropdowns nativos.
   * **Hidratação do Menu Principal:** Controlador `Menu` refatorado para entregar simultaneamente o HTML pré-renderizado ultra-rápido (`{{ categorias }}`) e os dados crus (`{{ categories }}`) garantindo máxima compatibilidade com layouts.
   * **Refatoração Fluida de Layout (Bootstrap 5):** Reestruturação do rodapé (`footer.twig`) para usar grid responsiva moderna (`col-12 col-sm-6 col-md`), eliminando quebras no mobile e adaptando-se automaticamente a remoção de colunas.
@@ -53,7 +53,7 @@ Este projeto consiste em um sistema de e-commerce moderno e independente desenvo
 
 ## � A "Obra de Arte": Arquitetura Alpha
 
-Diferente do OpenCart padrão, onde o SQL fica espalhado pelos Models, este projeto introduz o padrão **Data Mapper**.
+Diferentedo código legado padrão, onde o SQL fica espalhado pelos Models, este projeto introduz o padrão **Data Mapper**.
 
 ### Componentes Principais:
 
@@ -92,58 +92,58 @@ Diferente do OpenCart padrão, onde o SQL fica espalhado pelos Models, este proj
 ## 📦 Estrutura do Core
 
 ```text
-├── catalog/                                # Pasta legada do Opencart. Não está mais sendo utilizada.
-├── changelog/                              # 📝 Notas técnicas, registros de refatoração e log de IAs
-├── Config/                                 # 📂 Configurações da Aplicação
-│   └── Routes.php                          # 📁 Rotas PSR-15 centralizadas (Slim Framework)
-├── Containers/                             # 📂 Infraestrutura de Injeção de Dependências (DI)
-│   ├── AppContainer.php                    # 📦 Contêiner Pimple/PHP-DI com definições de classes
-│   └── AppBootstrap.php                    # 📦 Bootstrap de inicialização
-├── core/                                   # 🧠 Core da Alpha Engine (Backend Standalone)
-│   ├── Admin/                              # 🛡️ Módulo do Painel Administrativo
-│   │   ├── Controllers/Actions/            # Controladores Slim focados no Admin (Painel)
-│   │   ├── Mappers/                        # Mappers específicos da área administrativa
-│   │   └── ...                             # (Estrutura isolada de Backoffice)
-│   ├── Auth/                               # 🔐 Módulo de Autenticação e Segurança
-│   │   ├── Middleware/                     # Guards PSR-15 (Signature, Session, Language, Redirects)
-│   │   └── Services/                       # Regras de negócio de acesso (ex: CustomerAuthService)
-│   ├── Controller/                         # 🎮 Controladores (Skinny Controllers / Actions)
-│   │   ├── BaseController.php              # Controller abstrato base da aplicação
-│   │   └── Actions/                        # Ações HTTP no padrão ADR (Action-Domain-Responder)
-│   │       ├── Cart/                       # Rotas de Carrinho e Checkout
-│   │       ├── Customer/Auth/              # Rotas de Login, Registro e Conta Logada
-│   │       └── ...
-│   ├── Mappers/                            # 🗺️ Data Mappers (Acesso e isolamento de Banco de Dados)
-│   │   ├── EntityMappers/                  # Tradutores entre Banco e Entidades (ex: ProductMapper)
-│   │   └── Observers/                      # Padrão Observer para side-effects (ex: enviar emails)
-│   ├── Model/                              # 🏛️ Coração do Domínio (DDD)
-│   │   ├── DataAccessObject/               # Camada DAO (Conexões PDO, QueryBuilder, UnitOfWork)
-│   │   ├── DataTransferObject/             # DTOs de transporte (ex: ViewResponse)
-│   │   └── Domain/                         # Lógica de Domínio Estrutural
-│   │       ├── Entities/                   # Objetos de domínio puros e tipados (PHP 8.4)
-│   │       └── Repositories/               # Orquestradores de regras de negócio agregadas
-│   ├── Support/                            # 🛠️ Utilitários Transversais e Helpers Nativos
-│   │   ├── Session.php                     # Gerenciamento Nativo de Sessões PHP Standalone
-│   │   ├── EntityHydrator.php              # Padrão Hydrator para popular entidades reflexivamente
-│   │   ├── AlphaString.php                 # Sanitização moderna e validação de strings
-│   │   └── Presenters/                     # Formatadores visuais dedicados (ex: ImagePresenter)
-│   └── View/                               # 🖼️ Camada de Renderização
-│       └── ViewRenderer.php                # Motor renderizador base (integrado ao Twig)
-│
-├── docs/                                   # 📚 Arquivos de Documentação Arquitetural e Progresso
-├── resources/                              # 🎨 Recursos Estáticos Não-Compilados e Views
-│   └── views/                              # Templates Twig
-│       ├── admin/                          # Telas do Painel de Controle (Backoffice)
-│       ├── components/                     # Atomic Design (atoms, molecules, organisms)
-│       ├── layouts/                        # Estruturas base (header, footer, html base)
-│       └── pages/                          # Telas principais do E-commerce (catálogo, carrinho, user)
-│
-└── public_html/                            # 🌐 Webroot (Document Root exposto e servido para a Internet)
-    ├── index.php                           # Front Controller único da Aplicação (Bootstrap)
-    ├── .htaccess                           # Regras de URL Rewrite (Apache)
-    ├── css/                                # Folhas de estilo (Custom CSS compilado)
-    ├── js/                                 # Scripts Vanilla JS e integrações de formulário (AJAX)
-    └── fonts/                              # Tipografia e Ícones Locais
+  ├── catalog/                                # Pasta legadado código legado. Não está mais sendo utilizada.
+  ├── changelog/                              # 📝 Notas técnicas, registros de refatoração e log de IAs
+  ├── Config/                                 # 📂 Configurações da Aplicação
+  │   └── Routes.php                          # 📁 Rotas PSR-15 centralizadas (Slim Framework)
+  ├── Containers/                             # 📂 Infraestrutura de Injeção de Dependências (DI)
+  │   ├── AppContainer.php                    # 📦 Contêiner Pimple/PHP-DI com definições de classes
+  │   └── AppBootstrap.php                    # 📦 Bootstrap de inicialização
+  ├── core/                                   # 🧠 Core da Alpha Engine (Backend Standalone)
+  │   ├── Admin/                              # 🛡️ Módulo do Painel Administrativo
+  │   │   ├── Controllers/Actions/            # Controladores Slim focados no Admin (Painel)
+  │   │   ├── Mappers/                        # Mappers específicos da área administrativa
+  │   │   └── ...                             # (Estrutura isolada de Backoffice)
+  │   ├── Auth/                               # 🔐 Módulo de Autenticação e Segurança
+  │   │   ├── Middleware/                     # Guards PSR-15 (Signature, Session, Language, Redirects)
+  │   │   └── Services/                       # Regras de negócio de acesso (ex: CustomerAuthService)
+  │   ├── Controller/                         # 🎮 Controladores (Skinny Controllers / Actions)
+  │   │   ├── BaseController.php              # Controller abstrato base da aplicação
+  │   │   └── Actions/                        # Ações HTTP no padrão ADR (Action-Domain-Responder)
+  │   │       ├── Cart/                       # Rotas de Carrinho e Checkout
+  │   │       ├── Customer/Auth/              # Rotas de Login, Registro e Conta Logada
+  │   │       └── ...
+  │   ├── Mappers/                            # 🗺️ Data Mappers (Acesso e isolamento de Banco de Dados)
+  │   │   ├── EntityMappers/                  # Tradutores entre Banco e Entidades (ex: ProductMapper)
+  │   │   └── Observers/                      # Padrão Observer para side-effects (ex: enviar emails)
+  │   ├── Model/                              # 🏛️ Coração do Domínio (DDD)
+  │   │   ├── DataAccessObject/               # Camada DAO (Conexões PDO, QueryBuilder, UnitOfWork)
+  │   │   ├── DataTransferObject/             # DTOs de transporte (ex: ViewResponse)
+  │   │   └── Domain/                         # Lógica de Domínio Estrutural
+  │   │       ├── Entities/                   # Objetos de domínio puros e tipados (PHP 8.4)
+  │   │       └── Repositories/               # Orquestradores de regras de negócio agregadas
+  │   ├── Support/                            # 🛠️ Utilitários Transversais e Helpers Nativos
+  │   │   ├── Session.php                     # Gerenciamento Nativo de Sessões PHP Standalone
+  │   │   ├── EntityHydrator.php              # Padrão Hydrator para popular entidades reflexivamente
+  │   │   ├── AlphaString.php                 # Sanitização moderna e validação de strings
+  │   │   └── Presenters/                     # Formatadores visuais dedicados (ex: ImagePresenter)
+  │   └── View/                               # 🖼️ Camada de Renderização
+  │       └── ViewRenderer.php                # Motor renderizador base (integrado ao Twig)
+  │
+  ├── docs/                                   # 📚 Arquivos de Documentação Arquitetural e Progresso
+  ├── resources/                              # 🎨 Recursos Estáticos Não-Compilados e Views
+  │   └── views/                              # Templates Twig
+  │       ├── admin/                          # Telas do Painel de Controle (Backoffice)
+  │       ├── components/                     # Atomic Design (atoms, molecules, organisms)
+  │       ├── layouts/                        # Estruturas base (header, footer, html base)
+  │       └── pages/                          # Telas principais do E-commerce (catálogo, carrinho, user)
+  │
+  └── public_html/                            # 🌐 Webroot (Document Root exposto e servido para a Internet)
+      ├── index.php                           # Front Controller único da Aplicação (Bootstrap)
+      ├── .htaccess                           # Regras de URL Rewrite (Apache)
+      ├── css/                                # Folhas de estilo (Custom CSS compilado)
+      ├── js/                                 # Scripts Vanilla JS e integrações de formulário (AJAX)
+      └── fonts/                              # Tipografia e Ícones Locais
 
 
 
@@ -162,7 +162,7 @@ Fazer essa pausa para documentar e versionar é uma excelente prática. No desen
 
 ## 💡 Filosofia do Projeto
 
-O objetivo não é apenas "fazer funcionar", mas criar uma estrutura standalone onde o código seja autodocumentado, seguro por padrão e fácil de testar. A remoção de lógica complexa e o descarte dos controllers e models do OpenCart permite que a interface se concentre apenas na apresentação e fluxo de dados nativos.
+O objetivo não é apenas "fazer funcionar", mas criar uma estrutura standalone onde o código seja autodocumentado, seguro por padrão e fácil de testar. A remoção de lógica complexa e o descarte dos controllers e modelsdo código legado permite que a interface se concentre apenas na apresentação e fluxo de dados nativos.
 
 ---
 *Trabalho em constante evolução para elevar o padrão de engenharia do ecossistema de e-commerce com a Alpha Engine.*

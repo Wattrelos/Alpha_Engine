@@ -1,6 +1,6 @@
 <?php
 // Heading
-$_['heading_title']          = 'Sua Loja'; // Variável padrão do OpenCart para o title da página caso não haja no banco
+$_['heading_title']          = 'Sua Loja'; // Variável padrãodo código legado para o title da página caso não haja no banco
 
 // Alpha Engine: Títulos dinâmicos para os blocos injetados pelo HomeRepository
 $_['heading_title_featured'] = 'Em Destaque';

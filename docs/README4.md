@@ -25,20 +25,20 @@ Este documento registra os aspectos de segurança, gerenciamento do sistema e a 
 
 ## 🏗️ [INFRA] Arquitetura Standalone e Performance
 
-1.  **BaseController (Master Pattern)**: Centralização de injeção de dependências (mappers e repositórios) e resolução de internacionalização de forma nativa, extinguindo o carregador de arquivos procedural legado do OpenCart (`loader.php`).
+1.  **BaseController (Master Pattern)**: Centralização de injeção de dependências (mappers e repositórios) e resolução de internacionalização de forma nativa, extinguindo o carregador de arquivos procedural legadodo código legado (`loader.php`).
 2.  **DataAccessObject Advanced**:
     *   **Identity Map**: Repositórios guardam referências em memória das entidades carregadas, impedindo idas repetidas ao banco de dados na mesma requisição.
     *   **Lazy Loading**: Uso do `LazyCollection` via Closures e Proxies PHP nativos para postergar o processamento de relações complexas até seu uso na view.
     *   **Batch Loading**: Consultas como listagem de categorias do menu e SEO amigável utilizam buscas em lote (`readByIds`), contornando o gargalo de consultas em loop.
 3.  **Estratégia de Cache PSR-16**: Interface de cache (`CacheStrategyInterface`) implementada via Filesystem, permitindo fácil substituição por Redis/Memcached para cachear entidades estáticas (idiomas, moedas, configurações).
-4.  **Gerenciamento do Ciclo de Vida da Sessão**: O runtime do sistema inicializa a sessão utilizando a classe `AlphaSession` diretamente pelo bootstrap da Alpha Engine, eliminando a dependência da biblioteca de sessão legada do OpenCart e de seus arquivos de driver antigos.
+4.  **Gerenciamento do Ciclo de Vida da Sessão**: O runtime do sistema inicializa a sessão utilizando a classe `AlphaSession` diretamente pelo bootstrap da Alpha Engine, eliminando a dependência da biblioteca de sessão legadado código legado e de seus arquivos de driver antigos.
 5.  **Auditoria ORM**: Ferramentas de verificação estática que eliminam a presença de atributos órfãos e entidades não mapeadas, mantendo o alinhamento total entre o PHP 8.4 e o banco de dados.
 
 ---
 
 ## 🏆 Vitórias da Engenharia de Infraestrutura
 
-1.  **Fim da Execução Legada**: Bootstrap e Roteador pertencem inteiramente à Alpha Engine, inicializando controladores e views do zero e limpando as rotas originais do OpenCart.
+1.  **Fim da Execução Legada**: Bootstrap e Roteador pertencem inteiramente à Alpha Engine, inicializando controladores e views do zero e limpando as rotas originaisdo código legado.
 2.  **Widget Isolation**: A camada visual desenhada em Twig separa componentes e fragmentos, prevenindo loops de memória e WSOD (White Screen of Death) no carregamento de cabeçalhos e rodapés.
 3.  **Deprecation Logs**: Monitoramento constante via `CompatibilityLogger` que sinaliza chamadas a recursos procedurais antigos para eliminação definitiva do código.
 4.  **Descomissionamento de Modelos**: Desativação total de modelos herdados (renomeados para `.old`), garantindo que o banco de dados seja acessado exclusivamente pelos Mappers e Repositórios da Alpha Engine.

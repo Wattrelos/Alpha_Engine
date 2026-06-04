@@ -1,12 +1,12 @@
 # 🔒 Desacoplamento do Sistema de Sessões (Alpha Engine)
 
-Este documento registra a resolução arquitetural para as Sessões (`Session`), que foram totalmente desacopladas da engine do OpenCart e agora rodam de forma nativa e isolada no core da **Alpha Engine**.
+Este documento registra a resolução arquitetural para as Sessões (`Session`), que foram totalmente desacopladas da enginedo código legado e agora rodam de forma nativa e isolada no core da **Alpha Engine**.
 
 ---
 
 ## 🔍 Contexto Histórico e Limitação Anterior
 
-No ecossistema antigo do OpenCart, as sessões dependiam de adaptadores procedurais (drivers sob `system/library/session/`) e eram acopladas ao runtime global via `system/framework.php`. 
+No ecossistema antigodo código legado, as sessões dependiam de adaptadores procedurais (drivers sob `system/library/session/`) e eram acopladas ao runtime global via `system/framework.php`.
 Embora a Alpha Engine atuasse como uma ponte no banco de dados (`db.php`), o controle do ciclo de vida ainda passava pelas bibliotecas antigas, mantendo débitos técnicos como vulnerabilidade a sessões gordas/corrompidas e falta de tipagem rigorosa.
 
 Com a nova decisão estratégica de abandonar a engine antiga, a arquitetura migrou definitivamente para uma solução standalone.
@@ -20,7 +20,7 @@ Adotou-se a estratégia de **Desacoplamento Total**, removendo toda e qualquer i
 ### Componentes da Arquitetura Standalone de Sessão:
 
 1. **Classe `Session` (`core/Support/Session.php`)**:
-   * Substitui inteiramente a classe de sessão do OpenCart.
+   * Substitui inteiramente a classe de sessãodo código legado.
    * Mantém a referência por referência aos dados em sessão nativa do PHP (`$_SESSION`).
    * Gerencia de forma nativa a inicialização do estado de sessão.
    * **Método `getId()`**: Implementado para expor nativamente o ID da sessão ativa via `session_id()`, integrando-se sem erros com mappers e repositórios de domínio (como o `CartRepository`).
@@ -40,5 +40,5 @@ Adotou-se a estratégia de **Desacoplamento Total**, removendo toda e qualquer i
 
 * **Conformidade de Padrão (PSR-7 / Native Session)**: A utilização do `AlphaSessionHandler` de acordo com a `SessionHandlerInterface` nativa do PHP permite usar recursos de sessão nativos sem acoplamento procedimental ou proprietário.
 * **Segurança e Estabilidade**: O fim do acoplamento evita que queries não bufferizadas corrompam o estado da aplicação no encerramento da execução.
-* **Isolamento de Runtime**: O e-commerce roda de forma independente, sem risco de efeitos colaterais provocados por arquivos de drivers procedurais antigos do OpenCart.
+* **Isolamento de Runtime**: O e-commerce roda de forma independente, sem risco de efeitos colaterais provocados por arquivos de drivers procedurais antigosdo código legado.
 * **Prontidão para Novos Drivers (Cache/Redis)**: A persistência do repositório pode ser facilmente configurada para rodar em Redis ou em arquivos usando as classes utilitárias de cache da Alpha Engine (`CacheStrategyInterface`), sem alterar nenhuma linha de código dos controladores ou da aplicação principal.

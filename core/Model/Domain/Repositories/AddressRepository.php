@@ -17,7 +17,7 @@ use Alpha\Model\Domain\Repositories\ZoneRepository;
  * Autoridade de domínio para o livro de endereços dos clientes.
  * Centraliza busca, persistência e validação de regras de negócio para endereços.
  *
- * Nota: funções legadas do OpenCart (oc_validate_length, oc_validate_regex,
+ * Nota: funções legadasdo código legado (oc_validate_length, oc_validate_regex,
  * CustomFieldRepository) foram removidas e substituídas por implementações
  * puras em PHP 8+.
  */
@@ -319,7 +319,7 @@ class AddressRepository extends AbstractRepository implements BaseRepositoryInte
      * Verifica se o comprimento de uma string (em caracteres multibyte) está
      * dentro do intervalo [min, max].
      *
-     * Substitui oc_validate_length() do OpenCart.
+     * Substitui oc_validate_length()do código legado.
      */
     private function validateLength(string $value, int $min, int $max): bool
     {

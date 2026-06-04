@@ -7,7 +7,7 @@ namespace Alpha\Support;
 /**
  * AlphaString - Utilitários modernos e standalone para manipulação e validação de strings.
  * 
- * Substitui os helpers procedurais legados do OpenCart.
+ * Substitui os helpers procedurais legadosdo código legado.
  */
 class AlphaString
 {

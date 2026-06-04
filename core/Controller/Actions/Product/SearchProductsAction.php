@@ -30,8 +30,8 @@ class SearchProductsAction
             'filter_sub_category'=> $queryParams['sub_category'] ?? '',
             'sort'               => $queryParams['sort'] ?? 'p.sort_order',
             'order'              => $queryParams['order'] ?? 'ASC',
-            'page'               => (int)($queryParams['page'] ?? 1),
-            'limit'              => (int)($queryParams['limit'] ?? 12)
+            'page'               => max(1, (int)($queryParams['page'] ?? 1)),
+            'limit'              => max(1, (int)($queryParams['limit'] ?? 12))
         ];
 
         // Obtém dados de busca do repositório

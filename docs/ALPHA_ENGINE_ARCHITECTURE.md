@@ -1,9 +1,9 @@
 # 🏛️ Alpha Engine - Arquitetura e Engenharia de Software
 
 ## 1. Visão Geral
-A **Alpha Engine** é um ecossistema de e-commerce totalmente independente e autônomo, construído sob o conceito de arquitetura standalone moderna. A decisão estratégica de **abandonar por completo a engine original do OpenCart** resultou no desenvolvimento de um sistema "do zero", abrangendo um novo bootstrap, router, controllers e views. 
+A **Alpha Engine** é um ecossistema de e-commerce totalmente independente e autônomo, construído sob o conceito de arquitetura standalone moderna. A decisão estratégica de **abandonar por completo a engine originaldo código legado** resultou no desenvolvimento de um sistema "do zero", abrangendo um novo bootstrap, router, controllers e views.
 
-O motor foi projetado com forte isolamento de responsabilidades usando **Domain-Driven Design (DDD)**, **Repository Pattern** e **Data Mappers**. Toda a execução da aplicação (roteamento, manipulação de sessão, renderização e controle transacional) é nativa da Alpha Engine, eliminando a dependência do runtime legado do OpenCart. Os arquivos legados deste último servem estritamente como referência conceitual e para migração de dados históricos.
+O motor foi projetado com forte isolamento de responsabilidades usando **Domain-Driven Design (DDD)**, **Repository Pattern** e **Data Mappers**. Toda a execução da aplicação (roteamento, manipulação de sessão, renderização e controle transacional) é nativa da Alpha Engine, eliminando a dependência do runtime legadodo código legado. Os arquivos legados deste último servem estritamente como referência conceitual e para migração de dados históricos.
 
 ---
 
@@ -56,7 +56,7 @@ A Alpha Engine divide suas responsabilidades em camadas bem delineadas:
 
 ## 4. Tratamento de Integridade e Isolamento de Dados
 
-Para assegurar uma transição limpa da base de dados e sanear os débitos técnicos do OpenCart, a Alpha Engine implementa proteções ativas na camada de dados:
+Para assegurar uma transição limpa da base de dados e sanear os débitos técnicosdo código legado, a Alpha Engine implementa proteções ativas na camada de dados:
 
 *   **Tratamento do Pseudo-Null (FK = 0)**: 
     O banco legado utilizava o valor numérico `0` para representar ausência de associação (ex: `parent_id = 0` para categoria sem pai). Como isso viola regras de chaves estrangeiras de bancos rigorosos, o `DataAccessObject` escaneia os relacionamentos durante a hidratação e define a propriedade da entidade adequadamente como `null` quando encontra o valor `0`.

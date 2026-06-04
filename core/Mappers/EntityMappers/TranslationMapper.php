@@ -16,7 +16,7 @@ class TranslationMapper extends BaseMapper
 
     /**
      * Retorna as traduções customizadas de uma rota específica em formato de array bruto
-     * para máxima performance e compatibilidade com o motor do OpenCart.
+     * para máxima performance e compatibilidade com o motordo código legado.
      */
     public function getRouteTranslations(string $route, int $storeId, int $languageId): array
     {

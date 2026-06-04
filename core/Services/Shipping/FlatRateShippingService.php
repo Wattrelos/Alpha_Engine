@@ -2,89 +2,74 @@
 
 namespace Alpha\Services\Shipping;
 
-use Psr\Container\ContainerInterface;
 use Alpha\Model\Domain\Repositories\WeightClassRepository;
 use Alpha\Model\Domain\Repositories\LengthClassRepository;
 use Alpha\Model\Domain\Repositories\GeoZoneRepository;
 
 /**
- * FlatRateShippingService - Gerencia a lógica de cálculo para o método de frete fixo.
- * 
- * Esta classe demonstra a migração da lógica de negócio das extensões legadas para 
- * serviços tipados na Alpha Engine, utilizando os repositórios de medidas para 
- * garantir que limites de peso e dimensões sejam respeitados independentemente 
- * das unidades configuradas no checkout.
+ * FlatRateShippingService - Lógica de cálculo para o método de frete fixo.
+ *
+ * Valida zona geográfica e limite de peso usando os repositórios Alpha,
+ * retornando dados brutos para que a camada de apresentação (Action/Twig)
+ * aplique a formatação de moeda e impostos.
  */
 class FlatRateShippingService
 {
-    private ContainerInterface $container;
     private WeightClassRepository $weightClassRepository;
     private LengthClassRepository $lengthClassRepository;
     private GeoZoneRepository $geoZoneRepository;
 
-    public function __construct(ContainerInterface $container)
+    public function __construct()
     {
-        $this->container = $container;
-
         $repositoryFactory = \Alpha\Model\Domain\Repositories\RepositoryFactory::getInstance();
         $this->weightClassRepository = $repositoryFactory->get(WeightClassRepository::class);
         $this->lengthClassRepository = $repositoryFactory->get(LengthClassRepository::class);
-        $this->geoZoneRepository = $repositoryFactory->get(GeoZoneRepository::class);
+        $this->geoZoneRepository     = $repositoryFactory->get(GeoZoneRepository::class);
     }
 
     /**
-     * Verifica se o frete é aplicável e retorna a cotação (quote).
-     * 
-     * @param array $address Endereço de entrega.
-     * @param float $totalWeight Peso total do carrinho.
-     * @param int $weightClassId ID da classe de peso do carrinho.
-     * @return array|null Dados da cotação ou null se não aplicável.
+     * Verifica se o frete fixo é aplicável e retorna os dados brutos da cotação.
+     *
+     * @param array $address          Endereço de entrega.
+     * @param float $totalWeight      Peso total do carrinho.
+     * @param int   $weightClassId    ID da classe de peso do carrinho.
+     * @param int   $geoZoneId        ID da zona geográfica configurada (0 = sem restrição).
+     * @param int   $storeWeightClassId ID da classe de peso padrão da loja.
+     * @param float $cost             Custo fixo do frete.
+     * @param float $maxWeight        Peso máximo aceito (0 = sem limite).
+     * @param int   $taxClassId       ID da classe de imposto do frete.
+     * @param int   $sortOrder        Ordem de exibição.
+     * @return array|null Dados brutos da cotação ou null se não aplicável.
      */
-    public function getQuote(array $address, float $totalWeight, int $weightClassId): ?array
-    {
-        $config = $this->container->get('config');
-        $language = $this->container->get('language');
-        $currency = $this->container->get('currency');
-        $session = $this->container->get('session');
-        $tax = $this->container->get('tax');
-
+    public function getQuote(
+        array $address,
+        float $totalWeight,
+        int   $weightClassId,
+        int   $geoZoneId,
+        int   $storeWeightClassId,
+        float $cost,
+        float $maxWeight = 0,
+        int   $taxClassId = 0,
+        int   $sortOrder = 0
+    ): ?array {
         // Validação de Geo Zone via Alpha Engine
-        $geoZoneId = (int)$config->get('shipping_flat_geo_zone_id');
         if ($geoZoneId > 0 && !$this->geoZoneRepository->isAddressInGeoZone($geoZoneId, $address)) {
-            return null; // O endereço não atende a zona geográfica exigida
+            return null;
         }
 
-        // Normalização do peso para a unidade padrão da loja (ex: Kg) para validação de limites
-        $storeWeightClassId = (int)$config->get('config_weight_class_id');
+        // Normalização do peso para a unidade padrão da loja
         $normalizedWeight = $this->weightClassRepository->convert($totalWeight, $weightClassId, $storeWeightClassId);
 
-        // Exemplo de regra Alpha Engine: Limite máximo de peso para aceitar frete fixo
-        $maxWeight = (float)$config->get('shipping_flat_max_weight');
-        
+        // Regra Alpha: Limite máximo de peso para aceitar frete fixo
         if ($maxWeight > 0 && $normalizedWeight > $maxWeight) {
-            return null; // Peso excede o limite do Flat Rate
+            return null;
         }
 
-        $language->load('extension/opencart/shipping/flat');
-
-        $cost = (float)$config->get('shipping_flat_cost');
-        $taxClassId = (int)$config->get('shipping_flat_tax_class_id');
-        
-        // Retorno formatado seguindo o padrão OpenCart para compatibilidade com o checkout
         return [
-            'code'       => 'flat.flat',
-            'title'      => $language->get('text_title') ?: 'Frete Fixo',
-            'quote'      => [
-                'flat' => [
-                    'code'         => 'flat.flat',
-                    'title'        => $language->get('text_description') ?: 'Taxa Fixa de Frete',
-                    'cost'         => $cost,
-                    'tax_class_id' => $taxClassId,
-                    'text'         => $currency->format($tax->calculate($cost, $taxClassId, $config->get('config_tax')), $session->data['currency'])
-                ]
-            ],
-            'sort_order' => (int)$config->get('shipping_flat_sort_order'),
-            'error'      => false
+            'code'         => 'flat.flat',
+            'cost'         => $cost,
+            'tax_class_id' => $taxClassId,
+            'sort_order'   => $sortOrder,
         ];
     }
 }

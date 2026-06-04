@@ -95,7 +95,7 @@ class CountryRepository extends AbstractRepository implements BaseRepositoryInte
     }
 
     /**
-     * Converte a Entidade Country num DTO reconhecido pelo padrão OpenCart.
+     * Converte a Entidade Country num DTO reconhecido pelo padrão código legado.
      * Extrai o nome traduzido nativamente e formata as chaves.
      */
     private function toLegacyDTO(Country $country): array

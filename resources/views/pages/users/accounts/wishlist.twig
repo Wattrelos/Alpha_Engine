@@ -1,0 +1,76 @@
+{% extends 'layouts/main.twig' %}
+
+{% block content %}
+	<div class="egen-hero-premium">
+		<div class="egen-container">
+			<div class="egen-hero-content">
+				<h1 class="egen-hero-title">
+					<i class="fas fa-heart egen-hero-icon"></i>
+					{{ title }}
+				</h1>
+				{% include 'components/molecules/breadcrumbs.twig' %}
+			</div>
+		</div>
+	</div>
+
+	<div class="egen-container egen-page-spacing">
+		{% if wishlist_items %}
+			<div class="egen-wishlist-grid">
+				{% for item in wishlist_items %}
+					<div class="egen-wishlist-card egen-glass-panel">
+						<div class="egen-wishlist-card__image">
+							{% if item.thumb %}
+								<a href="{{ item.href }}">
+									<img src="{{ item.thumb }}" alt="{{ item.name }}" title="{{ item.name }}" class="img-responsive"/>
+								</a>
+							{% endif %}
+						</div>
+
+						<div class="egen-wishlist-card__details">
+							<h3 class="egen-wishlist-card__title">
+								<a href="{{ item.href }}">{{ item.name }}</a>
+							</h3>
+							<div class="egen-wishlist-card__meta">
+								<span class="egen-badge egen-badge--dark">Mod:
+									{{ item.model }}</span>
+								<span class="egen-badge egen-badge--status">Estoque:
+									{{ item.stock }}</span>
+							</div>
+
+							<div class="egen-wishlist-card__price-box">
+								{% if item.price %}
+									{% if not item.special %}
+										<span class="egen-price-regular">{{ item.price }}</span>
+									{% else %}
+										<span class="egen-price-old">{{ item.price }}</span>
+										<span class="egen-price-special">{{ item.special }}</span>
+									{% endif %}
+								{% endif %}
+							</div>
+						</div>
+
+						<div class="egen-wishlist-card__actions">
+							<button type="button" onclick="cart.add('{{ item.product_id }}');" class="egen-btn egen-btn-primary" title="Adicionar ao Carrinho">
+								<i class="fas fa-shopping-cart"></i>
+								Mover p/ Carrinho
+							</button>
+							<a href="{{ item.remove }}" class="egen-btn egen-btn-danger-icon" title="Remover da Lista">
+								<i class="fas fa-trash-alt"></i>
+							</a>
+						</div>
+					</div>
+				{% endfor %}
+			</div>
+		{% else %}
+			<div class="egen-empty-state egen-glass-panel">
+				<div class="egen-empty-icon-wrap">
+					<i class="fas fa-heart-broken egen-empty-icon"></i>
+				</div>
+				<h2 class="egen-empty-title">Sua lista de desejos está vazia</h2>
+				<p class="egen-empty-text">Você ainda não salvou nenhum produto para comprar depois. Navegue por nossos departamentos e adicione seus favoritos aqui!</p>
+				<a href="{{ continue_url }}" class="egen-btn egen-btn-primary">Explorar Produtos</a>
+			</div>
+		{% endif %}
+	</div>
+
+{% endblock %}

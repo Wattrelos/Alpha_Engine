@@ -25,14 +25,65 @@ class CartRepository extends AbstractRepository implements BaseRepositoryInterfa
         return $this->mapperFactory->get(CartMapper::class);
     }
 
+    // ─────────────────────────────────────────────────────────
+    // Métodos Defensivos de Acesso ao Container (Fim do God Registry e métodos Mágicos)
+    // ─────────────────────────────────────────────────────────
+
+    private function getCustomer()
+    {
+        return property_exists($this, 'container') && $this->container->has('customer') ? $this->container->get('customer') : null;
+    }
+
+    private function getSession()
+    {
+        return property_exists($this, 'container') && $this->container->has('session') ? $this->container->get('session') : null;
+    }
+
+    private function getConfig()
+    {
+        return property_exists($this, 'container') && $this->container->has('config') ? $this->container->get('config') : null;
+    }
+
+    private function getTax()
+    {
+        return property_exists($this, 'container') && $this->container->has('tax') ? $this->container->get('tax') : null;
+    }
+
+    private function getWeightService()
+    {
+        return property_exists($this, 'container') && $this->container->has('weight') ? $this->container->get('weight') : null;
+    }
+
+    private function getStoreId(): int
+    {
+        $config = $this->getConfig();
+        return (int)($config ? $config->get('config_store_id') : 0);
+    }
+
+    private function getLanguageId(): int
+    {
+        $config = $this->getConfig();
+        return (int)($config ? $config->get('config_language_id') : 2);
+    }
+
+    // ─────────────────────────────────────────────────────────
+
     private function getSessionId(): string
     {
-        return $this->session->getId();
+        $session = $this->getSession();
+        if ($session && method_exists($session, 'getId')) {
+            return $session->getId();
+        }
+        if (session_status() === PHP_SESSION_ACTIVE) {
+            return session_id();
+        }
+        return '';
     }
 
     private function getCustomerId(): int
     {
-        return $this->customer->isLogged() ? (int)$this->customer->getId() : 0;
+        $customer = $this->getCustomer();
+        return ($customer && $customer->isLogged()) ? (int)$customer->getId() : 0;
     }
 
     /**
@@ -41,8 +92,9 @@ class CartRepository extends AbstractRepository implements BaseRepositoryInterfa
      */
     public function initializeContext(): void
     {
-        if ($this->customer->isLogged() && $this->getSessionId()) {
-            $this->getMapper()->mergeCartOnLogin($this->getCustomerId(), $this->getSessionId(), $this->store_id);
+        $customer = $this->getCustomer();
+        if ($customer && $customer->isLogged() && $this->getSessionId()) {
+            $this->getMapper()->mergeCartOnLogin($this->getCustomerId(), $this->getSessionId(), $this->getStoreId());
         }
     }
 
@@ -57,7 +109,7 @@ class CartRepository extends AbstractRepository implements BaseRepositoryInterfa
         $optionData = !empty($option) ? json_encode($option) : '';
 
         // Verifica se o item já existe no carrinho para somar a quantidade (Fim do // TODO)
-        $cartItems = $mapper->getItems($this->getCustomerId(), $this->getSessionId(), $this->store_id);
+        $cartItems = $mapper->getItems($this->getCustomerId(), $this->getSessionId(), $this->getStoreId());
         $existingCartId = 0;
 
         foreach ($cartItems as $item) {
@@ -77,7 +129,7 @@ class CartRepository extends AbstractRepository implements BaseRepositoryInterfa
             $mapper->addItem(
                 $this->getCustomerId(),
                 $this->getSessionId(),
-                $this->store_id,
+                $this->getStoreId(),
                 $productId,
                 $quantity,
                 $optionData,
@@ -131,7 +183,7 @@ class CartRepository extends AbstractRepository implements BaseRepositoryInterfa
      */
     public function clear(): void
     {
-        $this->getMapper()->clearItems($this->getCustomerId(), $this->getSessionId(), $this->store_id);
+        $this->getMapper()->clearItems($this->getCustomerId(), $this->getSessionId(), $this->getStoreId());
         $this->data = [];
         $this->isLoaded = true;
         $this->cachedSubTotal = null;
@@ -144,7 +196,11 @@ class CartRepository extends AbstractRepository implements BaseRepositoryInterfa
      */
     private function resolveTaxAndShippingZone(): void
     {
-        if ($this->customer->isLogged() && empty($this->session->data['shipping_address']) && empty($this->session->data['payment_address'])) {
+        $customer = $this->getCustomer();
+        $session = $this->getSession();
+        $tax = $this->getTax();
+
+        if ($customer && $customer->isLogged() && $session && empty($session->data['shipping_address']) && empty($session->data['payment_address'])) {
             /** @var \Alpha\Model\Domain\Repositories\AddressRepository $addressRepo */
             $addressRepo = \Alpha\Model\Domain\Repositories\RepositoryFactory::getInstance()->get(\Alpha\Model\Domain\Repositories\AddressRepository::class);
             $defaultAddress = $addressRepo->getDefaultAddress($this->getCustomerId());
@@ -152,12 +208,12 @@ class CartRepository extends AbstractRepository implements BaseRepositoryInterfa
             if ($defaultAddress) {
                 $addressDTO = $addressRepo->getAddress($defaultAddress->getId());
                 
-                $this->session->data['shipping_address'] = $addressDTO;
-                $this->session->data['payment_address'] = $addressDTO;
+                $session->data['shipping_address'] = $addressDTO;
+                $session->data['payment_address'] = $addressDTO;
                 
-                if ($this->tax) {
-                    $this->tax->setShippingAddress($defaultAddress->getCountryId(), $defaultAddress->getZoneId());
-                    $this->tax->setPaymentAddress($defaultAddress->getCountryId(), $defaultAddress->getZoneId());
+                if ($tax) {
+                    $tax->setShippingAddress($defaultAddress->getCountryId(), $defaultAddress->getZoneId());
+                    $tax->setPaymentAddress($defaultAddress->getCountryId(), $defaultAddress->getZoneId());
                 }
             }
         }
@@ -177,7 +233,7 @@ class CartRepository extends AbstractRepository implements BaseRepositoryInterfa
         // utilizando a nova arquitetura da Entidade Address antes do processamento.
         $this->resolveTaxAndShippingZone();
 
-        $cartItems = $this->getMapper()->getItems($this->getCustomerId(), $this->getSessionId(), $this->store_id);
+        $cartItems = $this->getMapper()->getItems($this->getCustomerId(), $this->getSessionId(), $this->getStoreId());
         
         if (!$cartItems) {
             $this->isLoaded = true;
@@ -189,9 +245,11 @@ class CartRepository extends AbstractRepository implements BaseRepositoryInterfa
         $product_ids = array_column($cartItems, 'product_id');
 
         // Configurações de contexto da Alpha Engine para preços B2B / Varejo
-        $customerGroupId = (int)$this->config->get('config_customer_group_id');
-        if ($this->customer->isLogged()) {
-            $customerGroupId = (int)$this->customer->getGroupId();
+        $config = $this->getConfig();
+        $customerGroupId = $config ? (int)$config->get('config_customer_group_id') : 1;
+        $customer = $this->getCustomer();
+        if ($customer && $customer->isLogged()) {
+            $customerGroupId = (int)$customer->getGroupId();
         }
 
         /** @var \Alpha\Model\Domain\Repositories\PriceRepository $priceRepo */
@@ -200,7 +258,7 @@ class CartRepository extends AbstractRepository implements BaseRepositoryInterfa
 
         /** @var ProductMapper $productMapper */
         $productMapper = $this->mapperFactory->get(ProductMapper::class);
-        $productDataMap = $productMapper->getProductsByIds($product_ids, $this->language_id, $this->store_id, $customerGroupId, $priceStatements);
+        $productDataMap = $productMapper->getProductsByIds($product_ids, $this->getLanguageId(), $this->getStoreId(), $customerGroupId, $priceStatements);
         $productMap = array_column($productDataMap, null, 'id');
 
         $products = [];
@@ -228,7 +286,7 @@ class CartRepository extends AbstractRepository implements BaseRepositoryInterfa
 
         $optionValuesEntities = $optionRepo->getOptionValuesByIds($allOptionValueIds);
         // Mantém o Mapper legado em memória apenas para a extração do Nome da Opção Traduzida (Visual)
-        $legacyOptionValuesMap = !empty($allOptionValueIds) ? $productMapper->getOptionValuesByIds($allOptionValueIds, $this->language_id) : [];
+        $legacyOptionValuesMap = !empty($allOptionValueIds) ? $productMapper->getOptionValuesByIds($allOptionValueIds, $this->getLanguageId()) : [];
 
         foreach ($cartItems as $item) {
             // Busca o produto no mapa em memória (O(1)) em vez de consultar o banco
@@ -305,7 +363,7 @@ class CartRepository extends AbstractRepository implements BaseRepositoryInterfa
                 }
 
                 // Alpha Engine: Integração da Zona de Imposto (Tax Zone) na exibição de preços
-                $taxPrice = $this->tax->calculate($price, $productInfo['tax_class_id'], $this->config->get('config_tax'));
+                $taxPrice = $this->getTax() && $config ? $this->getTax()->calculate($price, $productInfo['tax_class_id'], $config->get('config_tax')) : $price;
                 $taxTotal = $taxPrice * $item['quantity'];
 
                 // Formatação final do produto protegendo a interface legada
@@ -357,15 +415,18 @@ class CartRepository extends AbstractRepository implements BaseRepositoryInterfa
         }
 
         $weight = 0.0;
+        $weightService = $this->getWeightService();
+        $config = $this->getConfig();
 
         foreach ($this->getProducts() as $product) {
-            if ($product['shipping']) {
-                // Delega à library nativa do OpenCart (que agora já usa seu WeightClassMapper internamente)
-                $weight += $this->weight->convert(
+            if ($product['shipping'] && $weightService && $config) {
+                $weight += $weightService->convert(
                     $product['weight'] * $product['quantity'], 
                     $product['weight_class_id'], 
-                    $this->config->get('config_weight_class_id')
+                    $config->get('config_weight_class_id')
                 );
+            } else {
+                $weight += $product['weight'] * $product['quantity'];
             }
         }
 
@@ -379,9 +440,10 @@ class CartRepository extends AbstractRepository implements BaseRepositoryInterfa
     public function getTaxes(): array
     {
         $tax_data = [];
+        $taxService = $this->getTax();
         foreach ($this->getProducts() as $product) {
-            if ($product['tax_class_id']) {
-                $tax_rates = $this->tax->getRates($product['price'], $product['tax_class_id']);
+            if ($product['tax_class_id'] && $taxService) {
+                $tax_rates = $taxService->getRates($product['price'], $product['tax_class_id']);
                 foreach ($tax_rates as $tax_rate) {
                     if (!isset($tax_data[$tax_rate['tax_rate_id']])) {
                         $tax_data[$tax_rate['tax_rate_id']] = ($tax_rate['amount'] * $product['quantity']);
@@ -551,11 +613,13 @@ class CartRepository extends AbstractRepository implements BaseRepositoryInterfa
      */
     private function clearCheckoutSession(): void
     {
-        unset($this->session->data['shipping_method']);
-        unset($this->session->data['shipping_methods']);
-        unset($this->session->data['payment_method']);
-        unset($this->session->data['payment_methods']);
-        unset($this->session->data['reward']);
+        if ($session = $this->getSession()) {
+            unset($session->data['shipping_method']);
+            unset($session->data['shipping_methods']);
+            unset($session->data['payment_method']);
+            unset($session->data['payment_methods']);
+            unset($session->data['reward']);
+        }
     }   
 
     /**
@@ -570,24 +634,31 @@ class CartRepository extends AbstractRepository implements BaseRepositoryInterfa
         // Fim do N+1: Busca as extensões do tipo 'total' no banco através do DAO
         $results = $extensionMapper->getExtensionsByType('total');
 
+        $config = $this->getConfig();
         $sort_order = [];
         foreach ($results as $key => $value) {
-            $sort_order[$key] = $this->config->get('total_' . $value['code'] . '_sort_order');
+            $sort_order[$key] = $config ? $config->get('total_' . $value['code'] . '_sort_order') : 0;
         }
 
         // Ordena as extensões (Sub-Total -> Frete -> Cupom -> Impostos -> Total)
         array_multisort($sort_order, SORT_ASC, $results);
 
         foreach ($results as $result) {
-            if ($this->config->get('total_' . $result['code'] . '_status')) {
+            if ($config && $config->get('total_' . $result['code'] . '_status')) {
                 
                 // Carrega a extensão legada como bridge (até refatorarmos cada uma)
                 $file = DIR_EXTENSION . $result['extension'] . '/catalog/model/total/' . $result['code'] . '.php';
-                if (is_file($file)) {
-                    $this->load->model('extension/' . $result['extension'] . '/total/' . $result['code']);
+                $loader = property_exists($this, 'container') && $this->container->has('load') ? $this->container->get('load') : null;
+                $registry = property_exists($this, 'container') && $this->container->has('registry') ? $this->container->get('registry') : null;
+                
+                if (is_file($file) && $loader && $registry) {
+                    $loader->model('extension/' . $result['extension'] . '/total/' . $result['code']);
+                    $modelCode = 'model_extension_' . $result['extension'] . '_total_' . $result['code'];
+                    $modelInstance = $registry->get($modelCode);
                     
-                    // Evoca a função getTotal nativamente
-                    ($this->{'model_extension_' . $result['extension'] . '_total_' . $result['code']}->getTotal)($totals, $taxes, $total);
+                    if ($modelInstance) {
+                        $modelInstance->getTotal($totals, $taxes, $total);
+                    }
                 }
             }
         }
@@ -598,6 +669,43 @@ class CartRepository extends AbstractRepository implements BaseRepositoryInterfa
             $sort_order[$key] = $value['sort_order'];
         }
         array_multisort($sort_order, SORT_ASC, $totals);
+
+        // Fallback se nenhuma totalização padrão for gerada
+        if (empty($totals)) {
+            $subTotal = $this->getSubTotal();
+            $currency = property_exists($this, 'container') && $this->container->has('currency') ? $this->container->get('currency') : null;
+            $session = $this->getSession();
+            $currencyCode = ($session && isset($session->data['currency'])) ? $session->data['currency'] : ($config ? $config->get('config_currency') : 'BRL');
+
+            $totals[] = [
+                'code'       => 'sub_total',
+                'title'      => 'Sub-Total',
+                'value'      => $subTotal,
+                'text'       => $currency ? $currency->format($subTotal, $currencyCode) : 'R$ ' . number_format($subTotal, 2, ',', '.'),
+                'sort_order' => $config ? (int)$config->get('total_sub_total_sort_order') : 1
+            ];
+
+            foreach ($taxes as $tax_rate_id => $value) {
+                if ($value > 0) {
+                    $totals[] = [
+                        'code'       => 'tax',
+                        'title'      => 'Impostos',
+                        'value'      => $value,
+                        'text'       => $currency ? $currency->format($value, $currencyCode) : 'R$ ' . number_format($value, 2, ',', '.'),
+                        'sort_order' => $config ? (int)$config->get('total_tax_sort_order') : 9
+                    ];
+                }
+            }
+
+            $grandTotal = $this->getTotal();
+            $totals[] = [
+                'code'       => 'total',
+                'title'      => 'Total',
+                'value'      => $grandTotal,
+                'text'       => $currency ? $currency->format($grandTotal, $currencyCode) : 'R$ ' . number_format($grandTotal, 2, ',', '.'),
+                'sort_order' => $config ? (int)$config->get('total_total_sort_order') : 9
+            ];
+        }
     }
 
     /**

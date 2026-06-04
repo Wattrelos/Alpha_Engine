@@ -6,7 +6,7 @@ Este documento registra as melhorias e modernizações arquiteturais realizadas 
 
 ## 🔍 1. Roteamento Amigável e Paginação de Categorias
 
-Com o abandono das rotas herdadas do OpenCart, a geração de URLs para o catálogo foi migrada integralmente para o novo padrão amigável da **Alpha Engine**:
+Com o abandono das rotas herdadasdo código legado, a geração de URLs para o catálogo foi migrada integralmente para o novo padrão amigável da **Alpha Engine**:
 
 *   **Padrão de Rota**: As categorias agora são acessadas por meio da estrutura de rotas limpas:
     `/{lang}/categoria/{slug}`

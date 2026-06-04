@@ -3,7 +3,7 @@
 namespace Alpha\Model\Domain\Entities\Geo;
 
 use Alpha\Model\Domain\BaseEntity;
-/* Novas classes de engereçamento e localização que susbstituirá as antigas classes e tabelas do OpenCart:
+/* Novas classes de engereçamento e localização que susbstituirá as antigas classes e tabelasdo código legado:
 /* Usaremos o doctrine para criar as entidades com persistencia de dados no banco de dados. 
 use Doctrine\ORM\Mapping as ORM;
 

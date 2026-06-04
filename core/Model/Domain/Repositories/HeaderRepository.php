@@ -2,87 +2,31 @@
 
 namespace Alpha\Model\Domain\Repositories;
 
-use Alpha\Model\Domain\Entities\Extension;
-use Alpha\Mappers\EntityMappers\ExtensionMapper;
 use Alpha\Model\Domain\InterfaceEntity;
 use Alpha\Support\Collection;
 
 /**
  * HeaderRepository - Orquestra a infraestrutura do cabeçalho global.
- * 
- * Melhoras Alpha Engine:
+ *
  * - SEO Management: Centraliza a configuração de Meta Tags no Document.
- * - Dynamic Analytics: Resolve módulos de analytics sem o Loader legado.
- * - Asset Management: Gerencia links de CSS e JS básicos do sistema.
  */
 class HeaderRepository extends AbstractRepository implements BaseRepositoryInterface
 {
     /**
-     * Alpha Engine: Coleta dados básicos, meta tags e extensões de analytics.
+     * Coleta dados básicos e meta tags para o cabeçalho.
      */
     public function getHeaderData(): Collection
     {
-        // Alpha Engine (Slim Context): O Repositório deve retornar apenas dados brutos.
-        // Resolução de rotas, protocolo HTTP, meta tags no Document e Dicionários de Idioma
-        // foram delegados para os Controllers Slim e ViewRenderer (Twig).
         $data = [
             'title'       => $this->config->get('config_meta_title') ?: $this->config->get('config_name'),
             'description' => $this->config->get('config_meta_description'),
             'keywords'    => $this->config->get('config_meta_keyword'),
             'name'        => $this->config->get('config_name'),
             'logo'        => $this->config->get('config_logo') ?: '',
-            'icon'        => $this->config->get('config_icon') ?: ''
+            'icon'        => $this->config->get('config_icon') ?: '',
         ];
-
-        // 3. Busca de extensões de analytics ativas via Mapper
-        /** @var ExtensionMapper $extensionMapper */
-        $extensionMapper = $this->mapperFactory->get(ExtensionMapper::class);
-        $data['analytics_extensions'] = $extensionMapper->getExtensionsByType('analytics');
 
         return new Collection($data);
-    }
-
-    /**
-     * Alpha Engine: Resolve e executa os módulos de analytics de forma Loader-Free.
-     */
-    public function getAnalyticsModules(Collection $headerData): array
-    {
-        $analytics = [];
-        $extensions = $headerData->get('analytics_extensions', []);
-
-        /** @var Extension $extension */
-        foreach ($extensions as $extension) {
-            $code = $extension->getCode();
-            if ($this->config->get('analytics_' . $code . '_status')) {
-                // Alpha Engine: Mapeamento PSR-4 para instanciamento direto (Evita Loader legado)
-                $namespace = 'Opencart\Catalog\Controller\Extension\\' . 
-                             str_replace('_', '', ucwords($extension->getExtension(), '_')) . 
-                             '\Analytics\\' . 
-                             str_replace('_', '', ucwords($code, '_'));
-
-                if (class_exists($namespace)) {
-                    $result = (new $namespace($this->registry))->index($this->config->get('analytics_' . $code . '_status'));
-                    if ($result) {
-                        $analytics[] = $result;
-                    }
-                }
-            }
-        }
-
-        return $analytics;
-    }
-
-    /**
-     * Retorna os assets básicos (CSS/JS) injetados pelo repositório.
-     */
-    public function getBasicAssets(): array
-    {
-        return [
-            'bootstrap'  => 'catalog/view/stylesheet/bootstrap.css',
-            'icons'      => 'catalog/view/stylesheet/fonts/fontawesome/css/all.min.css',
-            'stylesheet' => 'catalog/view/stylesheet/stylesheet.css',
-            'jquery'     => 'catalog/view/javascript/jquery/jquery-3.7.1.min.js'
-        ];
     }
 
     public function find(int $id): ?InterfaceEntity { return null; }

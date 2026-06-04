@@ -104,7 +104,7 @@ class CustomerRepository extends AbstractRepository implements BaseRepositoryInt
             return $customer;
         }
 
-        // Tratamento para senhas antigas do OpenCart (SHA1 com salt)
+        // Tratamento para senhas antigasdo código legado (SHA1 com salt)
         // pode ser injetado aqui via mapper caso necessário.
 
         return null;
@@ -154,7 +154,7 @@ class CustomerRepository extends AbstractRepository implements BaseRepositoryInt
      */
     public function registerCustomer(array $data): array
     {
-        // Inicialização de fallbacks resilientes para rodar tanto no OpenCart quanto no Slim standalone
+        // Inicialização de fallbacks resilientes para rodar tantono código legado quanto no Slim standalone
         $storeId = (int)$this->getConfigValue('config_store_id', 0);
         $languageId = (int)$this->getConfigValue('config_language_id', 2);
         $defaultGroupId = (int)$this->getConfigValue('config_customer_group_id', 1);

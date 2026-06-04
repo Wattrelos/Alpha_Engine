@@ -318,7 +318,13 @@ function renderGuestCartPage() {
                     <td>${p.model}</td>
                     <td class="text-center">
                         <div class="egen-cart-qty-wrapper">
+                            <button type="button" class="egen-btn-icon guest-qty-btn guest-qty-btn-minus" title="Diminuir">
+                                <i class="fa-solid fa-minus"></i>
+                            </button>
                             <input type="number" value="${p.quantity}" min="1" max="${p.stock_quantity}" class="egen-form-input egen-cart-qty-input guest-qty-input" oninput="var max = parseInt(this.max); var val = parseInt(this.value); if(!isNaN(max) && val > max) this.value = max; if(val < 1) this.value = 1;" />
+                            <button type="button" class="egen-btn-icon guest-qty-btn guest-qty-btn-plus" title="Aumentar">
+                                <i class="fa-solid fa-plus"></i>
+                            </button>
                             <div class="egen-cart-actions-btn">
                                 <button type="button" title="Atualizar" class="egen-btn-icon egen-btn-icon--update guest-btn-update">
                                     <i class="fa-solid fa-rotate"></i>
@@ -439,6 +445,30 @@ function attachGuestCartActions() {
                 guestCart.updateQuantity(productId, optionRaw, quantity);
                 showCartAlert('Quantidade atualizada.', 'success');
                 renderGuestCartPage();
+            }
+        });
+    });
+
+    // 3. Botões de Incremento/Decremento
+    document.querySelectorAll('.guest-qty-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+            const tr = btn.closest('tr');
+            if (tr) {
+                const qtyInput = tr.querySelector('.guest-qty-input');
+                if (!qtyInput) return;
+
+                let val = parseInt(qtyInput.value) || 1;
+                const min = parseInt(qtyInput.min) || 1;
+                const max = parseInt(qtyInput.max) || Infinity;
+
+                if (btn.classList.contains('guest-qty-btn-plus')) {
+                    if (val < max) val++;
+                } else {
+                    if (val > min) val--;
+                }
+
+                qtyInput.value = val;
+                qtyInput.dispatchEvent(new Event('input', { bubbles: true }));
             }
         });
     });

@@ -192,7 +192,7 @@ class CreateAddressAction implements ActionInterface
             return 0;
         }
         /** @var ZoneRepository $zoneRepository */
-        $zoneRepository = \RepositoryFactory::getInstance()->get(ZoneRepository::class);
+        $zoneRepository = \Alpha\Model\Domain\Repositories\RepositoryFactory::getInstance()->get(ZoneRepository::class);
         $zone = $zoneRepository->findOneBy(['code' => strtoupper(trim($code))]);
         return $zone ? (int)$zone->getId() : 0;
     }
