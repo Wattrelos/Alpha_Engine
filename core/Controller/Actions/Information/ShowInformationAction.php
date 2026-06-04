@@ -58,6 +58,12 @@ class ShowInformationAction implements ActionInterface
 
         $data = $viewResponse->getData();
 
+        // Converte a descrição em Markdown para HTML usando Parsedown
+        $parsedown = new \Parsedown();
+        if (!empty($data['description'])) {
+            $data['description'] = $parsedown->text($data['description']);
+        }
+
         $routeContext = RouteContext::fromRequest($request);
         $routeParser = $routeContext->getRouteParser();
         $lang = $request->getAttribute('lang', 'pt-br');
