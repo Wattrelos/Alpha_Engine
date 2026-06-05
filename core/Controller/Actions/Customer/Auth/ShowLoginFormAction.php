@@ -72,7 +72,7 @@ class ShowLoginFormAction implements ActionInterface
             'entry_email' => 'Endereço de E-mail',
             'entry_password' => 'Senha',
             'text_forgotten' => 'Esqueceu a senha?',
-            'forgotten' => '/' . $lang . '/forgotten', // Rota pública de esqueci a senha
+            'forgotten' => $routeParser->urlFor('account.recuperar-senha', ['lang' => $lang]), // Rota pública de esqueci a senha
             'button_login' => 'Acessar',
             'login' => $routeParser->urlFor('login.submit', ['lang' => $lang]), // Action do formulário
 

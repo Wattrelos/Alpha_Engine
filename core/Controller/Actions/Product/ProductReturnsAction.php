@@ -46,7 +46,7 @@ class ProductReturnsAction implements ActionInterface
 
         foreach ($returnsData as $ret) {
             $returns[] = [
-                'return_id'  => $ret['return_id'],
+                'return_id'  => $ret['id'],
                 'order_id'   => $ret['order_id'],
                 'firstname'  => $ret['firstname'],
                 'lastname'   => $ret['lastname'],

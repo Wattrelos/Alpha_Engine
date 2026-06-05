@@ -11,6 +11,8 @@ use Alpha\Controller\Actions\Customer\Auth\ShowRegistrationFormAction;
 use Alpha\Controller\Actions\Customer\Auth\RegisterAction;
 use Alpha\Controller\Actions\Customer\Auth\LogoutAction;
 use Alpha\Controller\Actions\Customer\Auth\AccountAction;
+use Alpha\Controller\Actions\Customer\Auth\RequestPasswordResetAction;
+use Alpha\Controller\Actions\Customer\Auth\ResetPasswordAction;
 use Alpha\Controller\Actions\Customer\OrdersAction;
 use Alpha\Controller\Actions\Customer\OrderHistoryAction;
 use Alpha\Controller\Actions\Customer\Addresses\ShowAddressesAction;
@@ -47,6 +49,9 @@ return function (\Slim\App $app) {
         // Grupo de rotas protegidas do painel administrativo
         $app->group('', function (RouteCollectorProxy $group) {
             $group->get('/dashboard', \Alpha\Admin\Controllers\Actions\Dashboard\ViewDashboardAction::class)->setName('admin.dashboard');
+            $group->get('/produtos', \Alpha\Admin\Controllers\Actions\Catalog\Product\ListProductsAction::class)->setName('admin.product.list');
+            $group->get('/produtos/{id:[0-9]+}/editar', \Alpha\Admin\Controllers\Actions\Catalog\Product\EditProductAction::class)->setName('admin.product.edit');
+            $group->post('/produtos/{id:[0-9]+}/editar', \Alpha\Admin\Controllers\Actions\Catalog\Product\UpdateProductAction::class)->setName('admin.product.update');
             $group->get('/logout', \Alpha\Admin\Controllers\Actions\Auth\LogoutAction::class)->setName('admin.logout');
         })->add(new \Alpha\Auth\Middleware\AdminSessionMiddleware());
         
@@ -65,6 +70,8 @@ return function (\Slim\App $app) {
     $app->get('/busca', RedirectToDefaultLanguageAction::class);
     $app->map(['GET', 'POST'], '/contato', RedirectToDefaultLanguageAction::class);
     $app->map(['GET', 'POST'], '/contact', RedirectToDefaultLanguageAction::class);
+    $app->map(['GET', 'POST'], '/recuperar-senha', RedirectToDefaultLanguageAction::class);
+    $app->map(['GET', 'POST'], '/resetar-senha', RedirectToDefaultLanguageAction::class);
 
     $app->map(['GET', 'POST'], '/checkout', RedirectToDefaultLanguageAction::class);
 
@@ -79,6 +86,8 @@ return function (\Slim\App $app) {
         $account->get('/return', RedirectToDefaultLanguageAction::class);
         $account->get('/wishlist', RedirectToDefaultLanguageAction::class);
         $account->get('/edit', RedirectToDefaultLanguageAction::class);
+        $account->map(['GET', 'POST'], '/resetar-senha', RedirectToDefaultLanguageAction::class);
+        $account->get('/transaction', RedirectToDefaultLanguageAction::class);
     });
 
     // ─────────────────────────────────────────────────────────
@@ -108,6 +117,10 @@ return function (\Slim\App $app) {
         $group->get('/login', ShowLoginFormAction::class)->setName('login.form');
         $group->post('/login', LoginAction::class)->setName('login.submit');
 
+        // Recuperar e Resetar Senha
+        $group->map(['GET', 'POST'], '/recuperar-senha', RequestPasswordResetAction::class)->setName('account.recuperar-senha');
+        $group->map(['GET', 'POST'], '/resetar-senha', ResetPasswordAction::class)->setName('account.resetar-senha');
+
         // Cadastro
         $group->get('/cadastro', ShowRegistrationFormAction::class)->setName('register.form');
         $group->post('/cadastro', RegisterAction::class)->setName('register.submit');
@@ -125,6 +138,13 @@ return function (\Slim\App $app) {
             // ── Editar Conta ─────────────────────────────────────────────────
             $account->get('/edit', \Alpha\Controller\Actions\Customer\Account\UpdateAction::class)->setName('account.edit');
             $account->post('/edit', \Alpha\Controller\Actions\Customer\Account\UpdateAction::class);
+            $account->map(['GET', 'POST'], '/resetar-senha', ResetPasswordAction::class)->setName('account.resetar-senha.logged');
+
+            // ── Newsletter ───────────────────────────────────────────────────
+            $account->post('/newsletter', \Alpha\Controller\Actions\Customer\Account\NewsletterAction::class)->setName('account.newsletter');
+
+            // ── Transações ───────────────────────────────────────────────────
+            $account->get('/transaction', \Alpha\Controller\Actions\Customer\Account\TransactionAction::class)->setName('account.transaction');
 
             // ── Lista de Desejos (Wishlist) ──────────────────────────────────
             $account->get('/wishlist', \Alpha\Controller\Actions\Customer\Account\WishlistAction::class)->setName('account.wishlist');

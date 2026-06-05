@@ -88,6 +88,84 @@ class AppBootstrap
         $this->container->bind('languageCode', $this->languageCode);
         $this->container->bind('languageId', $this->languageId);
 
+        // Wrapper para retrocompatibilidade do objeto config
+        $configWrapper = new class($this->configSettings, $this->languageId) {
+            private array $settings;
+            private int $languageId;
+            public function __construct(array $settings, int $languageId) {
+                $this->settings = $settings;
+                $this->languageId = $languageId;
+            }
+            public function get(string $key) {
+                if ($key === 'config_language_id') {
+                    return $this->languageId;
+                }
+                return $this->settings[$key] ?? null;
+            }
+            public function set(string $key, $value): void {
+                $this->settings[$key] = $value;
+            }
+        };
+        $this->container->bind('config', $configWrapper);
+
+        // Wrapper para retrocompatibilidade do construtor de URLs
+        $urlWrapper = new class($this->languageCode, $this->configSettings) {
+            private string $lang;
+            private string $server;
+            public function __construct(string $lang, array $settings) {
+                $this->lang = $lang;
+                $this->server = $settings['config_url'] ?? HTTP_SERVER;
+            }
+            public function link(string $route, string $args = '', bool $secure = true): string {
+                $route = trim($route, '/');
+                $routeMap = [
+                    'common/home'             => '',
+                    'account'                 => 'account',
+                    'account/account'         => 'account',
+                    'account/edit'            => 'account/edit',
+                    'account/password'        => 'account/resetar-senha',
+                    'account/address'         => 'account/addresses',
+                    'account/address/add'     => 'account/address/create',
+                    'account/address/edit'    => 'account/address/edit',
+                    'account/address/delete'  => 'account/address/delete',
+                    'account/orders'          => 'account/orders',
+                    'account/download'        => 'account/download',
+                    'account/newsletter'      => 'account/newsletter',
+                    'account/wishlist'        => 'account/wishlist',
+                    'account/return'          => 'account/return',
+                    'account/return/add'      => 'account/return/add',
+                    'account/transaction'     => 'account/transaction',
+                    'checkout/cart'           => 'carrinho',
+                    'checkout/checkout'       => 'checkout',
+                    'product/search'          => 'busca',
+                    'information/contact'     => 'contato',
+                    'information/sitemap'     => 'sitemap',
+                    'product/special'         => 'busca',
+                    'product/manufacturer'    => 'busca',
+                    'account/affiliate'       => 'account',
+                ];
+
+                $friendlyRoute = $routeMap[$route] ?? $route;
+
+                if ($route === 'product/category' && !empty($args)) {
+                    parse_str($args, $parsedArgs);
+                    if (isset($parsedArgs['path'])) {
+                        $friendlyRoute = 'categoria/' . $parsedArgs['path'];
+                    }
+                }
+
+                if ($route === 'information/information' && !empty($args)) {
+                    parse_str($args, $parsedArgs);
+                    if (isset($parsedArgs['information_id'])) {
+                        $friendlyRoute = 'pagina/' . $parsedArgs['information_id'];
+                    }
+                }
+
+                return $this->server . $this->lang . '/' . $friendlyRoute;
+            }
+        };
+        $this->container->bind('url', $urlWrapper);
+
         // Alpha Engine: Inicializa o Tradutor Support\Language e carrega o idioma principal
         $translator = new \Alpha\Support\Language($this->languageCode);
         $translator->load($this->languageCode);

@@ -481,4 +481,28 @@ class CustomerRepository extends AbstractRepository implements BaseRepositoryInt
     {
         return $this->getMapper()->findAll();
     }
+
+    /**
+     * Busca a lista de transações do cliente.
+     */
+    public function getTransactions(int $customerId, int $start = 0, int $limit = 20): array
+    {
+        return $this->getMapper()->getTransactionsArray($customerId, $start, $limit);
+    }
+
+    /**
+     * Retorna a contagem total de transações do cliente.
+     */
+    public function getTotalTransactions(int $customerId): int
+    {
+        return $this->getMapper()->getTotalTransactionsCount($customerId);
+    }
+
+    /**
+     * Retorna o saldo total de transações do cliente.
+     */
+    public function getTransactionTotal(int $customerId): float
+    {
+        return $this->getMapper()->getTransactionTotalSum($customerId);
+    }
 }

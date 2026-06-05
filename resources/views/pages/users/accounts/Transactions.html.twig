@@ -1,0 +1,69 @@
+{% extends 'layouts/base.html.twig' %}
+
+{% block page_title %}{{ heading_title }}{% endblock %}
+
+{% block content %}
+	<div class="egen-hero-premium">
+		<div class="egen-container">
+			<div class="egen-hero-content">
+				<h1 class="egen-hero-title">
+					<i class="fas fa-wallet egen-hero-icon" style="color: var(--egen-primary-color, #fc9003);"></i>
+					{{ heading_title }}
+				</h1>
+				{% include 'components/molecules/breadcrumbs.twig' %}
+			</div>
+		</div>
+	</div>
+
+	<div class="egen-container egen-page-spacing" style="margin-top: 2rem; margin-bottom: 4rem;">
+		{# Card do saldo atual #}
+		<div class="egen-login-card" style="margin-bottom: 2rem; padding: 1.5rem 2rem;">
+			<div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
+				<div>
+					<h2 class="egen-login-title" style="font-size: 1.25rem; margin: 0;">{{ text_total }}</h2>
+					<p style="font-size: 1.8rem; font-weight: 800; color: var(--egen-primary-color); margin: 0.5rem 0 0 0;">{{ total }}</p>
+				</div>
+				<i class="fas fa-coins" style="font-size: 2.5rem; color: var(--egen-primary-color); opacity: 0.8;"></i>
+			</div>
+		</div>
+
+		{% if transactions %}
+			<div class="egen-cart-main" style="padding: 1.5rem; background: var(--egen-bg-card); border-radius: 16px; border: 1px solid rgba(252, 144, 3, 0.2); box-shadow: var(--egen-shadow-card);">
+				<div class="egen-table-responsive">
+					<table class="egen-cart-table" style="width: 100%; border-collapse: collapse; color: var(--egen-text-color);">
+						<thead>
+							<tr>
+								<th style="text-align: left; padding: 1rem; border-bottom: 2px solid rgba(252, 144, 3, 0.3); color: var(--egen-primary-color); font-weight: 700; font-size: 0.85rem; text-transform: uppercase;">{{ column_date_added }}</th>
+								<th style="text-align: left; padding: 1rem; border-bottom: 2px solid rgba(252, 144, 3, 0.3); color: var(--egen-primary-color); font-weight: 700; font-size: 0.85rem; text-transform: uppercase;">{{ column_description }}</th>
+								<th style="text-align: right; padding: 1rem; border-bottom: 2px solid rgba(252, 144, 3, 0.3); color: var(--egen-primary-color); font-weight: 700; font-size: 0.85rem; text-transform: uppercase;">{{ column_amount }}</th>
+							</tr>
+						</thead>
+						<tbody>
+							{% for transaction in transactions %}
+								<tr>
+									<td style="padding: 1.25rem 1rem; border-bottom: 1px solid var(--egen-border-color); font-size: 0.95rem; color: var(--egen-text-muted);">{{ transaction.date_added }}</td>
+									<td style="padding: 1.25rem 1rem; border-bottom: 1px solid var(--egen-border-color); font-size: 0.95rem; font-weight: 500;">{{ transaction.description }}</td>
+									<td style="padding: 1.25rem 1rem; border-bottom: 1px solid var(--egen-border-color); font-size: 0.95rem; text-align: right; font-weight: 700; color: {% if '-' in transaction.amount %}#ff6b6b{% else %}#22c55e{% endif %};">
+										{{ transaction.amount }}
+									</td>
+								</tr>
+							{% endfor %}
+						</tbody>
+					</table>
+				</div>
+			</div>
+		{% else %}
+			<div class="egen-empty-state" style="text-align: center; padding: 3rem 1rem;">
+				<div class="egen-empty-state__icon" style="margin-bottom: 1.5rem;">
+					<i class="fas fa-wallet egen-empty-icon" style="font-size: 3rem; color: var(--egen-text-muted); opacity: 0.4;"></i>
+				</div>
+				<h2 class="egen-empty-state__title" style="color: var(--egen-text-color); font-size: 1.5rem; margin-bottom: 0.5rem;">{{ text_no_results }}</h2>
+				<p class="egen-empty-state__text" style="color: var(--egen-text-muted); margin-bottom: 2rem;">Qualquer crédito ou débito adicionado à sua conta será listado nesta página.</p>
+			</div>
+		{% endif %}
+
+		<div style="display: flex; justify-content: flex-end; margin-top: 2rem;">
+			<a href="{{ continue }}" class="egen-btn egen-btn-primary">Voltar</a>
+		</div>
+	</div>
+{% endblock %}

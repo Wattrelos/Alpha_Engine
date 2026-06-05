@@ -112,3 +112,92 @@
     font-size: 0.875rem;
     margin: 5px 0 0;
 }
+
+/* =========================
+   Sidebar & Topbar Styles
+   ========================= */
+
+.admin-body {
+    background: var(--color-bg-body);
+    margin: 0;
+    padding: 0;
+    font-family: 'Inter', sans-serif;
+}
+
+.sidebar-brand {
+    padding: 20px 30px;
+    border-bottom: 1px solid #334155;
+    margin-bottom: 20px;
+}
+
+.sidebar-title {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: #fff;
+    margin: 0;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.sidebar-logo-icon {
+    color: var(--color-primary);
+    font-size: 1.5rem;
+}
+
+.sidebar-link-icon {
+    margin-right: 12px;
+    width: 16px;
+    text-align: center;
+}
+
+.sidebar-logout-item {
+    margin-top: 50px;
+}
+
+.topbar-left {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.topbar-role {
+    color: #64748b;
+    font-size: 0.9rem;
+    font-weight: 500;
+}
+
+.topbar-right {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+.topbar-user-info {
+    text-align: right;
+}
+
+.topbar-username {
+    margin: 0;
+    font-weight: 600;
+    font-size: 0.9rem;
+    color: #1e293b;
+}
+
+.topbar-email {
+    margin: 0;
+    font-size: 0.8rem;
+    color: #64748b;
+}
+
+.topbar-avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: #e2e8f0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    color: var(--color-primary);
+}

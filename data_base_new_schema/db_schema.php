@@ -18,14 +18,14 @@
 function oc_db_create(string $db_driver, string $db_hostname, string $db_username, string $db_password, string $db_database, string $db_port, string $db_prefix, string $db_ssl_key, string $db_ssl_cert, string $db_ssl_ca): bool {
 	try {
 		// Database
-		$db = new \Opencart\system\library\db($db_driver, $db_hostname, $db_username, $db_password, $db_database, $db_port, $db_ssl_key, $db_ssl_cert, $db_ssl_ca);
+		// deprecated code: $db = new \Opencart\system\library\db($db_driver, $db_hostname, $db_username, $db_password, $db_database, $db_port, $db_ssl_key, $db_ssl_cert, $db_ssl_ca);
 	} catch (\Exception $e) {
 		return false;
 	}
 
 	// Set up Database structure
-	$tables = oc_db_schema();
-
+	// Deprecated code: $tables = oc_db_schema();
+/* // Deprecated code: 
 	foreach ($tables as $table) {
 		$table_query = $db->query("SELECT * FROM information_schema.COLUMNS WHERE TABLE_SCHEMA = '" . $db_database . "' AND TABLE_NAME = '" . $db_prefix . $table['name'] . "'");
 
@@ -69,7 +69,7 @@ function oc_db_create(string $db_driver, string $db_hostname, string $db_usernam
 
 	return true;
 }
-
+*/ 
 /**
  * DB Schema
  *
@@ -8004,4 +8004,4 @@ function oc_db_schema() {
 	];
 
 	return $tables;
-}
+// }

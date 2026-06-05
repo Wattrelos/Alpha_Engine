@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<title>
+			{% block title %}Painel Administrativo | AgSonhos
+			{% endblock %}
+		</title>
+
+		<link rel="stylesheet" href="/css/admin/admin.css">
+		<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+		<link rel="stylesheet" href="/fonts/fontawesome/css/all.min.css">
+	</head>
+	<body class="admin-body">
+		<div
+			class="admin-wrapper">
+			<!-- Sidebar -->
+			<aside class="sidebar">
+				<div class="sidebar-brand">
+					<h1 class="sidebar-title">
+						<span class="sidebar-logo-icon">🌌</span>
+						AgSonhos Admin
+					</h1>
+				</div>
+				<ul>
+					<li>
+						<a href="/LPDHED2dC7Gjrg2b/dashboard" class="active">
+							<i class="fas fa-chart-line sidebar-link-icon"></i>
+							Painel Inicial
+						</a>
+					</li>
+					<li>
+						<a href="/LPDHED2dC7Gjrg2b/pedidos">
+							<i class="fas fa-shopping-basket sidebar-link-icon"></i>
+							Vendas / Pedidos
+						</a>
+					</li>
+					<li>
+						<a href="/LPDHED2dC7Gjrg2b/clientes">
+							<i class="fas fa-users sidebar-link-icon"></i>
+							Clientes
+						</a>
+					</li>
+					<li>
+						<a href="/LPDHED2dC7Gjrg2b/produtos">
+							<i class="fas fa-box-open sidebar-link-icon"></i>
+							Produtos
+						</a>
+					</li>
+					<li>
+						<a href="/LPDHED2dC7Gjrg2b/configuracoes">
+							<i class="fas fa-cog sidebar-link-icon"></i>
+							Configurações
+						</a>
+					</li>
+					<li class="sidebar-logout-item">
+						<a href="/LPDHED2dC7Gjrg2b/logout">
+							<i class="fas fa-sign-out-alt sidebar-link-icon"></i>
+							Sair do Painel
+						</a>
+					</li>
+				</ul>
+			</aside>
+
+			<!-- Main Content Wrapper -->
+			<div
+				class="main-content">
+				<!-- Topbar -->
+				<header class="topbar">
+					<div class="topbar-left">
+						<span class="topbar-role">Modo Administrador</span>
+					</div>
+					<div class="topbar-right">
+						<div class="topbar-user-info">
+							<p class="topbar-username">Administrador Principal</p>
+							<p class="topbar-email">admin@agsonhos.com</p>
+						</div>
+						<div class="topbar-avatar">
+							AD
+						</div>
+					</div>
+				</header>
+
+				<!-- Main Page Content -->
+				<main class="page-body"> {% block content %}{% endblock %}
+					</main>
+				</div>
+			</div>
+		</body>
+	</html>

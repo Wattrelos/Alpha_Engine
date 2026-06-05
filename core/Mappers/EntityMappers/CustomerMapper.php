@@ -114,4 +114,45 @@ class CustomerMapper extends BaseMapper
         $stmt = $conn->prepare("DELETE FROM `" . DB_PREFIX . "customer_login` WHERE LCASE(email) = ?");
         $stmt->execute([strtolower($email)]);
     }
+
+    /**
+     * Retorna a lista de transações do cliente.
+     */
+    public function getTransactionsArray(int $customerId, int $start = 0, int $limit = 20): array
+    {
+        $query = (new QueryBuilder())
+            ->select('id', 'order_id', 'description', 'amount', 'date_added')
+            ->from(DB_PREFIX . "customer_transaction")
+            ->where("customer_id = ?", [$customerId])
+            ->orderBy("id", "DESC")
+            ->limit($limit)
+            ->offset($start);
+
+        return $this->dao->executeQuery($query);
+    }
+
+    /**
+     * Conta o total de transações do cliente.
+     */
+    public function getTotalTransactionsCount(int $customerId): int
+    {
+        $query = (new QueryBuilder())
+            ->from(DB_PREFIX . "customer_transaction")
+            ->where("customer_id = ?", [$customerId]);
+
+        return $this->dao->executeCount($query);
+    }
+
+    /**
+     * Calcula o saldo total das transações do cliente.
+     */
+    public function getTransactionTotalSum(int $customerId): float
+    {
+        $query = "SELECT SUM(amount) AS total FROM `" . DB_PREFIX . "customer_transaction` WHERE customer_id = ?";
+        $conn = \Alpha\Model\DataAccessObject\ConnectionDB::getInstance()->getConnection();
+        $stmt = $conn->prepare($query);
+        $stmt->execute([$customerId]);
+        $row = $stmt->fetch(\PDO::FETCH_ASSOC);
+        return $row ? (float)($row['total'] ?? 0.0) : 0.0;
+    }
 }

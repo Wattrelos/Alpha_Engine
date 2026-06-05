@@ -389,6 +389,15 @@ class ProductRepository extends AbstractRepository implements BaseRepositoryInte
     }
 
     /**
+     * @param InterfaceEntity $product
+     * @return int|null
+     */
+    public function save(InterfaceEntity $product): ?int
+    {
+        return $this->mapperFactory->get(ProductMapper::class)->save($product);
+    }
+
+    /**
      * @return InterfaceEntity[]
      */
     public function findAll(): array

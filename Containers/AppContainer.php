@@ -24,6 +24,14 @@ class AppContainer implements \Psr\Container\ContainerInterface
      */
     public function has(string $id): bool
     {
+        if ($id === 'event') {
+            return true;
+        }
+
+        if ($id === 'template') {
+            return isset($this->bindings[$id]) || isset($this->bindings[\Twig\Environment::class]);
+        }
+
         if (array_key_exists($id, $this->bindings)) {
             return true;
         }
@@ -90,6 +98,28 @@ class AppContainer implements \Psr\Container\ContainerInterface
      */
     public function get(string $className): mixed
     {
+        if ($className === 'event') {
+            return $this->bindings['event'] ?? null;
+        }
+
+        if ($className === 'template') {
+            if (isset($this->bindings['template'])) {
+                return $this->bindings['template'];
+            }
+            $twig = $this->bindings[\Twig\Environment::class] ?? null;
+            if ($twig) {
+                return new class($twig) {
+                    private $twig;
+                    public function __construct($twig) {
+                        $this->twig = $twig;
+                    }
+                    public function render(string $route, array $data = [], string $code = ''): string {
+                        return $this->twig->render($route, $data);
+                    }
+                };
+            }
+        }
+
         if (array_key_exists($className, $this->bindings)) {
             return $this->bindings[$className];
         }

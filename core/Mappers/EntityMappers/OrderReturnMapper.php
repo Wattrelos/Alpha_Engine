@@ -18,12 +18,12 @@ class OrderReturnMapper extends BaseMapper
     public function getReturnsArray(int $customerId, int $languageId, int $start = 0, int $limit = 20): array
     {
         $query = (new QueryBuilder())
-            ->select('r.return_id', 'r.order_id', 'r.firstname', 'r.lastname', 'rs.name as status', 'r.date_added')
+            ->select('r.id', 'r.order_id', 'r.firstname', 'r.lastname', 'rs.name as status', 'r.date_added')
             ->from(DB_PREFIX . "return", "r")
-            ->leftJoin(DB_PREFIX . "return_status", "rs", "r.return_status_id = rs.return_status_id")
+            ->leftJoin(DB_PREFIX . "return_status", "rs", "r.return_status_id = rs.id")
             ->where("r.customer_id = ?", [$customerId])
             ->where("rs.language_id = ?", [$languageId])
-            ->orderBy("r.return_id", "DESC")
+            ->orderBy("r.id", "DESC")
             ->limit($limit)
             ->offset($start);
 
@@ -43,14 +43,14 @@ class OrderReturnMapper extends BaseMapper
     {
         $query = (new QueryBuilder())
             ->select(
-                'r.return_id', 'r.order_id', 'r.firstname', 'r.lastname', 'r.email', 'r.telephone', 'r.product', 'r.model', 'r.quantity', 'r.opened',
+                'r.id', 'r.order_id', 'r.firstname', 'r.lastname', 'r.email', 'r.telephone', 'r.product', 'r.model', 'r.quantity', 'r.opened',
                 "(SELECT rr.name FROM " . DB_PREFIX . "return_reason rr WHERE rr.return_reason_id = r.return_reason_id AND rr.language_id = " . (int)$languageId . ") AS reason",
                 "(SELECT ra.name FROM " . DB_PREFIX . "return_action ra WHERE ra.return_action_id = r.return_action_id AND ra.language_id = " . (int)$languageId . ") AS action",
-                "(SELECT rs.name FROM " . DB_PREFIX . "return_status rs WHERE rs.return_status_id = r.return_status_id AND rs.language_id = " . (int)$languageId . ") AS status",
+                "(SELECT rs.name FROM " . DB_PREFIX . "return_status rs WHERE rs.id = r.return_status_id AND rs.language_id = " . (int)$languageId . ") AS status",
                 'r.comment', 'r.date_ordered', 'r.date_added', 'r.date_modified'
             )
             ->from(DB_PREFIX . "return", "r")
-            ->where("r.return_id = ?", [$returnId])
+            ->where("r.id = ?", [$returnId])
             ->where("r.customer_id = ?", [$customerId]);
 
         $results = $this->dao->executeQuery($query);
@@ -62,7 +62,7 @@ class OrderReturnMapper extends BaseMapper
         $query = (new QueryBuilder())
             ->select('rh.date_added', 'rs.name AS status', 'rh.comment')
             ->from(DB_PREFIX . "return_history", "rh")
-            ->leftJoin(DB_PREFIX . "return_status", "rs", "rh.return_status_id = rs.return_status_id")
+            ->leftJoin(DB_PREFIX . "return_status", "rs", "rh.return_status_id = rs.id")
             ->where("rh.return_id = ?", [$returnId])
             ->where("rs.language_id = ?", [$languageId])
             ->orderBy("rh.date_added", "ASC")

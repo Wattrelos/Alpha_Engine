@@ -1,17 +1,151 @@
-{% extends 'admin/layouts/base_auth.html.twig' %}
+{% extends 'admin/layouts/base.html.twig' %}
 
 {% block title %}
-	{{ title }}
+	{{ title|default('Painel Inicial | AgSonhos Admin') }}
 {% endblock %}
 
 {% block content %}
 	<div class="page-header">
-		<h2>Visão Geral</h2>
-		<p>Bem-vindo ao painel administrativo da AgSonhos.</p>
+		<h2>{{ title|default('Painel Inicial') }}</h2>
+		<p style="color: #64748b; margin: 0;">Bem-vindo de volta! Aqui está o resumo das atividades da AgSonhos hoje.</p>
 	</div>
 
-	<div class="card">
-		<h3>Estatísticas Rápidas</h3>
-		<p>Aqui você poderá ver resumos de vendas, novos clientes e novos pedidos.</p>
+	<!-- Stats Grid -->
+	<div class="stats-grid">
+		<!-- Stat Item 1 -->
+		<div class="card stat-card">
+			<div>
+				<p class="stat-title">Total em Vendas</p>
+				<h3 class="stat-value">R$ 14.825,90</h3>
+				<span class="stat-trend trend-up"><i class="fas fa-arrow-up"></i> +12% esta semana</span>
+			</div>
+			<div class="stat-icon-box icon-blue">
+				<i class="fas fa-dollar-sign"></i>
+			</div>
+		</div>
+
+		<!-- Stat Item 2 -->
+		<div class="card stat-card">
+			<div>
+				<p class="stat-title">Pedidos Recebidos</p>
+				<h3 class="stat-value">184</h3>
+				<span class="stat-trend trend-up"><i class="fas fa-arrow-up"></i> +5% esta semana</span>
+			</div>
+			<div class="stat-icon-box icon-green">
+				<i class="fas fa-shopping-bag"></i>
+			</div>
+		</div>
+
+		<!-- Stat Item 3 -->
+		<div class="card stat-card">
+			<div>
+				<p class="stat-title">Clientes Registrados</p>
+				<h3 class="stat-value">1.240</h3>
+				<span class="stat-trend trend-down"><i class="fas fa-arrow-down"></i> -2.4% esta semana</span>
+			</div>
+			<div class="stat-icon-box icon-yellow">
+				<i class="fas fa-users"></i>
+			</div>
+		</div>
+
+		<!-- Stat Item 4 -->
+		<div class="card stat-card">
+			<div>
+				<p class="stat-title">Taxa de Conversão</p>
+				<h3 class="stat-value">3.42%</h3>
+				<span class="stat-trend trend-up"><i class="fas fa-arrow-up"></i> +1.1% hoje</span>
+			</div>
+			<div class="stat-icon-box icon-purple">
+				<i class="fas fa-percentage"></i>
+			</div>
+		</div>
+	</div>
+
+	<!-- Two-column grid -->
+	<div class="dashboard-grid">
+		<!-- Recent Sales Card -->
+		<div class="card" style="margin: 0;">
+			<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+				<h3 style="margin: 0; font-size: 1.1rem; font-weight: 700; color: #1e293b;">Vendas Recentes</h3>
+				<button class="btn btn-primary" style="font-size: 0.8rem; padding: 6px 12px;">Ver Todas</button>
+			</div>
+			<div style="overflow-x: auto;">
+				<table class="table" style="margin: 0;">
+					<thead>
+						<tr>
+							<th class="pl-0">Pedido ID</th>
+							<th>Cliente</th>
+							<th>Status</th>
+							<th>Data</th>
+							<th class="text-right pr-0">Total</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr>
+							<td class="pl-0" style="font-weight: 600; color: var(--color-primary);">#4829</td>
+							<td>Carlos Silva</td>
+							<td><span class="status-pill status-approved">Aprovado</span></td>
+							<td>Hoje, 14:32</td>
+							<td class="text-right pr-0" style="font-weight: 600; color: #1e293b;">R$ 299,90</td>
+						</tr>
+						<tr>
+							<td class="pl-0" style="font-weight: 600; color: var(--color-primary);">#4828</td>
+							<td>Maria Fernanda</td>
+							<td><span class="status-pill status-cancelled">Cancelado</span></td>
+							<td>Hoje, 11:15</td>
+							<td class="text-right pr-0" style="font-weight: 600; color: #1e293b;">R$ 89,90</td>
+						</tr>
+						<tr>
+							<td class="pl-0" style="font-weight: 600; color: var(--color-primary);">#4827</td>
+							<td>Roberto Costa</td>
+							<td><span class="status-pill status-pending">Pendente</span></td>
+							<td>Ontem, 19:44</td>
+							<td class="text-right pr-0" style="font-weight: 600; color: #1e293b;">R$ 1.240,00</td>
+						</tr>
+						<tr>
+							<td class="pl-0" style="font-weight: 600; color: var(--color-primary);">#4826</td>
+							<td>Juliana Paes</td>
+							<td><span class="status-pill status-approved">Aprovado</span></td>
+							<td>Ontem, 16:21</td>
+							<td class="text-right pr-0" style="font-weight: 600; color: #1e293b;">R$ 459,00</td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+		</div>
+
+		<!-- Recent Activity Card -->
+		<div class="card" style="margin: 0;">
+			<h3 style="margin: 0 0 1.5rem 0; font-size: 1.1rem; font-weight: 700; color: #1e293b;">Atividades do Sistema</h3>
+			<div class="activity-list">
+				<!-- Activity 1 -->
+				<div class="activity-item">
+					<div class="activity-dot dot-primary"></div>
+					<div>
+						<p class="activity-title">Novo produto cadastrado</p>
+						<p class="activity-desc">"Cimento CP-II Itaú 50kg"</p>
+						<span class="activity-time">Há 5 minutos</span>
+					</div>
+				</div>
+				<!-- Activity 2 -->
+				<div class="activity-item">
+					<div class="activity-dot dot-success"></div>
+					<div>
+						<p class="activity-title">Pedido #4829 faturado</p>
+						<p class="activity-desc">Envio preparado via transportadora</p>
+						<span class="activity-time">Há 20 minutos</span>
+					</div>
+				</div>
+				<!-- Activity 3 -->
+				<div class="activity-item">
+					<div class="activity-dot dot-warning"></div>
+					<div>
+						<p class="activity-title">Nova mensagem de contato</p>
+						<p class="activity-desc">Dúvida sobre frete de tijolos</p>
+						<span class="activity-time">Há 1 hora</span>
+					</div>
+				</div>
+			</div>
+		</div>
 	</div>
 {% endblock %}

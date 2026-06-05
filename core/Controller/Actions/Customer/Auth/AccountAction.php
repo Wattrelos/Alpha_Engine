@@ -9,25 +9,30 @@ use Psr\Http\Message\ResponseInterface as Response;
 use Alpha\Controller\Actions\ActionInterface;
 use Alpha\Model\Domain\Repositories\LanguageRepository;
 use Alpha\Model\Domain\Repositories\SettingRepository;
+use Alpha\Model\Domain\Repositories\CustomerRepository;
 use Twig\Environment as TwigEnvironment;
 use Slim\Routing\RouteContext;
 use Psr\Container\ContainerInterface;
+
 
 class AccountAction implements ActionInterface
 {
     private TwigEnvironment $twig;
     private SettingRepository $settingRepository;
     private LanguageRepository $languageRepository;
+    private CustomerRepository $customerRepository;
 
     public function __construct(
         TwigEnvironment $twig,
         SettingRepository $settingRepository,
         LanguageRepository $languageRepository,
+        CustomerRepository $customerRepository,
         private readonly ContainerInterface $container
     ) {
         $this->twig = $twig;
         $this->settingRepository = $settingRepository;
         $this->languageRepository = $languageRepository;
+        $this->customerRepository = $customerRepository;
     }
 
     public function __invoke(Request $request, Response $response, array $args): Response
@@ -63,7 +68,7 @@ class AccountAction implements ActionInterface
 
             // Links das rotas
             'edit'          => '/' . $lang . '/account/edit',
-            'password'      => '/' . $lang . '/account/password',
+            'password'      => '/' . $lang . '/account/resetar-senha',
             'payment_method' => '/' . $lang . '/account/payment',
             'address'       => $routeParser->urlFor('account.addresses', ['lang' => $lang]),
             'wishlist'      => '/' . $lang . '/account/wishlist',
@@ -76,6 +81,7 @@ class AccountAction implements ActionInterface
             'affiliate'     => '/' . $lang . '/account/affiliate',
             'tracking'      => '/' . $lang . '/account/tracking',
             'newsletter'    => '/' . $lang . '/account/newsletter',
+            'newsletter_action_url' => $routeParser->urlFor('account.newsletter', ['lang' => $lang]),
 
             // Estrutura
             'column_left' => '',
@@ -85,6 +91,16 @@ class AccountAction implements ActionInterface
             'reward' => false, // Ocultar se não implementado
             'affiliate' => false // Ocultar se não implementado
         ], $translationData);
+
+        $customerHelper = $this->container->get('customer');
+        $newsletterStatus = false;
+        if ($customerHelper && $customerHelper->isLogged()) {
+            $customer = $this->customerRepository->find($customerHelper->getId());
+            if ($customer) {
+                $newsletterStatus = $customer->isNewsletter();
+            }
+        }
+        $data['newsletter_status'] = $newsletterStatus;
 
         $session = $this->container->has('session') ? $this->container->get('session') : null;
         $success = '';
