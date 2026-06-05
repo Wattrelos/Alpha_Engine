@@ -5,12 +5,12 @@
 {% endblock %}
 
 {% block content %}
-	<div class="page-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
+	<div class="page-header">
 		<div>
 			<h2>Editar Cliente</h2>
-			<p style="color: #64748b; margin: 0;">Atualize as informações cadastrais e os endereços do cliente.</p>
+			<p class="page-subtitle">Atualize as informações cadastrais e os endereços do cliente.</p>
 		</div>
-		<a href="/LPDHED2dC7Gjrg2b/clientes" class="btn" style="text-decoration: none; display: inline-flex; align-items: center; gap: 8px; background: #f1f5f9; color: #475569; border: 1px solid #cbd5e1;">
+		<a href="/LPDHED2dC7Gjrg2b/clientes" class="btn btn-secondary">
 			<i class="fas fa-arrow-left"></i>
 			<span>Voltar para Lista</span>
 		</a>
@@ -23,13 +23,13 @@
 	{% endif %}
 
 	{% if error %}
-		<div style="padding: 1rem; margin-bottom: 1.5rem; background: #fee2e2; color: #991b1b; border: 1px solid #fecaca; border-radius: 8px;">
+		<div class="alert alert-danger">
 			{{ error }}
 		</div>
 	{% endif %}
 
 	{% if errors.warning %}
-		<div style="padding: 1rem; margin-bottom: 1.5rem; background: #fee2e2; color: #991b1b; border: 1px solid #fecaca; border-radius: 8px;">
+		<div class="alert alert-danger">
 			{{ errors.warning }}
 		</div>
 	{% endif %}
@@ -48,15 +48,15 @@
 
 	<!-- Conteúdo: Aba Dados Gerais -->
 	<div id="tab-content-general" class="tab-content" style="display: none;">
-		<div class="card" style="box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1), 0 2px 4px -1px rgba(0,0,0,0.06); border-radius: var(--border-radius); background: #fff; padding: 2rem;">
+		<div class="card card-large">
 			<form action="/LPDHED2dC7Gjrg2b/clientes/{{ customer.id }}/editar" method="POST">
 				<input type="hidden" name="action" value="save_profile" />
 				
 				{% include 'admin/customer/customer/_form.html.twig' %}
 
-				<div class="form-actions" style="display: flex; gap: 1rem; justify-content: flex-end; border-top: 1px solid #e2e8f0; padding-top: 1.5rem; margin-top: 1.5rem;">
-					<a href="/LPDHED2dC7Gjrg2b/clientes" class="btn" style="background: #f1f5f9; color: #475569; border: 1px solid #cbd5e1; text-decoration: none; padding: 10px 20px; border-radius: 6px; font-weight: 600;">Cancelar</a>
-					<button type="submit" class="btn btn-primary" style="padding: 10px 25px; border-radius: 6px; font-weight: 600; display: inline-flex; align-items: center; gap: 8px;">
+				<div class="form-actions">
+					<a href="/LPDHED2dC7Gjrg2b/clientes" class="btn btn-secondary">Cancelar</a>
+					<button type="submit" class="btn btn-primary">
 						<i class="fas fa-save"></i>
 						<span>Salvar Alterações</span>
 					</button>
@@ -67,7 +67,7 @@
 
 	<!-- Conteúdo: Aba Endereços -->
 	<div id="tab-content-addresses" class="tab-content" style="display: none;">
-		<div class="card" style="box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1), 0 2px 4px -1px rgba(0,0,0,0.06); border-radius: var(--border-radius); background: #fff; padding: 2rem;">
+		<div class="card card-large">
 			<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; border-bottom: 1px solid #e2e8f0; padding-bottom: 0.75rem;">
 				<h3 style="margin: 0; color: #1e293b;">Endereços Cadastrados</h3>
 				<a href="/LPDHED2dC7Gjrg2b/clientes/{{ customer.id }}/enderecos/criar" class="btn btn-primary" style="padding: 8px 16px; border-radius: 6px; font-weight: 600; text-decoration: none; display: inline-flex; align-items: center; gap: 6px;">

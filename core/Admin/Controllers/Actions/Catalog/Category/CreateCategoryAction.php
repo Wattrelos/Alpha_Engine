@@ -23,6 +23,7 @@ class CreateCategoryAction extends BaseController implements \Alpha\Controller\A
             $metaKeyword = trim($data['meta_keyword'] ?? '');
             
             $parentId = (int)($data['parent_id'] ?? 0);
+            $dbParentId = $parentId === 0 ? null : $parentId;
             $sortOrder = (int)($data['sort_order'] ?? 0);
             $status = isset($data['status']) ? (int)$data['status'] : 1;
             $seoKeyword = trim($data['seo_keyword'] ?? '');
@@ -67,7 +68,7 @@ class CreateCategoryAction extends BaseController implements \Alpha\Controller\A
 
                 // 2. Insert into category table
                 $stmtCat = $conn->prepare("INSERT INTO `" . DB_PREFIX . "category` (`image`, `parent_id`, `sort_order`, `status`) VALUES (?, ?, ?, ?)");
-                $stmtCat->execute([$imagePath, $parentId, $sortOrder, $status]);
+                $stmtCat->execute([$imagePath, $dbParentId, $sortOrder, $status]);
                 $categoryId = (int)$conn->lastInsertId();
 
                 // 3. Insert into category_description (for all languages)
@@ -84,7 +85,7 @@ class CreateCategoryAction extends BaseController implements \Alpha\Controller\A
                 $stmtStore->execute([$categoryId]);
 
                 // 5. Build category paths
-                $this->rebuildCategoryPaths($categoryId, $parentId, $conn);
+                $this->rebuildCategoryPaths($categoryId, $dbParentId, $conn);
 
                 // 6. Insert SEO URL
                 if (!empty($seoKeyword)) {
@@ -130,16 +131,19 @@ class CreateCategoryAction extends BaseController implements \Alpha\Controller\A
         return $response->withHeader('Content-Type', 'text/html; charset=utf-8');
     }
 
-    private function rebuildCategoryPaths(int $categoryId, int $parentId, \PDO $conn): void
+    private function rebuildCategoryPaths(int $categoryId, ?int $parentId, \PDO $conn): void
     {
         // Delete existing paths for this category
         $stmt = $conn->prepare("DELETE FROM `" . DB_PREFIX . "category_path` WHERE `category_id` = ?");
         $stmt->execute([$categoryId]);
 
         // Fetch parent's paths
-        $stmt = $conn->prepare("SELECT `path_id`, `level` FROM `" . DB_PREFIX . "category_path` WHERE `category_id` = ? ORDER BY `level` ASC");
-        $stmt->execute([$parentId]);
-        $paths = $stmt->fetchAll(\PDO::FETCH_ASSOC);
+        $paths = [];
+        if ($parentId !== null && $parentId > 0) {
+            $stmt = $conn->prepare("SELECT `path_id`, `level` FROM `" . DB_PREFIX . "category_path` WHERE `category_id` = ? ORDER BY `level` ASC");
+            $stmt->execute([$parentId]);
+            $paths = $stmt->fetchAll(\PDO::FETCH_ASSOC);
+        }
 
         $level = 0;
         foreach ($paths as $path) {

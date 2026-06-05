@@ -8,7 +8,7 @@ use Psr\Http\Message\ResponseInterface as Response;
 use Alpha\Model\DataAccessObject\DataAccessObject;
 use Alpha\Model\DataAccessObject\QueryBuilder;
 use Alpha\Model\DataAccessObject\UnitOfWork;
-use Alpha\Model\Domain\Entities\Customer;
+use Alpha\Model\Domain\Entities\Customer\Customer;
 
 class CreateCustomerAction extends BaseController implements \Alpha\Controller\Actions\ActionInterface
 {

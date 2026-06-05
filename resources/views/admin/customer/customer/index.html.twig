@@ -5,38 +5,38 @@
 {% endblock %}
 
 {% block content %}
-	<div class="page-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
+	<div class="page-header">
 		<div>
 			<h2>Gerenciamento de Clientes</h2>
-			<p style="color: #64748b; margin: 0;">Visualize, adicione ou edite as contas de clientes da sua loja.</p>
+			<p class="page-subtitle">Visualize, adicione ou edite as contas de clientes da sua loja.</p>
 		</div>
-		<a href="/LPDHED2dC7Gjrg2b/clientes/criar" class="btn btn-primary" style="text-decoration: none; display: inline-flex; align-items: center; gap: 8px;">
+		<a href="/LPDHED2dC7Gjrg2b/clientes/criar" class="btn btn-primary btn-with-icon">
 			<i class="fas fa-plus"></i>
 			<span>Adicionar Cliente</span>
 		</a>
 	</div>
 
 	<!-- Painel de Filtros de Busca -->
-	<div class="card" style="margin-bottom: 1.5rem; box-shadow: 0 1px 3px rgba(0,0,0,0.05); border-radius: var(--border-radius); padding: 1.5rem; background: #fff;">
+	<div class="card">
 		<form method="GET" action="/LPDHED2dC7Gjrg2b/clientes">
-			<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; align-items: flex-end;">
+			<div class="grid-filters">
 				
 				<!-- Nome -->
-				<div class="form-group" style="margin: 0;">
-					<label for="filter_name" style="display: block; font-weight: 600; margin-bottom: 0.35rem; color: #475569; font-size: 0.85rem;">Nome do Cliente</label>
-					<input type="text" id="filter_name" name="filter_name" class="form-control" value="{{ filters.filter_name }}" placeholder="Buscar por nome..." style="padding: 0.5rem 0.75rem; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 0.9rem;" />
+				<div class="form-group mb-0">
+					<label for="filter_name" class="form-label-sm">Nome do Cliente</label>
+					<input type="text" id="filter_name" name="filter_name" class="form-control" value="{{ filters.filter_name }}" placeholder="Buscar por nome..." />
 				</div>
 
 				<!-- E-mail -->
-				<div class="form-group" style="margin: 0;">
-					<label for="filter_email" style="display: block; font-weight: 600; margin-bottom: 0.35rem; color: #475569; font-size: 0.85rem;">E-mail</label>
-					<input type="text" id="filter_email" name="filter_email" class="form-control" value="{{ filters.filter_email }}" placeholder="Buscar por e-mail..." style="padding: 0.5rem 0.75rem; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 0.9rem;" />
+				<div class="form-group mb-0">
+					<label for="filter_email" class="form-label-sm">E-mail</label>
+					<input type="text" id="filter_email" name="filter_email" class="form-control" value="{{ filters.filter_email }}" placeholder="Buscar por e-mail..." />
 				</div>
 
 				<!-- Grupo de Clientes -->
-				<div class="form-group" style="margin: 0;">
-					<label for="filter_customer_group_id" style="display: block; font-weight: 600; margin-bottom: 0.35rem; color: #475569; font-size: 0.85rem;">Grupo de Clientes</label>
-					<select id="filter_customer_group_id" name="filter_customer_group_id" class="form-control" style="padding: 0.5rem 0.75rem; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 0.9rem; background: #fff;">
+				<div class="form-group mb-0">
+					<label for="filter_customer_group_id" class="form-label-sm">Grupo de Clientes</label>
+					<select id="filter_customer_group_id" name="filter_customer_group_id" class="form-control">
 						<option value="">-- Todos --</option>
 						{% for group in customer_groups %}
 							<option value="{{ group.id }}" {% if filters.filter_customer_group_id == group.id %}selected{% endif %}>{{ group.name }}</option>
@@ -45,9 +45,9 @@
 				</div>
 
 				<!-- Status -->
-				<div class="form-group" style="margin: 0;">
-					<label for="filter_status" style="display: block; font-weight: 600; margin-bottom: 0.35rem; color: #475569; font-size: 0.85rem;">Status</label>
-					<select id="filter_status" name="filter_status" class="form-control" style="padding: 0.5rem 0.75rem; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 0.9rem; background: #fff;">
+				<div class="form-group mb-0">
+					<label for="filter_status" class="form-label-sm">Status</label>
+					<select id="filter_status" name="filter_status" class="form-control">
 						<option value="">-- Todos --</option>
 						<option value="1" {% if filters.filter_status == '1' %}selected{% endif %}>Ativo</option>
 						<option value="0" {% if filters.filter_status == '0' %}selected{% endif %}>Inativo</option>
@@ -55,9 +55,9 @@
 				</div>
  
 				<!-- Ações -->
-				<div style="display: flex; gap: 8px;">
-					<a href="/LPDHED2dC7Gjrg2b/clientes" class="btn" style="flex: 1; text-align: center; text-decoration: none; background: #f1f5f9; color: #475569; border: 1px solid #cbd5e1; padding: 0.5rem 1rem; border-radius: 6px; font-size: 0.9rem; font-weight: 600;">Limpar</a>
-					<button type="submit" class="btn btn-primary" style="flex: 1; padding: 0.5rem 1rem; border-radius: 6px; font-size: 0.9rem; font-weight: 600; display: inline-flex; align-items: center; justify-content: center; gap: 6px;">
+				<div class="d-flex gap-2">
+					<a href="/LPDHED2dC7Gjrg2b/clientes" class="btn flex-1 btn-secondary">Limpar</a>
+					<button type="submit" class="btn btn-primary flex-1">
 						<i class="fas fa-filter"></i>
 						<span>Filtrar</span>
 					</button>
@@ -68,28 +68,28 @@
 	</div>
 
 	<div class="card" style="margin: 0; box-shadow: 0 1px 3px rgba(0,0,0,0.05); border-radius: var(--border-radius); background: #fff;">
-		<div style="overflow-x: auto;">
+		<div class="overflow-x-auto">
 			<table class="table" style="margin: 0; width: 100%; border-collapse: collapse;">
 				<thead>
 					<tr>
-						<th style="padding: 1rem; border-bottom: 2px solid #f1f5f9; text-align: left; width: 80px;">ID</th>
-						<th style="padding: 1rem; border-bottom: 2px solid #f1f5f9; text-align: left;">Nome do Cliente</th>
-						<th style="padding: 1rem; border-bottom: 2px solid #f1f5f9; text-align: left;">E-mail</th>
-						<th style="padding: 1rem; border-bottom: 2px solid #f1f5f9; text-align: left;">Grupo</th>
-						<th style="padding: 1rem; border-bottom: 2px solid #f1f5f9; text-align: left;">Status</th>
-						<th style="padding: 1rem; border-bottom: 2px solid #f1f5f9; text-align: left;">Data Cadastro</th>
-						<th style="text-align: right; width: 150px; padding: 1rem; border-bottom: 2px solid #f1f5f9;">Ações</th>
+						<th>ID</th>
+						<th>Nome do Cliente</th>
+						<th>E-mail</th>
+						<th>Grupo</th>
+						<th>Status</th>
+						<th>Data Cadastro</th>
+						<th class="text-right">Ações</th>
 					</tr>
 				</thead>
 				<tbody>
 					{% if customers %}
 						{% for customer in customers %}
-							<tr style="border-bottom: 1px solid #f1f5f9;">
+							<tr>
 								<td style="padding: 1rem; color: #64748b;">#{{ customer.customer_id }}</td>
-								<td style="font-weight: 600; color: #1e293b; padding: 1rem;">{{ customer.name }}</td>
-								<td style="padding: 1rem; color: #475569;">{{ customer.email }}</td>
-								<td style="padding: 1rem; color: #475569;">{{ customer.customer_group }}</td>
-								<td style="padding: 1rem;">
+								<td class="text-semibold text-dark">{{ customer.name }}</td>
+								<td class="text-muted">{{ customer.email }}</td>
+								<td class="text-muted">{{ customer.customer_group }}</td>
+								<td>
 									{% if customer.status == 'Ativo' %}
 										<span class="status-pill status-approved">Ativo</span>
 									{% else %}
@@ -97,12 +97,12 @@
 									{% endif %}
 								</td>
 								<td style="padding: 1rem; color: #64748b;">{{ customer.date_added }}</td>
-								<td style="text-align: right; padding: 1rem;">
-									<div style="display: flex; gap: 8px; justify-content: flex-end;">
-										<a href="/LPDHED2dC7Gjrg2b/clientes/{{ customer.customer_id }}" class="btn" style="padding: 6px 10px; font-size: 0.8rem; background: #f1f5f9; color: #475569; border: 1px solid #cbd5e1;" title="Visualizar Detalhes">
+								<td class="text-right">
+									<div class="actions-wrapper">
+										<a href="/LPDHED2dC7Gjrg2b/clientes/{{ customer.customer_id }}" class="btn btn-sm" title="Visualizar Detalhes">
 											<i class="fas fa-eye"></i>
 										</a>
-										<a href="/LPDHED2dC7Gjrg2b/clientes/{{ customer.customer_id }}/editar" class="btn btn-primary" style="padding: 6px 10px; font-size: 0.8rem; background: #3b82f6;" title="Editar">
+										<a href="/LPDHED2dC7Gjrg2b/clientes/{{ customer.customer_id }}/editar" class="btn btn-primary btn-sm" title="Editar">
 											<i class="fas fa-edit"></i>
 										</a>
 									</div>

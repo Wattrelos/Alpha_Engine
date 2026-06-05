@@ -1,6 +1,6 @@
 <?php
 
-namespace Alpha\Model\Domain\Entities;
+namespace Alpha\Model\Domain\Entities\Customer;
 
 use Alpha\Model\Domain\BaseEntity;
 use DateTimeImmutable;

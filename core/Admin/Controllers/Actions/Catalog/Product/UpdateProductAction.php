@@ -45,6 +45,7 @@ class UpdateProductAction extends BaseController implements ActionInterface
         $ean = trim($data['ean'] ?? '');
         $stockStatusId = (int)($data['stock_status_id'] ?? 0);
         $manufacturerId = (int)($data['manufacturer_id'] ?? 0);
+        $dbManufacturerId = $manufacturerId === 0 ? null : $manufacturerId;
         $dateAvailable = trim($data['date_available'] ?? '');
         if (empty($dateAvailable)) {
             $dateAvailable = date('Y-m-d');
@@ -101,7 +102,7 @@ class UpdateProductAction extends BaseController implements ActionInterface
             
             // 1. Atualiza dados na tabela principal product (incluindo imagem)
             $stmt = $conn->prepare("UPDATE `" . DB_PREFIX . "product` SET `model` = ?, `price` = ?, `quantity` = ?, `status` = ?, `ean` = ?, `stock_status_id` = ?, `manufacturer_id` = ?, `date_available` = ?, `image` = ?, `date_modified` = NOW() WHERE `id` = ?");
-            $stmt->execute([$model, $price, $quantity, $status, $ean, $stockStatusId, $manufacturerId, $dateAvailable, $newImagePath, $productId]);
+            $stmt->execute([$model, $price, $quantity, $status, $ean, $stockStatusId, $dbManufacturerId, $dateAvailable, $newImagePath, $productId]);
 
             // 2. Atualiza a descrição na tabela product_description para o idioma atual
             $stmtDesc = $conn->prepare("UPDATE `" . DB_PREFIX . "product_description` SET `name` = ?, `description` = ? WHERE `product_id` = ? AND `language_id` = ?");

@@ -5,55 +5,55 @@
 {% endblock %}
 
 {% block content %}
-	<div class="page-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
+	<div class="page-header">
 		<div>
 			<h2>Editar Produto</h2>
-			<p style="color: #64748b; margin: 0;">Atualize as informações do produto em sua loja.</p>
+			<p class="page-subtitle">Atualize as informações do produto em sua loja.</p>
 		</div>
-		<a href="/LPDHED2dC7Gjrg2b/produtos" class="btn" style="text-decoration: none; display: inline-flex; align-items: center; gap: 8px; background: #f1f5f9; color: #475569; border: 1px solid #cbd5e1;">
+		<a href="/LPDHED2dC7Gjrg2b/produtos" class="btn btn-secondary">
 			<i class="fas fa-arrow-left"></i>
 			<span>Voltar para Lista</span>
 		</a>
 	</div>
 
-	<div class="card" style="box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1), 0 2px 4px -1px rgba(0,0,0,0.06); border-radius: var(--border-radius); background: #fff; padding: 2rem;">
+	<div class="card card-large">
 		<form action="/LPDHED2dC7Gjrg2b/produtos/{{ product.id }}/editar" method="POST" enctype="multipart/form-data">
-			<div class="form-grid" style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 1.5rem;">
+			<div class="form-grid grid-2-cols">
 				
 				<!-- Nome do Produto -->
-				<div class="form-group" style="grid-column: span 2; margin-bottom: 1.5rem;">
-					<label for="name" style="display: block; font-weight: 600; margin-bottom: 0.5rem; color: #1e293b;">Nome do Produto *</label>
-					<input type="text" id="name" name="name" class="form-control" value="{{ product.name }}" required style="width: 100%; padding: 0.75rem; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 1rem; color: #1e293b;" />
+				<div class="form-group col-span-2 grid-form-row">
+					<label for="name" class="form-label-dark">Nome do Produto *</label>
+					<input type="text" id="name" name="name" class="form-control form-control-lg" value="{{ product.name }}" required />
 				</div>
 
 				<!-- Modelo -->
-				<div class="form-group" style="margin-bottom: 1.5rem;">
-					<label for="model" style="display: block; font-weight: 600; margin-bottom: 0.5rem; color: #1e293b;">Modelo</label>
-					<input type="text" id="model" name="model" class="form-control" value="{{ product.model }}" style="width: 100%; padding: 0.75rem; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 1rem; color: #1e293b;" />
+				<div class="form-group mb-6">
+					<label for="model" class="form-label-dark">Modelo</label>
+					<input type="text" id="model" name="model" class="form-control form-control-lg" value="{{ product.model }}" />
 				</div>
 
 				<!-- EAN / Código de Barras -->
-				<div class="form-group" style="margin-bottom: 1.5rem;">
-					<label for="ean" style="display: block; font-weight: 600; margin-bottom: 0.5rem; color: #1e293b;">EAN (Código de Barras)</label>
-					<input type="text" id="ean" name="ean" class="form-control" value="{{ product.ean }}" style="width: 100%; padding: 0.75rem; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 1rem; color: #1e293b;" />
+				<div class="form-group mb-6">
+					<label for="ean" class="form-label-dark">EAN (Código de Barras)</label>
+					<input type="text" id="ean" name="ean" class="form-control form-control-lg" value="{{ product.ean }}" />
 				</div>
 
 				<!-- Preço -->
-				<div class="form-group" style="margin-bottom: 1.5rem;">
-					<label for="price" style="display: block; font-weight: 600; margin-bottom: 0.5rem; color: #1e293b;">Preço (R$)</label>
-					<input type="number" id="price" name="price" class="form-control" step="0.01" value="{{ product.price }}" style="width: 100%; padding: 0.75rem; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 1rem; color: #1e293b;" />
+				<div class="form-group mb-6">
+					<label for="price" class="form-label-dark">Preço (R$)</label>
+					<input type="number" id="price" name="price" class="form-control form-control-lg" step="0.01" value="{{ product.price }}" />
 				</div>
 
 				<!-- Quantidade -->
-				<div class="form-group" style="margin-bottom: 1.5rem;">
-					<label for="quantity" style="display: block; font-weight: 600; margin-bottom: 0.5rem; color: #1e293b;">Quantidade em Estoque</label>
-					<input type="number" id="quantity" name="quantity" class="form-control" value="{{ product.quantity }}" style="width: 100%; padding: 0.75rem; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 1rem; color: #1e293b;" />
+				<div class="form-group mb-6">
+					<label for="quantity" class="form-label-dark">Quantidade em Estoque</label>
+					<input type="number" id="quantity" name="quantity" class="form-control form-control-lg" value="{{ product.quantity }}" />
 				</div>
 
 				<!-- Fabricante (Manufacturer) -->
-				<div class="form-group" style="margin-bottom: 1.5rem;">
-					<label for="manufacturer_id" style="display: block; font-weight: 600; margin-bottom: 0.5rem; color: #1e293b;">Fabricante</label>
-					<select id="manufacturer_id" name="manufacturer_id" class="form-control" style="width: 100%; padding: 0.75rem; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 1rem; color: #1e293b; background: #fff;">
+				<div class="form-group mb-6">
+					<label for="manufacturer_id" class="form-label-dark">Fabricante</label>
+					<select id="manufacturer_id" name="manufacturer_id" class="form-control form-control-lg">
 						<option value="0">--- Nenhum ---</option>
 						{% for m in manufacturers %}
 							<option value="{{ m.id }}" {% if product.manufacturer_id == m.id %}selected{% endif %}>{{ m.name }}</option>
@@ -62,9 +62,9 @@
 				</div>
 
 				<!-- Status de Estoque (Stock Status) -->
-				<div class="form-group" style="margin-bottom: 1.5rem;">
-					<label for="stock_status_id" style="display: block; font-weight: 600; margin-bottom: 0.5rem; color: #1e293b;">Status se Esgotado</label>
-					<select id="stock_status_id" name="stock_status_id" class="form-control" style="width: 100%; padding: 0.75rem; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 1rem; color: #1e293b; background: #fff;">
+				<div class="form-group mb-6">
+					<label for="stock_status_id" class="form-label-dark">Status se Esgotado</label>
+					<select id="stock_status_id" name="stock_status_id" class="form-control form-control-lg">
 						{% for s in stock_statuses %}
 							<option value="{{ s.id }}" {% if product.stock_status_id == s.id %}selected{% endif %}>{{ s.name }}</option>
 						{% endfor %}
@@ -72,22 +72,22 @@
 				</div>
 
 				<!-- Data Disponível -->
-				<div class="form-group" style="margin-bottom: 1.5rem;">
-					<label for="date_available" style="display: block; font-weight: 600; margin-bottom: 0.5rem; color: #1e293b;">Data Disponível</label>
-					<input type="date" id="date_available" name="date_available" class="form-control" value="{{ product.date_available }}" style="width: 100%; padding: 0.75rem; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 1rem; color: #1e293b;" />
+				<div class="form-group mb-6">
+					<label for="date_available" class="form-label-dark">Data Disponível</label>
+					<input type="date" id="date_available" name="date_available" class="form-control form-control-lg" value="{{ product.date_available }}" />
 				</div>
 
 				<!-- Status -->
-				<div class="form-group" style="margin-bottom: 1.5rem;">
-					<label for="status" style="display: block; font-weight: 600; margin-bottom: 0.5rem; color: #1e293b;">Status Geral</label>
-					<select id="status" name="status" class="form-control" style="width: 100%; padding: 0.75rem; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 1rem; color: #1e293b; background: #fff;">
+				<div class="form-group mb-6">
+					<label for="status" class="form-label-dark">Status Geral</label>
+					<select id="status" name="status" class="form-control form-control-lg">
 						<option value="1" {% if product.status == 1 %}selected{% endif %}>Ativo</option>
 						<option value="0" {% if product.status == 0 %}selected{% endif %}>Inativo</option>
 					</select>
 				</div>
 
 				<!-- Última Modificação -->
-				<div class="form-group" style="grid-column: span 2; margin-bottom: 1.5rem;">
+				<div class="form-group col-span-2 grid-form-row">
 					<label style="display: block; font-weight: 600; margin-bottom: 0.5rem; color: #64748b;">Última Modificação</label>
 					<input type="text" class="form-control" value="{{ product.date_modified|default('Nenhuma alteração registrada') }}" readonly style="width: 100%; padding: 0.75rem; border: 1px solid #e2e8f0; border-radius: 8px; font-size: 1rem; color: #64748b; background: #f8f9fa; cursor: not-allowed;" />
 				</div>
@@ -117,22 +117,22 @@
 					{% endif %}
 
 					<div class="upload-input-wrap">
-						<input type="file" id="image" name="image" accept="image/*" class="form-control" style="width: 100%; padding: 0.75rem; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 0.95rem; color: #1e293b; background: #fff;" />
+						<input type="file" id="image" name="image" accept="image/*" class="form-control form-control-lg" />
 						<p style="margin: 0.5rem 0 0 0; font-size: 0.8rem; color: #64748b;">Formatos aceitos: JPG, PNG, WEBP, GIF. O envio de uma nova foto substituirá a atual.</p>
 					</div>
 				</div>
 
 				<div class="form-group" style="grid-column: span 2; margin-bottom: 2rem;">
-					<label for="description" style="display: block; font-weight: 600; margin-bottom: 0.5rem; color: #1e293b;">Descrição Detalhada</label>
-					<textarea id="description" name="description" class="form-control" rows="8" style="width: 100%; padding: 0.75rem; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 1rem; color: #1e293b; font-family: inherit; resize: vertical;">{{ product.description }}</textarea>
+					<label for="description" class="form-label-dark">Descrição Detalhada</label>
+					<textarea id="description" name="description" class="form-control form-control-lg" rows="8">{{ product.description }}</textarea>
 				</div>
 
 			</div>
 
 			<!-- Botões de Ação -->
-			<div class="form-actions" style="display: flex; gap: 1rem; justify-content: flex-end; border-top: 1px solid #e2e8f0; padding-top: 1.5rem; margin-top: 1.5rem;">
-				<a href="/LPDHED2dC7Gjrg2b/produtos" class="btn" style="background: #f1f5f9; color: #475569; border: 1px solid #cbd5e1; text-decoration: none; padding: 10px 20px; border-radius: 6px; font-weight: 600;">Cancelar</a>
-				<button type="submit" class="btn btn-primary" style="padding: 10px 25px; border-radius: 6px; font-weight: 600; display: inline-flex; align-items: center; gap: 8px;">
+			<div class="form-actions">
+				<a href="/LPDHED2dC7Gjrg2b/produtos" class="btn btn-secondary">Cancelar</a>
+				<button type="submit" class="btn btn-primary">
 					<i class="fas fa-save"></i>
 					<span>Salvar Alterações</span>
 				</button>

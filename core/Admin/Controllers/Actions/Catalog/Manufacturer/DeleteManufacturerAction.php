@@ -33,8 +33,8 @@ class DeleteManufacturerAction extends BaseController implements \Alpha\Controll
         try {
             $conn->beginTransaction();
 
-            // 1. Update products to disassociate the manufacturer (set manufacturer_id = 0)
-            $stmtUpdateProducts = $conn->prepare("UPDATE `" . DB_PREFIX . "product` SET `manufacturer_id` = 0 WHERE `manufacturer_id` = ?");
+            // 1. Update products to disassociate the manufacturer (set manufacturer_id = NULL)
+            $stmtUpdateProducts = $conn->prepare("UPDATE `" . DB_PREFIX . "product` SET `manufacturer_id` = NULL WHERE `manufacturer_id` = ?");
             $stmtUpdateProducts->execute([$manufacturerId]);
 
             // 2. Delete manufacturer to store mapping records

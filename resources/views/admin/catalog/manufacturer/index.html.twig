@@ -5,32 +5,32 @@
 {% endblock %}
 
 {% block content %}
-	<div class="page-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
+	<div class="page-header">
 		<div>
 			<h2>Gerenciamento de Fabricantes</h2>
-			<p style="color: #64748b; margin: 0;">Visualize, adicione ou edite os fabricantes e marcas cadastrados.</p>
+			<p class="page-subtitle">Visualize, adicione ou edite os fabricantes e marcas cadastrados.</p>
 		</div>
-		<a href="/LPDHED2dC7Gjrg2b/fabricantes/criar" class="btn btn-primary" style="text-decoration: none; display: inline-flex; align-items: center; gap: 8px;">
+		<a href="/LPDHED2dC7Gjrg2b/fabricantes/criar" class="btn btn-primary btn-with-icon">
 			<i class="fas fa-plus"></i>
 			<span>Adicionar Fabricante</span>
 		</a>
 	</div>
 
 	<!-- Painel de Filtros de Busca -->
-	<div class="card" style="margin-bottom: 1.5rem; box-shadow: 0 1px 3px rgba(0,0,0,0.05); border-radius: var(--border-radius); padding: 1.5rem; background: #fff;">
+	<div class="card">
 		<form method="GET" action="/LPDHED2dC7Gjrg2b/fabricantes">
-			<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1rem; align-items: flex-end;">
+			<div class="grid-filters">
 				
 				<!-- Nome -->
-				<div class="form-group" style="margin: 0;">
-					<label for="filter_name" style="display: block; font-weight: 600; margin-bottom: 0.35rem; color: #475569; font-size: 0.85rem;">Nome do Fabricante</label>
-					<input type="text" id="filter_name" name="filter_name" class="form-control" value="{{ filters.filter_name }}" placeholder="Buscar por nome..." style="padding: 0.5rem 0.75rem; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 0.9rem;" />
+				<div class="form-group mb-0">
+					<label for="filter_name" class="form-label-sm">Nome do Fabricante</label>
+					<input type="text" id="filter_name" name="filter_name" class="form-control" value="{{ filters.filter_name }}" placeholder="Buscar por nome..." />
 				</div>
  
 				<!-- Ações -->
-				<div style="display: flex; gap: 8px;">
-					<a href="/LPDHED2dC7Gjrg2b/fabricantes" class="btn" style="flex: 1; text-align: center; text-decoration: none; background: #f1f5f9; color: #475569; border: 1px solid #cbd5e1; padding: 0.5rem 1rem; border-radius: 6px; font-size: 0.9rem; font-weight: 600;">Limpar</a>
-					<button type="submit" class="btn btn-primary" style="flex: 1; padding: 0.5rem 1rem; border-radius: 6px; font-size: 0.9rem; font-weight: 600; display: inline-flex; align-items: center; justify-content: center; gap: 6px;">
+				<div class="d-flex gap-2">
+					<a href="/LPDHED2dC7Gjrg2b/fabricantes" class="btn flex-1 btn-secondary">Limpar</a>
+					<button type="submit" class="btn btn-primary flex-1">
 						<i class="fas fa-filter"></i>
 						<span>Filtrar</span>
 					</button>
@@ -41,21 +41,21 @@
 	</div>
 
 	<div class="card" style="margin: 0; box-shadow: 0 1px 3px rgba(0,0,0,0.05); border-radius: var(--border-radius); background: #fff;">
-		<div style="overflow-x: auto;">
+		<div class="overflow-x-auto">
 			<table class="table" style="margin: 0; width: 100%; border-collapse: collapse;">
 				<thead>
 					<tr>
-						<th style="width: 60px; padding: 1rem; border-bottom: 2px solid #f1f5f9; text-align: left;">Logo</th>
-						<th style="padding: 1rem; border-bottom: 2px solid #f1f5f9; text-align: left;">Nome do Fabricante</th>
-						<th style="padding: 1rem; border-bottom: 2px solid #f1f5f9; text-align: left;">Ordem de Exibição</th>
-						<th style="text-align: right; width: 120px; padding: 1rem; border-bottom: 2px solid #f1f5f9;">Ações</th>
+						<th>Logo</th>
+						<th>Nome do Fabricante</th>
+						<th>Ordem de Exibição</th>
+						<th class="text-right col-actions">Ações</th>
 					</tr>
 				</thead>
 				<tbody>
 					{% if manufacturers %}
 						{% for manufacturer in manufacturers %}
-							<tr style="border-bottom: 1px solid #f1f5f9;">
-								<td style="padding: 1rem;">
+							<tr>
+								<td>
 									{% if manufacturer.image %}
 										<img src="/{{ manufacturer.image }}" alt="{{ manufacturer.name }}" style="border-radius: 4px; border: 1px solid var(--color-border); max-width: 40px; max-height: 40px; background: #fff;" />
 									{% else %}
@@ -64,14 +64,14 @@
 										</div>
 									{% endif %}
 								</td>
-								<td style="font-weight: 600; color: #1e293b; padding: 1rem;">{{ manufacturer.name }}</td>
-								<td style="padding: 1rem; color: #475569;">{{ manufacturer.sort_order }}</td>
-								<td style="text-align: right; padding: 1rem;">
-									<div style="display: flex; gap: 8px; justify-content: flex-end;">
-										<a href="/LPDHED2dC7Gjrg2b/fabricantes/{{ manufacturer.manufacturer_id }}/editar" class="btn btn-primary" style="padding: 6px 10px; font-size: 0.8rem; background: #3b82f6;" title="Editar">
+								<td class="text-semibold text-dark">{{ manufacturer.name }}</td>
+								<td class="text-muted">{{ manufacturer.sort_order }}</td>
+								<td class="text-right">
+									<div class="actions-wrapper">
+										<a href="/LPDHED2dC7Gjrg2b/fabricantes/{{ manufacturer.manufacturer_id }}/editar" class="btn btn-primary btn-sm" title="Editar">
 											<i class="fas fa-edit"></i>
 										</a>
-										<a href="/LPDHED2dC7Gjrg2b/fabricantes/{{ manufacturer.manufacturer_id }}/excluir" class="btn btn-danger" style="padding: 6px 10px; font-size: 0.8rem;" title="Excluir" onclick="return confirm('Deseja realmente excluir este fabricante? Todos os produtos vinculados serão desassociados.');">
+										<a href="/LPDHED2dC7Gjrg2b/fabricantes/{{ manufacturer.manufacturer_id }}/excluir" class="btn btn-danger btn-sm" title="Excluir" onclick="return confirm('Deseja realmente excluir este fabricante? Todos os produtos vinculados serão desassociados.');">
 											<i class="fas fa-trash-alt"></i>
 										</a>
 									</div>

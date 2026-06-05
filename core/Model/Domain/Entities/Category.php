@@ -15,7 +15,7 @@ use Alpha\Model\Domain\Attributes\OneToMany;
 class Category extends BaseEntity
 {
     private string $image = '';
-    private int $parentId = 0;
+    private ?int $parentId = null;
     private int $sortOrder = 0;
     private bool $status = true;
 
@@ -34,8 +34,8 @@ class Category extends BaseEntity
     public function getImage(): string { return $this->image; }
     public function setImage(string $image): self { $this->image = $image; return $this; }
 
-    public function getParentId(): int { return $this->parentId; }
-    public function setParentId(int $parentId): self { $this->parentId = $parentId; return $this; }
+    public function getParentId(): ?int { return $this->parentId; }
+    public function setParentId(?int $parentId): self { $this->parentId = $parentId; return $this; }
 
     public function getSortOrder(): int { return $this->sortOrder; }
     public function setSortOrder(int $sortOrder): self { $this->sortOrder = $sortOrder; return $this; }

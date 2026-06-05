@@ -94,14 +94,20 @@ class CategoryMapper extends BaseMapper
     /**
      * Lista subcategorias de um nível específico.
      */
-    public function getSubCategories(int $parentId, int $languageId, int $storeId): array
+    public function getSubCategories(?int $parentId, int $languageId, int $storeId): array
     {
         $builder = (new QueryBuilder())
             ->from(DB_PREFIX . 'category', 'c')
             ->leftJoin(DB_PREFIX . 'category_description', 'cd', 'c.id = cd.category_id')
-            ->leftJoin(DB_PREFIX . 'category_to_store', 'c2s', 'c.id = c2s.category_id')
-            ->where('c.parent_id = ?', [$parentId])
-            ->where('cd.language_id = ?', [$languageId])
+            ->leftJoin(DB_PREFIX . 'category_to_store', 'c2s', 'c.id = c2s.category_id');
+
+        if ($parentId === null || $parentId === 0) {
+            $builder->where('c.parent_id IS NULL');
+        } else {
+            $builder->where('c.parent_id = ?', [$parentId]);
+        }
+
+        $builder->where('cd.language_id = ?', [$languageId])
             ->where('c2s.store_id = ?', [$storeId])
             ->where('c.status = 1');
 
@@ -169,13 +175,19 @@ class CategoryMapper extends BaseMapper
      * Lista subcategorias hidratadas como Entidades (Batch Load).
      * @return Category[]
      */
-    public function getHydratedSubCategories(int $parentId, int $languageId, int $storeId): array
+    public function getHydratedSubCategories(?int $parentId, int $languageId, int $storeId): array
     {
         $builder = (new QueryBuilder())
             ->from(DB_PREFIX . 'category', 'c')
-            ->leftJoin(DB_PREFIX . 'category_to_store', 'c2s', 'c.id = c2s.category_id')
-            ->where('c.parent_id = ?', [$parentId])
-            ->where('c2s.store_id = ?', [$storeId])
+            ->leftJoin(DB_PREFIX . 'category_to_store', 'c2s', 'c.id = c2s.category_id');
+
+        if ($parentId === null || $parentId === 0) {
+            $builder->where('c.parent_id IS NULL');
+        } else {
+            $builder->where('c.parent_id = ?', [$parentId]);
+        }
+
+        $builder->where('c2s.store_id = ?', [$storeId])
             ->where('c.status = 1')
             ->select('c.id');
 
@@ -227,7 +239,7 @@ class CategoryMapper extends BaseMapper
             ->where('cd.language_id = ?', [$languageId])
             ->where('cs.store_id = ?', [$storeId])
             ->where('c.status = 1')
-            ->where('c.parent_id = 0')
+            ->where('c.parent_id IS NULL')
             ->groupBy('c.id')
             ->groupBy('c.image')
             ->groupBy('cd.name')

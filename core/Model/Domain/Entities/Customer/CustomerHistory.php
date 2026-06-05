@@ -1,21 +1,21 @@
 <?php
 
-namespace Alpha\Model\Domain\Entities;
+namespace Alpha\Model\Domain\Entities\Customer;
 
 use Alpha\Model\Domain\BaseEntity;
 use DateTimeImmutable;
 use Alpha\Model\Domain\Attributes\ManyToOne;
 
 /**
- * Entidade CustomerApproval
- * Gerencia as solicitações de aprovação pendentes para clientes ou afiliados.
+ * Entidade CustomerHistory
+ * Registro de interações e anotações manuais ou automáticas sobre o cliente.
  * 
- * @Table(name="customer_approval")
+ * @Table(name="customer_history")
  */
-class CustomerApproval extends BaseEntity
+class CustomerHistory extends BaseEntity
 {
     private int $customerId = 0;
-    private string $type = 'customer';
+    private string $comment = '';
     private ?DateTimeImmutable $dateAdded = null;
 
     #[ManyToOne(targetEntity: Customer::class, foreignKey: 'customerId')]
@@ -23,8 +23,8 @@ class CustomerApproval extends BaseEntity
 
     /**
      * Apontamentos Técnicos:
-     * 1. Fluxo de Auditoria: Mantém o registro de quem ainda precisa ser aprovado para acessar a loja.
-     * 2. Tipagem: O campo 'type' diferencia se a aprovação é para conta de cliente padrão ou afiliado.
+     * 1. Rastreabilidade: Essencial para o suporte ao cliente visualizar o histórico de contatos.
+     * 2. Imutabilidade: Uma vez registrado, o comentário serve como snapshot do evento.
      */
 
     public function getCustomerId(): int
@@ -38,14 +38,14 @@ class CustomerApproval extends BaseEntity
         return $this;
     }
 
-    public function getType(): string
+    public function getComment(): string
     {
-        return $this->type;
+        return $this->comment;
     }
 
-    public function setType(string $type): self
+    public function setComment(string $comment): self
     {
-        $this->type = $type;
+        $this->comment = $comment;
         return $this;
     }
 

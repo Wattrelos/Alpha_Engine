@@ -1190,9 +1190,8 @@ function oc_db_schema() {
 				'type' => 'varchar(255)'
 			],
 			[
-				'name'    => 'parent_id',
-				'type'    => 'bigint(20)',
-				'default' => '0'
+				'name' => 'parent_id',
+				'type' => 'bigint(20)'
 			],
 			[
 				'name'    => 'sort_order',
@@ -5168,9 +5167,8 @@ function oc_db_schema() {
 				'type' => 'varchar(255)'
 			],
 			[
-				'name'    => 'manufacturer_id',
-				'type'    => 'bigint(20)',
-				'default' => '0'
+				'name' => 'manufacturer_id',
+				'type' => 'bigint(20)'
 			],
 			[
 				'name'    => 'shipping',

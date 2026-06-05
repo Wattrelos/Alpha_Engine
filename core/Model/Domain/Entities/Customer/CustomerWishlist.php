@@ -1,8 +1,10 @@
 <?php
-namespace Alpha\Model\Domain\Entities;
+namespace Alpha\Model\Domain\Entities\Customer;
 
  use Alpha\Model\Domain\BaseEntity;
  use Alpha\Model\Domain\Attributes\ManyToOne;
+ use Alpha\Model\Domain\Entities\Product;
+ use Alpha\Model\Domain\Entities\Store;
 
 /**
  * Entidade CustomerWishlist - Representa a lista de desejos (favoritos) do cliente.

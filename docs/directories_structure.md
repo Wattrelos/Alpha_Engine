@@ -54,6 +54,9 @@
   │   │   ├── DataTransferObject/             # DTOs de transporte (ex: ViewResponse)
   │   │   └── Domain/                         # Lógica de Domínio Estrutural
   │   │       ├── Entities/                   # Objetos de domínio puros e tipados (PHP 8.4)
+  │   │       │   ├── Customer/               # Subdiretório para Entidades de Clientes (Customer, CustomerHistory, etc.)
+  │   │       │   ├── Supplier/               # Subdiretório contendo a Entidade Supplier
+  │   │       │   └── Geo/                    # Subdiretório para Entidades Geográficas (Country, Zone, City, Address)
   │   │       └── Repositories/               # Orquestradores de regras de negócio agregadas
   │   ├── Support/                            # 🛠️ Utilitários Transversais e Helpers Nativos
   │   │   ├── Session.php                     # Gerenciamento Nativo de Sessões PHP Standalone
@@ -109,7 +112,9 @@
   └── public_html/                            # 🌐 Webroot (Document Root exposto e servido para a Internet)
       ├── index.php                           # Front Controller único da Aplicação (Bootstrap)
       ├── .htaccess                           # Regras de URL Rewrite (Apache)
-      ├── css/                                # Folhas de estilo (Custom CSS compilado)
+      ├── css/                                # Folhas de estilo (Estilos centralizados)
+      │   ├── admin/                          # CSS do Painel Administrativo (admin.css, variables.css, layout.css, components.css)
+      │   └── custom/                         # CSS do Frontend da Loja (personalizada.css, new-stylesheet.css)
       ├── js/                                 # Scripts Vanilla JS e integrações de formulário (AJAX)
       └── fonts/                              # Tipografia e Ícones Locais
 

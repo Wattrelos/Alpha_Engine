@@ -7,7 +7,7 @@
 {% block content %}
 	<div class="page-header">
 		<h2>{{ title|default('Painel Inicial') }}</h2>
-		<p style="color: #64748b; margin: 0;">Bem-vindo de volta! Aqui está o resumo das atividades da AgSonhos hoje.</p>
+		<p class="page-subtitle">Bem-vindo de volta! Aqui está o resumo das atividades da AgSonhos hoje.</p>
 	</div>
 
 	<!-- Stats Grid -->
@@ -64,12 +64,12 @@
 	<!-- Two-column grid -->
 	<div class="dashboard-grid">
 		<!-- Recent Sales Card -->
-		<div class="card" style="margin: 0;">
+		<div class="card mb-0">
 			<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
 				<h3 style="margin: 0; font-size: 1.1rem; font-weight: 700; color: #1e293b;">Vendas Recentes</h3>
 				<button class="btn btn-primary" style="font-size: 0.8rem; padding: 6px 12px;">Ver Todas</button>
 			</div>
-			<div style="overflow-x: auto;">
+			<div class="overflow-x-auto">
 				<table class="table" style="margin: 0;">
 					<thead>
 						<tr>
@@ -86,28 +86,28 @@
 							<td>Carlos Silva</td>
 							<td><span class="status-pill status-approved">Aprovado</span></td>
 							<td>Hoje, 14:32</td>
-							<td class="text-right pr-0" style="font-weight: 600; color: #1e293b;">R$ 299,90</td>
+							<td class="text-right pr-0 text-semibold text-dark">R$ 299,90</td>
 						</tr>
 						<tr>
 							<td class="pl-0" style="font-weight: 600; color: var(--color-primary);">#4828</td>
 							<td>Maria Fernanda</td>
 							<td><span class="status-pill status-cancelled">Cancelado</span></td>
 							<td>Hoje, 11:15</td>
-							<td class="text-right pr-0" style="font-weight: 600; color: #1e293b;">R$ 89,90</td>
+							<td class="text-right pr-0 text-semibold text-dark">R$ 89,90</td>
 						</tr>
 						<tr>
 							<td class="pl-0" style="font-weight: 600; color: var(--color-primary);">#4827</td>
 							<td>Roberto Costa</td>
 							<td><span class="status-pill status-pending">Pendente</span></td>
 							<td>Ontem, 19:44</td>
-							<td class="text-right pr-0" style="font-weight: 600; color: #1e293b;">R$ 1.240,00</td>
+							<td class="text-right pr-0 text-semibold text-dark">R$ 1.240,00</td>
 						</tr>
 						<tr>
 							<td class="pl-0" style="font-weight: 600; color: var(--color-primary);">#4826</td>
 							<td>Juliana Paes</td>
 							<td><span class="status-pill status-approved">Aprovado</span></td>
 							<td>Ontem, 16:21</td>
-							<td class="text-right pr-0" style="font-weight: 600; color: #1e293b;">R$ 459,00</td>
+							<td class="text-right pr-0 text-semibold text-dark">R$ 459,00</td>
 						</tr>
 					</tbody>
 				</table>
@@ -115,7 +115,7 @@
 		</div>
 
 		<!-- Recent Activity Card -->
-		<div class="card" style="margin: 0;">
+		<div class="card mb-0">
 			<h3 style="margin: 0 0 1.5rem 0; font-size: 1.1rem; font-weight: 700; color: #1e293b;">Atividades do Sistema</h3>
 			<div class="activity-list">
 				<!-- Activity 1 -->

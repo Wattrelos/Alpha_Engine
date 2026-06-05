@@ -5,10 +5,10 @@
 {% endblock %}
 
 {% block content %}
-	<div class="page-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
+	<div class="page-header">
 		<div>
 			<h2>Configurações da Loja</h2>
-			<p style="color: #64748b; margin: 0;">Gerencie as informações gerais, metadados SEO, imagens e redes sociais da sua loja.</p>
+			<p class="page-subtitle">Gerencie as informações gerais, metadados SEO, imagens e redes sociais da sua loja.</p>
 		</div>
 	</div>
 
@@ -19,32 +19,32 @@
 	{% endif %}
 
 	{% if error %}
-		<div style="padding: 1rem; margin-bottom: 1.5rem; background: #fee2e2; color: #991b1b; border: 1px solid #fecaca; border-radius: 8px;">
+		<div class="alert alert-danger">
 			{{ error }}
 		</div>
 	{% endif %}
 
 	{% if errors.warning %}
-		<div style="padding: 1rem; margin-bottom: 1.5rem; background: #fee2e2; color: #991b1b; border: 1px solid #fecaca; border-radius: 8px;">
+		<div class="alert alert-danger">
 			{{ errors.warning }}
 		</div>
 	{% endif %}
 
 	<!-- Navegação por Abas -->
 	<div style="display: flex; gap: 1rem; margin-bottom: 2rem; border-bottom: 2px solid #e2e8f0; padding-bottom: 0px;">
-		<button onclick="switchTab('general')" id="tab-btn-general" class="tab-button" style="padding: 0.75rem 1.5rem; font-weight: 600; font-size: 1rem; border: none; border-bottom: 3px solid transparent; background: none; cursor: pointer; color: #64748b; display: inline-flex; align-items: center; gap: 8px;">
+		<button onclick="switchTab('general')" id="tab-btn-general" class="tab-button">
 			<i class="fas fa-store"></i>
 			<span>Geral</span>
 		</button>
-		<button onclick="switchTab('seo')" id="tab-btn-seo" class="tab-button" style="padding: 0.75rem 1.5rem; font-weight: 600; font-size: 1rem; border: none; border-bottom: 3px solid transparent; background: none; cursor: pointer; color: #64748b; display: inline-flex; align-items: center; gap: 8px;">
+		<button onclick="switchTab('seo')" id="tab-btn-seo" class="tab-button">
 			<i class="fas fa-search"></i>
 			<span>Metadados (SEO)</span>
 		</button>
-		<button onclick="switchTab('images')" id="tab-btn-images" class="tab-button" style="padding: 0.75rem 1.5rem; font-weight: 600; font-size: 1rem; border: none; border-bottom: 3px solid transparent; background: none; cursor: pointer; color: #64748b; display: inline-flex; align-items: center; gap: 8px;">
+		<button onclick="switchTab('images')" id="tab-btn-images" class="tab-button">
 			<i class="fas fa-images"></i>
 			<span>Imagens</span>
 		</button>
-		<button onclick="switchTab('social')" id="tab-btn-social" class="tab-button" style="padding: 0.75rem 1.5rem; font-weight: 600; font-size: 1rem; border: none; border-bottom: 3px solid transparent; background: none; cursor: pointer; color: #64748b; display: inline-flex; align-items: center; gap: 8px;">
+		<button onclick="switchTab('social')" id="tab-btn-social" class="tab-button">
 			<i class="fas fa-share-alt"></i>
 			<span>Redes Sociais</span>
 		</button>
@@ -57,36 +57,36 @@
 			<div id="tab-content-general" class="tab-content" style="display: none;">
 				<h3 style="margin-top: 0; margin-bottom: 1.5rem; color: #1e293b; border-bottom: 1px solid #f1f5f9; padding-bottom: 0.75rem;">Informações da Loja</h3>
 				
-				<div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-bottom: 1.5rem;">
+				<div class="grid-2-cols grid-form-row">
 					<div>
-						<label for="config_name" style="display: block; font-weight: 600; margin-bottom: 0.5rem; color: #475569; font-size: 0.9rem;">Nome da Loja *</label>
-						<input type="text" id="config_name" name="config_name" class="form-control" value="{{ settings.config_name }}" required style="width: 100%; padding: 0.65rem; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 0.95rem;" />
-						{% if errors.config_name %}<div style="color: #ef4444; font-size: 0.85rem; margin-top: 0.25rem;">{{ errors.config_name }}</div>{% endif %}
+						<label for="config_name" class="form-label">Nome da Loja *</label>
+						<input type="text" id="config_name" name="config_name" class="form-control" value="{{ settings.config_name }}" required />
+						{% if errors.config_name %}<div class="invalid-feedback">{{ errors.config_name }}</div>{% endif %}
 					</div>
 					<div>
-						<label for="config_owner" style="display: block; font-weight: 600; margin-bottom: 0.5rem; color: #475569; font-size: 0.9rem;">Proprietário da Loja *</label>
-						<input type="text" id="config_owner" name="config_owner" class="form-control" value="{{ settings.config_owner }}" required style="width: 100%; padding: 0.65rem; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 0.95rem;" />
-						{% if errors.config_owner %}<div style="color: #ef4444; font-size: 0.85rem; margin-top: 0.25rem;">{{ errors.config_owner }}</div>{% endif %}
-					</div>
-				</div>
-
-				<div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-bottom: 1.5rem;">
-					<div>
-						<label for="config_email" style="display: block; font-weight: 600; margin-bottom: 0.5rem; color: #475569; font-size: 0.9rem;">E-mail de Contato *</label>
-						<input type="email" id="config_email" name="config_email" class="form-control" value="{{ settings.config_email }}" required style="width: 100%; padding: 0.65rem; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 0.95rem;" />
-						{% if errors.config_email %}<div style="color: #ef4444; font-size: 0.85rem; margin-top: 0.25rem;">{{ errors.config_email }}</div>{% endif %}
-					</div>
-					<div>
-						<label for="config_telephone" style="display: block; font-weight: 600; margin-bottom: 0.5rem; color: #475569; font-size: 0.9rem;">Telefone de Contato *</label>
-						<input type="text" id="config_telephone" name="config_telephone" class="form-control" value="{{ settings.config_telephone }}" required style="width: 100%; padding: 0.65rem; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 0.95rem;" />
-						{% if errors.config_telephone %}<div style="color: #ef4444; font-size: 0.85rem; margin-top: 0.25rem;">{{ errors.config_telephone }}</div>{% endif %}
+						<label for="config_owner" class="form-label">Proprietário da Loja *</label>
+						<input type="text" id="config_owner" name="config_owner" class="form-control" value="{{ settings.config_owner }}" required />
+						{% if errors.config_owner %}<div class="invalid-feedback">{{ errors.config_owner }}</div>{% endif %}
 					</div>
 				</div>
 
-				<div style="margin-bottom: 1.5rem;">
-					<label for="config_address" style="display: block; font-weight: 600; margin-bottom: 0.5rem; color: #475569; font-size: 0.9rem;">Endereço Físico *</label>
-					<textarea id="config_address" name="config_address" class="form-control" required style="width: 100%; padding: 0.65rem; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 0.95rem; height: 100px; resize: vertical;">{{ settings.config_address }}</textarea>
-					{% if errors.config_address %}<div style="color: #ef4444; font-size: 0.85rem; margin-top: 0.25rem;">{{ errors.config_address }}</div>{% endif %}
+				<div class="grid-2-cols grid-form-row">
+					<div>
+						<label for="config_email" class="form-label">E-mail de Contato *</label>
+						<input type="email" id="config_email" name="config_email" class="form-control" value="{{ settings.config_email }}" required />
+						{% if errors.config_email %}<div class="invalid-feedback">{{ errors.config_email }}</div>{% endif %}
+					</div>
+					<div>
+						<label for="config_telephone" class="form-label">Telefone de Contato *</label>
+						<input type="text" id="config_telephone" name="config_telephone" class="form-control" value="{{ settings.config_telephone }}" required />
+						{% if errors.config_telephone %}<div class="invalid-feedback">{{ errors.config_telephone }}</div>{% endif %}
+					</div>
+				</div>
+
+				<div class="mb-6">
+					<label for="config_address" class="form-label">Endereço Físico *</label>
+					<textarea id="config_address" name="config_address" class="form-control" required>{{ settings.config_address }}</textarea>
+					{% if errors.config_address %}<div class="invalid-feedback">{{ errors.config_address }}</div>{% endif %}
 				</div>
 			</div>
 
@@ -94,20 +94,20 @@
 			<div id="tab-content-seo" class="tab-content" style="display: none;">
 				<h3 style="margin-top: 0; margin-bottom: 1.5rem; color: #1e293b; border-bottom: 1px solid #f1f5f9; padding-bottom: 0.75rem;">Metadados da Loja (SEO)</h3>
 				
-				<div style="margin-bottom: 1.5rem;">
-					<label for="meta_title" style="display: block; font-weight: 600; margin-bottom: 0.5rem; color: #475569; font-size: 0.9rem;">Meta Título *</label>
-					<input type="text" id="meta_title" name="meta_title" class="form-control" value="{{ meta_title }}" required style="width: 100%; padding: 0.65rem; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 0.95rem;" />
-					{% if errors.meta_title %}<div style="color: #ef4444; font-size: 0.85rem; margin-top: 0.25rem;">{{ errors.meta_title }}</div>{% endif %}
+				<div class="mb-6">
+					<label for="meta_title" class="form-label">Meta Título *</label>
+					<input type="text" id="meta_title" name="meta_title" class="form-control" value="{{ meta_title }}" required />
+					{% if errors.meta_title %}<div class="invalid-feedback">{{ errors.meta_title }}</div>{% endif %}
 				</div>
 
-				<div style="margin-bottom: 1.5rem;">
-					<label for="meta_description" style="display: block; font-weight: 600; margin-bottom: 0.5rem; color: #475569; font-size: 0.9rem;">Meta Descrição</label>
-					<textarea id="meta_description" name="meta_description" class="form-control" style="width: 100%; padding: 0.65rem; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 0.95rem; height: 80px; resize: vertical;">{{ meta_description }}</textarea>
+				<div class="mb-6">
+					<label for="meta_description" class="form-label">Meta Descrição</label>
+					<textarea id="meta_description" name="meta_description" class="form-control">{{ meta_description }}</textarea>
 				</div>
 
-				<div style="margin-bottom: 1.5rem;">
-					<label for="meta_keyword" style="display: block; font-weight: 600; margin-bottom: 0.5rem; color: #475569; font-size: 0.9rem;">Meta Palavras-chave</label>
-					<textarea id="meta_keyword" name="meta_keyword" class="form-control" placeholder="Separadas por vírgula..." style="width: 100%; padding: 0.65rem; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 0.95rem; height: 80px; resize: vertical;">{{ meta_keyword }}</textarea>
+				<div class="mb-6">
+					<label for="meta_keyword" class="form-label">Meta Palavras-chave</label>
+					<textarea id="meta_keyword" name="meta_keyword" class="form-control" placeholder="Separadas por vírgula...">{{ meta_keyword }}</textarea>
 				</div>
 			</div>
 
@@ -139,7 +139,7 @@
 									<label for="remove_logo" style="font-size: 0.85rem; color: #64748b; font-weight: 500; cursor: pointer;">Remover logotipo atual</label>
 								</div>
 							{% endif %}
-							{% if errors.config_logo %}<div style="color: #ef4444; font-size: 0.85rem; margin-top: 0.25rem;">{{ errors.config_logo }}</div>{% endif %}
+							{% if errors.config_logo %}<div class="invalid-feedback">{{ errors.config_logo }}</div>{% endif %}
 						</div>
 					</div>
 
@@ -166,7 +166,7 @@
 									<label for="remove_icon" style="font-size: 0.85rem; color: #64748b; font-weight: 500; cursor: pointer;">Remover favicon atual</label>
 								</div>
 							{% endif %}
-							{% if errors.config_icon %}<div style="color: #ef4444; font-size: 0.85rem; margin-top: 0.25rem;">{{ errors.config_icon }}</div>{% endif %}
+							{% if errors.config_icon %}<div class="invalid-feedback">{{ errors.config_icon }}</div>{% endif %}
 						</div>
 					</div>
 				</div>
@@ -176,16 +176,16 @@
 			<div id="tab-content-social" class="tab-content" style="display: none;">
 				<h3 style="margin-top: 0; margin-bottom: 1.5rem; color: #1e293b; border-bottom: 1px solid #f1f5f9; padding-bottom: 0.75rem;">Redes Sociais</h3>
 				
-				<div style="margin-bottom: 1.5rem;">
-					<label for="config_facebook" style="display: block; font-weight: 600; margin-bottom: 0.5rem; color: #475569; font-size: 0.9rem;">Página do Facebook</label>
+				<div class="mb-6">
+					<label for="config_facebook" class="form-label">Página do Facebook</label>
 					<div style="display: flex; align-items: center;">
 						<span style="background: #f1f5f9; border: 1px solid #cbd5e1; border-right: none; border-radius: 6px 0 0 6px; padding: 0.65rem 1rem; color: #64748b;"><i class="fab fa-facebook-f"></i></span>
 						<input type="url" id="config_facebook" name="config_facebook" class="form-control" value="{{ settings.config_facebook|default('https://facebook.com') }}" style="width: 100%; padding: 0.65rem; border: 1px solid #cbd5e1; border-radius: 0 6px 6px 0; font-size: 0.95rem;" />
 					</div>
 				</div>
 
-				<div style="margin-bottom: 1.5rem;">
-					<label for="config_instagram" style="display: block; font-weight: 600; margin-bottom: 0.5rem; color: #475569; font-size: 0.9rem;">Perfil do Instagram</label>
+				<div class="mb-6">
+					<label for="config_instagram" class="form-label">Perfil do Instagram</label>
 					<div style="display: flex; align-items: center;">
 						<span style="background: #f1f5f9; border: 1px solid #cbd5e1; border-right: none; border-radius: 6px 0 0 6px; padding: 0.65rem 1rem; color: #64748b;"><i class="fab fa-instagram"></i></span>
 						<input type="url" id="config_instagram" name="config_instagram" class="form-control" value="{{ settings.config_instagram|default('https://instagram.com') }}" style="width: 100%; padding: 0.65rem; border: 1px solid #cbd5e1; border-radius: 0 6px 6px 0; font-size: 0.95rem;" />
@@ -193,7 +193,7 @@
 				</div>
 
 				<div style="margin-bottom: 2rem;">
-					<label for="config_youtube" style="display: block; font-weight: 600; margin-bottom: 0.5rem; color: #475569; font-size: 0.9rem;">Canal do YouTube</label>
+					<label for="config_youtube" class="form-label">Canal do YouTube</label>
 					<div style="display: flex; align-items: center;">
 						<span style="background: #f1f5f9; border: 1px solid #cbd5e1; border-right: none; border-radius: 6px 0 0 6px; padding: 0.65rem 1rem; color: #64748b;"><i class="fab fa-youtube"></i></span>
 						<input type="url" id="config_youtube" name="config_youtube" class="form-control" value="{{ settings.config_youtube|default('https://youtube.com') }}" style="width: 100%; padding: 0.65rem; border: 1px solid #cbd5e1; border-radius: 0 6px 6px 0; font-size: 0.95rem;" />
@@ -202,7 +202,7 @@
 			</div>
 
 			<!-- Botões de Ação -->
-			<div class="form-actions" style="display: flex; gap: 1rem; justify-content: flex-end; border-top: 1px solid #e2e8f0; padding-top: 1.5rem;">
+			<div class="form-actions">
 				<button type="submit" class="btn btn-primary" style="padding: 12px 30px; border-radius: 6px; font-weight: 600; display: inline-flex; align-items: center; gap: 8px; font-size: 1rem; box-shadow: 0 2px 4px rgba(59, 130, 246, 0.2);">
 					<i class="fas fa-save"></i>
 					<span>Salvar Configurações</span>

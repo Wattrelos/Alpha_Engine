@@ -48,3 +48,32 @@ Reestruturação estética e funcional:
 - **Responsividade Flexível**: Abaixo de 768px, a barra de filtros passa a se posicionar no topo de forma empilhada para maximizar o espaço dos cards de produtos na tela mobile.
 - **Busca de Marcas por Rolagem Interna com Lupa**: Adição de uma caixa de pesquisa dinâmica que oculta/mostra marcas instantaneamente por meio de JS, operando dentro de um contêiner de rolagem interna com altura máxima (`200px`) e scrollbar estilizado.
 
+---
+
+## 🛡️ Painel Administrativo (Admin Panel) — Modernização Visual e Boas Práticas
+
+Os estilos visuais da área administrativa do painel da Alpha Engine foram reestruturados para remover acoplamentos de estilos inline e centralizar as regras de estilo em folhas externas organizadas sob `public_html/css/admin/` (`admin.css`, `variables.css`, `layout.css` e `components.css`).
+
+### Destaques do Design System Administrativo:
+
+- **Tons Suaves e Sobriedade (Slate Palette)**:
+  - O fundo da página (`--color-bg-body`) utiliza um tom de cinza azulado muito claro e repousante `#f8fafc` (Slate 50).
+  - O fundo da sidebar (`--color-bg-sidebar`) adota um azul-escuro profundo e elegante `#0f172a` (Slate 900).
+  - Inputs de formulário (`.form-control`) possuem fundo suave e de baixo contraste (`#f8fafc`). Ao focar, o fundo transita suavemente para branco puro (`#ffffff`), com uma borda azul e um anel de brilho externo (`rgba(59, 130, 246, 0.15)`), destacando o elemento ativo de forma premium.
+
+- **Sombras de Camada (Layered Shadows)**:
+  - Introdução de sombras em variáveis (`--shadow-card`, `--shadow-topbar`, `--shadow-md`) que criam relevo tridimensional sem poluição visual.
+  - Efeito de **Elevação nos Cards** no hover: ao passar o mouse em um card (`.card`, `.stat-card` ou `.card-large`), ele realiza uma translação vertical suave de `-2px` (`translateY`) e projeta uma sombra mais difusa e espalhada (`--shadow-card-hover`), proporcionando interatividade.
+
+- **Menu Lateral e Navegação**:
+  - Item ativo na sidebar (`.sidebar li a.active`): Fundo azul muito suave (`rgba(59, 130, 246, 0.08)`) e uma barra lateral vertical arredondada no canto esquerdo (`::before`), criando um indicador de navegação discreto.
+
+- **Espaçamento e Cantos Arredondados**:
+  - Arredondamento principal (`--border-radius`) aumentado para `12px` (cards e painéis), suavizando a interface em comparação com o design quadrado anterior.
+  - Inputs e botões padronizados com arredondamento de `8px`.
+  - Margens e paddings expandidos (ex: padding do card em `1.75rem`), dando mais respiro e melhorando a escaneabilidade dos relatórios.
+
+- **Micro-interações e Animações**:
+  - **Stat Cards**: Zoom dinâmico (`scale(1.1)`) no ícone decorativo (`.stat-icon-box`) que é ativado automaticamente ao passar o mouse em qualquer parte do card estatístico.
+  - **Botões**: Animação de feedback ao clique (`scale(0.97)` active state) em todos os botões principais, acompanhada de expansão de sombra no hover.
+

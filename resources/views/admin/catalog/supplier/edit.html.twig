@@ -5,77 +5,77 @@
 {% endblock %}
 
 {% block content %}
-	<div class="page-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
+	<div class="page-header">
 		<div>
 			<h2>Editar Fornecedor</h2>
-			<p style="color: #64748b; margin: 0;">Modifique os detalhes do fornecedor e seu endereço.</p>
+			<p class="page-subtitle">Modifique os detalhes do fornecedor e seu endereço.</p>
 		</div>
-		<a href="/LPDHED2dC7Gjrg2b/fornecedores" class="btn" style="text-decoration: none; display: inline-flex; align-items: center; gap: 8px; background: #f1f5f9; color: #475569; border: 1px solid #cbd5e1; padding: 10px 20px; border-radius: 6px; font-weight: 600;">
+		<a href="/LPDHED2dC7Gjrg2b/fornecedores" class="btn btn-secondary">
 			<i class="fas fa-arrow-left"></i>
 			<span>Voltar para Lista</span>
 		</a>
 	</div>
 
 	{% if errors.warning %}
-		<div style="padding: 1rem; margin-bottom: 1.5rem; background: #fee2e2; color: #991b1b; border: 1px solid #fecaca; border-radius: 8px;">
+		<div class="alert alert-danger">
 			{{ errors.warning }}
 		</div>
 	{% endif %}
 
-	<div class="card" style="box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1), 0 2px 4px -1px rgba(0,0,0,0.06); border-radius: var(--border-radius); background: #fff; padding: 2rem;">
+	<div class="card card-large">
 		<form action="/LPDHED2dC7Gjrg2b/fornecedores/{{ supplier.id }}/editar" method="POST">
 
 			<h3 style="margin-top: 0; margin-bottom: 1.5rem; color: #1e293b; border-bottom: 1px solid #e2e8f0; padding-bottom: 0.5rem; font-size: 1.15rem;">
 				<i class="fas fa-info-circle" style="color: #3b82f6; margin-right: 6px;"></i>Dados Cadastrais
 			</h3>
 
-			<div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-bottom: 1.5rem;">
+			<div class="grid-2-cols grid-form-row">
 				<div>
-					<label for="company_name" style="display: block; font-weight: 600; margin-bottom: 0.5rem; color: #475569; font-size: 0.9rem;">Razão Social *</label>
-					<input type="text" id="company_name" name="company_name" class="form-control" value="{{ supplier.companyName }}" required style="width: 100%; padding: 0.65rem; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 0.95rem;"/>
+					<label for="company_name" class="form-label">Razão Social *</label>
+					<input type="text" id="company_name" name="company_name" class="form-control" value="{{ supplier.companyName }}" required />
 					{% if errors.companyName %}
-						<div style="color: #ef4444; font-size: 0.85rem; margin-top: 0.25rem;">{{ errors.companyName }}</div>
+						<div class="invalid-feedback">{{ errors.companyName }}</div>
 					{% endif %}
 				</div>
 				<div>
-					<label for="trade_name" style="display: block; font-weight: 600; margin-bottom: 0.5rem; color: #475569; font-size: 0.9rem;">Nome Fantasia</label>
-					<input type="text" id="trade_name" name="trade_name" class="form-control" value="{{ supplier.tradeName }}" style="width: 100%; padding: 0.65rem; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 0.95rem;"/>
+					<label for="trade_name" class="form-label">Nome Fantasia</label>
+					<input type="text" id="trade_name" name="trade_name" class="form-control" value="{{ supplier.tradeName }}" />
 				</div>
 			</div>
 
-			<div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1.5rem; margin-bottom: 1.5rem;">
+			<div class="grid-3-cols grid-form-row">
 				<div>
-					<label for="tax_id" style="display: block; font-weight: 600; margin-bottom: 0.5rem; color: #475569; font-size: 0.9rem;">CNPJ *</label>
-					<input type="text" id="tax_id" name="tax_id" class="form-control" placeholder="00.000.000/0000-00" value="{{ supplier.taxId }}" required style="width: 100%; padding: 0.65rem; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 0.95rem;"/>
+					<label for="tax_id" class="form-label">CNPJ *</label>
+					<input type="text" id="tax_id" name="tax_id" class="form-control" placeholder="00.000.000/0000-00" value="{{ supplier.taxId }}" required />
 					{% if errors.taxId %}
-						<div style="color: #ef4444; font-size: 0.85rem; margin-top: 0.25rem;">{{ errors.taxId }}</div>
+						<div class="invalid-feedback">{{ errors.taxId }}</div>
 					{% endif %}
 				</div>
 				<div>
-					<label for="state_registration" style="display: block; font-weight: 600; margin-bottom: 0.5rem; color: #475569; font-size: 0.9rem;">Inscrição Estadual</label>
-					<input type="text" id="state_registration" name="state_registration" class="form-control" value="{{ supplier.stateRegistration }}" style="width: 100%; padding: 0.65rem; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 0.95rem;"/>
+					<label for="state_registration" class="form-label">Inscrição Estadual</label>
+					<input type="text" id="state_registration" name="state_registration" class="form-control" value="{{ supplier.stateRegistration }}" />
 				</div>
 				<div>
-					<label for="municipal_registration" style="display: block; font-weight: 600; margin-bottom: 0.5rem; color: #475569; font-size: 0.9rem;">Inscrição Municipal</label>
-					<input type="text" id="municipal_registration" name="municipal_registration" class="form-control" value="{{ supplier.municipalRegistration }}" style="width: 100%; padding: 0.65rem; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 0.95rem;"/>
+					<label for="municipal_registration" class="form-label">Inscrição Municipal</label>
+					<input type="text" id="municipal_registration" name="municipal_registration" class="form-control" value="{{ supplier.municipalRegistration }}" />
 				</div>
 			</div>
 
-			<div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1.5rem; margin-bottom: 1.5rem;">
+			<div class="grid-3-cols grid-form-row">
 				<div>
-					<label for="email" style="display: block; font-weight: 600; margin-bottom: 0.5rem; color: #475569; font-size: 0.9rem;">E-mail *</label>
-					<input type="email" id="email" name="email" class="form-control" value="{{ supplier.email }}" required style="width: 100%; padding: 0.65rem; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 0.95rem;"/>
+					<label for="email" class="form-label">E-mail *</label>
+					<input type="email" id="email" name="email" class="form-control" value="{{ supplier.email }}" required />
 					{% if errors.email %}
-						<div style="color: #ef4444; font-size: 0.85rem; margin-top: 0.25rem;">{{ errors.email }}</div>
+						<div class="invalid-feedback">{{ errors.email }}</div>
 					{% endif %}
 				</div>
 				<div>
-					<label for="phone" style="display: block; font-weight: 600; margin-bottom: 0.5rem; color: #475569; font-size: 0.9rem;">Telefone</label>
-					<input type="text" id="phone" name="phone" class="form-control" value="{{ supplier.phone }}" style="width: 100%; padding: 0.65rem; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 0.95rem;"/>
+					<label for="phone" class="form-label">Telefone</label>
+					<input type="text" id="phone" name="phone" class="form-control" value="{{ supplier.phone }}" />
 				</div>
 				<div>
-					<label for="website" style="display: block; font-weight: 600; margin-bottom: 0.5rem; color: #475569; font-size: 0.9rem;">Website</label>
-					<input type="text" id="website" name="website" class="form-control" placeholder="https://..." value="{{ supplier.website }}" style="width: 100%; padding: 0.65rem; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 0.95rem;"/>
+					<label for="website" class="form-label">Website</label>
+					<input type="text" id="website" name="website" class="form-control" placeholder="https://..." value="{{ supplier.website }}" />
 				</div>
 			</div>
 
@@ -90,61 +90,61 @@
 				<i class="fas fa-map-marker-alt" style="color: #3b82f6; margin-right: 6px;"></i>Endereço Principal
 			</h3>
 
-			<div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-bottom: 1.5rem;">
+			<div class="grid-2-cols grid-form-row">
 				<div>
-					<label for="postal_code" style="display: block; font-weight: 600; margin-bottom: 0.5rem; color: #475569; font-size: 0.9rem;">CEP *</label>
-					<div style="display: flex; gap: 8px;">
-						<input type="text" id="postal_code" name="postal_code" class="form-control" placeholder="00000-000" value="{{ address.postal_code|default('') }}" required style="width: 100%; padding: 0.65rem; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 0.95rem;"/>
-						<button type="button" id="btn_cep_lookup" style="background: #f1f5f9; border: 1px solid #cbd5e1; color: #475569; padding: 0 1rem; border-radius: 6px; font-size: 0.9rem; font-weight: 600; cursor: pointer;">Buscar</button>
+					<label for="postal_code" class="form-label">CEP *</label>
+					<div class="d-flex gap-2">
+						<input type="text" id="postal_code" name="postal_code" class="form-control" placeholder="00000-000" value="{{ address.postal_code|default('') }}" required />
+						<button class="btn-secondary" type="button" id="btn_cep_lookup">Buscar</button>
 					</div>
 					{% if errors.postal_code %}
-						<div style="color: #ef4444; font-size: 0.85rem; margin-top: 0.25rem;">{{ errors.postal_code }}</div>
+						<div class="invalid-feedback">{{ errors.postal_code }}</div>
 					{% endif %}
 				</div>
 				<div>
-					<label for="district" style="display: block; font-weight: 600; margin-bottom: 0.5rem; color: #475569; font-size: 0.9rem;">Bairro</label>
-					<input type="text" id="district" name="district" class="form-control" value="{{ address.district|default('') }}" style="width: 100%; padding: 0.65rem; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 0.95rem;"/>
+					<label for="district" class="form-label">Bairro</label>
+					<input type="text" id="district" name="district" class="form-control" value="{{ address.district|default('') }}" />
 				</div>
 			</div>
 
-			<div style="display: grid; grid-template-columns: 2fr 1fr; gap: 1.5rem; margin-bottom: 1.5rem;">
+			<div class="grid-2to1-cols grid-form-row">
 				<div>
-					<label for="street" style="display: block; font-weight: 600; margin-bottom: 0.5rem; color: #475569; font-size: 0.9rem;">Rua / Logradouro *</label>
-					<input type="text" id="street" name="street" class="form-control" value="{{ address.street|default('') }}" required style="width: 100%; padding: 0.65rem; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 0.95rem;"/>
+					<label for="street" class="form-label">Rua / Logradouro *</label>
+					<input type="text" id="street" name="street" class="form-control" value="{{ address.street|default('') }}" required />
 					{% if errors.street %}
-						<div style="color: #ef4444; font-size: 0.85rem; margin-top: 0.25rem;">{{ errors.street }}</div>
+						<div class="invalid-feedback">{{ errors.street }}</div>
 					{% endif %}
 				</div>
 				<div>
-					<label for="number" style="display: block; font-weight: 600; margin-bottom: 0.5rem; color: #475569; font-size: 0.9rem;">Número *</label>
-					<input type="text" id="number" name="number" class="form-control" value="{{ address.number|default('') }}" required style="width: 100%; padding: 0.65rem; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 0.95rem;"/>
+					<label for="number" class="form-label">Número *</label>
+					<input type="text" id="number" name="number" class="form-control" value="{{ address.number|default('') }}" required />
 					{% if errors.number %}
-						<div style="color: #ef4444; font-size: 0.85rem; margin-top: 0.25rem;">{{ errors.number }}</div>
+						<div class="invalid-feedback">{{ errors.number }}</div>
 					{% endif %}
 				</div>
 			</div>
 
-			<div style="margin-bottom: 1.5rem;">
-				<label for="complement" style="display: block; font-weight: 600; margin-bottom: 0.5rem; color: #475569; font-size: 0.9rem;">Complemento</label>
-				<input type="text" id="complement" name="complement" class="form-control" value="{{ address.complement|default('') }}" style="width: 100%; padding: 0.65rem; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 0.95rem;"/>
+			<div class="mb-6">
+				<label for="complement" class="form-label">Complemento</label>
+				<input type="text" id="complement" name="complement" class="form-control" value="{{ address.complement|default('') }}" />
 			</div>
 
 			<div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1.5rem; margin-bottom: 2rem;">
 				<div>
-					<label for="country_id" style="display: block; font-weight: 600; margin-bottom: 0.5rem; color: #475569; font-size: 0.9rem;">País *</label>
-					<select id="country_id" name="country_id" class="form-control" style="width: 100%; padding: 0.65rem; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 0.95rem; background: #fff;">
+					<label for="country_id" class="form-label">País *</label>
+					<select id="country_id" name="country_id" class="form-control">
 						<option value="">Selecione...</option>
 						{% for country in countries %}
 							<option value="{{ country.id }}" {% if address and address.country and address.country.id == country.id %} selected {% endif %}>{{ country.name }}</option>
 						{% endfor %}
 					</select>
 					{% if errors.country_id %}
-						<div style="color: #ef4444; font-size: 0.85rem; margin-top: 0.25rem;">{{ errors.country_id }}</div>
+						<div class="invalid-feedback">{{ errors.country_id }}</div>
 					{% endif %}
 				</div>
 				<div>
-					<label for="zone_id" style="display: block; font-weight: 600; margin-bottom: 0.5rem; color: #475569; font-size: 0.9rem;">Estado *</label>
-					<select id="zone_id" name="zone_id" class="form-control" style="width: 100%; padding: 0.65rem; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 0.95rem; background: #fff;" {% if not zones %} disabled {% endif %}>
+					<label for="zone_id" class="form-label">Estado *</label>
+					<select id="zone_id" name="zone_id" class="form-control" {% if not zones %} disabled {% endif %}>
 						<option value="">Selecione o País...</option>
 						{% for zone in zones %}
 							<option value="{{ zone.id }}" {% if address and address.zone and address.zone.id == zone.id %} selected {% endif %} data-code="{{ zone.isoCode|replace({'BR-': ''}) }}">{{ zone.name }}
@@ -152,27 +152,27 @@
 						{% endfor %}
 					</select>
 					{% if errors.zone_id %}
-						<div style="color: #ef4444; font-size: 0.85rem; margin-top: 0.25rem;">{{ errors.zone_id }}</div>
+						<div class="invalid-feedback">{{ errors.zone_id }}</div>
 					{% endif %}
 				</div>
 				<div>
-					<label for="city_id" style="display: block; font-weight: 600; margin-bottom: 0.5rem; color: #475569; font-size: 0.9rem;">Cidade *</label>
-					<select id="city_id" name="city_id" class="form-control" style="width: 100%; padding: 0.65rem; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 0.95rem; background: #fff;" {% if not cities %} disabled {% endif %}>
+					<label for="city_id" class="form-label">Cidade *</label>
+					<select id="city_id" name="city_id" class="form-control" {% if not cities %} disabled {% endif %}>
 						<option value="">Selecione o Estado...</option>
 						{% for city in cities %}
 							<option value="{{ city.id }}" {% if address and address.city and address.city.id == city.id %} selected {% endif %}>{{ city.name }}</option>
 						{% endfor %}
 					</select>
 					{% if errors.city_id %}
-						<div style="color: #ef4444; font-size: 0.85rem; margin-top: 0.25rem;">{{ errors.city_id }}</div>
+						<div class="invalid-feedback">{{ errors.city_id }}</div>
 					{% endif %}
 				</div>
 			</div>
 
 			<!-- Botões de Ação -->
-			<div class="form-actions" style="display: flex; gap: 1rem; justify-content: flex-end; border-top: 1px solid #e2e8f0; padding-top: 1.5rem;">
-				<a href="/LPDHED2dC7Gjrg2b/fornecedores" class="btn" style="background: #f1f5f9; color: #475569; border: 1px solid #cbd5e1; text-decoration: none; padding: 10px 20px; border-radius: 6px; font-weight: 600;">Cancelar</a>
-				<button type="submit" class="btn btn-primary" style="padding: 10px 25px; border-radius: 6px; font-weight: 600; display: inline-flex; align-items: center; gap: 8px;">
+			<div class="form-actions">
+				<a href="/LPDHED2dC7Gjrg2b/fornecedores" class="btn btn-secondary">Cancelar</a>
+				<button type="submit" class="btn btn-primary">
 					<i class="fas fa-save"></i>
 					<span>Salvar Fornecedor</span>
 				</button>

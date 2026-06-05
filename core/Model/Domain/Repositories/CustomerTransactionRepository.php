@@ -3,7 +3,7 @@
 namespace Alpha\Model\Domain\Repositories;
 
 use Alpha\Mappers\EntityMappers\CustomerTransactionMapper;
-use Alpha\Model\Domain\Entities\CustomerTransaction;
+use Alpha\Model\Domain\Entities\Customer\CustomerTransaction;
 use Alpha\Model\Domain\InterfaceEntity;
 
 /**

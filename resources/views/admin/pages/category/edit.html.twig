@@ -5,31 +5,31 @@
 {% endblock %}
 
 {% block content %}
-	<div class="page-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
+	<div class="page-header">
 		<div>
 			<h2>Editar Categoria</h2>
-			<p style="color: #64748b; margin: 0;">Atualize as informações da categoria de produtos.</p>
+			<p class="page-subtitle">Atualize as informações da categoria de produtos.</p>
 		</div>
-		<a href="/LPDHED2dC7Gjrg2b/categorias" class="btn" style="text-decoration: none; display: inline-flex; align-items: center; gap: 8px; background: #f1f5f9; color: #475569; border: 1px solid #cbd5e1;">
+		<a href="/LPDHED2dC7Gjrg2b/categorias" class="btn btn-secondary">
 			<i class="fas fa-arrow-left"></i>
 			<span>Voltar para Lista</span>
 		</a>
 	</div>
 
-	<div class="card" style="box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1), 0 2px 4px -1px rgba(0,0,0,0.06); border-radius: var(--border-radius); background: #fff; padding: 2rem;">
+	<div class="card card-large">
 		<form action="/LPDHED2dC7Gjrg2b/categorias/{{ category.id }}/editar" method="POST" enctype="multipart/form-data">
-			<div class="form-grid" style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 1.5rem;">
+			<div class="form-grid grid-2-cols">
 				
 				<!-- Nome da Categoria -->
-				<div class="form-group" style="grid-column: span 2; margin-bottom: 1.5rem;">
-					<label for="name" style="display: block; font-weight: 600; margin-bottom: 0.5rem; color: #1e293b;">Nome da Categoria *</label>
-					<input type="text" id="name" name="name" class="form-control" value="{{ category.name }}" required style="width: 100%; padding: 0.75rem; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 1rem; color: #1e293b;" />
+				<div class="form-group col-span-2 grid-form-row">
+					<label for="name" class="form-label-dark">Nome da Categoria *</label>
+					<input type="text" id="name" name="name" class="form-control form-control-lg" value="{{ category.name }}" required />
 				</div>
 
 				<!-- Categoria Pai -->
-				<div class="form-group" style="margin-bottom: 1.5rem;">
-					<label for="parent_id" style="display: block; font-weight: 600; margin-bottom: 0.5rem; color: #1e293b;">Categoria Pai</label>
-					<select id="parent_id" name="parent_id" class="form-control" style="width: 100%; padding: 0.75rem; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 1rem; color: #1e293b; background: #fff;">
+				<div class="form-group mb-6">
+					<label for="parent_id" class="form-label-dark">Categoria Pai</label>
+					<select id="parent_id" name="parent_id" class="form-control form-control-lg">
 						<option value="0" {% if category.parent_id == 0 %}selected{% endif %}>--- Nenhuma (Raiz) ---</option>
 						{% for c in categories %}
 							<option value="{{ c.id }}" {% if category.parent_id == c.id %}selected{% endif %}>{{ c.name }}</option>
@@ -38,28 +38,28 @@
 				</div>
 
 				<!-- SEO URL (Keyword) -->
-				<div class="form-group" style="margin-bottom: 1.5rem;">
-					<label for="seo_keyword" style="display: block; font-weight: 600; margin-bottom: 0.5rem; color: #1e293b;">SEO URL (Amigável)</label>
-					<input type="text" id="seo_keyword" name="seo_keyword" class="form-control" value="{{ category.seo_keyword }}" placeholder="ex: tubos-de-pvc" style="width: 100%; padding: 0.75rem; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 1rem; color: #1e293b;" />
+				<div class="form-group mb-6">
+					<label for="seo_keyword" class="form-label-dark">SEO URL (Amigável)</label>
+					<input type="text" id="seo_keyword" name="seo_keyword" class="form-control form-control-lg" value="{{ category.seo_keyword }}" placeholder="ex: tubos-de-pvc" />
 				</div>
 
 				<!-- Ordem de Exibição -->
-				<div class="form-group" style="margin-bottom: 1.5rem;">
-					<label for="sort_order" style="display: block; font-weight: 600; margin-bottom: 0.5rem; color: #1e293b;">Ordem de Exibição</label>
-					<input type="number" id="sort_order" name="sort_order" class="form-control" value="{{ category.sort_order }}" style="width: 100%; padding: 0.75rem; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 1rem; color: #1e293b;" />
+				<div class="form-group mb-6">
+					<label for="sort_order" class="form-label-dark">Ordem de Exibição</label>
+					<input type="number" id="sort_order" name="sort_order" class="form-control form-control-lg" value="{{ category.sort_order }}" />
 				</div>
 
 				<!-- Status -->
-				<div class="form-group" style="margin-bottom: 1.5rem;">
-					<label for="status" style="display: block; font-weight: 600; margin-bottom: 0.5rem; color: #1e293b;">Status</label>
-					<select id="status" name="status" class="form-control" style="width: 100%; padding: 0.75rem; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 1rem; color: #1e293b; background: #fff;">
+				<div class="form-group mb-6">
+					<label for="status" class="form-label-dark">Status</label>
+					<select id="status" name="status" class="form-control form-control-lg">
 						<option value="1" {% if category.status == 1 %}selected{% endif %}>Ativo</option>
 						<option value="0" {% if category.status == 0 %}selected{% endif %}>Inativo</option>
 					</select>
 				</div>
 
 				<!-- Imagem de Capa -->
-				<div class="form-group" style="grid-column: span 2; margin-bottom: 1.5rem; padding: 1.5rem; border: 1px dashed #cbd5e1; border-radius: 12px; background: #f8fafc;">
+				<div class="form-group col-span-2 grid-form-row">
 					<label for="image" style="display: block; font-weight: 700; margin-bottom: 0.5rem; color: #0f172a; font-size: 1.1rem;">Imagem de Capa (Banner/Ícone)</label>
 					
 					{% if category.image %}
@@ -84,41 +84,41 @@
 					{% endif %}
 
 					<div class="upload-input-wrap">
-						<input type="file" id="image" name="image" accept="image/*" class="form-control" style="width: 100%; padding: 0.75rem; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 0.95rem; color: #1e293b; background: #fff;" />
+						<input type="file" id="image" name="image" accept="image/*" class="form-control form-control-lg" />
 						<p style="margin: 0.5rem 0 0 0; font-size: 0.8rem; color: #64748b;">Formatos aceitos: JPG, PNG, WEBP, GIF. O envio de uma nova imagem substituirá a atual.</p>
 					</div>
 				</div>
 
 				<!-- Meta Título -->
-				<div class="form-group" style="grid-column: span 2; margin-bottom: 1.5rem;">
-					<label for="meta_title" style="display: block; font-weight: 600; margin-bottom: 0.5rem; color: #1e293b;">Meta Título (SEO Title)</label>
-					<input type="text" id="meta_title" name="meta_title" class="form-control" value="{{ category.meta_title }}" style="width: 100%; padding: 0.75rem; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 1rem; color: #1e293b;" />
+				<div class="form-group col-span-2 grid-form-row">
+					<label for="meta_title" class="form-label-dark">Meta Título (SEO Title)</label>
+					<input type="text" id="meta_title" name="meta_title" class="form-control form-control-lg" value="{{ category.meta_title }}" />
 				</div>
 
 				<!-- Meta Descrição -->
-				<div class="form-group" style="grid-column: span 2; margin-bottom: 1.5rem;">
-					<label for="meta_description" style="display: block; font-weight: 600; margin-bottom: 0.5rem; color: #1e293b;">Meta Descrição (SEO Description)</label>
-					<input type="text" id="meta_description" name="meta_description" class="form-control" value="{{ category.meta_description }}" style="width: 100%; padding: 0.75rem; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 1rem; color: #1e293b;" />
+				<div class="form-group col-span-2 grid-form-row">
+					<label for="meta_description" class="form-label-dark">Meta Descrição (SEO Description)</label>
+					<input type="text" id="meta_description" name="meta_description" class="form-control form-control-lg" value="{{ category.meta_description }}" />
 				</div>
 
 				<!-- Meta Palavras-chave -->
-				<div class="form-group" style="grid-column: span 2; margin-bottom: 1.5rem;">
-					<label for="meta_keyword" style="display: block; font-weight: 600; margin-bottom: 0.5rem; color: #1e293b;">Meta Keywords (Palavras-chave)</label>
-					<input type="text" id="meta_keyword" name="meta_keyword" class="form-control" value="{{ category.meta_keyword }}" placeholder="ex: tubos, conexoes, pvc" style="width: 100%; padding: 0.75rem; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 1rem; color: #1e293b;" />
+				<div class="form-group col-span-2 grid-form-row">
+					<label for="meta_keyword" class="form-label-dark">Meta Keywords (Palavras-chave)</label>
+					<input type="text" id="meta_keyword" name="meta_keyword" class="form-control form-control-lg" value="{{ category.meta_keyword }}" placeholder="ex: tubos, conexoes, pvc" />
 				</div>
 
 				<!-- Descrição Detalhada -->
 				<div class="form-group" style="grid-column: span 2; margin-bottom: 2rem;">
-					<label for="description" style="display: block; font-weight: 600; margin-bottom: 0.5rem; color: #1e293b;">Descrição da Categoria</label>
-					<textarea id="description" name="description" class="form-control" rows="6" style="width: 100%; padding: 0.75rem; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 1rem; color: #1e293b; font-family: inherit; resize: vertical;">{{ category.description }}</textarea>
+					<label for="description" class="form-label-dark">Descrição da Categoria</label>
+					<textarea id="description" name="description" class="form-control form-control-lg" rows="6">{{ category.description }}</textarea>
 				</div>
 
 			</div>
 
 			<!-- Botões de Ação -->
-			<div class="form-actions" style="display: flex; gap: 1rem; justify-content: flex-end; border-top: 1px solid #e2e8f0; padding-top: 1.5rem; margin-top: 1.5rem;">
-				<a href="/LPDHED2dC7Gjrg2b/categorias" class="btn" style="background: #f1f5f9; color: #475569; border: 1px solid #cbd5e1; text-decoration: none; padding: 10px 20px; border-radius: 6px; font-weight: 600;">Cancelar</a>
-				<button type="submit" class="btn btn-primary" style="padding: 10px 25px; border-radius: 6px; font-weight: 600; display: inline-flex; align-items: center; gap: 8px;">
+			<div class="form-actions">
+				<a href="/LPDHED2dC7Gjrg2b/categorias" class="btn btn-secondary">Cancelar</a>
+				<button type="submit" class="btn btn-primary">
 					<i class="fas fa-save"></i>
 					<span>Salvar Alterações</span>
 				</button>

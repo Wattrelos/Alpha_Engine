@@ -38,13 +38,13 @@ class DeleteCategoryAction extends BaseController implements \Alpha\Controller\A
             $stmtSubs->execute([$categoryId]);
             $subIds = $stmtSubs->fetchAll(\PDO::FETCH_COLUMN);
 
-            // 2. Set subcategories parent to 0 (root level)
-            $stmtUpdateSubs = $conn->prepare("UPDATE `" . DB_PREFIX . "category` SET parent_id = 0 WHERE parent_id = ?");
+            // 2. Set subcategories parent to NULL (root level)
+            $stmtUpdateSubs = $conn->prepare("UPDATE `" . DB_PREFIX . "category` SET parent_id = NULL WHERE parent_id = ?");
             $stmtUpdateSubs->execute([$categoryId]);
 
             // 3. Rebuild paths for subcategories
             foreach ($subIds as $subId) {
-                $this->rebuildCategoryPaths((int)$subId, 0, $conn);
+                $this->rebuildCategoryPaths((int)$subId, null, $conn);
             }
 
             // 4. Delete category path records
@@ -86,16 +86,19 @@ class DeleteCategoryAction extends BaseController implements \Alpha\Controller\A
             ->withStatus(302);
     }
 
-    private function rebuildCategoryPaths(int $categoryId, int $parentId, \PDO $conn): void
+    private function rebuildCategoryPaths(int $categoryId, ?int $parentId, \PDO $conn): void
     {
         // Delete existing paths for this category
         $stmt = $conn->prepare("DELETE FROM `" . DB_PREFIX . "category_path` WHERE `category_id` = ?");
         $stmt->execute([$categoryId]);
 
         // Fetch parent's paths
-        $stmt = $conn->prepare("SELECT `path_id`, `level` FROM `" . DB_PREFIX . "category_path` WHERE `category_id` = ? ORDER BY `level` ASC");
-        $stmt->execute([$parentId]);
-        $paths = $stmt->fetchAll(\PDO::FETCH_ASSOC);
+        $paths = [];
+        if ($parentId !== null && $parentId > 0) {
+            $stmt = $conn->prepare("SELECT `path_id`, `level` FROM `" . DB_PREFIX . "category_path` WHERE `category_id` = ? ORDER BY `level` ASC");
+            $stmt->execute([$parentId]);
+            $paths = $stmt->fetchAll(\PDO::FETCH_ASSOC);
+        }
 
         $level = 0;
         foreach ($paths as $path) {

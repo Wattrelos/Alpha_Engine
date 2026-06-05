@@ -3,7 +3,7 @@
 namespace Alpha\Mappers\EntityMappers;
 
 use Alpha\Mappers\BaseMapper;
-use Alpha\Model\Domain\Entities\CustomerToken;
+use Alpha\Model\Domain\Entities\Customer\CustomerToken;
 
 /**
  * Mapper para a entidade CustomerToken.

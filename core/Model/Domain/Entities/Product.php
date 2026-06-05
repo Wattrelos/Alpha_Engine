@@ -29,7 +29,7 @@ class Product extends BaseEntity
     private int $quantity = 0;
     private int $stockStatusId = 0;
     private string $image = '';
-    private int $manufacturerId = 0;
+    private ?int $manufacturerId = null;
     private bool $shipping = true;
     private int $points = 0;
     private int $taxClassId = 0;
@@ -115,8 +115,8 @@ class Product extends BaseEntity
     public function getImage(): string { return $this->image; }
     public function setImage(string $image): self { $this->image = $image; return $this; }
 
-    public function getManufacturerId(): int { return $this->manufacturerId; }
-    public function setManufacturerId(int $id): self { $this->manufacturerId = $id; return $this; }
+    public function getManufacturerId(): ?int { return $this->manufacturerId; }
+    public function setManufacturerId(?int $id): self { $this->manufacturerId = $id; return $this; }
 
     public function isShipping(): bool { return $this->shipping; }
     public function setShipping(bool|int $shipping): self { $this->shipping = (bool)$shipping; return $this; }

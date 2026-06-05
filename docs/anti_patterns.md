@@ -5,10 +5,10 @@ Este documento registra as falhas de design arquitetural originaisdo código leg
 ---
 
 ## 1. O "Pseudo-Null" em Chaves Estrangeiras (FK = 0)
-**Módulo Afetado:** Categorias (`parent_id`), Clientes (`customer_id` em sessões/carrinho), downloads, etc.
+**Módulo Afetado:** Categorias (`parent_id`), Produtos (`manufacturer_id`), Clientes (`customer_id` em sessões/carrinho), downloads, etc.
 
 ### O Problema Original:
-O código legado armazena o valor inteiro `0` em vez de `NULL` para representar a ausência de um relacionamento (ex: categoria raiz sem categoria pai, ou visitante anônimo no carrinho).
+O código legado armazena o valor inteiro `0` em vez de `NULL` para representar a ausência de um relacionamento (ex: categoria raiz sem categoria pai, fabricante não selecionado em produtos, ou visitante anônimo no carrinho).
 * **Impacto:** Isso impede a criação de chaves estrangeiras restritivas (`FOREIGN KEY`) reais no MySQL (que acusa erro de integridade, já que ID `0` não existe na tabela pai). Em um modelo fortemente tipado (DDD), isso causa quebras de hidratação.
 
 ### A Solução Standalone na Alpha Engine:
@@ -16,6 +16,11 @@ O `DataAccessObject` (DAO) da Alpha Engine atua como um escudo durante a hidrata
 
 ### 🧹 Ação de Saneamento:
 À medida que as tabelas de banco forem migradas permanentemente para o novo esquema nativo da Alpha Engine, todas as colunas que representam associações opcionais devem sofrer `ALTER TABLE` para permitir `NULL`, acompanhado da conversão dos dados: `UPDATE tabela SET coluna = NULL WHERE coluna = 0`.
+
+* **Saneamentos Executados (2026-06-05):**
+  * **Categorias (`parent_id`)**: A coluna `parent_id` de `tbkk_category` foi convertida para permitir `NULL`, com os valores `0` (e um registro órfão) atualizados para `NULL`. Foi criada a FK `fk_category_parent` auto-referenciada.
+  * **Produtos (`manufacturer_id`)**: A coluna `manufacturer_id` de `tbkk_product` foi convertida para permitir `NULL`, com os valores `0` (e registros órfãos) atualizados para `NULL`. Foi criada a FK `fk_product_manufacturer` apontando para `tbkk_manufacturer`.
+  * **Relações Produto-Categoria (`category_id` em `tbkk_product_to_category`)**: Saneados os registros antigos onde `category_id = 0` (que provocavam falhas de integridade referencial), associando-os a categorias reais ou removendo a ligação inválida, possibilitando o estabelecimento de FKs estritas de integridade referencial.
 
 ---
 

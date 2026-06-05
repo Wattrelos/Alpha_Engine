@@ -49,3 +49,16 @@ Para assegurar o funcionamento dos componentes sem carregar bibliotecas JS robus
 *   **SEO Avançado**: URLs amigáveis e limpas indexam muito melhor nos motores de busca (como Google) em comparação com URLs procedurais cheias de parâmetros dinâmicos.
 *   **Isolamento Estético**: O layout do catálogo está totalmente imune a modificações globais do Bootstrap, garantindo que o tema dark e premium do e-commerce permaneça inalterado.
 *   **Performance (Lightweight)**: A eliminação do Bootstrap JS reduziu o tempo de processamento de scripts no navegador, resultando em interações instantâneas na galeria de imagens, abas e carrinho.
+
+---
+
+## 🔒 4. Saneamento do Banco de Dados e Chaves Referenciais (Pseudo-Null)
+Para viabilizar chaves estrangeiras restritivas reais no MySQL e manter o modelo Domain-Driven Design (DDD) livre de inconsistências:
+- **Categorias e Fabricantes**: Os registros residuais com ID `0` (ex: `parent_id = 0` na tabela de categorias ou `manufacturer_id = 0` na tabela de produtos) foram migrados para `NULL` após a alteração estrutural das colunas para permitir valores nulos.
+- **Associação de Produtos e Categorias**: Saneados os registros de `tbkk_product_to_category` onde `category_id = 0`, eliminando relações órfãs ou associando a categorias reais.
+
+## 🏢 5. Gestão Administrativa de Fabricantes (Admin Panel)
+Implementação completa da área de gerenciamento de marcas/fabricantes na administração da loja:
+- **Controladores Slim (Actions)**: `ListManufacturersAction`, `CreateManufacturerAction`, `StoreManufacturerAction`, `EditManufacturerAction`, `UpdateManufacturerAction`, `DeleteManufacturerAction`.
+- **Arquitetura Domain & Mapper**: Interação do controlador administrativo unicamente com as interfaces `ManufacturerRepository` e `ManufacturerMapper`, blindando o domínio contra regras de banco de dados.
+- **Interface Visual (Twig)**: Criação de visões Twig responsivas sob `resources/views/admin/catalog/manufacturer/` para listagem e formulários de edição e criação.

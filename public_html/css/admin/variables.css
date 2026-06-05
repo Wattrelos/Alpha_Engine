@@ -9,13 +9,21 @@
     --color-text-main: #212529;
     /* Cinza escuro (textos gerais) */
     --color-border: #e2e8f0;
-    /* Borda cinza */
+    /* Borda cinza suave (Slate 200) */
+    --color-border-hover: #cbd5e1;
+    /* Borda cinza no hover (Slate 300) */
     --color-card-bg: #ffffff;
-    /* Fundo branco (cards) */
-    --color-primary: #2563eb;
-    /* Azul principal */
-    --color-primary-hover: #1d4ed8;
-    /* Hover azul */
+    /* Fundo branco para cards se destacarem sobre o body */
+    --color-bg-soft: #f1f5f9;
+    /* Fundo suave alternativo (Slate 100) para inputs e cabeçalhos */
+    --color-primary: #3b82f6;
+    /* Azul principal mais vibrante (Blue 500) */
+    --color-primary-hover: #2563eb;
+    /* Hover azul (Blue 600) */
+    --color-primary-soft: rgba(59, 130, 246, 0.08);
+    /* Azul muito suave para hovers e estados ativos */
+    --color-primary-glow: rgba(59, 130, 246, 0.15);
+    /* Brilho azul para foco de inputs */
 }
 
 /* Fontes */
@@ -24,9 +32,22 @@ body {
     color: var(--color-text-main);
 }
 
-/* Dimensões padrão */
+/* Dimensões e Efeitos padrão */
 :root {
     --sidebar-width: 260px;
     --topbar-height: 60px;
-    --border-radius: 6px;
+    --border-radius: 12px;
+    --border-radius-sm: 8px;
+
+    /* Transições */
+    --transition-fast: 0.15s ease;
+    --transition-normal: 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+
+    /* Sombras Modernas */
+    --shadow-sm: 0 1px 2px 0 rgba(15, 23, 42, 0.03);
+    --shadow-md: 0 4px 6px -1px rgba(15, 23, 42, 0.05), 0 2px 4px -2px rgba(15, 23, 42, 0.05);
+    --shadow-lg: 0 10px 15px -3px rgba(15, 23, 42, 0.04), 0 4px 6px -4px rgba(15, 23, 42, 0.04);
+    --shadow-card: 0 4px 20px -2px rgba(15, 23, 42, 0.03), 0 2px 8px -1px rgba(15, 23, 42, 0.02);
+    --shadow-card-hover: 0 20px 25px -5px rgba(15, 23, 42, 0.08), 0 8px 10px -6px rgba(15, 23, 42, 0.03);
+    --shadow-topbar: 0 1px 3px 0 rgba(15, 23, 42, 0.03), 0 1px 2px -1px rgba(15, 23, 42, 0.02);
 }

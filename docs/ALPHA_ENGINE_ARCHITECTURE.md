@@ -43,6 +43,10 @@ A Alpha Engine divide suas responsabilidades em camadas bem delineadas:
 *   Plain Old PHP Objects (POPOs) puros, fortemente tipados e compatíveis com PHP 8.4.
 *   Utilizam **Atributos Nativos PHP** (como `#[ManyToOne]`, `#[OneToMany]`) para mapear relações.
 *   São totalmente agnósticos à infraestrutura de banco de dados, sem instruções SQL em seu corpo.
+*   Organizadas em subdiretórios específicos para melhor gerenciamento de domínios complexos:
+    *   [`Customer/`](file:///var/www/html/agsonhos/core/Model/Domain/Entities/Customer): Agrupa entidades ligadas a Clientes (ex: `Customer`, `CustomerApproval`, `CustomerHistory`, `CustomerLogin`, `CustomerOnline`, `CustomerReward`, `CustomerTransaction`).
+    *   [`Supplier/`](file:///var/www/html/agsonhos/core/Model/Domain/Entities/Supplier): Contém a entidade `Supplier` para gerenciamento de compras e fornecedores.
+    *   [`Geo/`](file:///var/www/html/agsonhos/core/Model/Domain/Entities/Geo): Agrupa entidades geográficas (`Country`, `Zone`, `City` e `Address`Format).
 
 ### 🎮 Controladores - BaseController (`core/Controller/`):
 *   Substituem completamente os controladores procedurais antigos, aplicando o conceito de *Skinny Controllers*.
@@ -56,10 +60,12 @@ A Alpha Engine divide suas responsabilidades em camadas bem delineadas:
 
 ## 4. Tratamento de Integridade e Isolamento de Dados
 
-Para assegurar uma transição limpa da base de dados e sanear os débitos técnicosdo código legado, a Alpha Engine implementa proteções ativas na camada de dados:
+Para assegurar uma transição limpa da base de dados e sanear os débitos técnicos do código legado, a Alpha Engine implementa proteções ativas na camada de dados, além de saneamentos definitivos na estrutura do banco:
 
 *   **Tratamento do Pseudo-Null (FK = 0)**: 
-    O banco legado utilizava o valor numérico `0` para representar ausência de associação (ex: `parent_id = 0` para categoria sem pai). Como isso viola regras de chaves estrangeiras de bancos rigorosos, o `DataAccessObject` escaneia os relacionamentos durante a hidratação e define a propriedade da entidade adequadamente como `null` quando encontra o valor `0`.
+    O banco legado utilizava o valor numérico `0` para representar ausência de associação (ex: `parent_id = 0` para categoria sem pai, ou `manufacturer_id = 0` para produto sem fabricante). 
+    - Na aplicação, o `DataAccessObject` escaneia os relacionamentos durante a hidratação e define a propriedade da entidade adequadamente como `null` quando encontra o valor `0`.
+    - No banco de dados, foi executada a migração de colunas críticas (como `parent_id` em `tbkk_category` e `manufacturer_id` em `tbkk_product`) para aceitar `NULL`, convertendo valores `0` residuais e criando restrições de chaves estrangeiras (`FOREIGN KEY`) reais. As tabelas de ligação de catálogo (como `tbkk_product_to_category` com `category_id = 0`) também foram saneadas para garantir integridade referencial.
 *   **Prevenção de Estouro de Sessão (Session Failsafe)**: 
     Problemas históricos causavam o acúmulo de dados corrompidos ou excessivos nas sessões (gerando arquivos/registros imensos e crash de memória RAM). O `SessionMapper` inspeciona ativamente o tamanho do registro (`SELECT LENGTH(data)`) e, caso encontre anomalias (ex: > 5MB), executa a remoção e recriação instantânea da sessão, mantendo a estabilidade da aplicação.
 

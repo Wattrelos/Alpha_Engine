@@ -3,7 +3,7 @@
 namespace Alpha\Model\Domain\Repositories;
 
 use Alpha\Mappers\EntityMappers\CustomerMapper;
-use Alpha\Model\Domain\Entities\Customer;
+use Alpha\Model\Domain\Entities\Customer\Customer;
 use Alpha\Model\Domain\InterfaceEntity;
 use Alpha\Support\EntityHydrator;
 use Alpha\Support\AlphaString;

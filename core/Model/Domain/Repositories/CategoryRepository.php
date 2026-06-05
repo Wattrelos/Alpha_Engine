@@ -39,17 +39,17 @@ class CategoryRepository extends AbstractRepository implements BaseRepositoryInt
             'meta_description' => $category['meta_description'] ?? '',
             'meta_keyword'     => $category['meta_keyword'] ?? '',
             'image'            => $category['image'] ?? '',
-            'parent_id'        => $category['parent_id'] ?? 0,
+            'parent_id'        => $category['parent_id'] ?? null,
         ];
     }
 
     /**
      * Recupera subcategorias de um determinado pai.
      *
-     * @param int $parentId (0 para raiz)
+     * @param int|null $parentId (null ou 0 para raiz)
      * @return array
      */
-    public function getCategories(int $parentId = 0): array
+    public function getCategories(?int $parentId = null): array
     {
         /** @var CategoryMapper $mapper */
         $mapper = $this->mapperFactory->get(CategoryMapper::class);
@@ -86,7 +86,8 @@ class CategoryRepository extends AbstractRepository implements BaseRepositoryInt
         // 3. Constrói a árvore de dependência relacional no PHP (Complexidade O(N))
         $tree = [];
         foreach ($flatCategories as $cat) {
-            $tree[$cat['parent_id']][] = $cat;
+            $parentId = $cat['parent_id'] !== null ? (int)$cat['parent_id'] : 0;
+            $tree[$parentId][] = $cat;
         }
 
         $html = $this->buildHtmlTree($tree, 0, '', clone $seoUrlRepository);
@@ -258,9 +259,9 @@ class CategoryRepository extends AbstractRepository implements BaseRepositoryInt
         $tree = [];
         foreach ($rows as $row) {
             $id       = (int)$row['id'];
-            $parentId = (int)$row['parent_id'];
+            $parentId = $row['parent_id'] !== null ? (int)$row['parent_id'] : null;
 
-            if ($parentId === 0) {
+            if ($parentId === null || $parentId === 0) {
                 $tree[] = &$index[$id];
             } elseif (isset($index[$parentId])) {
                 $index[$parentId]['children'][] = &$index[$id];

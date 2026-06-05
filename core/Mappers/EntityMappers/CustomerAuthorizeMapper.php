@@ -3,7 +3,7 @@
 namespace Alpha\Mappers\EntityMappers;
 
 use Alpha\Mappers\BaseMapper;
-use Alpha\Model\Domain\Entities\CustomerAuthorize;
+use Alpha\Model\Domain\Entities\Customer\CustomerAuthorize;
 
 /**
  * Mapper para a entidade CustomerAuthorize.

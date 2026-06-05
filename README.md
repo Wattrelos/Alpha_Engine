@@ -55,16 +55,23 @@ Estudos de impacto para decisões arquiteturais de banco de dados e infraestrutu
 ### 11. Subsistema do Carrinho de Compras e Checkout (Alpha Engine)
 Substituição completa da biblioteca de carrinho legada pelo `CartRepository` e `CartMapper` desacoplados. Registro do helper de pesos `Weight` no Registry global e ativação da rota de checkout dinâmica `/{lang}/checkout` com interface responsiva e interativa no padrão BEM/CSS. (Ver [Progresso do Carrinho](file:///var/www/html/agsonhos/docs/cart_progress.md))
 
-Substituição completa da biblioteca de carrinho legada pelo `CartRepository` e `CartMapper` desacoplados. Registro do helper de pesos `Weight` no Registry global e ativação da rota de checkout dinâmica `/{lang}/checkout` com interface responsiva e interativa no padrão BEM/CSS. (Ver Progresso do Carrinho)
-
 ### 12. Subsistema de Autenticação e Cadastro (Auth)
-Refatoração integral do fluxo de login, registro e gerenciamento de conta via middlewares (Slim) e abstração `AuthService`. (Ver Progresso de Autenticação)
+Refatoração integral do fluxo de login, registro e gerenciamento de conta via middlewares (Slim) e abstração `AuthService`. (Ver [Progresso de Autenticação](file:///var/www/html/agsonhos/docs/auth_progress.md))
 
 ### 13. Componentização e Apresentação Visual (Twig)
-Mapeamento da estrutura visual adotando *Atomic Design* (Atoms, Molecules, Organisms, Layouts e Pages) e reestruturação da interface de usuário em subdiretórios. (Ver Estrutura de Páginas)
+Mapeamento da estrutura visual adotando *Atomic Design* (Atoms, Molecules, Organisms, Layouts e Pages) e reestruturação da interface de usuário em subdiretórios. (Ver [Estrutura de Diretórios](file:///var/www/html/agsonhos/docs/directories_structure.md))
 
 ### 14. Subsistemas Auxiliares e Transversais
 *   Refatoração da Biblioteca de Moedas (Currency)
+
+### 15. Compras, Fornecedores e Localização Geo (Procurement)
+Implementação do sistema de fornecedores na área administrativa, acoplado a um mecanismo robusto de endereços com suporte a países, estados (zones) e cidades (Geo entities).
+
+### 16. Saneamento de Pseudo-Nulls e Integridade de Dados
+Fim definitivo do anti-pattern `FK = 0` na base de dados para relacionamentos do catálogo (categorias e fabricantes), migrando registros para `NULL` e adicionando chaves estrangeiras (`FOREIGN KEY`) restritivas.
+
+### 17. Modernização Visual do Painel Administrativo (Admin)
+Extração de estilos inline e centralização em arquivos externos (`/css/admin/`), acompanhado de um upgrade estético completo: tons suaves (Slate 50), sombras 3D em camadas de profundidade, transições suaves e feedback físico interativo em hovers e cliques.
 
 ---
 *Nota: Este índice foi gerado para organizar o conteúdo distribuído. Os arquivos `.md` mencionados acima devem ser mantidos em sincronia com as evoluções do código em `core/`.*

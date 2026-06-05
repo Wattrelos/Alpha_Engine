@@ -4,6 +4,7 @@ namespace Alpha\Model\Domain\Entities;
 
 use Alpha\Model\Domain\BaseEntity;
 use Alpha\Model\Domain\Attributes\ManyToOne;
+use Alpha\Model\Domain\Entities\Customer\Customer;
 
 /**
  * Entidade Review - Gerencia as avaliações de produtos feitas pelos clientes.

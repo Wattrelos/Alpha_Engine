@@ -2,7 +2,7 @@
 
 namespace Alpha\Model\Domain\Repositories;
 
-use Alpha\Model\Domain\Entities\CustomerReward;
+use Alpha\Model\Domain\Entities\Customer\CustomerReward;
 use Alpha\Model\Domain\InterfaceEntity;
 
 /**

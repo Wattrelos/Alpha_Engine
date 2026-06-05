@@ -3,7 +3,7 @@ namespace Alpha\Model\Domain\Repositories;
 
 use Alpha\Mappers\EntityMappers\CustomerAffiliateMapper;
 use Alpha\Model\Domain\InterfaceEntity;
-use Alpha\Model\Domain\Entities\CustomerAffiliate;
+use Alpha\Model\Domain\Entities\Customer\CustomerAffiliate;
 use Alpha\Support\EntityHydrator;
 
 class CustomerAffiliateRepository extends AbstractRepository implements BaseRepositoryInterface

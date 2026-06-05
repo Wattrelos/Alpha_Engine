@@ -13,7 +13,7 @@ use Alpha\Model\DataAccessObject\QueryBuilder;
 class CustomerGroupMapper extends BaseMapper {
     
     protected string $tableName = 'customer_group';
-    protected string $entityClass = \Alpha\Model\Domain\Entities\CustomerGroup::class;
+    protected string $entityClass = \Alpha\Model\Domain\Entities\Customer\CustomerGroup::class;
 
     /**
      * Extrai todos os grupos de clientes disponíveis junto com a tradução.

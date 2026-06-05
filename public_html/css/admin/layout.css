@@ -8,10 +8,12 @@
 /* Sidebar */
 .sidebar {
     width: 260px;
-    background: #1e293b;
+    background: var(--color-bg-sidebar);
     color: #fff;
-    padding: 20px 0;
+    padding: 24px 0;
     flex-shrink: 0;
+    box-shadow: 4px 0 24px rgba(0, 0, 0, 0.15);
+    z-index: 11;
 }
 
 /* Menu lateral */
@@ -20,19 +22,46 @@
     padding: 0;
 }
 
+.sidebar li {
+    margin: 4px 12px;
+}
+
 .sidebar li a {
     display: flex;
     align-items: center;
-    padding: 12px 20px;
-    color: #94a3b8;
+    padding: 10px 16px;
+    color: var(--color-text-sidebar);
     text-decoration: none;
-    transition: 0.2s;
+    border-radius: var(--border-radius-sm);
+    font-weight: 500;
+    transition: var(--transition-normal);
 }
 
-.sidebar li a:hover,
+.sidebar li a:hover {
+    background: rgba(255, 255, 255, 0.05);
+    color: var(--color-text-sidebar-active);
+}
+
 .sidebar li a.active {
-    background: #334155;
-    color: #fff;
+    background: rgba(59, 130, 246, 0.08);
+    color: var(--color-primary);
+    font-weight: 600;
+    position: relative;
+}
+
+.sidebar li a.active::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 25%;
+    height: 50%;
+    width: 4px;
+    background: var(--color-primary);
+    border-radius: 0 4px 4px 0;
+}
+
+.sidebar li a.active:hover {
+    background: rgba(59, 130, 246, 0.12);
 }
 
 /* Main Content */
@@ -45,17 +74,22 @@
 /* Topbar */
 .topbar {
     height: 60px;
-    background: #fff;
-    border-bottom: 1px solid #e2e8f0;
+    background: #ffffff;
+    border-bottom: 1px solid var(--color-border);
     padding: 0 30px;
     display: flex;
     align-items: center;
     justify-content: space-between;
+    box-shadow: var(--shadow-topbar);
+    z-index: 10;
 }
 
 /* Título da página */
 .page-header {
-    margin-bottom: 25px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
 }
 
 .page-header h2 {
@@ -125,8 +159,8 @@
 }
 
 .sidebar-brand {
-    padding: 20px 30px;
-    border-bottom: 1px solid #334155;
+    padding: 20px 24px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
     margin-bottom: 20px;
 }
 
@@ -200,4 +234,54 @@
     justify-content: center;
     font-weight: 700;
     color: var(--color-primary);
+}
+
+/* ── Refactored Layout Grids ── */
+
+.page-subtitle {
+    color: #64748b;
+    margin: 0;
+}
+
+.grid-2-cols {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem;
+}
+
+.grid-3-cols {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 1.5rem;
+}
+
+.grid-2to1-cols {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 1.5rem;
+}
+
+.grid-filters {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1rem;
+    align-items: flex-end;
+}
+
+.grid-form-row {
+    margin-bottom: 1.5rem;
+}
+
+.col-span-2 {
+    grid-column: span 2;
+}
+
+@media (max-width: 768px) {
+    .grid-2-cols, .grid-3-cols, .grid-2to1-cols {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+    }
+    .col-span-2 {
+        grid-column: span 1;
+    }
 }

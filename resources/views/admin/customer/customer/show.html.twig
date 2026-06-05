@@ -5,17 +5,17 @@
 {% endblock %}
 
 {% block content %}
-	<div class="page-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
+	<div class="page-header">
 		<div>
 			<h2>Ficha do Cliente: {{ customer.firstname }} {{ customer.lastname }}</h2>
-			<p style="color: #64748b; margin: 0;">Visualize o perfil completo, endereços e histórico de compras.</p>
+			<p class="page-subtitle">Visualize o perfil completo, endereços e histórico de compras.</p>
 		</div>
-		<div style="display: flex; gap: 8px;">
-			<a href="/LPDHED2dC7Gjrg2b/clientes" class="btn" style="text-decoration: none; display: inline-flex; align-items: center; gap: 8px; background: #f1f5f9; color: #475569; border: 1px solid #cbd5e1; padding: 10px 20px; border-radius: 6px; font-weight: 600;">
+		<div class="d-flex gap-2">
+			<a href="/LPDHED2dC7Gjrg2b/clientes" class="btn btn-secondary">
 				<i class="fas fa-arrow-left"></i>
 				<span>Voltar</span>
 			</a>
-			<a href="/LPDHED2dC7Gjrg2b/clientes/{{ customer.id }}/editar" class="btn btn-primary" style="text-decoration: none; display: inline-flex; align-items: center; gap: 8px; padding: 10px 20px; border-radius: 6px; font-weight: 600;">
+			<a href="/LPDHED2dC7Gjrg2b/clientes/{{ customer.id }}/editar" class="btn btn-primary btn-with-icon">
 				<i class="fas fa-user-edit"></i>
 				<span>Editar Cadastro</span>
 			</a>
@@ -32,40 +32,40 @@
 			</h3>
 			
 			<div style="display: flex; flex-direction: column; gap: 1rem;">
-				<div style="display: flex; border-bottom: 1px solid #f1f5f9; padding-bottom: 0.5rem;">
-					<span style="font-weight: 600; width: 140px; color: #64748b;">Nome Completo:</span>
+				<div class="d-flex border-bottom pb-2">
+					<span class="text-semibold text-muted w-140">Nome Completo:</span>
 					<span style="color: #1e293b; font-weight: 500;">{{ customer.firstname }} {{ customer.lastname }}</span>
 				</div>
 				
-				<div style="display: flex; border-bottom: 1px solid #f1f5f9; padding-bottom: 0.5rem;">
-					<span style="font-weight: 600; width: 140px; color: #64748b;">E-mail:</span>
+				<div class="d-flex border-bottom pb-2">
+					<span class="text-semibold text-muted w-140">E-mail:</span>
 					<span style="color: #1e293b;">{{ customer.email }}</span>
 				</div>
 				
-				<div style="display: flex; border-bottom: 1px solid #f1f5f9; padding-bottom: 0.5rem;">
-					<span style="font-weight: 600; width: 140px; color: #64748b;">Telefone:</span>
+				<div class="d-flex border-bottom pb-2">
+					<span class="text-semibold text-muted w-140">Telefone:</span>
 					<span style="color: #1e293b;">{{ customer.telephone }}</span>
 				</div>
 
-				<div style="display: flex; border-bottom: 1px solid #f1f5f9; padding-bottom: 0.5rem;">
-					<span style="font-weight: 600; width: 140px; color: #64748b;">Tipo de Pessoa:</span>
+				<div class="d-flex border-bottom pb-2">
+					<span class="text-semibold text-muted w-140">Tipo de Pessoa:</span>
 					<span style="color: #1e293b;">
 						{% if customer.persontype == 'J' %}Jurídica{% else %}Física{% endif %}
 					</span>
 				</div>
 
-				<div style="display: flex; border-bottom: 1px solid #f1f5f9; padding-bottom: 0.5rem;">
-					<span style="font-weight: 600; width: 140px; color: #64748b;">CPF / CNPJ:</span>
+				<div class="d-flex border-bottom pb-2">
+					<span class="text-semibold text-muted w-140">CPF / CNPJ:</span>
 					<span style="color: #1e293b;">{{ customer.cpf_cnpj|default('-') }}</span>
 				</div>
 				
-				<div style="display: flex; border-bottom: 1px solid #f1f5f9; padding-bottom: 0.5rem;">
-					<span style="font-weight: 600; width: 140px; color: #64748b;">Grupo de Clientes:</span>
+				<div class="d-flex border-bottom pb-2">
+					<span class="text-semibold text-muted w-140">Grupo de Clientes:</span>
 					<span style="color: #1e293b;">{{ customer.customer_group }}</span>
 				</div>
 				
-				<div style="display: flex; border-bottom: 1px solid #f1f5f9; padding-bottom: 0.5rem;">
-					<span style="font-weight: 600; width: 140px; color: #64748b;">Status:</span>
+				<div class="d-flex border-bottom pb-2">
+					<span class="text-semibold text-muted w-140">Status:</span>
 					<span>
 						{% if customer.status %}
 							<span class="status-pill status-approved">Ativo</span>
@@ -75,8 +75,8 @@
 					</span>
 				</div>
 
-				<div style="display: flex; border-bottom: 1px solid #f1f5f9; padding-bottom: 0.5rem;">
-					<span style="font-weight: 600; width: 140px; color: #64748b;">Aprovado (Safe):</span>
+				<div class="d-flex border-bottom pb-2">
+					<span class="text-semibold text-muted w-140">Aprovado (Safe):</span>
 					<span>
 						{% if customer.safe %}
 							<span style="color: #10b981; font-weight: 600;"><i class="fas fa-check-circle"></i> Sim</span>
@@ -86,13 +86,13 @@
 					</span>
 				</div>
 
-				<div style="display: flex; border-bottom: 1px solid #f1f5f9; padding-bottom: 0.5rem;">
-					<span style="font-weight: 600; width: 140px; color: #64748b;">Cadastrado em:</span>
+				<div class="d-flex border-bottom pb-2">
+					<span class="text-semibold text-muted w-140">Cadastrado em:</span>
 					<span style="color: #1e293b;">{{ customer.date_added|date('d/m/Y H:i') }}</span>
 				</div>
 
 				<div style="display: flex; padding-bottom: 0.5rem;">
-					<span style="font-weight: 600; width: 140px; color: #64748b;">IP de Registro:</span>
+					<span class="text-semibold text-muted w-140">IP de Registro:</span>
 					<span style="color: #64748b;">{{ customer.ip }}</span>
 				</div>
 			</div>
@@ -139,23 +139,23 @@
 			<i class="fas fa-history" style="color: #6366f1; margin-right: 8px;"></i>Histórico de Pedidos Recentes (Últimos 5)
 		</h3>
 		
-		<div style="overflow-x: auto;">
+		<div class="overflow-x-auto">
 			<table class="table" style="margin: 0; width: 100%; border-collapse: collapse;">
 				<thead>
 					<tr>
-						<th style="padding: 0.75rem; border-bottom: 2px solid #f1f5f9; text-align: left;">ID do Pedido</th>
-						<th style="padding: 0.75rem; border-bottom: 2px solid #f1f5f9; text-align: left;">Valor Total</th>
-						<th style="padding: 0.75rem; border-bottom: 2px solid #f1f5f9; text-align: left;">Data</th>
-						<th style="padding: 0.75rem; border-bottom: 2px solid #f1f5f9; text-align: left;">Status</th>
+						<th>ID do Pedido</th>
+						<th>Valor Total</th>
+						<th>Data</th>
+						<th>Status</th>
 					</tr>
 				</thead>
 				<tbody>
 					{% if orders %}
 						{% for order in orders %}
-							<tr style="border-bottom: 1px solid #f1f5f9;">
+							<tr>
 								<td style="padding: 0.75rem; font-weight: bold; color: #1e293b;">#{{ order.order_id }}</td>
 								<td style="padding: 0.75rem; color: #1e293b; font-weight: 500;">{{ order.total }}</td>
-								<td style="padding: 0.75rem; color: #475569;">{{ order.date_added }}</td>
+								<td class="text-muted">{{ order.date_added }}</td>
 								<td style="padding: 0.75rem;">
 									<span class="status-pill" style="background: #e0e7ff; color: #3730a3;">{{ order.status }}</span>
 								</td>

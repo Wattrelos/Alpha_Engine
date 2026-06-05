@@ -2,7 +2,7 @@
 
 namespace Alpha\Model\Domain\Repositories;
 
-use Alpha\Model\Domain\Entities\CustomerAuthorize;
+use Alpha\Model\Domain\Entities\Customer\CustomerAuthorize;
 
 /**
  * CustomerAuthorizeRepository

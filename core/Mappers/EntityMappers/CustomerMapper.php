@@ -4,7 +4,7 @@ namespace Alpha\Mappers\EntityMappers;
 
 use Alpha\Mappers\BaseMapper;
 use Alpha\Model\DataAccessObject\QueryBuilder;
-use Alpha\Model\Domain\Entities\Customer;
+use Alpha\Model\Domain\Entities\Customer\Customer;
 
 /**
  * CustomerMapper - Gerencia a autenticação e persistência de clientes.
