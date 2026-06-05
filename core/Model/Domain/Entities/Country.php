@@ -1,11 +1,12 @@
 <?php
+
 namespace Alpha\Model\Domain\Entities;
 
 use Alpha\Model\Domain\BaseEntity;
 use Alpha\Model\Domain\Attributes\OneToMany;
 
 /**
- * Entidade Country - Representa as nações para fins de logística e impostos.
+ * DEPRECATED. Entidade Country - Representa as nações para fins de logística e impostos.
  * 
  * Melhoras aplicadas (Alpha Engine):
  * - Integridade ISO: Campos isoCode2 e isoCode3 tipados para garantir validações precisas em gateways de pagamento.

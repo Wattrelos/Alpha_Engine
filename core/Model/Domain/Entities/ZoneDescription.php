@@ -1,11 +1,12 @@
 <?php
+
 namespace Alpha\Model\Domain\Entities;
 
 use Alpha\Model\Domain\BaseEntity;
 use Alpha\Model\Domain\Attributes\ManyToOne;
 
 /**
- * Entidade ZoneDescription - Traduções e nomes regionalizados de estados/províncias.
+ * DEPRECATED.Entidade ZoneDescription - Traduções e nomes regionalizados de estados/províncias.
  * 
  * Melhoras aplicadas (Alpha Engine):
  * - Suporte a Multi-idiomas: Estruturação para nomes traduzidos de Zonas (Estados/Departamentos).
@@ -32,7 +33,7 @@ class ZoneDescription extends BaseEntity
     public function setZoneId(int $zoneId): self
     {
         $this->zoneId = $zoneId;
-        
+
         // Alpha Engine: Previne corrupção do Identity Map.
         // Se houver uma entidade carregada e o novo ID for diferente, desanexa.
         if ($this->zone && $this->zone->getId() !== $zoneId) {
@@ -49,17 +50,27 @@ class ZoneDescription extends BaseEntity
     public function setLanguageId(int $languageId): self
     {
         $this->languageId = $languageId;
-        
+
         if ($this->language && $this->language->getId() !== $languageId) {
             $this->language = null;
         }
         return $this;
     }
 
-    public function getName(): string { return $this->name; }
-    public function setName(string $name): self { $this->name = $name; return $this; }
+    public function getName(): string
+    {
+        return $this->name;
+    }
+    public function setName(string $name): self
+    {
+        $this->name = $name;
+        return $this;
+    }
 
-    public function getZone(): ?Zone { return $this->zone; }
+    public function getZone(): ?Zone
+    {
+        return $this->zone;
+    }
     public function setZone(?Zone $zone): self
     {
         $this->zone = $zone;
@@ -71,7 +82,10 @@ class ZoneDescription extends BaseEntity
         return $this;
     }
 
-    public function getLanguage(): ?Language { return $this->language; }
+    public function getLanguage(): ?Language
+    {
+        return $this->language;
+    }
     public function setLanguage(?Language $language): self
     {
         $this->language = $language;

@@ -1,4 +1,5 @@
 <?php
+
 namespace Alpha\Model\Domain\Entities;
 
 use Alpha\Model\Domain\BaseEntity;
@@ -6,7 +7,7 @@ use Alpha\Model\Domain\Attributes\ManyToOne;
 use Alpha\Model\Domain\Attributes\OneToMany;
 
 /**
- * Entidade Zone - Representa estados, províncias ou regiões.
+ * DEPRECATED. Entidade Zone - Representa estados, províncias ou regiões.
  * 
  * Melhoras aplicadas (Alpha Engine):
  * - Injeção Relacional: Atributo #[ManyToOne] para que o DAO resolva o objeto Country automaticamente.
@@ -94,10 +95,9 @@ class Zone extends BaseEntity
     {
         return $this->descriptions;
     }
-        public function setDescriptions(array $descriptions): self
+    public function setDescriptions(array $descriptions): self
     {
         $this->descriptions = $descriptions;
         return $this;
     }
-
 }

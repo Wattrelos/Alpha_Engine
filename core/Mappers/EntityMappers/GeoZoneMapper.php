@@ -2,41 +2,24 @@
 
 namespace Alpha\Mappers\EntityMappers;
 
-use Alpha\Model\DataAccessObject\QueryBuilder;
-use Alpha\Model\DataAccessObject\DataAccessObject;
+use Alpha\Mappers\BaseMapper;
+use Alpha\Model\Domain\Entities\Geo\Zone;
 
-class GeoZoneMapper
-{
-    private DataAccessObject $dao;
-
-    public function __construct()
-    {
-        $this->dao = new DataAccessObject();
-    }
-
-    public function findAll(): array
-    {
-        $builder = (new QueryBuilder())
-            ->from(DB_PREFIX . 'geo_zone')
-            ->select('geo_zone_id, name')
-            ->orderBy('name', 'ASC');
-
-        return $this->dao->executeQuery($builder);
-    }
+/**
+ * Mapper para gerenciar a lógica de Estados (Geo Zone)
+ */
+class GeoZoneMapper extends BaseMapper {
+    
+    protected string $tableName = 'geo_zones';
+    protected string $entityClass = Zone::class;
 
     /**
-     * Alpha Engine: Batch Loading de Zonas Geográficas (Fim do N+1 em fretes e impostos)
-     * Retorna todos os IDs de Geo Zones aos quais este endereço pertence de uma só vez.
+     * Lista todas as zonas de um país
+     * 
+     * @param int $country_id
+     * @return Zone[]
      */
-    public function getValidGeoZoneIdsForAddress(int $countryId, int $zoneId): array
-    {
-        $builder = (new QueryBuilder())
-            ->from(DB_PREFIX . 'zone_to_geo_zone')
-            ->where('country_id = ? AND (zone_id = ? OR zone_id = 0)', [$countryId, $zoneId])
-            ->select('geo_zone_id');
-
-        $result = $this->dao->executeQuery($builder);
-
-        return array_map('intval', array_column($result, 'geo_zone_id'));
+    public function getZonesByCountryId(int $country_id): array {
+        return $this->search(['countryId' => $country_id]);
     }
 }

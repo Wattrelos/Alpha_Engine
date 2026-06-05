@@ -3,16 +3,19 @@
 namespace Alpha\Model\Domain\Entities\Geo;
 
 use Alpha\Model\Domain\BaseEntity;
-/* Novas classes de engereçamento e localização que susbstituirá as antigas classes e tabelasdo código legado:
-/* Usaremos o doctrine para criar as entidades com persistencia de dados no banco de dados. 
-use Doctrine\ORM\Mapping as ORM;
 
-#[ORM\Entity]
-#[ORM\Table(name: "agsc_geo_countries")]
-*/
+// Novas classes de engereçamento e localização que susbstituirá as antigas classes e tabelasdo código legado:
+// Usaremos o doctrine para criar as entidades com persistencia de dados no banco de dados. 
+
+// Como esta classe fica em uma subpasta, temos que utilizar alias para o namespace, por exemplo:
+// use Alpha\Model\Domain\Entities\Geo\Country as GeoCountry;
+// Isso ocorre porque estamos utilizando o namespace Alpha\Model\Domain\Entities\Geo na classe Country
+// E a classe Country também está no mesmo namespace, então para evitar conflito, usamos o alias.
 
 class Country extends BaseEntity
 {
+    public const TABLE_NAME = 'agsc_geo_countries';
+
     // #[ORM\Column(type: "string", length: 100)]
     private string $name;
 

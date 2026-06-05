@@ -69,7 +69,7 @@
 									<a href="{{ url_for('category.detail', {'lang': lang, 'slug': cat.seo_keyword ?: cat.id}) }}" class="category-card">
 										{% if cat.image %}
 											<div class="category-card__image-wrapper">
-												<img src="/image/{{ cat.image }}" alt="{{ cat.name }}" loading="lazy">
+												<img src="/{{ cat.image }}" alt="{{ cat.name }}" loading="lazy">
 											</div>
 										{% else %}
 											<div class="category-card__no-image">🏗️</div>

@@ -87,4 +87,37 @@ class SettingRepository extends AbstractRepository implements BaseRepositoryInte
     {
         return null;
     }
+
+    public function editSetting(string $code, array $data, int $storeId = 1): void
+    {
+        $dao = new \Alpha\Model\DataAccessObject\DataAccessObject();
+        
+        // 1. Delete existing settings for this store and code
+        $deleteQuery = (new \Alpha\Model\DataAccessObject\QueryBuilder())
+            ->delete(DB_PREFIX . 'setting')
+            ->where('store_id = ?', [$storeId])
+            ->where('code = ?', [$code]);
+        $dao->execute($deleteQuery);
+
+        // 2. Insert new settings
+        foreach ($data as $key => $value) {
+            $serialized = 0;
+            if (is_array($value) || is_object($value)) {
+                $value = json_encode($value, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
+                $serialized = 1;
+            }
+
+            $sql = "INSERT INTO `" . DB_PREFIX . "setting` (`store_id`, `code`, `key`, `value`, `serialized`) VALUES (?, ?, ?, ?, ?)";
+            $dao->executeRawSQL($sql, [$storeId, $code, $key, (string)$value, $serialized]);
+        }
+
+            // 3. Invalidate memory cache
+        $this->isLoaded = false;
+
+        // 4. Clear formatted settings cache file if exists
+        $cachePath = DIR_STORAGE . 'cache/store_settings_formatted.json';
+        if (is_file($cachePath)) {
+            @unlink($cachePath);
+        }
+    }
 }

@@ -358,7 +358,7 @@ class DataAccessObject
         $reflection = new ReflectionClass($clazz);
 
         $where = $this->buildWhereClause($entity);
-        $tableName = $this->tablePrefix . $this->convertPascalCaseToSnakeCase($reflection->getShortName());
+        $tableName = $this->getTableNameForClass($clazz);
         $sql = "SELECT * FROM `$tableName` " . $where;
 
         try {
@@ -432,7 +432,7 @@ class DataAccessObject
         if (empty($toFetchIds)) return $results;
 
         $reflection = new ReflectionClass($className);
-        $tableName = $this->tablePrefix . $this->convertPascalCaseToSnakeCase($reflection->getShortName());
+        $tableName = $this->getTableNameForClass($className);
         $placeholders = implode(',', array_fill(0, count($toFetchIds), '?'));
         $sql = "SELECT * FROM `$tableName` WHERE id IN ($placeholders)";
 
@@ -512,7 +512,7 @@ class DataAccessObject
                         if (!$childInstance) {
                             // Alpha Engine: Injeta o Proxy nativo de ManyToOne para Lazy Loading (Deep Hydration).
                             $childInstance = ProxyFactory::createProxy($paramType, $childId, function ($proxy, $id) use ($paramType) {
-                                $tableName = $this->tablePrefix . $this->convertPascalCaseToSnakeCase((new ReflectionClass($paramType))->getShortName());
+                                $tableName = $this->getTableNameForClass($paramType);
                                 $conn = ConnectionDB::getInstance()->getConnection();
                                 $stmt = $conn->prepare("SELECT * FROM `$tableName` WHERE id = ?");
                                 $stmt->execute([$id]);
@@ -545,7 +545,7 @@ class DataAccessObject
             // então o DAO pula buscas desnecessárias.
             if ($currentId > 0 && !$reflectionParent->isAbstract()) {
                 $instance->setId($currentId);
-                $parentTableName = $this->tablePrefix . $this->convertPascalCaseToSnakeCase((new ReflectionClass($parentClass))->getShortName());
+                $parentTableName = $this->getTableNameForClass($parentClass);
                 $stmt = $conn->prepare("SELECT * FROM `$parentTableName` WHERE id = ?");
                 $stmt->execute([$currentId]);
                 if ($parentRow = $stmt->fetch(PDO::FETCH_ASSOC)) {
@@ -558,7 +558,7 @@ class DataAccessObject
     {
         $this->addToIdentityMap($entity);
         $reflection = new ReflectionClass($entity);
-        $tableName = $this->tablePrefix . $this->convertPascalCaseToSnakeCase($reflection->getShortName());
+        $tableName = $this->getTableNameForClass(get_class($entity));
         $stmt = $conn->prepare("SELECT * FROM `$tableName` WHERE id = ?");
         $stmt->execute([$entity->getId()]);
         if ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
@@ -652,7 +652,7 @@ class DataAccessObject
 
             if (empty($setClauses)) return;
 
-            $sql = "UPDATE `" . $this->tablePrefix . $this->convertPascalCaseToSnakeCase($reflection->getShortName()) .
+            $sql = "UPDATE `" . $this->getTableNameForClass($clazz) .
                 "` SET " . implode(", ", $setClauses) . " WHERE id = ?";
 
             $values[] = $entity->getId();
@@ -702,7 +702,7 @@ class DataAccessObject
             $conn->beginTransaction();
 
             foreach ($hierarchy as $clazz) {
-                $tableName = $this->tablePrefix . $this->convertPascalCaseToSnakeCase((new ReflectionClass($clazz))->getShortName());
+                $tableName = $this->getTableNameForClass($clazz);
                 $stmt = $conn->prepare("DELETE FROM `$tableName` WHERE id = ?");
                 $stmt->execute([$entity->getId()]);
             }
@@ -722,6 +722,23 @@ class DataAccessObject
     {
         // Adiciona underscore antes de maiúsculas e antes de números que seguem letras
         return strtolower(preg_replace('/(?<!^)([A-Z]|(?<=[a-zA-Z])[0-9])/', '_$1', $name));
+    }
+
+    private function getTableNameForClass(string $clazz): string
+    {
+        if (defined("$clazz::TABLE_NAME")) {
+            $constTable = constant("$clazz::TABLE_NAME");
+            if (str_starts_with($constTable, 'agsc_')) {
+                return $this->tablePrefix . substr($constTable, 5);
+            }
+            if (str_starts_with($constTable, $this->tablePrefix)) {
+                return $constTable;
+            }
+            return $this->tablePrefix . $constTable;
+        }
+
+        $reflection = new ReflectionClass($clazz);
+        return $this->tablePrefix . $this->convertPascalCaseToSnakeCase($reflection->getShortName());
     }
 
     private function buildWhereClause(InterfaceEntity $entity): string
@@ -796,7 +813,7 @@ class DataAccessObject
 
     private function buildInsertSql(string $clazz, array $columns, array $placeholders): string
     {
-        $tableName = $this->tablePrefix . $this->convertPascalCaseToSnakeCase((new ReflectionClass($clazz))->getShortName());
+        $tableName = $this->getTableNameForClass($clazz);
         return "INSERT INTO `$tableName` (" . implode(", ", $columns) . ") VALUES (" . implode(", ", $placeholders) . ")";
     }
 

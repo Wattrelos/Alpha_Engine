@@ -10,27 +10,33 @@
   │   └── AppBootstrap.php                    # 📦 Bootstrap de inicialização
   ├── core/                                   # 🧠 Core da Alpha Engine (Backend Standalone)
   │   ├── Admin/                              # 🛡️ Módulo do Painel Administrativo
-  │   │   ├── Controllers/Actions/            # Controladores Slim focados no Admin (Painel)
-  │   │   │                ├── Catalog/                      # Focado no catálogo e cliente final
-  │   │   │                │   └── Manufacturer/
-  │   │   │                │       ├── CreateManufacturerAction.php
-  │   │   │                │       ├── StoreManufacturerAction.php
-  │   │   │                │       ├── EditManufacturerAction.php
-  │   │   │                │       ├── UpdateManufacturerAction.php
-  │   │   │                │       ├── DeleteManufacturerAction.php
-  │   │   │                │       └── ListManufacturersAction.php
-  │   │   │                │
-  │   │   │                └── Procurement/                  # Focado na gestão interna e compras
-  │   │   │                      └── Supplier/ 
-  │   │   │                         ├── CreateSupplierAction.php
-  │   │   │                         ├── StoreSupplierAction.php
-  │   │   │                         ├── EditSupplierAction.php
-  │   │   │                         ├── UpdateSupplierAction.php
-  │   │   │                         ├── DeleteSupplierAction.php
-  │   │   │                         └── ListSuppliersAction.php
-  │   │   ├─Repositories/  # Repositórios específicos da área administrativa
-  │   │   ├── Mappers/                        # Mappers específicos da área administrativa
-  │   │   └── ...                             # (Estrutura isolada de Backoffice)
+  │   │   └── Controllers/Actions/            # Controladores Slim focados no Admin (Painel)
+  │   │           ├── Catalog/                                # Focado no catálogo e cliente final
+  │   │           │   └── Manufacturer/                       # Ações relacionadas aos fabricantes
+  │   │           │      ├── CreateManufacturerAction.php     # Ação para criar um novo fabricante
+  │   │           │      ├── StoreManufacturerAction.php      # Ação para salvar um novo fabricante
+  │   │           │      ├── EditManufacturerAction.php       # Ação para editar um fabricante
+  │   │           │      ├── UpdateManufacturerAction.php     # Ação para atualizar um fabricante
+  │   │           │      ├── DeleteManufacturerAction.php     # Ação para deletar um fabricante
+  │   │           │      └── ListManufacturersAction.php
+  │   │           │
+  │   │           ├── Procurement/                            # Focado na gestão interna e compras
+  │   │           │     └── Supplier/                         # Ações relacionadas aos fornecedores
+  │   │           │         ├── CreateSupplierAction.php
+  │   │           │         ├── StoreSupplierAction.php
+  │   │           │         ├── EditSupplierAction.php
+  │   │           │         ├── UpdateSupplierAction.php
+  │   │           │         ├── DeleteSupplierAction.php
+  │   │           │         └── ListSuppliersAction.php
+  │   │           ├─Repositories/                           # Repositórios específicos da área administrativa
+  │   │           ├─Mappers/                                # Mappers específicos da área administrativa
+  │   │           ├── Customer/                             # Ações relacionadas aos clientes
+  │   │           ├── Sales/                                # Ações relacionadas às vendas
+  │   │           │
+  │   │           └── Setting/                              # Contexto de Configurações Globais
+  │   │                └── StoreSetting/                    # Especificamente sobre os dados da loja
+  │   │                    ├── EditStoreSettingAction.php   # Carrega o formulário com os dados atuais
+  │   │                    └── UpdateStoreSettingAction.php # Salva as alterações feitas no formulário
   │   ├── Auth/                               # 🔐 Módulo de Autenticação e Segurança
   │   │   ├── Middleware/                     # Guards PSR-15 (Signature, Session, Language, Redirects)
   │   │   └── Services/                       # Regras de negócio de acesso (ex: CustomerAuthService)

@@ -1,10 +1,11 @@
 <?php
+
 namespace Alpha\Model\Domain\Entities;
 
 use Alpha\Model\Domain\BaseEntity;
 
 /**
- * Entidade CountryDescription - Traduções e descrições dos Países.
+ * DEPRECATED.Entidade CountryDescription - Traduções e descrições dos Países.
  * 
  * Mapeada para suprir o OneToMany do Country, garantindo
  * o suporte multidioma para nomes de países na Alpha Engine.

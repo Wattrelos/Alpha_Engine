@@ -3,25 +3,21 @@
 namespace Alpha\Model\Domain\Entities\Geo;
 
 use Alpha\Model\Domain\BaseEntity;
-use Doctrine\ORM\Mapping as ORM;
 use Alpha\Model\Domain\Attributes\ManyToOne;
-/*
-#[ORM\Entity]
-#[ORM\Table(name: "agsc_geo_zones")]
-#[ORM\UniqueConstraint(name: "uk_country_zone_iso", columns: ["country_id", "iso_code"])]
-*/
+
+// Como esta classe fica em uma subpasta, temos que utilizar alias para o namespace, por exemplo:
+// use Alpha\Model\Domain\Entities\Geo\Zone as GeoZone;
+// Isso ocorre porque estamos utilizando o namespace Alpha\Model\Domain\Entities\Geo na classe Zone
+// E a classe Country também está no mesmo namespace, então para evitar conflito, usamos o alias.
 
 class Zone extends BaseEntity
 {
-    // #[ORM\ManyToOne(targetEntity: Country::class)]
-    // #[ORM\JoinColumn(name: "country_id", referencedColumnName: "id", nullable: false, onDelete: "RESTRICT")]
+    public const TABLE_NAME = 'agsc_geo_zones';
+
     #[ManyToOne(targetEntity: Country::class, foreignKey: 'countryId')]
     private ?Country $country = null;
 
-    // #[ORM\Column(type: "string", length: 10)]
     private string $isoCode; // Código ISO 3166-2 (Ex: 'BR-SP')
-
-    // #[ORM\Column(type: "string", length: 100)]
     private string $name;
 
     // Getters e Settores...

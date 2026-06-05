@@ -68,6 +68,14 @@ return function (\Slim\App $app) {
             $group->post('/fabricantes/{id:[0-9]+}/editar', \Alpha\Admin\Controllers\Actions\Catalog\Manufacturer\UpdateManufacturerAction::class)->setName('admin.manufacturer.update');
             $group->get('/fabricantes/{id:[0-9]+}/excluir', \Alpha\Admin\Controllers\Actions\Catalog\Manufacturer\DeleteManufacturerAction::class)->setName('admin.manufacturer.delete');
 
+            // Fornecedores
+            $group->get('/fornecedores', \Alpha\Admin\Controllers\Actions\Procurement\Supplier\ListSuppliersAction::class)->setName('admin.supplier.list');
+            $group->get('/fornecedores/criar', \Alpha\Admin\Controllers\Actions\Procurement\Supplier\CreateSupplierAction::class)->setName('admin.supplier.create');
+            $group->post('/fornecedores/criar', \Alpha\Admin\Controllers\Actions\Procurement\Supplier\StoreSupplierAction::class)->setName('admin.supplier.store');
+            $group->get('/fornecedores/{id:[0-9]+}/editar', \Alpha\Admin\Controllers\Actions\Procurement\Supplier\EditSupplierAction::class)->setName('admin.supplier.edit');
+            $group->post('/fornecedores/{id:[0-9]+}/editar', \Alpha\Admin\Controllers\Actions\Procurement\Supplier\UpdateSupplierAction::class)->setName('admin.supplier.update');
+            $group->get('/fornecedores/{id:[0-9]+}/excluir', \Alpha\Admin\Controllers\Actions\Procurement\Supplier\DeleteSupplierAction::class)->setName('admin.supplier.delete');
+
             // Clientes
             $group->get('/clientes', \Alpha\Admin\Controllers\Actions\Customer\Customer\ListCustomersAction::class)->setName('admin.customer.list');
             $group->map(['GET', 'POST'], '/clientes/criar', \Alpha\Admin\Controllers\Actions\Customer\Customer\CreateCustomerAction::class)->setName('admin.customer.create');
@@ -78,6 +86,10 @@ return function (\Slim\App $app) {
             $group->map(['GET', 'POST'], '/clientes/{customer_id:[0-9]+}/enderecos/criar', \Alpha\Admin\Controllers\Actions\Customer\Address\CreateAddressAction::class)->setName('admin.customer.address.create');
             $group->map(['GET', 'POST'], '/clientes/{customer_id:[0-9]+}/enderecos/{id:[0-9]+}/editar', \Alpha\Admin\Controllers\Actions\Customer\Address\EditAddressAction::class)->setName('admin.customer.address.edit');
             $group->get('/clientes/{customer_id:[0-9]+}/enderecos/{id:[0-9]+}/excluir', \Alpha\Admin\Controllers\Actions\Customer\Address\DeleteAddressAction::class)->setName('admin.customer.address.delete');
+
+            // Configurações da Loja
+            $group->get('/configuracoes', \Alpha\Admin\Controllers\Actions\Setting\StoreSetting\EditStoreSettingAction::class)->setName('admin.setting.edit');
+            $group->post('/configuracoes', \Alpha\Admin\Controllers\Actions\Setting\StoreSetting\UpdateStoreSettingAction::class)->setName('admin.setting.update');
 
             $group->get('/logout', \Alpha\Admin\Controllers\Actions\Auth\LogoutAction::class)->setName('admin.logout');
         })->add(new \Alpha\Auth\Middleware\AdminSessionMiddleware());
@@ -128,6 +140,10 @@ return function (\Slim\App $app) {
 
     // API para buscar estados (zones) de um país específico
     $app->get('/api/paises/{country_id:[0-9]+}/estados', GetZonesAction::class);
+
+    // Novas APIs do sistema de endereçamento Geo
+    $app->get('/api/geo/paises/{country_id:[0-9]+}/estados', \Alpha\Controller\Actions\Location\GetGeoZonesAction::class);
+    $app->get('/api/geo/estados/{zone_id:[0-9]+}/cidades', \Alpha\Controller\Actions\Location\GetGeoCitiesAction::class);
 
     // API para salvar dados de CEP/ViaCEP consultados
     $app->post('/api/carrinho/salvar-cep', \Alpha\Controller\Actions\Cart\SaveShippingCepAction::class);

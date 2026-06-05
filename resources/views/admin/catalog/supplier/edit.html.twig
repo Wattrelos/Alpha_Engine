@@ -1,0 +1,320 @@
+{% extends 'admin/layouts/base.html.twig' %}
+
+{% block title %}
+	{{ title|default('Editar Fornecedor | Painel Administrativo') }}
+{% endblock %}
+
+{% block content %}
+	<div class="page-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
+		<div>
+			<h2>Editar Fornecedor</h2>
+			<p style="color: #64748b; margin: 0;">Modifique os detalhes do fornecedor e seu endereço.</p>
+		</div>
+		<a href="/LPDHED2dC7Gjrg2b/fornecedores" class="btn" style="text-decoration: none; display: inline-flex; align-items: center; gap: 8px; background: #f1f5f9; color: #475569; border: 1px solid #cbd5e1; padding: 10px 20px; border-radius: 6px; font-weight: 600;">
+			<i class="fas fa-arrow-left"></i>
+			<span>Voltar para Lista</span>
+		</a>
+	</div>
+
+	{% if errors.warning %}
+		<div style="padding: 1rem; margin-bottom: 1.5rem; background: #fee2e2; color: #991b1b; border: 1px solid #fecaca; border-radius: 8px;">
+			{{ errors.warning }}
+		</div>
+	{% endif %}
+
+	<div class="card" style="box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1), 0 2px 4px -1px rgba(0,0,0,0.06); border-radius: var(--border-radius); background: #fff; padding: 2rem;">
+		<form action="/LPDHED2dC7Gjrg2b/fornecedores/{{ supplier.id }}/editar" method="POST">
+
+			<h3 style="margin-top: 0; margin-bottom: 1.5rem; color: #1e293b; border-bottom: 1px solid #e2e8f0; padding-bottom: 0.5rem; font-size: 1.15rem;">
+				<i class="fas fa-info-circle" style="color: #3b82f6; margin-right: 6px;"></i>Dados Cadastrais
+			</h3>
+
+			<div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-bottom: 1.5rem;">
+				<div>
+					<label for="company_name" style="display: block; font-weight: 600; margin-bottom: 0.5rem; color: #475569; font-size: 0.9rem;">Razão Social *</label>
+					<input type="text" id="company_name" name="company_name" class="form-control" value="{{ supplier.companyName }}" required style="width: 100%; padding: 0.65rem; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 0.95rem;"/>
+					{% if errors.companyName %}
+						<div style="color: #ef4444; font-size: 0.85rem; margin-top: 0.25rem;">{{ errors.companyName }}</div>
+					{% endif %}
+				</div>
+				<div>
+					<label for="trade_name" style="display: block; font-weight: 600; margin-bottom: 0.5rem; color: #475569; font-size: 0.9rem;">Nome Fantasia</label>
+					<input type="text" id="trade_name" name="trade_name" class="form-control" value="{{ supplier.tradeName }}" style="width: 100%; padding: 0.65rem; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 0.95rem;"/>
+				</div>
+			</div>
+
+			<div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1.5rem; margin-bottom: 1.5rem;">
+				<div>
+					<label for="tax_id" style="display: block; font-weight: 600; margin-bottom: 0.5rem; color: #475569; font-size: 0.9rem;">CNPJ *</label>
+					<input type="text" id="tax_id" name="tax_id" class="form-control" placeholder="00.000.000/0000-00" value="{{ supplier.taxId }}" required style="width: 100%; padding: 0.65rem; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 0.95rem;"/>
+					{% if errors.taxId %}
+						<div style="color: #ef4444; font-size: 0.85rem; margin-top: 0.25rem;">{{ errors.taxId }}</div>
+					{% endif %}
+				</div>
+				<div>
+					<label for="state_registration" style="display: block; font-weight: 600; margin-bottom: 0.5rem; color: #475569; font-size: 0.9rem;">Inscrição Estadual</label>
+					<input type="text" id="state_registration" name="state_registration" class="form-control" value="{{ supplier.stateRegistration }}" style="width: 100%; padding: 0.65rem; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 0.95rem;"/>
+				</div>
+				<div>
+					<label for="municipal_registration" style="display: block; font-weight: 600; margin-bottom: 0.5rem; color: #475569; font-size: 0.9rem;">Inscrição Municipal</label>
+					<input type="text" id="municipal_registration" name="municipal_registration" class="form-control" value="{{ supplier.municipalRegistration }}" style="width: 100%; padding: 0.65rem; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 0.95rem;"/>
+				</div>
+			</div>
+
+			<div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1.5rem; margin-bottom: 1.5rem;">
+				<div>
+					<label for="email" style="display: block; font-weight: 600; margin-bottom: 0.5rem; color: #475569; font-size: 0.9rem;">E-mail *</label>
+					<input type="email" id="email" name="email" class="form-control" value="{{ supplier.email }}" required style="width: 100%; padding: 0.65rem; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 0.95rem;"/>
+					{% if errors.email %}
+						<div style="color: #ef4444; font-size: 0.85rem; margin-top: 0.25rem;">{{ errors.email }}</div>
+					{% endif %}
+				</div>
+				<div>
+					<label for="phone" style="display: block; font-weight: 600; margin-bottom: 0.5rem; color: #475569; font-size: 0.9rem;">Telefone</label>
+					<input type="text" id="phone" name="phone" class="form-control" value="{{ supplier.phone }}" style="width: 100%; padding: 0.65rem; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 0.95rem;"/>
+				</div>
+				<div>
+					<label for="website" style="display: block; font-weight: 600; margin-bottom: 0.5rem; color: #475569; font-size: 0.9rem;">Website</label>
+					<input type="text" id="website" name="website" class="form-control" placeholder="https://..." value="{{ supplier.website }}" style="width: 100%; padding: 0.65rem; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 0.95rem;"/>
+				</div>
+			</div>
+
+			<div style="margin-bottom: 2rem;">
+				<label style="font-weight: 600; color: #475569; font-size: 0.95rem; cursor: pointer; user-select: none; display: flex; align-items: center; gap: 8px;">
+					<input type="checkbox" name="is_active" value="1" {% if supplier.isActive %} checked {% endif %} style="width: 18px; height: 18px; accent-color: #3b82f6;"/>
+					Fornecedor Ativo?
+				</label>
+			</div>
+
+			<h3 style="margin-top: 2rem; margin-bottom: 1.5rem; color: #1e293b; border-bottom: 1px solid #e2e8f0; padding-bottom: 0.5rem; font-size: 1.15rem;">
+				<i class="fas fa-map-marker-alt" style="color: #3b82f6; margin-right: 6px;"></i>Endereço Principal
+			</h3>
+
+			<div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-bottom: 1.5rem;">
+				<div>
+					<label for="postal_code" style="display: block; font-weight: 600; margin-bottom: 0.5rem; color: #475569; font-size: 0.9rem;">CEP *</label>
+					<div style="display: flex; gap: 8px;">
+						<input type="text" id="postal_code" name="postal_code" class="form-control" placeholder="00000-000" value="{{ address.postal_code|default('') }}" required style="width: 100%; padding: 0.65rem; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 0.95rem;"/>
+						<button type="button" id="btn_cep_lookup" style="background: #f1f5f9; border: 1px solid #cbd5e1; color: #475569; padding: 0 1rem; border-radius: 6px; font-size: 0.9rem; font-weight: 600; cursor: pointer;">Buscar</button>
+					</div>
+					{% if errors.postal_code %}
+						<div style="color: #ef4444; font-size: 0.85rem; margin-top: 0.25rem;">{{ errors.postal_code }}</div>
+					{% endif %}
+				</div>
+				<div>
+					<label for="district" style="display: block; font-weight: 600; margin-bottom: 0.5rem; color: #475569; font-size: 0.9rem;">Bairro</label>
+					<input type="text" id="district" name="district" class="form-control" value="{{ address.district|default('') }}" style="width: 100%; padding: 0.65rem; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 0.95rem;"/>
+				</div>
+			</div>
+
+			<div style="display: grid; grid-template-columns: 2fr 1fr; gap: 1.5rem; margin-bottom: 1.5rem;">
+				<div>
+					<label for="street" style="display: block; font-weight: 600; margin-bottom: 0.5rem; color: #475569; font-size: 0.9rem;">Rua / Logradouro *</label>
+					<input type="text" id="street" name="street" class="form-control" value="{{ address.street|default('') }}" required style="width: 100%; padding: 0.65rem; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 0.95rem;"/>
+					{% if errors.street %}
+						<div style="color: #ef4444; font-size: 0.85rem; margin-top: 0.25rem;">{{ errors.street }}</div>
+					{% endif %}
+				</div>
+				<div>
+					<label for="number" style="display: block; font-weight: 600; margin-bottom: 0.5rem; color: #475569; font-size: 0.9rem;">Número *</label>
+					<input type="text" id="number" name="number" class="form-control" value="{{ address.number|default('') }}" required style="width: 100%; padding: 0.65rem; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 0.95rem;"/>
+					{% if errors.number %}
+						<div style="color: #ef4444; font-size: 0.85rem; margin-top: 0.25rem;">{{ errors.number }}</div>
+					{% endif %}
+				</div>
+			</div>
+
+			<div style="margin-bottom: 1.5rem;">
+				<label for="complement" style="display: block; font-weight: 600; margin-bottom: 0.5rem; color: #475569; font-size: 0.9rem;">Complemento</label>
+				<input type="text" id="complement" name="complement" class="form-control" value="{{ address.complement|default('') }}" style="width: 100%; padding: 0.65rem; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 0.95rem;"/>
+			</div>
+
+			<div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1.5rem; margin-bottom: 2rem;">
+				<div>
+					<label for="country_id" style="display: block; font-weight: 600; margin-bottom: 0.5rem; color: #475569; font-size: 0.9rem;">País *</label>
+					<select id="country_id" name="country_id" class="form-control" style="width: 100%; padding: 0.65rem; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 0.95rem; background: #fff;">
+						<option value="">Selecione...</option>
+						{% for country in countries %}
+							<option value="{{ country.id }}" {% if address and address.country and address.country.id == country.id %} selected {% endif %}>{{ country.name }}</option>
+						{% endfor %}
+					</select>
+					{% if errors.country_id %}
+						<div style="color: #ef4444; font-size: 0.85rem; margin-top: 0.25rem;">{{ errors.country_id }}</div>
+					{% endif %}
+				</div>
+				<div>
+					<label for="zone_id" style="display: block; font-weight: 600; margin-bottom: 0.5rem; color: #475569; font-size: 0.9rem;">Estado *</label>
+					<select id="zone_id" name="zone_id" class="form-control" style="width: 100%; padding: 0.65rem; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 0.95rem; background: #fff;" {% if not zones %} disabled {% endif %}>
+						<option value="">Selecione o País...</option>
+						{% for zone in zones %}
+							<option value="{{ zone.id }}" {% if address and address.zone and address.zone.id == zone.id %} selected {% endif %} data-code="{{ zone.isoCode|replace({'BR-': ''}) }}">{{ zone.name }}
+								({{ zone.isoCode }})</option>
+						{% endfor %}
+					</select>
+					{% if errors.zone_id %}
+						<div style="color: #ef4444; font-size: 0.85rem; margin-top: 0.25rem;">{{ errors.zone_id }}</div>
+					{% endif %}
+				</div>
+				<div>
+					<label for="city_id" style="display: block; font-weight: 600; margin-bottom: 0.5rem; color: #475569; font-size: 0.9rem;">Cidade *</label>
+					<select id="city_id" name="city_id" class="form-control" style="width: 100%; padding: 0.65rem; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 0.95rem; background: #fff;" {% if not cities %} disabled {% endif %}>
+						<option value="">Selecione o Estado...</option>
+						{% for city in cities %}
+							<option value="{{ city.id }}" {% if address and address.city and address.city.id == city.id %} selected {% endif %}>{{ city.name }}</option>
+						{% endfor %}
+					</select>
+					{% if errors.city_id %}
+						<div style="color: #ef4444; font-size: 0.85rem; margin-top: 0.25rem;">{{ errors.city_id }}</div>
+					{% endif %}
+				</div>
+			</div>
+
+			<!-- Botões de Ação -->
+			<div class="form-actions" style="display: flex; gap: 1rem; justify-content: flex-end; border-top: 1px solid #e2e8f0; padding-top: 1.5rem;">
+				<a href="/LPDHED2dC7Gjrg2b/fornecedores" class="btn" style="background: #f1f5f9; color: #475569; border: 1px solid #cbd5e1; text-decoration: none; padding: 10px 20px; border-radius: 6px; font-weight: 600;">Cancelar</a>
+				<button type="submit" class="btn btn-primary" style="padding: 10px 25px; border-radius: 6px; font-weight: 600; display: inline-flex; align-items: center; gap: 8px;">
+					<i class="fas fa-save"></i>
+					<span>Salvar Fornecedor</span>
+				</button>
+			</div>
+		</form>
+	</div>
+
+	<script>
+		document.addEventListener('DOMContentLoaded', function () {
+const countrySelect = document.getElementById('country_id');
+const zoneSelect = document.getElementById('zone_id');
+const citySelect = document.getElementById('city_id');
+const postcode = document.getElementById('postal_code');
+const btnCep = document.getElementById('btn_cep_lookup');
+
+function loadZones(countryId, selectedZoneId = 0, callback = null) {
+if (! countryId) {
+zoneSelect.innerHTML = '<option value="">Selecione o País...</option>';
+zoneSelect.disabled = true;
+citySelect.innerHTML = '<option value="">Selecione o Estado...</option>';
+citySelect.disabled = true;
+return;
+}
+
+fetch (`/api/geo/paises/${countryId}/estados`).then(response => response.json()).then(data => {
+zoneSelect.innerHTML = '<option value="">Selecione o Estado...</option>';
+data.zones.forEach(zone => {
+const option = document.createElement('option');
+option.value = zone.id;
+option.textContent = `${
+zone.name
+} (${
+zone.code
+})`;
+option.setAttribute('data-code', zone.code.replace('BR-', ''));
+if (selectedZoneId && selectedZoneId == zone.id) {
+option.selected = true;
+}
+zoneSelect.appendChild(option);
+});
+zoneSelect.disabled = false;
+if (callback) 
+callback();
+
+
+
+});
+}
+
+function loadCities(zoneId, selectedCityId = 0, callback = null) {
+if (! zoneId) {
+citySelect.innerHTML = '<option value="">Selecione o Estado...</option>';
+citySelect.disabled = true;
+return;
+}
+
+fetch (`/api/geo/estados/${zoneId}/cidades`).then(response => response.json()).then(data => {
+citySelect.innerHTML = '<option value="">Selecione a Cidade...</option>';
+data.cities.forEach(city => {
+const option = document.createElement('option');
+option.value = city.id;
+option.textContent = city.name;
+if (selectedCityId && selectedCityId == city.id) {
+option.selected = true;
+}
+citySelect.appendChild(option);
+});
+citySelect.disabled = false;
+if (callback) 
+callback();
+
+
+
+});
+}
+
+countrySelect.addEventListener('change', function () {
+loadZones(this.value);
+});
+
+zoneSelect.addEventListener('change', function () {
+loadCities(this.value);
+});
+
+// Autocompletar por CEP (ViaCEP)
+btnCep.addEventListener('click', function () {
+const cep = postcode.value.replace(/\D/g, '');
+if (cep.length !== 8) {
+alert('Informe um CEP válido com 8 dígitos.');
+return;
+}
+
+btnCep.disabled = true;
+btnCep.textContent = '...';
+
+fetch (`https://viacep.com.br/ws/${cep}/json/`).then(r => r.json()).then(json => {
+btnCep.disabled = false;
+btnCep.textContent = 'Buscar';
+
+if (json.erro) {
+alert('CEP não encontrado.');
+return;
+}
+
+document.getElementById('street').value = json.logradouro || '';
+document.getElementById('district').value = json.bairro || '';
+countrySelect.value = 76;
+// Brasil
+
+// Carrega os estados do Brasil
+loadZones(76, 0, function () { // Encontra o estado correspondente
+const uf = json.uf;
+let matchedZoneId = 0;
+for (let i = 0; i < zoneSelect.options.length; i++) {
+const opt = zoneSelect.options[i];
+if (opt.getAttribute('data-code') === uf) {
+opt.selected = true;
+matchedZoneId = opt.value;
+break;
+}
+}
+
+// Carrega as cidades e seleciona pelo nome
+if (matchedZoneId) {
+loadCities(matchedZoneId, 0, function () {
+const cityName = json.localidade;
+for (let i = 0; i < citySelect.options.length; i++) {
+const opt = citySelect.options[i];
+if (opt.textContent.toLowerCase() === cityName.toLowerCase()) {
+opt.selected = true;
+break;
+}
+}
+});
+}
+});
+}).catch(() => {
+btnCep.disabled = false;
+btnCep.textContent = 'Buscar';
+alert('Erro ao buscar o CEP.');
+});
+});
+});
+	</script>
+{% endblock %}
