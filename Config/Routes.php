@@ -68,6 +68,17 @@ return function (\Slim\App $app) {
             $group->post('/fabricantes/{id:[0-9]+}/editar', \Alpha\Admin\Controllers\Actions\Catalog\Manufacturer\UpdateManufacturerAction::class)->setName('admin.manufacturer.update');
             $group->get('/fabricantes/{id:[0-9]+}/excluir', \Alpha\Admin\Controllers\Actions\Catalog\Manufacturer\DeleteManufacturerAction::class)->setName('admin.manufacturer.delete');
 
+            // Clientes
+            $group->get('/clientes', \Alpha\Admin\Controllers\Actions\Customer\Customer\ListCustomersAction::class)->setName('admin.customer.list');
+            $group->map(['GET', 'POST'], '/clientes/criar', \Alpha\Admin\Controllers\Actions\Customer\Customer\CreateCustomerAction::class)->setName('admin.customer.create');
+            $group->map(['GET', 'POST'], '/clientes/{id:[0-9]+}/editar', \Alpha\Admin\Controllers\Actions\Customer\Customer\EditCustomerAction::class)->setName('admin.customer.edit');
+            $group->get('/clientes/{id:[0-9]+}', \Alpha\Admin\Controllers\Actions\Customer\Customer\ShowCustomerAction::class)->setName('admin.customer.show');
+
+            // Endereços de Clientes
+            $group->map(['GET', 'POST'], '/clientes/{customer_id:[0-9]+}/enderecos/criar', \Alpha\Admin\Controllers\Actions\Customer\Address\CreateAddressAction::class)->setName('admin.customer.address.create');
+            $group->map(['GET', 'POST'], '/clientes/{customer_id:[0-9]+}/enderecos/{id:[0-9]+}/editar', \Alpha\Admin\Controllers\Actions\Customer\Address\EditAddressAction::class)->setName('admin.customer.address.edit');
+            $group->get('/clientes/{customer_id:[0-9]+}/enderecos/{id:[0-9]+}/excluir', \Alpha\Admin\Controllers\Actions\Customer\Address\DeleteAddressAction::class)->setName('admin.customer.address.delete');
+
             $group->get('/logout', \Alpha\Admin\Controllers\Actions\Auth\LogoutAction::class)->setName('admin.logout');
         })->add(new \Alpha\Auth\Middleware\AdminSessionMiddleware());
         

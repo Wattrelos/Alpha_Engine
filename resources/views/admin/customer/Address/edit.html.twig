@@ -1,0 +1,122 @@
+{% extends 'admin/layouts/base.html.twig' %}
+
+{% block title %}
+	{{ title|default('Editar Endereço | Painel Administrativo') }}
+{% endblock %}
+
+{% block content %}
+	<div class="page-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
+		<div>
+			<h2>Editar Endereço</h2>
+			<p style="color: #64748b; margin: 0;">Modifique os dados do endereço do cliente: <strong>{{ customer.firstname }} {{ customer.lastname }}</strong></p>
+		</div>
+		<a href="/LPDHED2dC7Gjrg2b/clientes/{{ customer.id }}/editar?tab=addresses" class="btn" style="text-decoration: none; display: inline-flex; align-items: center; gap: 8px; background: #f1f5f9; color: #475569; border: 1px solid #cbd5e1; padding: 10px 20px; border-radius: 6px; font-weight: 600;">
+			<i class="fas fa-arrow-left"></i>
+			<span>Voltar</span>
+		</a>
+	</div>
+
+	{% if errors.warning %}
+		<div style="padding: 1rem; margin-bottom: 1.5rem; background: #fee2e2; color: #991b1b; border: 1px solid #fecaca; border-radius: 8px;">
+			{{ errors.warning }}
+		</div>
+	{% endif %}
+
+	<div class="card" style="box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1), 0 2px 4px -1px rgba(0,0,0,0.06); border-radius: var(--border-radius); background: #fff; padding: 2rem;">
+		<form action="/LPDHED2dC7Gjrg2b/clientes/{{ customer.id }}/enderecos/{{ address.id }}/editar" method="POST">
+			
+			<div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-bottom: 1.5rem;">
+				<div>
+					<label for="firstname" style="display: block; font-weight: 600; margin-bottom: 0.5rem; color: #475569; font-size: 0.9rem;">Nome *</label>
+					<input type="text" id="firstname" name="firstname" class="form-control" value="{{ data.firstname }}" required style="width: 100%; padding: 0.65rem; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 0.95rem;" />
+					{% if errors.firstname %}<div style="color: #ef4444; font-size: 0.85rem; margin-top: 0.25rem;">{{ errors.firstname }}</div>{% endif %}
+				</div>
+				<div>
+					<label for="lastname" style="display: block; font-weight: 600; margin-bottom: 0.5rem; color: #475569; font-size: 0.9rem;">Sobrenome *</label>
+					<input type="text" id="lastname" name="lastname" class="form-control" value="{{ data.lastname }}" required style="width: 100%; padding: 0.65rem; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 0.95rem;" />
+					{% if errors.lastname %}<div style="color: #ef4444; font-size: 0.85rem; margin-top: 0.25rem;">{{ errors.lastname }}</div>{% endif %}
+				</div>
+			</div>
+
+			<div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-bottom: 1.5rem;">
+				<div>
+					<label for="company" style="display: block; font-weight: 600; margin-bottom: 0.5rem; color: #475569; font-size: 0.9rem;">Empresa</label>
+					<input type="text" id="company" name="company" class="form-control" value="{{ data.company }}" style="width: 100%; padding: 0.65rem; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 0.95rem;" />
+					{% if errors.company %}<div style="color: #ef4444; font-size: 0.85rem; margin-top: 0.25rem;">{{ errors.company }}</div>{% endif %}
+				</div>
+				<div>
+					<label for="postcode" style="display: block; font-weight: 600; margin-bottom: 0.5rem; color: #475569; font-size: 0.9rem;">CEP *</label>
+					<input type="text" id="postcode" name="postcode" class="form-control" value="{{ data.postcode }}" placeholder="00000000" required style="width: 100%; padding: 0.65rem; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 0.95rem;" />
+					{% if errors.postcode %}<div style="color: #ef4444; font-size: 0.85rem; margin-top: 0.25rem;">{{ errors.postcode }}</div>{% endif %}
+				</div>
+			</div>
+
+			<div style="display: grid; grid-template-columns: 2fr 1fr; gap: 1.5rem; margin-bottom: 1.5rem;">
+				<div>
+					<label for="address_1" style="display: block; font-weight: 600; margin-bottom: 0.5rem; color: #475569; font-size: 0.9rem;">Rua / Logradouro *</label>
+					<input type="text" id="address_1" name="address_1" class="form-control" value="{{ data.address_1 }}" required style="width: 100%; padding: 0.65rem; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 0.95rem;" />
+					{% if errors.address_1 %}<div style="color: #ef4444; font-size: 0.85rem; margin-top: 0.25rem;">{{ errors.address_1 }}</div>{% endif %}
+				</div>
+				<div>
+					<label for="number" style="display: block; font-weight: 600; margin-bottom: 0.5rem; color: #475569; font-size: 0.9rem;">Número *</label>
+					<input type="number" id="number" name="number" class="form-control" value="{{ data.number }}" required style="width: 100%; padding: 0.65rem; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 0.95rem;" />
+					{% if errors.number %}<div style="color: #ef4444; font-size: 0.85rem; margin-top: 0.25rem;">{{ errors.number }}</div>{% endif %}
+				</div>
+			</div>
+
+			<div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-bottom: 1.5rem;">
+				<div>
+					<label for="address_2" style="display: block; font-weight: 600; margin-bottom: 0.5rem; color: #475569; font-size: 0.9rem;">Complemento</label>
+					<input type="text" id="address_2" name="address_2" class="form-control" value="{{ data.address_2 }}" style="width: 100%; padding: 0.65rem; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 0.95rem;" />
+					{% if errors.address_2 %}<div style="color: #ef4444; font-size: 0.85rem; margin-top: 0.25rem;">{{ errors.address_2 }}</div>{% endif %}
+				</div>
+				<div>
+					<label for="neighborhood" style="display: block; font-weight: 600; margin-bottom: 0.5rem; color: #475569; font-size: 0.9rem;">Bairro *</label>
+					<input type="text" id="neighborhood" name="neighborhood" class="form-control" value="{{ data.neighborhood }}" required style="width: 100%; padding: 0.65rem; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 0.95rem;" />
+					{% if errors.neighborhood %}<div style="color: #ef4444; font-size: 0.85rem; margin-top: 0.25rem;">{{ errors.neighborhood }}</div>{% endif %}
+				</div>
+			</div>
+
+			<div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1.5rem; margin-bottom: 1.5rem;">
+				<div>
+					<label for="city" style="display: block; font-weight: 600; margin-bottom: 0.5rem; color: #475569; font-size: 0.9rem;">Cidade *</label>
+					<input type="text" id="city" name="city" class="form-control" value="{{ data.city }}" required style="width: 100%; padding: 0.65rem; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 0.95rem;" />
+					{% if errors.city %}<div style="color: #ef4444; font-size: 0.85rem; margin-top: 0.25rem;">{{ errors.city }}</div>{% endif %}
+				</div>
+				<div>
+					<label for="country_id" style="display: block; font-weight: 600; margin-bottom: 0.5rem; color: #475569; font-size: 0.9rem;">País *</label>
+					<select id="country_id" name="country_id" class="form-control" style="width: 100%; padding: 0.65rem; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 0.95rem; background: #fff;">
+						{% for country in countries %}
+							<option value="{{ country.id }}" {% if data.country_id == country.id %}selected{% endif %}>{{ country.name }}</option>
+						{% endfor %}
+					</select>
+					{% if errors.country_id %}<div style="color: #ef4444; font-size: 0.85rem; margin-top: 0.25rem;">{{ errors.country_id }}</div>{% endif %}
+				</div>
+				<div>
+					<label for="zone_id" style="display: block; font-weight: 600; margin-bottom: 0.5rem; color: #475569; font-size: 0.9rem;">Estado (UF) *</label>
+					<select id="zone_id" name="zone_id" class="form-control" style="width: 100%; padding: 0.65rem; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 0.95rem; background: #fff;">
+						<option value="">Selecione...</option>
+						{% for zone in zones %}
+							<option value="{{ zone.id }}" {% if data.zone_id == zone.id %}selected{% endif %}>{{ zone.name }} ({{ zone.code }})</option>
+						{% endfor %}
+					</select>
+					{% if errors.zone_id %}<div style="color: #ef4444; font-size: 0.85rem; margin-top: 0.25rem;">{{ errors.zone_id }}</div>{% endif %}
+				</div>
+			</div>
+
+			<div style="margin-bottom: 2rem; display: flex; align-items: center; gap: 8px;">
+				<input type="checkbox" id="default" name="default" value="1" {% if data.default %}checked{% endif %} style="width: 18px; height: 18px; accent-color: #3b82f6;" />
+				<label for="default" style="font-weight: 600; color: #475569; font-size: 0.95rem; cursor: pointer; user-select: none;">Definir como Endereço Padrão</label>
+			</div>
+
+			<!-- Botões de Ação -->
+			<div class="form-actions" style="display: flex; gap: 1rem; justify-content: flex-end; border-top: 1px solid #e2e8f0; padding-top: 1.5rem;">
+				<a href="/LPDHED2dC7Gjrg2b/clientes/{{ customer.id }}/editar?tab=addresses" class="btn" style="background: #f1f5f9; color: #475569; border: 1px solid #cbd5e1; text-decoration: none; padding: 10px 20px; border-radius: 6px; font-weight: 600;">Cancelar</a>
+				<button type="submit" class="btn btn-primary" style="padding: 10px 25px; border-radius: 6px; font-weight: 600; display: inline-flex; align-items: center; gap: 8px;">
+					<i class="fas fa-save"></i>
+					<span>Atualizar Endereço</span>
+				</button>
+			</div>
+		</form>
+	</div>
+{% endblock %}

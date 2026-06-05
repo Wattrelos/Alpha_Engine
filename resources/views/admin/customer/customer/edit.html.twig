@@ -1,0 +1,160 @@
+{% extends 'admin/layouts/base.html.twig' %}
+
+{% block title %}
+	{{ title|default('Editar Cliente | Painel Administrativo') }}
+{% endblock %}
+
+{% block content %}
+	<div class="page-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
+		<div>
+			<h2>Editar Cliente</h2>
+			<p style="color: #64748b; margin: 0;">Atualize as informações cadastrais e os endereços do cliente.</p>
+		</div>
+		<a href="/LPDHED2dC7Gjrg2b/clientes" class="btn" style="text-decoration: none; display: inline-flex; align-items: center; gap: 8px; background: #f1f5f9; color: #475569; border: 1px solid #cbd5e1;">
+			<i class="fas fa-arrow-left"></i>
+			<span>Voltar para Lista</span>
+		</a>
+	</div>
+
+	{% if success %}
+		<div style="padding: 1rem; margin-bottom: 1.5rem; background: #d1fae5; color: #065f46; border: 1px solid #a7f3d0; border-radius: 8px;">
+			{{ success }}
+		</div>
+	{% endif %}
+
+	{% if error %}
+		<div style="padding: 1rem; margin-bottom: 1.5rem; background: #fee2e2; color: #991b1b; border: 1px solid #fecaca; border-radius: 8px;">
+			{{ error }}
+		</div>
+	{% endif %}
+
+	{% if errors.warning %}
+		<div style="padding: 1rem; margin-bottom: 1.5rem; background: #fee2e2; color: #991b1b; border: 1px solid #fecaca; border-radius: 8px;">
+			{{ errors.warning }}
+		</div>
+	{% endif %}
+
+	<!-- Navegação por Abas -->
+	<div style="display: flex; gap: 1rem; margin-bottom: 1.5rem; border-bottom: 2px solid #e2e8f0; padding-bottom: 0px;">
+		<button onclick="switchTab('general')" id="tab-btn-general" class="tab-button" style="padding: 0.75rem 1.5rem; font-weight: 600; font-size: 1rem; border: none; border-bottom: 3px solid transparent; background: none; cursor: pointer; color: #64748b;">
+			<i class="fas fa-user-edit" style="margin-right: 6px;"></i>
+			Dados Gerais
+		</button>
+		<button onclick="switchTab('addresses')" id="tab-btn-addresses" class="tab-button" style="padding: 0.75rem 1.5rem; font-weight: 600; font-size: 1rem; border: none; border-bottom: 3px solid transparent; background: none; cursor: pointer; color: #64748b;">
+			<i class="fas fa-map-marked-alt" style="margin-right: 6px;"></i>
+			Endereços ({{ addresses|length }})
+		</button>
+	</div>
+
+	<!-- Conteúdo: Aba Dados Gerais -->
+	<div id="tab-content-general" class="tab-content" style="display: none;">
+		<div class="card" style="box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1), 0 2px 4px -1px rgba(0,0,0,0.06); border-radius: var(--border-radius); background: #fff; padding: 2rem;">
+			<form action="/LPDHED2dC7Gjrg2b/clientes/{{ customer.id }}/editar" method="POST">
+				<input type="hidden" name="action" value="save_profile" />
+				
+				{% include 'admin/customer/customer/_form.html.twig' %}
+
+				<div class="form-actions" style="display: flex; gap: 1rem; justify-content: flex-end; border-top: 1px solid #e2e8f0; padding-top: 1.5rem; margin-top: 1.5rem;">
+					<a href="/LPDHED2dC7Gjrg2b/clientes" class="btn" style="background: #f1f5f9; color: #475569; border: 1px solid #cbd5e1; text-decoration: none; padding: 10px 20px; border-radius: 6px; font-weight: 600;">Cancelar</a>
+					<button type="submit" class="btn btn-primary" style="padding: 10px 25px; border-radius: 6px; font-weight: 600; display: inline-flex; align-items: center; gap: 8px;">
+						<i class="fas fa-save"></i>
+						<span>Salvar Alterações</span>
+					</button>
+				</div>
+			</form>
+		</div>
+	</div>
+
+	<!-- Conteúdo: Aba Endereços -->
+	<div id="tab-content-addresses" class="tab-content" style="display: none;">
+		<div class="card" style="box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1), 0 2px 4px -1px rgba(0,0,0,0.06); border-radius: var(--border-radius); background: #fff; padding: 2rem;">
+			<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; border-bottom: 1px solid #e2e8f0; padding-bottom: 0.75rem;">
+				<h3 style="margin: 0; color: #1e293b;">Endereços Cadastrados</h3>
+				<a href="/LPDHED2dC7Gjrg2b/clientes/{{ customer.id }}/enderecos/criar" class="btn btn-primary" style="padding: 8px 16px; border-radius: 6px; font-weight: 600; text-decoration: none; display: inline-flex; align-items: center; gap: 6px;">
+					<i class="fas fa-plus"></i>
+					<span>Adicionar Endereço</span>
+				</a>
+			</div>
+			
+			{% if addresses %}
+				<div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 1.5rem;">
+					{% for addr in addresses %}
+						<div style="padding: 1.25rem; border: 1px solid {% if addr.default %}#3b82f6{% else %}#e2e8f0{% endif %}; border-radius: 8px; background: {% if addr.default %}#f0f7ff{% else %}#f8fafc{% endif %}; position: relative; display: flex; flex-direction: column; justify-content: space-between; min-height: 180px;">
+							<div>
+								{% if addr.default %}
+									<span style="position: absolute; top: 1.25rem; right: 1.25rem; background: #3b82f6; color: #fff; font-size: 0.75rem; font-weight: bold; padding: 2px 8px; border-radius: 20px;">Padrão</span>
+								{% endif %}
+								<p style="margin: 0 0 0.5rem 0; font-weight: bold; color: #1e293b;">{{ addr.firstname }} {{ addr.lastname }}</p>
+								<p style="margin: 0 0 0.25rem 0; color: #475569; font-size: 0.9rem;">
+									{{ addr.address_1 }}, Nº {{ addr.number }} {% if addr.address_2 %}({{ addr.address_2 }}){% endif %}
+								</p>
+								<p style="margin: 0 0 0.25rem 0; color: #475569; font-size: 0.9rem;">
+									{{ addr.neighborhood }} - {{ addr.city }}/{{ addr.zone_code }}
+								</p>
+								<p style="margin: 0 0 1rem 0; color: #64748b; font-size: 0.85rem;">
+									CEP: {{ addr.postcode }} | {{ addr.country }}
+								</p>
+							</div>
+							
+							<div style="display: flex; gap: 0.5rem; justify-content: flex-end; border-top: 1px solid #e2e8f0; padding-top: 0.75rem; margin-top: 0.5rem;">
+								<a href="/LPDHED2dC7Gjrg2b/clientes/{{ customer.id }}/enderecos/{{ addr.address_id }}/editar" class="btn btn-primary" style="padding: 6px 12px; font-size: 0.8rem; background: #3b82f6; display: inline-flex; align-items: center; gap: 4px; text-decoration: none;">
+									<i class="fas fa-edit"></i>
+									<span>Editar</span>
+								</a>
+								
+								<a href="/LPDHED2dC7Gjrg2b/clientes/{{ customer.id }}/enderecos/{{ addr.address_id }}/excluir" class="btn btn-danger" onclick="return confirm('Deseja realmente excluir este endereço?');" style="padding: 6px 12px; font-size: 0.8rem; display: inline-flex; align-items: center; gap: 4px; text-decoration: none; color: #fff; background-color: #ef4444; border-radius: 4px; font-weight: 600;">
+									<i class="fas fa-trash-alt"></i>
+									<span>Excluir</span>
+								</a>
+							</div>
+						</div>
+					{% endfor %}
+				</div>
+			{% else %}
+				<div style="text-align: center; padding: 3rem; color: #64748b; background: #f8fafc; border-radius: 8px; border: 1px dashed #cbd5e1;">
+					<i class="fas fa-map-marker-alt" style="font-size: 2.5rem; color: #cbd5e1; margin-bottom: 0.75rem; display: block;"></i>
+					Nenhum endereço cadastrado para este cliente.
+				</div>
+			{% endif %}
+		</div>
+	</div>
+
+		</div>
+	</div>
+
+	<script>
+		// Switcher de abas Twig / JS amigável
+		function switchTab(tabName) {
+			// Esconde todas as abas
+			document.querySelectorAll('.tab-content').forEach(el => el.style.display = 'none');
+			// Remove classe de ativação dos botões
+			document.querySelectorAll('.tab-button').forEach(el => {
+				el.style.borderBottomColor = 'transparent';
+				el.style.color = '#64748b';
+			});
+
+			// Mostra a aba selecionada
+			const contentEl = document.getElementById('tab-content-' + tabName);
+			if (contentEl) {
+				contentEl.style.display = 'block';
+			}
+
+			// Ativa o botão da aba selecionada
+			const btnEl = document.getElementById('tab-btn-' + tabName);
+			if (btnEl) {
+				btnEl.style.borderBottomColor = '#3b82f6';
+				btnEl.style.color = '#1e293b';
+			}
+
+			// Atualiza a URL sem recarregar a página
+			const url = new URL(window.location);
+			url.searchParams.set('tab', tabName);
+			window.history.pushState({}, '', url);
+		}
+
+		// Inicializa a aba correta com base no parâmetro 'tab' passado pelo PHP
+		document.addEventListener('DOMContentLoaded', function() {
+			switchTab('{{ tab }}');
+		});
+	</script>
+{% endblock %}
