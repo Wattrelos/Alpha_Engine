@@ -60,7 +60,7 @@ $twigEnv->addExtension(new \Alpha\Support\Twig\UrlExtension($seoUrlRepository));
 // Resolve a URL completa do logotipo da loja
 $logo = '';
 if (!empty($configSettings['config_logo'])) {
-    $logo = HTTP_SERVER . 'img/' . $configSettings['config_logo'];
+    $logo = HTTP_SERVER . 'image/' . $configSettings['config_logo'];
 }
 
 // ── Twig Globals: disponíveis em TODOS os templates

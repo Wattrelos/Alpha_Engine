@@ -14,7 +14,7 @@
 /* Identidade Visual */
 
 .telhado {
-  background-image: url('/img/seamless/scandinavian-roof-tile-seamless.jpg');
+  background-image: url('/image/seamless/scandinavian-roof-tile-seamless.jpg');
   background-repeat: repeat;
   position: relative;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.35);
@@ -44,16 +44,16 @@
 }
 
 .stucco4 {
-  background: url('/img/seamless/Stucco4.jpg');
+  background: url('/image/seamless/Stucco4.jpg');
 }
 
 .Roof01 {
   padding: 10px;
-  background: url('/img/seamless/Roof01.jpg');
+  background: url('/image/seamless/Roof01.jpg');
 }
 
 .roof02 {
-  background: url('/img/seamless/Roof02.jpg');
+  background: url('/image/seamless/Roof02.jpg');
   padding: 0 10px;
 }
 

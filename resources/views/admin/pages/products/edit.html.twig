@@ -17,7 +17,7 @@
 	</div>
 
 	<div class="card" style="box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1), 0 2px 4px -1px rgba(0,0,0,0.06); border-radius: var(--border-radius); background: #fff; padding: 2rem;">
-		<form action="/LPDHED2dC7Gjrg2b/produtos/{{ product.id }}/editar" method="POST">
+		<form action="/LPDHED2dC7Gjrg2b/produtos/{{ product.id }}/editar" method="POST" enctype="multipart/form-data">
 			<div class="form-grid" style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 1.5rem;">
 				
 				<!-- Nome do Produto -->
@@ -91,8 +91,37 @@
 					<label style="display: block; font-weight: 600; margin-bottom: 0.5rem; color: #64748b;">Última Modificação</label>
 					<input type="text" class="form-control" value="{{ product.date_modified|default('Nenhuma alteração registrada') }}" readonly style="width: 100%; padding: 0.75rem; border: 1px solid #e2e8f0; border-radius: 8px; font-size: 1rem; color: #64748b; background: #f8f9fa; cursor: not-allowed;" />
 				</div>
+				<!-- Imagem do Produto -->
+				<div class="form-group" style="grid-column: span 2; margin-bottom: 2rem; padding: 1.5rem; border: 1px dashed #cbd5e1; border-radius: 12px; background: #f8fafc;">
+					<label for="image" style="display: block; font-weight: 700; margin-bottom: 0.75rem; color: #0f172a; font-size: 1.1rem;">Foto do Produto</label>
+					
+					{% if product.image %}
+						<div class="current-image-container" style="display: flex; align-items: center; gap: 1.5rem; margin-bottom: 1.5rem; background: #fff; padding: 1rem; border-radius: 8px; border: 1px solid #e2e8f0;">
+							<div style="width: 120px; height: 120px; display: flex; align-items: center; justify-content: center; background: #f1f5f9; border-radius: 6px; overflow: hidden; border: 1px solid #e2e8f0;">
+								<img src="/{{ product.image }}" alt="Preview" style="max-width: 100%; max-height: 100%; object-fit: contain;" />
+							</div>
+							<div>
+								<div style="font-weight: 600; color: #334155; margin-bottom: 0.25rem;">Caminho da imagem atual:</div>
+								<div style="font-family: monospace; font-size: 0.85rem; color: #64748b; margin-bottom: 0.75rem; word-break: break-all;">{{ product.image }}</div>
+								<label style="display: inline-flex; align-items: center; gap: 8px; color: #ef4444; font-weight: 600; cursor: pointer; font-size: 0.9rem; user-select: none;">
+									<input type="checkbox" name="remove_image" value="1" style="width: 16px; height: 16px; accent-color: #ef4444;" />
+									<span>Remover esta imagem</span>
+								</label>
+							</div>
+						</div>
+					{% else %}
+						<div class="no-image-placeholder" style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1.25rem; color: #64748b; font-size: 0.9rem;">
+							<i class="fas fa-image" style="font-size: 2rem; color: #cbd5e1;"></i>
+							<span>Nenhuma imagem cadastrada para este produto.</span>
+						</div>
+					{% endif %}
 
-				<!-- Descrição -->
+					<div class="upload-input-wrap">
+						<input type="file" id="image" name="image" accept="image/*" class="form-control" style="width: 100%; padding: 0.75rem; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 0.95rem; color: #1e293b; background: #fff;" />
+						<p style="margin: 0.5rem 0 0 0; font-size: 0.8rem; color: #64748b;">Formatos aceitos: JPG, PNG, WEBP, GIF. O envio de uma nova foto substituirá a atual.</p>
+					</div>
+				</div>
+
 				<div class="form-group" style="grid-column: span 2; margin-bottom: 2rem;">
 					<label for="description" style="display: block; font-weight: 600; margin-bottom: 0.5rem; color: #1e293b;">Descrição Detalhada</label>
 					<textarea id="description" name="description" class="form-control" rows="8" style="width: 100%; padding: 0.75rem; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 1rem; color: #1e293b; font-family: inherit; resize: vertical;">{{ product.description }}</textarea>

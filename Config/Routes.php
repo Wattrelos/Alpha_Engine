@@ -52,6 +52,22 @@ return function (\Slim\App $app) {
             $group->get('/produtos', \Alpha\Admin\Controllers\Actions\Catalog\Product\ListProductsAction::class)->setName('admin.product.list');
             $group->get('/produtos/{id:[0-9]+}/editar', \Alpha\Admin\Controllers\Actions\Catalog\Product\EditProductAction::class)->setName('admin.product.edit');
             $group->post('/produtos/{id:[0-9]+}/editar', \Alpha\Admin\Controllers\Actions\Catalog\Product\UpdateProductAction::class)->setName('admin.product.update');
+            
+            // Categorias
+            $group->get('/categorias', \Alpha\Admin\Controllers\Actions\Catalog\Category\ListCategoriesAction::class)->setName('admin.category.list');
+            $group->map(['GET', 'POST'], '/categorias/criar', \Alpha\Admin\Controllers\Actions\Catalog\Category\CreateCategoryAction::class)->setName('admin.category.create');
+            $group->get('/categorias/{id:[0-9]+}/editar', \Alpha\Admin\Controllers\Actions\Catalog\Category\EditCategoryAction::class)->setName('admin.category.edit');
+            $group->post('/categorias/{id:[0-9]+}/editar', \Alpha\Admin\Controllers\Actions\Catalog\Category\UpdateCategoryAction::class)->setName('admin.category.update');
+            $group->get('/categorias/{id:[0-9]+}/excluir', \Alpha\Admin\Controllers\Actions\Catalog\Category\DeleteCategoryAction::class)->setName('admin.category.delete');
+
+            // Fabricantes
+            $group->get('/fabricantes', \Alpha\Admin\Controllers\Actions\Catalog\Manufacturer\ListManufacturersAction::class)->setName('admin.manufacturer.list');
+            $group->get('/fabricantes/criar', \Alpha\Admin\Controllers\Actions\Catalog\Manufacturer\CreateManufacturerAction::class)->setName('admin.manufacturer.create');
+            $group->post('/fabricantes/criar', \Alpha\Admin\Controllers\Actions\Catalog\Manufacturer\StoreManufacturerAction::class)->setName('admin.manufacturer.store');
+            $group->get('/fabricantes/{id:[0-9]+}/editar', \Alpha\Admin\Controllers\Actions\Catalog\Manufacturer\EditManufacturerAction::class)->setName('admin.manufacturer.edit');
+            $group->post('/fabricantes/{id:[0-9]+}/editar', \Alpha\Admin\Controllers\Actions\Catalog\Manufacturer\UpdateManufacturerAction::class)->setName('admin.manufacturer.update');
+            $group->get('/fabricantes/{id:[0-9]+}/excluir', \Alpha\Admin\Controllers\Actions\Catalog\Manufacturer\DeleteManufacturerAction::class)->setName('admin.manufacturer.delete');
+
             $group->get('/logout', \Alpha\Admin\Controllers\Actions\Auth\LogoutAction::class)->setName('admin.logout');
         })->add(new \Alpha\Auth\Middleware\AdminSessionMiddleware());
         

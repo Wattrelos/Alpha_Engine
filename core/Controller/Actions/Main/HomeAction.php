@@ -63,7 +63,7 @@ class HomeAction implements ActionInterface
 
         $logo = '';
         if (!empty($configSettings['config_logo'])) {
-            $logo = HTTP_SERVER . 'img/' . $configSettings['config_logo'];
+            $logo = HTTP_SERVER . 'image/' . $configSettings['config_logo'];
         }
 
         $routeContext = RouteContext::fromRequest($request);

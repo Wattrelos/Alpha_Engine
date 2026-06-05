@@ -11,6 +11,24 @@
   ├── core/                                   # 🧠 Core da Alpha Engine (Backend Standalone)
   │   ├── Admin/                              # 🛡️ Módulo do Painel Administrativo
   │   │   ├── Controllers/Actions/            # Controladores Slim focados no Admin (Painel)
+  │   │   │                ├── Catalog/                      # Focado no catálogo e cliente final
+  │   │   │                │   └── Manufacturer/
+  │   │   │                │       ├── CreateManufacturerAction.php
+  │   │   │                │       ├── StoreManufacturerAction.php
+  │   │   │                │       ├── EditManufacturerAction.php
+  │   │   │                │       ├── UpdateManufacturerAction.php
+  │   │   │                │       ├── DeleteManufacturerAction.php
+  │   │   │                │       └── ListManufacturersAction.php
+  │   │   │                │
+  │   │   │                └── Procurement/                  # Focado na gestão interna e compras
+  │   │   │                      └── Supplier/ 
+  │   │   │                         ├── CreateSupplierAction.php
+  │   │   │                         ├── StoreSupplierAction.php
+  │   │   │                         ├── EditSupplierAction.php
+  │   │   │                         ├── UpdateSupplierAction.php
+  │   │   │                         ├── DeleteSupplierAction.php
+  │   │   │                         └── ListSuppliersAction.php
+  │   │   ├─Repositories/  # Repositórios específicos da área administrativa
   │   │   ├── Mappers/                        # Mappers específicos da área administrativa
   │   │   └── ...                             # (Estrutura isolada de Backoffice)
   │   ├── Auth/                               # 🔐 Módulo de Autenticação e Segurança

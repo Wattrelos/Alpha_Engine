@@ -5,7 +5,7 @@
             {# Logo — ancora à esquerda (Atom) #}
             <div class="egen-header__logo">
                 {% include 'components/atoms/logo.twig' with {
-                    'logo': store.logo|default(logo)|default('/img/logo.png'),
+                    'logo': store.logo|default(logo)|default('/image/logo.png'),
                     'home': home|default('/pt-br'),
                     'name': store.name|default(name)|default('AG Sonhos e Construções')
                 } %}

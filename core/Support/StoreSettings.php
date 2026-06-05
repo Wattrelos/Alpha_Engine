@@ -59,26 +59,24 @@ class StoreSettings
         $baseUrl = HTTP_SERVER;
         if (!empty($this->rawSettings['config_logo'])) {
             $logoPath = $this->rawSettings['config_logo'];
-            if (strpos($logoPath, 'img/') === 0) {
+            if (strpos($logoPath, 'image/') === 0) {
                 $store['logo'] = $baseUrl . $logoPath;
             } else {
-                $store['logo'] = $baseUrl . 'img/' . $logoPath;
+                $store['logo'] = $baseUrl . 'image/' . $logoPath;
             }
         } else {
-            $store['logo'] = $baseUrl . 'img/logo.png';
+            $store['logo'] = $baseUrl . 'image/logo.png';
         }
 
         if (!empty($this->rawSettings['config_icon'])) {
             $iconPath = $this->rawSettings['config_icon'];
-            if (strpos($iconPath, 'img/') === 0) {
+            if (strpos($iconPath, 'image/') === 0) {
                 $store['icon'] = $baseUrl . $iconPath;
-            } elseif (strpos($iconPath, 'image/') === 0) {
-                $store['icon'] = $baseUrl . str_replace('image/', 'img/', $iconPath);
             } else {
-                $store['icon'] = $baseUrl . 'img/' . $iconPath;
+                $store['icon'] = $baseUrl . 'image/' . $iconPath;
             }
         } else {
-            $store['icon'] = $baseUrl . 'img/logo2.png';
+            $store['icon'] = $baseUrl . 'image/logo2.png';
         }
 
         // Parse localized descriptions (meta title, description, keywords)

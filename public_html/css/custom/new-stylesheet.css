@@ -2342,7 +2342,7 @@
 
 .egen-hero-card {
     background: linear-gradient(135deg, rgba(16, 20, 24, 0.9) 0%, rgba(30, 34, 39, 0.7) 100%),
-        url('/img/seamless/scandinavian-roof-tile-seamless.jpg') center/cover;
+        url('/image/seamless/scandinavian-roof-tile-seamless.jpg') center/cover;
     padding: 5rem 3rem;
     display: flex;
     align-items: center;

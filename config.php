@@ -9,7 +9,7 @@ define('HTTP_SERVER', 'http://' . ($_SERVER['HTTP_HOST'] ?? 'localhost') . '/');
 define('DIR_ROOT', $root);
 define('DIR_APPLICATION', DIR_ROOT . 'catalog/');
 define('DIR_EXTENSION',   DIR_ROOT . 'extension/');
-define('DIR_IMAGE',       DIR_ROOT . 'image/');
+define('DIR_IMAGE',       DIR_ROOT . 'public_html/');
 define('DIR_SYSTEM',      DIR_ROOT . 'system/');
 define('DIR_STORAGE',     DIR_ROOT . 'storage/'); // Certifique-se que esta pasta existe
 
