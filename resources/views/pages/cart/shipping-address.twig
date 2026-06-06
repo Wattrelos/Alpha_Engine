@@ -1,6 +1,5 @@
 <!-- Formulário de Endereço de Entrega -->
-<div
-	id="checkout-shipping-address" class="egen-checkout-form-hidden shipping-address-premium">
+<div id="checkout-shipping-address" class="egen-checkout-form-hidden">
 	<!-- Campos do endereço -->
 	<div class="egen-form-grid-premium">
 		<div class="egen-form-group-premium">
@@ -29,13 +28,13 @@
 				{{ entry_country|default('País') }}
 				<span class="text-danger">*</span>
 			</label>
-			<div class="select-wrapper-premium">
+			<div class="egen-select-wrapper-premium">
 				<select name="shipping_country_id" id="input-shipping-country" class="egen-form-select-premium" required>
 					{% for country in countries %}
 						<option value="{{ country.id }}" {% if country.id == shipping_country_id %}selected{% endif %}>{{ country.name }}</option>
 					{% endfor %}
 				</select>
-				<i class="fa-solid fa-chevron-down select-arrow-premium"></i>
+				<i class="fa-solid fa-chevron-down egen-select-arrow-premium"></i>
 			</div>
 		</div>
 	</div>

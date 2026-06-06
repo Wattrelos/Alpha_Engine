@@ -3,9 +3,9 @@
 {% block title %}{{ store.metaTitle|default(Home.metaTitle)|default('Início | AgSonhos — Materiais de Construção') }}{% endblock %}
 
 {% block content %}
-	<div class="stucco4">
+	<div class="egen-stucco4">
 		<div id="common-home" class="container py-4">
-			<div class="row">
+			<div class="egen-row">
 				{% if column_left %}
 					<div class="col-lg-3 col-md-4 col-sm-12">
 						{{ column_left }}
@@ -59,31 +59,16 @@
 
 					{# ── Seção de destaque: grade de categorias principais ── #}
 					{% if featured_categories %}
-						<section class="home-categories mb-5" id="content-start">
+						<section class="egen-home-categories mb-5" id="content-start">
 							<div class="egen-section-header">
-								<h2 class="section-title">{{ Home.departments.title }}</h2>
+								<h2 class="egen-section-title">{{ Home.departments.title }}</h2>
 								<p class="egen-section-subtitle">{{ Home.departments.subtitle }}</p>
 							</div>
-							<div class="category-grid">
+							<div class="egen-category-grid">
 								{% for cat in featured_categories %}
-									<a href="{{ url_for('category.detail', {'lang': lang, 'slug': cat.seo_keyword ?: cat.id}) }}" class="category-card">
-										{% if cat.image %}
-											<div class="category-card__image-wrapper">
-												<img src="/{{ cat.image }}" alt="{{ cat.name }}" loading="lazy">
-											</div>
-										{% else %}
-											<div class="category-card__no-image">🏗️</div>
-										{% endif %}
-										<div class="category-card__content">
-											<span class="category-card__name">{{ cat.name }}</span>
-											{% if cat.subcategory_count > 0 %}
-												<span class="category-card__count">{{ cat.subcategory_count }}
-													{{ Home.departments.subcategories }}</span>
-											{% endif %}
-										</div>
-									</a>
+									{% include 'pages/category/category-card.html.twig' with {'cat': cat, 'subcategories_label': Home.departments.subcategories} %}
 								{% else %}
-									<p class="empty-state">{{ Home.departments.empty }}</p>
+									<p class="egen-empty-state">{{ Home.departments.empty }}</p>
 								{% endfor %}
 							</div>
 						</section>
@@ -111,14 +96,12 @@
 					{# ── Produtos em Destaque Injetados ── #}
 					{% if featured_products %}
 						<div class="egen-section-header">
-							<h3 class="section-title">{{ Home.headingTitleFeatured|default(Home.featured.title) }}</h3>
+							<h3 class="egen-section-title">{{ Home.headingTitleFeatured|default(Home.featured.title) }}</h3>
 							<p class="egen-section-subtitle">{{ Home.featured.subtitle }}</p>
 						</div>
-						<div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-xl-4 mb-5">
+						<div class="egen-product-grid mb-5">
 							{% for product in featured_products %}
-								<div class="col">
-									{% include 'pages/product/product-card.html.twig' with {'prod': product} %}
-								</div>
+								{% include 'pages/product/product-card.html.twig' with {'prod': product} %}
 							{% endfor %}
 						</div>
 					{% endif %}
@@ -126,14 +109,12 @@
 					{# ── Produtos Mais Recentes Injetados ── #}
 					{% if latest_products %}
 						<div class="egen-section-header">
-							<h3 class="section-title">{{ Home.headingTitleLatest|default(Home.latest.title) }}</h3>
+							<h3 class="egen-section-title">{{ Home.headingTitleLatest|default(Home.latest.title) }}</h3>
 							<p class="egen-section-subtitle">{{ Home.latest.subtitle }}</p>
 						</div>
-						<div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-xl-4 mb-5">
+						<div class="egen-product-grid mb-5">
 							{% for product in latest_products %}
-								<div class="col">
-									{% include 'pages/product/product-card.html.twig' with {'prod': product} %}
-								</div>
+								{% include 'pages/product/product-card.html.twig' with {'prod': product} %}
 							{% endfor %}
 						</div>
 					{% endif %}

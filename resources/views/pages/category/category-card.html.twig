@@ -1,0 +1,16 @@
+<a href="{{ url_for('category.detail', {'lang': lang, 'slug': cat.seo_keyword ?: cat.id}) }}" class="egen-category-card">
+	{% if cat.image %}
+		<div class="egen-category-card__image-wrapper">
+			<img src="/{{ cat.image }}" alt="{{ cat.name }}" loading="lazy">
+		</div>
+	{% else %}
+		<div class="egen-category-card__no-image">🏗️</div>
+	{% endif %}
+	<div class="egen-category-card__content">
+		<span class="egen-category-card__name">{{ cat.name }}</span>
+		{% if cat.subcategory_count > 0 %}
+			<span class="egen-category-card__count">{{ cat.subcategory_count }}
+				{{ subcategories_label|default('Subcategorias') }}</span>
+		{% endif %}
+	</div>
+</a>

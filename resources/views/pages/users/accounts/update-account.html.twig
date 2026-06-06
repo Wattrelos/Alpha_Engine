@@ -5,21 +5,39 @@
 {% endblock %}
 
 {% block content %}
-	<div class="egen-hero-premium">
-		<div class="egen-container">
-			<div class="egen-hero-content">
-				<h1 class="egen-hero-title">
-					<i class="fas fa-user-edit egen-hero-icon" style="color: var(--egen-primary-color, #e056fd);"></i>
-					{{ heading_title|default('Editar Informações') }}
-				</h1>
-				{% include 'components/molecules/breadcrumbs.twig' with { items: breadcrumbs } %}
+	<div id="account-page">
+		{# ── Hero ── #}
+		<div class="account-hero">
+			<div class="account-hero-inner">
+				<nav class="account-breadcrumb" aria-label="Navegação">
+					{% for breadcrumb in breadcrumbs %}
+						{% if not loop.last %}
+							<a href="{{ breadcrumb.href }}">{{ breadcrumb.text }}</a>
+							<span class="sep">›</span>
+						{% else %}
+							<span class="current">{{ breadcrumb.text }}</span>
+						{% endif %}
+					{% endfor %}
+				</nav>
+				<div class="account-hero-content">
+					<div class="account-avatar">
+						<svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+							<path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
+							<path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
+						</svg>
+					</div>
+					<div>
+						<h1 class="account-hero-title">{{ heading_title|default('Editar Informações') }}</h1>
+						<p class="account-hero-sub">Mantenha seus dados pessoais atualizados</p>
+					</div>
+				</div>
 			</div>
 		</div>
-	</div>
 
-	<div class="egen-container egen-page-spacing egen-account-page">
+		{# ── Wrapper ── #}
+		<div class="account-wrapper">
 		{% if errors.warning %}
-			<div class="egen-alert egen-alert--danger">
+			<div class="egen-alert egen-alert--danger" style="margin-bottom: 2rem; animation: slideDown 0.3s ease-out;">
 				<i class="fa-solid fa-circle-exclamation"></i>
 				{{ errors.warning }}
 			</div>
@@ -117,4 +135,6 @@
 			</form>
 		</div>
 	</div>
+	</div>
+	{# /#account-page #}
 {% endblock %}

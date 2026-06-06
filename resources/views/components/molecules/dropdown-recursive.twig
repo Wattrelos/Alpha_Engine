@@ -13,7 +13,7 @@
 
 			{# Se a categoria tiver subcategorias, a função chama ela mesma (recursão) #}
 			{% if item.children is not empty %}
-				<ul class="submenu">
+				<ul class="egen-submenu">
 					{{ macros.render_menu(item.children) }}
 				</ul>
 			{% endif %}

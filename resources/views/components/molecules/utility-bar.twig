@@ -14,7 +14,7 @@
         {% if search %}
             {{ search }}
         {% else %}
-            <form action="/{{ lang|default('pt-br') }}/busca" method="GET" class="search-bar">
+            <form action="/{{ lang|default('pt-br') }}/busca" method="GET" class="egen-search-bar">
                 <input type="text" name="search" placeholder="Buscar no site..." required>
                 <button type="submit">Buscar</button>
             </form>

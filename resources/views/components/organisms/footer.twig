@@ -49,13 +49,13 @@
           {% else %}
             <h3 class="egen-footer__brand-name">{{ store.name }}</h3>
           {% endif %}
-          <p class="footer-desc">
+        <p class="egen-footer-desc">
             A parceria ideal para a realização dos seus sonhos e da sua obra. Materiais de construção com qualidade, agilidade e o melhor preço.
           </p>
         </div>
 
         {# Redes Sociais #}
-        <div class="social-icons">
+      <div class="egen-social-icons">
           <a href="{{ store.social.facebook }}" target="_blank" rel="noopener" title="Facebook" aria-label="Facebook"><i class="fa-brands fa-facebook-f" aria-hidden="true"></i></a>
           <a href="{{ store.social.instagram }}" target="_blank" rel="noopener" title="Instagram" aria-label="Instagram"><i class="fa-brands fa-instagram" aria-hidden="true"></i></a>
           <a href="{{ store.social.youtube }}" target="_blank" rel="noopener" title="YouTube" aria-label="YouTube"><i class="fa-brands fa-youtube" aria-hidden="true"></i></a>
@@ -101,8 +101,8 @@
           {{ Common.footer.powered|default(powered)|format('Alpha Engine', "now"|date("Y"))|raw }}
         </p>
 
-        <div class="payment-methods">
-          <span class="payment-methods__label">Formas de pagamento:</span>
+        <div class="egen-payment-methods">
+          <span class="egen-payment-methods__label">Formas de pagamento:</span>
           <i class="fa-brands fa-cc-visa fa-2x" title="Visa" aria-label="Visa"></i>
           <i class="fa-brands fa-cc-mastercard fa-2x" title="Mastercard" aria-label="Mastercard"></i>
           <i class="fa-solid fa-barcode fa-2x" title="Boleto Bancário" aria-label="Boleto Bancário"></i>

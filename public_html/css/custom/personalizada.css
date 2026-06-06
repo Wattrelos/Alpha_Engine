@@ -13,7 +13,7 @@
 /************************************************************************************************************/
 /* Identidade Visual */
 
-.telhado {
+.egen-telhado {
   background-image: url('/image/seamless/scandinavian-roof-tile-seamless.jpg');
   background-repeat: repeat;
   position: relative;
@@ -22,7 +22,7 @@
   transition: all var(--transition-speed) ease;
 }
 
-.telhado::before {
+.egen-telhado::before {
   content: '';
   position: absolute;
   top: 0;
@@ -33,41 +33,41 @@
   z-index: 1;
 }
 
-.telhado>* {
+.egen-telhado>* {
   position: relative;
   z-index: 2;
 }
 
-.telhado header {
+.egen-telhado header {
   padding: 1.5rem 0;
   transition: padding var(--transition-speed) ease;
 }
 
-.stucco4 {
+.egen-stucco4 {
   background: url('/image/seamless/Stucco4.jpg');
 }
 
-.Roof01 {
+.egen-Roof01 {
   padding: 10px;
   background: url('/image/seamless/Roof01.jpg');
 }
 
-.roof02 {
+.egen-roof02 {
   background: url('/image/seamless/Roof02.jpg');
   padding: 0 10px;
 }
 
-.roof02 .product-thumb {
+.egen-roof02 .product-thumb {
   background: white;
 }
 
-.roof02 h3 {
+.egen-roof02 h3 {
   color: white;
   text-align: center;
 }
 
 /* Botão 3D. Geralmente usados no menu */
-.btn-3d {
+.egen-btn-3d {
   text-shadow: 0 -1px 0 rgba(255, 117, 24, 0.25);
   background-color: #ff9900;
   background-image: linear-gradient(to bottom, #fc9003, #9c4902);
@@ -77,19 +77,19 @@
 }
 
 /* Logo */
-#logo {
+#egen-logo {
   display: flex;
   align-items: center;
 }
 
-#logo h1 {
+#egen-logo h1 {
   margin: 0;
   font-size: 2.2rem;
   font-weight: 800;
   letter-spacing: -0.5px;
 }
 
-#logo h1 a {
+#egen-logo h1 a {
   text-decoration: none;
   background: linear-gradient(135deg, #ffffff 0%, var(--primary-color) 100%);
   -webkit-background-clip: text;
@@ -97,17 +97,17 @@
   transition: opacity var(--transition-speed) ease;
 }
 
-#logo h1 a:hover {
+#egen-logo h1 a:hover {
   opacity: 0.9;
 }
 
-#logo img {
+#egen-logo img {
   max-height: 70px;
   width: auto;
   transition: transform var(--transition-speed) ease;
 }
 
-#logo img:hover {
+#egen-logo img:hover {
   transform: scale(1.05);
 }
 
@@ -161,15 +161,15 @@
 }
 
 /* Estado sticky */
-.telhado.sticky .egen-header {
+.egen-telhado.sticky .egen-header {
   padding: 0.5rem 0;
 }
 
-.telhado.sticky #logo h1 {
+.egen-telhado.sticky #egen-logo h1 {
   font-size: 1.8rem;
 }
 
-.telhado.sticky #logo img {
+.egen-telhado.sticky #egen-logo img {
   max-height: 50px;
 }
 
@@ -292,16 +292,16 @@
 }
 
 /* Efeito ao passar o mouse sobre um item do menu principal ou quando ativo */
-.ag-menu-container:hover .dropdown-menu-recursive,
-.ag-menu-container:focus-within .dropdown-menu-recursive,
-.dropdown-menu-recursive.show {
+.ag-menu-container:hover .egen-dropdown-menu-recursive,
+.ag-menu-container:focus-within .egen-dropdown-menu-recursive,
+.egen-dropdown-menu-recursive.show {
   opacity: 1;
   visibility: visible;
   pointer-events: auto;
   transform: translateY(0);
 }
 
-.menu-button-left {
+.egen-menu-button-left {
   text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.2);
   background-color: var(--primary-color);
   background-image: linear-gradient(to bottom, var(--primary-color), var(--primary-hover));
@@ -318,14 +318,14 @@
   cursor: pointer;
 }
 
-.menu-button-left:hover {
+.egen-menu-button-left:hover {
   background-image: linear-gradient(to bottom, var(--accent-color), var(--primary-color));
   border-color: var(--primary-color);
   transform: translateY(-2px);
   box-shadow: 0 6px 15px rgba(252, 144, 3, 0.4);
 }
 
-.dropdown-menu-recursive {
+.egen-dropdown-menu-recursive {
   display: block;
   opacity: 0;
   visibility: hidden;
@@ -348,7 +348,7 @@
     visibility var(--transition-speed);
 }
 
-.dropdown-menu-recursive li {
+.egen-dropdown-menu-recursive li {
   width: 100%;
   position: relative;
   padding: 0;
@@ -360,14 +360,14 @@
   transition: all 0.2s ease;
 }
 
-.dropdown-menu-recursive li:hover {
+.egen-dropdown-menu-recursive li:hover {
   background: rgba(252, 144, 3, 0.1);
 }
 
 /* Mostra o submenu ao passar o mouse sobre um item do menu pai ou quando ativo */
-.dropdown-menu-recursive li:hover>.submenu,
-.dropdown-menu-recursive li:focus-within>.submenu,
-.submenu.show {
+.egen-dropdown-menu-recursive li:hover>.egen-submenu,
+.egen-dropdown-menu-recursive li:focus-within>.egen-submenu,
+.egen-submenu.show {
   opacity: 1;
   visibility: visible;
   pointer-events: auto;
@@ -375,7 +375,7 @@
 }
 
 /* Link <a> ocupa todo o container */
-.dropdown-menu-recursive li a {
+.egen-dropdown-menu-recursive li a {
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -387,12 +387,12 @@
   transition: color var(--transition-speed) ease;
 }
 
-.dropdown-menu-recursive li a:hover {
+.egen-dropdown-menu-recursive li a:hover {
   color: var(--primary-color);
 }
 
 /* Oculta o submenu inicialmente */
-.submenu {
+.egen-submenu {
   background-color: var(--light-color-1);
   display: block;
   opacity: 0;
@@ -415,16 +415,16 @@
     visibility var(--transition-speed);
 }
 
-.submenu li {
+.egen-submenu li {
   background-color: var(--light-color-1);
 }
 
-.submenu li:hover {
+.egen-submenu li:hover {
   background-color: rgba(252, 144, 3, 0.1);
 }
 
 /* Caixa de busca ----------------------*/
-.search-bar {
+.egen-search-bar {
   display: flex;
   align-items: stretch;
   width: 100%;
@@ -438,12 +438,12 @@
   transition: all var(--transition-speed) ease;
 }
 
-.search-bar:focus-within {
+.egen-search-bar:focus-within {
   border-color: var(--primary-color);
   box-shadow: 0 4px 15px rgba(252, 144, 3, 0.25);
 }
 
-.search-bar input {
+.egen-search-bar input {
   flex-grow: 1;
   border: none;
   outline: none;
@@ -453,11 +453,11 @@
   background: transparent;
 }
 
-.search-bar input::placeholder {
+.egen-search-bar input::placeholder {
   color: #999999;
 }
 
-.search-bar button {
+.egen-search-bar button {
   background: var(--primary-color) !important;
   color: var(--light-color-1) !important;
   border: none;
@@ -467,12 +467,12 @@
   cursor: pointer;
 }
 
-.search-bar button:hover {
+.egen-search-bar button:hover {
   background: var(--primary-hover) !important;
 }
 
 /* Estilo para ícones de atalho para redes sociais -------------------------------------------------------------------------------------- */
-.ico-menu {
+.egen-ico-menu {
   display: flex;
   align-items: center;
   white-space: nowrap;
@@ -482,27 +482,27 @@
   border-radius: 1em;
 }
 
-.ico-menu li {
+.egen-ico-menu li {
   display: inline-block;
   list-style: none;
   margin: 0 0.5em;
 }
 
-.ico-menu li a {
+.egen-ico-menu li a {
   text-decoration: none;
   color: #333;
   display: flex;
   align-items: center;
 }
 
-.ico-menu li img {
+.egen-ico-menu li img {
   width: 1em;
   height: 1em;
   margin-right: 0.2em;
 }
 
 /* Ações do usuário */
-.user-actions {
+.egen-user-actions {
   display: flex;
   white-space: nowrap;
   align-items: center;
@@ -512,19 +512,19 @@
   border-radius: 1em;
 }
 
-.user-actions a {
+.egen-user-actions a {
   text-decoration: none;
   color: var(--light-color-1);
   transition: color 0.3s;
   position: relative;
 }
 
-.user-actions a:hover {
+.egen-user-actions a:hover {
   color: var(--focus-color-1);
 }
 
-.user-actions,
-.ico-menu {
+.egen-user-actions,
+.egen-ico-menu {
   background: var(--primary-color);
   color: var(--light-color-1);
   padding: 0.5em 1em;
@@ -707,18 +707,18 @@
     transform: translateX(-50%) translateY(0);
   }
 
-  .search-bar {
+  .egen-search-bar {
     max-width: 100%;
   }
 }
 
 /* Formatação do formulário de login ----------------------------------------------------------------------------------- */
-.dropdown {
+.egen-dropdown {
   position: relative;
   display: inline-block;
 }
 
-.dropdown-content {
+.egen-dropdown-content {
   display: none;
   position: absolute;
   background-color: #f9f9f9;
@@ -730,33 +730,33 @@
   transition: opacity 0.3s ease-in-out;
 }
 
-.dropdown:hover .dropdown-content {
+.egen-dropdown:hover .egen-dropdown-content {
   display: block;
   opacity: 1;
 }
 
-.dropdown-content input[type="text"],
-.dropdown-content input[type="email"],
-.dropdown-content input[type="password"],
-.dropdown-content input[type="submit"] {
+.egen-dropdown-content input[type="text"],
+.egen-dropdown-content input[type="email"],
+.egen-dropdown-content input[type="password"],
+.egen-dropdown-content input[type="submit"] {
   margin-bottom: 10px;
   padding: 8px;
   border: 1px solid #ccc;
   border-radius: 3px;
 }
 
-.dropdown-content input[type="submit"] {
+.egen-dropdown-content input[type="submit"] {
   background-color: #4CAF50;
   color: white;
   cursor: pointer;
 }
 
 /* Checagem dos campos 'input' para marcar como válidos: */
-.input-container.valid input {
+.egen-input-container.egen-valid input {
   border-color: green;
 }
 
-.input-container.valid .checkmark {
+.egen-input-container.egen-valid .egen-checkmark {
   display: inline;
 }
 
@@ -811,7 +811,7 @@
   margin: 0 0 0.5rem 0;
 }
 
-.footer-desc {
+.egen-footer-desc {
   color: #a0aab5;
   font-size: 0.9rem;
   line-height: 1.6;
@@ -819,13 +819,13 @@
 }
 
 /* ── Ícones de redes sociais ── */
-.social-icons {
+.egen-social-icons {
   display: flex;
   flex-wrap: wrap;
   gap: 0.5rem;
 }
 
-.ag-footer .social-icons a {
+.ag-footer .egen-social-icons a {
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -842,7 +842,7 @@
     box-shadow var(--transition-speed) ease;
 }
 
-.ag-footer .social-icons a:hover {
+.ag-footer .egen-social-icons a:hover {
   background: var(--primary-color);
   color: var(--light-color-1);
   transform: translateY(-3px) rotate(360deg);
@@ -857,7 +857,7 @@
 }
 
 /* Título da coluna */
-.footer-column__title {
+.egen-footer-column__title {
   color: var(--light-color-1);
   font-weight: 700;
   font-size: 1rem;
@@ -868,7 +868,7 @@
   margin: 0;
 }
 
-.footer-column__title::after {
+.egen-footer-column__title::after {
   content: '';
   position: absolute;
   left: 0;
@@ -879,12 +879,12 @@
   transition: width var(--transition-speed) ease;
 }
 
-.egen-footer__col:hover .footer-column__title::after {
+.egen-footer__col:hover .egen-footer-column__title::after {
   width: 48px;
 }
 
 /* Lista de links */
-.footer-column__list {
+.egen-footer-column__list {
   list-style: none;
   margin: 0;
   padding: 0;
@@ -893,12 +893,12 @@
   gap: 0.5rem;
 }
 
-.footer-column__item {
+.egen-footer-column__item {
   margin: 0;
   padding: 0;
 }
 
-.footer-column__link {
+.egen-footer-column__link {
   color: #a0aab5;
   font-size: 0.9rem;
   text-decoration: none;
@@ -907,8 +907,8 @@
     transform var(--transition-speed) ease;
 }
 
-.footer-column__link:hover,
-.footer-column__link:focus-visible {
+.egen-footer-column__link:hover,
+.egen-footer-column__link:focus-visible {
   color: var(--primary-color);
   transform: translateX(5px);
   outline: none;
@@ -938,25 +938,25 @@
 }
 
 /* Ícones de formas de pagamento */
-.payment-methods {
+.egen-payment-methods {
   display: flex;
   align-items: center;
   gap: 0.5rem;
   flex-wrap: wrap;
 }
 
-.payment-methods__label {
+.egen-payment-methods__label {
   color: #7d8794;
   font-size: 0.8rem;
 }
 
-.payment-methods i {
+.egen-payment-methods i {
   color: #7d8794;
   transition: color var(--transition-speed) ease,
     transform var(--transition-speed) ease;
 }
 
-.payment-methods i:hover {
+.egen-payment-methods i:hover {
   color: var(--primary-color);
   transform: scale(1.15);
 }
@@ -980,7 +980,7 @@
     border-bottom: 1px solid rgba(255, 255, 255, 0.07);
   }
 
-  .social-icons {
+  .egen-social-icons {
     margin-top: 0.5rem;
   }
 }
@@ -1003,7 +1003,7 @@
     align-items: center;
   }
 
-  .payment-methods {
+  .egen-payment-methods {
     justify-content: center;
   }
 }

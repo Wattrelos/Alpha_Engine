@@ -123,7 +123,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const password = passwordInput.value.trim();
 
             if (!email || !password) {
-                showCartAlert('Por favor, preencha todos os campos.', 'danger');
+                window.showNotification('Por favor, preencha todos os campos.', 'danger');
                 return;
             }
 
@@ -147,7 +147,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 .then(res => res.json())
                 .then(data => {
                     if (data.redirect) {
-                        showCartAlert('Login realizado com sucesso! Redirecionando...', 'success');
+                        window.showNotification('Login realizado com sucesso! Redirecionando...', 'success');
 
                         // Sincroniza o carrinho local de visitante com o banco de dados antes de redirecionar
                         if (typeof guestCart !== 'undefined' && guestCart.getItems().length > 0) {
@@ -173,18 +173,18 @@ document.addEventListener('DOMContentLoaded', () => {
                             window.location.href = data.redirect;
                         }
                     } else if (data.error) {
-                        showCartAlert(data.error, 'danger');
+                        window.showNotification(data.error, 'danger');
                         loginButton.disabled = false;
                         loginButton.innerHTML = originalBtnHTML;
                     } else {
-                        showCartAlert('Erro inesperado ao realizar login.', 'danger');
+                        window.showNotification('Erro inesperado ao realizar login.', 'danger');
                         loginButton.disabled = false;
                         loginButton.innerHTML = originalBtnHTML;
                     }
                 })
                 .catch(err => {
                     console.error('Erro na requisição de login:', err);
-                    showCartAlert('Erro de rede ou servidor. Tente novamente.', 'danger');
+                    window.showNotification('Erro de rede ou servidor. Tente novamente.', 'danger');
                     loginButton.disabled = false;
                     loginButton.innerHTML = originalBtnHTML;
                 });
@@ -229,12 +229,12 @@ document.addEventListener('DOMContentLoaded', () => {
                             setFieldVal(cityId, data.localidade);
                             setFieldVal(zoneInputId, data.uf);
                         } else {
-                            showCartAlert('CEP não encontrado.', 'danger');
+                            window.showNotification('CEP não encontrado.', 'danger');
                         }
                     })
                     .catch(error => {
                         console.error('Erro ao buscar CEP:', error);
-                        showCartAlert('Erro ao consultar ViaCEP.', 'danger');
+                        window.showNotification('Erro ao consultar ViaCEP.', 'danger');
                     });
             }
         });
@@ -271,11 +271,24 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Gerencia o clique nos botões "Avançar" e "Voltar"
     document.querySelectorAll('[data-checkout-nav]').forEach(btn => {
-        btn.addEventListener('click', () => {
+        btn.addEventListener('click', async (e) => {
+            e.preventDefault();
             const direction = btn.getAttribute('data-checkout-nav');
+            
             if (direction === 'next') {
-                if (validateStep(currentStep)) {
-                    navigateNext();
+                const originalHtml = btn.innerHTML;
+                btn.disabled = true;
+                btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Processando...';
+
+                try {
+                    // Transforma a validação em assíncrona (Aguardando o Backend)
+                    const isValid = await validateStepAsync(currentStep);
+                    if (isValid) navigateNext();
+                } catch (error) {
+                    console.error("Erro na transição de etapa:", error);
+                } finally {
+                    btn.disabled = false;
+                    btn.innerHTML = originalHtml;
                 }
             } else if (direction === 'prev') {
                 navigatePrev();
@@ -308,7 +321,29 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
-    function validateStep(step) {
+    // ── ALTERNAR MÉTODOS DE PAGAMENTO (ETAPA 4) ──
+    const paymentCards = document.querySelectorAll('.egen-payment-method-card');
+    if (paymentCards.length > 0) {
+        paymentCards.forEach(card => {
+            const radio = card.querySelector('.egen-payment-method-radio');
+            
+            card.addEventListener('click', function(e) {
+                if (e.target !== radio) {
+                    radio.checked = true;
+                    radio.dispatchEvent(new Event('change', { bubbles: true }));
+                }
+            });
+
+            radio.addEventListener('change', function() {
+                paymentCards.forEach(c => c.classList.remove('active'));
+                if (radio.checked) {
+                    card.classList.add('active');
+                }
+            });
+        });
+    }
+
+    async function validateStepAsync(step) {
         let valid = true;
         const activeStepEl = document.querySelector(`.egen-checkout-step[data-step="${step}"]`);
         if (!activeStepEl) return true;
@@ -317,13 +352,13 @@ document.addEventListener('DOMContentLoaded', () => {
         if (step === 1) {
             const activeIdentityBtn = document.querySelector('.egen-checkout-identity-options button.active');
             if (!activeIdentityBtn) {
-                showCartAlert('Selecione uma opção de identificação para continuar.', 'danger');
+                window.showNotification('Selecione uma opção de identificação para continuar.', 'danger');
                 return false;
             }
 
             const action = activeIdentityBtn.getAttribute('data-checkout-action');
             if (action === 'login') {
-                showCartAlert('Por favor, clique no botão para se autenticar ou escolha outra opção.', 'danger');
+                window.showNotification('Por favor, clique no botão para se autenticar ou escolha outra opção.', 'danger');
                 return false;
             }
 
@@ -343,15 +378,23 @@ document.addEventListener('DOMContentLoaded', () => {
                 const password = document.getElementById('register-password');
                 const confirm = document.getElementById('register-confirm');
                 if (password && confirm && password.value !== confirm.value) {
-                    showCartAlert('As senhas não coincidem.', 'danger');
+                    window.showNotification('As senhas não coincidem.', 'danger');
                     confirm.classList.add('is-invalid');
                     valid = false;
                 }
 
                 if (!valid) {
-                    showCartAlert('Por favor, preencha todos os campos obrigatórios de cadastro.', 'danger');
+                    window.showNotification('Por favor, preencha todos os campos obrigatórios de cadastro.', 'danger');
+                    return false;
                 }
+                
+                // TODO: Chamada AJAX para salvar os dados de cadastro na sessão e validar backend (E-mail duplicado, etc)
+                /* const formData = new FormData(registerForm);
+                   const res = await fetch('/api/checkout/save-identity', { method: 'POST', body: formData });
+                   const data = await res.json();
+                   if (!data.success) { window.showNotification(data.error, 'danger'); return false; } */
             }
+            // Se action for 'guest', prossegue para o passo 2 sem validar form
         }
 
         // Se for etapa 2, valida os campos de cobrança
@@ -369,10 +412,16 @@ document.addEventListener('DOMContentLoaded', () => {
                     }
                 });
                 if (!valid) {
-                    showCartAlert('Por favor, preencha todos os campos obrigatórios do endereço de cobrança.', 'danger');
+                    window.showNotification('Por favor, preencha todos os campos obrigatórios do endereço de cobrança.', 'danger');
+                    return false;
                 }
+                
+                // TODO: Chamada AJAX para salvar endereço na sessão do OpenCart e buscar métodos de frete
+                /* const formData = new FormData(billingForm);
+                   const res = await fetch('/api/checkout/save-billing', { method: 'POST', body: formData });
+                   if (!res.ok) { window.showNotification('Erro ao salvar endereço.', 'danger'); return false; } */
             } else {
-                showCartAlert('Escolha se deseja entregar no mesmo endereço ou em outro.', 'danger');
+                window.showNotification('Escolha se deseja entregar no mesmo endereço ou em outro.', 'danger');
                 return false;
             }
         }
@@ -391,8 +440,13 @@ document.addEventListener('DOMContentLoaded', () => {
                     }
                 });
                 if (!valid) {
-                    showCartAlert('Por favor, preencha todos os campos obrigatórios do endereço de entrega.', 'danger');
+                    window.showNotification('Por favor, preencha todos os campos obrigatórios do endereço de entrega.', 'danger');
+                    return false;
                 }
+                
+                // TODO: Chamada AJAX para buscar/confirmar métodos de Frete antes do Pagamento
+                /* const res = await fetch('/api/checkout/get-shipping-methods');
+                   // renderizar HTML de frete dinamicamente... */
             }
         }
 

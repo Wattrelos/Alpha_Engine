@@ -1,10 +1,10 @@
 <div class="egen-footer__col">
-  <h5 class="footer-column__title">{{ title }}</h5>
-  <ul class="footer-column__list">
+  <h5 class="egen-footer-column__title">{{ title }}</h5>
+  <ul class="egen-footer-column__list">
     {% for link in links %}
       {% if link.href %}
-        <li class="footer-column__item">
-          <a href="{{ link.href }}" class="footer-column__link">
+        <li class="egen-footer-column__item">
+          <a href="{{ link.href }}" class="egen-footer-column__link">
             {{ link.label }}
           </a>
         </li>

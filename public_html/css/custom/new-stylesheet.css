@@ -27,6 +27,21 @@
     border-radius: 4px;
 }
 
+/* Utilidade Grid Layout Egen */
+.egen-row {
+    display: flex;
+    flex-wrap: wrap;
+    margin-right: -0.75rem;
+    margin-left: -0.75rem;
+}
+.egen-row > * {
+    box-sizing: border-box;
+    flex-shrink: 0;
+    width: 100%;
+    max-width: 100%;
+    padding-right: 0.75rem;
+    padding-left: 0.75rem;
+}
 
 /* Estamos substituindo os estilos Bootstrap por estilos personalizados para este projeto, */
 /* Para distinguir o estilo personalizado dos outros estilos, usaremos o prefixo egen- */
@@ -64,10 +79,137 @@
     --egen-shadow-btn: 0 4px 15px rgba(252, 144, 3, 0.4);
 
     /* Erros */
-    --egen-error-color: #ff6b6b;
+    --egen-error-color: #f57d0c;
 
     /* Transição */
     --egen-transition: 0.25s ease;
+}
+
+/* ══════════════════════════════════════════════════════
+   PÁGINA DE LOGIN (Container e Elementos Premium UI)
+   ══════════════════════════════════════════════════════ */
+#account-login-page {
+    min-height: 100vh;
+    background: #0d0f14;
+    color: #e2e8f0;
+    font-family: 'Inter', 'Outfit', system-ui, sans-serif;
+}
+
+.login-hero {
+    background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 50%, #0f172a 100%);
+    border-bottom: 1px solid rgba(252, 144, 3, 0.25);
+    padding: 3rem 2rem 2.5rem;
+}
+
+.login-hero-inner {
+    max-width: 960px;
+    margin: 0 auto;
+}
+
+.login-breadcrumb {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.8rem;
+    color: #94a3b8;
+    margin-bottom: 1.5rem;
+}
+
+.login-breadcrumb a {
+    color: #94a3b8;
+    text-decoration: none;
+    transition: color 0.2s;
+}
+
+.login-breadcrumb a:hover {
+    color: #fc9003;
+}
+
+.login-breadcrumb .sep {
+    color: #475569;
+}
+
+.login-breadcrumb .current {
+    color: #fc9003;
+    font-weight: 500;
+}
+
+.login-hero-title {
+    font-size: clamp(1.6rem, 3vw, 2.2rem);
+    font-weight: 700;
+    color: #f1f5f9;
+    margin: 0 0 0.5rem;
+    letter-spacing: -0.02em;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.login-hero-icon {
+    width: 44px;
+    height: 44px;
+    flex-shrink: 0;
+    background: linear-gradient(135deg, rgba(252, 144, 3, 0.2), rgba(255, 193, 7, 0.2));
+    border: 1px solid rgba(252, 144, 3, 0.35);
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #ff1707;
+}
+
+.login-hero-sub {
+    color: #94a3b8;
+    font-size: 0.9rem;
+    margin: 0;
+}
+
+.login-wrapper {
+    max-width: 960px;
+    margin: 0 auto;
+    padding: 3rem 1.5rem 5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+}
+
+.login-alert {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 1rem 1.25rem;
+    border-radius: 10px;
+    font-size: 0.9rem;
+}
+
+.login-alert--danger {
+    background: rgba(239, 68, 68, 0.1);
+    border: 1px solid rgba(239, 68, 68, 0.25);
+    color: #fca5a5;
+}
+
+.login-alert--success {
+    background: rgba(34, 197, 94, 0.1);
+    border: 1px solid rgba(34, 197, 94, 0.25);
+    color: #86efac;
+}
+
+.login-grid-container {
+    display: grid;
+    grid-template-columns: 1fr 1.2fr;
+    gap: 2rem;
+    align-items: stretch;
+}
+
+.login-grid-col {
+    display: flex;
+}
+
+@media (max-width: 768px) {
+    .login-grid-container {
+        grid-template-columns: 1fr;
+        gap: 1.5rem;
+    }
 }
 
 /* ══════════════════════════════════════════════════════
@@ -1157,7 +1299,7 @@
 }
 
 /* Grade de Produtos */
-.egen-category-grid {
+.egen-product-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
     gap: 1.5rem;
@@ -2486,7 +2628,7 @@
 }
 
 /* Category Grid & Cards */
-.section-title {
+.egen-section-title {
     font-size: 2rem;
     font-weight: 800;
     background: linear-gradient(135deg, #ffffff 0%, var(--egen-primary-color) 100%);
@@ -2496,14 +2638,14 @@
     margin-bottom: 2rem;
 }
 
-.category-grid {
+.egen-category-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
     gap: 1.5rem;
     margin-bottom: 3rem;
 }
 
-.category-card {
+.egen-category-card {
     background: var(--egen-bg-card);
     backdrop-filter: blur(12px);
     -webkit-backdrop-filter: blur(12px);
@@ -2519,13 +2661,13 @@
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
 }
 
-.category-card:hover {
+.egen-category-card:hover {
     transform: translateY(-5px);
     border-color: rgba(252, 144, 3, 0.4);
     box-shadow: 0 15px 35px rgba(252, 144, 3, 0.2);
 }
 
-.category-card__image-wrapper {
+.egen-category-card__image-wrapper {
     width: 100%;
     height: 140px;
     display: flex;
@@ -2538,18 +2680,18 @@
     overflow: hidden;
 }
 
-.category-card__image-wrapper img {
+.egen-category-card__image-wrapper img {
     max-width: 100%;
     max-height: 100%;
     object-fit: contain;
     transition: transform var(--egen-transition);
 }
 
-.category-card:hover .category-card__image-wrapper img {
+.egen-category-card:hover .egen-category-card__image-wrapper img {
     transform: scale(1.08);
 }
 
-.category-card__no-image {
+.egen-category-card__no-image {
     font-size: 3.5rem;
     height: 140px;
     display: flex;
@@ -2562,25 +2704,25 @@
     border: 1px solid var(--egen-border-color);
 }
 
-.category-card__content {
+.egen-category-card__content {
     display: flex;
     flex-direction: column;
     align-items: center;
     gap: 0.25rem;
 }
 
-.category-card__name {
+.egen-category-card__name {
     font-size: 1.1rem;
     font-weight: 700;
     color: var(--egen-text-color);
     transition: color var(--egen-transition);
 }
 
-.category-card:hover .category-card__name {
+.egen-category-card:hover .egen-category-card__name {
     color: var(--egen-primary-color);
 }
 
-.category-card__count {
+.egen-category-card__count {
     font-size: 0.8rem;
     color: var(--egen-text-muted);
 }
@@ -2651,7 +2793,7 @@
     position: relative;
 }
 
-.egen-section-header .section-title {
+.egen-section-header .egen-section-title {
     display: inline-block;
     margin-bottom: 0.5rem;
 }
@@ -3756,26 +3898,105 @@
 }
 
 /* Custom Select Arrow */
-.select-wrapper-premium {
+.egen-select-wrapper-premium {
     position: relative;
     display: flex;
     align-items: center;
     width: 100%;
 }
 
-.select-wrapper-premium select {
+.egen-select-wrapper-premium select {
     padding-right: 2.5rem !important;
     appearance: none !important;
     -webkit-appearance: none !important;
 }
 
-.select-arrow-premium {
+.egen-select-arrow-premium {
     position: absolute;
     right: 1rem;
     color: #64748b;
     pointer-events: none;
     display: flex;
     align-items: center;
+}
+
+/* ══════════════════════════════════════════════════════
+   MÉTODO DE PAGAMENTO (payment_method.twig)
+   ══════════════════════════════════════════════════════ */
+.egen-payment-methods-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 15px;
+    margin-top: 10px;
+}
+
+@media (min-width: 768px) {
+    .egen-payment-methods-grid {
+        grid-template-columns: 1fr 1fr;
+    }
+}
+
+.egen-payment-method-card {
+    display: block;
+    position: relative;
+    background: var(--egen-bg-input, rgba(255, 255, 255, 0.05));
+    border: 1px solid var(--egen-border-color, rgba(255, 255, 255, 0.1));
+    border-radius: 12px;
+    padding: 16px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.egen-payment-method-card:hover {
+    background: rgba(255, 255, 255, 0.08);
+    border-color: rgba(255, 255, 255, 0.2);
+}
+
+.egen-payment-method-card.active {
+    border-color: var(--egen-accent-color, #ff4081);
+    background: rgba(255, 64, 129, 0.05);
+    box-shadow: 0 0 10px rgba(255, 64, 129, 0.15);
+}
+
+.egen-payment-method-radio {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    accent-color: var(--egen-accent-color, #ff4081);
+    cursor: pointer;
+}
+
+.egen-payment-method-card-content {
+    display: flex;
+    align-items: flex-start;
+    gap: 15px;
+}
+
+.egen-payment-method-card-content i {
+    font-size: 24px;
+    margin-top: 2px;
+    color: var(--egen-accent-color, #ff4081);
+    width: 30px;
+    text-align: center;
+}
+
+.egen-payment-method-name {
+    display: block;
+    font-weight: 600;
+    font-size: 15px;
+    color: var(--egen-text-primary, #ffffff);
+    margin-bottom: 4px;
+}
+
+.egen-payment-method-desc {
+    display: block;
+    font-size: 12px;
+    color: var(--egen-text-secondary, #b3b3b3);
+    line-height: 1.4;
+}
+
+.egen-payment-note-group {
+    margin-top: 1.5rem;
 }
 
 /* Premium Checkout Steps Layout */
@@ -3988,6 +4209,309 @@
     display: flex;
     align-items: center;
     gap: 0.75rem;
+}
+
+/* ==========================================================================
+   ACCOUNT PAGE — Alpha Engine Premium UI
+   ========================================================================== */
+#account-page {
+    min-height: 100vh;
+    background: #0d0f14;
+    color: #e2e8f0;
+    font-family: 'Inter', 'Outfit', system-ui, sans-serif;
+}
+
+/* ── Hero ── */
+.account-hero {
+    background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 50%, #0f172a 100%);
+    border-bottom: 1px solid rgba(99, 102, 241, 0.2);
+    padding: 3rem 2rem 2.5rem;
+}
+.account-hero-inner {
+    max-width: 1100px;
+    margin: 0 auto;
+}
+
+.account-breadcrumb {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.8rem;
+    color: #94a3b8;
+    margin-bottom: 1.75rem;
+}
+.account-breadcrumb a {
+    color: #94a3b8;
+    text-decoration: none;
+    transition: color 0.2s;
+}
+.account-breadcrumb a:hover {
+    color: #a5b4fc;
+}
+.account-breadcrumb .sep {
+    color: #475569;
+}
+.account-breadcrumb .current {
+    color: #a5b4fc;
+    font-weight: 500;
+}
+
+.account-hero-content {
+    display: flex;
+    align-items: center;
+    gap: 1.25rem;
+}
+.account-avatar {
+    width: 64px;
+    height: 64px;
+    background: linear-gradient(135deg, rgba(99,102,241,0.25), rgba(139,92,246,0.25));
+    border: 1px solid rgba(99, 102, 241, 0.4);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #a5b4fc;
+    flex-shrink: 0;
+}
+.account-hero-title {
+    font-size: clamp(1.5rem, 3vw, 2.2rem);
+    font-weight: 700;
+    color: #f1f5f9;
+    margin: 0 0 0.25rem;
+    letter-spacing: -0.02em;
+}
+.account-hero-sub {
+    color: #94a3b8;
+    font-size: 0.9rem;
+    margin: 0;
+}
+
+/* ── Wrapper ── */
+.account-wrapper {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 2.5rem 1.5rem 5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 2.5rem;
+}
+
+/* ── Section ── */
+.section-header {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 1rem;
+}
+.section-icon {
+    width: 36px;
+    height: 36px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+.section-icon--profile {
+    background: rgba(99, 102, 241, 0.15);
+    color: #a5b4fc;
+    border: 1px solid rgba(99, 102, 241, 0.25);
+}
+.section-icon--orders {
+    background: rgba(34, 197, 94, 0.12);
+    color: #4ade80;
+    border: 1px solid rgba(34, 197, 94, 0.25);
+}
+.section-icon--news {
+    background: rgba(59, 130, 246, 0.12);
+    color: #60a5fa;
+    border: 1px solid rgba(59, 130, 246, 0.25);
+}
+.section-icon--affiliate {
+    background: rgba(245, 158, 11, 0.12);
+    color: #fbbf24;
+    border: 1px solid rgba(245, 158, 11, 0.25);
+}
+
+.section-title {
+    font-size: 0.7rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: #94a3b8;
+    margin: 0;
+}
+
+/* ── Cards grid ── */
+.account-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 0.75rem;
+}
+
+/* ── Single card ── */
+.account-card {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.07);
+    border-radius: 12px;
+    padding: 1rem 1.1rem;
+    text-decoration: none;
+    color: #e2e8f0;
+    transition: background 0.2s, border-color 0.2s, transform 0.2s, box-shadow 0.2s;
+    cursor: pointer;
+}
+.account-card:hover {
+    background: rgba(99, 102, 241, 0.08);
+    border-color: rgba(99, 102, 241, 0.3);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+    color: #e2e8f0;
+}
+.account-card--highlight {
+    border-color: rgba(34, 197, 94, 0.2);
+    background: rgba(34, 197, 94, 0.04);
+}
+.account-card--highlight:hover {
+    background: rgba(34, 197, 94, 0.1);
+    border-color: rgba(34, 197, 94, 0.4);
+}
+
+.card-icon {
+    width: 40px;
+    height: 40px;
+    background: rgba(99, 102, 241, 0.12);
+    border: 1px solid rgba(99, 102, 241, 0.2);
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #a5b4fc;
+    flex-shrink: 0;
+    transition: background 0.2s;
+}
+.account-card--highlight .card-icon {
+    background: rgba(34, 197, 94, 0.12);
+    border-color: rgba(34, 197, 94, 0.25);
+    color: #4ade80;
+}
+.card-icon--gold {
+    background: rgba(245, 158, 11, 0.12);
+    border-color: rgba(245, 158, 11, 0.25);
+    color: #fbbf24;
+}
+
+.account-card:hover .card-icon {
+    background: rgba(99, 102, 241, 0.22);
+}
+.account-card--highlight:hover .card-icon {
+    background: rgba(34, 197, 94, 0.22);
+}
+
+.card-text {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 0.15rem;
+    min-width: 0;
+}
+.card-label {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: #e2e8f0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+.card-hint {
+    font-size: 0.75rem;
+    color: #64748b;
+}
+
+.card-arrow {
+    color: #475569;
+    font-size: 1.1rem;
+    font-weight: 300;
+    transition: color 0.2s, transform 0.2s;
+    flex-shrink: 0;
+}
+.account-card:hover .card-arrow {
+    color: #a5b4fc;
+    transform: translateX(2px);
+}
+.account-card--highlight:hover .card-arrow {
+    color: #4ade80;
+}
+
+/* ── Responsive ── */
+@media(max-width: 640px) {
+    .account-hero {
+        padding: 2rem 1rem 1.5rem;
+    }
+    .account-wrapper {
+        padding: 1.5rem 1rem 4rem;
+        gap: 2rem;
+    }
+    .account-cards {
+        grid-template-columns: 1fr;
+    }
+    .account-hero-title {
+        font-size: 1.4rem;
+    }
+    .account-avatar {
+        width: 52px;
+        height: 52px;
+    }
+}
+
+/* ── Toggle Switch Component ── */
+.account-card--toggle {
+    cursor: default;
+}
+.account-card--toggle:hover {
+    background: rgba(255, 255, 255, 0.03);
+    border-color: rgba(255, 255, 255, 0.07);
+    transform: none;
+    box-shadow: none;
+}
+.card-toggle {
+    margin-left: auto;
+    flex-shrink: 0;
+}
+#newsletter-toggle {
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    position: relative;
+    display: inline-block;
+    width: 44px;
+    height: 24px;
+    border-radius: 24px;
+    background-color: #334155;
+    transition: background-color 0.3s ease;
+    cursor: pointer;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+#newsletter-toggle::before {
+    content: "";
+    position: absolute;
+    top: 2px;
+    left: 2px;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background-color: #94a3b8;
+    transition: transform 0.3s ease, background-color 0.3s ease;
+}
+#newsletter-toggle:checked {
+    background-color: #22c55e; /* green-500 */
+    border-color: transparent;
+}
+#newsletter-toggle:checked::before {
+    background-color: white;
+    transform: translateX(20px);
 }
 
 /* ==========================================================================

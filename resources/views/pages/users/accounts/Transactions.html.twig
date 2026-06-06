@@ -3,19 +3,37 @@
 {% block page_title %}{{ heading_title }}{% endblock %}
 
 {% block content %}
-	<div class="egen-hero-premium">
-		<div class="egen-container">
-			<div class="egen-hero-content">
-				<h1 class="egen-hero-title">
-					<i class="fas fa-wallet egen-hero-icon" style="color: var(--egen-primary-color, #fc9003);"></i>
-					{{ heading_title }}
-				</h1>
-				{% include 'components/molecules/breadcrumbs.twig' %}
+	<div id="account-page">
+		{# ── Hero ── #}
+		<div class="account-hero">
+			<div class="account-hero-inner">
+				<nav class="account-breadcrumb" aria-label="Navegação">
+					{% for breadcrumb in breadcrumbs %}
+						{% if not loop.last %}
+							<a href="{{ breadcrumb.href }}">{{ breadcrumb.text }}</a>
+							<span class="sep">›</span>
+						{% else %}
+							<span class="current">{{ breadcrumb.text }}</span>
+						{% endif %}
+					{% endfor %}
+				</nav>
+				<div class="account-hero-content">
+					<div class="account-avatar">
+						<svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+							<line x1="12" y1="1" x2="12" y2="23"/>
+							<path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
+						</svg>
+					</div>
+					<div>
+						<h1 class="account-hero-title">{{ heading_title }}</h1>
+						<p class="account-hero-sub">Histórico de créditos e débitos da conta</p>
+					</div>
+				</div>
 			</div>
 		</div>
-	</div>
 
-	<div class="egen-container egen-page-spacing" style="margin-top: 2rem; margin-bottom: 4rem;">
+		{# ── Wrapper ── #}
+		<div class="account-wrapper">
 		{# Card do saldo atual #}
 		<div class="egen-login-card" style="margin-bottom: 2rem; padding: 1.5rem 2rem;">
 			<div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
@@ -66,4 +84,6 @@
 			<a href="{{ continue }}" class="egen-btn egen-btn-primary">Voltar</a>
 		</div>
 	</div>
+	</div>
+	{# /#account-page #}
 {% endblock %}

@@ -34,7 +34,9 @@ class LoginAction implements ActionInterface
 
         if (!$user) {
             $response->getBody()->write(json_encode([
-                'error' => 'Aviso: Seu endereço de e-mail e/ou senha não coincidem.'
+                'error' => [
+                    'warning' => 'Aviso: Seu endereço de e-mail e/ou senha não coincidem.'
+                ]
             ]));
             return $response->withHeader('Content-Type', 'application/json')->withStatus(400);
         }
@@ -66,4 +68,3 @@ class LoginAction implements ActionInterface
             ->withStatus(200);
     }
 }
-

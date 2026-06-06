@@ -3,19 +3,36 @@
 {% block page_title %}{{ title }}{% endblock %}
 
 {% block content %}
-	<div class="egen-hero-premium">
-		<div class="egen-container">
-			<div class="egen-hero-content">
-				<h1 class="egen-hero-title">
-					<i class="fas fa-heart egen-hero-icon" style="color: var(--egen-primary-color, #e056fd);"></i>
-					{{ title }}
-				</h1>
-				{% include 'components/molecules/breadcrumbs.twig' %}
+	<div id="account-page">
+		{# ── Hero ── #}
+		<div class="account-hero">
+			<div class="account-hero-inner">
+				<nav class="account-breadcrumb" aria-label="Navegação">
+					{% for breadcrumb in breadcrumbs %}
+						{% if not loop.last %}
+							<a href="{{ breadcrumb.href }}">{{ breadcrumb.text }}</a>
+							<span class="sep">›</span>
+						{% else %}
+							<span class="current">{{ breadcrumb.text }}</span>
+						{% endif %}
+					{% endfor %}
+				</nav>
+				<div class="account-hero-content">
+					<div class="account-avatar">
+						<svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+							<path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
+						</svg>
+					</div>
+					<div>
+						<h1 class="account-hero-title">{{ title }}</h1>
+						<p class="account-hero-sub">Seus produtos favoritos salvos</p>
+					</div>
+				</div>
 			</div>
 		</div>
-	</div>
 
-	<div class="egen-container egen-page-spacing" style="margin-top: 2rem; margin-bottom: 4rem;">
+		{# ── Wrapper ── #}
+		<div class="account-wrapper">
 		{# Exibição de alertas de sucesso/erro vindos da sessão #}
 		{% if success %}
 			<div class="egen-alert egen-alert--success" style="margin-bottom: 2rem; animation: slideDown 0.3s ease-out;">
@@ -91,4 +108,6 @@
 			</div>
 		{% endif %}
 	</div>
+	</div>
+	{# /#account-page #}
 {% endblock %}
