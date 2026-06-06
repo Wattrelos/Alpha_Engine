@@ -86,7 +86,7 @@
 								{% endif %}
 								<p style="margin: 0 0 0.5rem 0; font-weight: bold; color: #1e293b;">{{ addr.firstname }} {{ addr.lastname }}</p>
 								<p style="margin: 0 0 0.25rem 0; color: #475569; font-size: 0.9rem;">
-									{{ addr.address_1 }}, Nº {{ addr.number }} {% if addr.address_2 %}({{ addr.address_2 }}){% endif %}
+									{{ addr.street }}, Nº {{ addr.number }} {% if addr.complement %}({{ addr.complement }}){% endif %}
 								</p>
 								<p style="margin: 0 0 0.25rem 0; color: #475569; font-size: 0.9rem;">
 									{{ addr.neighborhood }} - {{ addr.city }}/{{ addr.zone_code }}

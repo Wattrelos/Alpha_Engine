@@ -13,14 +13,14 @@ use Alpha\Model\Domain\Attributes\ManyToOne;
  * - Tipagem Estrita PHP 8.4: Propriedades tipadas e inicializadas para prevenir NullPointer.
  * - Injeção Relacional: Atributos #[ManyToOne] para resolução automática via DAO.
  */
-class ZoneDescription extends BaseEntity
+class ZoneDescription_deprecated extends BaseEntity
 {
     private int $zoneId = 0;
     private int $languageId = 0;
     private string $name = '';
 
-    #[ManyToOne(targetEntity: Zone::class, foreignKey: 'zoneId')]
-    private ?Zone $zone = null;
+    #[ManyToOne(targetEntity: Zone_deprecated::class, foreignKey: 'zoneId')]
+    private ?Zone_deprecated $zone = null;
 
     #[ManyToOne(targetEntity: Language::class, foreignKey: 'languageId')]
     private ?Language $language = null;
@@ -67,11 +67,11 @@ class ZoneDescription extends BaseEntity
         return $this;
     }
 
-    public function getZone(): ?Zone
+    public function getZone(): ?Zone_deprecated
     {
         return $this->zone;
     }
-    public function setZone(?Zone $zone): self
+    public function setZone(?Zone_deprecated $zone): self
     {
         $this->zone = $zone;
         if ($zone) {

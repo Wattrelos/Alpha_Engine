@@ -8,13 +8,13 @@ use Alpha\Model\Domain\Attributes\ManyToOne;
 /**
  * DEPRECATED. Entidade ZoneToGeoZone - Mapeamento individual de estados/países para uma GeoZone.
  */
-class ZoneToGeoZone extends BaseEntity
+class ZoneToGeoZone_deprecated        extends BaseEntity
 {
     #[ManyToOne(targetEntity: Country::class, foreignKey: 'countryId')]
     private ?Country $country = null;
 
-    #[ManyToOne(targetEntity: Zone::class, foreignKey: 'zoneId')]
-    private ?Zone $zone = null;
+    #[ManyToOne(targetEntity: Zone_deprecated::class, foreignKey: 'zoneId')]
+    private ?Zone_deprecated $zone = null;
 
     #[ManyToOne(targetEntity: GeoZone::class, foreignKey: 'geoZoneId')]
     private ?GeoZone $geoZone = null;
@@ -38,7 +38,7 @@ class ZoneToGeoZone extends BaseEntity
 
     public function setZoneId(int $id): self
     {
-        if (!$this->zone) $this->zone = new Zone();
+        if (!$this->zone) $this->zone = new Zone_deprecated();
         $this->zone->setId($id);
         return $this;
     }
@@ -64,11 +64,11 @@ class ZoneToGeoZone extends BaseEntity
         return $this;
     }
 
-    public function getZone(): ?Zone
+    public function getZone(): ?Zone_deprecated
     {
         return $this->zone;
     }
-    public function setZone(?Zone $zone): self
+    public function setZone(?Zone_deprecated $zone): self
     {
         $this->zone = $zone;
         return $this;

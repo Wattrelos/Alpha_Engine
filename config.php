@@ -35,7 +35,7 @@ define('DB_USERNAME', 'root');
 define('DB_PASSWORD', '42010052');
 define('DB_DATABASE', 'AlphaAgsonhos');
 define('DB_PORT', '3306');
-define('DB_PREFIX', 'tbkk_');
+define('DB_PREFIX', 'agsc_');
 define('DB_SSL_KEY', '');
 define('DB_SSL_CERT', '');
 define('DB_SSL_CA', '');

@@ -5,7 +5,7 @@ namespace Alpha\Admin\Controllers\Actions\Customer\Address;
 use Alpha\Controller\BaseController;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Psr\Http\Message\ResponseInterface as Response;
-use Alpha\Model\Domain\Repositories\AddressRepository;
+use Alpha\Model\Domain\Repositories\CustomerAddressesRepository;
 use Alpha\Model\Domain\Repositories\CustomerRepository;
 
 class DeleteAddressAction extends BaseController implements \Alpha\Controller\Actions\ActionInterface
@@ -24,8 +24,8 @@ class DeleteAddressAction extends BaseController implements \Alpha\Controller\Ac
             return $response->withStatus(404);
         }
 
-        /** @var AddressRepository $addressRepo */
-        $addressRepo = $this->getRepository(AddressRepository::class);
+        /** @var CustomerAddressesRepository $addressRepo */
+        $addressRepo = $this->getRepository(CustomerAddressesRepository::class);
         
         $deleteErrors = $addressRepo->validateDelete($customerId, $addressId);
 

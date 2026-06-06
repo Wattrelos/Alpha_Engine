@@ -6,7 +6,7 @@ use Psr\Http\Message\ServerRequestInterface as Request;
 use Psr\Http\Message\ResponseInterface as Response;
 use Alpha\Model\Domain\Repositories\ProductRepository;
 use Alpha\Model\Domain\Repositories\SeoUrlRepository;
-use Alpha\Model\Domain\Repositories\AddressRepository;
+use Alpha\Model\Domain\Repositories\CustomerAddressesRepository;
 use Psr\Container\ContainerInterface;
 use Twig\Environment as TwigEnvironment;
 use Alpha\Controller\Actions\ActionInterface;
@@ -17,7 +17,7 @@ class ShowProductAction implements ActionInterface
 {
     private ProductRepository $productRepository;
     private SeoUrlRepository $seoRepository;
-    private AddressRepository $addressRepository;
+    private CustomerAddressesRepository $addressRepository;
     private ContainerInterface $container;
     private TwigEnvironment $twig;
     private ImagePresenter $imagePresenter;
@@ -27,7 +27,7 @@ class ShowProductAction implements ActionInterface
     public function __construct(
         ProductRepository $productRepository,
         SeoUrlRepository $seoRepository,
-        AddressRepository $addressRepository,
+        CustomerAddressesRepository $addressRepository,
         ContainerInterface $container,
         TwigEnvironment $twig,
         ImagePresenter $imagePresenter,
@@ -187,9 +187,12 @@ class ShowProductAction implements ActionInterface
         $shippingCep = '';
         $customer = $this->container->has('customer') ? $this->container->get('customer') : null;
         if ($customer && $customer->isLogged()) {
-            $defaultAddress = $this->addressRepository->getDefaultAddress($customer->getId());
-            if ($defaultAddress) {
-                $shippingCep = preg_replace('/\D/', '', $defaultAddress->getPostcode());
+            $defaultAddressId = $customer->getAddressId();
+            if ($defaultAddressId > 0) {
+                $defaultAddress = $this->addressRepository->find($defaultAddressId);
+                if ($defaultAddress) {
+                    $shippingCep = preg_replace('/\D/', '', $defaultAddress->getPostalCode());
+                }
             }
         }
 

@@ -16,6 +16,8 @@ class Country extends BaseEntity
 {
     public const TABLE_NAME = 'agsc_geo_countries';
 
+    // O Id vem herdado da classe BaseEntity
+
     // #[ORM\Column(type: "string", length: 100)]
     private string $name;
 

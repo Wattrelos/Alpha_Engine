@@ -82,3 +82,25 @@ O código legado inicializava sessões sem controle sobre o tamanho do payload. 
 
 ### A Solução Standalone na Alpha Engine:
 O runtime de sessão é gerenciado exclusivamente pela Alpha Engine. O `SessionMapper` executa uma auditoria de tamanho ativa antes de carregar o payload (`SELECT id, LENGTH(data)`). Se o tamanho exceder 5MB, a linha é imediatamente eliminada e uma sessão limpa é gerada para o visitante. Além disso, as conexões da Alpha Engine impõem queries bufferizadas (`PDO::MYSQL_ATTR_USE_BUFFERED_QUERY => true`), eliminando os travamentos por consultas concorrentes ativas.
+
+---
+
+## 5. Novo Sistema de Localização e Endereçamento (vs. Código Morto)
+**Módulo Afetado:** Geolocalização (`Country`, `Zone`, `City`) e Cadastro de Endereços de Clientes (`CustomerAddresses`).
+
+### O Problema Original / Transição:
+Originalmente, a localização e os endereços eram mapeados por tabelas legadas e classes não hierárquicas em subdiretórios planos.
+Como parte da modernização para o padrão de entidades e mappers limpos da Alpha Engine, foi estabelecido um novo sistema sob o namespace `Alpha\Model\Domain\Entities\Geo` (para entidades como `Country`, `Zone`, `City`) e `Alpha\Model\Domain\Entities\Customer\CustomerAddresses` (para endereços).
+
+### Classes e Repositórios Mortos (NÃO UTILIZAR OU TENTAR CONSERTAR):
+Para evitar conflitos e orientar desenvolvedores e IAs, os arquivos antigos foram renomeados com o sufixo `Deprecated.txt`. Eles representam **código morto** e **NÃO** devem ser utilizados, reabilitados ou modificados:
+* `core/Model/Domain/Entities/CountryDeprecated.txt` (Substituído por [`Country.php`](file:///var/www/html/agsonhos/core/Model/Domain/Entities/Geo/Country.php))
+* `core/Model/Domain/Entities/CountryDescriptionDeprecated.txt` (Descontinuado/Unificado no novo `Country`)
+* `core/Model/Domain/Repositories/AddressRepositoryDeprecated.txt` (Substituído por [`CustomerAddressesRepository.php`](file:///var/www/html/agsonhos/core/Model/Domain/Repositories/CustomerAddressesRepository.php))
+* `core/Model/Domain/Repositories/ZoneRepositoryDeprecated.txt` (Substituído por [`GeoZoneRepository.php`](file:///var/www/html/agsonhos/core/Model/Domain/Repositories/GeoZoneRepository.php))
+* `core/Model/Domain/Repositories/CountryRepositoryDeprecated.txt` (Substituído por mappers como [`GeoCountryMapper.php`](file:///var/www/html/agsonhos/core/Mappers/EntityMappers/GeoCountryMapper.php))
+* `core/Mappers/EntityMappers/CountryMapperDeprecated.txt` (Substituído por [`GeoCountryMapper.php`](file:///var/www/html/agsonhos/core/Mappers/EntityMappers/GeoCountryMapper.php))
+
+### ⚠️ Lembrete de Arquitetura:
+* **Entidades Novas:** Sempre utilize as classes sob o namespace `Alpha\Model\Domain\Entities\Geo` e `Alpha\Model\Domain\Entities\Customer\CustomerAddresses`.
+* **Mapeamento:** O acesso aos países e estados ativos no front-end é feito via `GeoCountryMapper` e `GeoZoneMapper`. Não crie referências a classes deprecadas. Qualquer referência a esses arquivos legados ou tabelas desatualizadas causará incoerências e deve ser evitada.

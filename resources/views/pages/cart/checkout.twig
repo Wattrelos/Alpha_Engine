@@ -209,7 +209,7 @@
 										<label for="input-payment-address-1" class="egen-form-label-premium">{{ Checkout.entryAddress1|default('Endereço') }}
 											<span class="text-danger">*</span>
 										</label>
-										<input type="text" name="payment_address_1" value="{{ payment_address_1 }}" placeholder="{{ Checkout.entryAddress1|default('Endereço') }}" id="input-payment-address-1" class="egen-form-input-premium" required/>
+										<input type="text" name="payment_street" value="{{ payment_street }}" placeholder="{{ Checkout.entryAddress1|default('Endereço') }}" id="input-payment-address-1" class="egen-form-input-premium" required/>
 									</div>
 								</div>
 
@@ -222,7 +222,7 @@
 									</div>
 									<div class="egen-form-group-premium">
 										<label for="input-payment-address-2" class="egen-form-label-premium">{{ Checkout.entryAddress2|default('Número e complemento') }}</label>
-										<input type="text" name="payment_address_2" value="{{ payment_address_2 }}" placeholder="{{ Checkout.entryAddress2|default('Número e complemento') }}" id="input-payment-address-2" class="egen-form-input-premium"/>
+										<input type="text" name="payment_complement" value="{{ payment_complement }}" placeholder="{{ Checkout.entryAddress2|default('Número e complemento') }}" id="input-payment-address-2" class="egen-form-input-premium"/>
 									</div>
 								</div>
 
@@ -248,69 +248,81 @@
 											<span class="text-danger">*</span>
 										</label>
 										<input type="text" name="payment_zone_id" id="input-payment-zone" value="{{ payment_zone_id }}" placeholder="{{ Checkout.entryZone|default('Estado') }}" class="egen-form-input-premium" readonly required/>
-										<input type="hidden" name="payment_country_id" id="input-payment-country" value="30"/>
 									</div>
-									<div class="egen-form-group-premium"></div>
+									<div class="egen-form-group-premium">
+										<label for="input-shipping-country" class="egen-form-label-premium">
+											{{ entry_country|default('País') }}
+											<span class="text-danger">*</span>
+										</label>
+										<div class="select-wrapper-premium">
+											<select name="shipping_country_id" id="input-shipping-country" class="egen-form-select-premium" required>
+												{% for country in countries %}
+													<option value="{{ country.id }}" {% if country.id == shipping_country_id %} selected {% endif %}>{{ country.name }}</option>
+												{% endfor %}
+											</select>
+											<i class="fa-solid fa-chevron-down select-arrow-premium"></i>
+										</div>
+									</div>
 								</div>
 							</div>
-
-							<div class="egen-checkout-step-nav">
-								<button type="button" class="egen-btn-secondary" data-checkout-nav="prev">
-									<i class="fa-solid fa-arrow-left"></i>
-									{{ Common.button.back|default('Voltar') }}
-								</button>
-								<button type="button" class="egen-btn-primary" data-checkout-nav="next" id="btn-billing-next">
-									{{ Checkout.buttonNext|default('Avançar') }}
-									<i class="fa-solid fa-arrow-right"></i>
-								</button>
-							</div>
 						</div>
-					</div>
 
-					<!-- 3. Endereço de Entrega -->
-					<div class="egen-checkout-step" data-step="3" id="step-shipping">
-						<h2 class="egen-checkout-step-title">
-							<i class="fa-solid fa-truck-fast"></i>
-							<span>{{ Checkout.step3Title|default('Dados de Entrega') }}</span>
-						</h2>
-						<div class="egen-checkout-step-content">
-							{% include 'pages/cart/shipping-address.twig' %}
-
-							<div class="egen-checkout-step-nav">
-								<button type="button" class="egen-btn-secondary" data-checkout-nav="prev">
-									<i class="fa-solid fa-arrow-left"></i>
-									{{ Common.button.back|default('Voltar') }}
-								</button>
-								<button type="button" class="egen-btn-primary" data-checkout-nav="next" id="btn-shipping-next">
-									{{ Checkout.buttonNext|default('Avançar') }}
-									<i class="fa-solid fa-arrow-right"></i>
-								</button>
-							</div>
-						</div>
-					</div>
-					<!-- 4. Método de Pagamento -->
-					<div class="egen-checkout-step" data-step="4" id="step-payment-method">
-						<h2 class="egen-checkout-step-title">
-							<i class="fa-solid fa-credit-card"></i>
-							<span>{{ Checkout.step4Title|default('Método de Pagamento') }}</span>
-						</h2>
-						<div class="egen-checkout-step-content">
-							{% include 'pages/cart/payment_method.twig' %}
-
-							<div class="egen-checkout-step-nav">
-								<button type="button" class="egen-btn-secondary" data-checkout-nav="prev">
-									<i class="fa-solid fa-arrow-left"></i>
-									{{ Common.button.back|default('Voltar') }}
-								</button>
-								<button type="submit" class="egen-btn-primary" id="btn-submit-checkout">
-									{{ Checkout.buttonConfirm|default('Finalizar Compra') }}
-									<i class="fa-solid fa-check"></i>
-								</button>
-							</div>
+						<div class="egen-checkout-step-nav">
+							<button type="button" class="egen-btn-secondary" data-checkout-nav="prev">
+								<i class="fa-solid fa-arrow-left"></i>
+								{{ Common.button.back|default('Voltar') }}
+							</button>
+							<button type="button" class="egen-btn-primary" data-checkout-nav="next" id="btn-billing-next">
+								{{ Checkout.buttonNext|default('Avançar') }}
+								<i class="fa-solid fa-arrow-right"></i>
+							</button>
 						</div>
 					</div>
 				</div>
-			</form>
-		</div>
+
+				<!-- 3. Endereço de Entrega -->
+				<div class="egen-checkout-step" data-step="3" id="step-shipping">
+					<h2 class="egen-checkout-step-title">
+						<i class="fa-solid fa-truck-fast"></i>
+						<span>{{ Checkout.step3Title|default('Dados de Entrega') }}</span>
+					</h2>
+					<div class="egen-checkout-step-content">
+						{% include 'pages/cart/shipping-address.twig' %}
+
+						<div class="egen-checkout-step-nav">
+							<button type="button" class="egen-btn-secondary" data-checkout-nav="prev">
+								<i class="fa-solid fa-arrow-left"></i>
+								{{ Common.button.back|default('Voltar') }}
+							</button>
+							<button type="button" class="egen-btn-primary" data-checkout-nav="next" id="btn-shipping-next">
+								{{ Checkout.buttonNext|default('Avançar') }}
+								<i class="fa-solid fa-arrow-right"></i>
+							</button>
+						</div>
+					</div>
+				</div>
+				<!-- 4. Método de Pagamento -->
+				<div class="egen-checkout-step" data-step="4" id="step-payment-method">
+					<h2 class="egen-checkout-step-title">
+						<i class="fa-solid fa-credit-card"></i>
+						<span>{{ Checkout.step4Title|default('Método de Pagamento') }}</span>
+					</h2>
+					<div class="egen-checkout-step-content">
+						{% include 'pages/cart/payment_method.twig' %}
+
+						<div class="egen-checkout-step-nav">
+							<button type="button" class="egen-btn-secondary" data-checkout-nav="prev">
+								<i class="fa-solid fa-arrow-left"></i>
+								{{ Common.button.back|default('Voltar') }}
+							</button>
+							<button type="submit" class="egen-btn-primary" id="btn-submit-checkout">
+								{{ Checkout.buttonConfirm|default('Finalizar Compra') }}
+								<i class="fa-solid fa-check"></i>
+							</button>
+						</div>
+					</div>
+				</div>
+			</div>
+		</form>
 	</div>
-{% endblock %}
+</div>{% endblock %}

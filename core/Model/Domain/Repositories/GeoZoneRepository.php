@@ -41,6 +41,14 @@ class GeoZoneRepository extends AbstractRepository implements BaseRepositoryInte
     }
 
     /**
+     * Retorna a lista de zonas associadas ao ID do país
+     */
+    public function getZonesByCountryId(int $countryId): array
+    {
+        return $this->getMapper()->getZonesByCountryId($countryId);
+    }
+
+    /**
      * Alpha Engine: Verificação otimizada de Geo Zone O(1)
      */
     public function isAddressInGeoZone(int $geoZoneId, array $address): bool
@@ -65,8 +73,24 @@ class GeoZoneRepository extends AbstractRepository implements BaseRepositoryInte
     }
 
     // Implementações obrigatórias da BaseRepositoryInterface
-    public function find(int $id): ?InterfaceEntity { return null; }
-    public function findAll(): array { return $this->getGeoZones(); }
-    public function findBy(array $criteria, ?array $orderBy = null, ?int $limit = null, ?int $offset = null): array { return []; }
-    public function findOneBy(array $criteria): ?InterfaceEntity { return null; }
+    public function find(int $id): ?InterfaceEntity
+    {
+        return $this->getMapper()->findById($id);
+    }
+
+    public function findAll(): array
+    {
+        return $this->getGeoZones();
+    }
+
+    public function findBy(array $criteria, ?array $orderBy = null, ?int $limit = null, ?int $offset = null): array
+    {
+        return $this->getMapper()->search($criteria, $orderBy, $limit, $offset);
+    }
+
+    public function findOneBy(array $criteria): ?InterfaceEntity
+    {
+        $results = $this->getMapper()->search($criteria);
+        return $results[0] ?? null;
+    }
 }

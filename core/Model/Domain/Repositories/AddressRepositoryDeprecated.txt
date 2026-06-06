@@ -12,14 +12,7 @@ use Alpha\Model\Domain\Repositories\CustomerRepository;
 use Alpha\Model\Domain\Repositories\ZoneRepository;
 
 /**
- * AddressRepository
- *
- * Autoridade de domínio para o livro de endereços dos clientes.
- * Centraliza busca, persistência e validação de regras de negócio para endereços.
- *
- * Nota: funções legadasdo código legado (oc_validate_length, oc_validate_regex,
- * CustomFieldRepository) foram removidas e substituídas por implementações
- * puras em PHP 8+.
+ * @deprecated AddressRepository
  */
 class AddressRepository extends AbstractRepository implements BaseRepositoryInterface
 {
@@ -100,9 +93,9 @@ class AddressRepository extends AbstractRepository implements BaseRepositoryInte
             'firstname'      => $address->getFirstname(),
             'lastname'       => $address->getLastname(),
             'company'        => $address->getCompany(),
-            'address_1'      => $address->getAddress1(),
+            'street'      => $address->getAddress1(),
             'number'         => $address->getNumber(),
-            'address_2'      => $address->getAddress2(),
+            'complement'      => $address->getAddress2(),
             'neighborhood'   => $address->getNeighborhood(),
             'postcode'       => $address->getPostcode(),
             'city'           => $address->getCity(),
@@ -126,7 +119,7 @@ class AddressRepository extends AbstractRepository implements BaseRepositoryInte
     /**
      * Cria ou atualiza um endereço para o cliente.
      *
-     * Normaliza as chaves `address_1`/`address_2` para `address1`/`address2`
+     * Normaliza as chaves `street`/`complement` para `address1`/`address2`
      * antes de repassar ao EntityHydrator, pois o hydrator resolve setters
      * pelo nome camelCase do campo (setAddress1 → 'address1'), mas os formulários
      * e sessões do Checkout usam a nomenclatura com underscore numérico.
@@ -139,11 +132,11 @@ class AddressRepository extends AbstractRepository implements BaseRepositoryInte
     public function save(array $data, int $customerId): int
     {
         // ── Normalização de chaves (snake_case legado → camelCase da entidade) ──
-        if (isset($data['address_1']) && !isset($data['address1'])) {
-            $data['address1'] = $data['address_1'];
+        if (isset($data['street']) && !isset($data['address1'])) {
+            $data['address1'] = $data['street'];
         }
-        if (isset($data['address_2']) && !isset($data['address2'])) {
-            $data['address2'] = $data['address_2'];
+        if (isset($data['complement']) && !isset($data['address2'])) {
+            $data['address2'] = $data['complement'];
         }
 
         $addressId = (int)($data['id'] ?? $data['address_id'] ?? 0);
@@ -226,8 +219,8 @@ class AddressRepository extends AbstractRepository implements BaseRepositoryInte
         }
 
         // ── Endereço ─────────────────────────────────────────────────────────
-        if (!$this->validateLength($data['address_1'] ?? $data['address1'] ?? '', 3, 128)) {
-            $errors['address_1'] = 'O logradouro deve ter entre 3 e 128 caracteres.';
+        if (!$this->validateLength($data['street'] ?? $data['address1'] ?? '', 3, 128)) {
+            $errors['street'] = 'O logradouro deve ter entre 3 e 128 caracteres.';
         }
         if (!$this->validateLength($data['city'] ?? '', 2, 128)) {
             $errors['city'] = 'A cidade deve ter entre 2 e 128 caracteres.';

@@ -12,13 +12,16 @@ use Alpha\Model\Domain\Attributes\ManyToOne;
 
 class Zone extends BaseEntity
 {
+    // O Id vem herdado da classe BaseEntity e é chave dominante, sendo um surrogate do atributo @isoCode
+
     public const TABLE_NAME = 'agsc_geo_zones';
 
     #[ManyToOne(targetEntity: Country::class, foreignKey: 'countryId')]
     private ?Country $country = null;
 
-    private string $isoCode; // Código ISO 3166-2 (Ex: 'BR-SP')
+    private string $isoCode; // Código ISO 3166-2 (Ex: 'BR-SP') será um surrogate do atributo Id.
     private string $name;
+    private int    $countryId;
 
     // Getters e Settores...
     public function getCountry(): Country
@@ -46,6 +49,15 @@ class Zone extends BaseEntity
     public function setName(string $name): self
     {
         $this->name = $name;
+        return $this;
+    }
+    public function getCountryId(): int
+    {
+        return $this->countryId;
+    }
+    public function setCountryId(int $countryId): self
+    {
+        $this->countryId = $countryId;
         return $this;
     }
 }

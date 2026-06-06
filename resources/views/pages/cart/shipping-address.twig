@@ -25,7 +25,18 @@
 			<input type="text" name="shipping_company" value="{{ shipping_company }}" placeholder="{{ entry_company }}" id="input-shipping-company" class="egen-form-input-premium"/>
 		</div>
 		<div class="egen-form-group-premium">
-			<input type="hidden" name="shipping_country_id" id="input-shipping-country" value="30"/>
+			<label for="input-shipping-country" class="egen-form-label-premium">
+				{{ entry_country|default('País') }}
+				<span class="text-danger">*</span>
+			</label>
+			<div class="select-wrapper-premium">
+				<select name="shipping_country_id" id="input-shipping-country" class="egen-form-select-premium" required>
+					{% for country in countries %}
+						<option value="{{ country.id }}" {% if country.id == shipping_country_id %}selected{% endif %}>{{ country.name }}</option>
+					{% endfor %}
+				</select>
+				<i class="fa-solid fa-chevron-down select-arrow-premium"></i>
+			</div>
 		</div>
 	</div>
 
@@ -39,10 +50,10 @@
 		</div>
 		<div class="egen-form-group-premium">
 			<label for="input-shipping-address-1" class="egen-form-label-premium">
-				{{ entry_address_1 }}
+				{{ entry_street }}
 				<span class="text-danger">*</span>
 			</label>
-			<input type="text" name="shipping_address_1" value="{{ shipping_address_1 }}" placeholder="{{ entry_address_1 }}" id="input-shipping-address-1" class="egen-form-input-premium" required/>
+			<input type="text" name="shipping_street" value="{{ shipping_street }}" placeholder="{{ entry_street }}" id="input-shipping-address-1" class="egen-form-input-premium" required/>
 		</div>
 	</div>
 
@@ -55,8 +66,8 @@
 			<input type="number" name="shipping_number" value="{{ shipping_number }}" placeholder="Número" id="input-shipping-number" class="egen-form-input-premium" required/>
 		</div>
 		<div class="egen-form-group-premium">
-			<label for="input-shipping-address-2" class="egen-form-label-premium">{{ entry_address_2 }}</label>
-			<input type="text" name="shipping_address_2" value="{{ shipping_address_2 }}" placeholder="{{ entry_address_2 }}" id="input-shipping-address-2" class="egen-form-input-premium"/>
+			<label for="input-shipping-address-2" class="egen-form-label-premium">{{ entry_complement }}</label>
+			<input type="text" name="shipping_complement" value="{{ shipping_complement }}" placeholder="{{ entry_complement }}" id="input-shipping-address-2" class="egen-form-input-premium"/>
 		</div>
 	</div>
 

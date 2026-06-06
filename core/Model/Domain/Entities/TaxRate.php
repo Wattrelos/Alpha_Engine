@@ -3,6 +3,8 @@
 namespace Alpha\Model\Domain\Entities;
 
 use Alpha\Model\Domain\BaseEntity;
+use Alpha\Model\Domain\Attributes\ManyToOne;
+use Alpha\Model\Domain\Entities\Zone;
 
 /**
  * Entidade TaxRate (Alíquota de Imposto)
@@ -16,8 +18,8 @@ class TaxRate extends BaseEntity
     private float $rate = 0.0000;
     private string $type = 'P'; // 'P' para Percentual, 'F' para Fixo
 
-    #[ManyToOne(targetEntity: GeoZone::class, foreignKey: 'geoZoneId')]
-    private ?GeoZone $geoZone = null;
+    #[ManyToOne(targetEntity: Zone::class, foreignKey: 'zonesId')]
+    private ?Zone $zone = null;
 
     /**
      * Apontamentos Técnicos:
@@ -27,15 +29,15 @@ class TaxRate extends BaseEntity
      *    aplicado se o cliente pertencer à zona geográfica configurada.
      */
 
-    public function getGeoZoneId(): int
+    public function getZoneId(): int
     {
-        return $this->geoZone ? (int)$this->geoZone->getId() : 0;
+        return $this->zone ? (int)$this->zone->getId() : 0;
     }
 
-    public function setGeoZoneId(int $geoZoneId): self
+    public function setZoneId(int $zoneId): self
     {
-        if (!$this->geoZone) $this->geoZone = new GeoZone();
-        $this->geoZone->setId($geoZoneId);
+        if (!$this->zone) $this->zone = new Zone();
+        $this->zone->setId($zoneId);
         return $this;
     }
 
@@ -72,14 +74,14 @@ class TaxRate extends BaseEntity
         return $this;
     }
 
-    public function getGeoZone(): ?GeoZone
+    public function getZone(): ?Zone
     {
-        return $this->geoZone;
+        return $this->zone;
     }
 
-    public function setGeoZone(?GeoZone $geoZone): self
+    public function setZone(?Zone $zone): self
     {
-        $this->geoZone = $geoZone;
+        $this->zone = $zone;
         return $this;
     }
 }

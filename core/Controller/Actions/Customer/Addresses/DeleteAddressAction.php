@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Alpha\Controller\Actions\Customer\Addresses;
 
 use Alpha\Controller\Actions\ActionInterface;
-use Alpha\Model\Domain\Repositories\AddressRepository;
+use Alpha\Model\Domain\Repositories\CustomerAddressesRepository;
 use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Psr\Http\Message\ResponseInterface as Response;
@@ -22,7 +22,7 @@ use Slim\Routing\RouteContext;
 class DeleteAddressAction implements ActionInterface
 {
     public function __construct(
-        private readonly AddressRepository $addressRepository,
+        private readonly CustomerAddressesRepository $addressRepository,
         private readonly ContainerInterface $container,
     ) {}
 

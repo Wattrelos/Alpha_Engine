@@ -8,8 +8,7 @@ use Psr\Http\Message\ResponseInterface as Response;
 use Alpha\Model\DataAccessObject\DataAccessObject;
 use Alpha\Model\DataAccessObject\QueryBuilder;
 use Alpha\Model\DataAccessObject\UnitOfWork;
-use Alpha\Model\Domain\Repositories\AddressRepository;
-use Alpha\Model\Domain\Repositories\CountryRepository;
+use Alpha\Model\Domain\Repositories\CustomerAddressesRepository;
 use Alpha\Model\Domain\Repositories\CustomerRepository;
 
 class EditCustomerAction extends BaseController implements \Alpha\Controller\Actions\ActionInterface
@@ -27,10 +26,8 @@ class EditCustomerAction extends BaseController implements \Alpha\Controller\Act
 
         /** @var CustomerRepository $customerRepo */
         $customerRepo = $this->getRepository(CustomerRepository::class);
-        /** @var AddressRepository $addressRepo */
-        $addressRepo = $this->getRepository(AddressRepository::class);
-        /** @var CountryRepository $countryRepo */
-        $countryRepo = $this->getRepository(CountryRepository::class);
+        /** @var CustomerAddressesRepository $addressRepo */
+        $addressRepo = $this->getRepository(CustomerAddressesRepository::class);
 
         // Carrega dados do cliente usando repositório (ORM Entity)
         $customerEntity = $customerRepo->find($customerId);

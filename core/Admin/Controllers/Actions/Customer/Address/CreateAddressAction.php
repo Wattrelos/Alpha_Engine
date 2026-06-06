@@ -7,8 +7,7 @@ use Psr\Http\Message\ServerRequestInterface as Request;
 use Psr\Http\Message\ResponseInterface as Response;
 use Alpha\Model\DataAccessObject\DataAccessObject;
 use Alpha\Model\DataAccessObject\QueryBuilder;
-use Alpha\Model\Domain\Repositories\AddressRepository;
-use Alpha\Model\Domain\Repositories\CountryRepository;
+use Alpha\Model\Domain\Repositories\CustomerAddressesRepository;
 use Alpha\Model\Domain\Repositories\CustomerRepository;
 
 class CreateAddressAction extends BaseController implements \Alpha\Controller\Actions\ActionInterface
@@ -26,10 +25,8 @@ class CreateAddressAction extends BaseController implements \Alpha\Controller\Ac
             return $response->withStatus(404);
         }
 
-        /** @var AddressRepository $addressRepo */
-        $addressRepo = $this->getRepository(AddressRepository::class);
-        /** @var CountryRepository $countryRepo */
-        $countryRepo = $this->getRepository(CountryRepository::class);
+        /** @var CustomerAddressesRepository $addressRepo */
+        $addressRepo = $this->getRepository(CustomerAddressesRepository::class);
 
         $dao = new DataAccessObject();
         $errors = [];
@@ -39,24 +36,32 @@ class CreateAddressAction extends BaseController implements \Alpha\Controller\Ac
             $data = $request->getParsedBody();
 
             $addressData = [
-                'firstname'    => trim($data['firstname'] ?? ''),
-                'lastname'     => trim($data['lastname'] ?? ''),
-                'company'      => trim($data['company'] ?? ''),
-                'address_1'    => trim($data['address_1'] ?? ''),
+                'street'    => trim($data['street'] ?? ''),
                 'number'       => (int)($data['number'] ?? 0),
-                'address_2'    => trim($data['address_2'] ?? ''),
+                'complement'    => trim($data['complement'] ?? ''),
                 'neighborhood' => trim($data['neighborhood'] ?? ''),
                 'city'         => trim($data['city'] ?? ''),
                 'postcode'     => trim($data['postcode'] ?? ''),
-                'country_id'   => (int)($data['country_id'] ?? 30),
+                'country_id'   => (int)($data['country_id'] ?? 76),
                 'zone_id'      => (int)($data['zone_id'] ?? 0),
                 'default'      => !empty($data['default']) ? 1 : 0
             ];
 
-            $errors = $addressRepo->validate($addressData);
-
+            // Validation rules
+            if (strlen($addressData['postcode']) < 8) {
+                $errors['postcode'] = 'O CEP deve ter pelo menos 8 caracteres.';
+            }
+            if (empty($addressData['street'])) {
+                $errors['street'] = 'A rua/logradouro é obrigatória.';
+            }
+            if (empty($addressData['city'])) {
+                $errors['city'] = 'A cidade é obrigatória.';
+            }
             if ($addressData['number'] <= 0) {
                 $errors['number'] = 'O número deve ser um valor inteiro maior que zero.';
+            }
+            if ($addressData['zone_id'] <= 0) {
+                $errors['zone_id'] = 'Selecione um estado.';
             }
 
             if (empty($errors)) {
@@ -73,17 +78,20 @@ class CreateAddressAction extends BaseController implements \Alpha\Controller\Ac
             }
         }
 
-        // Fetch countries
-        $countries = $countryRepo->getCountries();
+        // Fetch active countries using GeoCountryMapper
+        /** @var \Alpha\Mappers\EntityMappers\GeoCountryMapper $countryMapper */
+        $countryMapper = $addressRepo->mapperFactory->get(\Alpha\Mappers\EntityMappers\GeoCountryMapper::class);
+        $countries = array_map(fn($c) => [
+            'id' => $c->getId(),
+            'name' => $c->getName()
+        ], $countryMapper->getCountries());
 
         // Fetch zones (Brazil)
         $zoneBuilder = (new QueryBuilder())
-            ->from(DB_PREFIX . 'zone', 'z')
-            ->join(DB_PREFIX . 'zone_description', 'zd', 'z.id = zd.zone_id')
-            ->select('z.id', 'zd.name', 'z.code')
-            ->where('z.country_id = 30')
-            ->where('zd.language_id = ?', [$this->languageId])
-            ->orderBy('zd.name', 'ASC');
+            ->from(DB_PREFIX . 'geo_zones', 'z')
+            ->select('z.id', 'z.name', 'z.iso_code AS code')
+            ->where('z.country_id = 76')
+            ->orderBy('z.name', 'ASC');
         $zones = $dao->executeQuery($zoneBuilder);
 
         $html = $this->getTemplate('admin/customer/Address/create.html.twig', [

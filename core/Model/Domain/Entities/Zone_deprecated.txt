@@ -14,7 +14,7 @@ use Alpha\Model\Domain\Attributes\OneToMany;
  * - Tipagem Estrita: countryId tipado como int para integridade referencial com chaves estrangeiras.
  * - Interface Fluida: Setters retornando self para construção ágil de objetos geográficos.
  */
-class Zone extends BaseEntity
+class Zone_deprecated extends BaseEntity
 {
     private string $name = '';
     private string $code = '';
@@ -22,9 +22,9 @@ class Zone extends BaseEntity
     private bool $status = true;
 
     /**
-     * @var ZoneDescription[]
+     * @var ZoneDescription_deprecated[]
      */
-    #[OneToMany(targetEntity: ZoneDescription::class, mappedBy: "zone", foreignKey: "zoneId")]
+    #[OneToMany(targetEntity: ZoneDescription_deprecated::class, mappedBy: "zone", foreignKey: "zoneId")]
     private array $descriptions = [];
 
     #[ManyToOne(targetEntity: Country::class, foreignKey: 'countryId')]

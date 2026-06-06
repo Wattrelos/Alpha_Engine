@@ -77,16 +77,12 @@
 									<circle cx="12" cy="10" r="3"/>
 								</svg>
 							</div>
-							<div class="addr-card-name">{{ address.firstname }} {{ address.lastname }}</div>
+							<div class="addr-card-name">{{ address.street }}{% if address.number %}, {{ address.number }}{% endif %}</div>
 						</div>
 
 						<div class="addr-card-body">
-							{% if address.company %}
-								<div class="addr-line addr-line--company">{{ address.company }}</div>
-							{% endif %}
-							<div class="addr-line">{{ address.address_1 }}{% if address.number %}, {{ address.number }}{% endif %}</div>
-							{% if address.address_2 %}
-								<div class="addr-line">{{ address.address_2 }}</div>
+							{% if address.complement %}
+								<div class="addr-line">{{ address.complement }}</div>
 							{% endif %}
 							{% if address.neighborhood %}
 								<div class="addr-line">{{ address.neighborhood }}</div>

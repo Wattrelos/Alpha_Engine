@@ -103,7 +103,7 @@ function oc_db_schema() {
 				'type' => 'varchar(60)'
 			],
 			[
-				'name' => 'address_1',
+				'name' => 'street',
 				'type' => 'varchar(128)'
 			],
 			[
@@ -111,7 +111,7 @@ function oc_db_schema() {
 				'type' => 'int(11)'
 			],
 			[
-				'name' => 'address_2',
+				'name' => 'complement',
 				'type' => 'varchar(128)'
 			],
 			[
@@ -4405,7 +4405,7 @@ function oc_db_schema() {
 				'type' => 'varchar(60)'
 			],
 			[
-				'name' => 'payment_address_1',
+				'name' => 'payment_street',
 				'type' => 'varchar(128)'
 			],
 			[
@@ -4413,7 +4413,7 @@ function oc_db_schema() {
 				'type' => 'int(11)'
 			],
 			[
-				'name' => 'payment_address_2',
+				'name' => 'payment_complement',
 				'type' => 'varchar(128)'
 			],
 			[
@@ -4475,7 +4475,7 @@ function oc_db_schema() {
 				'type' => 'varchar(60)'
 			],
 			[
-				'name' => 'shipping_address_1',
+				'name' => 'shipping_street',
 				'type' => 'varchar(128)'
 			],
 			[
@@ -4483,7 +4483,7 @@ function oc_db_schema() {
 				'type' => 'int(11)'
 			],
 			[
-				'name' => 'shipping_address_2',
+				'name' => 'shipping_complement',
 				'type' => 'varchar(128)'
 			],
 			[

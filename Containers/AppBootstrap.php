@@ -19,7 +19,7 @@ use Alpha\Model\Domain\Repositories\CartRepository;
 use Alpha\Model\Domain\Repositories\SitemapRepository;
 use Alpha\Model\Domain\Repositories\OrderReturnRepository;
 use Alpha\Model\Domain\Repositories\ManufacturerRepository;
-use Alpha\Model\Domain\Repositories\AddressRepository;
+use Alpha\Model\Domain\Repositories\CustomerAddressesRepository;
 use Alpha\Session\AlphaSessionHandler;
 use Alpha\Auth\Services\CustomerAuthService;
 use Alpha\Auth\Services\AdminAuthService;
@@ -92,17 +92,20 @@ class AppBootstrap
         $configWrapper = new class($this->configSettings, $this->languageId) {
             private array $settings;
             private int $languageId;
-            public function __construct(array $settings, int $languageId) {
+            public function __construct(array $settings, int $languageId)
+            {
                 $this->settings = $settings;
                 $this->languageId = $languageId;
             }
-            public function get(string $key) {
+            public function get(string $key)
+            {
                 if ($key === 'config_language_id') {
                     return $this->languageId;
                 }
                 return $this->settings[$key] ?? null;
             }
-            public function set(string $key, $value): void {
+            public function set(string $key, $value): void
+            {
                 $this->settings[$key] = $value;
             }
         };
@@ -112,11 +115,13 @@ class AppBootstrap
         $urlWrapper = new class($this->languageCode, $this->configSettings) {
             private string $lang;
             private string $server;
-            public function __construct(string $lang, array $settings) {
+            public function __construct(string $lang, array $settings)
+            {
                 $this->lang = $lang;
                 $this->server = $settings['config_url'] ?? HTTP_SERVER;
             }
-            public function link(string $route, string $args = '', bool $secure = true): string {
+            public function link(string $route, string $args = '', bool $secure = true): string
+            {
                 $route = trim($route, '/');
                 $routeMap = [
                     'common/home'             => '',
@@ -174,7 +179,7 @@ class AppBootstrap
         $this->container->bind('language', $translator);
         $this->container->bind(\Alpha\Support\Language::class, $translator);
         $this->container->bind('languageEntity', $this->language);
-        
+
         $sessionMock = new \stdClass();
         $sessionMock->data = []; // Evita erros de "property of non-object" no legado
         $this->container->bind('session', $sessionMock);
@@ -199,7 +204,7 @@ class AppBootstrap
         $cartRepository = $repositoryFactory->get(CartRepository::class);
         $sitemapRepository = $repositoryFactory->get(SitemapRepository::class);
         $manufacturerRepository = $repositoryFactory->get(ManufacturerRepository::class);
-        $addressRepository = $repositoryFactory->get(AddressRepository::class);
+        $customerAddressesRepository = $repositoryFactory->get(CustomerAddressesRepository::class);
         $orderReturnRepository = $repositoryFactory->get(OrderReturnRepository::class);
 
         // Bindings no Container de Dependências
@@ -219,7 +224,7 @@ class AppBootstrap
             ->bind(CartRepository::class, $cartRepository)
             ->bind(SitemapRepository::class, $sitemapRepository)
             ->bind(ManufacturerRepository::class, $manufacturerRepository)
-            ->bind(AddressRepository::class, $addressRepository)
+            ->bind(CustomerAddressesRepository::class, $customerAddressesRepository)
             ->bind(OrderReturnRepository::class, $orderReturnRepository)
             ->bind(MapperFactory::class, $mapperFactory)
             ->bind(RepositoryFactory::class, $repositoryFactory);

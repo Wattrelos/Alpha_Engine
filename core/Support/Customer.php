@@ -93,4 +93,23 @@ class Customer
         $user = $this->getLoggedUser();
         return $user ? (string)($user->telephone ?? '') : '';
     }
+
+    public function getAddressId(): int
+    {
+        if (!$this->isLogged()) {
+            return 0;
+        }
+        $customerId = $this->getId();
+        if ($customerId <= 0) {
+            return 0;
+        }
+        try {
+            /** @var \Alpha\Model\Domain\Repositories\CustomerRepository $customerRepo */
+            $customerRepo = \Alpha\Model\Domain\Repositories\RepositoryFactory::getInstance()->get(\Alpha\Model\Domain\Repositories\CustomerRepository::class);
+            $customer = $customerRepo->find($customerId);
+            return $customer ? (int)$customer->getAddressId() : 0;
+        } catch (\Throwable $e) {
+            return 0;
+        }
+    }
 }

@@ -6,6 +6,8 @@ use Alpha\Mappers\EntityMappers\CartMapper;
 use Alpha\Mappers\EntityMappers\ProductMapper;
 use Alpha\Model\Domain\InterfaceEntity;
 use Alpha\Support\AlphaString;
+use Alpha\Model\Domain\Entities\Geo\Country;
+use Alpha\Model\Domain\Entities\Geo\Zone;
 
 /**
  * CartRepository - Orquestra a lógica de negócios do Carrinho de Compras.
@@ -107,7 +109,7 @@ class CartRepository extends AbstractRepository implements BaseRepositoryInterfa
     public function add(int $productId, int $quantity = 1, array $option = [], int $subscriptionPlanId = 0): void
     {
         $mapper = $this->getMapper();
-        
+
         // Na Alpha Engine, garantimos que as opções virem um hash JSON para comparação exata no banco
         $optionData = !empty($option) ? json_encode($option) : '';
 
@@ -209,18 +211,30 @@ class CartRepository extends AbstractRepository implements BaseRepositoryInterfa
 
         if ($customer && $customer->isLogged()) {
             if (empty($session->data['shipping_address']) || empty($session->data['payment_address'])) {
-                /** @var \Alpha\Model\Domain\Repositories\AddressRepository $addressRepo */
-                $addressRepo = \Alpha\Model\Domain\Repositories\RepositoryFactory::getInstance()->get(\Alpha\Model\Domain\Repositories\AddressRepository::class);
-                $defaultAddress = $addressRepo->getDefaultAddress($this->getCustomerId());
-                
-                if ($defaultAddress) {
-                    $addressDTO = $addressRepo->getAddress($defaultAddress->getId());
-                    
-                    if (empty($session->data['shipping_address'])) {
-                        $session->data['shipping_address'] = $addressDTO;
+                /** @var \Alpha\Model\Domain\Repositories\CustomerAddressesRepository $addressRepo */
+                $addressRepo = \Alpha\Model\Domain\Repositories\RepositoryFactory::getInstance()->get(\Alpha\Model\Domain\Repositories\CustomerAddressesRepository::class);
+                $defaultAddressId = $customer->getAddressId();
+
+                if ($defaultAddressId > 0) {
+                    $addresses = $addressRepo->getAddresses($this->getCustomerId());
+                    $addressDTO = null;
+                    foreach ($addresses as $addr) {
+                        if ((int)$addr['address_id'] === $defaultAddressId) {
+                            $addressDTO = $addr;
+                            break;
+                        }
                     }
-                    if (empty($session->data['payment_address'])) {
-                        $session->data['payment_address'] = $addressDTO;
+                    if ($addressDTO === null && !empty($addresses)) {
+                        $addressDTO = $addresses[0];
+                    }
+
+                    if ($addressDTO) {
+                        if (empty($session->data['shipping_address'])) {
+                            $session->data['shipping_address'] = $addressDTO;
+                        }
+                        if (empty($session->data['payment_address'])) {
+                            $session->data['payment_address'] = $addressDTO;
+                        }
                     }
                 }
             }
@@ -229,16 +243,20 @@ class CartRepository extends AbstractRepository implements BaseRepositoryInterfa
         // Sincroniza com as propriedades tributárias de impostos se houver endereço na sessão (logados ou anônimos)
         if (!empty($session->data['shipping_address'])) {
             $shippingAddr = $session->data['shipping_address'];
-            $countryId = (int)($shippingAddr['country_id'] ?? 30);
+            $countryId = (int)($shippingAddr['country_id'] ?? 76);
             $zoneId = (int)($shippingAddr['zone_id'] ?? 0);
 
             // Se o zone_id for 0 mas tivermos a sigla do estado em 'zone', tenta resolver o zone_id via banco
             if ($zoneId === 0 && !empty($shippingAddr['zone'])) {
                 try {
                     $repositoryFactory = \Alpha\Model\Domain\Repositories\RepositoryFactory::getInstance();
-                    /** @var \Alpha\Model\Domain\Repositories\ZoneRepository $zoneRepository */
-                    $zoneRepository = $repositoryFactory->get(\Alpha\Model\Domain\Repositories\ZoneRepository::class);
-                    $zone = $zoneRepository->findOneBy(['code' => trim((string)$shippingAddr['zone'])]);
+                    /** @var \Alpha\Model\Domain\Repositories\GeoZoneRepository $zoneRepository */
+                    $zoneRepository = $repositoryFactory->get(\Alpha\Model\Domain\Repositories\GeoZoneRepository::class);
+                    $zoneCode = strtoupper(trim((string)$shippingAddr['zone']));
+                    if (!str_contains($zoneCode, '-')) {
+                        $zoneCode = 'BR-' . $zoneCode;
+                    }
+                    $zone = $zoneRepository->findOneBy(['isoCode' => $zoneCode]);
                     if ($zone) {
                         $zoneId = $zone->getId();
                         $countryId = $zone->getCountryId();
@@ -272,7 +290,7 @@ class CartRepository extends AbstractRepository implements BaseRepositoryInterfa
         $this->resolveTaxAndShippingZone();
 
         $cartItems = $this->getMapper()->getItems($this->getCustomerId(), $this->getSessionId(), $this->getStoreId());
-        
+
         if (!$cartItems) {
             $this->isLoaded = true;
             $this->data = [];
@@ -300,7 +318,7 @@ class CartRepository extends AbstractRepository implements BaseRepositoryInterfa
         $productMap = array_column($productDataMap, null, 'id');
 
         $products = [];
-        
+
         /** @var ProductMapper $productMapper */
         $productMapper = $this->mapperFactory->get(ProductMapper::class);
 
@@ -329,21 +347,21 @@ class CartRepository extends AbstractRepository implements BaseRepositoryInterfa
         foreach ($cartItems as $item) {
             // Busca o produto no mapa em memória (O(1)) em vez de consultar o banco
             $productInfo = $productMap[$item['product_id']] ?? null;
-            
+
             if ($productInfo) {
                 $price = (float)$productInfo['price'];
                 $points = (int)$productInfo['points'];
                 $weight = (float)$productInfo['weight'];
-                
+
                 $optionData = [];
                 $options = json_decode($item['option'], true) ?: [];
-                
+
                 foreach ($options as $productOptionId => $value) {
                     if (is_scalar($value)) {
                         /** @var \Alpha\Model\Domain\Entities\ProductOptionValue $optionEntity */
                         $optionEntity = $optionValuesEntities[(int)$value] ?? null;
                         $legacyOptionInfo = $legacyOptionValuesMap[(int)$value] ?? null;
-                        
+
                         if ($optionEntity) {
                             // Processa Modificador de Preço
                             if ($optionEntity->getPricePrefix() === '+') {
@@ -351,14 +369,14 @@ class CartRepository extends AbstractRepository implements BaseRepositoryInterfa
                             } elseif ($optionEntity->getPricePrefix() === '-') {
                                 $price -= (float)$optionEntity->getPrice();
                             }
-                            
+
                             // Processa Modificador de Peso
                             if ($optionEntity->getWeightPrefix() === '+') {
                                 $weight += (float)$optionEntity->getWeight();
                             } elseif ($optionEntity->getWeightPrefix() === '-') {
                                 $weight -= (float)$optionEntity->getWeight();
                             }
-                            
+
                             // Mantemos os metadados da opção para a view
                             $optionData[] = [
                                 'name'  => $legacyOptionInfo['option_name'] ?? 'Option',
@@ -459,8 +477,8 @@ class CartRepository extends AbstractRepository implements BaseRepositoryInterfa
         foreach ($this->getProducts() as $product) {
             if ($product['shipping'] && $weightService && $config) {
                 $weight += $weightService->convert(
-                    $product['weight'] * $product['quantity'], 
-                    $product['weight_class_id'], 
+                    $product['weight'] * $product['quantity'],
+                    $product['weight_class_id'],
                     $config->get('config_weight_class_id')
                 );
             } else {
@@ -600,19 +618,23 @@ class CartRepository extends AbstractRepository implements BaseRepositoryInterfa
     }
 
     // Métodos obrigatórios da BaseRepositoryInterface
-    public function find(int $id): ?InterfaceEntity { 
-        return $this->getMapper()->findById($id); 
+    public function find(int $id): ?InterfaceEntity
+    {
+        return $this->getMapper()->findById($id);
     }
-    
-    public function findAll(): array { 
-        return $this->getMapper()->findAll(); 
+
+    public function findAll(): array
+    {
+        return $this->getMapper()->findAll();
     }
-    
-    public function findBy(array $criteria, ?array $orderBy = null, ?int $limit = null, ?int $offset = null): array { 
-        return $this->getMapper()->search($criteria, $orderBy, $limit, $offset); 
+
+    public function findBy(array $criteria, ?array $orderBy = null, ?int $limit = null, ?int $offset = null): array
+    {
+        return $this->getMapper()->search($criteria, $orderBy, $limit, $offset);
     }
-    
-    public function findOneBy(array $criteria): ?InterfaceEntity { 
+
+    public function findOneBy(array $criteria): ?InterfaceEntity
+    {
         $results = $this->getMapper()->search($criteria);
         return $results[0] ?? null;
     }
@@ -658,7 +680,7 @@ class CartRepository extends AbstractRepository implements BaseRepositoryInterfa
             unset($session->data['payment_methods']);
             unset($session->data['reward']);
         }
-    }   
+    }
 
     /**
      * Alpha Engine: Orquestra a renderização e o cálculo dos módulos de totalização do carrinho.
@@ -668,7 +690,7 @@ class CartRepository extends AbstractRepository implements BaseRepositoryInterfa
     {
         /** @var \Alpha\Mappers\EntityMappers\ExtensionMapper $extensionMapper */
         $extensionMapper = $this->mapperFactory->get(\Alpha\Mappers\EntityMappers\ExtensionMapper::class);
-        
+
         // Fim do N+1: Busca as extensões do tipo 'total' no banco através do DAO
         $results = $extensionMapper->getExtensionsByType('total');
 
@@ -683,17 +705,17 @@ class CartRepository extends AbstractRepository implements BaseRepositoryInterfa
 
         foreach ($results as $result) {
             if ($config && $config->get('total_' . $result['code'] . '_status')) {
-                
+
                 // Carrega a extensão legada como bridge (até refatorarmos cada uma)
                 $file = DIR_EXTENSION . $result['extension'] . '/catalog/model/total/' . $result['code'] . '.php';
                 $loader = property_exists($this, 'container') && $this->container->has('load') ? $this->container->get('load') : null;
                 $registry = property_exists($this, 'container') && $this->container->has('registry') ? $this->container->get('registry') : null;
-                
+
                 if (is_file($file) && $loader && $registry) {
                     $loader->model('extension/' . $result['extension'] . '/total/' . $result['code']);
                     $modelCode = 'model_extension_' . $result['extension'] . '_total_' . $result['code'];
                     $modelInstance = $registry->get($modelCode);
-                    
+
                     if ($modelInstance) {
                         $modelInstance->getTotal($totals, $taxes, $total);
                     }

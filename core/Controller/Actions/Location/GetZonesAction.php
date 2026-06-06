@@ -5,7 +5,7 @@ namespace Alpha\Controller\Actions\Location;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Psr\Http\Message\ResponseInterface as Response;
 use Alpha\Controller\Actions\ActionInterface;
-use Alpha\Model\Domain\Repositories\ZoneRepository;
+use Alpha\Model\Domain\Repositories\GeoZoneRepository;
 use Slim\Routing\RouteContext;
 
 /**
@@ -17,16 +17,17 @@ class GetZonesAction implements ActionInterface
     {
         $countryId = (int)($args['country_id'] ?? 0);
         
-        /** @var ZoneRepository $zoneRepository */
-        $zoneRepository = \Alpha\Model\Domain\Repositories\RepositoryFactory::getInstance()->get(ZoneRepository::class);
+        /** @var GeoZoneRepository $zoneRepository */
+        $zoneRepository = \Alpha\Model\Domain\Repositories\RepositoryFactory::getInstance()->get(GeoZoneRepository::class);
         $zones = $zoneRepository->getZonesByCountryId($countryId);
 
         $zoneData = [];
         foreach ($zones as $zone) {
+            $isoCode = $zone->getIsoCode();
             $zoneData[] = [
                 'id'   => $zone->getId(),
                 'name' => $zone->getName(),
-                'code' => $zone->getCode()
+                'code' => str_contains($isoCode, '-') ? explode('-', $isoCode)[1] : $isoCode
             ];
         }
 

@@ -89,3 +89,8 @@ Este documento registra o avanço na reestruturação arquitetural do módulo de
     - Implementação completa dos métodos da classe de suporte a impostos `Alpha\Support\Tax` (`setShippingAddress`, `setPaymentAddress`, `setStoreAddress`, `calculate`, `getRates`), que antes estavam ausentes ou eram apenas stubs.
     - Integração de `Tax` com o `Registry` da Alpha Engine para recuperação dinâmica de configurações, grupos de clientes e regras de impostos ativas.
     - Resolução do erro fatal no `CartRepository::resolveTaxAndShippingZone` devido à falta do método `setShippingAddress`.
+
+21. **Seleção Dinâmica de País no Checkout (GeoCountryMapper)**
+    - Reabilitada a exibição e seleção de países nos formulários de endereço no checkout (`shipping-address.twig` e `checkout.twig`) através de um dropdown select dinâmico com estilo premium (`egen-form-select-premium`).
+    - Integração no `Checkout.php` para carregar a lista de países através do `GeoCountryMapper` e disponibilizá-los à view, tendo como fallback o país de configuração da loja (`config_country_id` ou default 76).
+    - Ajustada a submissão no `SubmitCheckoutAction.php` para ler dinamicamente a postagem do país selecionado e corrigido o bug de busca de nome do país (que incorretamente consultava o repositório de endereços ao invés do mapper de países).

@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Alpha\Controller\Actions\Customer\Addresses;
 
 use Alpha\Controller\Actions\ActionInterface;
-use Alpha\Model\Domain\Repositories\AddressRepository;
+use Alpha\Model\Domain\Repositories\CustomerAddressesRepository;
 use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Psr\Http\Message\ResponseInterface as Response;
@@ -15,12 +15,12 @@ use Slim\Routing\RouteContext;
 class ShowAddressesAction implements ActionInterface
 {
     private TwigEnvironment $twig;
-    private AddressRepository $addressRepository;
+    private CustomerAddressesRepository $addressRepository;
     private ContainerInterface $container;
 
     public function __construct(
         TwigEnvironment $twig,
-        AddressRepository $addressRepository,
+        CustomerAddressesRepository $addressRepository,
         ContainerInterface $container
     ) {
         $this->twig              = $twig;

@@ -3,6 +3,7 @@
 namespace Alpha\Model\Domain\Entities;
 
 use Alpha\Model\Domain\BaseEntity;
+use Alpha\Model\Domain\Attributes\OneToMany;
 
 /**
  * Entidade TaxClass (Classe de Imposto)

@@ -7,7 +7,7 @@ use Psr\Http\Message\ServerRequestInterface as Request;
 use Psr\Http\Message\ResponseInterface as Response;
 use Alpha\Model\DataAccessObject\DataAccessObject;
 use Alpha\Model\DataAccessObject\QueryBuilder;
-use Alpha\Model\Domain\Repositories\AddressRepository;
+use Alpha\Model\Domain\Repositories\CustomerAddressesRepository;
 
 class ShowCustomerAction extends BaseController implements \Alpha\Controller\Actions\ActionInterface
 {
@@ -38,8 +38,8 @@ class ShowCustomerAction extends BaseController implements \Alpha\Controller\Act
         }
 
         // 2. Fetch addresses
-        /** @var AddressRepository $addressRepo */
-        $addressRepo = $this->getRepository(AddressRepository::class);
+        /** @var CustomerAddressesRepository $addressRepo */
+        $addressRepo = $this->getRepository(CustomerAddressesRepository::class);
         $addresses = $addressRepo->getAddresses($customerId);
 
         // 3. Fetch recent orders

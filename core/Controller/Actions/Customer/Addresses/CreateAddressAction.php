@@ -5,8 +5,7 @@ declare(strict_types=1);
 namespace Alpha\Controller\Actions\Customer\Addresses;
 
 use Alpha\Controller\Actions\ActionInterface;
-use Alpha\Model\Domain\Repositories\AddressRepository;
-use Alpha\Model\Domain\Repositories\ZoneRepository;
+use Alpha\Model\Domain\Repositories\CustomerAddressesRepository;
 use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Psr\Http\Message\ResponseInterface as Response;
@@ -20,7 +19,7 @@ class CreateAddressAction implements ActionInterface
 {
     public function __construct(
         private readonly TwigEnvironment   $twig,
-        private readonly AddressRepository $addressRepository,
+        private readonly CustomerAddressesRepository $addressRepository,
         private readonly ContainerInterface $container,
     ) {}
 
@@ -77,12 +76,8 @@ class CreateAddressAction implements ActionInterface
                 return $response->withHeader('Content-Type', 'text/html; charset=utf-8');
             }
 
-            // Resolve zone_id numérico a partir do código UF enviado
-            $zoneId = $this->resolveZoneId($body['zone_id'] ?? '');
-
             $saveData = array_merge($body, [
-                'zone_id'    => $zoneId,
-                'country_id' => (int)($body['country_id'] ?? 30),
+                'country_id' => (int)($body['country_id'] ?? 76),
                 'default'    => !empty($body['default']),
             ]);
 
@@ -100,29 +95,21 @@ class CreateAddressAction implements ActionInterface
             'action'        => $actionUrl,
             'back'          => $backUrl,
 
-            // Dados pessoais vazios
-            'firstname'     => '',
-            'lastname'      => '',
-            'company'       => '',
-
             // Endereço vazio
             'postcode'      => '',
-            'address_1'     => '',
+            'street'     => '',
             'number'        => '',
-            'address_2'     => '',
+            'complement'     => '',
             'neighborhood'  => '',
             'city'          => '',
             'zone_id'       => '',
-            'country_id'    => 30, // Padrão Brasil
+            'country_id'    => 76, // Padrão Brasil
             'default'       => false,
 
             // Labels
-            'entry_firstname' => 'Nome',
-            'entry_lastname'  => 'Sobrenome',
-            'entry_company'   => 'Empresa',
             'entry_postcode'  => 'CEP',
-            'entry_address_1' => 'Logradouro',
-            'entry_address_2' => 'Complemento',
+            'entry_street' => 'Logradouro',
+            'entry_complement' => 'Complemento',
             'entry_city'      => 'Cidade',
             'button_continue' => 'Adicionar Endereço',
         ];
@@ -132,25 +119,15 @@ class CreateAddressAction implements ActionInterface
         return $response->withHeader('Content-Type', 'text/html; charset=utf-8');
     }
 
-    // ─────────────────────────────────────────────────────────────────────
-    // Helpers privados (idênticos aos de EditAddressAction)
-    // ─────────────────────────────────────────────────────────────────────
-
     private function validate(array $body): array
     {
         $errors = [];
 
-        if (empty(trim($body['firstname'] ?? ''))) {
-            $errors['error_firstname'] = 'O nome é obrigatório.';
-        }
-        if (empty(trim($body['lastname'] ?? ''))) {
-            $errors['error_lastname'] = 'O sobrenome é obrigatório.';
-        }
         if (strlen(trim($body['postcode'] ?? '')) < 8) {
             $errors['error_postcode'] = 'Informe um CEP válido.';
         }
-        if (empty(trim($body['address_1'] ?? ''))) {
-            $errors['error_address_1'] = 'O logradouro é obrigatório.';
+        if (empty(trim($body['street'] ?? ''))) {
+            $errors['error_street'] = 'O logradouro é obrigatório.';
         }
         if (empty(trim($body['city'] ?? ''))) {
             $errors['error_city'] = 'A cidade é obrigatória.';
@@ -162,38 +139,21 @@ class CreateAddressAction implements ActionInterface
     private function formData(array $body, string $lang): array
     {
         return [
-            'firstname'    => $body['firstname']    ?? '',
-            'lastname'     => $body['lastname']     ?? '',
-            'company'      => $body['company']      ?? '',
             'postcode'     => $body['postcode']     ?? '',
-            'address_1'    => $body['address_1']    ?? '',
+            'street'    => $body['street']    ?? '',
             'number'       => $body['number']       ?? '',
-            'address_2'    => $body['address_2']    ?? '',
+            'complement'    => $body['complement']    ?? '',
             'neighborhood' => $body['neighborhood'] ?? '',
             'city'         => $body['city']         ?? '',
             'zone_id'      => $body['zone_id']      ?? '',
-            'country_id'   => (int)($body['country_id'] ?? 30),
+            'country_id'   => (int)($body['country_id'] ?? 76),
             'default'      => !empty($body['default']),
 
-            'entry_firstname' => 'Nome',
-            'entry_lastname'  => 'Sobrenome',
-            'entry_company'   => 'Empresa',
             'entry_postcode'  => 'CEP',
-            'entry_address_1' => 'Logradouro',
-            'entry_address_2' => 'Complemento',
+            'entry_street' => 'Logradouro',
+            'entry_complement' => 'Complemento',
             'entry_city'      => 'Cidade',
             'button_continue' => 'Adicionar Endereço',
         ];
-    }
-
-    private function resolveZoneId(string $code): int
-    {
-        if (empty($code)) {
-            return 0;
-        }
-        /** @var ZoneRepository $zoneRepository */
-        $zoneRepository = \Alpha\Model\Domain\Repositories\RepositoryFactory::getInstance()->get(ZoneRepository::class);
-        $zone = $zoneRepository->findOneBy(['code' => strtoupper(trim($code))]);
-        return $zone ? (int)$zone->getId() : 0;
     }
 }

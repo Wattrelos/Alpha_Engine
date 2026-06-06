@@ -49,8 +49,8 @@ class SaveShippingCepAction implements ActionInterface
                     $currentAddress,
                     [
                         'postcode' => $viaCepData['cep'] ?? $cep,
-                        'address_1' => $viaCepData['logradouro'] ?? '',
-                        'address_2' => $viaCepData['complemento'] ?? '',
+                        'street' => $viaCepData['logradouro'] ?? '',
+                        'complement' => $viaCepData['complemento'] ?? '',
                         'city' => $viaCepData['localidade'] ?? '',
                         'zone' => $viaCepData['uf'] ?? '',
                         'neighborhood' => $viaCepData['bairro'] ?? '',

@@ -109,12 +109,12 @@ class OrderHistoryAction implements ActionInterface
             if ($order['payment_company']) {
                 $paymentAddress .= $order['payment_company'] . '<br/>';
             }
-            $paymentAddress .= $order['payment_address_1'] . ($order['payment_number'] ? ', ' . $order['payment_number'] : '') . '<br/>';
-            if ($order['payment_address_2']) {
-                $paymentAddress .= $order['payment_address_2'] . '<br/>';
+            $paymentAddress .= $order['payment_street'] . ($order['payment_number'] ? ', ' . $order['payment_number'] : '') . '<br/>';
+            if ($order['payment_complement']) {
+                $paymentAddress .= $order['payment_complement'] . '<br/>';
             }
-            if ($order['payment_neighborhood']) {
-                $paymentAddress .= $order['payment_neighborhood'] . '<br/>';
+            if ($order['payment_district']) {
+                $paymentAddress .= $order['payment_district'] . '<br/>';
             }
             $paymentAddress .= $order['payment_city'] . ' - ' . $order['payment_zone'] . '<br/>';
             $paymentAddress .= $order['payment_postcode'];
@@ -126,12 +126,12 @@ class OrderHistoryAction implements ActionInterface
             if ($order['shipping_company']) {
                 $shippingAddress .= $order['shipping_company'] . '<br/>';
             }
-            $shippingAddress .= $order['shipping_address_1'] . ($order['shipping_number'] ? ', ' . $order['shipping_number'] : '') . '<br/>';
-            if ($order['shipping_address_2']) {
-                $shippingAddress .= $order['shipping_address_2'] . '<br/>';
+            $shippingAddress .= $order['shipping_street'] . ($order['shipping_number'] ? ', ' . $order['shipping_number'] : '') . '<br/>';
+            if ($order['shipping_complement']) {
+                $shippingAddress .= $order['shipping_complement'] . '<br/>';
             }
-            if ($order['shipping_neighborhood']) {
-                $shippingAddress .= $order['shipping_neighborhood'] . '<br/>';
+            if ($order['shipping_district']) {
+                $shippingAddress .= $order['shipping_district'] . '<br/>';
             }
             $shippingAddress .= $order['shipping_city'] . ' - ' . $order['shipping_zone'] . '<br/>';
             $shippingAddress .= $order['shipping_postcode'];

@@ -43,46 +43,10 @@
 
 		<form action="{{ action }}" method="post" class="addr-form-card" id="address-create-form" novalidate>
 
-			{# ── Seção: Dados Pessoais ── #}
-			<div class="addr-form-section">
-				<h2 class="addr-form-section-title">
-					<span class="addr-section-num">1</span>
-					Dados Pessoais
-				</h2>
-				<div class="addr-form-grid">
-					<div class="addr-form-group {% if error_firstname %}has-error{% endif %}">
-						<label for="input-firstname" class="addr-form-label">
-							{{ entry_firstname|default('Nome') }}
-							<span class="required">*</span>
-						</label>
-						<input type="text" name="firstname" value="{{ firstname }}" placeholder="{{ entry_firstname|default('Nome') }}" id="input-firstname" class="addr-form-input" required />
-						{% if error_firstname %}
-							<span class="addr-form-error">{{ error_firstname }}</span>
-						{% endif %}
-					</div>
-					<div class="addr-form-group {% if error_lastname %}has-error{% endif %}">
-						<label for="input-lastname" class="addr-form-label">
-							{{ entry_lastname|default('Sobrenome') }}
-							<span class="required">*</span>
-						</label>
-						<input type="text" name="lastname" value="{{ lastname }}" placeholder="{{ entry_lastname|default('Sobrenome') }}" id="input-lastname" class="addr-form-input" required />
-						{% if error_lastname %}
-							<span class="addr-form-error">{{ error_lastname }}</span>
-						{% endif %}
-					</div>
-				</div>
-				<div class="addr-form-grid addr-form-grid--single">
-					<div class="addr-form-group">
-						<label for="input-company" class="addr-form-label">{{ entry_company|default('Empresa') }}</label>
-						<input type="text" name="company" value="{{ company }}" placeholder="{{ entry_company|default('Empresa (opcional)') }}" id="input-company" class="addr-form-input" />
-					</div>
-				</div>
-			</div>
-
 			{# ── Seção: Endereço ── #}
 			<div class="addr-form-section">
 				<h2 class="addr-form-section-title">
-					<span class="addr-section-num">2</span>
+					<span class="addr-section-num">1</span>
 					Dados do Endereço
 				</h2>
 
@@ -103,14 +67,14 @@
 							<span class="addr-form-error">{{ error_postcode }}</span>
 						{% endif %}
 					</div>
-					<div class="addr-form-group {% if error_address_1 %}has-error{% endif %}">
+					<div class="addr-form-group {% if error_street %}has-error{% endif %}">
 						<label for="input-address-1" class="addr-form-label">
-							{{ entry_address_1|default('Logradouro') }}
+							{{ entry_street|default('Logradouro') }}
 							<span class="required">*</span>
 						</label>
-						<input type="text" name="address_1" value="{{ address_1 }}" placeholder="{{ entry_address_1|default('Rua, Avenida...') }}" id="input-address-1" class="addr-form-input" required />
-						{% if error_address_1 %}
-							<span class="addr-form-error">{{ error_address_1 }}</span>
+						<input type="text" name="street" value="{{ street }}" placeholder="{{ entry_street|default('Rua, Avenida...') }}" id="input-address-1" class="addr-form-input" required />
+						{% if error_street %}
+							<span class="addr-form-error">{{ error_street }}</span>
 						{% endif %}
 					</div>
 				</div>
@@ -124,8 +88,8 @@
 						<input type="text" name="number" value="{{ number }}" placeholder="Nº" id="input-number" class="addr-form-input" required />
 					</div>
 					<div class="addr-form-group">
-						<label for="input-address-2" class="addr-form-label">{{ entry_address_2|default('Complemento') }}</label>
-						<input type="text" name="address_2" value="{{ address_2 }}" placeholder="{{ entry_address_2|default('Apto, Bloco... (opcional)') }}" id="input-address-2" class="addr-form-input" />
+						<label for="input-address-2" class="addr-form-label">{{ entry_complement|default('Complemento') }}</label>
+						<input type="text" name="complement" value="{{ complement }}" placeholder="{{ entry_complement|default('Apto, Bloco... (opcional)') }}" id="input-address-2" class="addr-form-input" />
 					</div>
 				</div>
 
