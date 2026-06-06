@@ -163,11 +163,14 @@ class CustomerRepository extends AbstractRepository implements BaseRepositoryInt
         $customer_group_id = !empty($data['customer_group_id']) ? (int)$data['customer_group_id'] : $defaultGroupId;
 
         $customerGroupRepo = null;
-        try {
-            $repoFactory = RepositoryFactory::getInstance();
-            $customerGroupRepo = $repoFactory->get(\Alpha\Model\Domain\Repositories\CustomerGroupRepository::class);
-        } catch (\Throwable) {
-            // Fallback silencioso
+        if ($this->container && $this->container->has(RepositoryFactory::class)) {
+            $customerGroupRepo = $this->container->get(RepositoryFactory::class)->get(CustomerGroupRepository::class);
+        } else {
+            try {
+                $customerGroupRepo = RepositoryFactory::getInstance()->get(CustomerGroupRepository::class);
+            } catch (\Throwable) {
+                // Fallback silencioso
+            }
         }
 
         $customer_group_info = $customerGroupRepo ? $customerGroupRepo->getCustomerGroup($customer_group_id, $languageId) : null;
@@ -258,10 +261,13 @@ class CustomerRepository extends AbstractRepository implements BaseRepositoryInt
 
         // Aceite dos Termos de Uso
         $informationRepo = null;
-        try {
-            $repoFactory = RepositoryFactory::getInstance();
-            $informationRepo = $repoFactory->get(\Alpha\Model\Domain\Repositories\InformationRepository::class);
-        } catch (\Throwable) {
+        if ($this->container && $this->container->has(RepositoryFactory::class)) {
+            $informationRepo = $this->container->get(RepositoryFactory::class)->get(InformationRepository::class);
+        } else {
+            try {
+                $informationRepo = RepositoryFactory::getInstance()->get(InformationRepository::class);
+            } catch (\Throwable) {
+            }
         }
 
         $information_info = $informationRepo ? $informationRepo->getInformation($accountId) : null;
@@ -392,9 +398,12 @@ class CustomerRepository extends AbstractRepository implements BaseRepositoryInt
             return $this->getTranslation($key, 'account/register', $default);
         };
 
-        $repoFactory = RepositoryFactory::getInstance();
-
-        $customFieldRepo = $repoFactory->get(\Alpha\Model\Domain\Repositories\CustomFieldRepository::class);
+        $customFieldRepo = null;
+        if ($this->container && $this->container->has(RepositoryFactory::class)) {
+            $customFieldRepo = $this->container->get(RepositoryFactory::class)->get(CustomFieldRepository::class);
+        } else {
+            $customFieldRepo = RepositoryFactory::getInstance()->get(CustomFieldRepository::class);
+        }
         $custom_fields = $customFieldRepo->getCustomFields($customerGroupId);
 
         foreach ($custom_fields as $custom_field) {
