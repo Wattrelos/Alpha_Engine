@@ -1,0 +1,17 @@
+{% extends 'admin/layouts/base.html.twig' %}
+
+{% block title %}Acesso Negado | Painel Administrativo{% endblock %}
+
+{% block content %}
+	<div style="max-width: 600px; margin: 4rem auto; padding: 3rem 2rem; text-align: center; background: var(--color-bg-card, #fff); border-radius: var(--border-radius, 1rem); box-shadow: 0 10px 30px rgba(0,0,0,0.05); border: 1px solid var(--color-border, #e2e8f0);">
+		<div style="font-size: 5rem; margin-bottom: 1.5rem;">🚫</div>
+		<h1 style="color: #e53e3e; font-size: 2.2rem; margin-top: 0; font-weight: 700; font-family: 'Inter', sans-serif;">Acesso Negado</h1>
+		<p style="color: var(--color-text-muted, #718096); font-size: 1.1rem; line-height: 1.6; margin-bottom: 2.5rem; font-family: 'Inter', sans-serif;">
+			{{ message|default('Você não tem privilégios suficientes para acessar ou modificar este recurso.') }}
+		</p>
+		<a href="/LPDHED2dC7Gjrg2b/dashboard" class="btn btn-primary" style="display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.8rem 2rem; font-weight: 600; text-decoration: none; border-radius: var(--border-radius, 0.5rem); background: var(--color-primary, #4f46e5); color: #fff; transition: all 0.2s;">
+			<i class="fas fa-arrow-left"></i>
+			<span>Voltar ao Painel Inicial</span>
+		</a>
+	</div>
+{% endblock %}

@@ -10,6 +10,8 @@ use Alpha\Model\Domain\InterfaceEntity;
  */
 class OrderStatusRepository extends AbstractRepository implements BaseRepositoryInterface
 {
+    protected string $mapperClass = OrderStatusMapper::class;
+
     protected function getMapper(): OrderStatusMapper
     {
         return $this->mapperFactory->get(OrderStatusMapper::class);
@@ -17,7 +19,8 @@ class OrderStatusRepository extends AbstractRepository implements BaseRepository
 
     public function getOrderStatus(int $orderStatusId): array
     {
-        return $this->getMapper()->getOrderStatus($orderStatusId, $this->language_id);
+        $status = $this->getMapper()->getOrderStatus($orderStatusId, $this->language_id);
+        return $status ? $status->toArray() : [];
     }
 
     public function getOrderStatuses(): array
@@ -28,7 +31,11 @@ class OrderStatusRepository extends AbstractRepository implements BaseRepository
             return $this->cache->get($cacheKey);
         }
 
-        $results = $this->getMapper()->getOrderStatuses($this->language_id);
+        $results = [];
+        $statuses = $this->getMapper()->getOrderStatuses($this->language_id);
+        foreach ($statuses as $status) {
+            $results[] = $status->toArray();
+        }
 
         if ($this->cache) {
             $this->cache->set($cacheKey, $results);
@@ -38,8 +45,26 @@ class OrderStatusRepository extends AbstractRepository implements BaseRepository
     }
 
     // BaseRepositoryInterface bindings
-    public function find(int $id): ?InterfaceEntity { return null; }
-    public function findAll(): array { return []; }
-    public function findBy(array $criteria, ?array $orderBy = null, ?int $limit = null, ?int $offset = null): array { return []; }
-    public function findOneBy(array $criteria): ?InterfaceEntity { return null; }
+    public function find(int $id): ?InterfaceEntity
+    {
+        return $this->getMapper()->getOrderStatus($id, $this->language_id);
+    }
+
+    public function findAll(): array
+    {
+        return $this->getMapper()->getOrderStatuses($this->language_id);
+    }
+
+    public function findBy(array $criteria, ?array $orderBy = null, ?int $limit = null, ?int $offset = null): array
+    {
+        $criteria['language_id'] = $criteria['language_id'] ?? $this->language_id;
+        return $this->getMapper()->search($criteria, $orderBy, $limit, $offset);
+    }
+
+    public function findOneBy(array $criteria): ?InterfaceEntity
+    {
+        $criteria['language_id'] = $criteria['language_id'] ?? $this->language_id;
+        $results = $this->getMapper()->search($criteria);
+        return $results[0] ?? null;
+    }
 }

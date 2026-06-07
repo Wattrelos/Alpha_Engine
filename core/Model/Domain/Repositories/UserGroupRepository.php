@@ -11,6 +11,8 @@ use Alpha\Model\Domain\InterfaceEntity;
  */
 class UserGroupRepository extends AbstractRepository implements BaseRepositoryInterface
 {
+    protected string $mapperClass = UserGroupMapper::class;
+
     protected function getMapper(): UserGroupMapper
     {
         return $this->mapperFactory->get(UserGroupMapper::class);

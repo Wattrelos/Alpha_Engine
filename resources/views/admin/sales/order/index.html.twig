@@ -1,0 +1,129 @@
+{% extends 'admin/layouts/base.html.twig' %}
+
+{% block title %}
+	{{ title|default('Pedidos | Painel Administrativo') }}
+{% endblock %}
+
+{% block content %}
+	<div class="page-header">
+		<div>
+			<h2>Gerenciamento de Pedidos</h2>
+			<p class="page-subtitle">Acompanhe as vendas, mude status e emita faturas para os clientes.</p>
+		</div>
+	</div>
+
+	<!-- Painel de Filtros de Busca -->
+	<div class="card">
+		<form method="GET" action="/LPDHED2dC7Gjrg2b/pedidos">
+			<div class="grid-filters" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; align-items: end;">
+				
+				<!-- ID do Pedido -->
+				<div class="form-group mb-0">
+					<label for="filter_order_id" class="form-label-sm">ID do Pedido</label>
+					<input type="text" id="filter_order_id" name="filter_order_id" class="form-control" value="{{ filters.filter_order_id }}" placeholder="Ex: 123" />
+				</div>
+ 
+				<!-- Cliente -->
+				<div class="form-group mb-0">
+					<label for="filter_customer" class="form-label-sm">Cliente</label>
+					<input type="text" id="filter_customer" name="filter_customer" class="form-control" value="{{ filters.filter_customer }}" placeholder="Nome ou sobrenome..." />
+				</div>
+ 
+				<!-- Status -->
+				<div class="form-group mb-0">
+					<label for="filter_order_status_id" class="form-label-sm">Status</label>
+					<select id="filter_order_status_id" name="filter_order_status_id" class="form-control">
+						<option value="">-- Todos --</option>
+						{% for s in statuses %}
+							<option value="{{ s.id }}" {% if filters.filter_order_status_id == s.id %}selected{% endif %}>{{ s.name }}</option>
+						{% endfor %}
+					</select>
+				</div>
+ 
+				<!-- Total -->
+				<div class="form-group mb-0">
+					<label for="filter_total" class="form-label-sm">Total do Pedido</label>
+					<input type="text" id="filter_total" name="filter_total" class="form-control" value="{{ filters.filter_total }}" placeholder="Ex: 250.00" />
+				</div>
+
+				<!-- Data de Criação -->
+				<div class="form-group mb-0">
+					<label for="filter_date_added" class="form-label-sm">Data de Inclusão</label>
+					<input type="date" id="filter_date_added" name="filter_date_added" class="form-control" value="{{ filters.filter_date_added }}" />
+				</div>
+
+				<!-- Ações -->
+				<div class="d-flex gap-2">
+					<a href="/LPDHED2dC7Gjrg2b/pedidos" class="btn flex-1 btn-secondary" style="background: var(--color-bg-soft); border: 1px solid var(--color-border); color: var(--color-text-muted);">Limpar</a>
+					<button type="submit" class="btn btn-primary flex-1">
+						<i class="fas fa-filter"></i>
+						<span>Filtrar</span>
+					</button>
+				</div>
+ 
+			</div>
+		</form>
+	</div>
+
+	<div class="card" style="margin: 0; box-shadow: 0 1px 3px rgba(0,0,0,0.05); border-radius: var(--border-radius);">
+		<div class="overflow-x-auto">
+			<table class="table" style="margin: 0;">
+				<thead>
+					<tr>
+						<th style="width: 80px;">ID</th>
+						<th>Cliente</th>
+						<th>Status</th>
+						<th>Total</th>
+						<th>Data de Inclusão</th>
+						<th>Data de Alteração</th>
+						<th class="text-right" style="width: 150px;">Ações</th>
+					</tr>
+				</thead>
+				<tbody>
+					{% if orders %}
+						{% for order in orders %}
+							<tr>
+								<td class="text-semibold text-dark">#{{ order.order_id }}</td>
+								<td class="text-semibold text-dark">{{ order.customer }}</td>
+								<td>
+									{% if 'Cancelado' in order.status or 'Nulled' in order.status or 'Reprovado' in order.status %}
+										<span class="status-pill status-cancelled">{{ order.status }}</span>
+									{% elseif 'Completo' in order.status or 'Entregue' in order.status or 'Enviado' in order.status or 'Pago' in order.status or 'Processamento' in order.status %}
+										<span class="status-pill status-approved">{{ order.status }}</span>
+									{% else %}
+										<span class="status-pill status-pending">{{ order.status }}</span>
+									{% endif %}
+								</td>
+								<td class="text-semibold text-dark">{{ order.total }}</td>
+								<td>{{ order.date_added }}</td>
+								<td>{{ order.date_modified }}</td>
+								<td class="text-right">
+									<div class="actions-wrapper">
+										<a href="/LPDHED2dC7Gjrg2b/pedidos/{{ order.order_id }}" class="btn btn-primary btn-sm" title="Visualizar Detalhes">
+											<i class="fas fa-eye"></i>
+										</a>
+										<a href="/LPDHED2dC7Gjrg2b/pedidos/{{ order.order_id }}/fatura" target="_blank" class="btn btn-secondary btn-sm" title="Imprimir Fatura" style="background: var(--color-bg-soft); border: 1px solid var(--color-border); color: var(--color-text-muted);">
+											<i class="fas fa-print"></i>
+										</a>
+									</div>
+								</td>
+							</tr>
+						{% endfor %}
+					{% else %}
+						<tr>
+							<td colspan="7" style="text-align: center; padding: 3rem; color: #64748b;">
+								<i class="fas fa-shopping-basket" style="font-size: 2.5rem; color: #cbd5e1; margin-bottom: 1rem; display: block;"></i>
+								Nenhum pedido encontrado.
+							</td>
+						</tr>
+					{% endif %}
+				</tbody>
+			</table>
+		</div>
+		{% if total > limit %}
+			<div style="padding: 1.5rem; display: flex; justify-content: flex-end; border-top: 1px solid var(--color-border);">
+				{% include 'components/molecules/pagination.html.twig' %}
+			</div>
+		{% endif %}
+	</div>
+{% endblock %}

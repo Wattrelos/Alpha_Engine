@@ -3,7 +3,6 @@
 namespace Alpha\Mappers\EntityMappers;
 
 use Alpha\Mappers\BaseMapper;
-use Alpha\Model\DataAccessObject\DataAccessObject;
 use Alpha\Model\DataAccessObject\QueryBuilder;
 use Alpha\Model\Domain\Entities\Order;
 use Alpha\Model\Domain\Entities\OrderHistory;
@@ -77,7 +76,7 @@ class OrderMapper extends BaseMapper
         $order->setId($orderId);
 
         $results = $this->dao->read($order);
-        
+
         return $results ? $results[0] : null;
     }
 
@@ -107,7 +106,7 @@ class OrderMapper extends BaseMapper
     {
         $order = new Order();
         $order->setId($orderId);
-        
+
         return (bool)$this->dao->delete($order);
     }
 
@@ -141,7 +140,7 @@ class OrderMapper extends BaseMapper
     public function insert(OrderDataDTO $dto): int
     {
         $order = new Order();
-        
+
         // Map DTO flat properties to the Order entity properties
         $order->setStoreId((int)$dto->get('store_id'))
             ->setCustomerId((int)$dto->get('customer_id'))
@@ -235,7 +234,7 @@ class OrderMapper extends BaseMapper
                     ->setType((string)$optionData['type'])
                     ->setOrder($order)
                     ->setOrderProduct($product);
-                
+
                 $options[] = $option;
             }
             $product->setOptions($options);

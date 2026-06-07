@@ -27,6 +27,14 @@ class ShowLoginAction implements ActionInterface
         $routeContext = RouteContext::fromRequest($request);
         $routeParser = $routeContext->getRouteParser();
 
+        // Detecta OOBE se a tabela de usuários estiver vazia
+        $userRepo = \Alpha\Model\Domain\Repositories\RepositoryFactory::getInstance()->get(\Alpha\Model\Domain\Repositories\UserRepository::class);
+        $users = $userRepo->findAll();
+        if (count($users) === 0) {
+            $setupUrl = $routeParser->urlFor('admin.setup.form');
+            return $response->withHeader('Location', $setupUrl)->withStatus(302);
+        }
+
         $queryParams = $request->getQueryParams();
         $error = isset($queryParams['error']) ? 'Usuário ou senha inválidos.' : null;
 

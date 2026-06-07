@@ -13,50 +13,24 @@ use Alpha\Model\Domain\Attributes\ManyToOne;
  */
 class UserLogin extends BaseEntity
 {
-    private int $userId = 0;
+    private string $username = '';
     private string $ip = '';
-    private string $userAgent = '';
+    private int $total = 1;
     private string $dateAdded = '';
+    private string $dateModified = '';
 
-    #[ManyToOne(targetEntity: User::class, foreignKey: 'userId')]
-    private ?User $user = null;
+    public function getUsername(): string { return $this->username; }
+    public function setUsername(string $val): self { $this->username = $val; return $this; }
 
-    public function getUserId(): int { return $this->userId; }
-    public function setUserId(int $val): self { $this->userId = $val; return $this; }
+    public function getIp(): string { return $this->ip; }
+    public function setIp(string $ip): self { $this->ip = $ip; return $this; }
 
-    public function getIp(): string
-    {
-        return $this->ip;
-    }
+    public function getTotal(): int { return $this->total; }
+    public function setTotal(int $total): self { $this->total = $total; return $this; }
 
-    public function setIp(string $ip): self
-    {
-        $this->ip = $ip;
-        return $this;
-    }
+    public function getDateAdded(): string { return $this->dateAdded; }
+    public function setDateAdded(string $dateAdded): self { $this->dateAdded = $dateAdded; return $this; }
 
-    public function getUserAgent(): string
-    {
-        return $this->userAgent;
-    }
-
-    public function setUserAgent(string $userAgent): self
-    {
-        $this->userAgent = $userAgent;
-        return $this;
-    }
-
-    public function getDateAdded(): string
-    {
-        return $this->dateAdded;
-    }
-
-    public function setDateAdded(string $dateAdded): self
-    {
-        $this->dateAdded = $dateAdded;
-        return $this;
-    }
-
-    public function getUser(): ?User { return $this->user; }
-    public function setUser(?User $user): self { $this->user = $user; return $this; }
+    public function getDateModified(): string { return $this->dateModified; }
+    public function setDateModified(string $dateModified): self { $this->dateModified = $dateModified; return $this; }
 }

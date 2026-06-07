@@ -45,6 +45,8 @@ return function (\Slim\App $app) {
     if (defined('APPLICATION') && APPLICATION === 'admin') {
         $app->get('/', \Alpha\Admin\Controllers\Actions\Auth\ShowLoginAction::class)->setName('admin.login.form');
         $app->post('/login', \Alpha\Admin\Controllers\Actions\Auth\LoginAction::class)->setName('admin.login.submit');
+        $app->get('/setup', \Alpha\Admin\Controllers\Actions\Auth\ShowSetupAction::class)->setName('admin.setup.form');
+        $app->post('/setup', \Alpha\Admin\Controllers\Actions\Auth\SetupAction::class)->setName('admin.setup.submit');
         
         // Grupo de rotas protegidas do painel administrativo
         $app->group('', function (RouteCollectorProxy $group) {
@@ -91,8 +93,14 @@ return function (\Slim\App $app) {
             $group->get('/configuracoes', \Alpha\Admin\Controllers\Actions\Setting\StoreSetting\EditStoreSettingAction::class)->setName('admin.setting.edit');
             $group->post('/configuracoes', \Alpha\Admin\Controllers\Actions\Setting\StoreSetting\UpdateStoreSettingAction::class)->setName('admin.setting.update');
 
+            // Gestão de Pedidos (Vendas)
+            $group->get('/pedidos', \Alpha\Admin\Controllers\Actions\Sales\Order\ListOrdersAction::class)->setName('admin.orders.index');
+            $group->get('/pedidos/{id:[0-9]+}', \Alpha\Admin\Controllers\Actions\Sales\Order\ShowOrderAction::class)->setName('admin.orders.show');
+            $group->get('/pedidos/{id:[0-9]+}/fatura', \Alpha\Admin\Controllers\Actions\Sales\Order\ViewOrderDetailsAction::class)->setName('admin.orders.invoice');
+            $group->post('/pedidos/{id:[0-9]+}/status', \Alpha\Admin\Controllers\Actions\Sales\Order\UpdateOrderStatusAction::class)->setName('admin.orders.update_status');
+
             $group->get('/logout', \Alpha\Admin\Controllers\Actions\Auth\LogoutAction::class)->setName('admin.logout');
-        })->add(new \Alpha\Auth\Middleware\AdminSessionMiddleware());
+        })->add(new \Alpha\Auth\Middleware\AdminSessionMiddleware($app->getContainer()));
         
         return;
     }

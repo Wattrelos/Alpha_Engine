@@ -16,9 +16,48 @@ class AdminSessionMiddleware
 {
     private ?RedisClient $redis = null;
     private bool $useRedis = false;
+    private ?\Psr\Container\ContainerInterface $container = null;
 
-    public function __construct()
+    private const ROUTE_PERMISSION_MAP = [
+        'admin.dashboard' => 'common/dashboard',
+        'admin.product.list' => 'catalog/product',
+        'admin.product.edit' => 'catalog/product',
+        'admin.product.update' => 'catalog/product',
+        'admin.category.list' => 'catalog/category',
+        'admin.category.create' => 'catalog/category',
+        'admin.category.edit' => 'catalog/category',
+        'admin.category.update' => 'catalog/category',
+        'admin.category.delete' => 'catalog/category',
+        'admin.manufacturer.list' => 'catalog/manufacturer',
+        'admin.manufacturer.create' => 'catalog/manufacturer',
+        'admin.manufacturer.store' => 'catalog/manufacturer',
+        'admin.manufacturer.edit' => 'catalog/manufacturer',
+        'admin.manufacturer.update' => 'catalog/manufacturer',
+        'admin.manufacturer.delete' => 'catalog/manufacturer',
+        'admin.supplier.list' => 'procurement/supplier',
+        'admin.supplier.create' => 'procurement/supplier',
+        'admin.supplier.store' => 'procurement/supplier',
+        'admin.supplier.edit' => 'procurement/supplier',
+        'admin.supplier.update' => 'procurement/supplier',
+        'admin.supplier.delete' => 'procurement/supplier',
+        'admin.customer.list' => 'customer/customer',
+        'admin.customer.show' => 'customer/customer',
+        'admin.customer.create' => 'customer/customer',
+        'admin.customer.edit' => 'customer/customer',
+        'admin.customer.address.create' => 'customer/customer',
+        'admin.customer.address.edit' => 'customer/customer',
+        'admin.customer.address.delete' => 'customer/customer',
+        'admin.setting.edit' => 'setting/setting',
+        'admin.setting.update' => 'setting/setting',
+        'admin.orders.index' => 'sale/order',
+        'admin.orders.show' => 'sale/order',
+        'admin.orders.invoice' => 'sale/order',
+        'admin.orders.update_status' => 'sale/order',
+    ];
+
+    public function __construct(?\Psr\Container\ContainerInterface $container = null)
     {
+        $this->container = $container;
         try {
             $this->redis = new RedisClient([
                 'host' => $_ENV['REDIS_HOST'] ?? '127.0.0.1',
@@ -35,6 +74,17 @@ class AdminSessionMiddleware
 
     public function __invoke(Request $request, Handler $handler): Response
     {
+        // Detecta OOBE se a tabela de usuários estiver vazia
+        try {
+            $userRepo = \Alpha\Model\Domain\Repositories\RepositoryFactory::getInstance()->get(\Alpha\Model\Domain\Repositories\UserRepository::class);
+            if (count($userRepo->findAll()) === 0) {
+                $response = new Response();
+                return $response->withHeader('Location', '/setup')->withStatus(302);
+            }
+        } catch (\Exception $e) {
+            // Ignora
+        }
+
         $cookies = $request->getCookieParams();
         $sessionId = $cookies['admin_session_id'] ?? '';
 
@@ -77,6 +127,70 @@ class AdminSessionMiddleware
         $user = json_decode($sessionData);
         $request = $request->withAttribute('logged_admin', $user);
 
+        // --- Verificação de privilégios / permissões ---
+        $routeContext = \Slim\Routing\RouteContext::fromRequest($request);
+        $route = $routeContext->getRoute();
+        $routeName = $route ? $route->getName() : '';
+        $permissionKey = self::ROUTE_PERMISSION_MAP[$routeName] ?? null;
+
+        if ($permissionKey) {
+            $userGroupId = isset($user->user_group_id) ? (int)$user->user_group_id : 0;
+            $permissions = [];
+
+            if ($userGroupId > 0) {
+                try {
+                    $userGroupRepo = \Alpha\Model\Domain\Repositories\RepositoryFactory::getInstance()->get(\Alpha\Model\Domain\Repositories\UserGroupRepository::class);
+                    $userGroup = $userGroupRepo->find($userGroupId);
+                    if ($userGroup instanceof \Alpha\Model\Domain\Entities\UserGroup) {
+                        $permissions = $userGroup->getPermissionArray();
+                    }
+                } catch (\Exception $e) {
+                    // Ignora erros de carregamento e assume permissões vazias
+                }
+            }
+
+            $accessList = $permissions['access'] ?? [];
+            $modifyList = $permissions['modify'] ?? [];
+            $isModify = in_array(strtoupper($request->getMethod()), ['POST', 'PUT', 'DELETE', 'PATCH']);
+
+            if ($isModify) {
+                if (!in_array($permissionKey, $modifyList)) {
+                    return $this->render403('Você não tem privilégios de alteração para este recurso.');
+                }
+            } else {
+                if (!in_array($permissionKey, $accessList)) {
+                    return $this->render403('Você não tem permissão para visualizar esta página.');
+                }
+            }
+        }
+
         return $handler->handle($request);
+    }
+
+    private function render403(string $message): Response
+    {
+        $response = new Response();
+        try {
+            $twig = null;
+            if ($this->container && $this->container->has(\Slim\Views\Twig::class)) {
+                $twig = $this->container->get(\Slim\Views\Twig::class);
+            } elseif ($this->container && $this->container->has(\Twig\Environment::class)) {
+                $twigEnv = $this->container->get(\Twig\Environment::class);
+                $html = $twigEnv->render('admin/pages/errors/403.html.twig', ['message' => $message]);
+                $response->getBody()->write($html);
+                return $response->withStatus(403);
+            }
+
+            if ($twig) {
+                $html = $twig->fetch('admin/pages/errors/403.html.twig', ['message' => $message]);
+                $response->getBody()->write($html);
+                return $response->withStatus(403);
+            }
+        } catch (\Exception $e) {
+            // Em caso de qualquer falha na renderização do template, retorna string simples
+        }
+
+        $response->getBody()->write("<h1>403 Forbidden</h1><p>" . htmlspecialchars($message) . "</p>");
+        return $response->withStatus(403);
     }
 }

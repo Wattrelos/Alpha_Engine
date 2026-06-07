@@ -1,0 +1,259 @@
+{% extends 'admin/layouts/base.html.twig' %}
+
+{% block title %}
+	{{ title|default('Detalhes do Pedido | Painel Administrativo') }}
+{% endblock %}
+
+{% block content %}
+	<div class="page-header" style="margin-bottom: 2rem;">
+		<div>
+			<div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem;">
+				<a href="/LPDHED2dC7Gjrg2b/pedidos" class="text-muted" style="text-decoration: none;">Pedidos</a>
+				<span class="text-muted">/</span>
+				<span class="text-semibold text-dark">Pedido #{{ order.id }}</span>
+			</div>
+			<h2>Pedido #{{ order.id }}</h2>
+			<p class="page-subtitle">Visualização completa dos dados da transação, produtos e histórico.</p>
+		</div>
+		<div class="d-flex gap-2">
+			<a href="/LPDHED2dC7Gjrg2b/pedidos" class="btn btn-secondary" style="background: var(--color-bg-soft); border: 1px solid var(--color-border); color: var(--color-text-muted);">
+				<i class="fas fa-arrow-left"></i> Voltar
+			</a>
+			<a href="/LPDHED2dC7Gjrg2b/pedidos/{{ order.id }}/fatura" target="_blank" class="btn btn-primary">
+				<i class="fas fa-print"></i> Imprimir Fatura
+			</a>
+		</div>
+	</div>
+
+	{% if success %}
+		<div class="alert alert-success">
+			<i class="fas fa-check-circle" style="margin-right: 8px;"></i>
+			Status do pedido atualizado com sucesso!
+		</div>
+	{% endif %}
+
+	<!-- Grid de Informações Básicas e do Cliente -->
+	<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 1.5rem; margin-bottom: 1.5rem;">
+		
+		<!-- Resumo do Pedido -->
+		<div class="card" style="margin-bottom: 0;">
+			<h3 style="margin-top: 0; margin-bottom: 1.25rem; font-size: 1.1rem; border-bottom: 1px solid var(--color-border); padding-bottom: 0.75rem; color: var(--color-text-main);">
+				<i class="fas fa-shopping-cart" style="margin-right: 8px; color: var(--color-primary);"></i> Resumo da Venda
+			</h3>
+			<table style="width: 100%; font-size: 0.9rem; border-collapse: collapse;">
+				<tr style="height: 35px; border-bottom: 1px solid var(--color-bg-soft);">
+					<td class="text-muted">ID do Pedido:</td>
+					<td class="text-semibold text-dark text-right">#{{ order.id }}</td>
+				</tr>
+				<tr style="height: 35px; border-bottom: 1px solid var(--color-bg-soft);">
+					<td class="text-muted">Data da Compra:</td>
+					<td class="text-semibold text-dark text-right">{{ order.date_added|date('d/m/Y H:i') }}</td>
+				</tr>
+				<tr style="height: 35px; border-bottom: 1px solid var(--color-bg-soft);">
+					<td class="text-muted">Canal / Loja:</td>
+					<td class="text-semibold text-dark text-right">{{ order.store_name }}</td>
+				</tr>
+				<tr style="height: 35px; border-bottom: 1px solid var(--color-bg-soft);">
+					<td class="text-muted">Forma de Pagamento:</td>
+					<td class="text-semibold text-dark text-right">{{ order.payment_method }}</td>
+				</tr>
+				<tr style="height: 35px;">
+					<td class="text-muted">Forma de Envio:</td>
+					<td class="text-semibold text-dark text-right">{{ order.shipping_method }}</td>
+				</tr>
+			</table>
+		</div>
+
+		<!-- Dados do Cliente -->
+		<div class="card" style="margin-bottom: 0;">
+			<h3 style="margin-top: 0; margin-bottom: 1.25rem; font-size: 1.1rem; border-bottom: 1px solid var(--color-border); padding-bottom: 0.75rem; color: var(--color-text-main);">
+				<i class="fas fa-user" style="margin-right: 8px; color: var(--color-primary);"></i> Informações do Cliente
+			</h3>
+			<table style="width: 100%; font-size: 0.9rem; border-collapse: collapse;">
+				<tr style="height: 35px; border-bottom: 1px solid var(--color-bg-soft);">
+					<td class="text-muted">Nome Completo:</td>
+					<td class="text-semibold text-dark text-right">{{ order.firstname }} {{ order.lastname }}</td>
+				</tr>
+				<tr style="height: 35px; border-bottom: 1px solid var(--color-bg-soft);">
+					<td class="text-muted">E-mail:</td>
+					<td class="text-semibold text-dark text-right"><a href="mailto:{{ order.email }}" style="color: var(--color-primary); text-decoration: none;">{{ order.email }}</a></td>
+				</tr>
+				<tr style="height: 35px; border-bottom: 1px solid var(--color-bg-soft);">
+					<td class="text-muted">Telefone:</td>
+					<td class="text-semibold text-dark text-right">{{ order.telephone }}</td>
+				</tr>
+				<tr style="height: 35px; border-bottom: 1px solid var(--color-bg-soft);">
+					<td class="text-muted">IP do Cliente:</td>
+					<td class="text-semibold text-dark text-right">{{ order.ip }}</td>
+				</tr>
+				<tr style="height: 35px;">
+					<td class="text-muted">Navegador:</td>
+					<td class="text-semibold text-dark text-right" style="max-width: 180px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;" title="{{ order.user_agent }}">{{ order.user_agent }}</td>
+				</tr>
+			</table>
+		</div>
+
+	</div>
+
+	<!-- Endereços -->
+	<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 1.5rem; margin-bottom: 1.5rem;">
+		
+		<!-- Endereço de Cobrança -->
+		<div class="card" style="margin-bottom: 0;">
+			<h3 style="margin-top: 0; margin-bottom: 1.25rem; font-size: 1.1rem; border-bottom: 1px solid var(--color-border); padding-bottom: 0.75rem; color: var(--color-text-main);">
+				<i class="fas fa-file-invoice-dollar" style="margin-right: 8px; color: var(--color-primary);"></i> Endereço de Cobrança
+			</h3>
+			<div style="font-size: 0.9rem; line-height: 1.6; color: var(--color-text-main);">
+				<strong>{{ order.payment_firstname }} {{ order.payment_lastname }}</strong><br>
+				{% if order.payment_company %}{{ order.payment_company }}<br>{% endif %}
+				{{ order.payment_street }}, {{ order.payment_number }}
+				{% if order.payment_complement %} - {{ order.payment_complement }}{% endif %}<br>
+				{{ order.payment_district }} - {{ order.payment_city }} / {{ order.payment_zone }}<br>
+				CEP: {{ order.payment_postcode }}<br>
+				{{ order.payment_country }}
+			</div>
+		</div>
+
+		<!-- Endereço de Entrega -->
+		<div class="card" style="margin-bottom: 0;">
+			<h3 style="margin-top: 0; margin-bottom: 1.25rem; font-size: 1.1rem; border-bottom: 1px solid var(--color-border); padding-bottom: 0.75rem; color: var(--color-text-main);">
+				<i class="fas fa-truck" style="margin-right: 8px; color: var(--color-primary);"></i> Endereço de Entrega
+			</h3>
+			<div style="font-size: 0.9rem; line-height: 1.6; color: var(--color-text-main);">
+				<strong>{{ order.shipping_firstname }} {{ order.shipping_lastname }}</strong><br>
+				{% if order.shipping_company %}{{ order.shipping_company }}<br>{% endif %}
+				{{ order.shipping_street }}, {{ order.shipping_number }}
+				{% if order.shipping_complement %} - {{ order.shipping_complement }}{% endif %}<br>
+				{{ order.shipping_district }} - {{ order.shipping_city }} / {{ order.shipping_zone }}<br>
+				CEP: {{ order.shipping_postcode }}<br>
+				{{ order.shipping_country }}
+			</div>
+		</div>
+
+	</div>
+
+	<!-- Itens do Pedido -->
+	<div class="card" style="margin-bottom: 1.5rem; padding-bottom: 1rem;">
+		<h3 style="margin-top: 0; margin-bottom: 1rem; font-size: 1.1rem; border-bottom: 1px solid var(--color-border); padding-bottom: 0.75rem; color: var(--color-text-main);">
+			<i class="fas fa-box-open" style="margin-right: 8px; color: var(--color-primary);"></i> Produtos Comprados
+		</h3>
+		<div class="overflow-x-auto">
+			<table class="table" style="margin-top: 0; width: 100%;">
+				<thead>
+					<tr>
+						<th>Nome do Produto</th>
+						<th>Modelo</th>
+						<th>Quantidade</th>
+						<th class="text-right">Preço Unitário</th>
+						<th class="text-right">Total</th>
+					</tr>
+				</thead>
+				<tbody>
+					{% for product in products %}
+						<tr>
+							<td class="text-semibold text-dark">
+								{{ product.name }}
+								{% if product.options %}
+									<div style="margin-top: 4px; font-size: 0.8rem; color: var(--color-text-muted);">
+										{% for opt in product.options %}
+											<strong>- {{ opt.name }}:</strong> {{ opt.value }}<br>
+										{% endfor %}
+									</div>
+								{% endif %}
+							</td>
+							<td>{{ product.model }}</td>
+							<td>{{ product.quantity }}</td>
+							<td class="text-right text-semibold">{{ product.price }}</td>
+							<td class="text-right text-semibold text-dark">{{ product.total }}</td>
+						</tr>
+					{% endfor %}
+					
+					<!-- Totais -->
+					{% for total in totals %}
+						<tr style="background: rgba(248, 250, 252, 0.5);">
+							<td colspan="3" style="border: none;"></td>
+							<td class="text-right text-semibold text-muted" style="border-bottom: 1px solid var(--color-border); padding: 0.75rem 1rem;">{{ total.title }}:</td>
+							<td class="text-right text-semibold {% if total.code == 'total' %}text-dark{% endif %}" style="border-bottom: 1px solid var(--color-border); padding: 0.75rem 1rem; {% if total.code == 'total' %}font-size: 1.1rem; font-weight: 700; color: var(--color-primary);{% endif %}">
+								R$ {{ total.value|number_format(2, ',', '.') }}
+							</td>
+						</tr>
+					{% endfor %}
+				</tbody>
+			</table>
+		</div>
+	</div>
+
+	<!-- Timeline de Histórico e Alteração de Status -->
+	<div style="display: grid; grid-template-columns: 1.5fr 1fr; gap: 1.5rem; align-items: start; margin-bottom: 2rem;">
+		
+		<!-- Timeline do Histórico -->
+		<div class="card" style="margin-bottom: 0;">
+			<h3 style="margin-top: 0; margin-bottom: 1.25rem; font-size: 1.1rem; border-bottom: 1px solid var(--color-border); padding-bottom: 0.75rem; color: var(--color-text-main);">
+				<i class="fas fa-history" style="margin-right: 8px; color: var(--color-primary);"></i> Histórico de Alterações
+			</h3>
+			<div class="activity-list" style="position: relative; padding-left: 5px;">
+				{% if histories %}
+					{% for history in histories %}
+						<div class="activity-item" style="border-bottom: 1px solid var(--color-border); padding-bottom: 0.75rem; margin-bottom: 0.75rem;">
+							<div style="display: flex; justify-content: space-between; align-items: center; width: 100%;">
+								<div>
+									<span class="status-pill {% if 'Cancelado' in history.status or 'Reprovado' in history.status %}status-cancelled{% elseif 'Completo' in history.status or 'Entregue' in history.status or 'Pago' in history.status %}status-approved{% else %}status-pending{% endif %}" style="font-size: 0.7rem; padding: 2px 6px;">
+										{{ history.status }}
+									</span>
+									<span class="activity-time" style="margin-left: 8px;">{{ history.date_added|date('d/m/Y H:i') }}</span>
+								</div>
+								{% if history.notify %}
+									<span class="status-pill status-approved" style="font-size: 0.65rem; background: #e0f2fe; color: #0369a1; padding: 2px 6px;">
+										<i class="fas fa-envelope"></i> Cliente Notificado
+									</span>
+								{% endif %}
+							</div>
+							{% if history.comment %}
+								<div class="activity-desc" style="margin-top: 6px; padding: 8px; background: var(--color-bg-soft); border-radius: 4px; font-size: 0.85rem; color: var(--color-text-main); font-style: italic;">
+									"{{ history.comment }}"
+								</div>
+							{% endif %}
+						</div>
+					{% endfor %}
+				{% else %}
+					<p style="color: var(--color-text-muted); font-size: 0.9rem; text-align: center; padding: 1.5rem 0;">
+						Nenhuma alteração registrada ainda.
+					</p>
+				{% endif %}
+			</div>
+		</div>
+
+		<!-- Formulário de Alteração de Status -->
+		<div class="card" style="margin-bottom: 0;">
+			<h3 style="margin-top: 0; margin-bottom: 1.25rem; font-size: 1.1rem; border-bottom: 1px solid var(--color-border); padding-bottom: 0.75rem; color: var(--color-text-main);">
+				<i class="fas fa-edit" style="margin-right: 8px; color: var(--color-primary);"></i> Atualizar Pedido
+			</h3>
+			<form action="/LPDHED2dC7Gjrg2b/pedidos/{{ order.id }}/status" method="POST">
+				<div class="form-group">
+					<label for="order_status_id" class="form-label">Novo Status</label>
+					<select name="order_status_id" id="order_status_id" class="form-control" required>
+						<option value="">-- Selecione o Status --</option>
+						{% for status in statuses %}
+							<option value="{{ status.id }}" {% if order.order_status_id == status.id %}selected{% endif %}>{{ status.name }}</option>
+						{% endfor %}
+					</select>
+				</div>
+
+				<div class="form-group">
+					<label for="comment" class="form-label">Comentário / Observação</label>
+					<textarea name="comment" id="comment" class="form-control" rows="4" placeholder="Insira observações sobre o envio, código de rastreamento ou faturamento..." style="resize: vertical;"></textarea>
+				</div>
+
+				<div class="form-group" style="display: flex; align-items: center; gap: 8px; margin-bottom: 1.5rem;">
+					<input type="checkbox" name="notify" id="notify" value="1" style="width: 16px; height: 16px; cursor: pointer;">
+					<label for="notify" style="margin-bottom: 0; cursor: pointer; user-select: none;">Notificar Cliente por E-mail</label>
+				</div>
+
+				<button type="submit" class="btn btn-primary w-100">
+					<i class="fas fa-save"></i> Atualizar Status
+				</button>
+			</form>
+		</div>
+
+	</div>
+{% endblock %}

@@ -6,8 +6,9 @@ use Alpha\Controller\BaseController;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Psr\Http\Message\ResponseInterface as Response;
 use Alpha\Model\Domain\Repositories\OrderRepository;
+use Alpha\Model\Domain\Repositories\OrderStatusRepository;
 
-class ViewOrderDetailsAction extends BaseController implements \Alpha\Controller\Actions\ActionInterface
+class ShowOrderAction extends BaseController implements \Alpha\Controller\Actions\ActionInterface
 {
     public function __invoke(Request $request, Response $response, array $args): Response
     {
@@ -22,7 +23,7 @@ class ViewOrderDetailsAction extends BaseController implements \Alpha\Controller
             return $response->withStatus(404);
         }
 
-        // Fetch products and totals
+        // Fetch products, options, totals and history
         $productsData = $orderRepo->getProducts($orderId);
         $products = [];
         foreach ($productsData as $product) {
@@ -38,22 +39,25 @@ class ViewOrderDetailsAction extends BaseController implements \Alpha\Controller
         }
 
         $totals = $orderRepo->getTotals($orderId);
+        $histories = $orderRepo->getHistories($orderId);
 
-        // Fetch store settings for invoice header
-        $settings = $this->container->has('configSettings') ? $this->container->get('configSettings') : [];
+        // Fetch order statuses for status update dropdown
+        /** @var OrderStatusRepository $statusRepo */
+        $statusRepo = $this->getRepository(OrderStatusRepository::class);
+        $statuses = $statusRepo->getOrderStatuses();
 
-        $html = $this->getTemplate('admin/sales/order/invoice.html.twig', [
-            'title'     => 'Fatura do Pedido #' . $orderId,
+        // Success / error message handling
+        $queryParams = $request->getQueryParams();
+        $success = $queryParams['success'] ?? null;
+
+        $html = $this->getTemplate('admin/sales/order/show.html.twig', [
+            'title'     => 'Pedido #' . $orderId . ' | Painel Administrativo',
             'order'     => $order,
             'products'  => $products,
             'totals'    => $totals,
-            'store'     => [
-                'name'      => $settings['config_name'] ?? 'Sonhos de Ninar',
-                'address'   => $settings['config_address'] ?? '',
-                'telephone' => $settings['config_telephone'] ?? '',
-                'email'     => $settings['config_email'] ?? '',
-                'url'       => $settings['config_url'] ?? HTTP_SERVER,
-            ]
+            'histories' => $histories,
+            'statuses'  => $statuses,
+            'success'   => $success,
         ]);
 
         $response->getBody()->write($html);

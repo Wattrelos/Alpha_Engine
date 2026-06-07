@@ -36,6 +36,7 @@ class AdminAuthService extends AbstractAuthService
 
         // Bloqueia se atingiu o limite de 5 tentativas malsucedidas no período de 1 hora
         if ($this->userRepository->isLockedOut($username, 5)) {
+            $this->logAdminLogin('LOCKED_OUT', $username, $ip);
             return null;
         }
 
@@ -45,18 +46,37 @@ class AdminAuthService extends AbstractAuthService
         if ($user && $user->isStatus() && password_verify($password, $user->getPassword())) {
             // Sucesso: Limpa o histórico de tentativas do usuário
             $this->userRepository->resetLoginAttempts($username);
+            $this->logAdminLogin('SUCCESS', $username, $ip);
 
             return [
-                'id'       => $user->getId(),
-                'username' => $user->getUsername(),
-                'name'     => trim($user->getFirstname() . ' ' . $user->getLastname()),
-                'role'     => 'admin'
+                'id'            => $user->getId(),
+                'username'      => $user->getUsername(),
+                'name'          => trim($user->getFirstname() . ' ' . $user->getLastname()),
+                'user_group_id' => $user->getUserGroupId(),
+                'role'          => 'admin'
             ];
         }
 
         // Falha: Registra a tentativa mal-sucedida
         $this->userRepository->addLoginAttempt($username, $ip);
+        $this->logAdminLogin('FAILURE', $username, $ip);
 
         return null;
+    }
+
+    /**
+     * Registra o evento de login no arquivo de log administrativo.
+     */
+    private function logAdminLogin(string $status, string $username, string $ip): void
+    {
+        $logDir = defined('DIR_LOGS') ? DIR_LOGS : '/var/www/html/agsonhos/storage/logs/';
+        if (!is_dir($logDir)) {
+            @mkdir($logDir, 0777, true);
+        }
+        $logFile = $logDir . 'admin_login.log';
+        $timestamp = date('Y-m-d H:i:s');
+        $userAgent = $_SERVER['HTTP_USER_AGENT'] ?? 'Unknown User-Agent';
+        $logEntry = sprintf("[%s] [%s] User: '%s' | IP: '%s' | UA: '%s'\n", $timestamp, $status, $username, $ip, $userAgent);
+        @file_put_contents($logFile, $logEntry, FILE_APPEND);
     }
 }
