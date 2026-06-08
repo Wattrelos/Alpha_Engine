@@ -39,6 +39,14 @@ class ProductRepository extends AbstractRepository implements BaseRepositoryInte
         $mapper = $this->mapperFactory->get(ProductMapper::class);
         $product = $mapper->getProduct($productId, $this->language_id, $this->store_id, $customerGroupId, $priceStatements);
         
+        if ($product) {
+            $parsedown = new \Parsedown();
+            $parsedown->setSafeMode(true);
+            if (isset($product['description'])) {
+                $product['description'] = $parsedown->text($product['description']);
+            }
+        }
+        
         if ($product && $this->cache !== null) {
             // TTL Curto (5 min) devido à volatilidade de estoque e preço
             $this->cache->set($cacheKey, $product, 300);
@@ -306,6 +314,17 @@ class ProductRepository extends AbstractRepository implements BaseRepositoryInte
         $mapper = $this->mapperFactory->get(ProductMapper::class);
         $related = $mapper->getRelated($productId, $this->language_id, $this->store_id, $customerGroupId, $priceStatements);
 
+        if ($related) {
+            $parsedown = new \Parsedown();
+            $parsedown->setSafeMode(true);
+            foreach ($related as &$prod) {
+                if (isset($prod['description'])) {
+                    $prod['description'] = $parsedown->text($prod['description']);
+                }
+            }
+            unset($prod);
+        }
+
         if ($this->cache !== null) {
             $this->cache->set($cacheKey, $related, 3600);
         }
@@ -348,6 +367,17 @@ class ProductRepository extends AbstractRepository implements BaseRepositoryInte
         /** @var \Alpha\Mappers\EntityMappers\ProductMapper $mapper */
         $mapper = $this->mapperFactory->get(ProductMapper::class);
         $products = $mapper->getProducts($filterData, $this->language_id, $this->store_id, $customerGroupId, $priceStatements);
+
+        if ($products) {
+            $parsedown = new \Parsedown();
+            $parsedown->setSafeMode(true);
+            foreach ($products as &$product) {
+                if (isset($product['description'])) {
+                    $product['description'] = $parsedown->text($product['description']);
+                }
+            }
+            unset($product);
+        }
 
         if ($this->cache !== null) {
             $this->cache->set($cacheKey, $products, 300);

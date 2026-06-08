@@ -28,11 +28,14 @@
 
 		{# Preços #}
 		<div class="egen-prod-card-price-block">
-			{% if prod.special %}
+			{% if prod.special_formatted %}
+				<span class="egen-prod-price-old">{{ prod.price_formatted }}</span>
+				<span class="egen-prod-price-special">{{ prod.special_formatted }}</span>
+			{% elseif prod.special %}
 				<span class="egen-prod-price-old">{{ prod.price }}</span>
 				<span class="egen-prod-price-special">{{ prod.special }}</span>
 			{% else %}
-				<span class="egen-prod-price">{{ prod.price }}</span>
+				<span class="egen-prod-price">{{ prod.price_formatted|default(prod.price) }}</span>
 			{% endif %}
 		</div>
 
