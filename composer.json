@@ -4,10 +4,7 @@
             "Alpha\\": "core/",
             "Containers\\": "Containers/",
             "Config\\": "Config/"
-        },
-        "files": [
-            "core/Support/autoloader_legacy.php"
-        ]
+        }
     },
     "config": {
         "optimize-autoloader": true,

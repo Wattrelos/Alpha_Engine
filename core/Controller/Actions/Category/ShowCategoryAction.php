@@ -219,6 +219,9 @@ class ShowCategoryAction implements ActionInterface
                 'limit' => $filterData['limit']
             ]))
         ];
+        
+        $data['sorts'] = $sorts;
+        $data['limits'] = $limits;
 
         $html = $this->twig->render('pages/category/show.html.twig', [
             'category'           => $data,

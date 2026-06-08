@@ -8,6 +8,7 @@ use Twig\Environment as TwigEnvironment;
 use Alpha\Controller\Actions\ActionInterface;
 use Alpha\Model\Domain\Repositories\CartRepository;
 use Alpha\Model\Domain\Repositories\SeoUrlRepository;
+use Alpha\Model\Domain\Repositories\CustomerAddressesRepository;
 use Psr\Container\ContainerInterface;
 use Alpha\Support\Presenters\ImagePresenter;
 use Slim\Routing\RouteContext;
@@ -19,19 +20,22 @@ class ShowCartAction implements ActionInterface
     private SeoUrlRepository $seoRepository;
     private ContainerInterface $container;
     private ImagePresenter $imagePresenter;
+    private CustomerAddressesRepository $addressRepository;
 
     public function __construct(
         TwigEnvironment $twig,
         CartRepository $cartRepository,
         SeoUrlRepository $seoRepository,
         ContainerInterface $container,
-        ImagePresenter $imagePresenter
+        ImagePresenter $imagePresenter,
+        CustomerAddressesRepository $addressRepository
     ) {
         $this->twig = $twig;
         $this->cartRepository = $cartRepository;
         $this->seoRepository = $seoRepository;
         $this->container = $container;
         $this->imagePresenter = $imagePresenter;
+        $this->addressRepository = $addressRepository;
     }
 
     public function __invoke(Request $request, Response $response, array $args): Response
@@ -127,8 +131,30 @@ class ShowCartAction implements ActionInterface
         $checkoutUrl = $routeParser->urlFor('checkout.index', ['lang' => $lang]);
         $continueUrl = $routeParser->urlFor('home', ['lang' => $lang]);
 
-        // CEP da sessão se houver
-        $shippingCep = $session->data['shipping_cep'] ?? '';
+        // CEP da sessão se houver ou do cliente logado ou endereço de entrega na sessão
+        $shippingCep = '';
+        if ($session && !empty($session->data['shipping_cep'])) {
+            $shippingCep = (string)$session->data['shipping_cep'];
+        }
+
+        if (empty($shippingCep)) {
+            $customer = $this->container->has('customer') ? $this->container->get('customer') : null;
+            if ($customer && $customer->isLogged()) {
+                $defaultAddressId = $customer->getAddressId();
+                if ($defaultAddressId > 0) {
+                    $defaultAddress = $this->addressRepository->find($defaultAddressId);
+                    if ($defaultAddress) {
+                        $shippingCep = preg_replace('/\D/', '', $defaultAddress->getPostalCode());
+                    }
+                }
+            }
+        }
+
+        if (empty($shippingCep)) {
+            if ($session && !empty($session->data['shipping_address']['postcode'])) {
+                $shippingCep = preg_replace('/\D/', '', $session->data['shipping_address']['postcode']);
+            }
+        }
 
         $title = $translations['heading_title'] ?? 'Carrinho de Compras';
 

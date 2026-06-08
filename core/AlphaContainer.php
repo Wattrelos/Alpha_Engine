@@ -58,7 +58,6 @@ class AlphaContainer
             'design/translation'          => \Alpha\Model\Domain\Repositories\TranslationRepository::class,
             'design/seo_url'              => \Alpha\Model\Domain\Repositories\SeoUrlRepository::class,
             'localisation/language'       => \Alpha\Model\Domain\Repositories\LanguageRepository::class,
-            'localisation/zone'           => \Alpha\Model\Domain\Repositories\ZoneRepository::class,
             'localisation/address_format' => \Alpha\Model\Domain\Repositories\AddressFormatRepository::class,
             'localisation/weight_class'   => \Alpha\Model\Domain\Repositories\WeightClassRepository::class,
             'localisation/length_class'   => \Alpha\Model\Domain\Repositories\LengthClassRepository::class,
