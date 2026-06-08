@@ -54,5 +54,7 @@ Thumbs.db
 # Diversos
 changelog/
 tests/ # Arquivos de testes
-/public_html/image/product/* # Ignora Imagens de produtos
-/public_html/image/cache/* # Ignora Imagens em cache
+# Ignora Imagens de produtos
+/public_html/image/product/*
+# Ignora Imagens em cache
+/public_html/image/cache/*
