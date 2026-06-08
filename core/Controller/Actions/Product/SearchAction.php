@@ -6,27 +6,43 @@ use Psr\Http\Message\ServerRequestInterface as Request;
 use Psr\Http\Message\ResponseInterface as Response;
 use Alpha\Model\Domain\Repositories\ProductRepository;
 use Alpha\Model\Domain\Repositories\SeoUrlRepository;
+use Alpha\Model\Domain\Repositories\CategoryRepository;
+use Alpha\Model\Domain\Repositories\ManufacturerRepository;
 use Twig\Environment as TwigEnvironment;
 use Slim\Routing\RouteContext;
 use Alpha\Controller\Actions\ActionInterface;
+use Psr\Container\ContainerInterface;
+use Alpha\Support\Presenters\ImagePresenter;
 
 class SearchAction implements ActionInterface
 {
     private ProductRepository $productRepository;
     private SeoUrlRepository $seoRepository;
+    private CategoryRepository $categoryRepository;
+    private ManufacturerRepository $manufacturerRepository;
     private TwigEnvironment $twig;
     private \Alpha\Support\Language $translator;
+    private ContainerInterface $container;
+    private ImagePresenter $imagePresenter;
 
     public function __construct(
         ProductRepository $productRepository,
         SeoUrlRepository $seoRepository,
+        CategoryRepository $categoryRepository,
+        ManufacturerRepository $manufacturerRepository,
         TwigEnvironment $twig,
-        \Alpha\Support\Language $translator
+        \Alpha\Support\Language $translator,
+        ContainerInterface $container,
+        ImagePresenter $imagePresenter
     ) {
         $this->productRepository = $productRepository;
         $this->seoRepository = $seoRepository;
+        $this->categoryRepository = $categoryRepository;
+        $this->manufacturerRepository = $manufacturerRepository;
         $this->twig = $twig;
         $this->translator = $translator;
+        $this->container = $container;
+        $this->imagePresenter = $imagePresenter;
     }
 
     public function __invoke(Request $request, Response $response, array $args): Response
@@ -36,7 +52,7 @@ class SearchAction implements ActionInterface
 
         $queryParams = $request->getQueryParams();
         
-        $filterData = array_merge($queryParams, [
+        $filterData = [
             'search'             => $queryParams['busca'] ?? $queryParams['search'] ?? '',
             'filter_name'        => $queryParams['busca'] ?? $queryParams['search'] ?? '',
             'filter_description' => $queryParams['description'] ?? '',
@@ -45,8 +61,15 @@ class SearchAction implements ActionInterface
             'sort'               => $queryParams['sort'] ?? 'p.sort_order',
             'order'              => $queryParams['order'] ?? 'ASC',
             'page'               => max(1, (int)($queryParams['page'] ?? 1)),
-            'limit'              => max(1, (int)($queryParams['limit'] ?? 12))
-        ]);
+            'limit'              => max(1, (int)($queryParams['limit'] ?? 12)),
+            
+            // Filtros facetados
+            'filter_categories'    => $queryParams['category'] ?? [],
+            'filter_manufacturers' => $queryParams['manufacturer'] ?? [],
+            'filter_price_min'     => $queryParams['price_min'] ?? null,
+            'filter_price_max'     => $queryParams['price_max'] ?? null,
+            'filter_rating'        => $queryParams['rating'] ?? null
+        ];
 
         // Obtém dados de busca do repositório
         $viewResponse = $this->productRepository->getSearchData($filterData);
@@ -57,8 +80,14 @@ class SearchAction implements ActionInterface
         $lang = $request->getAttribute('lang', 'pt-br');
         $languageId = $request->getAttribute('language_id', 2);
 
-        // Garante que o href e o slug dos produtos da busca sejam construídos
-        // de forma inteligente utilizando o roteador de URLs amigáveis do Slim.
+        $config = $this->container->has('config') ? $this->container->get('config') : null;
+        $currency = $this->container->has('currency') ? $this->container->get('currency') : null;
+        $tax = $this->container->has('tax') ? $this->container->get('tax') : null;
+        $session = $this->container->has('session') ? $this->container->get('session') : null;
+        $currencyCode = $session->data['currency'] ?? ($config ? $config->get('config_currency') : 'BRL');
+        $imagePresenter = $this->imagePresenter;
+
+        // Garante que o href, slug, imagens e preços dos produtos da busca sejam construídos
         if (isset($data['products']) && is_array($data['products'])) {
             foreach ($data['products'] as &$product) {
                 $productId = (int)($product['product_id'] ?? $product['id'] ?? 0);
@@ -73,6 +102,19 @@ class SearchAction implements ActionInterface
                 $productSlug = !empty($keyword) ? $keyword : (!empty($product['keyword']) ? $product['keyword'] : $productId);
                 $product['slug'] = $productSlug;
                 $product['href'] = $routeParser->urlFor('product.detail', ['lang' => $lang, 'slug' => (string)$productSlug]);
+
+                // Formatação visual da miniatura
+                $product['thumb'] = $imagePresenter->resize($product['image'] ?? '', $config ? (int)$config->get('config_image_product_width') : 228, $config ? (int)$config->get('config_image_product_height') : 228);
+
+                // Formatação de Preços com Impostos integrados
+                if ($currency && $tax && $config) {
+                    $priceBase = $tax->calculate($product['price'], $product['tax_class_id'] ?? 0, $config->get('config_tax'));
+                    $product['price_formatted'] = $currency->format($priceBase, $currencyCode);
+
+                    $product['special_formatted'] = !empty($product['special']) 
+                        ? $currency->format($tax->calculate($product['special'], $product['tax_class_id'] ?? 0, $config->get('config_tax')), $currencyCode) 
+                        : false;
+                }
             }
             unset($product);
         }
@@ -85,6 +127,23 @@ class SearchAction implements ActionInterface
             return $routeParser->urlFor('search', ['lang' => $lang], array_merge($baseUrlParams, $newParams));
         };
 
+        $sorts = [
+            ['text' => 'Padrão', 'value' => 'p.sort_order-ASC', 'href' => $buildSearchUrl(['sort' => 'p.sort_order', 'order' => 'ASC'])],
+            ['text' => 'Nome (A - Z)', 'value' => 'pd.name-ASC', 'href' => $buildSearchUrl(['sort' => 'pd.name', 'order' => 'ASC'])],
+            ['text' => 'Nome (Z - A)', 'value' => 'pd.name-DESC', 'href' => $buildSearchUrl(['sort' => 'pd.name', 'order' => 'DESC'])],
+            ['text' => 'Preço (Menor > Maior)', 'value' => 'p.price-ASC', 'href' => $buildSearchUrl(['sort' => 'p.price', 'order' => 'ASC'])],
+            ['text' => 'Preço (Maior > Menor)', 'value' => 'p.price-DESC', 'href' => $buildSearchUrl(['sort' => 'p.price', 'order' => 'DESC'])],
+        ];
+
+        $limits = [
+            ['text' => '12', 'value' => 12, 'href' => $buildSearchUrl(['limit' => 12])],
+            ['text' => '24', 'value' => 24, 'href' => $buildSearchUrl(['limit' => 24])],
+            ['text' => '48', 'value' => 48, 'href' => $buildSearchUrl(['limit' => 48])],
+            ['text' => '96', 'value' => 96, 'href' => $buildSearchUrl(['limit' => 96])],
+        ];
+
+        $data['sorts'] = $sorts;
+        $data['limits'] = $limits;
         $data['pagination'] = [
             'page' => $filterData['page'],
             'url'  => str_replace('%7Bpage%7D', '{page}', $buildSearchUrl([
@@ -102,13 +161,39 @@ class SearchAction implements ActionInterface
             'canonical'   => $routeParser->urlFor('search', ['lang' => $lang])
         ];
 
+        // Preparar listas para a barra lateral de filtros facetados na busca
+        $listaCategorias = $this->categoryRepository->getCategories(0);
+        foreach ($listaCategorias as &$cat) {
+            $catId = (int)($cat['id'] ?? 0);
+            $keyword = $this->seoRepository->getKeywordByQuery('category_id', $catId, 0, $languageId);
+            $catSlug = !empty($keyword) ? $keyword : $catId;
+            $cat['href'] = $routeParser->urlFor('category.detail', ['lang' => $lang, 'slug' => (string)$catSlug]);
+            $cat['thumb'] = $imagePresenter->resize($cat['image'] ?? '', $config ? (int)$config->get('config_image_category_width') : 80, $config ? (int)$config->get('config_image_category_height') : 80);
+        }
+        unset($cat);
+
+        $listaManufacturers = $this->manufacturerRepository->getManufacturers([]);
+
+        $filtrosAtivos = [
+            'category'     => $filterData['filter_categories'],
+            'manufacturer' => $filterData['filter_manufacturers'],
+            'price_min'    => $filterData['filter_price_min'],
+            'price_max'    => $filterData['filter_price_max'],
+            'rating'       => $filterData['filter_rating']
+        ];
+
         $html = $this->twig->render('pages/product/search.html.twig', [
-            'search_data' => $data,
-            'seo'         => $seoData,
-            'term'        => $filterData['filter_name'],
-            'title'       => $seoData['title'],
-            'description' => $seoData['description'],
-            'lang'        => $lang
+            'search_data'         => $data,
+            'seo'                 => $seoData,
+            'term'                => $filterData['filter_name'],
+            'title'               => $seoData['title'],
+            'description'         => $seoData['description'],
+            'lista_categorias'    => $listaCategorias,
+            'lista_manufacturers' => $listaManufacturers,
+            'filtros_ativos'      => $filtrosAtivos,
+            'sorts'               => $sorts,
+            'limits'              => $limits,
+            'lang'                => $lang
         ]);
 
         $response->getBody()->write($html);

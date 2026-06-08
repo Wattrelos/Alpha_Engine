@@ -82,7 +82,10 @@
 					</div>
 				</div>
 
-				<div class="egen-category-layout" style="display: block;">
+				<div class="egen-category-layout">
+					{# Filtros para faixa de preços, fabricantes, categorias... #}
+					{% include 'components/organisms/aside_filters.html.twig' %}
+
 					<div class="egen-category-main">
 						{# ── Grade de Produtos ── #}
 						<div class="egen-cat-grid" id="products-grid">
