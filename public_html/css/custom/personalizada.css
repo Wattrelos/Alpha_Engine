@@ -376,6 +376,7 @@
 
 /* Link <a> ocupa todo o container */
 .egen-dropdown-menu-recursive li a {
+  z-index: 200;
   display: flex;
   justify-content: space-between;
   align-items: center;

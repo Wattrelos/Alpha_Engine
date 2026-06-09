@@ -33,7 +33,7 @@ class SitemapRepository extends AbstractRepository implements BaseRepositoryInte
         // 1. Categorias (Árvore de 3 níveis)
         // Alpha Engine: Implementação de cache para evitar processamento recursivo custoso
         $cache_key = 'sitemap.categories.' . $store_id . '.' . $language_id;
-        
+
         $categories = $this->cache ? $this->cache->get($cache_key) : null;
 
         if (!$categories) {
@@ -81,46 +81,50 @@ class SitemapRepository extends AbstractRepository implements BaseRepositoryInte
     {
         /** @var CategoryMapper $categoryMapper */
         $categoryMapper = $this->mapperFactory->get(CategoryMapper::class);
-        
+
         $categories = [];
         $language_param = 'language=' . $this->config->get('config_language');
 
         // Alpha Engine: Evitando o problema de N+1 Queries.
         // Carrega todas as categorias de uma vez e monta a árvore em memória.
         $allCategories = $categoryMapper->getAllCategories($language_id, $store_id);
-        
+
         $categoryMap = [];
         foreach ($allCategories as $cat) {
-            $categoryMap[(int)$cat['parent_id']][] = $cat;
+            $parentId = $cat['parent_id'] !== null ? (int)$cat['parent_id'] : '';
+            $categoryMap[$parentId][] = $cat;
         }
 
-        // Verifica se existem categorias raiz (parent_id = 0)
-        if (isset($categoryMap[0])) {
-            foreach ($categoryMap[0] as $category_1) {
+        // Verifica se existem categorias raiz (parent_id = null ou vazio)
+        if (isset($categoryMap[''])) {
+            foreach ($categoryMap[''] as $category_1) {
                 $level_2_data = [];
-                
+
                 if (isset($categoryMap[(int)$category_1['id']])) {
                     foreach ($categoryMap[(int)$category_1['id']] as $category_2) {
                         $level_3_data = [];
-                        
+
                         if (isset($categoryMap[(int)$category_2['id']])) {
                             foreach ($categoryMap[(int)$category_2['id']] as $category_3) {
                                 $level_3_data[] = [
+                                    'id'   => (int)$category_3['id'],
                                     'name' => $category_3['name'],
-                                    'href' => $this->url->link('product/category', $language_param . '&path=' . $category_1['id'] . '_' . $category_2['id'] . '_' . $category_3['id'])
+                                    'href' => $this->url->link('product/category', $language_param . '&path=' . $category_3['id'])
                                 ];
                             }
                         }
 
                         $level_2_data[] = [
+                            'id'       => (int)$category_2['id'],
                             'name'     => $category_2['name'],
                             'children' => $level_3_data,
-                            'href'     => $this->url->link('product/category', $language_param . '&path=' . $category_1['id'] . '_' . $category_2['id'])
+                            'href'     => $this->url->link('product/category', $language_param . '&path=' . $category_2['id'])
                         ];
                     }
                 }
 
                 $categories[] = [
+                    'id'       => (int)$category_1['id'],
                     'name'     => $category_1['name'],
                     'children' => $level_2_data,
                     'href'     => $this->url->link('product/category', $language_param . '&path=' . $category_1['id'])
@@ -138,12 +142,13 @@ class SitemapRepository extends AbstractRepository implements BaseRepositoryInte
     {
         /** @var InformationMapper $informationMapper */
         $informationMapper = $this->mapperFactory->get(InformationMapper::class);
-        
+
         $informations = [];
         $language_param = 'language=' . $this->config->get('config_language');
 
         foreach ($informationMapper->getInformations($language_id, $store_id) as $result) {
             $informations[] = [
+                'id'    => (int)$result['id'],
                 'title' => $result['title'],
                 'href'  => $this->url->link('information/information', $language_param . '&information_id=' . $result['id'])
             ];
@@ -153,8 +158,20 @@ class SitemapRepository extends AbstractRepository implements BaseRepositoryInte
     }
 
     // Métodos obrigatórios da Interface BaseRepository
-    public function find(int $id): ?InterfaceEntity { return null; }
-    public function findAll(): array { return []; }
-    public function findBy(array $criteria, ?array $orderBy = null, ?int $limit = null, ?int $offset = null): array { return []; }
-    public function findOneBy(array $criteria): ?InterfaceEntity { return null; }
+    public function find(int $id): ?InterfaceEntity
+    {
+        return null;
+    }
+    public function findAll(): array
+    {
+        return [];
+    }
+    public function findBy(array $criteria, ?array $orderBy = null, ?int $limit = null, ?int $offset = null): array
+    {
+        return [];
+    }
+    public function findOneBy(array $criteria): ?InterfaceEntity
+    {
+        return null;
+    }
 }

@@ -79,7 +79,7 @@
 
             <!-- Descrição Curta -->
             <p class="egen-product-info__short-desc">
-                {{ product.description|raw|slice(0, 300) ~ '...' }}
+                {{ product.description|striptags|slice(0, 300) ~ '...' }}
             </p>
 
             <!-- Formulário de Compra/Opções -->

@@ -195,6 +195,15 @@ class AppBootstrap
         $imagePresenter = new ImagePresenter($configUrl, $imageDir);
         $this->container->bind(ImagePresenter::class, $imagePresenter);
 
+        // Alpha Engine: Instancia e vincula helpers de Moeda e Imposto
+        $currencyHelper = new \Alpha\Support\Currency($translator);
+        $this->container->bind('currency', $currencyHelper);
+        $this->container->bind(\Alpha\Support\Currency::class, $currencyHelper);
+
+        $taxHelper = new \Alpha\Support\Tax($this->container);
+        $this->container->bind('tax', $taxHelper);
+        $this->container->bind(\Alpha\Support\Tax::class, $taxHelper);
+
         // Repositórios de Domínio
         $this->categoryRepository = new CategoryRepository($mapperFactory, $this->container);
         $productRepository = $repositoryFactory->get(ProductRepository::class);
