@@ -34,7 +34,8 @@
     margin-right: -0.75rem;
     margin-left: -0.75rem;
 }
-.egen-row > * {
+
+.egen-row>* {
     box-sizing: border-box;
     flex-shrink: 0;
     width: 100%;
@@ -2493,7 +2494,6 @@
 
 .egen-hero-content {
     max-width: 650px;
-    z-index: 2;
 }
 
 .egen-hero-title {
@@ -4227,6 +4227,7 @@
     border-bottom: 1px solid rgba(99, 102, 241, 0.2);
     padding: 3rem 2rem 2.5rem;
 }
+
 .account-hero-inner {
     max-width: 1100px;
     margin: 0 auto;
@@ -4240,17 +4241,21 @@
     color: #94a3b8;
     margin-bottom: 1.75rem;
 }
+
 .account-breadcrumb a {
     color: #94a3b8;
     text-decoration: none;
     transition: color 0.2s;
 }
+
 .account-breadcrumb a:hover {
     color: #a5b4fc;
 }
+
 .account-breadcrumb .sep {
     color: #475569;
 }
+
 .account-breadcrumb .current {
     color: #a5b4fc;
     font-weight: 500;
@@ -4261,10 +4266,11 @@
     align-items: center;
     gap: 1.25rem;
 }
+
 .account-avatar {
     width: 64px;
     height: 64px;
-    background: linear-gradient(135deg, rgba(99,102,241,0.25), rgba(139,92,246,0.25));
+    background: linear-gradient(135deg, rgba(99, 102, 241, 0.25), rgba(139, 92, 246, 0.25));
     border: 1px solid rgba(99, 102, 241, 0.4);
     border-radius: 50%;
     display: flex;
@@ -4273,6 +4279,7 @@
     color: #a5b4fc;
     flex-shrink: 0;
 }
+
 .account-hero-title {
     font-size: clamp(1.5rem, 3vw, 2.2rem);
     font-weight: 700;
@@ -4280,6 +4287,7 @@
     margin: 0 0 0.25rem;
     letter-spacing: -0.02em;
 }
+
 .account-hero-sub {
     color: #94a3b8;
     font-size: 0.9rem;
@@ -4303,6 +4311,7 @@
     gap: 0.75rem;
     margin-bottom: 1rem;
 }
+
 .section-icon {
     width: 36px;
     height: 36px;
@@ -4312,21 +4321,25 @@
     justify-content: center;
     flex-shrink: 0;
 }
+
 .section-icon--profile {
     background: rgba(99, 102, 241, 0.15);
     color: #a5b4fc;
     border: 1px solid rgba(99, 102, 241, 0.25);
 }
+
 .section-icon--orders {
     background: rgba(34, 197, 94, 0.12);
     color: #4ade80;
     border: 1px solid rgba(34, 197, 94, 0.25);
 }
+
 .section-icon--news {
     background: rgba(59, 130, 246, 0.12);
     color: #60a5fa;
     border: 1px solid rgba(59, 130, 246, 0.25);
 }
+
 .section-icon--affiliate {
     background: rgba(245, 158, 11, 0.12);
     color: #fbbf24;
@@ -4363,6 +4376,7 @@
     transition: background 0.2s, border-color 0.2s, transform 0.2s, box-shadow 0.2s;
     cursor: pointer;
 }
+
 .account-card:hover {
     background: rgba(99, 102, 241, 0.08);
     border-color: rgba(99, 102, 241, 0.3);
@@ -4370,10 +4384,12 @@
     box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
     color: #e2e8f0;
 }
+
 .account-card--highlight {
     border-color: rgba(34, 197, 94, 0.2);
     background: rgba(34, 197, 94, 0.04);
 }
+
 .account-card--highlight:hover {
     background: rgba(34, 197, 94, 0.1);
     border-color: rgba(34, 197, 94, 0.4);
@@ -4392,11 +4408,13 @@
     flex-shrink: 0;
     transition: background 0.2s;
 }
+
 .account-card--highlight .card-icon {
     background: rgba(34, 197, 94, 0.12);
     border-color: rgba(34, 197, 94, 0.25);
     color: #4ade80;
 }
+
 .card-icon--gold {
     background: rgba(245, 158, 11, 0.12);
     border-color: rgba(245, 158, 11, 0.25);
@@ -4406,6 +4424,7 @@
 .account-card:hover .card-icon {
     background: rgba(99, 102, 241, 0.22);
 }
+
 .account-card--highlight:hover .card-icon {
     background: rgba(34, 197, 94, 0.22);
 }
@@ -4417,6 +4436,7 @@
     gap: 0.15rem;
     min-width: 0;
 }
+
 .card-label {
     font-size: 0.9rem;
     font-weight: 600;
@@ -4425,6 +4445,7 @@
     overflow: hidden;
     text-overflow: ellipsis;
 }
+
 .card-hint {
     font-size: 0.75rem;
     color: #64748b;
@@ -4437,10 +4458,12 @@
     transition: color 0.2s, transform 0.2s;
     flex-shrink: 0;
 }
+
 .account-card:hover .card-arrow {
     color: #a5b4fc;
     transform: translateX(2px);
 }
+
 .account-card--highlight:hover .card-arrow {
     color: #4ade80;
 }
@@ -4450,16 +4473,20 @@
     .account-hero {
         padding: 2rem 1rem 1.5rem;
     }
+
     .account-wrapper {
         padding: 1.5rem 1rem 4rem;
         gap: 2rem;
     }
+
     .account-cards {
         grid-template-columns: 1fr;
     }
+
     .account-hero-title {
         font-size: 1.4rem;
     }
+
     .account-avatar {
         width: 52px;
         height: 52px;
@@ -4470,16 +4497,19 @@
 .account-card--toggle {
     cursor: default;
 }
+
 .account-card--toggle:hover {
     background: rgba(255, 255, 255, 0.03);
     border-color: rgba(255, 255, 255, 0.07);
     transform: none;
     box-shadow: none;
 }
+
 .card-toggle {
     margin-left: auto;
     flex-shrink: 0;
 }
+
 #newsletter-toggle {
     -webkit-appearance: none;
     -moz-appearance: none;
@@ -4494,6 +4524,7 @@
     cursor: pointer;
     border: 1px solid rgba(255, 255, 255, 0.1);
 }
+
 #newsletter-toggle::before {
     content: "";
     position: absolute;
@@ -4505,10 +4536,13 @@
     background-color: #94a3b8;
     transition: transform 0.3s ease, background-color 0.3s ease;
 }
+
 #newsletter-toggle:checked {
-    background-color: #22c55e; /* green-500 */
+    background-color: #22c55e;
+    /* green-500 */
     border-color: transparent;
 }
+
 #newsletter-toggle:checked::before {
     background-color: white;
     transform: translateX(20px);

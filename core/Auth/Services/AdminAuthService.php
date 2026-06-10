@@ -52,6 +52,8 @@ class AdminAuthService extends AbstractAuthService
                 'id'            => $user->getId(),
                 'username'      => $user->getUsername(),
                 'name'          => trim($user->getFirstname() . ' ' . $user->getLastname()),
+                'email'         => $user->getEmail(),
+                'image'         => $user->getImage(),
                 'user_group_id' => $user->getUserGroupId(),
                 'role'          => 'admin'
             ];

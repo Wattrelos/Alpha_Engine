@@ -127,6 +127,12 @@ class AdminSessionMiddleware
         $user = json_decode($sessionData);
         $request = $request->withAttribute('logged_admin', $user);
 
+        // Injeta os dados do administrador globalmente no Twig
+        if ($this->container && $this->container->has(\Twig\Environment::class)) {
+            $twig = $this->container->get(\Twig\Environment::class);
+            $twig->addGlobal('logged_admin', $user);
+        }
+
         // --- Verificação de privilégios / permissões ---
         $routeContext = \Slim\Routing\RouteContext::fromRequest($request);
         $route = $routeContext->getRoute();

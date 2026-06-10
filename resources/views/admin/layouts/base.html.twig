@@ -91,11 +91,19 @@
 					</div>
 					<div class="topbar-right">
 						<div class="topbar-user-info">
-							<p class="topbar-username">Administrador Principal</p>
-							<p class="topbar-email">admin@agsonhos.com</p>
+							<p class="topbar-username">{{ logged_admin.name|default('Administrador') }}</p>
+							<p class="topbar-email">{{ logged_admin.email|default('admin@agsonhos.com') }}</p>
 						</div>
 						<div class="topbar-avatar">
-							AD
+							{% if logged_admin.image %}
+								{% if logged_admin.image starts with 'http' or logged_admin.image starts with '/' %}
+									<img src="{{ logged_admin.image }}" alt="{{ logged_admin.name|default('User') }}" class="topbar-avatar-img">
+								{% else %}
+									<img src="/image/{{ logged_admin.image }}" alt="{{ logged_admin.name|default('User') }}" class="topbar-avatar-img">
+								{% endif %}
+							{% else %}
+								<img src="/image/profile/default-user-profile.jpg" alt="{{ logged_admin.name|default('User') }}" class="topbar-avatar-img">
+							{% endif %}
 						</div>
 					</div>
 				</header>
