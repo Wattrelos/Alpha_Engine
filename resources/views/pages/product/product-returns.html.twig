@@ -1,6 +1,6 @@
 {% extends 'layouts/base.html.twig' %}
 
-{% block title %}{{ Returns.headingTitle }} | AgSonhos{% endblock %}
+{% block title %}{{ Returns.heading_title }} | AgSonhos{% endblock %}
 
 {% block content %}
 <div id="account-returns-page">
@@ -20,9 +20,9 @@
             </nav>
             <h1 class="returns-title">
                 <span class="returns-title-icon">🔄</span>
-                {{ Returns.headingTitle }}
+                {{ Returns.heading_title }}
             </h1>
-            <p class="returns-subtitle">{{ Returns.textSubtitle }}</p>
+            <p class="returns-subtitle">{{ Returns.text_subtitle }}</p>
         </div>
     </div>
 
@@ -34,7 +34,7 @@
             <div class="returns-stats">
                 <div class="stat-chip">
                     <span class="stat-chip-value">{{ returns|length }}</span>
-                    <span class="stat-chip-label">{{ returns|length != 1 ? Returns.textRequestPlural : Returns.textRequestSingular }}</span>
+                    <span class="stat-chip-label">{{ returns|length != 1 ? Returns.text_request_plural : Returns.text_request_singular }}</span>
                 </div>
             </div>
 
@@ -44,10 +44,10 @@
                     <table class="returns-table" id="returns-table">
                         <thead>
                             <tr>
-                                <th class="col-id">{{ Returns.columnReturnId }}</th>
-                                <th class="col-order">{{ Returns.columnOrderId }}</th>
-                                <th class="col-status">{{ Returns.columnStatus }}</th>
-                                <th class="col-date">{{ Returns.columnDateAdded }}</th>
+                                <th class="col-id">{{ Returns.column_return_id }}</th>
+                                <th class="col-order">{{ Returns.column_order_id }}</th>
+                                <th class="col-status">{{ Returns.column_status }}</th>
+                                <th class="col-date">{{ Returns.column_date_added }}</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -61,7 +61,7 @@
                                 </td>
                                 <td class="col-status">
                                     <span class="status-pill status-{{ ret.status|lower|replace({' ': '-'}) }}">
-                                        {{ ret.status ?: Returns.textPending }}
+                                        {{ ret.status ?: Returns.text_pending }}
                                     </span>
                                 </td>
                                 <td class="col-date">
@@ -78,9 +78,9 @@
             {# ── Empty State ── #}
             <div class="returns-empty">
                 <div class="empty-icon">🔄</div>
-                <h2 class="empty-title">{{ Returns.textEmptyTitle }}</h2>
-                <p class="empty-desc">{{ Returns.textNoResults }}</p>
-                <a href="{{ continue }}" class="btn-shop">{{ Returns.buttonAccount }}</a>
+                <h2 class="empty-title">{{ Returns.text_empty_title }}</h2>
+                <p class="empty-desc">{{ Returns.text_no_results }}</p>
+                <a href="{{ continue }}" class="btn-shop">{{ Returns.button_account }}</a>
             </div>
         {% endif %}
 
@@ -90,7 +90,7 @@
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                     <polyline points="15 18 9 12 15 6"/>
                 </svg>
-                {{ Returns.buttonContinue }}
+                {{ Returns.button_continue }}
             </a>
         </div>
 
@@ -222,6 +222,7 @@
 .return-row {
     border-bottom: 1px solid rgba(255,255,255,0.05);
     transition: background 0.2s;
+    cursor: pointer;
 }
 .return-row:last-child { border-bottom: none; }
 .return-row:hover { background: rgba(99, 102, 241, 0.06); }
@@ -332,4 +333,24 @@
     .returns-table td.col-date { display: none; }
 }
 </style>
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    const table = document.getElementById('returns-table');
+    if (table) {
+        table.addEventListener('click', (e) => {
+            const row = e.target.closest('.return-row');
+            if (row) {
+                const id = row.getAttribute('data-return');
+                if (id) {
+                    // Pega o idioma da URL de forma segura
+                    const pathParts = window.location.pathname.split('/');
+                    const lang = (pathParts[1] && ['pt-br', 'en', 'es'].includes(pathParts[1])) ? pathParts[1] : 'pt-br';
+                    window.location.href = `/${lang}/account/return/${id}`;
+                }
+            }
+        });
+    }
+});
+</script>
 {% endblock %}

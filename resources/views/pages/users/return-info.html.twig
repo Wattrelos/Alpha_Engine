@@ -1,0 +1,491 @@
+{% extends 'layouts/base.html.twig' %}
+
+{% block title %}Devolução #{{ return.id }} | AgSonhos{% endblock %}
+
+{% block content %}
+<div id="account-return-detail-page">
+
+    {# ── Hero ── #}
+    <div class="return-hero">
+        <div class="return-hero-inner">
+            <nav class="return-breadcrumb" aria-label="Navegação">
+                {% for breadcrumb in breadcrumbs %}
+                    {% if not loop.last %}
+                        <a href="{{ breadcrumb.href }}">{{ breadcrumb.text }}</a>
+                        <span class="sep">›</span>
+                    {% else %}
+                        <span class="current">{{ breadcrumb.text }}</span>
+                    {% endif %}
+                {% endfor %}
+            </nav>
+            <h1 class="return-title">
+                <span class="return-title-icon">🔄</span>
+                Devolução #{{ return.id }}
+            </h1>
+            <p class="return-subtitle">Solicitada em {{ return.date_added }}</p>
+        </div>
+    </div>
+
+    {# ── Main content ── #}
+    <div class="return-wrapper">
+
+        {# ── Metadata Grid ── #}
+        <div class="detail-grid">
+            
+            {# ── Section 1: Customer details ── #}
+            <div class="detail-card">
+                <h3 class="detail-card-title">
+                    <span>👤</span> {{ Returns.text_customer }}
+                </h3>
+                <div class="detail-card-content">
+                    <div class="info-row"><strong>Nome:</strong> {{ return.firstname }} {{ return.lastname }}</div>
+                    <div class="info-row"><strong>E-mail:</strong> {{ return.email }}</div>
+                    <div class="info-row"><strong>Telefone:</strong> {{ return.telephone }}</div>
+                </div>
+            </div>
+
+            {# ── Section 2: Order details ── #}
+            <div class="detail-card">
+                <h3 class="detail-card-title">
+                    <span>📦</span> {{ Returns.text_order }}
+                </h3>
+                <div class="detail-card-content">
+                    <div class="info-row"><strong>{{ Returns.text_order_id }}</strong> #{{ return.order_id }}</div>
+                    <div class="info-row"><strong>{{ Returns.text_date_ordered }}</strong> {{ return.date_ordered }}</div>
+                    <div class="info-row">
+                        <strong>{{ Returns.column_status }}:</strong>
+                        <span class="status-pill status-{{ return.status|lower|replace({' ': '-'}) }}">
+                            {{ return.status }}
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        {# ── Section 3: Product Info ── #}
+        <div class="return-card">
+            <div class="return-card-header">
+                <h3 class="return-card-header-title">{{ Returns.text_return }}</h3>
+            </div>
+            <div class="return-card-body">
+                <div class="product-info-grid">
+                    <div class="product-info-item">
+                        <span class="product-info-label">{{ Returns.column_product }}</span>
+                        <strong class="product-info-val">{{ return.product }}</strong>
+                    </div>
+                    <div class="product-info-item">
+                        <span class="product-info-label">{{ Returns.column_model }}</span>
+                        <span class="product-info-val model-badge">{{ return.model }}</span>
+                    </div>
+                    <div class="product-info-item">
+                        <span class="product-info-label">{{ Returns.column_quantity }}</span>
+                        <span class="product-info-val">{{ return.quantity }}</span>
+                    </div>
+                    <div class="product-info-item">
+                        <span class="product-info-label">{{ Returns.column_opened }}</span>
+                        <span class="product-info-val">{{ return.opened }}</span>
+                    </div>
+                    <div class="product-info-item">
+                        <span class="product-info-label">{{ Returns.column_reason }}</span>
+                        <span class="product-info-val text-warning">{{ return.reason }}</span>
+                    </div>
+                    <div class="product-info-item">
+                        <span class="product-info-label">{{ Returns.column_action }}</span>
+                        <span class="product-info-val text-success">{{ return.action }}</span>
+                    </div>
+                </div>
+
+                {% if return.comment %}
+                    <div class="fault-comment-wrap">
+                        <span class="fault-comment-label">{{ Returns.entry_fault_detail }}</span>
+                        <div class="fault-comment-content">
+                            {{ return.comment|raw }}
+                        </div>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+
+        {# ── Section 4: History Timeline ── #}
+        <div class="return-card">
+            <div class="return-card-header">
+                <h3 class="return-card-header-title">{{ Returns.text_history }}</h3>
+            </div>
+            <div class="timeline-wrap">
+                {% if histories %}
+                    <div class="timeline">
+                        {% for history in histories %}
+                            <div class="timeline-item">
+                                <div class="timeline-dot"></div>
+                                <div class="timeline-content">
+                                    <div class="timeline-header">
+                                        <span class="timeline-status-pill status-{{ history.status|lower|replace({' ': '-'}) }}">
+                                            {{ history.status }}
+                                        </span>
+                                        <span class="timeline-date">{{ history.date_added }}</span>
+                                    </div>
+                                    {% if history.comment %}
+                                        <div class="timeline-comment">
+                                            {{ history.comment|raw }}
+                                        </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <p class="timeline-empty">Nenhum histórico registrado para esta devolução.</p>
+                {% endif %}
+            </div>
+        </div>
+
+        {# ── Footer Actions ── #}
+        <div class="return-footer">
+            <a href="{{ back }}" class="btn-back">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="15 18 9 12 15 6"/>
+                </svg>
+                Voltar para Devoluções
+            </a>
+        </div>
+
+    </div>{# /.return-wrapper #}
+</div>{# /#account-return-detail-page #}
+
+<style>
+/* ══════════════════════════════════════════════════
+   RETURN DETAIL — Alpha Engine Premium UI
+   ══════════════════════════════════════════════════ */
+
+#account-return-detail-page {
+    min-height: 100vh;
+    background: #0d0f14;
+    color: #e2e8f0;
+    font-family: 'Inter', 'Outfit', system-ui, sans-serif;
+}
+
+/* ── Hero ── */
+.return-hero {
+    background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 50%, #0f172a 100%);
+    border-bottom: 1px solid rgba(99, 102, 241, 0.2);
+    padding: 3rem 2rem 2.5rem;
+}
+.return-hero-inner {
+    max-width: 900px;
+    margin: 0 auto;
+}
+.return-breadcrumb {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.8rem;
+    color: #94a3b8;
+    margin-bottom: 1.5rem;
+}
+.return-breadcrumb a {
+    color: #94a3b8;
+    text-decoration: none;
+    transition: color 0.2s;
+}
+.return-breadcrumb a:hover { color: #a5b4fc; }
+.return-breadcrumb .sep { color: #475569; }
+.return-breadcrumb .current { color: #a5b4fc; font-weight: 500; }
+
+.return-title {
+    font-size: clamp(1.6rem, 3vw, 2.4rem);
+    font-weight: 700;
+    color: #f1f5f9;
+    margin: 0 0 0.5rem;
+    letter-spacing: -0.02em;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+.return-title-icon { font-size: 1.6rem; }
+.return-subtitle {
+    color: #94a3b8;
+    font-size: 0.95rem;
+    margin: 0;
+}
+
+/* ── Wrapper ── */
+.return-wrapper {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 2.5rem 1.5rem 5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+}
+
+/* ── Detail Grid / Cards ── */
+.detail-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+}
+@media (min-width: 640px) {
+    .detail-grid { grid-template-columns: 1fr 1fr; }
+}
+.detail-card {
+    background: rgba(255, 255, 255, 0.02);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    border-radius: 16px;
+    padding: 1.5rem;
+    backdrop-filter: blur(8px);
+}
+.detail-card-title {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: #f1f5f9;
+    margin: 0 0 1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    padding-bottom: 0.75rem;
+}
+.detail-card-content {
+    font-size: 0.9rem;
+    color: #cbd5e1;
+    line-height: 1.7;
+}
+.info-row {
+    margin-bottom: 0.5rem;
+}
+.info-row strong {
+    color: #94a3b8;
+    margin-right: 0.35rem;
+}
+
+/* ── Status Pills ── */
+.status-pill {
+    display: inline-block;
+    padding: 0.2rem 0.65rem;
+    border-radius: 100px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.03em;
+    background: rgba(245, 158, 11, 0.15);
+    color: #fbbf24;
+    border: 1px solid rgba(245, 158, 11, 0.3);
+}
+.status-pill.status-completo,
+.status-pill.status-completado,
+.status-pill.status-finalizado {
+    background: rgba(34, 197, 94, 0.12);
+    color: #4ade80;
+    border-color: rgba(34, 197, 94, 0.3);
+}
+.status-pill.status-cancelado,
+.status-pill.status-recusado {
+    background: rgba(239, 68, 68, 0.12);
+    color: #f87171;
+    border-color: rgba(239, 68, 68, 0.3);
+}
+
+/* ── Return Card & Product Info ── */
+.return-card {
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 16px;
+    overflow: hidden;
+    backdrop-filter: blur(8px);
+}
+.return-card-header {
+    padding: 1.25rem 1.5rem;
+    background: rgba(99, 102, 241, 0.05);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+}
+.return-card-header-title {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: #f1f5f9;
+    margin: 0;
+}
+.return-card-body {
+    padding: 1.5rem;
+}
+
+.product-info-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 1.5rem;
+    border-bottom: 1px dashed rgba(255, 255, 255, 0.06);
+    padding-bottom: 1.5rem;
+    margin-bottom: 1.5rem;
+}
+.product-info-item {
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+}
+.product-info-label {
+    font-size: 0.78rem;
+    font-weight: 600;
+    color: #94a3b8;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+.product-info-val {
+    font-size: 0.95rem;
+    color: #f1f5f9;
+}
+.model-badge {
+    display: inline-block;
+    background: rgba(255,255,255,0.04);
+    padding: 0.15rem 0.5rem;
+    border-radius: 6px;
+    font-size: 0.8rem;
+}
+.text-warning { color: #fcd34d !important; }
+.text-success { color: #4ade80 !important; }
+
+/* ── Fault comments ── */
+.fault-comment-wrap {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+.fault-comment-label {
+    font-size: 0.78rem;
+    font-weight: 600;
+    color: #94a3b8;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+.fault-comment-content {
+    background: rgba(0, 0, 0, 0.15);
+    border: 1px solid rgba(255, 255, 255, 0.04);
+    border-radius: 12px;
+    padding: 1.25rem;
+    font-size: 0.9rem;
+    color: #cbd5e1;
+    line-height: 1.6;
+}
+
+/* ── Timeline (Histórico) ── */
+.timeline-wrap {
+    padding: 2rem;
+}
+.timeline {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+}
+.timeline::before {
+    content: '';
+    position: absolute;
+    left: 7px;
+    top: 5px;
+    bottom: 5px;
+    width: 2px;
+    background: rgba(255, 255, 255, 0.06);
+}
+.timeline-item {
+    position: relative;
+    padding-left: 2rem;
+}
+.timeline-dot {
+    position: absolute;
+    left: 0;
+    top: 6px;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background: #1e293b;
+    border: 3px solid rgba(99, 102, 241, 0.5);
+    z-index: 2;
+    transition: all 0.3s ease;
+}
+.timeline-item:hover .timeline-dot {
+    border-color: #a5b4fc;
+    background: #6366f1;
+    box-shadow: 0 0 10px rgba(99, 102, 241, 0.6);
+}
+.timeline-content {
+    background: rgba(255, 255, 255, 0.015);
+    border: 1px solid rgba(255, 255, 255, 0.04);
+    border-radius: 12px;
+    padding: 1.25rem;
+}
+.timeline-header {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.5rem;
+    margin-bottom: 0.75rem;
+}
+.timeline-status-pill {
+    display: inline-block;
+    padding: 0.25rem 0.75rem;
+    border-radius: 100px;
+    font-size: 0.78rem;
+    font-weight: 600;
+    letter-spacing: 0.03em;
+    background: rgba(245, 158, 11, 0.15);
+    color: #fbbf24;
+    border: 1px solid rgba(245, 158, 11, 0.3);
+}
+.timeline-status-pill.status-completo,
+.timeline-status-pill.status-completado,
+.timeline-status-pill.status-finalizado {
+    background: rgba(34, 197, 94, 0.12);
+    color: #4ade80;
+    border-color: rgba(34, 197, 94, 0.3);
+}
+.timeline-status-pill.status-cancelado,
+.timeline-status-pill.status-recusado {
+    background: rgba(239, 68, 68, 0.12);
+    color: #f87171;
+    border-color: rgba(239, 68, 68, 0.3);
+}
+.timeline-date {
+    font-size: 0.8rem;
+    color: #64748b;
+}
+.timeline-comment {
+    font-size: 0.88rem;
+    color: #94a3b8;
+    line-height: 1.5;
+    background: rgba(0, 0, 0, 0.15);
+    padding: 0.75rem 1rem;
+    border-radius: 8px;
+    border-left: 3px solid rgba(99, 102, 241, 0.4);
+}
+.timeline-empty {
+    text-align: center;
+    color: #94a3b8;
+    margin: 0;
+    padding: 1rem 0;
+}
+
+/* ── Footer ── */
+.return-footer { display: flex; align-items: center; }
+.btn-back {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    color: #94a3b8;
+    text-decoration: none;
+    font-size: 0.9rem;
+    font-weight: 500;
+    padding: 0.5rem 0.75rem;
+    border-radius: 8px;
+    transition: all 0.2s;
+}
+.btn-back:hover {
+    color: #e2e8f0;
+    background: rgba(255, 255, 255, 0.05);
+}
+
+/* ── Responsive ── */
+@media (max-width: 640px) {
+    .return-hero { padding: 2rem 1rem 1.5rem; }
+    .product-info-grid { grid-template-columns: 1fr; gap: 1rem; }
+    .timeline-wrap { padding: 1rem; }
+}
+</style>
+{% endblock %}

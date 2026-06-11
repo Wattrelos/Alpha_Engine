@@ -10,6 +10,11 @@ use Alpha\Model\Domain\Entities\ReturnHistory;
  */
 class ReturnHistoryRepository extends AbstractRepository
 {
+    protected function getMapper(): \Alpha\Mappers\EntityMappers\ReturnHistoryMapper
+    {
+        return $this->mapperFactory->get(\Alpha\Mappers\EntityMappers\ReturnHistoryMapper::class);
+    }
+
     /**
      * Busca todo o histórico cronológico de uma devolução específica.
      *
@@ -19,7 +24,7 @@ class ReturnHistoryRepository extends AbstractRepository
     public function findByReturnId(int $returnId): array
     {
         // Busca e ordena por data de adição ascendente (do mais antigo pro mais recente)
-        return $this->mapper->search(
+        return $this->getMapper()->search(
             ['returnId' => $returnId],
             ['dateAdded' => 'ASC']
         );

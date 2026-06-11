@@ -35,9 +35,9 @@ class ProductReturnsAction implements ActionInterface
         $lang = $request->getAttribute('lang', 'pt-br');
 
         $breadcrumbs = [
-            ['text' => $this->translator->get('breadcrumbHome', 'account/returns'), 'href' => $routeParser->urlFor('home', ['lang' => $lang])],
-            ['text' => $this->translator->get('breadcrumbAccount', 'account/returns'), 'href' => $routeParser->urlFor('account.index', ['lang' => $lang])],
-            ['text' => $this->translator->get('breadcrumbReturns', 'account/returns'), 'href' => $routeParser->urlFor('account.returns', ['lang' => $lang])]
+            ['text' => $this->translator->get('text_home', 'account/returns'), 'href' => $routeParser->urlFor('home', ['lang' => $lang])],
+            ['text' => $this->translator->get('text_account', 'account/returns'), 'href' => $routeParser->urlFor('account.index', ['lang' => $lang])],
+            ['text' => $this->translator->get('heading_title', 'account/returns'), 'href' => $routeParser->urlFor('account.returns', ['lang' => $lang])]
         ];
 
         // Busca devoluções do cliente logado
@@ -57,12 +57,12 @@ class ProductReturnsAction implements ActionInterface
 
         $data = [
             'breadcrumbs'       => $breadcrumbs,
-            'heading_title'     => $this->translator->get('headingTitle', 'account/returns'),
-            'column_return_id'  => $this->translator->get('columnReturnId', 'account/returns'),
-            'column_order_id'   => $this->translator->get('columnOrderId', 'account/returns'),
-            'column_status'     => $this->translator->get('columnStatus', 'account/returns'),
-            'column_date_added' => $this->translator->get('columnDateAdded', 'account/returns'),
-            'text_no_results'   => $this->translator->get('textNoResults', 'account/returns'),
+            'heading_title'     => $this->translator->get('heading_title', 'account/returns'),
+            'column_return_id'  => $this->translator->get('column_return_id', 'account/returns'),
+            'column_order_id'   => $this->translator->get('column_order_id', 'account/returns'),
+            'column_status'     => $this->translator->get('column_status', 'account/returns'),
+            'column_date_added' => $this->translator->get('column_date_added', 'account/returns'),
+            'text_no_results'   => $this->translator->get('text_no_results', 'account/returns'),
             'returns'           => $returns,
             'continue'          => $routeParser->urlFor('account.index', ['lang' => $lang]),
             'column_left'       => '',

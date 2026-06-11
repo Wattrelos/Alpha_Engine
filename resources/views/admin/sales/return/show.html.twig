@@ -1,0 +1,239 @@
+{% extends 'admin/layouts/base.html.twig' %}
+
+{% block title %}
+	{{ title|default('Detalhes da Devolução | Painel Administrativo') }}
+{% endblock %}
+
+{% block content %}
+	<div class="page-header" style="margin-bottom: 2rem;">
+		<div>
+			<div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem;">
+				<a href="/LPDHED2dC7Gjrg2b/devolucoes" class="text-muted" style="text-decoration: none;">Devoluções</a>
+				<span class="text-muted">/</span>
+				<span class="text-semibold text-dark">Devolução #{{ return.id }}</span>
+			</div>
+			<h2>Devolução #{{ return.id }}</h2>
+			<p class="page-subtitle">Visualização completa dos dados da solicitação de devolução, produto e histórico de status.</p>
+		</div>
+		<div>
+			<a href="/LPDHED2dC7Gjrg2b/devolucoes" class="btn btn-secondary" style="background: var(--color-bg-soft); border: 1px solid var(--color-border); color: var(--color-text-muted);">
+				<i class="fas fa-arrow-left"></i> Voltar
+			</a>
+		</div>
+	</div>
+
+	{% if success %}
+		<div class="alert alert-success" style="margin-bottom: 1.5rem; background: #d1fae5; border-left: 4px solid #34d399; color: #065f46; padding: 1rem; border-radius: 4px;">
+			<i class="fas fa-check-circle" style="margin-right: 8px;"></i>
+			Solicitação de devolução atualizada com sucesso!
+		</div>
+	{% endif %}
+
+	<!-- Grid de Informações Básicas e do Cliente -->
+	<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 1.5rem; margin-bottom: 1.5rem;">
+		
+		<!-- Resumo da Devolução -->
+		<div class="card" style="margin-bottom: 0; box-shadow: 0 1px 3px rgba(0,0,0,0.05);">
+			<h3 style="margin-top: 0; margin-bottom: 1.25rem; font-size: 1.1rem; border-bottom: 1px solid var(--color-border); padding-bottom: 0.75rem; color: var(--color-text-main);">
+				<i class="fas fa-undo" style="margin-right: 8px; color: var(--color-primary);"></i> Resumo do RMA
+			</h3>
+			<table style="width: 100%; font-size: 0.9rem; border-collapse: collapse;">
+				<tr style="height: 35px; border-bottom: 1px solid var(--color-bg-soft);">
+					<td class="text-muted">ID da Devolução:</td>
+					<td class="text-semibold text-dark text-right">#{{ return.id }}</td>
+				</tr>
+				<tr style="height: 35px; border-bottom: 1px solid var(--color-bg-soft);">
+					<td class="text-muted">ID do Pedido:</td>
+					<td class="text-semibold text-dark text-right">
+						<a href="/LPDHED2dC7Gjrg2b/pedidos/{{ return.order_id }}" style="color: var(--color-primary); text-decoration: none; font-weight: 600;">
+							#{{ return.order_id }}
+						</a>
+					</td>
+				</tr>
+				<tr style="height: 35px; border-bottom: 1px solid var(--color-bg-soft);">
+					<td class="text-muted">Data do Pedido:</td>
+					<td class="text-semibold text-dark text-right">{{ return.date_ordered|date('d/m/Y') }}</td>
+				</tr>
+				<tr style="height: 35px; border-bottom: 1px solid var(--color-bg-soft);">
+					<td class="text-muted">Abertura de Embalagem:</td>
+					<td class="text-semibold text-dark text-right">{{ return.opened ? 'Sim' : 'Não' }}</td>
+				</tr>
+				<tr style="height: 35px; border-bottom: 1px solid var(--color-bg-soft);">
+					<td class="text-muted">Data da Solicitação:</td>
+					<td class="text-semibold text-dark text-right">{{ return.date_added|date('d/m/Y H:i') }}</td>
+				</tr>
+				<tr style="height: 35px;">
+					<td class="text-muted">Última Modificação:</td>
+					<td class="text-semibold text-dark text-right">{{ return.date_modified|date('d/m/Y H:i') }}</td>
+				</tr>
+			</table>
+		</div>
+
+		<!-- Dados do Cliente -->
+		<div class="card" style="margin-bottom: 0; box-shadow: 0 1px 3px rgba(0,0,0,0.05);">
+			<h3 style="margin-top: 0; margin-bottom: 1.25rem; font-size: 1.1rem; border-bottom: 1px solid var(--color-border); padding-bottom: 0.75rem; color: var(--color-text-main);">
+				<i class="fas fa-user" style="margin-right: 8px; color: var(--color-primary);"></i> Informações do Cliente
+			</h3>
+			<table style="width: 100%; font-size: 0.9rem; border-collapse: collapse;">
+				<tr style="height: 35px; border-bottom: 1px solid var(--color-bg-soft);">
+					<td class="text-muted">Nome Completo:</td>
+					<td class="text-semibold text-dark text-right">{{ return.firstname }} {{ return.lastname }}</td>
+				</tr>
+				<tr style="height: 35px; border-bottom: 1px solid var(--color-bg-soft);">
+					<td class="text-muted">E-mail:</td>
+					<td class="text-semibold text-dark text-right"><a href="mailto:{{ return.email }}" style="color: var(--color-primary); text-decoration: none;">{{ return.email }}</a></td>
+				</tr>
+				<tr style="height: 35px; border-bottom: 1px solid var(--color-bg-soft);">
+					<td class="text-muted">Telefone:</td>
+					<td class="text-semibold text-dark text-right">{{ return.telephone }}</td>
+				</tr>
+				{% if return.cpf_cnpj %}
+				<tr style="height: 35px; border-bottom: 1px solid var(--color-bg-soft);">
+					<td class="text-muted">CPF / CNPJ:</td>
+					<td class="text-semibold text-dark text-right">{{ return.cpf_cnpj }}</td>
+				</tr>
+				{% endif %}
+				{% if return.persontype %}
+				<tr style="height: 35px;">
+					<td class="text-muted">Tipo de Pessoa:</td>
+					<td class="text-semibold text-dark text-right">{{ return.persontype == 'F' ? 'Física' : 'Jurídica' }}</td>
+				</tr>
+				{% endif %}
+			</table>
+		</div>
+
+	</div>
+
+	<!-- Informações do Produto Devolvido -->
+	<div class="card" style="margin-bottom: 1.5rem; box-shadow: 0 1px 3px rgba(0,0,0,0.05);">
+		<h3 style="margin-top: 0; margin-bottom: 1.25rem; font-size: 1.1rem; border-bottom: 1px solid var(--color-border); padding-bottom: 0.75rem; color: var(--color-text-main);">
+			<i class="fas fa-box-open" style="margin-right: 8px; color: var(--color-primary);"></i> Detalhes do Produto & Motivo
+		</h3>
+		<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1.5rem; margin-bottom: 1.5rem;">
+			<div>
+				<span style="font-size: 0.8rem; text-transform: uppercase; color: var(--color-text-muted); display: block; margin-bottom: 4px;">Produto</span>
+				<strong style="color: var(--color-text-main); font-size: 0.95rem;">{{ return.product }}</strong>
+			</div>
+			<div>
+				<span style="font-size: 0.8rem; text-transform: uppercase; color: var(--color-text-muted); display: block; margin-bottom: 4px;">Modelo</span>
+				<span style="font-size: 0.95rem; font-weight: 600; color: var(--color-text-main); background: var(--color-bg-soft); padding: 2px 6px; border-radius: 4px;">{{ return.model }}</span>
+			</div>
+			<div>
+				<span style="font-size: 0.8rem; text-transform: uppercase; color: var(--color-text-muted); display: block; margin-bottom: 4px;">Quantidade</span>
+				<strong style="color: var(--color-text-main); font-size: 0.95rem;">{{ return.quantity }}</strong>
+			</div>
+			<div>
+				<span style="font-size: 0.8rem; text-transform: uppercase; color: var(--color-text-muted); display: block; margin-bottom: 4px;">Motivo do Retorno</span>
+				<span style="font-size: 0.95rem; font-weight: 600; color: #d97706;">{{ return.reason_name }}</span>
+			</div>
+			<div>
+				<span style="font-size: 0.8rem; text-transform: uppercase; color: var(--color-text-muted); display: block; margin-bottom: 4px;">Ação Resolutiva</span>
+				<span style="font-size: 0.95rem; font-weight: 600; color: #16a34a;">{{ return.action_name|default('A definir') }}</span>
+			</div>
+			<div>
+				<span style="font-size: 0.8rem; text-transform: uppercase; color: var(--color-text-muted); display: block; margin-bottom: 4px;">Status Atual</span>
+				<span class="status-pill {% if 'Cancelado' in return.status_name or 'Recusado' in return.status_name or 'Rejeitado' in return.status_name %}status-cancelled{% elseif 'Completo' in return.status_name or 'Reembolsado' in return.status_name %}status-approved{% else %}status-pending{% endif %}" style="font-size: 0.8rem; padding: 4px 10px;">
+					{{ return.status_name }}
+				</span>
+			</div>
+		</div>
+
+		{% if return.comment %}
+			<div style="border-top: 1px dashed var(--color-border); padding-top: 1.25rem;">
+				<span style="font-size: 0.8rem; text-transform: uppercase; color: var(--color-text-muted); display: block; margin-bottom: 6px;">Comentários do Cliente</span>
+				<div style="background: var(--color-bg-soft); padding: 1rem; border-radius: 6px; font-size: 0.9rem; color: var(--color-text-main); line-height: 1.6; font-style: italic;">
+					"{{ return.comment }}"
+				</div>
+			</div>
+		{% endif %}
+	</div>
+
+	<!-- Timeline e Atualização de Status -->
+	<div style="display: grid; grid-template-columns: 1.5fr 1fr; gap: 1.5rem; align-items: start; margin-bottom: 2rem;">
+		
+		<!-- Timeline do Histórico -->
+		<div class="card" style="margin-bottom: 0; box-shadow: 0 1px 3px rgba(0,0,0,0.05);">
+			<h3 style="margin-top: 0; margin-bottom: 1.25rem; font-size: 1.1rem; border-bottom: 1px solid var(--color-border); padding-bottom: 0.75rem; color: var(--color-text-main);">
+				<i class="fas fa-history" style="margin-right: 8px; color: var(--color-primary);"></i> Linha do Tempo da Devolução
+			</h3>
+			<div class="activity-list" style="position: relative; padding-left: 5px;">
+				{% if histories %}
+					{% for history in histories %}
+						<div class="activity-item" style="border-bottom: 1px solid var(--color-border); padding-bottom: 0.75rem; margin-bottom: 0.75rem;">
+							<div style="display: flex; justify-content: space-between; align-items: center; width: 100%;">
+								<div>
+									<span class="status-pill {% if 'Cancelado' in history.status or 'Recusado' in history.status or 'Rejeitado' in history.status %}status-cancelled{% elseif 'Completo' in history.status or 'Reembolsado' in history.status %}status-approved{% else %}status-pending{% endif %}" style="font-size: 0.7rem; padding: 2px 6px;">
+										{{ history.status }}
+									</span>
+									<span class="activity-time" style="margin-left: 8px; font-size: 0.8rem; color: var(--color-text-muted);">{{ history.date_added|date('d/m/Y H:i') }}</span>
+								</div>
+								{% if history.notify %}
+									<span class="status-pill status-approved" style="font-size: 0.65rem; background: #e0f2fe; color: #0369a1; padding: 2px 6px;">
+										<i class="fas fa-envelope"></i> Cliente Notificado
+									</span>
+								{% endif %}
+							</div>
+							{% if history.comment %}
+								<div class="activity-desc" style="margin-top: 6px; padding: 8px; background: var(--color-bg-soft); border-radius: 4px; font-size: 0.85rem; color: var(--color-text-main); font-style: italic;">
+									"{{ history.comment }}"
+								</div>
+							{% endif %}
+						</div>
+					{% endfor %}
+				{% else %}
+					<p style="color: var(--color-text-muted); font-size: 0.9rem; text-align: center; padding: 1.5rem 0;">
+						Nenhuma alteração registrada ainda no histórico.
+					</p>
+				{% endif %}
+			</div>
+		</div>
+
+		<!-- Formulário de Alteração de Status / Ação -->
+		<div class="card" style="margin-bottom: 0; box-shadow: 0 1px 3px rgba(0,0,0,0.05);">
+			<h3 style="margin-top: 0; margin-bottom: 1.25rem; font-size: 1.1rem; border-bottom: 1px solid var(--color-border); padding-bottom: 0.75rem; color: var(--color-text-main);">
+				<i class="fas fa-edit" style="margin-right: 8px; color: var(--color-primary);"></i> Atualizar Solicitação
+			</h3>
+			<form action="/LPDHED2dC7Gjrg2b/devolucoes/{{ return.id }}/status" method="POST">
+				
+				<!-- Novo Status -->
+				<div class="form-group" style="margin-bottom: 1rem;">
+					<label for="return_status_id" class="form-label">Alterar Status</label>
+					<select name="return_status_id" id="return_status_id" class="form-control" required>
+						<option value="">-- Selecione o Status --</option>
+						{% for status in statuses %}
+							<option value="{{ status.id }}" {% if return.return_status_id == status.id %}selected{% endif %}>{{ status.name }}</option>
+						{% endfor %}
+					</select>
+				</div>
+
+				<!-- Ação Resolutiva -->
+				<div class="form-group" style="margin-bottom: 1rem;">
+					<label for="return_action_id" class="form-label">Ação / Resolução</label>
+					<select name="return_action_id" id="return_action_id" class="form-control" required>
+						<option value="">-- Selecione a Ação --</option>
+						{% for action in actions %}
+							<option value="{{ action.id }}" {% if return.return_action_id == action.id %}selected{% endif %}>{{ action.name }}</option>
+						{% endfor %}
+					</select>
+				</div>
+
+				<!-- Comentário -->
+				<div class="form-group" style="margin-bottom: 1rem;">
+					<label for="comment" class="form-label">Comentário / Observação</label>
+					<textarea name="comment" id="comment" class="form-control" rows="4" placeholder="Insira observações internas ou detalhes para o cliente..." style="resize: vertical;"></textarea>
+				</div>
+
+				<!-- Notificar -->
+				<div class="form-group" style="display: flex; align-items: center; gap: 8px; margin-bottom: 1.5rem;">
+					<input type="checkbox" name="notify" id="notify" value="1" style="width: 16px; height: 16px; cursor: pointer;">
+					<label for="notify" style="margin-bottom: 0; cursor: pointer; user-select: none;">Notificar Cliente por E-mail</label>
+				</div>
+
+				<button type="submit" class="btn btn-primary w-100">
+					<i class="fas fa-save"></i> Gravar Alterações
+				</button>
+			</form>
+		</div>
+
+	</div>
+{% endblock %}

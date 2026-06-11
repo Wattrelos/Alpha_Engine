@@ -83,12 +83,13 @@ class OrderHistoryAction implements ActionInterface
                 ];
             }
             $products[] = [
-                'name'     => $product['name'],
-                'model'    => $product['model'],
-                'quantity' => $product['quantity'],
-                'price'    => 'R$ ' . number_format((float)$product['price'], 2, ',', '.'),
-                'total'    => 'R$ ' . number_format((float)$product['total'], 2, ',', '.'),
-                'option'   => $options
+                'product_id' => (int)$product['product_id'],
+                'name'       => $product['name'],
+                'model'      => $product['model'],
+                'quantity'   => $product['quantity'],
+                'price'      => 'R$ ' . number_format((float)$product['price'], 2, ',', '.'),
+                'total'      => 'R$ ' . number_format((float)$product['total'], 2, ',', '.'),
+                'option'     => $options
             ];
         }
 

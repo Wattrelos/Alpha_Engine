@@ -74,6 +74,7 @@
 								<th class="col-center">{{ column_quantity }}</th>
 								<th class="col-right">{{ column_price }}</th>
 								<th class="col-right">{{ column_total }}</th>
+								<th class="col-center">Ações</th>
 							</tr>
 						</thead>
 						<tbody>
@@ -90,6 +91,11 @@
 									<td class="col-center font-tabular">{{ product.quantity }}</td>
 									<td class="col-right font-tabular">{{ product.price }}</td>
 									<td class="col-right font-tabular"><strong class="order-total-value">{{ product.total }}</strong></td>
+									<td class="col-center">
+										<a href="/{{ lang }}/account/return/add?order_id={{ order_id }}&product_id={{ product.product_id }}" class="btn-return-action" title="Devolver Produto">
+											🔄 Devolver
+										</a>
+									</td>
 								</tr>
 							{% endfor %}
 						</tbody>
@@ -499,6 +505,28 @@
 		.btn-back:hover {
 			color: #e2e8f0;
 			background: rgba(255, 255, 255, 0.05);
+		}
+
+		/* ── Devolver Button ── */
+		.btn-return-action {
+			display: inline-flex;
+			align-items: center;
+			gap: 0.25rem;
+			padding: 0.35rem 0.75rem;
+			border-radius: 6px;
+			font-size: 0.8rem;
+			font-weight: 600;
+			text-decoration: none;
+			background: rgba(99, 102, 241, 0.1);
+			color: #a5b4fc;
+			border: 1px solid rgba(99, 102, 241, 0.25);
+			transition: all 0.2s;
+		}
+		.btn-return-action:hover {
+			background: #6366f1;
+			color: #ffffff;
+			border-color: #6366f1;
+			box-shadow: 0 0 10px rgba(99, 102, 241, 0.3);
 		}
 
 		/* ── Responsive ── */

@@ -53,5 +53,14 @@
     "error_product": "O produto deve ter entre 3 e 255 caracteres.",
     "error_model": "O modelo deve ter entre 3 e 64 caracteres.",
     "error_reason": "Você deve selecionar um motivo para a devolução.",
-    "error_agree": "Atenção: Você deve aceitar o contrato de %s."
+    "error_agree": "Atenção: Você deve aceitar o contrato de %s.",
+    "text_home": "Início",
+    "text_subtitle": "Acompanhe o status e histórico das suas solicitações de devolução.",
+    "text_request_plural": "solicitações",
+    "text_request_singular": "solicitação",
+    "text_empty_title": "Nenhuma devolução encontrada",
+    "text_pending": "Pendente",
+    "button_account": "Ir para Minha Conta",
+    "button_continue": "Continuar",
+    "button_submit": "Enviar Solicitação"
 }

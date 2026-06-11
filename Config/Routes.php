@@ -99,6 +99,11 @@ return function (\Slim\App $app) {
             $group->get('/pedidos/{id:[0-9]+}/fatura', \Alpha\Admin\Controllers\Actions\Sales\Order\ViewOrderDetailsAction::class)->setName('admin.orders.invoice');
             $group->post('/pedidos/{id:[0-9]+}/status', \Alpha\Admin\Controllers\Actions\Sales\Order\UpdateOrderStatusAction::class)->setName('admin.orders.update_status');
 
+            // Gestão de Devoluções (Vendas)
+            $group->get('/devolucoes', \Alpha\Admin\Controllers\Actions\Sales\Return\ListReturnsAction::class)->setName('admin.returns.index');
+            $group->get('/devolucoes/{id:[0-9]+}', \Alpha\Admin\Controllers\Actions\Sales\Return\ShowReturnAction::class)->setName('admin.returns.show');
+            $group->post('/devolucoes/{id:[0-9]+}/status', \Alpha\Admin\Controllers\Actions\Sales\Return\UpdateReturnStatusAction::class)->setName('admin.returns.update_status');
+
             $group->get('/logout', \Alpha\Admin\Controllers\Actions\Auth\LogoutAction::class)->setName('admin.logout');
         })->add(new \Alpha\Auth\Middleware\AdminSessionMiddleware($app->getContainer()));
         
@@ -185,6 +190,8 @@ return function (\Slim\App $app) {
             $account->get('/orders', OrdersAction::class)->setName('account.orders');
             $account->get('/order/history/{order_id}', OrderHistoryAction::class)->setName('account.order.history');
             $account->get('/return', ProductReturnsAction::class)->setName('account.returns');
+            $account->map(['GET', 'POST'], '/return/add', \Alpha\Controller\Actions\Customer\Account\AddReturnAction::class)->setName('account.returns.add');
+            $account->get('/return/{id:[0-9]+}', \Alpha\Controller\Actions\Customer\Account\ShowReturnAction::class)->setName('account.returns.show');
 
             // ── Editar Conta ─────────────────────────────────────────────────
             $account->get('/edit', \Alpha\Controller\Actions\Customer\Account\UpdateAction::class)->setName('account.edit');

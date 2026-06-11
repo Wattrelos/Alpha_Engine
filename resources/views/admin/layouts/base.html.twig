@@ -37,6 +37,12 @@
 						</a>
 					</li>
 					<li>
+						<a href="/LPDHED2dC7Gjrg2b/devolucoes">
+							<i class="fas fa-undo sidebar-link-icon"></i>
+							Devoluções
+						</a>
+					</li>
+					<li>
 						<a href="/LPDHED2dC7Gjrg2b/clientes">
 							<i class="fas fa-users sidebar-link-icon"></i>
 							Clientes
@@ -113,5 +119,18 @@
 					</main>
 				</div>
 			</div>
+			<script>
+			document.addEventListener('DOMContentLoaded', () => {
+				const currentPath = window.location.pathname;
+				const links = document.querySelectorAll('.sidebar a');
+				links.forEach(link => {
+					link.classList.remove('active');
+					const href = link.getAttribute('href');
+					if (currentPath === href || (href !== '/LPDHED2dC7Gjrg2b/dashboard' && currentPath.startsWith(href))) {
+						link.classList.add('active');
+					}
+				});
+			});
+			</script>
 		</body>
 	</html>

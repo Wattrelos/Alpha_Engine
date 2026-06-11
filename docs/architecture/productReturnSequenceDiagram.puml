@@ -1,0 +1,207 @@
+@startuml "Fluxo_Completo_Devolucao_Produtos"
+
+' --- Bloco de Estilo CSS Moderno e Colorido (Herdado da sua arquitetura) ---
+<style>
+sequenceDiagram {
+    participant {
+        Padding 12
+        BorderThickness 1.5
+        FontName "Helvetica Neue"
+        FontSize 13
+        FontStyle bold
+    }
+    box {
+        Padding 12
+        FontName "Helvetica Neue"
+        FontSize 14
+        FontStyle bold
+    }
+    lifeLine {
+        BackgroundColor #FFEB3B
+        BorderColor #FBC02D
+    }
+    arrow {
+        FontName "Courier New"
+        FontSize 11
+        FontColor #37474F
+        LineColor #263238
+        LineThickness 1.2
+    }
+    database {
+        BackgroundColor #FFCC80
+        BorderColor #E65100
+    }
+    note {
+        FontName "Helvetica Neue"
+        FontSize 11
+        LineColor #B0BEC5
+    }
+}
+</style>
+
+autonumber "<b>00:"
+
+' --- Definição dos Participantes ---
+box "Infraestrutura / HTTP" #E3F2FD
+    actor "Cliente / Admin" as Ator
+    participant "Slim Middleware" as Middleware #90CAF9
+    participant "Slim Action" as Action #64B5F6
+    participant "Twig Engine" as Twig #42A5F5
+end box
+
+box "Domínio / Aplicação" #E8F5E9
+    participant "Domain Service" as Domain #81C784
+    participant "Repository" as Repo #66BB6A
+end box
+
+box "Persistência / Dados" #FFF3E0
+    participant "Unit Of Work" as UoW #FFB74D
+    participant "Data Mapper" as Mapper #FFA726
+    participant "Query Builder" as QB #FF9800
+    participant "Dynamic DAO" as DAO #FB8C00
+    database "Database" as DB
+end box
+
+' --- Início do Fluxo Principal ---
+Ator -> Middleware : Requisição HTTP (Devolução)
+activate Middleware
+
+    Middleware -> Action : __invoke(Request)
+    activate Action
+        
+    alt #E0F7FA ROTA DE LEITURA (HTTP GET /devolucao/{id})
+        
+        Action -> Repo : findById(id)
+        activate Repo
+            
+            Repo -> QB : select()->where('return_id', id)
+            activate QB
+                QB -> QB : buildSQL()
+                QB --> Repo : SQL String (tabela oc_return)
+            deactivate QB
+            
+            Repo -> DAO : query(SQL)
+            activate DAO
+                DAO -> DB : SELECT * FROM oc_return ...
+                activate DB
+                DB --> DAO : Raw Data (Array/Rows)
+                deactivate DB
+                DAO --> Repo : Raw Data
+            deactivate DAO
+            
+            ' O MAPEAMENTO REVERSO (Hydration) usando a classe ProductReturn
+            note over Repo, Mapper #E0F2F1
+                **Mapeamento Reverso:**
+                O Data Mapper transforma os dados brutos da oc_return
+                na entidade de domínio 'ProductReturn' de forma segura.
+            end note
+            Repo -> Mapper : mapToDomain(RawData)
+            activate Mapper
+                Mapper --> Repo : ProductReturn (Objeto de Domínio)
+            deactivate Mapper
+            
+            Repo --> Action : ProductReturn (Entity)
+        deactivate Repo
+        
+        Action -> Twig : render('detalhes_devolucao.twig', ProductReturn)
+        activate Twig
+        Twig --> Action : HTML / JSON Response
+        deactivate Twig
+        
+    else #F3E5F5 ROTA DE ESCRITA (HTTP POST /devolucao/atualizar-status)
+        
+        note over Action #D1ECF1
+            **Escrita com UoW:**
+            Inicia o escopo para persistir a mudança de status da devolução
+        end note
+        
+        Action -> UoW : beginTransaction()
+        activate UoW
+        UoW --> Action : OK
+        deactivate UoW
+        
+        Action -> Domain : atualizarStatusDevolucao(return_id, novo_status)
+        activate Domain
+            
+            note over Domain
+                Executa regras de negócio:
+                - Verifica se a devolução não está fechada
+                - Mapeia oc_return_status e oc_agsc_return_action
+            end note
+            
+            Domain -> Repo : save(ProductReturn)
+            activate Repo
+                Repo -> UoW : registerDirty(ProductReturn)
+                activate UoW
+                UoW --> Repo : OK
+                deactivate UoW
+            Repo --> Domain : OK
+            deactivate Repo
+            
+        Domain --> Action : StateUpdated
+        deactivate Domain
+        
+        alt #E8F5E9 Fluxo de Sucesso (Commit da Devolução)
+            
+            Action -> UoW : commit()
+            activate UoW
+                
+                UoW -> Mapper : mapToDatabase(ProductReturn)
+                activate Mapper
+                    
+                    Mapper -> QB : update('oc_return')->set('return_status_id')
+                    activate QB
+                        QB -> QB : buildSQL()
+                        QB --> Mapper : SQL UPDATE + Bindings
+                    deactivate QB
+                    
+                    Mapper -> DAO : execute(SQL, Bindings)
+                    activate DAO
+                        DAO -> DB : UPDATE oc_return / INSERT oc_return_history
+                        activate DB
+                        DB --> DAO : DB_Success
+                        deactivate DB
+                        DAO --> Mapper : Raw Data
+                    deactivate DAO
+                    
+                    Mapper --> UoW : Mapping Done
+                deactivate Mapper
+                
+                UoW -> DB : COMMIT
+                UoW --> Action : Committed
+            deactivate UoW
+
+            note over Action
+                Dispara notificações assíncronas 
+                ou eventos pós-venda para o cliente
+            end note
+
+            Action -> Twig : render('devolucao_sucesso.twig')
+            activate Twig
+            Twig --> Action : HTML Response
+            deactivate Twig
+            
+        else #FFEBEE Fluxo de Falha (Rollback)
+            
+            Action -> UoW : rollback()
+            activate UoW
+                UoW -> DB : ROLLBACK TRANSACTION
+                UoW --> Action : Rolled Back
+            deactivate UoW
+            
+            Action -> Twig : render('devolucao_erro.twig')
+            activate Twig
+            Twig --> Action : HTML Error Page
+            deactivate Twig
+            
+        end
+        
+    end
+
+    Action --> Middleware : Response Object
+    deactivate Action
+
+    Middleware --> Ator : HTTP Response
+deactivate Middleware
+
+@endum

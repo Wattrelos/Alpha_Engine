@@ -12,15 +12,9 @@ class ReturnDictionaryRepository extends AbstractRepository
     // Como este Repository é um agregador, não declaramos um mapper principal estrito.
     // Usaremos as fábricas de mappers instanciadas dinamicamente se necessário.
 
-    /**
-     * Obtém todas as ações de devolução (Troca, Estorno, etc) para um dado idioma.
-     *
-     * @param int $languageId
-     * @return array
-     */
     public function getActionsByLanguage(int $languageId): array
     {
-        $mapper = $this->factory->getMapper('ReturnAction');
+        $mapper = $this->mapperFactory->get(\Alpha\Mappers\EntityMappers\ReturnActionMapper::class);
         return $mapper->search(
             ['languageId' => $languageId],
             ['name' => 'ASC']
@@ -35,7 +29,7 @@ class ReturnDictionaryRepository extends AbstractRepository
      */
     public function getReasonsByLanguage(int $languageId): array
     {
-        $mapper = $this->factory->getMapper('ReturnReason');
+        $mapper = $this->mapperFactory->get(\Alpha\Mappers\EntityMappers\ReturnReasonMapper::class);
         return $mapper->search(
             ['languageId' => $languageId],
             ['name' => 'ASC']
@@ -51,7 +45,7 @@ class ReturnDictionaryRepository extends AbstractRepository
     public function getStatusesByLanguage(int $languageId): array
     {
         // O status reside diretamente na entidade ReturnStatus que contém languageId
-        $mapper = $this->factory->getMapper('ReturnStatus');
+        $mapper = $this->mapperFactory->get(\Alpha\Mappers\EntityMappers\ReturnStatusMapper::class);
         return $mapper->search(
             ['languageId' => $languageId],
             ['name' => 'ASC']

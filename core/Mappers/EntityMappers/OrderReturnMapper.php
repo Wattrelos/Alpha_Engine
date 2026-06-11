@@ -12,14 +12,14 @@ use Alpha\Model\DataAccessObject\QueryBuilder;
  */
 class OrderReturnMapper extends BaseMapper
 {
-    protected string $table = 'return';
+    protected string $table = 'product_return';
     protected string $entityClass = OrderReturn::class;
 
     public function getReturnsArray(int $customerId, int $languageId, int $start = 0, int $limit = 20): array
     {
         $query = (new QueryBuilder())
             ->select('r.id', 'r.order_id', 'r.firstname', 'r.lastname', 'rs.name as status', 'r.date_added')
-            ->from(DB_PREFIX . "return", "r")
+            ->from(DB_PREFIX . "product_return", "r")
             ->leftJoin(DB_PREFIX . "return_status", "rs", "r.return_status_id = rs.id")
             ->where("r.customer_id = ?", [$customerId])
             ->where("rs.language_id = ?", [$languageId])
@@ -33,7 +33,7 @@ class OrderReturnMapper extends BaseMapper
     public function getTotalReturnsCount(int $customerId): int
     {
         $query = (new QueryBuilder())
-            ->from(DB_PREFIX . "return")
+            ->from(DB_PREFIX . "product_return")
             ->where("customer_id = ?", [$customerId]);
 
         return $this->dao->executeCount($query);
@@ -49,7 +49,7 @@ class OrderReturnMapper extends BaseMapper
                 "(SELECT rs.name FROM " . DB_PREFIX . "return_status rs WHERE rs.id = r.return_status_id AND rs.language_id = " . (int)$languageId . ") AS status",
                 'r.comment', 'r.date_ordered', 'r.date_added', 'r.date_modified'
             )
-            ->from(DB_PREFIX . "return", "r")
+            ->from(DB_PREFIX . "product_return", "r")
             ->where("r.id = ?", [$returnId])
             ->where("r.customer_id = ?", [$customerId]);
 
@@ -83,23 +83,23 @@ class OrderReturnMapper extends BaseMapper
 
     public function addReturnArray(array $data, int $customerId, int $defaultStatusId): void
     {
-        $sql = "INSERT INTO `" . DB_PREFIX . "return` SET 
-                  order_id = :order_id, 
-                  customer_id = :customer_id, 
-                  firstname = :firstname, 
-                  lastname = :lastname, 
-                  email = :email, 
-                  telephone = :telephone, 
-                  product = :product, 
-                  model = :model, 
-                  quantity = :quantity, 
-                  opened = :opened, 
-                  return_reason_id = :return_reason_id, 
-                  return_status_id = :return_status_id, 
-                  comment = :comment, 
-                  date_ordered = :date_ordered, 
-                  date_added = NOW(), 
-                  date_modified = NOW()";
+        $sql = "INSERT INTO `" . DB_PREFIX . "product_return` SET 
+                   order_id = :order_id, 
+                   customer_id = :customer_id, 
+                   firstname = :firstname, 
+                   lastname = :lastname, 
+                   email = :email, 
+                   telephone = :telephone, 
+                   product = :product, 
+                   model = :model, 
+                   quantity = :quantity, 
+                   opened = :opened, 
+                   return_reason_id = :return_reason_id, 
+                   return_status_id = :return_status_id, 
+                   comment = :comment, 
+                   date_ordered = :date_ordered, 
+                   date_added = NOW(), 
+                   date_modified = NOW()";
 
         $this->dao->executeRawSQL($sql, [
             'order_id'         => (int)$data['order_id'],

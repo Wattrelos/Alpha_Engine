@@ -53,5 +53,14 @@
     "error_product": "Product Name must be greater than 3 and less than 255 characters!",
     "error_model": "Product Model must be greater than 3 and less than 64 characters!",
     "error_reason": "You must select a return product reason!",
-    "error_agree": "Warning: You must agree to the %s!"
+    "error_agree": "Warning: You must agree to the %s!",
+    "text_home": "Home",
+    "text_subtitle": "History and status tracking of your return requests.",
+    "text_request_plural": "requests",
+    "text_request_singular": "request",
+    "text_empty_title": "No returns found",
+    "text_pending": "Pending",
+    "button_account": "Go to My Account",
+    "button_continue": "Continue",
+    "button_submit": "Submit Request"
 }
