@@ -1,0 +1,67 @@
+@startuml "Diagrama_Casos_De_Uso_Cliente"
+
+' --- Estilo CSS Moderno ---
+<style>
+usecaseDiagram {
+    BackgroundColor #FAFAFA
+    BorderColor #37474F
+    LineColor #263238
+    FontName "Helvetica Neue"
+    FontSize 13
+    
+    usecase {
+        BackgroundColor #E3F2FD
+        BorderColor #1565C0
+    }
+    actor {
+        BackgroundColor #FFF3E0
+        BorderColor #E65100
+    }
+}
+</style>
+
+left to right direction
+
+actor "Visitante" as Guest
+actor "Cliente Logado" as Customer
+actor "Sistema / Gateway" as System
+
+Guest <|-- Customer : Herda permissões
+
+rectangle "Alpha Engine - Loja Virtual" {
+    usecase "Navegar no Catálogo" as UC_Nav
+    usecase "Buscar Produtos" as UC_Search
+    usecase "Adicionar ao Carrinho" as UC_Cart
+    usecase "Selecionar Variantes/Assinaturas" as UC_Cart_Inc
+    usecase "Fazer Login / Cadastro" as UC_Auth
+    usecase "Mesclar Carrinho na Sessão" as UC_Auth_Inc
+    usecase "Realizar Checkout" as UC_Checkout
+    usecase "Aplicar Cupom de Desconto" as UC_Coupon
+    usecase "Comprar como Visitante (Guest)" as UC_Checkout_Ext
+    usecase "Acompanhar Pedidos" as UC_Orders
+    usecase "Processar Pagamento" as UC_Payment
+}
+
+' Associações Diretas do Visitante
+Guest --> UC_Nav
+Guest --> UC_Search
+Guest --> UC_Cart
+Guest --> UC_Auth
+Guest --> UC_Checkout
+
+' Inclusões (Include) - Ações Obrigatórias do Fluxo
+UC_Cart ..> UC_Cart_Inc : <<include>>
+UC_Auth ..> UC_Auth_Inc : <<include>>
+UC_Checkout ..> UC_Payment : <<include>>
+
+' Extensões (Extend) - Ações Opcionais do Fluxo
+UC_Coupon .up.> UC_Checkout : <<extend>>
+UC_Checkout_Ext .up.> UC_Checkout : <<extend>>
+
+' Ações Exclusivas do Cliente Logado
+Customer --> UC_Orders
+
+' Associação do Sistema (Externa)
+System --> UC_Payment
+
+@enduml

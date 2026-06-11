@@ -1,0 +1,198 @@
+@startuml "Fluxo_Completo_Gravacao_e_Leitura_Reversa"
+
+' --- Bloco de Estilo CSS Moderno e Colorido ---
+<style>
+sequenceDiagram {
+    participant {
+        Padding 12
+        BorderThickness 1.5
+        FontName "Helvetica Neue"
+        FontSize 13
+        FontStyle bold
+    }
+    box {
+        Padding 12
+        FontName "Helvetica Neue"
+        FontSize 14
+        FontStyle bold
+    }
+    lifeLine {
+        BackgroundColor #FFEB3B
+        BorderColor #FBC02D
+    }
+    arrow {
+        FontName "Courier New"
+        FontSize 11
+        FontColor #37474F
+        LineColor #263238
+        LineThickness 1.2
+    }
+    database {
+        BackgroundColor #FFCC80
+        BorderColor #E65100
+    }
+    note {
+        FontName "Helvetica Neue"
+        FontSize 11
+        LineColor #B0BEC5
+    }
+}
+</style>
+
+autonumber "<b>00:"
+
+' --- Definição dos Participantes ---
+box "Infraestrutura / HTTP" #E3F2FD
+    actor "Cliente" as Cliente
+    participant "Slim Middleware" as Middleware #90CAF9
+    participant "Slim Action" as Action #64B5F6
+    participant "Twig Engine" as Twig #42A5F5
+end box
+
+box "Domínio / Aplicação" #E8F5E9
+    participant "Domain Service" as Domain #81C784
+    participant "Repository" as Repo #66BB6A
+end box
+
+box "Persistência / Dados" #FFF3E0
+    participant "Unit Of Work" as UoW #FFB74D
+    participant "Data Mapper" as Mapper #FFA726
+    participant "Query Builder" as QB #FF9800
+    participant "Dynamic DAO" as DAO #FB8C00
+    database "Database" as DB
+end box
+
+' --- Início do Fluxo Principal ---
+Cliente -> Middleware : Requisição HTTP
+activate Middleware
+
+    Middleware -> Action : __invoke(Request)
+    activate Action
+        
+    alt #E0F7FA ROTA DE LEITURA (HTTP GET /pedido/{id})
+        
+        Action -> Repo : findById(id)
+        activate Repo
+            
+            ' O Repositório monta a consulta de leitura
+            Repo -> QB : select()->where('id', id)
+            activate QB
+                QB -> QB : buildSQL()
+                QB --> Repo : SQL String
+            deactivate QB
+            
+            ' Executa no banco através do DAO
+            Repo -> DAO : query(SQL)
+            activate DAO
+                DAO -> DB : SELECT * FROM ...
+                activate DB
+                DB --> DAO : Raw Data (Array/Rows)
+                deactivate DB
+                DAO --> Repo : Raw Data (Array/Rows)
+            deactivate DAO
+            
+            ' O MAPEAMENTO REVERSO (Hydration)
+            note over Repo, Mapper #E0F2F1
+                **Mapeamento Reverso:**
+                O Data Mapper transforma os dados brutos 
+                do banco de volta em um Objeto de Domínio.
+            end note
+            Repo -> Mapper : mapToDomain(RawData)
+            activate Mapper
+                Mapper --> Repo : Entity (Objeto de Domínio)
+            deactivate Mapper
+            
+            Repo --> Action : Entity (Objeto de Domínio)
+        deactivate Repo
+        
+        Action -> Twig : render('detalhes.twig', Entity)
+        activate Twig
+        Twig --> Action : HTML / JSON Response
+        deactivate Twig
+        
+    else #F3E5F5 ROTA DE ESCRITA (HTTP POST /pedido/criar)
+        
+        note over Action #D1ECF1
+            **Escrita com UoW:**
+            Inicia o escopo transacional
+        end note
+        
+        Action -> UoW : beginTransaction()
+        activate UoW
+        UoW --> Action : OK
+        deactivate UoW
+        
+        Action -> Domain : processarRegraNegocio()
+        activate Domain
+            
+            Domain -> Repo : save(Entity)
+            activate Repo
+                Repo -> UoW : registerNew(Entity)
+                activate UoW
+                UoW --> Repo : OK
+                deactivate UoW
+            Repo --> Domain : OK
+            deactivate Repo
+            
+        Domain --> Action : StateUpdated
+        deactivate Domain
+        
+        alt #E8F5E9 Fluxo de Sucesso (Commit)
+            
+            Action -> UoW : commit()
+            activate UoW
+                
+                UoW -> Mapper : mapToDatabase(Entity)
+                activate Mapper
+                    
+                    Mapper -> QB : insertInto()->values()
+                    activate QB
+                        QB -> QB : buildSQL()
+                        QB --> Mapper : SQL + Bindings
+                    deactivate QB
+                    
+                    Mapper -> DAO : execute(SQL, Bindings)
+                    activate DAO
+                        DAO -> DB : INSERT / UPDATE
+                        activate DB
+                        DB --> DAO : DB_Success
+                        deactivate DB
+                        DAO --> Mapper : Raw Data
+                    deactivate DAO
+                    
+                    Mapper --> UoW : Mapping Done
+                deactivate Mapper
+                
+                UoW -> DB : COMMIT
+                UoW --> Action : Committed
+            deactivate UoW
+
+            Action -> Twig : render('sucesso.twig')
+            activate Twig
+            Twig --> Action : HTML Response
+            deactivate Twig
+            
+        else #FFEBEE Fluxo de Falha (Rollback)
+            
+            Action -> UoW : rollback()
+            activate UoW
+                UoW -> DB : ROLLBACK TRANSACTION
+                UoW --> Action : Rolled Back
+            deactivate UoW
+            
+            Action -> Twig : render('erro.twig')
+            activate Twig
+            Twig --> Action : HTML Error Page
+            deactivate Twig
+            
+        end
+        
+    end
+
+    Action --> Middleware : Response Object
+    deactivate Action
+
+    Middleware --> Cliente : HTTP Response
+deactivate Middleware
+
+@endum
