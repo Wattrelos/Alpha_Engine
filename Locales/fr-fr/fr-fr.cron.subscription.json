@@ -1,0 +1,14 @@
+{
+    "text_log": "Vérifiez vos rapports d'abonnements pour plus d'informations.",
+    "error_store": "Attention: La boutique n'a pu être trouvée!",
+    "error_language": "Attention: L'extension du mode de paiement est introuvable!",
+    "error_currency": "Attention: La devise n'a pu être trouvée!",
+    "error_customer": "Attention: L'extension du mode de paiement est introuvable!",
+    "error_payment_address": "Attention: L'extension du mode de paiement est introuvable!",
+    "error_shipping_address": "Attention: L'extension du mode de paiement est introuvable!",
+    "error_product": "Attention: L'extension du mode de paiement est introuvable!",
+    "error_option": "Attention: L'option %s n'a pu être trouvée!",
+    "error_shipping_method": "Attention: Le mode d'expédition %s est introuvable!",
+    "error_payment_method": "Attention: Le mode de paiement %s est introuvable!",
+    "error_extension": "Attention: L'extension du mode de paiement est introuvable!"
+}

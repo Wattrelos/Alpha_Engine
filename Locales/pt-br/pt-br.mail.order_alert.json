@@ -1,0 +1,10 @@
+{
+    "text_subject": "%s - Pedido nº %s",
+    "text_received": "Você recebeu um novo pedido.",
+    "text_order_id": "Pedido nº:",
+    "text_date_added": "Data do pedido:",
+    "text_order_status": "Situação do pedido:",
+    "text_product": "Produtos",
+    "text_total": "Total",
+    "text_comment": "O comentário para o seu pedido é:"
+}

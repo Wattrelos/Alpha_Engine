@@ -1,0 +1,15 @@
+{
+    "text_subject": "Confirmação de cadastro na loja %s.",
+    "text_welcome": "Obrigado por se cadastrar na loja %s.",
+    "text_login": "Sua conta foi cadastrada em nossa loja, agora você pode acessá-la utilizando seu e-mail e senha através da nossa loja:",
+    "text_approval": "Sua conta precisa ser aprovada para que você possa acessar os dados de sua conta. Assim que sua conta for aprovada você poderá acessar sua conta utilizando seu e-mail e sua senha através de nossa loja:",
+    "text_service": "Ao acessar sua conta, você poderá visualizar o histórico de seus pedidos, imprimir faturas, fazer downloads que tenha comprado, modificar as informações de sua conta e muito mais.",
+    "text_thanks": "Atenciosamente,",
+    "text_new_customer": "Novo cliente",
+    "text_signup": "Dados do novo cliente:",
+    "text_customer_group": "Tipo de cliente:",
+    "text_firstname": "Nome:",
+    "text_lastname": "Sobrenome:",
+    "text_email": "E-mail:",
+    "text_telephone": "Telefone:"
+}

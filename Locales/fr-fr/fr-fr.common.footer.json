@@ -1,0 +1,18 @@
+{
+    "text_information": "Informations",
+    "text_blog": "Blog",
+    "text_service": "Service client",
+    "text_extra": "Extras",
+    "text_contact": "Nous contacter",
+    "text_return": "Retours",
+    "text_sitemap": "Plan du site",
+    "text_gdpr": "RGPD",
+    "text_manufacturer": "Marques",
+    "text_affiliate": "Affilié",
+    "text_special": "Promotions",
+    "text_account": "Mon compte",
+    "text_order": "Historique des commandes",
+    "text_wishlist": "Liste de souhaits",
+    "text_newsletter": "Newsletter",
+    "text_powered": "Propulsé par Alpha Engine %s &copy; %s"
+}

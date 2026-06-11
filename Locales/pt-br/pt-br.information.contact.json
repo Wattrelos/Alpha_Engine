@@ -1,0 +1,19 @@
+{
+    "heading_title": "Entre em contato",
+    "text_location": "Nossa localização",
+    "text_store": "Nossas lojas",
+    "text_contact": "Formulário de contato",
+    "text_address": "Endereço",
+    "text_telephone": "Telefone",
+    "text_fax": "Fax",
+    "text_open": "Horário de funcionamento",
+    "text_comment": "Comentários",
+    "text_success": "<p>Sua dúvida foi enviada para nosso atendimento.<\/p>",
+    "entry_name": "Seu nome",
+    "entry_email": "Seu e-mail",
+    "entry_enquiry": "Dúvida",
+    "email_subject": "Contato - %s",
+    "error_name": "O seu nome deve ter entre 3 e 32 caracteres.",
+    "error_email": "O e-mail não é válido.",
+    "error_enquiry": "A dúvida deve ter entre 10 e 3000 caracteres."
+}

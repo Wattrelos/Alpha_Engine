@@ -130,6 +130,10 @@ const guestCart = {
 
 // Exibe alertas flutuantes elegantes na página
 function showCartAlert(message, type = 'success') {
+    if (typeof window.showNotification === 'function') {
+        window.showNotification(message, type);
+        return;
+    }
     const alertContainer = document.getElementById('alert');
     if (alertContainer) {
         alertContainer.innerHTML = `

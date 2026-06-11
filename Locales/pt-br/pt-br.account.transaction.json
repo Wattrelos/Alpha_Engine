@@ -1,0 +1,10 @@
+{
+    "heading_title": "Suas Transações",
+    "text_account": "Conta",
+    "text_transaction": "Suas Transações",
+    "text_total": "Seu saldo atual é:",
+    "text_no_results": "Você não possui nenhuma transação!",
+    "column_date_added": "Data de cadastro",
+    "column_description": "Descrição",
+    "column_amount": "Valor (%s)"
+}

@@ -1,0 +1,12 @@
+{
+    "heading_title": "Método de envio",
+    "text_shipping_method": "Opções de método de envio",
+    "text_shipping": "Selecione o método de envio de sua preferência para este pedido.",
+    "text_success": "Sucesso: Você alterou o método de envio!",
+    "entry_shipping_method": "Escolha o método de envio...",
+    "error_customer": "Informação do cliente obrigatória!",
+    "error_payment_address": "Endereço de pagamento obrigatório!",
+    "error_shipping_address": "Endereço de entrega obrigatório!",
+    "error_shipping_method": "Método de envio obrigatório!",
+    "error_no_shipping": "Nenhuma opção de envio disponível. Entre em contato conosco para obter ajuda!"
+}

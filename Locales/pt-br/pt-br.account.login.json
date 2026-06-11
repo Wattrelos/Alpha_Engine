@@ -1,0 +1,17 @@
+{
+    "heading_title": "Acessar Conta",
+    "text_account": "Minha conta",
+    "text_login": "Acessar",
+    "text_new_customer": "Ainda não é cliente?",
+    "text_register": "Cadastre sua conta.",
+    "text_register_account": "Ao cadastrar sua conta, você será capaz de comprar mais rápido, ficar atualizado sobre a situação de um pedido e acompanhar o histórico dos pedidos que você já fez.",
+    "text_returning_customer": "Já é cliente?",
+    "text_i_am_returning_customer": "Se você já fez um pedido e cadastrou uma conta, coloque os dados da conta abaixo:",
+    "text_forgotten": "Solicitar nova senha",
+    "entry_email": "E-mail",
+    "entry_password": "Senha",
+    "error_token": "Aviso: Sessão com token inválido. Faça login novamente!",
+    "error_login": "Atenção: Seus dados de acesso não estão corretos. Se você tem certeza que o e-mail está correto, solicite uma nova senha.",
+    "error_attempts": "Atenção: Você excedeu o limite de tentativas de acesso. Por segurança, tente acessar novamente após 1 hora.",
+    "error_approved": "Atenção: Sua conta ainda não foi aprovada. Quando sua conta for aprovada, você receberá um e-mail de confirmação."
+}

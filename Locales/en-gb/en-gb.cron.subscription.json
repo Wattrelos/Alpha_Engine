@@ -1,0 +1,14 @@
+{
+    "text_log": "Check the subscription log for more information.",
+    "error_store": "Warning: Store not found!",
+    "error_language": "Warning: Language could not be found!",
+    "error_currency": "Warning: Currency could not be found!",
+    "error_customer": "Warning: Customer could not be found!",
+    "error_payment_address": "Warning: Payment address could not be found!",
+    "error_shipping_address": "Warning: Shipping address could not be found!",
+    "error_product": "Warning: Product %s could not be found!",
+    "error_option": "Warning: Option %s could not be found!",
+    "error_shipping_method": "Warning: Shipping method required!",
+    "error_payment_method": "Warning: Payment method required!",
+    "error_extension": "Warning: Payment method extension could not be found!"
+}

@@ -1,0 +1,18 @@
+{
+    "heading_title": "Contactez-nous",
+    "text_location": "Nos emplacements",
+    "text_store": "Nos magasins",
+    "text_contact": "Formulaire de contact",
+    "text_address": "Adresse",
+    "text_telephone": "Téléphone",
+    "text_open": "Horaires d'ouverture",
+    "text_comment": "Commentaires",
+    "text_message": "<p>Votre demande a été envoyée avec succès au propriétaire du magasin!<\/p>",
+    "entry_name": "Votre nom",
+    "entry_email": "Adresse e-mail",
+    "entry_enquiry": "Demande",
+    "email_subject": "Demande %s",
+    "error_name": "Le nom doit comporter entre 3 et 32 caractères!",
+    "error_email": "L'adresse e-mail ne semble pas valide!",
+    "error_enquiry": "La demande doit comporter entre 10 et 3000 caractères!"
+}

@@ -1,0 +1,9 @@
+{
+    "text_subject": "%s - Atualização do Pedido nº %s",
+    "text_order_id": "Pedido nº:",
+    "text_date_added": "Atualizado em:",
+    "text_order_status": "Seu pedido foi atualizado para a seguinte situação:",
+    "text_comment": "O comentário para o seu pedido é:",
+    "text_link": "Para acompanhar o andamento do seu pedido, clique no link abaixo:",
+    "text_footer": "Caso tenha alguma dúvida, responda este e-mail."
+}

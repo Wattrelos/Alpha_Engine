@@ -1,0 +1,10 @@
+{
+    "heading_title": "Utilizar pontos (Você possui %s pontos)",
+    "text_reward": "Pontos (%s)",
+    "text_order_id": "Pedido nº: %s",
+    "text_success": "Os pontos foram utilizados com sucesso!",
+    "entry_reward": "Pontos para utilização (Máximo %s)",
+    "error_reward": "Atenção: Insira a quantidade de pontos que deseja utilizar!",
+    "error_points": "Atenção: Você não possui %s pontos!",
+    "error_maximum": "Atenção: O número máximo de pontos que pode ser utilizado é: %s!"
+}

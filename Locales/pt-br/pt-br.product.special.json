@@ -1,0 +1,22 @@
+{
+    "heading_title": "Produtos em promoção",
+    "text_empty": "Não há produtos em promoção.",
+    "text_quantity": "Qtd:",
+    "text_manufacturer": "Marca:",
+    "text_model": "Modelo:",
+    "text_points": "Pontos:",
+    "text_price": "Preço:",
+    "text_tax": "Sem impostos:",
+    "text_compare": "Produtos para comparar (%s)",
+    "text_sort": "Organizar por:",
+    "text_default": "Padrão",
+    "text_name_asc": "Nome (A - Z)",
+    "text_name_desc": "Nome (Z - A)",
+    "text_price_asc": "Preço (menor &gt; maior)",
+    "text_price_desc": "Preço (maior &gt; menor)",
+    "text_rating_asc": "Avaliação (menor)",
+    "text_rating_desc": "Avaliação (maior)",
+    "text_model_asc": "Modelo (A - Z)",
+    "text_model_desc": "Modelo (Z - A)",
+    "text_limit": "Exibir:"
+}

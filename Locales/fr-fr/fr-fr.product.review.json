@@ -1,0 +1,22 @@
+{
+    "text_reviews": "%s avis",
+    "text_write": "Écrire un avis",
+    "text_login": "Veuillez <a href=\"%s\">vous connecter<\/a> ou <a href=\"%s\">vous inscrire<\/a> pour laisser un avis",
+    "text_no_results": "Il n'y a pas d'avis pour ce produit.",
+    "text_note": "<span class=\"text-danger\">Remarque:<\/span> Le HTML n'est pas traduit!",
+    "text_success": "Merci pour votre avis. Il a été soumis au webmaster pour approbation.",
+    "entry_author": "Votre nom",
+    "entry_review": "Votre avis",
+    "entry_rating": "Évaluation",
+    "entry_good": "Bon",
+    "entry_bad": "Mauvais",
+    "tab_review": "Avis (%s)",
+    "error_token": "Attention: Jeton d'avis invalide!",
+    "error_product": "Attention: Produit introuvable!",
+    "error_author": "Le nom de l'avis doit contenir entre 3 et 25 caractères!",
+    "error_text": "Le texte de l'avis doit contenir entre 25 et 1000 caractères!",
+    "error_rating": "Veuillez sélectionner une évaluation pour l'avis!",
+    "error_login": "Vous devez être connecté pour laisser un avis sur ce produit!",
+    "error_purchased": "Vous devez avoir acheté ce produit avant de pouvoir écrire un avis!",
+    "error_status": "Les avis sont désactivés!"
+}

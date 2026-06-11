@@ -20,12 +20,14 @@ class ShowRegistrationFormAction implements ActionInterface
     private TwigEnvironment $twig;
     private SettingRepository $settingRepository;
     private LanguageRepository $languageRepository;
+    private \Alpha\Support\Language $translator;
 
-    public function __construct(TwigEnvironment $twig, SettingRepository $settingRepository, LanguageRepository $languageRepository)
+    public function __construct(TwigEnvironment $twig, SettingRepository $settingRepository, LanguageRepository $languageRepository, \Alpha\Support\Language $translator)
     {
         $this->twig = $twig;
         $this->settingRepository = $settingRepository;
         $this->languageRepository = $languageRepository;
+        $this->translator = $translator;
     }
 
     public function __invoke(Request $request, Response $response, array $args): Response
@@ -49,7 +51,7 @@ class ShowRegistrationFormAction implements ActionInterface
 
         // Carrega as traduções dinamicamente a partir dos arquivos de idiomas do core
         $languageCodeStr = $language ? $language->getCode() : 'pt-br';
-        $languageData = $this->loadLanguageData('account/register', $languageCodeStr);
+        $languageData = $this->translator->load('account/register');
 
         // Formatação dinâmica dos links contidos nas chaves de tradução
         if (isset($languageData['text_account_already'])) {
@@ -96,21 +98,5 @@ class ShowRegistrationFormAction implements ActionInterface
         return $response->withHeader('Content-Type', 'text/html; charset=utf-8');
     }
 
-    /**
-     * Carrega de forma dinâmica e segura um arquivo de idioma PHP e retorna seu array associativo.
-     */
-    private function loadLanguageData(string $route, string $languageCode): array
-    {
-        $data = [];
-        $file = '/var/www/html/agsonhos/core/language_legacy/' . $languageCode . '/' . $route . '.php';
-        
-        if (is_file($file)) {
-            $_ = [];
-            include $file;
-            foreach ($_ as $key => $value) {
-                $data[$key] = $value;
-            }
-        }
-        return $data;
-    }
+
 }

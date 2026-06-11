@@ -1,0 +1,17 @@
+{
+    "heading_title": "Ma Liste de Souhaits",
+    "text_account": "Compte",
+    "text_wishlist": "Liste de Souhaits (%s)",
+    "text_login": "Vous devez <a href=\"%s\">vous connecter<\/a> ou <a href=\"%s\">créer un compte<\/a> pour sauvegarder <a href=\"%s\">%s<\/a> dans votre <a href=\"%s\">liste de souhaits<\/a>!",
+    "text_success": "Succès: Vous avez ajouté <a href=\"%s\">%s<\/a> à votre <a href=\"%s\">liste de souhaits<\/a>!",
+    "text_remove": "Succès: Vous avez supprimé un article de votre liste de souhaits",
+    "text_no_results": "Votre liste de souhaits est vide.",
+    "column_image": "Image",
+    "column_name": "Nom du Produit",
+    "column_model": "Modèle",
+    "column_stock": "Stock",
+    "column_price": "Prix Unitaire",
+    "column_action": "Action",
+    "error_product": "Attention: Produit introuvable!",
+    "error_login": "Attention: Vous devez <a href=\"%s\">vous connectez<\/a> ou <a href=\"%s\">créer un compte<\/a> pour supprimer les items de votre <a href=\"%s\">liste de souhaits<\/a>!"
+}

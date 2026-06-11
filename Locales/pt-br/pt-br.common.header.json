@@ -1,0 +1,16 @@
+{
+    "text_home": "Principal",
+    "text_wishlist": "Lista de desejos (%s)",
+    "text_shopping_cart": "Carrinho de compras",
+    "text_category": "Departamentos",
+    "text_account": "Minha conta",
+    "text_register": "Cadastre-se",
+    "text_login": "Acessar",
+    "text_order": "Histórico de pedidos",
+    "text_transaction": "Transações",
+    "text_download": "Downloads",
+    "text_logout": "Sair",
+    "text_checkout": "Finalizar pedido",
+    "text_search": "Busca",
+    "text_all": "Exibir"
+}

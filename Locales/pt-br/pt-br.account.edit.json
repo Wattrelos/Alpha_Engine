@@ -1,0 +1,19 @@
+{
+    "heading_title": "Informações da conta",
+    "text_account": "Minha conta",
+    "text_edit": "Informações da conta",
+    "text_your_details": "Caso deseje, modifique as informações da sua conta",
+    "text_success": "As informações da sua conta foram modificadas.",
+    "entry_firstname": "Nome",
+    "entry_lastname": "Sobrenome",
+    "entry_email": "E-mail",
+    "entry_telephone": "Telefone",
+    "entry_cpf_cnpj": "CPF ou CNPJ",
+    "entry_persontype": "Pessoa física ou jurídica?",
+    "error_exists": "Atenção: Este e-mail já está cadastrado.",
+    "error_firstname": "O nome deve ter entre 1 e 32 caracteres.",
+    "error_lastname": "O sobrenome deve entre 1 e 32 caracteres.",
+    "error_email": "O e-mail não é válido.",
+    "error_telephone": "O telefone deve ter entre 10 e 11 números.",
+    "error_custom_field": "O campo %s é obrigatório."
+}

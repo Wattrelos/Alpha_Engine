@@ -4211,6 +4211,18 @@
     gap: 0.75rem;
 }
 
+.egen-alert.egen-alert--success {
+    background: rgba(46, 204, 113, 0.15);
+    border: 1px solid rgba(46, 204, 113, 0.3);
+    color: #2ecc71;
+}
+
+.egen-alert.egen-alert--danger {
+    background: rgba(239, 68, 68, 0.1);
+    border: 1px solid rgba(239, 68, 68, 0.2);
+    color: #fca5a5;
+}
+
 /* ==========================================================================
    ACCOUNT PAGE — Alpha Engine Premium UI
    ========================================================================== */

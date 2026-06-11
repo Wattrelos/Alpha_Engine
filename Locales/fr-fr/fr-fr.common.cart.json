@@ -1,0 +1,17 @@
+{
+    "text_items": "%s article(s) - %s",
+    "text_points": "Points de récompenses",
+    "text_subscription": "Abonnement",
+    "text_subscription_duration": "%s tous les %d %s(s) pour %d paiement(s)",
+    "text_subscription_cancel": "%s tous les %d %s(s) jusqu'à annulation",
+    "text_day": "jour",
+    "text_week": "semaine",
+    "text_semi_month": "demi-mois",
+    "text_month": "mois",
+    "text_year": "année",
+    "text_no_results": "Votre panier est vide!",
+    "text_model": "Modèle",
+    "text_cart": "Voir le panier",
+    "text_checkout": "Paiement",
+    "error_product": "Attention: Le produit est introuvable!"
+}

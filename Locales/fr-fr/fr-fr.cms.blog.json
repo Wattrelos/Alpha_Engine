@@ -1,0 +1,17 @@
+{
+    "heading_title": "Blog",
+    "text_refine": "Affiner la recherche",
+    "text_all": "Tout",
+    "text_blog": "Blog",
+    "text_by": "Par",
+    "text_tags": "Balises:",
+    "text_comment": "commentaires",
+    "text_no_results": "Il n'y a pas d'article.",
+    "text_sort": "Trier par",
+    "text_rating_asc": "Évaluation (Lowest)",
+    "text_rating_desc": "Évaluation (Highest)",
+    "text_date_added_asc": "Date Ajoutée (Oldest)",
+    "text_date_added_desc": "Date Ajoutée (Latest)",
+    "entry_search": "Rechercher",
+    "button_continue": "Continuer la lecture"
+}

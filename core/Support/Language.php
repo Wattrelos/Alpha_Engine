@@ -12,16 +12,12 @@ class Language
     private array $loadedNamespaces = [];
     private array $nestedData = [];
     private string $localesDir;
-    private string $legacyDir;
-
     public function __construct(
         string $code = 'pt-br',
-        string $localesDir = '/var/www/html/agsonhos/Locales',
-        string $legacyDir = '/var/www/html/agsonhos/core/language_legacy'
+        string $localesDir = '/var/www/html/agsonhos/Locales'
     ) {
         $this->code = $code;
         $this->localesDir = $localesDir;
-        $this->legacyDir = $legacyDir;
         $this->initializeSymfonyTranslator();
     }
 
@@ -56,7 +52,6 @@ class Language
     /**
      * Carrega as traduções de um namespace.
      * Tenta buscar no novo diretório JSON: Locales/{lang}/{lang}.{namespace}.json
-     * Se não existir, busca no diretório legado PHP: core/language/{lang}/{route}.php
      */
     public function load(string $route): array
     {
@@ -85,19 +80,6 @@ class Language
             $this->loadedNamespaces[$route] = true;
             
             return $flat;
-        }
-
-        // Fallback: busca no diretório de arquivos PHP legados
-        $phpFile = $this->legacyDir . '/' . $this->code . '/' . $route . '.php';
-        if (is_file($phpFile)) {
-            $_ = [];
-            include $phpFile;
-            
-            $this->nestedData[$route] = $_;
-            $this->symfonyTranslator->addResource('array', $_, $this->code, $route);
-            $this->loadedNamespaces[$route] = true;
-            
-            return $_;
         }
 
         return [];

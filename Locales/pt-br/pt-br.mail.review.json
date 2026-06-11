@@ -1,0 +1,8 @@
+{
+    "text_subject": "%s - Novo comentário",
+    "text_waiting": "Um novo comentário foi cadastrado e está aguardando aprovação.",
+    "text_product": "Produto: %s",
+    "text_reviewer": "Autor: %s",
+    "text_rating": "Avaliação: %s",
+    "text_review": "Comentário:"
+}

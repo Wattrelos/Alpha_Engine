@@ -19,7 +19,6 @@ class CustomerRepository extends AbstractRepository implements BaseRepositoryInt
 {
 
     private ?array $configSettings = null;
-    private array $languageCache = [];
 
     private function getConfigValue(string $key, mixed $default = null): mixed
     {
@@ -45,17 +44,7 @@ class CustomerRepository extends AbstractRepository implements BaseRepositoryInt
             return (string)$langData[$key];
         }
 
-        if (!isset($this->languageCache[$route])) {
-            $this->languageCache[$route] = [];
-            $file = '/var/www/html/agsonhos/core/language_legacy/pt-br/' . $route . '.php';
-            if (is_file($file)) {
-                $_ = [];
-                include $file;
-                $this->languageCache[$route] = $_;
-            }
-        }
-
-        return (string)($this->languageCache[$route][$key] ?? $default);
+        return $default;
     }
 
     protected function getMapper(): CustomerMapper

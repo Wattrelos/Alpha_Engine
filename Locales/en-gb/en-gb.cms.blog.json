@@ -1,0 +1,17 @@
+{
+    "heading_title": "Blog",
+    "text_refine": "Refine Search",
+    "text_all": "All",
+    "text_blog": "Blog",
+    "text_by": "By",
+    "text_tags": "Tags:",
+    "text_comment": "comments",
+    "text_no_results": "There are no articles.",
+    "text_sort": "Sort By",
+    "text_rating_asc": "Rating (Lowest)",
+    "text_rating_desc": "Rating (Highest)",
+    "text_date_added_asc": "Date Added (Oldest)",
+    "text_date_added_desc": "Date Added (Latest)",
+    "entry_search": "Search",
+    "button_continue": "Continue Reading"
+}

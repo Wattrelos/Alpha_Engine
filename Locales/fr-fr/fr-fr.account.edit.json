@@ -1,0 +1,19 @@
+{
+    "heading_title": "Informations sur Mon Compte",
+    "text_account": "Compte",
+    "text_edit": "Modifier les Informations",
+    "text_your_details": "Vos Informations Personnelles",
+    "text_success": "Succès: Votre compte a été mis à jour avec succès.",
+    "entry_firstname": "Prénom",
+    "entry_lastname": "Nom",
+    "entry_email": "E-mail",
+    "entry_telephone": "Téléphone",
+    "error_token": "Attention: Jeton de modification invalide!",
+    "error_exists": "Attention: L'adresse e-mail est déjà enregistrée!",
+    "error_firstname": "Le prénom doit contenir entre 1 et 32 caractères!",
+    "error_lastname": "Le nom doit contenir entre 1 et 32 caractères!",
+    "error_email": "L'adresse e-mail ne semble pas être valide!",
+    "error_telephone": "Le téléphone doit contenir entre 3 et 32 caractères!",
+    "error_custom_field": "%s requis!",
+    "error_regex": "%s n'est pas une entrée valide!"
+}

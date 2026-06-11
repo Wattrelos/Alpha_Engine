@@ -1,0 +1,17 @@
+{
+    "heading_title": "Lista de desejos",
+    "text_account": "Minha conta",
+    "text_wishlist": "Lista de desejos (%s)",
+    "text_login": "Você deve <a href=\"%s\">acessar<\/a> sua conta ou <a href=\"%s\">cadastrar<\/a> uma conta para adicionar <a href=\"%s\">%s<\/a> em sua <a href=\"%s\">lista de desejos<\/a>.",
+    "text_success": "Você adicionou <a href=\"%s\">%s<\/a> em sua <a href=\"%s\">lista de desejos<\/a>.",
+    "text_remove": "Você modificou sua lista de desejos.",
+    "text_no_results": "Você ainda não adicionou itens a sua lista de desejos.",
+    "column_image": "Imagem",
+    "column_name": "Produto",
+    "column_model": "Modelo",
+    "column_stock": "Disponibilidade",
+    "column_price": "Preço",
+    "column_action": "Ação",
+    "error_product": "Aviso: Produto não foi encontrado!",
+    "error_login": "Aviso: Você precisa <a href=\"%s\">fazer login<\/a> ou <a href=\"%s\">criar uma conta<\/a> para remover itens da sua <a href=\"%s\">lista de desejos<\/a>!"
+}

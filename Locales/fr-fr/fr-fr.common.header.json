@@ -1,0 +1,12 @@
+{
+    "text_wishlist": "Liste de souhaits (%s)",
+    "text_shopping_cart": "Panier d'achat",
+    "text_account": "Mon compte",
+    "text_register": "S'inscrire",
+    "text_login": "Connexion",
+    "text_order": "Historique des commandes",
+    "text_transaction": "Transactions",
+    "text_download": "Téléchargements",
+    "text_logout": "Déconnexion",
+    "text_checkout": "Paiement"
+}

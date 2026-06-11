@@ -1,0 +1,19 @@
+{
+    "heading_title": "Esqueceu tua senha?",
+    "heading_reset": "Redefinir tua senha",
+    "text_account": "Minha conta",
+    "text_forgotten": "Solicitar nova senha",
+    "text_your_email": "Seu e-mail já cadastrado em nossa loja",
+    "text_email": "Digite o e-mail associado à sua conta. Depois pressione o botão <b>Continuar<\/b> para enviarmos um e-mail para você.",
+    "text_password": "Digite a nova senha que deseja usar.",
+    "text_success": "Enviamos para o seu e-mail a nova senha.",
+    "entry_email": "Seu e-mail",
+    "entry_new_password": "Nova senha",
+    "entry_password": "Senha",
+    "entry_confirm": "Repetir a senha",
+    "error_email": "O endereço de e-mail parece não ser válido!",
+    "error_not_found": "Atenção: O e-mail informado não foi localizado em nossa loja, tente novamente.",
+    "error_password": "A senha deve ter entre 4 e 20 caracteres.",
+    "error_code": "O código de redefinição de senha é inválido ou já foi usado anteriormente!",
+    "error_confirm": "A senha repetida está errada."
+}

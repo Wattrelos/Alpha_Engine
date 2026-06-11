@@ -1,0 +1,23 @@
+{
+    "heading_title": "Recherche",
+    "heading_tag": "Tag - ",
+    "text_search": "Produits correspondant aux critères de recherche",
+    "text_keyword": "Mots-clés",
+    "text_category": "Toutes les catégories",
+    "text_sub_category": "Rechercher dans les sous-catégories",
+    "text_no_results": "Aucun produit ne correspond aux critères de recherche.",
+    "text_compare": "Comparateur de produits (%s)",
+    "text_sort": "Trier par",
+    "text_default": "Par défaut",
+    "text_name_asc": "Nom (A - Z)",
+    "text_name_desc": "Nom (Z - A)",
+    "text_price_asc": "Prix (Croissant)",
+    "text_price_desc": "Prix (Décroissant)",
+    "text_rating_asc": "Évaluation (La plus basse)",
+    "text_rating_desc": "Évaluation (La plus élevée)",
+    "text_model_asc": "Modèle (A - Z)",
+    "text_model_desc": "Modèle (Z - A)",
+    "text_limit": "Afficher",
+    "entry_search": "Critères de recherche",
+    "entry_description": "Rechercher dans les descriptions des produits"
+}

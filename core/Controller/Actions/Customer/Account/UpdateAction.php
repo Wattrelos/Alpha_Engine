@@ -24,7 +24,8 @@ class UpdateAction implements ActionInterface
         private readonly ContainerInterface $container,
         private readonly CustomerRepository $customerRepository,
         private readonly SettingRepository $settingRepository,
-        private readonly LanguageRepository $languageRepository
+        private readonly LanguageRepository $languageRepository,
+        private readonly \Alpha\Support\Language $translator
     ) {
     }
 
@@ -62,7 +63,7 @@ class UpdateAction implements ActionInterface
         $languageCodeStr = $language ? $language->getCode() : 'pt-br';
 
         // Carrega traduções
-        $languageData = $this->loadLanguageData('account/edit', $languageCodeStr);
+        $languageData = $this->translator->load('account/edit');
 
         $errors = [];
         $success = null;
@@ -154,18 +155,5 @@ class UpdateAction implements ActionInterface
         return $response->withHeader('Content-Type', 'text/html; charset=utf-8');
     }
 
-    private function loadLanguageData(string $route, string $languageCode): array
-    {
-        $data = [];
-        $file = '/var/www/html/agsonhos/core/language_legacy/' . $languageCode . '/' . $route . '.php';
-        
-        if (is_file($file)) {
-            $_ = [];
-            include $file;
-            foreach ($_ as $key => $value) {
-                $data[$key] = $value;
-            }
-        }
-        return $data;
-    }
+
 }

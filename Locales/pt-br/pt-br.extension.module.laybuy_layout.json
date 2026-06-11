@@ -1,0 +1,22 @@
+{
+    "heading_title": "Informações Lay-Buy",
+    "text_reference_info": "Informação de referência",
+    "text_laybuy_ref_no": "Lay-Buy Reference ID:",
+    "text_paypal_profile_id": "PayPal Profile ID:",
+    "text_payment_plan": "Plano de pagamento",
+    "text_status": "Situação:",
+    "text_amount": "Valor:",
+    "text_downpayment_percent": "Porcentagem de pagamento:",
+    "text_months": "Meses:",
+    "text_downpayment_amount": "Valor inicial do pagamento:",
+    "text_payment_amounts": "Valores de pagamento:",
+    "text_first_payment_due": "Primeiro pagamento devido:",
+    "text_last_payment_due": "Último pagamento devido:",
+    "text_downpayment": "Pagamento inicial",
+    "text_month": "Mês",
+    "column_instalment": "Financiamento",
+    "column_amount": "Valor",
+    "column_date": "Data",
+    "column_pp_trans_id": "PayPal Transação ID",
+    "column_status": "Situação"
+}

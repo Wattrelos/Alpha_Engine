@@ -1,0 +1,6 @@
+{
+    "text_success": "Success: Affiliate commission will be applied to this order!",
+    "text_remove": "Success: Your affiliate commission has been removed!",
+    "error_affiliate": "Warning: Affiliate could not be found!",
+    "error_order": "Warning: Sub-Total needs to be above 0 for commission to be applied!"
+}

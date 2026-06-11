@@ -1,0 +1,6 @@
+{
+    "text_upload": "Seu arquivo foi enviado.",
+    "error_filename": "O nome do arquivo deve ter entre 3 e 64 caracteres.",
+    "error_filetype": "O tipo de arquivo não é válido.",
+    "error_upload": "É obrigatório enviar o arquivo."
+}

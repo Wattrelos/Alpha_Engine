@@ -1,0 +1,12 @@
+{
+    "text_success": "O vale presentes foi utilizado com sucesso.",
+    "text_cart": "O carrinho de compras foi modificado com sucesso.",
+    "text_for": "%s enviou um vale presentes para %s.",
+    "error_permission": "Atenção: Você não tem permissão de acesso a API.",
+    "error_voucher": "Atenção: O vale presentes é inválido ou já foi utilizado.",
+    "error_to_name": "O nome do destinatário deve ter entre 1 e 64 caracteres.",
+    "error_from_name": "Seu nome deve ter entre 1 e 64 caracteres.",
+    "error_email": "O e-mail não é válido.",
+    "error_theme": "Selecione um tema.",
+    "error_amount": "O valor deve ser entre %s e %s."
+}

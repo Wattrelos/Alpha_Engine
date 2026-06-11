@@ -1,0 +1,10 @@
+{
+    "text_subject": "%s - Commande %s - Abonnement annulé",
+    "text_received": "Vous avez reçu une annulation d'abonnement.",
+    "text_orders_id": "ID de commande:",
+    "text_subscription_id": "ID de l'abonnement:",
+    "text_date_added": "Date d'ajout:",
+    "text_subscription_status": "Statut de l'abonnement:",
+    "text_comment": "Les commentaires pour votre abonnement sont:",
+    "text_canceled": "Succès: Le profil d'abonnement a été annulé!"
+}

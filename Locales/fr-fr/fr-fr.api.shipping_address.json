@@ -1,0 +1,13 @@
+{
+    "text_success": "Succès: L'adresse d'expédition a été définie!",
+    "error_firstname": "Le prénom doit contenir entre 1 et 32 caractères!",
+    "error_lastname": "Le nom doit contenir entre 1 et 32 caractères!",
+    "error_street": "L'adresse 1 doit contenir entre 3 et 128 caractères!",
+    "error_city": "La ville doit contenir entre 3 et 128 caractères!",
+    "error_postcode": "Le code postal doit contenir entre 2 et 10 caractères pour ce pays!",
+    "error_country": "Veuillez sélectionner un pays!",
+    "error_zone": "Veuillez sélectionner une région \/ un état!",
+    "error_custom_field": "%s requis!",
+    "error_regex": "%s n'est pas une entrée valide!",
+    "error_shipping": "Attention: Aucun produit ne nécessite d'expédition"
+}

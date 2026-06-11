@@ -1,0 +1,20 @@
+{
+    "heading_title": "Comparaison de produits",
+    "text_product": "Détails du produit",
+    "text_name": "Produit",
+    "text_image": "Image",
+    "text_price": "Prix",
+    "text_model": "Modèle",
+    "text_manufacturer": "Marque",
+    "text_availability": "Disponibilité",
+    "text_rating": "Évaluation",
+    "text_reviews": "Basé sur %s avis.",
+    "text_summary": "Résumé",
+    "text_weight": "Poids",
+    "text_dimension": "Dimensions (L x l x H)",
+    "text_compare": "Comparateur de produits (%s)",
+    "text_success": "Succès: Vous avez ajouté <a href=\"%s\">%s<\/a> à votre <a href=\"%s\">comparateur de produits<\/a>!",
+    "text_remove": "Succès: Vous avez modifié votre comparateur de produits!",
+    "text_no_results": "Vous n'avez sélectionné aucun produit à comparer.",
+    "error_product": "Attention: Produit introuvable!"
+}

@@ -1,0 +1,10 @@
+{
+    "text_subject": "%s - La demande GDPR a été traitée!",
+    "text_request": "Demande de suppression de compte",
+    "text_hello": "Bonjour <strong>%s<\/strong>,",
+    "text_user": "Utilisateur",
+    "text_delete": "Votre demande de suppression de données GDPR a été effectuée avec succès.",
+    "text_contact": "Pour plus d'informations, vous pouvez contacter le propriétaire de la boutique ici:",
+    "text_thanks": "Merci,",
+    "button_contact": "Nous contacter"
+}

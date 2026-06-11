@@ -1,0 +1,5 @@
+{
+    "text_success": "A moeda foi modificada com sucesso.",
+    "error_permission": "Atenção: Você não tem permissão para acessar a API.",
+    "error_currency": "Atenção: O código da moeda não é válido."
+}

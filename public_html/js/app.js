@@ -152,8 +152,8 @@
                 minWidth: '280px'
             });
 
-            const icon = type === 'success' ? '✓' : (type === 'danger' ? '✕' : 'ℹ');
-            toast.innerHTML = `<span style="font-weight:800; font-size:1.1rem">${icon}</span> <span>${message}</span>`;
+            const iconClass = type === 'success' ? 'fa-circle-check' : (type === 'danger' ? 'fa-circle-exclamation' : 'fa-circle-info');
+            toast.innerHTML = `<i class="fa-solid ${iconClass}" style="font-size: 1.1rem; display: flex; align-items: center;"></i> <span>${message}</span>`;
 
             container.appendChild(toast);
 

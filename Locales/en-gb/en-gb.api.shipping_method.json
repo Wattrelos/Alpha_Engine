@@ -1,0 +1,8 @@
+{
+    "text_success": "Success: Shipping method has been set!",
+    "error_customer": "Warning: Customer details required!",
+    "error_shipping_address": "Warning: Shipping address required!",
+    "error_shipping": "Warning: There are no products that require shipping",
+    "error_no_shipping": "Warning: No Shipping options are available!",
+    "error_shipping_method": "Warning: Shipping method required!"
+}

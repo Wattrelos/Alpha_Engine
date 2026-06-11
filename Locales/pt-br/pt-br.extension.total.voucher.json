@@ -1,0 +1,8 @@
+{
+    "heading_title": "Utilizar vale presentes",
+    "text_voucher": "Vale presentes (%s)",
+    "text_success": "O vale presentes foi utilizado com sucesso!",
+    "entry_voucher": "Código do vale presentes",
+    "error_voucher": "Atenção: O vale presentes é inválido ou já foi utilizado!",
+    "error_empty": "Atenção: Digite o código do vale presentes!"
+}
