@@ -22,12 +22,20 @@
 		</div>
 	</div>
 
-	{% if success %}
-		<div class="alert alert-success" style="margin-bottom: 1.5rem; background: #d1fae5; border-left: 4px solid #34d399; color: #065f46; padding: 1rem; border-radius: 4px;">
-			<i class="fas fa-check-circle" style="margin-right: 8px;"></i>
-			Solicitação de devolução atualizada com sucesso!
-		</div>
-	{% endif %}
+	<div id="alert-container">
+		{% if success %}
+			<div class="alert alert-success" style="margin-bottom: 1.5rem; background: #d1fae5; border-left: 4px solid #34d399; color: #065f46; padding: 1rem; border-radius: 4px;">
+				<i class="fas fa-check-circle" style="margin-right: 8px;"></i>
+				Solicitação de devolução atualizada com sucesso!
+			</div>
+		{% endif %}
+		{% if error == 'concurrency_conflict' %}
+			<div class="alert alert-error" style="margin-bottom: 1.5rem; background: #fee2e2; border-left: 5px solid #ef4444; color: #991b1b; padding: 1rem; border-radius: 4px;">
+				<i class="fas fa-exclamation-triangle" style="margin-right: 8px;"></i>
+				Não foi possível salvar! Outro administrador alterou esta devolução enquanto você lia a página. Por favor, tente novamente com os dados atualizados.
+			</div>
+		{% endif %}
+	</div>
 
 	<!-- Grid de Informações Básicas e do Cliente -->
 	<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 1.5rem; margin-bottom: 1.5rem;">
@@ -64,7 +72,11 @@
 				</tr>
 				<tr style="height: 35px;">
 					<td class="text-muted">Última Modificação:</td>
-					<td class="text-semibold text-dark text-right">{{ return.date_modified|date('d/m/Y H:i') }}</td>
+					<td id="info_date_modified" class="text-semibold text-dark text-right">{{ return.date_modified|date('d/m/Y H:i') }}</td>
+				</tr>
+				<tr style="height: 35px;">
+					<td class="text-muted">Versão do Registro:</td>
+					<td id="info_version" class="text-semibold text-dark text-right">#{{ return.version }}</td>
 				</tr>
 			</table>
 		</div>
@@ -128,11 +140,11 @@
 			</div>
 			<div>
 				<span style="font-size: 0.8rem; text-transform: uppercase; color: var(--color-text-muted); display: block; margin-bottom: 4px;">Ação Resolutiva</span>
-				<span style="font-size: 0.95rem; font-weight: 600; color: #16a34a;">{{ return.action_name|default('A definir') }}</span>
+				<span id="current_action_name" style="font-size: 0.95rem; font-weight: 600; color: #16a34a;">{{ return.action_name|default('A definir') }}</span>
 			</div>
 			<div>
 				<span style="font-size: 0.8rem; text-transform: uppercase; color: var(--color-text-muted); display: block; margin-bottom: 4px;">Status Atual</span>
-				<span class="status-pill {% if 'Cancelado' in return.status_name or 'Recusado' in return.status_name or 'Rejeitado' in return.status_name %}status-cancelled{% elseif 'Completo' in return.status_name or 'Reembolsado' in return.status_name %}status-approved{% else %}status-pending{% endif %}" style="font-size: 0.8rem; padding: 4px 10px;">
+				<span id="current_status_pill" class="status-pill {% if 'Cancelado' in return.status_name or 'Recusado' in return.status_name or 'Rejeitado' in return.status_name %}status-cancelled{% elseif 'Completo' in return.status_name or 'Reembolsado' in return.status_name %}status-approved{% else %}status-pending{% endif %}" style="font-size: 0.8rem; padding: 4px 10px;">
 					{{ return.status_name }}
 				</span>
 			</div>
@@ -193,7 +205,8 @@
 			<h3 style="margin-top: 0; margin-bottom: 1.25rem; font-size: 1.1rem; border-bottom: 1px solid var(--color-border); padding-bottom: 0.75rem; color: var(--color-text-main);">
 				<i class="fas fa-edit" style="margin-right: 8px; color: var(--color-primary);"></i> Atualizar Solicitação
 			</h3>
-			<form action="/LPDHED2dC7Gjrg2b/devolucoes/{{ return.id }}/status" method="POST">
+			<form id="update-status-form" action="/LPDHED2dC7Gjrg2b/devolucoes/{{ return.id }}/status" method="POST">
+				<input type="hidden" name="version" id="return_version" value="{{ return.version }}">
 				
 				<!-- Novo Status -->
 				<div class="form-group" style="margin-bottom: 1rem;">
@@ -236,4 +249,36 @@
 		</div>
 
 	</div>
+
+	<script src="/js/updateReturnStatus.js"></script>
+	<script>
+		document.addEventListener('DOMContentLoaded', () => {
+			const form = document.getElementById('update-status-form');
+			if (form) {
+				form.addEventListener('submit', async (e) => {
+					e.preventDefault();
+					const id = "{{ return.id }}";
+					const statusSelect = document.getElementById('return_status_id');
+					const actionSelect = document.getElementById('return_action_id');
+					const commentTextarea = document.getElementById('comment');
+					const notifyCheckbox = document.getElementById('notify');
+					const versionInput = document.getElementById('return_version');
+
+					const novoStatus = statusSelect.value;
+					const acaoResolutiva = actionSelect.value;
+					const comment = commentTextarea.value;
+					const notify = notifyCheckbox.checked;
+					const versaoAtual = versionInput.value;
+
+					await updateReturnStatus(id, {
+						return_status_id: novoStatus,
+						return_action_id: acaoResolutiva,
+						comment: comment,
+						notify: notify,
+						version: versaoAtual
+					});
+				});
+			}
+		});
+	</script>
 {% endblock %}

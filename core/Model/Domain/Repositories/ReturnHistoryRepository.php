@@ -29,4 +29,9 @@ class ReturnHistoryRepository extends AbstractRepository
             ['dateAdded' => 'ASC']
         );
     }
+
+    public function save(\Alpha\Model\Domain\InterfaceEntity $entity): ?int
+    {
+        return $this->getMapper()->save($entity);
+    }
 }

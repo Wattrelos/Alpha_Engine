@@ -61,6 +61,7 @@ class ShowReturnAction extends BaseController implements \Alpha\Controller\Actio
 
         $queryParams = $request->getQueryParams();
         $success = isset($queryParams['success']) && $queryParams['success'] == '1';
+        $error = $queryParams['error'] ?? null;
 
         // 4. Render template
         $html = $this->getTemplate('admin/sales/return/show.html.twig', [
@@ -70,6 +71,7 @@ class ShowReturnAction extends BaseController implements \Alpha\Controller\Actio
             'statuses'   => $statuses,
             'actions'    => $actions,
             'success'    => $success,
+            'error'      => $error,
         ]);
 
         $response->getBody()->write($html);

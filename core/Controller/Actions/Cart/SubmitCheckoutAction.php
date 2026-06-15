@@ -26,8 +26,63 @@ class SubmitCheckoutAction implements ActionInterface
     public function __invoke(Request $request, Response $response, array $args): Response
     {
         $parsedBody = $request->getParsedBody();
+        if (empty($parsedBody)) {
+            $input = file_get_contents('php://input');
+            $parsedBody = json_decode($input, true) ?? [];
+        }
+
         $repositoryFactory = $this->container->get('alpha_repository_factory');
         $configSettings = $this->container->get('configSettings');
+        $routeParser = null;
+        try {
+            $routeContext = RouteContext::fromRequest($request);
+            $routeParser = $routeContext->getRouteParser();
+        } catch (\RuntimeException $e) {
+            // Routing not completed (e.g. testing context or direct controller call)
+        }
+        $lang = $request->getAttribute('lang', 'pt-br');
+
+        // Verificação de Idempotência
+        $idempotencyKey = $request->getHeaderLine('X-Idempotency-Key');
+        if (!empty($idempotencyKey)) {
+            $isDuplicate = false;
+            try {
+                $redis = new \Predis\Client([
+                    'host' => $_ENV['REDIS_HOST'] ?? '127.0.0.1',
+                    'port' => $_ENV['REDIS_PORT'] ?? 6379,
+                    'password' => ($_ENV['REDIS_PASSWORD'] ?? '') ?: null,
+                ]);
+                $redis->connect();
+                $redisKey = "idempotency:" . $idempotencyKey;
+                $result = $redis->executeRaw(['SET', $redisKey, 'processing', 'NX', 'EX', 300]);
+                if ($result !== 'OK' && $result !== true) {
+                    $isDuplicate = true;
+                }
+            } catch (\Throwable $e) {
+                // Fallback para sessão
+                if (!isset($_SESSION['idempotency_keys'])) {
+                    $_SESSION['idempotency_keys'] = [];
+                }
+                if (isset($_SESSION['idempotency_keys'][$idempotencyKey])) {
+                    $isDuplicate = true;
+                } else {
+                    $_SESSION['idempotency_keys'][$idempotencyKey] = time() + 300;
+                }
+            }
+
+            if ($isDuplicate) {
+                if ($this->isJsonRequest($request)) {
+                    $response->getBody()->write(json_encode([
+                        'error' => 'DUPLICATE_REQUEST',
+                        'message' => 'Processamento em andamento.'
+                    ]));
+                    return $response->withHeader('Content-Type', 'application/json')->withStatus(422);
+                }
+                $_SESSION['error'] = 'Processamento em andamento. Por favor, aguarde.';
+                $errorUrl = $routeParser ? $routeParser->urlFor('checkout.index', ['lang' => $lang]) : '/' . $lang . '/checkout';
+                return $response->withHeader('Location', $errorUrl)->withStatus(302);
+            }
+        }
 
         // Buscar GeoZoneRepository para obter IDs a partir de siglas/UF
         /** @var \Alpha\Model\Domain\Repositories\GeoZoneRepository $zoneRepository */
@@ -179,9 +234,7 @@ class SubmitCheckoutAction implements ActionInterface
         /** @var OrderRepository $orderRepository */
         $orderRepository = $repositoryFactory->get(OrderRepository::class);
 
-        $routeContext = RouteContext::fromRequest($request);
-        $routeParser = $routeContext->getRouteParser();
-        $lang = $request->getAttribute('lang', 'pt-br');
+
 
         try {
             // 4. Montar o DTO do Pedido manualmente (Removido do Repositório)
@@ -302,12 +355,34 @@ class SubmitCheckoutAction implements ActionInterface
             // Grava o order_id na sessão para consulta futura na página de sucesso
             $_SESSION['last_order_id'] = $orderId;
 
-            $successUrl = $routeParser->urlFor('checkout.success', ['lang' => $lang]);
+            if ($this->isJsonRequest($request)) {
+                $response->getBody()->write(json_encode([
+                    'success' => true,
+                    'id' => $orderId
+                ]));
+                return $response->withHeader('Content-Type', 'application/json')->withStatus(201);
+            }
+
+            $successUrl = $routeParser ? $routeParser->urlFor('checkout.success', ['lang' => $lang]) : '/' . $lang . '/checkout/sucesso';
             return $response->withHeader('Location', $successUrl)->withStatus(302);
         } catch (\Exception $e) {
+            if ($this->isJsonRequest($request)) {
+                $response->getBody()->write(json_encode([
+                    'error' => 'ORDER_CREATION_FAILED',
+                    'message' => $e->getMessage()
+                ]));
+                return $response->withHeader('Content-Type', 'application/json')->withStatus(500);
+            }
             $_SESSION['error'] = 'Erro ao processar o seu pedido: ' . $e->getMessage();
-            $errorUrl = $routeParser->urlFor('checkout.index', ['lang' => $lang]);
+            $errorUrl = $routeParser ? $routeParser->urlFor('checkout.index', ['lang' => $lang]) : '/' . $lang . '/checkout';
             return $response->withHeader('Location', $errorUrl)->withStatus(302);
         }
+    }
+
+    private function isJsonRequest(Request $request): bool
+    {
+        $accept = $request->getHeaderLine('Accept');
+        $contentType = $request->getHeaderLine('Content-Type');
+        return str_contains($accept, 'application/json') || str_contains($contentType, 'application/json');
     }
 }

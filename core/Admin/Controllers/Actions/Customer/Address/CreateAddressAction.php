@@ -80,7 +80,7 @@ class CreateAddressAction extends BaseController implements \Alpha\Controller\Ac
 
         // Fetch active countries using GeoCountryMapper
         /** @var \Alpha\Mappers\EntityMappers\GeoCountryMapper $countryMapper */
-        $countryMapper = $addressRepo->mapperFactory->get(\Alpha\Mappers\EntityMappers\GeoCountryMapper::class);
+        $countryMapper = $this->getMapper(\Alpha\Mappers\EntityMappers\GeoCountryMapper::class);
         $countries = array_map(fn($c) => [
             'id' => $c->getId(),
             'name' => $c->getName()

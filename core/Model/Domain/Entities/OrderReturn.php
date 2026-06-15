@@ -13,8 +13,9 @@ use Alpha\Model\Domain\Entities\Customer\Customer;
  * 
  * @Table(name="return")
  */
-class OrderReturn extends BaseEntity
+class OrderReturn extends BaseEntity implements \Alpha\Model\Domain\VersionedEntityInterface
 {
+    public const TABLE_NAME = 'product_return';
     private int $orderId = 0;
     private int $customerId = 0;
     private string $firstname = '';
@@ -35,6 +36,7 @@ class OrderReturn extends BaseEntity
     private string $dateOrdered = '';
     private string $dateAdded = '';
     private string $dateModified = '';
+    private int $version = 1;
 
     #[ManyToOne(targetEntity: Order::class, foreignKey: 'orderId')]
     private ?Order $order = null;
@@ -104,6 +106,9 @@ class OrderReturn extends BaseEntity
 
     public function getDateModified(): string { return $this->dateModified; }
     public function setDateModified(string $val): self { $this->dateModified = $val; return $this; }
+
+    public function getVersion(): int { return $this->version; }
+    public function setVersion(int $val): self { $this->version = $val; return $this; }
 
     public function getOrder(): ?Order { return $this->order; }
     public function getCustomer(): ?Customer { return $this->customer; }

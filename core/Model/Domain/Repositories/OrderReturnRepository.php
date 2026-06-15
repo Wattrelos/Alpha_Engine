@@ -144,4 +144,9 @@ class OrderReturnRepository extends AbstractRepository implements BaseRepository
         $res = $this->getMapper()->search($criteria);
         return $res[0] ?? null;
     }
+
+    public function save(InterfaceEntity $entity): ?int
+    {
+        return $this->getMapper()->save($entity);
+    }
 }

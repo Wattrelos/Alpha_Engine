@@ -599,6 +599,9 @@ class DataAccessObject
             return $entity->getId();
         } catch (Exception $e) {
             if ($conn && $conn->inTransaction()) $conn->rollBack();
+            if ($e instanceof ConcurrencyException) {
+                throw $e;
+            }
             error_log($e->getMessage());
             return null;
         }
@@ -633,6 +636,8 @@ class DataAccessObject
                 }
             }
         }
+        $isVersioned = $entity instanceof \Alpha\Model\Domain\VersionedEntityInterface;
+        $currentVersion = $isVersioned ? $entity->getVersion() : null;
 
         $attempts = 0;
         while ($attempts < 5) {
@@ -641,6 +646,9 @@ class DataAccessObject
 
             foreach ($columnsMap as $col => $val) {
                 if ($val !== null) {
+                    if ($isVersioned && $col === 'version') {
+                        continue;
+                    }
                     $setClauses[] = "`$col` = ?";
 
                     if ($val instanceof \DateTimeInterface) {
@@ -650,6 +658,10 @@ class DataAccessObject
                 }
             }
 
+            if ($isVersioned) {
+                $setClauses[] = "`version` = `version` + 1";
+            }
+
             if (empty($setClauses)) return;
 
             $sql = "UPDATE `" . $this->getTableNameForClass($clazz) .
@@ -657,10 +669,25 @@ class DataAccessObject
 
             $values[] = $entity->getId();
 
+            if ($isVersioned) {
+                $sql .= " AND `version` = ?";
+                $values[] = $currentVersion;
+            }
+
             try {
                 $startTime = microtime(true);
-                $conn->prepare($sql)->execute($values);
-                $this->logDebugQuery($sql, $values, $startTime, $entity->getId(), ['action' => 'UPDATE']);
+                $stmt = $conn->prepare($sql);
+                $stmt->execute($values);
+                $affectedRows = $stmt->rowCount();
+                $this->logDebugQuery($sql, $values, $startTime, $entity->getId(), ['action' => 'UPDATE', 'affected_rows' => $affectedRows]);
+
+                if ($isVersioned && $affectedRows === 0) {
+                    throw new ConcurrencyException("Falha de concorrência: o registro foi alterado por outro usuário.");
+                }
+
+                if ($isVersioned) {
+                    $entity->setVersion($currentVersion + 1);
+                }
                 return;
             } catch (PDOException $e) {
                 // Auto-Healing: Resiliência contra colunas legadas inexistentes

@@ -1,0 +1,65 @@
+@startuml "Idempotency Failure Flow"
+autonumber "<b>00:"
+
+box "Frontend / Web"
+    actor "Cliente (Cliques Duplos)" as Cliente
+    participant "Frontend App (JS)" as Front
+end box
+
+box "Backend / Infraestrutura"
+    participant "Slim Action" as Action
+    participant "Domain Service" as Domain
+    database "Cache (Redis)" as Cache
+    database "Database" as DB
+end box
+
+' --- PRIMEIRA REQUISICAO (A caminho) ---
+Cliente -> Front : Clique 1 (Botão Comprar)
+activate Front
+    Front -> Front : Gera Token Único (UUID)
+    Front -> Action : HTTP POST /{lang}/checkout [Token: UUID-XYZ]
+    activate Action
+        Action -> Domain : verificarIdempotencia(UUID-XYZ)
+        activate Domain
+            Domain -> Cache : SETNX(UUID-XYZ, "PROCESSING", expire: 5min)
+            activate Cache
+                Cache --> Domain : OK (Chave não existia)
+            deactivate Cache
+            Domain --> Action : Token Válido (Segue o fluxo)
+        deactivate Domain
+        
+        ' Simulando lentidão ou processamento normal da requisição A
+        Action -> DB : Executa INSERT do Pedido...
+        activate DB
+        
+' --- SEGUNDA REQUISICAO (O Clique Duplo) ---
+Cliente -> Front : Clique 2 (Botão Comprar rápido)
+    Front -> Action : HTTP POST /{lang}/checkout [Token: UUID-XYZ]
+    activate Action
+        Action -> Domain : verificarIdempotencia(UUID-XYZ)
+        activate Domain
+            Domain -> Cache : SETNX(UUID-XYZ, "PROCESSING")
+            activate Cache
+                Cache --> Domain : ERR (Chave já existe!)
+            deactivate Cache
+            
+            ' O domínio identifica a duplicidade e barra imediatamente
+            Domain --> Action : Throws DuplicateRequestException
+        deactivate Domain
+        
+        ' Backend responde a requisição B com erro controlado
+        Action --> Front : HTTP 422 Unprocessable Entity { error: "DUPLICATE_REQUEST", message: "Processamento em andamento." }
+    deactivate Action
+
+        ' Conclusão tardia da primeira requisição A
+        DB --> Action : DB_Success
+        deactivate DB
+        Action --> Front : HTTP 201 Created (Pedido 1 Criado com Sucesso!)
+    deactivate Action
+
+    ' TRATAMENTO NO FRONTEND
+    Front -> Front : Ignora o erro HTTP 422 da requisição duplicada
+    Front -> Front : Processa o HTTP 201 da requisição original
+    Front -> Cliente : Redireciona para a tela de Sucesso do Pedido
+deactivate Front
+@enduml

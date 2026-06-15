@@ -69,24 +69,41 @@ endif
 
 ' O fluxo unifica novamente para o processamento do pedido
 
-|Sistema|
-:Recebe requisição POST /checkout;
-:Valida sessão e dados do carrinho;
+|Cliente|
+:Clica no botão "Confirmar Compra" (Finalizar);
+:JS intercepta o submit do formulário;
+:Gera UUID único para a tentativa e desabilita botão (spinner);
+:Envia HTTP POST /{lang}/checkout com 'X-Idempotency-Key';
 
-if (Dados Válidos?) then (Não)
+|Sistema|
+:Recebe requisição POST /{lang}/checkout;
+if (Verifica Idempotência via Redis (SETNX)?) then (Duplicada)
+    :Retorna HTTP 422 Unprocessable Entity\n{error: "DUPLICATE_REQUEST"};
     |Cliente|
-    :Exibe mensagem de erro nos dados;
+    :JS ignora o HTTP 422 silenciosamente\ne aguarda a requisição original;
     detach
-end if
+else (Primeiro envio)
+    |Sistema|
+    :Valida sessão e dados do carrinho;
+    if (Dados Válidos?) then (Não)
+        :Retorna HTTP 400/500 ou erro de validação;
+        |Cliente|
+        :Exibe mensagem de erro nos dados;
+        :JS reativa o botão de confirmação;
+        detach
+    end if
+endif
 
 |Sistema|
 :Inicia Transação via Unit of Work;
 :Verifica disponibilidade de estoque no Domínio;
 
 if (Estoque Disponível?) then (Não)
-    :Cancela operação;
+    :UoW executa ROLLBACK da transação;
+    :Retorna erro de indisponibilidade de estoque;
     |Cliente|
     :Exibe aviso de "Produto Esgotado";
+    :JS reativa o botão de confirmação;
     detach
 end if
 
@@ -97,10 +114,10 @@ end if
 if (Pagamento Aprovado?) then (Não)
     :UoW executa ROLLBACK da transação;
     :Libera o estoque reservado;
-    :Renderiza página de falha no pagamento;
+    :Retorna erro de falha no pagamento;
     |Cliente|
     :Exibe erro "Falha no Pagamento";
-    :Oferece opção de trocar a forma de pagamento;
+    :JS reativa o botão de confirmação;
     detach
 end if
 
@@ -115,9 +132,11 @@ end if
 
 |Sistema|
 :Dispara evento de e-mail de confirmação;
-:Renderiza tela de sucesso com Twig;
+:Retorna HTTP 201 Created (ou redirecionamento com ID);
 
 |Cliente|
+:JS limpa carrinho local (clearGuestCartAfterOrder);
+:Redireciona para /{lang}/checkout/sucesso;
 :Visualiza confirmação do pedido na tela;
 stop
 

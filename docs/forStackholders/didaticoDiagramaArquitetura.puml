@@ -1,0 +1,159 @@
+@startuml
+' ─────────────────────────────────────────────────────────────────────────────
+' Alpha Engine — Diagrama de Arquitetura
+' Atualizado para refletir o estado atual do projeto (Slim 4, PSR-11, sem legado)
+' ─────────────────────────────────────────────────────────────────────────────
+<style>
+rectangle {
+    BackgroundColor White
+    BorderColor #555555
+}
+arrow {
+    LineColor #333333
+}
+note {
+    BorderColor #aaaaaa
+    BackgroundColor #fffde7
+}
+</style>
+skinparam packageStyle rectangle
+
+' ═════════════════════════════════════════════════════════════════════════════
+' CAMADA 0 — Entrypoint & Framework
+' ═════════════════════════════════════════════════════════════════════════════
+package "0. Entrypoint & Slim 4 Framework" as Slim #dce8f5 {
+    rectangle "public_html/index.php\n(Bootstrap: AppBootstrap, Twig, Globals)" as Entrypoint
+    rectangle "Config/Routes.php\n(Slim Route Definitions)" as Routes
+    rectangle "AppContainer (PSR-11)\n[Padrão: Service Locator + Reflection DI]\n(bind / get / resolve)" as AppContainer
+}
+
+' ═════════════════════════════════════════════════════════════════════════════
+' CAMADA 1 — Middleware Stack
+' ═════════════════════════════════════════════════════════════════════════════
+package "1. Middleware Stack" as Middlewares #f3e5f5 {
+    rectangle "LanguageMiddleware\n(Injeta lang, logged, cart_count no Twig)" as LangMW
+    rectangle "AdminSessionMiddleware\n(Valida sessão Redis/PHP, injeta logged_admin no Twig)" as AdminMW
+    rectangle "SessionMiddleware\n(Protege rotas /account/* do cliente)" as SessionMW
+    rectangle "LegacyRouteRedirectMiddleware\n(Redireciona URLs antigas)" as LegacyMW
+}
+
+' ═════════════════════════════════════════════════════════════════════════════
+' CAMADA 2A — Actions do Front-end (E-commerce)
+' ═════════════════════════════════════════════════════════════════════════════
+package "2a. Actions — Front-end (E-commerce)" as FrontActions #e1f5fe {
+    rectangle "Actions (implements ActionInterface)\n[Ex: ShowProductAction, AddCartAction]\n(Injeção de dependência via construtor)" as FrontAction
+    rectangle "Auth Services\n[AdminAuthService, CustomerAuthService]\n(Autenticação + criação de sessão)" as AuthServices
+}
+
+' ═════════════════════════════════════════════════════════════════════════════
+' CAMADA 2B — Actions do Painel Admin
+' ═════════════════════════════════════════════════════════════════════════════
+package "2b. Actions — Painel Administrativo" as AdminActions #fff3e0 {
+    rectangle "Actions (extends BaseController implements ActionInterface)\n[Ex: ListProductsAction, EditOrderAction]\n(Herda getRepository(), getMapper(), getTemplate(), remember())" as AdminAction
+    rectangle "BaseController\n[Padrão: Template Method]\n(Master Controller: expõe atalhos de Repositório, Cache e View)" as BaseCtrl
+}
+
+' ═════════════════════════════════════════════════════════════════════════════
+' CAMADA 3 — Apresentação (Twig)
+' ═════════════════════════════════════════════════════════════════════════════
+package "3. Apresentação (Twig)" as Apresentacao #e8f5e9 {
+    rectangle "TwigEnvironment\n(Globals: lang, settings, logged_admin, etc.)\n+ UrlExtension, ViewHelper" as Twig
+    rectangle "Templates (.html.twig)\nresources/views/ — Front-end\nresources/views/admin/ — Admin" as Views
+}
+
+' ═════════════════════════════════════════════════════════════════════════════
+' CAMADA 4 — Domínio (Repositórios + Entidades)
+' ═════════════════════════════════════════════════════════════════════════════
+package "4. Camada de Domínio (DDD)" as Dominio #e8f5e9 {
+    rectangle "RepositoryFactory\n[Padrão: Factory + Singleton]" as RepoFactory
+    rectangle "Repositories (extends AbstractRepository)\n[Ex: ProductRepository, OrderRepository]\n[Padrão: Repository, Identity Map, Cache opcional]" as Repos
+    rectangle "Entities (extends BaseEntity)\n[Ex: User, Order, Product]\n[Padrão: DTO estruturado]" as Entities
+    rectangle "AlphaContainer\n[Padrão: Route-to-Repository Resolver]\n(Mapeia rotas legadas ex: 'catalog/product' → Repository/Mapper)" as AlphaContainer
+}
+
+' ═════════════════════════════════════════════════════════════════════════════
+' CAMADA 5 — Infraestrutura de Persistência
+' ═════════════════════════════════════════════════════════════════════════════
+package "5. Infraestrutura de Persistência" as Persistencia #fff3e0 {
+    rectangle "MapperFactory\n[Padrão: Factory + Singleton]" as MapperFactory
+    rectangle "Entity Mappers (extends BaseMapper)\n[Ex: ProductMapper, OrderMapper]\n[Padrão: Data Mapper + Hidratação automática]" as Mappers
+    rectangle "Observers (Mappers/Observers/)\n[Ex: OrderEmailObserver]\n[Padrão: Observer]" as Observers
+    rectangle "DataAccessObject (DAO)\n[Padrão: DAO + Unit of Work]\n(executeQuery, hydrate, paginate, Identity Map)" as DAO
+    rectangle "QueryBuilder\n[Padrão: Builder]\n(Montagem segura de SQL parametrizado)" as QB
+}
+
+' ═════════════════════════════════════════════════════════════════════════════
+' CAMADA 6 — Suporte & Infraestrutura
+' ═════════════════════════════════════════════════════════════════════════════
+package "6. Suporte & Infraestrutura" as Infra #f3e5f5 {
+    database "MySQL 8.0+\n(snake_case, PK/FK bigint)" as MySQL
+    rectangle "CacheStrategy\n[FilesystemCache / Redis]\n[Padrão: Strategy]" as Cache
+    rectangle "Support & Utils\n(Language, Currency, Tax, Customer,\nImagePresenter, StoreSettings, PSR-4)" as Support
+}
+
+' ─────────────────────────────────────────────────────────────────────────────
+' RELACIONAMENTOS
+' ─────────────────────────────────────────────────────────────────────────────
+
+' Bootstrap
+Entrypoint --> Routes
+Entrypoint --> AppContainer
+Entrypoint --> Twig
+
+' Slim Routes disparam Middlewares → Actions
+Routes --> LangMW
+Routes --> AdminMW
+Routes --> SessionMW
+Routes --> LegacyMW
+Routes --> FrontAction
+Routes --> AdminAction
+
+' AppContainer resolve dependências das Actions
+AppContainer ..> FrontAction : Resolve (Reflection DI)
+AppContainer ..> AdminAction : Resolve (Reflection DI)
+
+' Middlewares injetam globals no Twig
+LangMW --> Twig
+AdminMW --> Twig
+
+' Front-end Actions
+FrontAction --> Twig
+FrontAction --> Repos
+FrontAction --> AuthServices
+
+' Admin Actions
+AdminAction --> BaseCtrl
+BaseCtrl --> RepoFactory
+BaseCtrl --> Twig
+
+' Auth Services acessam repositórios
+AuthServices --> Repos
+
+' AlphaContainer: resolve modelo legado → Repositório/Mapper moderno
+AlphaContainer --> Repos
+AlphaContainer --> Mappers
+
+' Twig renderiza Views
+Twig --> Views
+
+' Repositórios: Factory + Instância
+RepoFactory ..> Repos : Instancia
+Repos --> Entities
+Repos --> MapperFactory
+Repos --> Cache
+
+' Mappers: Factory + Instância + Observers
+MapperFactory ..> Mappers : Instancia
+Mappers ..> Observers : Notifica
+Mappers --> DAO
+
+' Persistência
+DAO --> QB
+DAO --> MySQL
+QB --> MySQL
+
+' Suporte transversal
+Repos --> Support
+FrontAction --> Support
+
+@enduml

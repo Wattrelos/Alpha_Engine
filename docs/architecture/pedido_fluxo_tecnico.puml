@@ -1,0 +1,166 @@
+@startuml "Fluxo_Completo_Gravacao_e_Leitura_Reversa_Otimizado"
+autonumber "<b>00:"
+
+' --- Nova Sintaxe de Configuração Semântica via CSS ---
+<style>
+sequenceDiagram {
+  ' Substitui o 'skinparam BoxPadding 15' e 'ParticipantPadding 15'
+  box {
+    Padding 15
+  }
+  participant {
+    Padding 15
+  }
+  ' Substitui o 'skinparam MaxMessageSize 250'
+  arrow {
+    MaximumWidth 250
+  }
+  ' Remove o fundo sólido de TODOS os blocos (alt, opt, loop, group) 
+  ' garantindo que as raias/swimlanes nunca fiquem cobertas
+  group {
+    BackgroundColor transparent
+  }
+}
+</style>
+
+header "Caso de Uso: Fechamento de Pedidos (Checkout) com Controle de Idempotência"
+title "Fluxo Didático do Processo de Compra e Criação de Pedido"
+
+box "Camada 1: Apresentação e Infraestrutura (HTTP / Controlador / View)" #E0F7FA
+    actor "Cliente" as Cliente
+    participant "Slim Middleware" as Middleware
+    participant "Slim Action" as Action
+    participant "Twig Engine" as Twig
+end box
+
+box "Camada 2: Domínio e Aplicação (Regras de Negócio e Serviços)" #FFF9C4
+    participant "Domain Service" as Domain
+    participant "Repository" as Repo
+end box
+
+box "Camada 3: Persistência de Dados (Banco de Dados / ORM)" #FFEBEE
+    participant "Unit Of Work" as UoW
+    participant "Data Mapper" as Mapper
+    participant "Query Builder" as QB
+    participant "Dynamic DAO" as DAO
+    database "Database" as DB
+end box
+
+' === INÍCIO DO FLUXO ===
+Cliente -> Middleware : Requisição HTTP
+activate Middleware
+    Middleware -> Action : __invoke(Request)
+    activate Action
+        
+    alt ROTA DE LEITURA (HTTP GET /pedido/{id})
+        note over Cliente, Action: **[Fase de Leitura - HTTP GET /pedido/{id}]**\nO cliente deseja visualizar os detalhes de um pedido existente.
+        
+        Action -> Repo : findById(id)
+        activate Repo
+            Repo -> QB : select()->where('id', id)
+            activate QB
+                QB -> QB : buildSQL()
+                QB --> Repo : SQL String
+            deactivate QB
+            
+            Repo -> DAO : query(SQL)
+            activate DAO
+                DAO -> DB : SELECT * FROM pedidos ...
+                activate DB
+                DB --> DAO : Raw Data (Array/Rows)
+                deactivate DB
+                DAO --> Repo : Raw Data
+            deactivate DAO
+            
+            note over Repo, Mapper: **Mapeamento Reverso (Hydration):** Os dados da tabela do banco de dados\nsão convertidos de volta em um objeto rico do domínio.
+            Repo -> Mapper : mapToDomain(RawData)
+            activate Mapper
+                Mapper --> Repo : Entity (Objeto de Domínio)
+            deactivate Mapper
+            Repo --> Action : Entity
+        deactivate Repo
+        
+        Action -> Twig : render('detalhes.twig', Entity)
+        activate Twig
+            Twig --> Action : HTML / JSON Response
+        deactivate Twig
+        
+    else ROTA DE ESCRITA (HTTP POST /{lang}/checkout)
+        note over Cliente, Action: **[Fase de Escrita - HTTP POST /{lang}/checkout]**\nO cliente envia o formulário de finalização de compra.\nPara evitar cliques duplos (double-click), é utilizado o cabeçalho 'X-Idempotency-Key'.
+
+        note over Action, Domain: **Verificação de Idempotência:** Impede que cliques duplos criem pedidos idênticos.\nO token enviado no cabeçalho é salvo no Redis de forma atômica (SET com NX e EX).
+        Action -> Domain : verificarIdempotencia(RequestToken)
+        activate Domain
+            Domain --> Action : Token Valido / Novo Pedido
+        deactivate Domain
+
+        note over Action, Repo: **Processamento em Memória Primeiro:** Toda a preparação do pedido,\ncálculo de totais, validação de cupons e DTO é feita antes de abrir transação\nno banco, evitando travar conexões ou causar gargalos.
+        Action -> Domain : processarRegraNegocio()
+        activate Domain
+            Domain -> Repo : save(Entity)
+            activate Repo
+                note over Repo, UoW: **Unit of Work (Unidade de Trabalho):** Registra o novo pedido na memória\npara ser persistido na transação unificada posterior.
+                Repo -> UoW : registerNew(Entity)
+                activate UoW
+                    UoW --> Repo : OK
+                deactivate UoW
+                Repo --> Domain : OK
+            deactivate Repo
+            Domain --> Action : StateUpdated
+        deactivate Domain
+        
+        note over Action, UoW: **Escopo Transacional Curto:** A transação de escrita é aberta no MySQL\napenas no momento de salvar fisicamente, minimizando tempo de lock.
+        Action -> UoW : commit()
+        activate UoW
+            
+            group #E8F5E9 Bloco Try [Escopo de Persistência Física]
+                UoW -> DB : BEGIN TRANSACTION
+                
+                UoW -> Mapper : mapToDatabase(Entity)
+                activate Mapper
+                    Mapper -> QB : insertInto()->values()
+                    activate QB
+                        QB -> QB : buildSQL()
+                        QB --> Mapper : SQL + Bindings
+                    deactivate QB
+                    
+                    Mapper -> DAO : execute(SQL, Bindings)
+                    activate DAO
+                        DAO -> DB : INSERT INTO pedidos ...
+                        activate DB
+                        DB --> DAO : DB_Success
+                        deactivate DB
+                        DAO --> Mapper : Raw Data
+                    deactivate DAO
+                    Mapper --> UoW : Mapping Done
+                deactivate Mapper
+                
+                UoW -> DB : COMMIT
+                UoW --> Action : Committed
+                
+            else #FFF8DC Bloco Catch [Tratamento de Exceções / Rollback]
+                note over UoW, DB: Se houver qualquer falha física ou lógica durante a persistência,\na transação é revertida integralmente no MySQL.
+                UoW -> DB : ROLLBACK TRANSACTION
+                UoW --> Action : Throws Exception (Rollback Executed)
+            end
+        deactivate UoW
+
+        alt Fluxo de Sucesso
+            note over Action, Twig: **Finalização do Pedido:** O carrinho local é limpo e a resposta HTTP é montada.
+            Action -> Twig : render('sucesso.twig')
+            activate Twig
+                Twig --> Action : HTML Response
+            deactivate Twig
+        else Fluxo de Falha (Exception Caught)
+            Action -> Twig : render('erro.twig')
+            activate Twig
+                Twig --> Action : HTML Error Page
+            deactivate Twig
+        end
+    end
+
+    Action --> Middleware : Response Object
+    deactivate Action
+    Middleware --> Cliente : HTTP Response
+deactivate Middleware
+@enduml
