@@ -1,0 +1,69 @@
+@startuml Diagrama_Classes_Produto
+
+' --- Estilo CSS Moderno (Corrigido para PlantUML) ---
+<style>
+diagram {
+  BackgroundColor #FAFAFA
+  LineColor #263238
+}
+class {
+  BackgroundColor #E8F5E9
+  BorderColor #2E7D32
+  FontName Helvetica Neue
+  FontSize 13
+  HeaderBackgroundColor #A5D6A7
+  LineColor #37474F
+}
+</style>
+
+package "Camada de Domínio (Product Graph)" {
+  class Product {
+    - int id
+    - string model
+    - string sku
+    - float price
+    - int quantity
+    - bool status
+    + getPrice() : float
+    + isAvailable() : bool
+  }
+
+  class ProductDescription {
+    - int language_id
+    - string name
+    - string description
+  }
+
+  class Category {
+    - int id
+    - int parent_id
+    - bool status
+  }
+
+  class Manufacturer {
+    - int id
+    - string name
+  }
+
+  class ProductImage {
+    - int id
+    - string image
+    - int sort_order
+  }
+
+  class ProductOption {
+    - int id
+    - float price
+    - string price_prefix
+    - int quantity
+  }
+}
+
+' --- Relações ---
+Product "1" *-- "1..*" ProductDescription : "traduções"
+Product "0..*" -up- "0..1" Manufacturer : "fabricado por"
+Product "0..*" -- "0..*" Category : "pertence a"
+Product "1" *-- "0..*" ProductImage : "contém"
+Product "1" *-- "0..*" ProductOption : "possui variantes"
+
+@enduml

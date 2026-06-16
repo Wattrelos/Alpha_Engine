@@ -1,22 +1,29 @@
 @startuml "Diagrama_Casos_De_Uso_Cliente"
 
-' --- Estilo CSS Moderno ---
+' --- Estilo CSS Moderno (Corrigido para PlantUML) ---
 <style>
-usecaseDiagram {
+root {
     BackgroundColor #FAFAFA
-    BorderColor #37474F
-    LineColor #263238
     FontName "Helvetica Neue"
     FontSize 13
-    
-    usecase {
-        BackgroundColor #E3F2FD
-        BorderColor #1565C0
-    }
-    actor {
-        BackgroundColor #FFF3E0
-        BorderColor #E65100
-    }
+}
+arrow {
+    LineColor #263238
+}
+actor {
+    BackgroundColor #FFF3E0
+    BorderColor #E65100
+    LineColor #E65100
+}
+usecase {
+    BackgroundColor #E3F2FD
+    BorderColor #1565C0
+    LineColor #1565C0
+}
+rectangle {
+    BackgroundColor #FFFFFF
+    BorderColor #37474F
+    LineColor #37474F
 }
 </style>
 
