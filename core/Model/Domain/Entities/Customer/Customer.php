@@ -22,7 +22,6 @@ class Customer extends BaseEntity
     private string $email = '';
     private string $telephone = '';
     private string $password = '';
-    private string $customField = '';
     private bool   $newsletter = false;
     private string $ip = '';
     private bool   $status = true;
@@ -160,22 +159,6 @@ class Customer extends BaseEntity
     public function setPassword(string $password): self
     {
         $this->password = $password;
-        return $this;
-    }
-
-    public function getCustomField(): string
-    {
-        return $this->customField;
-    }
-
-    public function getCustomFieldArray(): array
-    {
-        return json_decode($this->customField, true) ?: [];
-    }
-
-    public function setCustomField(string|array $customField): self
-    {
-        $this->customField = is_array($customField) ? json_encode($customField) : $customField;
         return $this;
     }
 

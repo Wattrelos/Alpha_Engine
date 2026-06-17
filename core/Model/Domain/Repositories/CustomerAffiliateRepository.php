@@ -91,7 +91,6 @@ class CustomerAffiliateRepository extends AbstractRepository implements BaseRepo
             'bank_swift_code'     => $entity->getBankSwiftCode(),
             'bank_account_name'   => $entity->getBankAccountName(),
             'bank_account_number' => $entity->getBankAccountNumber(),
-            'custom_field'        => $entity->getCustomFieldArray(),
             'status'              => $entity->isStatus(),
             'date_added'          => $entity->getDateAdded(),
         ];

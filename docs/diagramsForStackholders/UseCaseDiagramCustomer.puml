@@ -46,6 +46,7 @@ rectangle "Alpha Engine - Loja Virtual" {
     usecase "Aplicar Cupom de Desconto" as UC_Coupon
     usecase "Comprar como Visitante (Guest)" as UC_Checkout_Ext
     usecase "Acompanhar Pedidos" as UC_Orders
+    usecase "Solicitar Devolução de Produto" as UC_Return
     usecase "Processar Pagamento" as UC_Payment
 }
 
@@ -67,6 +68,7 @@ UC_Checkout_Ext .up.> UC_Checkout : <<extend>>
 
 ' Ações Exclusivas do Cliente Logado
 Customer --> UC_Orders
+Customer --> UC_Return
 
 ' Associação do Sistema (Externa)
 System --> UC_Payment

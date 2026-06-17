@@ -207,7 +207,6 @@
 │   │   │   ├── CouponMapper.php
 │   │   │   ├── CronMapper.php
 │   │   │   ├── CurrencyMapper.php
-│   │   │   ├── CustomFieldMapper.php
 │   │   │   ├── CustomerAddressesMapper.php
 │   │   │   ├── CustomerAffiliateMapper.php
 │   │   │   ├── CustomerAuthorizeMapper.php
@@ -262,7 +261,6 @@
 │   │   │   ├── TopicMapper.php
 │   │   │   ├── TotalMapper.php
 │   │   │   ├── TranslationMapper.php
-│   │   │   ├── UploadMapper.php
 │   │   │   ├── UserAuthorizeMapper.php
 │   │   │   ├── UserGroupMapper.php
 │   │   │   ├── UserLoginMapper.php
@@ -341,11 +339,6 @@
 │   │       │   ├── CouponProduct.php
 │   │       │   ├── Cron.php
 │   │       │   ├── Currency.php
-│   │       │   ├── CustomField.php
-│   │       │   ├── CustomFieldCustomerGroup.php
-│   │       │   ├── CustomFieldDescription.php
-│   │       │   ├── CustomFieldValue.php
-│   │       │   ├── CustomFieldValueDescription.php
 │   │       │   ├── Customer/
 │   │       │   │   ├── Customer.php
 │   │       │   │   ├── CustomerActivity.php
@@ -365,9 +358,6 @@
 │   │       │   │   ├── CustomerToken.php
 │   │       │   │   ├── CustomerTransaction.php
 │   │       │   │   └── CustomerWishlist.php
-│   │       │   ├── Download.php
-│   │       │   ├── DownloadDescription.php
-│   │       │   ├── DownloadReport.php
 │   │       │   ├── Event.php
 │   │       │   ├── Extension.php
 │   │       │   ├── ExtensionInstall.php
@@ -428,7 +418,6 @@
 │   │       │   ├── ProductReward.php
 │   │       │   ├── ProductSubscription.php
 │   │       │   ├── ProductToCategory.php
-│   │       │   ├── ProductToDownload.php
 │   │       │   ├── ProductToLayout.php
 │   │       │   ├── ProductToStore.php
 │   │       │   ├── ProductViewed.php
@@ -465,7 +454,6 @@
 │   │       │   ├── TopicToLayout.php
 │   │       │   ├── TopicToStore.php
 │   │       │   ├── Translation.php
-│   │       │   ├── Upload.php
 │   │       │   ├── User.php
 │   │       │   ├── UserAuthorize.php
 │   │       │   ├── UserGroup.php
@@ -501,7 +489,6 @@
 │   │           ├── CouponRepository.php
 │   │           ├── CronRepository.php
 │   │           ├── CurrencyRepository.php
-│   │           ├── CustomFieldRepository.php
 │   │           ├── CustomerAddressesRepository.php
 │   │           ├── CustomerAffiliateRepository.php
 │   │           ├── CustomerAuthorizeRepository.php
@@ -510,7 +497,6 @@
 │   │           ├── CustomerRewardRepository.php
 │   │           ├── CustomerTokenRepository.php
 │   │           ├── CustomerTransactionRepository.php
-│   │           ├── DownloadRepository.php
 │   │           ├── EventRepository.php
 │   │           ├── ExtensionRepository.php
 │   │           ├── FooterRepository.php
@@ -551,7 +537,6 @@
 │   │           ├── TaxRuleRepository.php
 │   │           ├── ThemeRepository.php
 │   │           ├── TranslationRepository.php
-│   │           ├── UploadRepository.php
 │   │           ├── UserAuthorizeRepository.php
 │   │           ├── UserGroupRepository.php
 │   │           ├── UserLoginRepository.php
@@ -608,7 +593,6 @@
 │       │   │   ├── address.php
 │       │   │   ├── affiliate.php
 │       │   │   ├── authorize.php
-│       │   │   ├── download.php
 │       │   │   ├── edit.php
 │       │   │   ├── forgotten.php
 │       │   │   ├── login.php
@@ -698,15 +682,12 @@
 │       │   │   ├── search.php
 │       │   │   ├── special.php
 │       │   │   └── thumb.php
-│       │   └── tool/
-│       │       └── upload.php
 │       ├── fr-fr/
 │       │   ├── account/
 │       │   │   ├── account.php
 │       │   │   ├── address.php
 │       │   │   ├── affiliate.php
 │       │   │   ├── authorize.php
-│       │   │   ├── download.php
 │       │   │   ├── edit.php
 │       │   │   ├── forgotten.php
 │       │   │   ├── login.php
@@ -796,14 +777,11 @@
 │       │   │   ├── search.php
 │       │   │   ├── special.php
 │       │   │   └── thumb.php
-│       │   └── tool/
-│       │       └── upload.php
 │       └── pt-br/
 │           ├── account/
 │           │   ├── account.php
 │           │   ├── address.php
 │           │   ├── affiliate.php
-│           │   ├── download.php
 │           │   ├── edit.php
 │           │   ├── forgotten.php
 │           │   ├── login.php
@@ -993,9 +971,7 @@
 │           │   ├── search.php
 │           │   └── special.php
 │           ├── pt-br.php
-│           ├── pt-br.png
-│           └── tool/
-│               └── upload.php
+│           └── pt-br.png
 ├── data_base_new_schema/
 │   ├── db_schema.php
 │   ├── new_suppliers_insert_query.sql

@@ -1,7 +1,0 @@
-{
-    "text_upload": "Your file was successfully uploaded!",
-    "error_token": "Warning: upload token invalid!",
-    "error_filename": "Filename must be between 3 and 64 characters!",
-    "error_file_type": "Invalid file type!",
-    "error_upload": "Upload required!"
-}

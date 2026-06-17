@@ -81,7 +81,6 @@ class ShowSitemapAction implements ActionInterface
         $sitemapData['password'] = $routeParser->urlFor('account.resetar-senha.logged', ['lang' => $lang]);
         $sitemapData['address']  = $routeParser->urlFor('account.addresses', ['lang' => $lang]);
         $sitemapData['history']  = $routeParser->urlFor('account.orders', ['lang' => $lang]);
-        $sitemapData['download'] = $routeParser->urlFor('account.index', ['lang' => $lang]); // download not defined, fallback
         $sitemapData['cart']     = $routeParser->urlFor('cart.index', ['lang' => $lang]);
         $sitemapData['checkout'] = $routeParser->urlFor('checkout.index', ['lang' => $lang]);
         $sitemapData['search']   = $routeParser->urlFor('search', ['lang' => $lang]);

@@ -20,7 +20,6 @@ class CustomerAffiliate implements InterfaceEntity
     private string $bankSwiftCode = '';
     private string $bankAccountName = '';
     private string $bankAccountNumber = '';
-    private array $customField = [];
     private bool $status = false;
     private string $dateAdded = '';
 
@@ -76,13 +75,6 @@ class CustomerAffiliate implements InterfaceEntity
 
     public function getBankAccountNumber(): string { return $this->bankAccountNumber; }
     public function setBankAccountNumber(string $bankAccountNumber): self { $this->bankAccountNumber = $bankAccountNumber; return $this; }
-
-    public function getCustomField(): string { return json_encode($this->customField); }
-    public function getCustomFieldArray(): array { return $this->customField; }
-    public function setCustomField(string|array $customField): self { 
-        $this->customField = is_string($customField) ? (json_decode($customField, true) ?: []) : $customField; 
-        return $this; 
-    }
 
     public function isStatus(): bool { return $this->status; }
     public function setStatus(bool $status): self { $this->status = $status; return $this; }

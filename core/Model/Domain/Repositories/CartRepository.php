@@ -612,11 +612,6 @@ class CartRepository extends AbstractRepository implements BaseRepositoryInterfa
         return false;
     }
 
-    public function hasDownload(): bool
-    {
-        return false;
-    }
-
     // Métodos obrigatórios da BaseRepositoryInterface
     public function find(int $id): ?InterfaceEntity
     {

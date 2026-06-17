@@ -109,7 +109,6 @@ class CreateCustomerAction extends BaseController implements \Alpha\Controller\A
                             ->setEmail($email)
                             ->setTelephone($telephone)
                             ->setPassword($hashedPassword)
-                            ->setCustomField('{}')
                             ->setNewsletter(false)
                             ->setIp($ip)
                             ->setStatus((bool)$status)

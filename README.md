@@ -14,7 +14,7 @@ Visão geral da estrutura de pastas em `core/`, separação de camadas e princí
 
 ### 2. Modelos de Domínio e Entidades
 Detalhamento das árvores de agregação e grafos de objetos:
-*   ✅ **Catálogo**: `Product`, `Category`, `CategoryPath`, `CategoryToLayout`, `Manufacturer`, `ManufacturerToLayout`, `Information`, `StockStatus`, `Review`, `Download`, `DownloadDescription`, `DownloadReport`.
+*   ✅ **Catálogo**: `Product`, `Category`, `CategoryPath`, `CategoryToLayout`, `Manufacturer`, `ManufacturerToLayout`, `Information`, `StockStatus`, `Review`.
 *   ✅ **CMS (Blog)**: `Article`, `Topic`.
 *   ✅ **Design**: `Banner`, `Theme`, `Translation`.
 *   ✅ **SEO**: `SeoUrl`.
@@ -22,7 +22,7 @@ Detalhamento das árvores de agregação e grafos de objetos:
 *   ✅ **Sistema/Localização**: `Setting`, `WeightClass`, `LengthClass`, `LengthClassDescription`, `TaxClass`, `TaxRate`, `TaxRule`, `TaxRateToCustomerGroup`, `Session`, `Startup`, `AddressFormat`, `Cron`, `Event`, `Gdpr`, `Location`, `Notification`, `Upload`.
 *   ✅ **Segurança e Auditoria**: `User`, `UserGroup`, `UserLogin`, `OrderOption`, `Api`, `Statistics`, `Gdpr`.
 *   ✅ **Marketing**: `Marketing`, `MarketingReport`.
-*   ✅ **Clientes**: `Customer`, `CustomerApproval`, `CustomerHistory`, `CustomerLogin`, `CustomerOnline`, `CustomerReward`, `CustomerTransaction`, `Address`, `CustomerGroup`, `CustomField`, `CustomFieldDescription`, `CustomFieldValue`, `CustomFieldValueDescription`, `CustomFieldCustomerGroup`, `Notification`.
+*   ✅ **Clientes**: `Customer`, `CustomerApproval`, `CustomerHistory`, `CustomerLogin`, `CustomerOnline`, `CustomerReward`, `CustomerTransaction`, `Address`, `CustomerGroup`, `Notification`.
 *   ✅ **Módulos e Extensões**: `Extension`, `ExtensionInstall`, `ExtensionPath`, `Module`.
 
 ### 3. Infraestrutura e Banco de Dados

@@ -134,7 +134,6 @@ class AppBootstrap
                     'account/address/edit'    => 'account/address/edit',
                     'account/address/delete'  => 'account/address/delete',
                     'account/orders'          => 'account/orders',
-                    'account/download'        => 'account/download',
                     'account/newsletter'      => 'account/newsletter',
                     'account/wishlist'        => 'account/wishlist',
                     'account/return'          => 'account/return',

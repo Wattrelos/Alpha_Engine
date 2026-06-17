@@ -238,11 +238,9 @@ class CustomerRepository extends AbstractRepository implements BaseRepositoryInt
             $errors['telephone'] = $getLang('error_telephone', 'O telefone deve ter entre 10 e 11 números.');
         }
 
-        // DRY: Validação Compartilhada - Documentos, Campos Customizados e Senha
+        // DRY: Validação Compartilhada - Documentos e Senha
         $docError = $this->getDocumentError($data['persontype'] ?? '', $data['cpf_cnpj'] ?? '');
         if ($docError) $errors['cpf_cnpj'] = $docError;
-
-        $errors = array_merge($errors, $this->getCustomFieldsErrors($data, $customerGroupId));
 
         $password = html_entity_decode($data['password'] ?? '', ENT_QUOTES, 'UTF-8');
         $passError = $this->getPasswordError($password);
@@ -307,13 +305,9 @@ class CustomerRepository extends AbstractRepository implements BaseRepositoryInt
             $errors['telephone'] = $getLang('error_telephone', 'O telefone deve ter entre 10 e 11 números.');
         }
 
-        // DRY: Documentos e Campos Customizados
+        // DRY: Documentos
         $docError = $this->getDocumentError($data['persontype'] ?? '', $data['cpf_cnpj'] ?? '');
         if ($docError) $errors['cpf_cnpj'] = $docError;
-
-        $customer = $this->find($customerId);
-        $customerGroupId = $customer ? $customer->getCustomerGroupId() : (int)$this->getConfigValue('config_customer_group_id', 1);
-        $errors = array_merge($errors, $this->getCustomFieldsErrors($data, $customerGroupId));
 
         return $errors;
     }
@@ -377,44 +371,6 @@ class CustomerRepository extends AbstractRepository implements BaseRepositoryInt
             if ((int)$cnpj[13] != ((($n %= 11) < 2) ? 0 : 11 - $n)) return $getLang('error_cnpj', 'O CNPJ informado é inválido.');
         }
         return null;
-    }
-
-    private function getCustomFieldsErrors(array $data, int $customerGroupId): array
-    {
-        $errors = [];
-
-        $getLang = function (string $key, string $default = '') {
-            return $this->getTranslation($key, 'account/register', $default);
-        };
-
-        $customFieldRepo = null;
-        if ($this->container && $this->container->has(RepositoryFactory::class)) {
-            $customFieldRepo = $this->container->get(RepositoryFactory::class)->get(CustomFieldRepository::class);
-        } else {
-            $customFieldRepo = RepositoryFactory::getInstance()->get(CustomFieldRepository::class);
-        }
-        $custom_fields = $customFieldRepo->getCustomFields($customerGroupId);
-
-        foreach ($custom_fields as $custom_field) {
-            if ($custom_field['location'] == 'account') {
-                $cf_id = $custom_field['custom_field_id'];
-                $is_empty = true;
-
-                if (isset($data['custom_field'][$cf_id])) {
-                    $cf_value = $data['custom_field'][$cf_id];
-                    $is_empty = is_array($cf_value) ? empty($cf_value) : (trim((string)$cf_value) === '');
-                }
-
-                if ($custom_field['required'] && $is_empty) {
-                    $errors['custom_field_' . $cf_id] = sprintf($getLang('error_custom_field', 'O campo %s é obrigatório.'), $custom_field['name']);
-                } elseif ($custom_field['type'] == 'text' && !empty($custom_field['validation']) && !$is_empty) {
-                    if (!AlphaString::validateRegex((string)($data['custom_field'][$cf_id] ?? ''), $custom_field['validation'])) {
-                        $errors['custom_field_' . $cf_id] = sprintf($getLang('error_regex', 'O campo %s não é válido.'), $custom_field['name']);
-                    }
-                }
-            }
-        }
-        return $errors;
     }
 
     private function getPasswordError(string $password): ?string

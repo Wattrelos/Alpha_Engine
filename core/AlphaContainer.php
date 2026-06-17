@@ -42,7 +42,6 @@ class AlphaContainer
             'account/customer_group'      => \Alpha\Model\Domain\Repositories\CustomerGroupRepository::class,
             'account/affiliate'           => \Alpha\Model\Domain\Repositories\CustomerAffiliateRepository::class,
             'account/transaction'         => \Alpha\Model\Domain\Repositories\CustomerTransactionRepository::class,
-            'account/download'            => \Alpha\Model\Domain\Repositories\DownloadRepository::class,
             'account/returns'             => \Alpha\Model\Domain\Repositories\OrderReturnRepository::class,
             'account/reward'              => \Alpha\Model\Domain\Repositories\CustomerRewardRepository::class,
             'account/order'               => \Alpha\Model\Domain\Repositories\OrderRepository::class,

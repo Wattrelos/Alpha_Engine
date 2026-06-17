@@ -50,14 +50,6 @@ CustomerSearch.php
 CustomerToken.php
 CustomerTransaction.php
 CustomerWishlist.php
-CustomFieldCustomerGroup.php
-CustomFieldDescription.php
-CustomField.php
-CustomFieldValueDescription.php
-CustomFieldValue.php
-DownloadDescription.php
-Download.php
-DownloadReport.php
 Event.php
 ExtensionInstall.php
 ExtensionPath.php
@@ -118,7 +110,6 @@ ProductReport.php
 ProductReward.php
 ProductSubscription.php
 ProductToCategory.php
-ProductToDownload.php
 ProductToLayout.php
 ProductToStore.php
 ProductViewed.php
@@ -152,7 +143,6 @@ Theme.php
 TopicDescription.php
 Topic.php
 Translation.php
-Upload.php
 UserAuthorize.php
 UserGroup.php
 UserLogin.php

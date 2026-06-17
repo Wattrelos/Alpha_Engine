@@ -23,7 +23,6 @@ class Order extends BaseEntity
     private string $lastname = '';
     private string $email = '';
     private string $telephone = '';
-    private string $customField = '';
     private string $paymentMethod = '';
     private string $shippingMethod = '';
     private float  $total = 0.0000;
@@ -50,7 +49,6 @@ class Order extends BaseEntity
     private string $paymentZone = '';
     private int    $paymentZoneId = 0;
     private string $paymentAddressFormat = '';
-    private string $paymentCustomField = '';
     private int    $shippingAddressId = 0;
     private string $shippingFirstname = '';
     private string $shippingLastname = '';
@@ -66,7 +64,6 @@ class Order extends BaseEntity
     private string $shippingZone = '';
     private int    $shippingZoneId = 0;
     private string $shippingAddressFormat = '';
-    private string $shippingCustomField = '';
     private string $comment = '';
     private int    $affiliateId = 0;
     private float  $commission = 0.0000;
@@ -160,16 +157,6 @@ class Order extends BaseEntity
     public function setTelephone(string $telephone): self
     {
         $this->telephone = $telephone;
-        return $this;
-    }
-
-    public function getCustomField(): string
-    {
-        return $this->customField;
-    }
-    public function setCustomField(string $customField): self
-    {
-        $this->customField = $customField;
         return $this;
     }
 
@@ -433,16 +420,6 @@ class Order extends BaseEntity
         return $this;
     }
 
-    public function getPaymentCustomField(): string
-    {
-        return $this->paymentCustomField;
-    }
-    public function setPaymentCustomField(string $paymentCustomField): self
-    {
-        $this->paymentCustomField = $paymentCustomField;
-        return $this;
-    }
-
     public function getShippingAddressId(): int
     {
         return $this->shippingAddressId;
@@ -590,16 +567,6 @@ class Order extends BaseEntity
     public function setShippingAddressFormat(string $shippingAddressFormat): self
     {
         $this->shippingAddressFormat = $shippingAddressFormat;
-        return $this;
-    }
-
-    public function getShippingCustomField(): string
-    {
-        return $this->shippingCustomField;
-    }
-    public function setShippingCustomField(string $shippingCustomField): self
-    {
-        $this->shippingCustomField = $shippingCustomField;
         return $this;
     }
 

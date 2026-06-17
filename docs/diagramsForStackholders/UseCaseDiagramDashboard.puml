@@ -1,0 +1,66 @@
+@startuml "Diagrama_Casos_De_Uso_Painel"
+
+' --- Estilo CSS Moderno ---
+<style>
+root {
+    BackgroundColor #FAFAFA
+    FontName "Helvetica Neue"
+    FontSize 13
+}
+arrow {
+    LineColor #263238
+}
+actor {
+    BackgroundColor #FFE0B2
+    BorderColor #E65100
+    LineColor #E65100
+}
+usecase {
+    BackgroundColor #E0F2F1
+    BorderColor #004D40
+    LineColor #004D40
+}
+rectangle {
+    BackgroundColor #FFFFFF
+    BorderColor #37474F
+    LineColor #37474F
+}
+</style>
+
+left to right direction
+
+actor "Operador do Painel" as Operator
+actor "Administrador Geral" as Admin
+
+' Administrador Geral herda todas as capacidades e associações do Operador
+Operator <|-- Admin
+
+rectangle "Alpha Engine - Dashboard Administrativo" {
+    ' Operações de Negócio & Catálogo
+    usecase "Gerenciar Catálogo\n(Produtos, Categorias, Opções)" as UC_Catalog
+    usecase "Gerenciar Clientes\n(Aprovações, Grupos de Clientes)" as UC_Customers
+    usecase "Gerenciar Pedidos & Faturamento" as UC_Orders
+    usecase "Gerenciar Devoluções & Trocas" as UC_Returns
+    usecase "Visualizar Relatórios & Estatísticas" as UC_Reports
+
+    ' Operações do Sistema (Exclusivas de Administrador)
+    usecase "Configurar Lojas & Parâmetros do Motor" as UC_Settings
+    usecase "Gerenciar Usuários & Grupos de Permissões" as UC_Users
+    usecase "Gerenciar Planos de Assinatura" as UC_Subscriptions
+    usecase "Gerenciar Localização, Moedas & Impostos" as UC_Locales
+}
+
+' Associações do Operador do Painel (Nível de Operação de Vendas/Inventário)
+Operator --> UC_Catalog
+Operator --> UC_Customers
+Operator --> UC_Orders
+Operator --> UC_Returns
+Operator --> UC_Reports
+
+' Associações do Administrador Geral (Nível do Sistema & Configuração)
+Admin --> UC_Settings
+Admin --> UC_Users
+Admin --> UC_Subscriptions
+Admin --> UC_Locales
+
+@enduml

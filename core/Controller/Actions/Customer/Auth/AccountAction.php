@@ -74,7 +74,6 @@ class AccountAction implements ActionInterface
             'wishlist'      => '/' . $lang . '/account/wishlist',
             'order'         => $routeParser->urlFor('account.orders',    ['lang' => $lang]),
             'subscription'  => '/' . $lang . '/account/subscription',
-            'download'      => '/' . $lang . '/account/download',
             'reward'        => '/' . $lang . '/account/reward',
             'return'        => '/' . $lang . '/account/return',
             'transaction'   => '/' . $lang . '/account/transaction',

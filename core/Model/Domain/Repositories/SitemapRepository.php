@@ -51,7 +51,6 @@ class SitemapRepository extends AbstractRepository implements BaseRepositoryInte
         $data['password'] = $this->url->link('account/password', $full_token, true);
         $data['address']  = $this->url->link('account/address', $full_token, true);
         $data['history']  = $this->url->link('account/orders', $full_token, true);
-        $data['download'] = $this->url->link('account/download', $full_token, true);
         $data['cart']     = $this->url->link('checkout/cart', $language_param);
         $data['checkout'] = $this->url->link('checkout/checkout', $language_param, true);
         $data['search']   = $this->url->link('product/search', $language_param);
