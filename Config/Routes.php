@@ -52,6 +52,7 @@ return function (\Slim\App $app) {
         $app->group('', function (RouteCollectorProxy $group) {
             $group->get('/dashboard', \Alpha\Admin\Controllers\Actions\Dashboard\ViewDashboardAction::class)->setName('admin.dashboard');
             $group->get('/produtos', \Alpha\Admin\Controllers\Actions\Catalog\Product\ListProductsAction::class)->setName('admin.product.list');
+            $group->map(['GET', 'POST'], '/produtos/criar', \Alpha\Admin\Controllers\Actions\Catalog\Product\CreateProductAction::class)->setName('admin.product.create');
             $group->get('/produtos/{id:[0-9]+}/editar', \Alpha\Admin\Controllers\Actions\Catalog\Product\EditProductAction::class)->setName('admin.product.edit');
             $group->post('/produtos/{id:[0-9]+}/editar', \Alpha\Admin\Controllers\Actions\Catalog\Product\UpdateProductAction::class)->setName('admin.product.update');
             

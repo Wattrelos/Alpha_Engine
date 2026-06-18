@@ -637,7 +637,7 @@ class DataAccessObject
             }
         }
         $isVersioned = $entity instanceof \Alpha\Model\Domain\VersionedEntityInterface;
-        $currentVersion = $isVersioned ? $entity->getVersion() : null;
+        $currentVersion = $entity instanceof \Alpha\Model\Domain\VersionedEntityInterface ? $entity->getVersion() : null;
 
         $attempts = 0;
         while ($attempts < 5) {
@@ -685,7 +685,7 @@ class DataAccessObject
                     throw new ConcurrencyException("Falha de concorrência: o registro foi alterado por outro usuário.");
                 }
 
-                if ($isVersioned) {
+                if ($entity instanceof \Alpha\Model\Domain\VersionedEntityInterface) {
                     $entity->setVersion($currentVersion + 1);
                 }
                 return;
@@ -860,7 +860,7 @@ class DataAccessObject
                 if (str_ends_with($attrName, 'ManyToMany')) $isManyToMany = true;
 
                 $args = $attr->getArguments();
-                $targetEntityClass = $args['targetEntity'] ?? null;
+                $targetEntityClass = $args['targetEntity'] ?? $args[0] ?? null;
                 $foreignKey = $args['foreignKey'] ?? null;
             }
 
@@ -906,9 +906,24 @@ class DataAccessObject
                 $sql = "SELECT `$fkChild` FROM `$tableLink` WHERE `$fkParent` = ?";
                 $stmt = $conn->prepare($sql);
                 $stmt->execute([$instance->getId()]);
-                $stmt->fetchAll(\PDO::FETCH_ASSOC);
+                $rows = $stmt->fetchAll(\PDO::FETCH_ASSOC);
 
-                // Para cada ID encontrado na tabela pivot, poderíamos carregar a entidade (omitido por brevidade)
+                $childIds = array_map(fn($row) => (int)$row[$fkChild], $rows);
+
+                // Também normaliza o setter da propriedade na entidade pai
+                $parentSetter = "set" . ucfirst(str_replace('_', '', ucwords($property->getName(), '_')));
+
+                if (method_exists($instance, $parentSetter)) {
+                    if ($this->shouldLazyLoad($property)) {
+                        // Alpha Engine: Injeta LazyCollection para carregamento sob demanda (Lazy Loading)
+                        $loader = fn() => $this->readByIds($targetEntityClass, $childIds);
+                        $instance->$parentSetter(new LazyCollection($loader));
+                    } else {
+                        // Hidratação imediata (Eager Loading)
+                        $children = $this->readByIds($targetEntityClass, $childIds);
+                        $instance->$parentSetter($children);
+                    }
+                }
             }
         }
     }
