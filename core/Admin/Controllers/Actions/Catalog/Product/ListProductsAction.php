@@ -135,7 +135,9 @@ class ListProductsAction extends BaseController implements \Alpha\Controller\Act
             'url'            => $url,
             'categories'     => $categories,
             'manufacturers'  => $manufacturers,
-            'filters'        => $queryParams // envia filtros para pré-seleção no formulário
+            'filters'        => $queryParams, // envia filtros para pré-seleção no formulário
+            'success'        => $queryParams['success'] ?? null,
+            'error'          => $queryParams['error'] ?? null
         ]);
 
         $response->getBody()->write($html);
