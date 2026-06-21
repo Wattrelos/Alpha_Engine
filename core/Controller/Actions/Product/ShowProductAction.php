@@ -205,8 +205,49 @@ class ShowProductAction implements ActionInterface
             }
         }
 
+        // Busca variações filhas do produto pai
+        $variantsRaw = $this->productRepository->getProductVariants($productId);
+        $variants = [];
+        foreach ($variantsRaw as $variant) {
+            if ($variant['status']) {
+                $vPriceRaw = (float)($variant['price'] ?? 0);
+                if ($vPriceRaw <= 0.0) {
+                    $vPriceRaw = (float)($product['price'] ?? 0);
+                }
+
+                // Aplica impostos no preço da variação
+                $vPriceFormatted = '';
+                if ($currency && $tax && $config) {
+                    $vTaxClassId = (int)($product['tax_class_id'] ?? 0);
+                    $vPriceFormatted = $currency->format($tax->calculate($vPriceRaw, $vTaxClassId, $config->get('config_tax')), $currencyCode);
+                } else {
+                    $vPriceFormatted = 'R$ ' . number_format($vPriceRaw, 2, ',', '.');
+                }
+
+                // Trata a imagem da variação
+                $vImageThumb = '';
+                if (!empty($variant['image'])) {
+                    $vImageThumb = $imagePresenter->resize($variant['image'], $config ? (int)$config->get('config_image_thumb_width') : 228, $config ? (int)$config->get('config_image_thumb_height') : 228);
+                } else {
+                    $vImageThumb = $product['thumb'] ?? '';
+                }
+
+                $variants[] = [
+                    'id'              => (int)$variant['id'],
+                    'name'            => $variant['variant'],
+                    'sku'             => $variant['sku'],
+                    'price'           => $vPriceRaw,
+                    'price_formatted' => $vPriceFormatted,
+                    'quantity'        => (int)$variant['quantity'],
+                    'image'           => $variant['image'],
+                    'thumb'           => $vImageThumb
+                ];
+            }
+        }
+
         $html = $this->twig->render('pages/product/show.html.twig', [
             'product'      => $product,
+            'variants'     => $variants,
             'seo'          => $seoData,
             'title'        => $seoData['title'],
             'description'  => $seoData['description'],

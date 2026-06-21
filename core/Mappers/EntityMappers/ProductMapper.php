@@ -101,7 +101,8 @@ class ProductMapper extends BaseMapper {
               ->where("p.status = ?", [1])
               ->where("p.date_available <= ?", [date('Y-m-d')])
               ->where("pd.language_id = ?", [$language_id])
-              ->where("p.quantity > 0");
+              ->where("p.quantity > 0")
+              ->where("p.master_id = 0");
 
         // Filtros de busca
         if (!empty($data['filter_name'])) {
@@ -275,7 +276,8 @@ class ProductMapper extends BaseMapper {
               ->where("p.status = ?", [1])
               ->where("p.date_available <= ?", [date('Y-m-d')])
               ->where("pd.language_id = ?", [$language_id])
-              ->where("p.quantity > 0");
+              ->where("p.quantity > 0")
+              ->where("p.master_id = 0");
 
         if (!empty($data['filter_name'])) {
             $query->where("(pd.name LIKE ? OR p.model = ?)", ["%" . $data['filter_name'] . "%", $data['filter_name']]);
@@ -450,6 +452,20 @@ class ProductMapper extends BaseMapper {
             ];
         }
         return array_values($groupedData);
+    }
+
+    /**
+     * Obtém todas as variações filhas de um produto pai
+     */
+    public function getProductVariants(int $product_id, int $language_id): array {
+        $query = (new QueryBuilder())
+            ->from(DB_PREFIX . 'product', 'p')
+            ->leftJoin(DB_PREFIX . 'product_description', 'pd', 'p.id = pd.product_id')
+            ->where("p.master_id = ?", [$product_id])
+            ->where("pd.language_id = ?", [$language_id])
+            ->select('p.*', 'pd.name', 'pd.description');
+
+        return $this->dao->executeQuery($query);
     }
 
     /**

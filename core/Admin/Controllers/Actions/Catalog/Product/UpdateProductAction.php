@@ -108,6 +108,114 @@ class UpdateProductAction extends BaseController implements ActionInterface
             $stmtDesc = $conn->prepare("UPDATE `" . DB_PREFIX . "product_description` SET `name` = ?, `description` = ? WHERE `product_id` = ? AND `language_id` = ?");
             $stmtDesc->execute([$name, $description, $productId, $this->languageId]);
 
+            // 3. Processa Variações (Produtos Filhos)
+            if (isset($data['variants']) && is_array($data['variants'])) {
+                foreach ($data['variants'] as $v) {
+                    $vId = (int)($v['id'] ?? 0);
+                    $vName = trim($v['name'] ?? '');
+                    $vSku = trim($v['sku'] ?? '');
+                    $vPrice = (float)($v['price'] ?? 0.0);
+                    $vQuantity = (int)($v['quantity'] ?? 0);
+                    $vStatus = isset($v['status']) ? (int)$v['status'] : 1;
+                    $vDelete = isset($v['delete']) && $v['delete'] == '1';
+
+                    if (empty($vName)) {
+                        continue; // Variação sem nome é ignorada
+                    }
+
+                    if ($vId > 0) {
+                        if ($vDelete) {
+                            // Deleta a variação
+                            $conn->prepare("DELETE FROM `" . DB_PREFIX . "product` WHERE `id` = ? AND `master_id` = ?")->execute([$vId, $productId]);
+                            $conn->prepare("DELETE FROM `" . DB_PREFIX . "product_description` WHERE `product_id` = ?")->execute([$vId]);
+                            $conn->prepare("DELETE FROM `" . DB_PREFIX . "product_to_store` WHERE `product_id` = ?")->execute([$vId]);
+                            $conn->prepare("DELETE FROM `" . DB_PREFIX . "product_to_category` WHERE `product_id` = ?")->execute([$vId]);
+                        } else {
+                            // Atualiza a variação
+                            $conn->prepare("
+                                UPDATE `" . DB_PREFIX . "product` 
+                                SET `sku` = ?, `price` = ?, `quantity` = ?, `status` = ?, `variant` = ?, `model` = ?, `stock_status_id` = ?, `manufacturer_id` = ?, `date_available` = ?, `image` = ?, `date_modified` = NOW() 
+                                WHERE `id` = ? AND `master_id` = ?
+                            ")->execute([
+                                $vSku, $vPrice, $vQuantity, $vStatus, $vName, $model . '-' . $vSku, $stockStatusId, $dbManufacturerId, $dateAvailable, $newImagePath, $vId, $productId
+                            ]);
+
+                            // Atualiza a descrição da variação (Nome do pai + nome da variação)
+                            $vFullName = $name . ' - ' . $vName;
+                            $conn->prepare("
+                                UPDATE `" . DB_PREFIX . "product_description` 
+                                SET `name` = ?, `description` = ? 
+                                WHERE `product_id` = ?
+                            ")->execute([
+                                $vFullName, $description, $vId
+                            ]);
+                        }
+                    } else if (!$vDelete) {
+                        // Cria uma nova variação
+                        $stmtInsVariant = $conn->prepare("
+                            INSERT INTO `" . DB_PREFIX . "product` (
+                                `master_id`, `model`, `sku`, `upc`, `ean`, `jan`, `isbn`, `mpn`, `location`, 
+                                `variant`, `override`, `quantity`, `stock_status_id`, `image`, `manufacturer_id`, 
+                                `shipping`, `price`, `points`, `tax_class_id`, `date_available`, `weight`, 
+                                `weight_class_id`, `length`, `width`, `height`, `length_class_id`, `subtract`, 
+                                `minimum`, `rating`, `sort_order`, `status`, `date_added`, `date_modified`, 
+                                `ncm`, `cest`
+                            ) VALUES (
+                                ?, ?, ?, '', '', '', '', '', '', 
+                                ?, '', ?, ?, ?, ?, 
+                                1, ?, 0, 0, ?, 0.00000000, 
+                                0, 0.00000000, 0.00000000, 0.00000000, 0, 1, 
+                                1, 0, 0, ?, NOW(), NOW(), 
+                                '', ''
+                            )
+                        ");
+                        $stmtInsVariant->execute([
+                            $productId, $model . '-' . $vSku, $vSku, $vName, $vQuantity, $stockStatusId, $newImagePath, $dbManufacturerId, $vPrice, $dateAvailable, $vStatus
+                        ]);
+                        $newVariantId = (int)$conn->lastInsertId();
+
+                        // Insere descrição da variação para todos os idiomas
+                        $stmtLangs = $conn->query("SELECT id FROM `" . DB_PREFIX . "language`");
+                        $languages = $stmtLangs->fetchAll(\PDO::FETCH_COLUMN);
+
+                        $vFullName = $name . ' - ' . $vName;
+                        foreach ($languages as $langId) {
+                            $conn->prepare("
+                                INSERT INTO `" . DB_PREFIX . "product_description` (
+                                    `product_id`, `language_id`, `name`, `description`, `tag`, `meta_title`, `meta_description`, `meta_keyword`
+                                ) VALUES (?, ?, ?, ?, '', ?, '', '')
+                            ")->execute([
+                                $newVariantId, $langId, $vFullName, $description, $vFullName
+                            ]);
+                        }
+
+                        // Vincula à loja (store_id = 1)
+                        $conn->prepare("INSERT INTO `" . DB_PREFIX . "product_to_store` (`product_id`, `store_id`) VALUES (?, 1)")->execute([$newVariantId]);
+                    }
+                }
+            }
+
+            // 4. Edição em Lote: Propagar em lote as informações comuns do pai para os filhos
+            $conn->prepare("
+                UPDATE `" . DB_PREFIX . "product` 
+                SET `manufacturer_id` = ?, `stock_status_id` = ?, `date_available` = ?, `date_modified` = NOW() 
+                WHERE `master_id` = ?
+            ")->execute([$dbManufacturerId, $stockStatusId, $dateAvailable, $productId]);
+
+            // Sincronizar categorias do pai para as variações
+            $conn->prepare("
+                DELETE FROM `" . DB_PREFIX . "product_to_category` 
+                WHERE `product_id` IN (SELECT `id` FROM `" . DB_PREFIX . "product` WHERE `master_id` = ?)
+            ")->execute([$productId]);
+
+            $conn->prepare("
+                INSERT INTO `" . DB_PREFIX . "product_to_category` (`product_id`, `category_id`)
+                SELECT p.id, pc.category_id 
+                FROM `" . DB_PREFIX . "product` p
+                JOIN `" . DB_PREFIX . "product_to_category` pc ON pc.product_id = ?
+                WHERE p.master_id = ?
+            ")->execute([$productId, $productId]);
+
             // Limpa cache do repositório para evitar dados antigos
             if ($this->container->has(\Alpha\Support\Cache\CacheStrategyInterface::class)) {
                 $cache = $this->container->get(\Alpha\Support\Cache\CacheStrategyInterface::class);

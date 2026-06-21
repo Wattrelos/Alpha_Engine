@@ -48,11 +48,15 @@ class EditProductAction extends BaseController implements ActionInterface
         $stmtStockStatuses->execute([$this->languageId]);
         $stockStatuses = $stmtStockStatuses->fetchAll(\PDO::FETCH_ASSOC);
 
+        // 4. Busca as variações (produtos filhos) cadastradas
+        $variants = $productRepo->getProductVariants($productId);
+
         $html = $this->getTemplate('admin/pages/products/edit.html.twig', [
             'title'          => 'Editar Produto | Painel Administrativo',
             'product'        => $product,
             'manufacturers'  => $manufacturers,
-            'stock_statuses' => $stockStatuses
+            'stock_statuses' => $stockStatuses,
+            'variants'       => $variants
         ]);
 
         $response->getBody()->write($html);

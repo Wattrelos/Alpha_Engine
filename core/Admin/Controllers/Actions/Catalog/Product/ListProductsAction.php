@@ -28,6 +28,9 @@ class ListProductsAction extends BaseController implements \Alpha\Controller\Act
         $where = [];
         $params = [];
 
+        // Apenas produtos principais (master_id = 0)
+        $where[] = "p.master_id = 0";
+
         // Filtro por Nome
         if (!empty($queryParams['filter_name'])) {
             $where[] = "pd.name LIKE ?";

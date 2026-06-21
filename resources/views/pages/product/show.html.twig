@@ -94,7 +94,23 @@
 
             <!-- Formulário de Compra/Opções -->
             <form action="/{{ lang }}/carrinho/adicionar" method="POST" id="form-product-purchase" class="egen-product-purchase-form">
-                <input type="hidden" name="product_id" value="{{ product.id }}">
+                <input type="hidden" name="product_id" id="purchase-product-id" value="{{ product.id }}">
+
+                {% if variants %}
+                    <div class="egen-product-options" style="margin-bottom: 2rem; border-top: 1px solid var(--egen-border-color); padding-top: 1.5rem;">
+                        <h4 class="egen-product-options__title">Escolha a Variação:</h4>
+                        <div class="egen-product-options__inline-group" id="variants-selector-container">
+                            {% for variant in variants %}
+                                <div class="egen-product-options__inline-item variant-selector-item" data-id="{{ variant.id }}" data-sku="{{ variant.sku }}" data-price="{{ variant.price_formatted }}" data-thumb="{{ variant.thumb }}" data-qty="{{ variant.quantity }}" style="cursor: pointer; border: 1px solid var(--egen-border-color); border-radius: 8px; padding: 0.6rem 1rem; transition: all 0.2s;">
+                                    <span style="font-size: 0.9rem; font-weight: 600; color: var(--egen-text-color);">{{ variant.name }}</span>
+                                    {% if variant.price > 0 %}
+                                        <span class="egen-product-options__price-prefix" style="font-size: 0.85rem; font-weight: 600; margin-left: 0.5rem; color: var(--egen-primary-color);">({{ variant.price_formatted }})</span>
+                                    {% endif %}
+                                </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                {% endif %}
 
                 {% if product.options %}
                     <div class="egen-product-options">
@@ -241,6 +257,7 @@
 
 <script>
 document.addEventListener('DOMContentLoaded', function() {
+    // 1. Abas
     document.querySelectorAll('.egen-tab-trigger').forEach(button => {
         button.addEventListener('click', () => {
             const targetId = button.getAttribute('data-target');
@@ -255,6 +272,64 @@ document.addEventListener('DOMContentLoaded', function() {
             if (pane) pane.classList.add('egen-tab-pane--active');
         });
     });
+
+    // 2. Seletor de Variações de Produto (SaaS)
+    const variantItems = document.querySelectorAll('.variant-selector-item');
+    const purchaseProductId = document.getElementById('purchase-product-id');
+    const mainPriceNormal = document.querySelector('.egen-product-price-card__price-normal');
+    const mainPriceSpecial = document.querySelector('.egen-product-price-card__price-special');
+    const mainImg = document.getElementById('main-product-image');
+    const qtyInput = document.getElementById('input-quantity');
+
+    variantItems.forEach(item => {
+        item.addEventListener('click', function() {
+            // Remove seleção ativa das outras variações
+            variantItems.forEach(i => {
+                i.style.borderColor = 'var(--egen-border-color)';
+                i.style.background = 'rgba(255, 255, 255, 0.05)';
+            });
+
+            // Aplica seleção ativa nesta variação
+            this.style.borderColor = 'var(--egen-primary-color)';
+            this.style.background = 'rgba(252, 144, 3, 0.08)';
+
+            // Obtém metadados da variação
+            const varId = this.getAttribute('data-id');
+            const varPrice = this.getAttribute('data-price');
+            const varThumb = this.getAttribute('data-thumb');
+            const varQty = parseInt(this.getAttribute('data-qty')) || 0;
+
+            // Atualiza o ID do produto para envio ao carrinho
+            if (purchaseProductId) purchaseProductId.value = varId;
+
+            // Atualiza preço em tela
+            if (varPrice) {
+                if (mainPriceSpecial) {
+                    mainPriceSpecial.textContent = varPrice;
+                } else if (mainPriceNormal) {
+                    mainPriceNormal.textContent = varPrice;
+                }
+            }
+
+            // Atualiza imagem principal
+            if (varThumb && mainImg) {
+                mainImg.src = varThumb;
+            }
+
+            // Atualiza quantidade máxima do input quantity
+            if (qtyInput) {
+                qtyInput.max = varQty;
+                if (parseInt(qtyInput.value) > varQty) {
+                    qtyInput.value = varQty;
+                }
+            }
+        });
+    });
+
+    // Pré-seleciona a primeira variação por padrão
+    if (variantItems.length > 0) {
+        variantItems[0].click();
+    }
 });
 </script>
 <script src="/js/custom/shipping-simulator.js"></script>

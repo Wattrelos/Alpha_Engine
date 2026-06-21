@@ -498,4 +498,14 @@ class ProductRepository extends AbstractRepository implements BaseRepositoryInte
         }
         return true;
     }
+
+    /**
+     * Obtém todas as variações de um produto
+     */
+    public function getProductVariants(int $productId): array
+    {
+        /** @var \Alpha\Mappers\EntityMappers\ProductMapper $mapper */
+        $mapper = $this->mapperFactory->get(ProductMapper::class);
+        return $mapper->getProductVariants($productId, $this->language_id);
+    }
 }
