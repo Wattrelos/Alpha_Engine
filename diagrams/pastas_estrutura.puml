@@ -1303,7 +1303,6 @@
 │           ├── product/
 │           │   ├── product-card.html.twig
 │           │   ├── product-returns.html.twig
-│           │   ├── search-product.html.twig
 │           │   ├── search.html.twig
 │           │   └── show.html.twig
 │           └── users/

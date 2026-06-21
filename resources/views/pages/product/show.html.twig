@@ -41,7 +41,17 @@
         <!-- Coluna da Direita: Detalhes, Preço e Compra -->
         <div class="egen-product-info">
             <div class="egen-product-info__header">
-                <span class="egen-product-info__model-badge">{{ product.model }}</span>
+                <div class="egen-product-info__meta">
+                    <span class="egen-product-info__model-badge">{{ product.model }}</span>
+                    {% if product.manufacturer %}
+                        <div class="egen-product-info__manufacturer">
+                            {% if product.manufacturer_logo_thumb %}
+                                <img src="{{ product.manufacturer_logo_thumb }}" alt="{{ product.manufacturer }}" class="egen-product-info__manufacturer-logo">
+                            {% endif %}
+                            <span class="egen-product-info__manufacturer-name">{{ product.manufacturer }}</span>
+                        </div>
+                    {% endif %}
+                </div>
                 <h1 class="egen-product-info__title">{{ product.name }}</h1>
 
                 <!-- Avaliações -->

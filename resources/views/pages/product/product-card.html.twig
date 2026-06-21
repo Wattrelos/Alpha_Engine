@@ -16,6 +16,14 @@
 
 	{# Corpo #}
 	<div class="egen-prod-card-body">
+		{% if prod.manufacturer %}
+			<div class="egen-prod-card-manufacturer">
+				{% if prod.manufacturer_logo_thumb %}
+					<img src="{{ prod.manufacturer_logo_thumb }}" alt="{{ prod.manufacturer }}" class="egen-prod-card-manufacturer-logo" loading="lazy">
+				{% endif %}
+				<span class="egen-prod-card-manufacturer-name">{{ prod.manufacturer }}</span>
+			</div>
+		{% endif %}
 		<h3 class="egen-prod-card-title">
 			<a href="{{ product_url }}" class="egen-prod-card-title-link">{{ prod.name }}</a>
 		</h3>

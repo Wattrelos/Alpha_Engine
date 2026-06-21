@@ -95,6 +95,7 @@ class ShowProductAction implements ActionInterface
         // 1. Formatação Visual de Imagens (Principal e Adicionais)
         $product['popup'] = !empty($product['image']) ? $imagePresenter->resize($product['image'], $config ? (int)$config->get('config_image_popup_width') : 500, $config ? (int)$config->get('config_image_popup_height') : 500) : '';
         $product['thumb'] = !empty($product['image']) ? $imagePresenter->resize($product['image'], $config ? (int)$config->get('config_image_thumb_width') : 228, $config ? (int)$config->get('config_image_thumb_height') : 228) : '';
+        $product['manufacturer_logo_thumb'] = !empty($product['manufacturer_logo']) ? $imagePresenter->resize($product['manufacturer_logo'], 60, 60) : '';
 
         if (!empty($product['images']) && is_array($product['images'])) {
             foreach ($product['images'] as &$img) {
@@ -159,6 +160,7 @@ class ShowProductAction implements ActionInterface
 
                     // Formatação visual da miniatura
                     $relProd['thumb'] = $imagePresenter->resize($relProd['image'] ?? '', $config ? (int)$config->get('config_image_related_width') : 228, $config ? (int)$config->get('config_image_related_height') : 228);
+                    $relProd['manufacturer_logo_thumb'] = !empty($relProd['manufacturer_logo']) ? $imagePresenter->resize($relProd['manufacturer_logo'], 40, 40) : '';
 
                     // Formatação de Preços com Impostos integrados
                     if ($currency && $tax && $config) {

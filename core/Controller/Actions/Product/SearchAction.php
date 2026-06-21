@@ -105,6 +105,7 @@ class SearchAction implements ActionInterface
 
                 // Formatação visual da miniatura
                 $product['thumb'] = $imagePresenter->resize($product['image'] ?? '', $config ? (int)$config->get('config_image_product_width') : 228, $config ? (int)$config->get('config_image_product_height') : 228);
+                $product['manufacturer_logo_thumb'] = !empty($product['manufacturer_logo']) ? $imagePresenter->resize($product['manufacturer_logo'], 40, 40) : '';
 
                 // Formatação de Preços com Impostos integrados
                 if ($currency && $tax && $config) {
