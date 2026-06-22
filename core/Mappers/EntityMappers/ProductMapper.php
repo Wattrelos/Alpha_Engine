@@ -147,7 +147,19 @@ class ProductMapper extends BaseMapper {
         }
 
         // Select e Ordenação
-        $query->select('p.*', 'pd.name', 'pd.description', 'p.image', 'm.name AS manufacturer', 'm.image AS manufacturer_logo', '(SELECT COUNT(*) FROM ' . DB_PREFIX . 'review r WHERE r.product_id = p.id AND r.status = 1) AS reviews');
+        $query->select(
+            'p.*', 
+            'pd.name', 
+            'pd.description', 
+            'p.image', 
+            'm.name AS manufacturer', 
+            'm.image AS manufacturer_logo', 
+            '(SELECT COUNT(*) FROM ' . DB_PREFIX . 'review r WHERE r.product_id = p.id AND r.status = 1) AS reviews',
+            '(SELECT MIN(CASE WHEN pv.price > 0 THEN pv.price ELSE p.price END) FROM `' . DB_PREFIX . 'product` pv WHERE pv.master_id = p.id AND pv.status = 1) AS min_variant_price',
+            '(SELECT MAX(CASE WHEN pv.price > 0 THEN pv.price ELSE p.price END) FROM `' . DB_PREFIX . 'product` pv WHERE pv.master_id = p.id AND pv.status = 1) AS max_variant_price',
+            '(SELECT pdv.name FROM `' . DB_PREFIX . 'product` pv LEFT JOIN `' . DB_PREFIX . 'product_description` pdv ON (pv.id = pdv.product_id AND pdv.language_id = pd.language_id) WHERE pv.master_id = p.id AND pv.status = 1 ORDER BY CASE WHEN pv.price > 0 THEN pv.price ELSE p.price END ASC, pv.id ASC LIMIT 1) AS min_variant_name',
+            '(SELECT pv.image FROM `' . DB_PREFIX . 'product` pv WHERE pv.master_id = p.id AND pv.status = 1 ORDER BY CASE WHEN pv.price > 0 THEN pv.price ELSE p.price END ASC, pv.id ASC LIMIT 1) AS min_variant_image'
+        );
         if (!empty($priceStatements)) {
             $query->select(...array_values($priceStatements));
         }
@@ -226,7 +238,19 @@ class ProductMapper extends BaseMapper {
             ->where("p.date_available <= ?", [date('Y-m-d')])
             ->where("p2s.store_id = ?", [$store_id])
             ->where("pd.language_id = ?", [$language_id])
-            ->select('p.*', 'pd.name', 'pd.description', 'p.image', 'm.name AS manufacturer', 'm.image AS manufacturer_logo', '(SELECT COUNT(*) FROM ' . DB_PREFIX . 'review r WHERE r.product_id = p.id AND r.status = 1) AS reviews');
+            ->select(
+                'p.*', 
+                'pd.name', 
+                'pd.description', 
+                'p.image', 
+                'm.name AS manufacturer', 
+                'm.image AS manufacturer_logo', 
+                '(SELECT COUNT(*) FROM ' . DB_PREFIX . 'review r WHERE r.product_id = p.id AND r.status = 1) AS reviews',
+                '(SELECT MIN(CASE WHEN pv.price > 0 THEN pv.price ELSE p.price END) FROM `' . DB_PREFIX . 'product` pv WHERE pv.master_id = p.id AND pv.status = 1) AS min_variant_price',
+                '(SELECT MAX(CASE WHEN pv.price > 0 THEN pv.price ELSE p.price END) FROM `' . DB_PREFIX . 'product` pv WHERE pv.master_id = p.id AND pv.status = 1) AS max_variant_price',
+                '(SELECT pdv.name FROM `' . DB_PREFIX . 'product` pv LEFT JOIN `' . DB_PREFIX . 'product_description` pdv ON (pv.id = pdv.product_id AND pdv.language_id = pd.language_id) WHERE pv.master_id = p.id AND pv.status = 1 ORDER BY CASE WHEN pv.price > 0 THEN pv.price ELSE p.price END ASC, pv.id ASC LIMIT 1) AS min_variant_name',
+                '(SELECT pv.image FROM `' . DB_PREFIX . 'product` pv WHERE pv.master_id = p.id AND pv.status = 1 ORDER BY CASE WHEN pv.price > 0 THEN pv.price ELSE p.price END ASC, pv.id ASC LIMIT 1) AS min_variant_image'
+            );
             
         if (!empty($priceStatements)) {
             $query->select(...array_values($priceStatements));
@@ -374,7 +398,11 @@ class ProductMapper extends BaseMapper {
                 'p.image',
                 'm.name AS manufacturer',
                 'm.image AS manufacturer_logo',
-                '(SELECT COUNT(*) FROM ' . DB_PREFIX . 'review r WHERE r.product_id = p.id AND r.status = 1) AS reviews'
+                '(SELECT COUNT(*) FROM ' . DB_PREFIX . 'review r WHERE r.product_id = p.id AND r.status = 1) AS reviews',
+                '(SELECT MIN(CASE WHEN pv.price > 0 THEN pv.price ELSE p.price END) FROM `' . DB_PREFIX . 'product` pv WHERE pv.master_id = p.id AND pv.status = 1) AS min_variant_price',
+                '(SELECT MAX(CASE WHEN pv.price > 0 THEN pv.price ELSE p.price END) FROM `' . DB_PREFIX . 'product` pv WHERE pv.master_id = p.id AND pv.status = 1) AS max_variant_price',
+                '(SELECT pdv.name FROM `' . DB_PREFIX . 'product` pv LEFT JOIN `' . DB_PREFIX . 'product_description` pdv ON (pv.id = pdv.product_id AND pdv.language_id = pd.language_id) WHERE pv.master_id = p.id AND pv.status = 1 ORDER BY CASE WHEN pv.price > 0 THEN pv.price ELSE p.price END ASC, pv.id ASC LIMIT 1) AS min_variant_name',
+                '(SELECT pv.image FROM `' . DB_PREFIX . 'product` pv WHERE pv.master_id = p.id AND pv.status = 1 ORDER BY CASE WHEN pv.price > 0 THEN pv.price ELSE p.price END ASC, pv.id ASC LIMIT 1) AS min_variant_image'
             );
             
         if (!empty($priceStatements)) {

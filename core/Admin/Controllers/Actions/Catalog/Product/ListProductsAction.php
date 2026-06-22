@@ -79,7 +79,9 @@ class ListProductsAction extends BaseController implements \Alpha\Controller\Act
 
         // 3. Query dos dados dos produtos filtrados
         $dataQuery = "
-            SELECT p.id, p.image, pd.name, p.model, p.price, p.quantity, p.status 
+            SELECT p.id, p.image, pd.name, p.model, p.price, p.quantity, p.status,
+                   (SELECT MIN(CASE WHEN pv.price > 0 THEN pv.price ELSE p.price END) FROM `" . DB_PREFIX . "product` pv WHERE pv.master_id = p.id AND pv.status = 1) AS min_variant_price,
+                   (SELECT MAX(CASE WHEN pv.price > 0 THEN pv.price ELSE p.price END) FROM `" . DB_PREFIX . "product` pv WHERE pv.master_id = p.id AND pv.status = 1) AS max_variant_price
             FROM `" . DB_PREFIX . "product` p
             LEFT JOIN `" . DB_PREFIX . "product_description` pd ON p.id = pd.product_id AND pd.language_id = ?
             $whereSql
@@ -105,11 +107,20 @@ class ListProductsAction extends BaseController implements \Alpha\Controller\Act
         $imagePresenter = $this->getImagePresenter();
         $products = [];
         foreach ($productsData as $prod) {
+            $minPrice = $prod['min_variant_price'] !== null ? (float)$prod['min_variant_price'] : null;
+            $maxPrice = $prod['max_variant_price'] !== null ? (float)$prod['max_variant_price'] : null;
+
+            if ($minPrice !== null && $maxPrice !== null && $minPrice !== $maxPrice) {
+                $priceDisplay = 'R$ ' . number_format($minPrice, 2, ',', '.') . ' - R$ ' . number_format($maxPrice, 2, ',', '.');
+            } else {
+                $priceDisplay = 'R$ ' . number_format((float)($prod['price'] ?? 0), 2, ',', '.');
+            }
+
             $products[] = [
                 'product_id' => $prod['id'] ?? 0,
                 'name'       => $prod['name'],
                 'model'      => $prod['model'] ?? '',
-                'price'      => 'R$ ' . number_format((float)($prod['price'] ?? 0), 2, ',', '.'),
+                'price'      => $priceDisplay,
                 'quantity'   => $prod['quantity'] ?? 0,
                 'status'     => $prod['status'] ? 'Ativo' : 'Inativo',
                 'image'      => $imagePresenter->resize($prod['image'] ?? '', 40, 40, false)

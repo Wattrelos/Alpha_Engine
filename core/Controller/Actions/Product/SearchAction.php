@@ -103,6 +103,18 @@ class SearchAction implements ActionInterface
                 $product['slug'] = $productSlug;
                 $product['href'] = $routeParser->urlFor('product.detail', ['lang' => $lang, 'slug' => (string)$productSlug]);
 
+                // Exibe nome e imagem da variação de menor preço caso existam variações com preços distintos
+                $minPrice = !empty($product['min_variant_price']) ? (float)$product['min_variant_price'] : null;
+                $maxPrice = !empty($product['max_variant_price']) ? (float)$product['max_variant_price'] : null;
+                if ($minPrice !== null && $maxPrice !== null && $minPrice !== $maxPrice) {
+                    if (!empty($product['min_variant_name'])) {
+                        $product['name'] = $product['min_variant_name'];
+                    }
+                    if (!empty($product['min_variant_image'])) {
+                        $product['image'] = $product['min_variant_image'];
+                    }
+                }
+
                 // Formatação visual da miniatura
                 $product['thumb'] = $imagePresenter->resize($product['image'] ?? '', $config ? (int)$config->get('config_image_product_width') : 228, $config ? (int)$config->get('config_image_product_height') : 228);
                 $product['manufacturer_logo_thumb'] = !empty($product['manufacturer_logo']) ? $imagePresenter->resize($product['manufacturer_logo'], 40, 40) : '';
@@ -115,6 +127,18 @@ class SearchAction implements ActionInterface
                     $product['special_formatted'] = !empty($product['special']) 
                         ? $currency->format($tax->calculate($product['special'], $product['tax_class_id'] ?? 0, $config->get('config_tax')), $currencyCode) 
                         : false;
+
+                    // Formatação de Preços de Variação
+                    $minPrice = !empty($product['min_variant_price']) ? (float)$product['min_variant_price'] : null;
+                    $maxPrice = !empty($product['max_variant_price']) ? (float)$product['max_variant_price'] : null;
+
+                    if ($minPrice !== null && $maxPrice !== null && $minPrice !== $maxPrice) {
+                        $product['has_variants'] = true;
+                        $product['price_min_formatted'] = $currency->format($tax->calculate($minPrice, $product['tax_class_id'] ?? 0, $config->get('config_tax')), $currencyCode);
+                        $product['price_max_formatted'] = $currency->format($tax->calculate($maxPrice, $product['tax_class_id'] ?? 0, $config->get('config_tax')), $currencyCode);
+                    } else {
+                        $product['has_variants'] = false;
+                    }
                 }
             }
             unset($product);

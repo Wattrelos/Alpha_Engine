@@ -158,6 +158,18 @@ class ShowProductAction implements ActionInterface
                     $relProd['slug'] = $relSlug;
                     $relProd['href'] = $routeParser->urlFor('product.detail', ['lang' => $lang, 'slug' => (string)$relSlug]);
 
+                    // Exibe nome e imagem da variação de menor preço caso existam variações com preços distintos
+                    $minPrice = !empty($relProd['min_variant_price']) ? (float)$relProd['min_variant_price'] : null;
+                    $maxPrice = !empty($relProd['max_variant_price']) ? (float)$relProd['max_variant_price'] : null;
+                    if ($minPrice !== null && $maxPrice !== null && $minPrice !== $maxPrice) {
+                        if (!empty($relProd['min_variant_name'])) {
+                            $relProd['name'] = $relProd['min_variant_name'];
+                        }
+                        if (!empty($relProd['min_variant_image'])) {
+                            $relProd['image'] = $relProd['min_variant_image'];
+                        }
+                    }
+
                     // Formatação visual da miniatura
                     $relProd['thumb'] = $imagePresenter->resize($relProd['image'] ?? '', $config ? (int)$config->get('config_image_related_width') : 228, $config ? (int)$config->get('config_image_related_height') : 228);
                     $relProd['manufacturer_logo_thumb'] = !empty($relProd['manufacturer_logo']) ? $imagePresenter->resize($relProd['manufacturer_logo'], 40, 40) : '';
@@ -170,6 +182,18 @@ class ShowProductAction implements ActionInterface
                         $relProd['special_formatted'] = !empty($relProd['special'])
                             ? $currency->format($tax->calculate((float)$relProd['special'], (int)($relProd['tax_class_id'] ?? 0), $config->get('config_tax')), $currencyCode)
                             : false;
+
+                        // Formatação de Preços de Variação para Relacionados
+                        $minPrice = !empty($relProd['min_variant_price']) ? (float)$relProd['min_variant_price'] : null;
+                        $maxPrice = !empty($relProd['max_variant_price']) ? (float)$relProd['max_variant_price'] : null;
+
+                        if ($minPrice !== null && $maxPrice !== null && $minPrice !== $maxPrice) {
+                            $relProd['has_variants'] = true;
+                            $relProd['price_min_formatted'] = $currency->format($tax->calculate($minPrice, $relProd['tax_class_id'] ?? 0, $config->get('config_tax')), $currencyCode);
+                            $relProd['price_max_formatted'] = $currency->format($tax->calculate($maxPrice, $relProd['tax_class_id'] ?? 0, $config->get('config_tax')), $currencyCode);
+                        } else {
+                            $relProd['has_variants'] = false;
+                        }
                     }
                 }
                 unset($relProd);

@@ -317,6 +317,88 @@ class CartRepository extends AbstractRepository implements BaseRepositoryInterfa
         $productDataMap = $productMapper->getProductsByIds($product_ids, $this->getLanguageId(), $this->getStoreId(), $customerGroupId, $priceStatements);
         $productMap = array_column($productDataMap, null, 'id');
 
+        // Alpha Engine: Identifica e carrega em lote os produtos pai para variações (Evita N+1)
+        $parentIdsToFetch = [];
+        foreach ($productMap as $prod) {
+            $masterId = (int)($prod['master_id'] ?? 0);
+            if ($masterId > 0 && !isset($productMap[$masterId])) {
+                $parentIdsToFetch[] = $masterId;
+            }
+        }
+
+        if (!empty($parentIdsToFetch)) {
+            $parentDataMap = $productMapper->getProductsByIds($parentIdsToFetch, $this->getLanguageId(), $this->getStoreId(), $customerGroupId, $priceStatements);
+            foreach ($parentDataMap as $parentProd) {
+                $productMap[$parentProd['id']] = $parentProd;
+            }
+        }
+
+        // Hidratação e Herança das variações
+        foreach ($productMap as $id => &$prod) {
+            $masterId = (int)($prod['master_id'] ?? 0);
+            if ($masterId > 0 && isset($productMap[$masterId])) {
+                $parent = $productMap[$masterId];
+
+                // Preço Base
+                if ((float)$prod['price'] <= 0.0) {
+                    $prod['price'] = $parent['price'];
+                }
+
+                // Preço Promocional (Special e Discount)
+                // Se a variação herda o preço do pai, herda também promoções e descontos do pai
+                if (!isset($prod['special']) || (float)$prod['special'] <= 0.0) {
+                    if ((float)$prod['price'] === (float)$parent['price']) {
+                        $prod['special'] = $parent['special'];
+                    }
+                }
+                if (!isset($prod['discount']) || (float)$prod['discount'] <= 0.0) {
+                    if ((float)$prod['price'] === (float)$parent['price']) {
+                        $prod['discount'] = $parent['discount'];
+                    }
+                }
+
+                // Classe de Imposto
+                if (empty($prod['tax_class_id'])) {
+                    $prod['tax_class_id'] = $parent['tax_class_id'];
+                }
+
+                // Peso e Classe de Peso
+                if ((float)$prod['weight'] <= 0.0) {
+                    $prod['weight'] = $parent['weight'];
+                    $prod['weight_class_id'] = $parent['weight_class_id'];
+                }
+
+                // Imagem
+                if (empty($prod['image'])) {
+                    $prod['image'] = $parent['image'];
+                }
+
+                // Pontos
+                if (empty($prod['points'])) {
+                    $prod['points'] = $parent['points'];
+                }
+                if (empty($prod['reward'])) {
+                    $prod['reward'] = $parent['reward'] ?? 0;
+                }
+
+                // Compra Mínima
+                if (empty($prod['minimum']) || (int)$prod['minimum'] <= 1) {
+                    $prod['minimum'] = $parent['minimum'];
+                }
+
+                // Estoque Subtraível
+                if (isset($parent['subtract'])) {
+                    $prod['subtract'] = $parent['subtract'];
+                }
+
+                // Frete Requerido
+                if (isset($parent['shipping'])) {
+                    $prod['shipping'] = $parent['shipping'];
+                }
+            }
+        }
+        unset($prod);
+
         $products = [];
 
         /** @var ProductMapper $productMapper */

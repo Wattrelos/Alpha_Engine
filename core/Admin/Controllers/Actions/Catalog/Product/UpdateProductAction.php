@@ -110,7 +110,7 @@ class UpdateProductAction extends BaseController implements ActionInterface
 
             // 3. Processa Variações (Produtos Filhos)
             if (isset($data['variants']) && is_array($data['variants'])) {
-                foreach ($data['variants'] as $v) {
+                foreach ($data['variants'] as $index => $v) {
                     $vId = (int)($v['id'] ?? 0);
                     $vName = trim($v['name'] ?? '');
                     $vSku = trim($v['sku'] ?? '');
@@ -131,13 +131,47 @@ class UpdateProductAction extends BaseController implements ActionInterface
                             $conn->prepare("DELETE FROM `" . DB_PREFIX . "product_to_store` WHERE `product_id` = ?")->execute([$vId]);
                             $conn->prepare("DELETE FROM `" . DB_PREFIX . "product_to_category` WHERE `product_id` = ?")->execute([$vId]);
                         } else {
+                            // Fetch existing variation image path
+                            $stmtVImage = $conn->prepare("SELECT image FROM `" . DB_PREFIX . "product` WHERE `id` = ? AND `master_id` = ?");
+                            $stmtVImage->execute([$vId, $productId]);
+                            $vCurrentImagePath = $stmtVImage->fetchColumn() ?: '';
+
+                            $vRemoveImage = isset($v['remove_image']) && $v['remove_image'] == '1';
+                            $vNewImagePath = $vCurrentImagePath;
+
+                            if ($vRemoveImage) {
+                                $vNewImagePath = '';
+                            }
+
+                            // Process uploaded image for this variation
+                            $vImageFile = $uploadedFiles["variant_image_{$index}"] ?? null;
+                            if ($vImageFile && $vImageFile->getError() === UPLOAD_ERR_OK) {
+                                $clientFilename = $vImageFile->getClientFilename();
+                                $extension = strtolower(pathinfo($clientFilename, PATHINFO_EXTENSION));
+                                $allowedExtensions = ['jpg', 'jpeg', 'png', 'gif', 'webp'];
+
+                                if (in_array($extension, $allowedExtensions, true)) {
+                                    $safeFilename = sprintf('product_var_%d_%d.%s', $vId, time(), $extension);
+                                    $targetPathRel = 'image/product/' . $safeFilename;
+                                    $targetPathAbs = DIR_IMAGE . $targetPathRel;
+
+                                    $targetDir = dirname($targetPathAbs);
+                                    if (!is_dir($targetDir)) {
+                                        @mkdir($targetDir, 0755, true);
+                                    }
+
+                                    $vImageFile->moveTo($targetPathAbs);
+                                    $vNewImagePath = $targetPathRel;
+                                }
+                            }
+
                             // Atualiza a variação
                             $conn->prepare("
                                 UPDATE `" . DB_PREFIX . "product` 
                                 SET `sku` = ?, `price` = ?, `quantity` = ?, `status` = ?, `variant` = ?, `model` = ?, `stock_status_id` = ?, `manufacturer_id` = ?, `date_available` = ?, `image` = ?, `date_modified` = NOW() 
                                 WHERE `id` = ? AND `master_id` = ?
                             ")->execute([
-                                $vSku, $vPrice, $vQuantity, $vStatus, $vName, $model . '-' . $vSku, $stockStatusId, $dbManufacturerId, $dateAvailable, $newImagePath, $vId, $productId
+                                $vSku, $vPrice, $vQuantity, $vStatus, $vName, $model . '-' . $vSku, $stockStatusId, $dbManufacturerId, $dateAvailable, $vNewImagePath, $vId, $productId
                             ]);
 
                             // Atualiza a descrição da variação (Nome do pai + nome da variação)
@@ -151,6 +185,29 @@ class UpdateProductAction extends BaseController implements ActionInterface
                             ]);
                         }
                     } else if (!$vDelete) {
+                        // Process uploaded image for new variation
+                        $vNewImagePath = '';
+                        $vImageFile = $uploadedFiles["variant_image_{$index}"] ?? null;
+                        if ($vImageFile && $vImageFile->getError() === UPLOAD_ERR_OK) {
+                            $clientFilename = $vImageFile->getClientFilename();
+                            $extension = strtolower(pathinfo($clientFilename, PATHINFO_EXTENSION));
+                            $allowedExtensions = ['jpg', 'jpeg', 'png', 'gif', 'webp'];
+
+                            if (in_array($extension, $allowedExtensions, true)) {
+                                $safeFilename = sprintf('product_var_new_%d_%s.%s', $productId, uniqid(), $extension);
+                                $targetPathRel = 'image/product/' . $safeFilename;
+                                $targetPathAbs = DIR_IMAGE . $targetPathRel;
+
+                                $targetDir = dirname($targetPathAbs);
+                                if (!is_dir($targetDir)) {
+                                    @mkdir($targetDir, 0755, true);
+                                }
+
+                                $vImageFile->moveTo($targetPathAbs);
+                                $vNewImagePath = $targetPathRel;
+                            }
+                        }
+
                         // Cria uma nova variação
                         $stmtInsVariant = $conn->prepare("
                             INSERT INTO `" . DB_PREFIX . "product` (
@@ -170,7 +227,7 @@ class UpdateProductAction extends BaseController implements ActionInterface
                             )
                         ");
                         $stmtInsVariant->execute([
-                            $productId, $model . '-' . $vSku, $vSku, $vName, $vQuantity, $stockStatusId, $newImagePath, $dbManufacturerId, $vPrice, $dateAvailable, $vStatus
+                            $productId, $model . '-' . $vSku, $vSku, $vName, $vQuantity, $stockStatusId, $vNewImagePath, $dbManufacturerId, $vPrice, $dateAvailable, $vStatus
                         ]);
                         $newVariantId = (int)$conn->lastInsertId();
 
