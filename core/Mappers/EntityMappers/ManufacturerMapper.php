@@ -90,7 +90,7 @@ class ManufacturerMapper {
             ->where('p2s.store_id = ?', [$store_id])
             ->where('m2s.store_id = ?', [$store_id])
             ->where('p.status = 1')
-            ->where('p.quantity > 0')
+            ->where('NOT (p.quantity <= 0 AND p.stock_status_id = 5)')
             ->groupBy('m.id')
             ->orderBy('m.name', 'ASC')
             ->select('m.*');

@@ -32,6 +32,19 @@ class SupplierRepository extends AbstractRepository implements BaseRepositoryInt
             if (!empty($results)) {
                 $supplier->setAddresses($results[0]);
             }
+
+            // Busca os contatos associados via pivot
+            $conn = \Alpha\Model\DataAccessObject\ConnectionDB::getInstance()->getConnection();
+            $stmtContacts = $conn->prepare("
+                SELECT c.*, scm.manufacturer_id, m.name AS manufacturer_name
+                FROM `" . DB_PREFIX . "supplier_contact_manufacturer` scm
+                JOIN `" . DB_PREFIX . "contact` c ON scm.contact_id = c.id
+                LEFT JOIN `" . DB_PREFIX . "manufacturer` m ON scm.manufacturer_id = m.id
+                WHERE scm.supplier_id = ?
+            ");
+            $stmtContacts->execute([$id]);
+            $contacts = $stmtContacts->fetchAll(\PDO::FETCH_ASSOC);
+            $supplier->setContacts($contacts);
         }
 
         return $supplier;
@@ -94,6 +107,70 @@ class SupplierRepository extends AbstractRepository implements BaseRepositoryInt
                 $address->setId($addressId);
             }
 
+            // Salva contatos se existirem
+            $existingContactIds = [];
+            $stmtExisting = $conn->prepare("SELECT contact_id FROM `" . DB_PREFIX . "supplier_contact_manufacturer` WHERE supplier_id = ?");
+            $stmtExisting->execute([$supplierId]);
+            $existingContactIds = $stmtExisting->fetchAll(\PDO::FETCH_COLUMN);
+
+            // Limpa associação anterior
+            $conn->prepare("DELETE FROM `" . DB_PREFIX . "supplier_contact_manufacturer` WHERE supplier_id = ?")->execute([$supplierId]);
+
+            $keptContactIds = [];
+            $contacts = $supplier->getContacts();
+            foreach ($contacts as $contactData) {
+                $contactId = isset($contactData['id']) ? (int)$contactData['id'] : 0;
+                $name = trim($contactData['name'] ?? '');
+                $email = trim($contactData['email'] ?? '');
+                $phone = trim($contactData['phone'] ?? '');
+                $position = trim($contactData['position'] ?? '');
+                $isActive = isset($contactData['is_active']) ? (int)$contactData['is_active'] : 1;
+                $manufacturerId = isset($contactData['manufacturer_id']) ? (int)$contactData['manufacturer_id'] : 0;
+
+                if (empty($name)) {
+                    continue;
+                }
+
+                if ($contactId > 0) {
+                    // Update
+                    $stmtUpd = $conn->prepare("
+                        UPDATE `" . DB_PREFIX . "contact` 
+                        SET name = ?, email = ?, phone = ?, position = ?, is_active = ?, updated_at = NOW() 
+                        WHERE id = ?
+                    ");
+                    $stmtUpd->execute([$name, $email, $phone, $position, $isActive, $contactId]);
+                    $keptContactIds[] = $contactId;
+                } else {
+                    // Insert
+                    $stmtIns = $conn->prepare("
+                        INSERT INTO `" . DB_PREFIX . "contact` (
+                            name, email, phone, position, is_active, created_at, updated_at
+                        ) VALUES (?, ?, ?, ?, ?, NOW(), NOW())
+                    ");
+                    $stmtIns->execute([$name, $email, $phone, $position, $isActive]);
+                    $contactId = (int)$conn->lastInsertId();
+                    $keptContactIds[] = $contactId;
+                }
+
+                // Relacionamento (somente se houver fabricante selecionado)
+                if ($manufacturerId > 0) {
+                    $stmtRel = $conn->prepare("
+                        INSERT INTO `" . DB_PREFIX . "supplier_contact_manufacturer` (
+                            supplier_id, contact_id, manufacturer_id, created_at
+                        ) VALUES (?, ?, ?, NOW())
+                    ");
+                    $stmtRel->execute([$supplierId, $contactId, $manufacturerId]);
+                }
+            }
+
+            // Remove contatos órfãos
+            $orphans = array_diff($existingContactIds, $keptContactIds);
+            if (!empty($orphans)) {
+                $placeholders = implode(',', array_fill(0, count($orphans), '?'));
+                $stmtDelOrphans = $conn->prepare("DELETE FROM `" . DB_PREFIX . "contact` WHERE id IN ($placeholders)");
+                $stmtDelOrphans->execute(array_values($orphans));
+            }
+
             if ($managedTransaction) {
                 $conn->commit();
             }
@@ -126,6 +203,11 @@ class SupplierRepository extends AbstractRepository implements BaseRepositoryInt
                 $managedTransaction = true;
             }
 
+            // Busca os contatos associados ao fornecedor antes de deletá-lo
+            $stmtContacts = $conn->prepare("SELECT contact_id FROM `" . DB_PREFIX . "supplier_contact_manufacturer` WHERE supplier_id = ?");
+            $stmtContacts->execute([$id]);
+            $contactIds = $stmtContacts->fetchAll(\PDO::FETCH_COLUMN);
+
             // Remove os endereços associados ao fornecedor
             $addresses = $addressMapper->search(['supplierId' => $id]);
             foreach ($addresses as $address) {
@@ -134,6 +216,13 @@ class SupplierRepository extends AbstractRepository implements BaseRepositoryInt
 
             // Remove o fornecedor
             $result = $supplierMapper->delete($id);
+
+            // Remove os contatos da tabela contact
+            if (!empty($contactIds)) {
+                $placeholders = implode(',', array_fill(0, count($contactIds), '?'));
+                $stmtDelContacts = $conn->prepare("DELETE FROM `" . DB_PREFIX . "contact` WHERE id IN ($placeholders)");
+                $stmtDelContacts->execute($contactIds);
+            }
 
             if ($managedTransaction) {
                 $conn->commit();

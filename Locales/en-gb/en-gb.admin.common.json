@@ -1,0 +1,23 @@
+{
+    "sidebar": {
+        "title": "AgSonhos Admin",
+        "dashboard": "Dashboard",
+        "orders": "Sales / Orders",
+        "returns": "Returns",
+        "customers": "Customers",
+        "products": "Products",
+        "categories": "Categories",
+        "manufacturers": "Manufacturers",
+        "suppliers": "Suppliers",
+        "settings": "Settings",
+        "logout": "Logout"
+    },
+    "topbar": {
+        "role": "Administrator Mode",
+        "default_name": "Administrator",
+        "default_email": "admin@agsonhos.com"
+    },
+    "language": {
+        "select": "Select Language"
+    }
+}

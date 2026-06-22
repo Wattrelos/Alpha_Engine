@@ -17,9 +17,14 @@ class CreateSupplierAction extends BaseController implements \Alpha\Controller\A
         $countryMapper = $mapperFactory->get(GeoCountryMapper::class);
         $countries = $countryMapper->getCountries();
 
+        $conn = \Alpha\Model\DataAccessObject\ConnectionDB::getInstance()->getConnection();
+        $stmtManufacturers = $conn->query("SELECT id, name FROM `" . DB_PREFIX . "manufacturer` ORDER BY name ASC");
+        $manufacturers = $stmtManufacturers->fetchAll(\PDO::FETCH_ASSOC);
+
         $html = $this->getTemplate('admin/catalog/supplier/create.html.twig', [
-            'title'     => 'Adicionar Fornecedor | Painel Administrativo',
-            'countries' => $countries
+            'title'         => 'Adicionar Fornecedor | Painel Administrativo',
+            'countries'     => $countries,
+            'manufacturers' => $manufacturers
         ]);
 
         $response->getBody()->write($html);

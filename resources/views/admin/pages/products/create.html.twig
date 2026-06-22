@@ -1,18 +1,18 @@
 {% extends 'admin/layouts/base.html.twig' %}
 
 {% block title %}
-	{{ title|default('Adicionar Produto | Painel Administrativo') }}
+	{{ title|default(AdminLang.text_title_create) }}
 {% endblock %}
 
 {% block content %}
 	<div class="page-header">
 		<div>
-			<h2>Adicionar Produto</h2>
-			<p class="page-subtitle">Cadastre um novo produto na sua loja.</p>
+			<h2>{{ AdminLang.heading_title_create }}</h2>
+			<p class="page-subtitle">{{ AdminLang.text_subtitle_create }}</p>
 		</div>
 		<a href="/LPDHED2dC7Gjrg2b/produtos" class="btn btn-secondary">
 			<i class="fas fa-arrow-left"></i>
-			<span>Voltar para Lista</span>
+			<span>{{ AdminLang.button_back }}</span>
 		</a>
 	</div>
 
@@ -22,39 +22,39 @@
 				
 				<!-- Nome do Produto -->
 				<div class="form-group col-span-2 grid-form-row">
-					<label for="name" class="form-label-dark">Nome do Produto *</label>
-					<input type="text" id="name" name="name" class="form-control form-control-lg" placeholder="ex: Tubo de PVC Soldável 25mm 6m" required />
+					<label for="name" class="form-label-dark">{{ AdminLang.entry_name }} *</label>
+					<input type="text" id="name" name="name" class="form-control form-control-lg" placeholder="{{ AdminLang.placeholder_name_create }}" required />
 				</div>
 
 				<!-- Modelo -->
 				<div class="form-group mb-6">
-					<label for="model" class="form-label-dark">Modelo</label>
-					<input type="text" id="model" name="model" class="form-control form-control-lg" placeholder="ex: PVC-25-6M" />
+					<label for="model" class="form-label-dark">{{ AdminLang.entry_model }}</label>
+					<input type="text" id="model" name="model" class="form-control form-control-lg" placeholder="{{ AdminLang.placeholder_model }}" />
 				</div>
 
 				<!-- EAN / Código de Barras -->
 				<div class="form-group mb-6">
-					<label for="ean" class="form-label-dark">EAN (Código de Barras)</label>
-					<input type="text" id="ean" name="ean" class="form-control form-control-lg" placeholder="ex: 7891234567890" />
+					<label for="ean" class="form-label-dark">{{ AdminLang.entry_ean_title }}</label>
+					<input type="text" id="ean" name="ean" class="form-control form-control-lg" placeholder="{{ AdminLang.placeholder_ean_val }}" />
 				</div>
 
 				<!-- Preço -->
 				<div class="form-group mb-6">
-					<label for="price" class="form-label-dark">Preço (R$)</label>
+					<label for="price" class="form-label-dark">{{ AdminLang.entry_price_title }}</label>
 					<input type="number" id="price" name="price" class="form-control form-control-lg" step="0.01" value="0.00" />
 				</div>
 
 				<!-- Quantidade -->
 				<div class="form-group mb-6">
-					<label for="quantity" class="form-label-dark">Quantidade em Estoque</label>
+					<label for="quantity" class="form-label-dark">{{ AdminLang.entry_quantity_title }}</label>
 					<input type="number" id="quantity" name="quantity" class="form-control form-control-lg" value="0" />
 				</div>
 
 				<!-- Fabricante (Manufacturer) -->
 				<div class="form-group mb-6">
-					<label for="manufacturer_id" class="form-label-dark">Fabricante</label>
+					<label for="manufacturer_id" class="form-label-dark">{{ AdminLang.entry_manufacturer_title }}</label>
 					<select id="manufacturer_id" name="manufacturer_id" class="form-control form-control-lg">
-						<option value="0">--- Nenhum ---</option>
+						<option value="0">{{ AdminLang.text_none }}</option>
 						{% for m in manufacturers %}
 							<option value="{{ m.id }}">{{ m.name }}</option>
 						{% endfor %}
@@ -63,7 +63,7 @@
 
 				<!-- Status de Estoque (Stock Status) -->
 				<div class="form-group mb-6">
-					<label for="stock_status_id" class="form-label-dark">Status se Esgotado</label>
+					<label for="stock_status_id" class="form-label-dark">{{ AdminLang.entry_stock_status }}</label>
 					<select id="stock_status_id" name="stock_status_id" class="form-control form-control-lg">
 						{% for s in stock_statuses %}
 							<option value="{{ s.id }}" {% if s.id == 7 %}selected{% endif %}>{{ s.name }}</option>
@@ -71,45 +71,60 @@
 					</select>
 				</div>
 
+				<!-- Categorias -->
+				<div class="form-group mb-6" style="grid-column: span 2;">
+					<label class="form-label-dark">{{ AdminLang.entry_categories }}</label>
+					<div style="border: 1px solid #cbd5e1; border-radius: 8px; padding: 1rem; max-height: 200px; overflow-y: auto; background: #ffffff;">
+						<div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 0.75rem;">
+							{% for c in categories %}
+								<label style="display: inline-flex; align-items: center; gap: 8px; color: #334155; font-size: 0.95rem; cursor: pointer; user-select: none;">
+									<input type="checkbox" name="product_category[]" value="{{ c.id }}" style="width: 18px; height: 18px; accent-color: #3b82f6; cursor: pointer;" />
+									<span>{{ c.name }}</span>
+								</label>
+							{% endfor %}
+						</div>
+					</div>
+				</div>
+
 				<!-- Data Disponível -->
 				<div class="form-group mb-6">
-					<label for="date_available" class="form-label-dark">Data Disponível</label>
+					<label for="date_available" class="form-label-dark">{{ AdminLang.entry_date_available }}</label>
 					<input type="date" id="date_available" name="date_available" class="form-control form-control-lg" value="{{ "now"|date("Y-m-d") }}" />
 				</div>
 
 				<!-- Status -->
 				<div class="form-group mb-6">
-					<label for="status" class="form-label-dark">Status Geral</label>
+					<label for="status" class="form-label-dark">{{ AdminLang.entry_status_general }}</label>
 					<select id="status" name="status" class="form-control form-control-lg">
-						<option value="1">Ativo</option>
-						<option value="0">Inativo</option>
+						<option value="1">{{ AdminLang.text_active }}</option>
+						<option value="0">{{ AdminLang.text_inactive }}</option>
 					</select>
 				</div>
 
 				<!-- Imagem do Produto -->
 				<div class="form-group" style="grid-column: span 2; margin-bottom: 2rem; padding: 1.5rem; border: 1px dashed #cbd5e1; border-radius: 12px; background: #f8fafc;">
-					<label for="image" style="display: block; font-weight: 700; margin-bottom: 0.75rem; color: #0f172a; font-size: 1.1rem;">Foto do Produto</label>
+					<label for="image" style="display: block; font-weight: 700; margin-bottom: 0.75rem; color: #0f172a; font-size: 1.1rem;">{{ AdminLang.entry_image }}</label>
 					
 					<div class="upload-input-wrap">
 						<input type="file" id="image" name="image" accept="image/*" class="form-control form-control-lg" />
-						<p style="margin: 0.5rem 0 0 0; font-size: 0.8rem; color: #64748b;">Formatos aceitos: JPG, PNG, WEBP, GIF.</p>
+						<p style="margin: 0.5rem 0 0 0; font-size: 0.8rem; color: #64748b;">{{ AdminLang.text_image_help }}</p>
 					</div>
 				</div>
 
 				<!-- Descrição Detalhada -->
 				<div class="form-group" style="grid-column: span 2; margin-bottom: 2rem;">
-					<label for="description" class="form-label-dark">Descrição Detalhada</label>
-					<textarea id="description" name="description" class="form-control form-control-lg" rows="8" placeholder="Digite a descrição detalhada do produto..."></textarea>
+					<label for="description" class="form-label-dark">{{ AdminLang.entry_description }}</label>
+					<textarea id="description" name="description" class="form-control form-control-lg" rows="8" placeholder="{{ AdminLang.placeholder_description }}"></textarea>
 				</div>
 
 			</div>
 
 			<!-- Botões de Ação -->
 			<div class="form-actions">
-				<a href="/LPDHED2dC7Gjrg2b/produtos" class="btn btn-secondary">Cancelar</a>
+				<a href="/LPDHED2dC7Gjrg2b/produtos" class="btn btn-secondary">{{ AdminLang.button_cancel }}</a>
 				<button type="submit" class="btn btn-primary">
 					<i class="fas fa-plus"></i>
-					<span>Cadastrar Produto</span>
+					<span>{{ AdminLang.button_create }}</span>
 				</button>
 			</div>
 		</form>

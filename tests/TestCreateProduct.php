@@ -69,6 +69,16 @@ try {
     $testProductPrice = 99.99;
     $testProductQuantity = 100;
 
+    // Find or create a test category
+    $testCategoryId = (int)$conn->query("SELECT id FROM `" . DB_PREFIX . "category` LIMIT 1")->fetchColumn();
+    $createdTestCategory = false;
+    if (!$testCategoryId) {
+        $conn->prepare("INSERT INTO `" . DB_PREFIX . "category` (`parent_id`, `sort_order`, `status`, `date_added`, `date_modified`) VALUES (0, 0, 1, NOW(), NOW())")->execute();
+        $testCategoryId = (int)$conn->lastInsertId();
+        $conn->prepare("INSERT INTO `" . DB_PREFIX . "category_description` (`category_id`, `language_id`, `name`, `description`, `meta_title`, `meta_description`, `meta_keyword`) VALUES (?, 1, 'Test Cat', '', '', '', '')")->execute([$testCategoryId]);
+        $createdTestCategory = true;
+    }
+
     $requestPostValid = $serverRequestFactory->createServerRequest('POST', '/produtos/criar')
         ->withParsedBody([
             'name' => $testProductName,
@@ -80,7 +90,8 @@ try {
             'ean' => '1234567890123',
             'stock_status_id' => 7,
             'manufacturer_id' => 0,
-            'date_available' => date('Y-m-d')
+            'date_available' => date('Y-m-d'),
+            'product_category' => [$testCategoryId]
         ]);
 
     $responsePostValid = $app->handle($requestPostValid);
@@ -119,13 +130,26 @@ try {
         throw new \Exception("Product was not linked to store_id = 1, got store_id: " . $storeId);
     }
 
-    echo "Assertion PASSED: Product successfully inserted and associated in store.\n";
+    // Check product_to_category insertion
+    $stmtCat = $conn->prepare("SELECT category_id FROM `" . DB_PREFIX . "product_to_category` WHERE product_id = ?");
+    $stmtCat->execute([$insertedProduct['id']]);
+    $insertedCatId = (int)$stmtCat->fetchColumn();
+    if ($insertedCatId !== $testCategoryId) {
+        throw new \Exception("Product was not linked to category_id = " . $testCategoryId . ", got: " . $insertedCatId);
+    }
+
+    echo "Assertion PASSED: Product successfully inserted and associated in store & category.\n";
 
     echo "\n=== 4. Cleaning Up ===\n";
+    $conn->prepare("DELETE FROM `" . DB_PREFIX . "product_to_category` WHERE product_id = ?")->execute([$insertedProduct['id']]);
     $conn->prepare("DELETE FROM `" . DB_PREFIX . "product_to_store` WHERE product_id = ?")->execute([$insertedProduct['id']]);
     $conn->prepare("DELETE FROM `" . DB_PREFIX . "product_description` WHERE product_id = ?")->execute([$insertedProduct['id']]);
     $conn->prepare("DELETE FROM `" . DB_PREFIX . "product` WHERE id = ?")->execute([$insertedProduct['id']]);
-    echo "Test product cleaned up successfully.\n";
+    if ($createdTestCategory) {
+        $conn->prepare("DELETE FROM `" . DB_PREFIX . "category_description` WHERE category_id = ?")->execute([$testCategoryId]);
+        $conn->prepare("DELETE FROM `" . DB_PREFIX . "category` WHERE id = ?")->execute([$testCategoryId]);
+    }
+    echo "Test product and dummy categories cleaned up successfully.\n";
 
     echo "\n=== ALL TESTS PASSED SUCCESSFULLY! ===\n";
 } catch (\Throwable $e) {

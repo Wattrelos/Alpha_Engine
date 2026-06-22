@@ -48,15 +48,36 @@ class EditProductAction extends BaseController implements ActionInterface
         $stmtStockStatuses->execute([$this->languageId]);
         $stockStatuses = $stmtStockStatuses->fetchAll(\PDO::FETCH_ASSOC);
 
+        // 3.1. Busca lista de todas as categorias
+        $stmtCategories = $conn->prepare("
+            SELECT c.id, cd.name 
+            FROM `" . DB_PREFIX . "category` c 
+            LEFT JOIN `" . DB_PREFIX . "category_description` cd ON c.id = cd.category_id AND cd.language_id = ? 
+            ORDER BY cd.name ASC
+        ");
+        $stmtCategories->execute([$this->languageId]);
+        $categories = $stmtCategories->fetchAll(\PDO::FETCH_ASSOC);
+
+        // 3.2. Busca categorias atualmente vinculadas ao produto
+        $stmtProdCategories = $conn->prepare("
+            SELECT category_id 
+            FROM `" . DB_PREFIX . "product_to_category` 
+            WHERE product_id = ?
+        ");
+        $stmtProdCategories->execute([$productId]);
+        $productCategories = $stmtProdCategories->fetchAll(\PDO::FETCH_COLUMN);
+
         // 4. Busca as variações (produtos filhos) cadastradas
         $variants = $productRepo->getProductVariants($productId);
 
         $html = $this->getTemplate('admin/pages/products/edit.html.twig', [
-            'title'          => 'Editar Produto | Painel Administrativo',
-            'product'        => $product,
-            'manufacturers'  => $manufacturers,
-            'stock_statuses' => $stockStatuses,
-            'variants'       => $variants
+            'title'              => 'Editar Produto | Painel Administrativo',
+            'product'            => $product,
+            'manufacturers'      => $manufacturers,
+            'stock_statuses'     => $stockStatuses,
+            'categories'         => $categories,
+            'product_categories' => $productCategories,
+            'variants'           => $variants
         ]);
 
         $response->getBody()->write($html);

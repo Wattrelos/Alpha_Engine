@@ -45,13 +45,18 @@ class EditSupplierAction extends BaseController implements \Alpha\Controller\Act
             }
         }
 
+        $conn = \Alpha\Model\DataAccessObject\ConnectionDB::getInstance()->getConnection();
+        $stmtManufacturers = $conn->query("SELECT id, name FROM `" . DB_PREFIX . "manufacturer` ORDER BY name ASC");
+        $manufacturers = $stmtManufacturers->fetchAll(\PDO::FETCH_ASSOC);
+
         $html = $this->getTemplate('admin/catalog/supplier/edit.html.twig', [
-            'title'     => 'Editar Fornecedor | Painel Administrativo',
-            'supplier'  => $supplier,
-            'address'   => $address,
-            'countries' => $countries,
-            'zones'     => $zones,
-            'cities'    => $cities
+            'title'         => 'Editar Fornecedor | Painel Administrativo',
+            'supplier'      => $supplier,
+            'address'       => $address,
+            'countries'     => $countries,
+            'zones'         => $zones,
+            'cities'        => $cities,
+            'manufacturers' => $manufacturers
         ]);
 
         $response->getBody()->write($html);

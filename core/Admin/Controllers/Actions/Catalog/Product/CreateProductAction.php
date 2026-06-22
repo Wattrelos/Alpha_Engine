@@ -33,6 +33,8 @@ class CreateProductAction extends BaseController implements \Alpha\Controller\Ac
                 $dateAvailable = date('Y-m-d');
             }
 
+            $categoryIds = isset($data['product_category']) && is_array($data['product_category']) ? $data['product_category'] : [];
+
             if (empty($name)) {
                 $response->getBody()->write('O nome do produto é obrigatório.');
                 return $response->withStatus(400);
@@ -121,6 +123,14 @@ class CreateProductAction extends BaseController implements \Alpha\Controller\Ac
                 $stmtStore = $conn->prepare("INSERT INTO `" . DB_PREFIX . "product_to_store` (`product_id`, `store_id`) VALUES (?, 1)");
                 $stmtStore->execute([$productId]);
 
+                // 5. Insert into product_to_category
+                if (!empty($categoryIds)) {
+                    $stmtCat = $conn->prepare("INSERT INTO `" . DB_PREFIX . "product_to_category` (`product_id`, `category_id`) VALUES (?, ?)");
+                    foreach ($categoryIds as $categoryId) {
+                        $stmtCat->execute([$productId, (int)$categoryId]);
+                    }
+                }
+
                 $conn->commit();
 
                 // Clear caches
@@ -155,10 +165,21 @@ class CreateProductAction extends BaseController implements \Alpha\Controller\Ac
         $stmtStockStatuses->execute([$this->languageId]);
         $stockStatuses = $stmtStockStatuses->fetchAll(\PDO::FETCH_ASSOC);
 
+        // 3. Busca lista de categorias para o checkbox grid
+        $stmtCategories = $conn->prepare("
+            SELECT c.id, cd.name 
+            FROM `" . DB_PREFIX . "category` c 
+            LEFT JOIN `" . DB_PREFIX . "category_description` cd ON c.id = cd.category_id AND cd.language_id = ? 
+            ORDER BY cd.name ASC
+        ");
+        $stmtCategories->execute([$this->languageId]);
+        $categories = $stmtCategories->fetchAll(\PDO::FETCH_ASSOC);
+
         $html = $this->getTemplate('admin/pages/products/create.html.twig', [
             'title'          => 'Adicionar Produto | Painel Administrativo',
             'manufacturers'  => $manufacturers,
-            'stock_statuses' => $stockStatuses
+            'stock_statuses' => $stockStatuses,
+            'categories'     => $categories
         ]);
 
         $response->getBody()->write($html);

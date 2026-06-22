@@ -51,6 +51,8 @@ class UpdateProductAction extends BaseController implements ActionInterface
             $dateAvailable = date('Y-m-d');
         }
 
+        $categoryIds = isset($data['product_category']) && is_array($data['product_category']) ? $data['product_category'] : [];
+
         if (empty($name)) {
             $response->getBody()->write('O nome do produto é obrigatório.');
             return $response->withStatus(400);
@@ -258,6 +260,15 @@ class UpdateProductAction extends BaseController implements ActionInterface
                 SET `manufacturer_id` = ?, `stock_status_id` = ?, `date_available` = ?, `date_modified` = NOW() 
                 WHERE `master_id` = ?
             ")->execute([$dbManufacturerId, $stockStatusId, $dateAvailable, $productId]);
+
+            // Atualizar categorias do produto pai
+            $conn->prepare("DELETE FROM `" . DB_PREFIX . "product_to_category` WHERE `product_id` = ?")->execute([$productId]);
+            if (!empty($categoryIds)) {
+                $stmtCat = $conn->prepare("INSERT INTO `" . DB_PREFIX . "product_to_category` (`product_id`, `category_id`) VALUES (?, ?)");
+                foreach ($categoryIds as $categoryId) {
+                    $stmtCat->execute([$productId, (int)$categoryId]);
+                }
+            }
 
             // Sincronizar categorias do pai para as variações
             $conn->prepare("

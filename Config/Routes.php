@@ -107,7 +107,14 @@ return function (\Slim\App $app) {
             $group->post('/devolucoes/{id:[0-9]+}/status', \Alpha\Admin\Controllers\Actions\Sales\Return\UpdateReturnStatusAction::class)->setName('admin.returns.update_status');
 
             $group->get('/logout', \Alpha\Admin\Controllers\Actions\Auth\LogoutAction::class)->setName('admin.logout');
-        })->add(new \Alpha\Auth\Middleware\AdminSessionMiddleware($app->getContainer()));
+            $group->post('/idioma', \Alpha\Admin\Controllers\Actions\Common\SwitchAdminLanguageAction::class)->setName('admin.language.switch');
+        })
+        ->add(new \Alpha\Auth\Middleware\AdminLanguageMiddleware(
+            $app->getContainer()->get(\Alpha\Model\Domain\Repositories\LanguageRepository::class),
+            $app->getContainer()->get(\Twig\Environment::class),
+            $app->getContainer()
+        ))
+        ->add(new \Alpha\Auth\Middleware\AdminSessionMiddleware($app->getContainer()));
         
         return;
     }

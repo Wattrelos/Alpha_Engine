@@ -234,6 +234,10 @@ class ShowProductAction implements ActionInterface
         $variants = [];
         foreach ($variantsRaw as $variant) {
             if ($variant['status']) {
+                // Não mostrar variação cuja quantidade seja <= 0 e o stock status seja "esgotado" (5)
+                if ((int)$variant['quantity'] <= 0 && (int)$variant['stock_status_id'] === 5) {
+                    continue;
+                }
                 $vPriceRaw = (float)($variant['price'] ?? 0);
                 if ($vPriceRaw <= 0.0) {
                     $vPriceRaw = (float)($product['price'] ?? 0);

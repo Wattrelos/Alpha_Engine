@@ -723,10 +723,15 @@ class DataAccessObject
         $hierarchy = $this->getEntityHierarchy(get_class($entity));
         $hierarchy = array_reverse($hierarchy);
         $conn = null;
+        $managedTransaction = false;
 
         try {
             $conn = ConnectionDB::getInstance()->getConnection();
-            $conn->beginTransaction();
+            
+            if (!$conn->inTransaction()) {
+                $conn->beginTransaction();
+                $managedTransaction = true;
+            }
 
             foreach ($hierarchy as $clazz) {
                 $tableName = $this->getTableNameForClass($clazz);
@@ -734,10 +739,14 @@ class DataAccessObject
                 $stmt->execute([$entity->getId()]);
             }
 
-            $conn->commit();
+            if ($managedTransaction) {
+                $conn->commit();
+            }
             return $entity->getId();
         } catch (Exception $e) {
-            if ($conn && $conn->inTransaction()) $conn->rollBack();
+            if ($managedTransaction && $conn && $conn->inTransaction()) {
+                $conn->rollBack();
+            }
             return 0;
         }
     }

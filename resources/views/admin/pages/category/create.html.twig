@@ -1,18 +1,18 @@
 {% extends 'admin/layouts/base.html.twig' %}
 
 {% block title %}
-	{{ title|default('Adicionar Categoria | Painel Administrativo') }}
+	{{ title|default(AdminLang.text_title_create) }}
 {% endblock %}
 
 {% block content %}
 	<div class="page-header">
 		<div>
-			<h2>Adicionar Categoria</h2>
-			<p class="page-subtitle">Cadastre uma nova categoria de produtos em sua loja.</p>
+			<h2>{{ AdminLang.heading_title_create }}</h2>
+			<p class="page-subtitle">{{ AdminLang.text_subtitle_create }}</p>
 		</div>
 		<a href="/LPDHED2dC7Gjrg2b/categorias" class="btn btn-secondary">
 			<i class="fas fa-arrow-left"></i>
-			<span>Voltar para Lista</span>
+			<span>{{ AdminLang.button_back }}</span>
 		</a>
 	</div>
 
@@ -22,15 +22,15 @@
 				
 				<!-- Nome da Categoria -->
 				<div class="form-group col-span-2 grid-form-row">
-					<label for="name" class="form-label-dark">Nome da Categoria *</label>
+					<label for="name" class="form-label-dark">{{ AdminLang.entry_name }} *</label>
 					<input type="text" id="name" name="name" class="form-control form-control-lg" required />
 				</div>
 
 				<!-- Categoria Pai -->
 				<div class="form-group mb-6">
-					<label for="parent_id" class="form-label-dark">Categoria Pai</label>
+					<label for="parent_id" class="form-label-dark">{{ AdminLang.entry_parent }}</label>
 					<select id="parent_id" name="parent_id" class="form-control form-control-lg">
-						<option value="0">--- Nenhuma (Raiz) ---</option>
+						<option value="0">{{ AdminLang.text_none }}</option>
 						{% for c in categories %}
 							<option value="{{ c.id }}">{{ c.name }}</option>
 						{% endfor %}
@@ -39,53 +39,53 @@
 
 				<!-- SEO URL (Keyword) -->
 				<div class="form-group mb-6">
-					<label for="seo_keyword" class="form-label-dark">SEO URL (Amigável)</label>
-					<input type="text" id="seo_keyword" name="seo_keyword" class="form-control form-control-lg" placeholder="ex: tubos-de-pvc" />
+					<label for="seo_keyword" class="form-label-dark">{{ AdminLang.entry_seo_keyword }}</label>
+					<input type="text" id="seo_keyword" name="seo_keyword" class="form-control form-control-lg" placeholder="{{ AdminLang.placeholder_seo_keyword }}" />
 				</div>
 
 				<!-- Ordem de Exibição -->
 				<div class="form-group mb-6">
-					<label for="sort_order" class="form-label-dark">Ordem de Exibição</label>
+					<label for="sort_order" class="form-label-dark">{{ AdminLang.entry_sort_order }}</label>
 					<input type="number" id="sort_order" name="sort_order" class="form-control form-control-lg" value="0" />
 				</div>
 
 				<!-- Status -->
 				<div class="form-group mb-6">
-					<label for="status" class="form-label-dark">Status</label>
+					<label for="status" class="form-label-dark">{{ AdminLang.entry_status }}</label>
 					<select id="status" name="status" class="form-control form-control-lg">
-						<option value="1">Ativo</option>
-						<option value="0">Inativo</option>
+						<option value="1">{{ AdminLang.text_active }}</option>
+						<option value="0">{{ AdminLang.text_inactive }}</option>
 					</select>
 				</div>
 
 				<!-- Imagem de Capa -->
 				<div class="form-group col-span-2 grid-form-row">
-					<label for="image" style="display: block; font-weight: 700; margin-bottom: 0.5rem; color: #0f172a; font-size: 1.1rem;">Imagem de Capa (Banner/Ícone)</label>
+					<label for="image" style="display: block; font-weight: 700; margin-bottom: 0.5rem; color: #0f172a; font-size: 1.1rem;">{{ AdminLang.entry_image }}</label>
 					<input type="file" id="image" name="image" accept="image/*" class="form-control form-control-lg" />
-					<p style="margin: 0.5rem 0 0 0; font-size: 0.8rem; color: #64748b;">Formatos aceitos: JPG, PNG, WEBP, GIF.</p>
+					<p style="margin: 0.5rem 0 0 0; font-size: 0.8rem; color: #64748b;">{{ AdminLang.text_image_help }}</p>
 				</div>
 
 				<!-- Meta Título -->
 				<div class="form-group col-span-2 grid-form-row">
-					<label for="meta_title" class="form-label-dark">Meta Título (SEO Title)</label>
+					<label for="meta_title" class="form-label-dark">{{ AdminLang.entry_meta_title }}</label>
 					<input type="text" id="meta_title" name="meta_title" class="form-control form-control-lg" />
 				</div>
 
 				<!-- Meta Descrição -->
 				<div class="form-group col-span-2 grid-form-row">
-					<label for="meta_description" class="form-label-dark">Meta Descrição (SEO Description)</label>
+					<label for="meta_description" class="form-label-dark">{{ AdminLang.entry_meta_description }}</label>
 					<input type="text" id="meta_description" name="meta_description" class="form-control form-control-lg" />
 				</div>
 
 				<!-- Meta Palavras-chave -->
 				<div class="form-group col-span-2 grid-form-row">
-					<label for="meta_keyword" class="form-label-dark">Meta Keywords (Palavras-chave)</label>
-					<input type="text" id="meta_keyword" name="meta_keyword" class="form-control form-control-lg" placeholder="ex: tubos, conexoes, pvc" />
+					<label for="meta_keyword" class="form-label-dark">{{ AdminLang.entry_meta_keyword }}</label>
+					<input type="text" id="meta_keyword" name="meta_keyword" class="form-control form-control-lg" placeholder="{{ AdminLang.placeholder_meta_keyword }}" />
 				</div>
 
 				<!-- Descrição Detalhada -->
 				<div class="form-group" style="grid-column: span 2; margin-bottom: 2rem;">
-					<label for="description" class="form-label-dark">Descrição da Categoria</label>
+					<label for="description" class="form-label-dark">{{ AdminLang.entry_description }}</label>
 					<textarea id="description" name="description" class="form-control form-control-lg" rows="6"></textarea>
 				</div>
 
@@ -93,10 +93,10 @@
 
 			<!-- Botões de Ação -->
 			<div class="form-actions">
-				<a href="/LPDHED2dC7Gjrg2b/categorias" class="btn btn-secondary">Cancelar</a>
+				<a href="/LPDHED2dC7Gjrg2b/categorias" class="btn btn-secondary">{{ AdminLang.button_cancel }}</a>
 				<button type="submit" class="btn btn-primary">
 					<i class="fas fa-save"></i>
-					<span>Salvar Categoria</span>
+					<span>{{ AdminLang.button_save }}</span>
 				</button>
 			</div>
 		</form>

@@ -93,14 +93,23 @@ class UpdateSupplierAction extends BaseController implements \Alpha\Controller\A
                 }
             }
 
+            $conn = \Alpha\Model\DataAccessObject\ConnectionDB::getInstance()->getConnection();
+            $stmtManufacturers = $conn->query("SELECT id, name FROM `" . DB_PREFIX . "manufacturer` ORDER BY name ASC");
+            $manufacturers = $stmtManufacturers->fetchAll(\PDO::FETCH_ASSOC);
+
+            // Temporarily set contacts from parsed body so they are returned to form if validation fails
+            $contactsData = isset($data['contacts']) && is_array($data['contacts']) ? $data['contacts'] : [];
+            $supplier->setContacts($contactsData);
+
             $html = $this->getTemplate('admin/catalog/supplier/edit.html.twig', [
-                'title'     => 'Editar Fornecedor | Painel Administrativo',
-                'errors'    => $errors,
-                'supplier'  => $supplier,
-                'address'   => $address,
-                'countries' => $countries,
-                'zones'     => $zones,
-                'cities'    => $cities
+                'title'         => 'Editar Fornecedor | Painel Administrativo',
+                'errors'        => $errors,
+                'supplier'      => $supplier,
+                'address'       => $address,
+                'countries'     => $countries,
+                'zones'         => $zones,
+                'cities'        => $cities,
+                'manufacturers' => $manufacturers
             ]);
             $response->getBody()->write($html);
             return $response->withHeader('Content-Type', 'text/html; charset=utf-8');
@@ -118,6 +127,10 @@ class UpdateSupplierAction extends BaseController implements \Alpha\Controller\A
             $supplier->setWebsite(trim($data['website'] ?? ''));
             $supplier->setIsActive(isset($data['is_active']) && $data['is_active'] == '1');
             $supplier->setUpdatedAt(date('Y-m-d H:i:s'));
+
+            // Parse and set contacts
+            $contactsData = isset($data['contacts']) && is_array($data['contacts']) ? $data['contacts'] : [];
+            $supplier->setContacts($contactsData);
 
             // Obtém ou instancia endereço
             $address = $supplier->getAddresses();
@@ -161,14 +174,23 @@ class UpdateSupplierAction extends BaseController implements \Alpha\Controller\A
                 }
             }
 
+            $conn = \Alpha\Model\DataAccessObject\ConnectionDB::getInstance()->getConnection();
+            $stmtManufacturers = $conn->query("SELECT id, name FROM `" . DB_PREFIX . "manufacturer` ORDER BY name ASC");
+            $manufacturers = $stmtManufacturers->fetchAll(\PDO::FETCH_ASSOC);
+
+            // Temporarily set contacts back to Supplier entity in case of error
+            $contactsData = isset($data['contacts']) && is_array($data['contacts']) ? $data['contacts'] : [];
+            $supplier->setContacts($contactsData);
+
             $html = $this->getTemplate('admin/catalog/supplier/edit.html.twig', [
-                'title'     => 'Editar Fornecedor | Painel Administrativo',
-                'errors'    => ['warning' => 'Erro ao atualizar fornecedor: ' . $e->getMessage()],
-                'supplier'  => $supplier,
-                'address'   => $address,
-                'countries' => $countries,
-                'zones'     => $zones,
-                'cities'    => $cities
+                'title'         => 'Editar Fornecedor | Painel Administrativo',
+                'errors'        => ['warning' => 'Erro ao atualizar fornecedor: ' . $e->getMessage()],
+                'supplier'      => $supplier,
+                'address'       => $address,
+                'countries'     => $countries,
+                'zones'         => $zones,
+                'cities'        => $cities,
+                'manufacturers' => $manufacturers
             ]);
             $response->getBody()->write($html);
             return $response->withHeader('Content-Type', 'text/html; charset=utf-8');

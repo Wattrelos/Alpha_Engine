@@ -492,6 +492,14 @@ package "Localization Module" #DAE8FC {
         * status : tinyint(1)
     }
 
+    entity City #F2F7FF {
+        * id : int <<PK>>
+        --
+        * zone_id : int <<FK>>
+        * name : varchar(128)
+        * is_served : tinyint(1)
+    }
+
     entity TaxClass #F2F7FF {
         * id : int <<PK>>
         --
@@ -527,6 +535,58 @@ package "System & Store" #E3E3E3 {
         --
         * name : varchar(64)
         * url : varchar(255)
+    }
+}
+
+package "Procurement Module" #E0F2F1 {
+    entity Supplier #E0F7FA {
+        * id : int <<PK>>
+        --
+        * company_name : varchar(255)
+        * trade_name : varchar(255)
+        * tax_id : varchar(14)
+        * state_registration : varchar(32)
+        * municipal_registration : varchar(32)
+        * email : varchar(96)
+        * phone : varchar(32)
+        * website : varchar(255)
+        * is_active : tinyint(1)
+        * created_at : datetime
+        * updated_at : datetime
+    }
+
+    entity Contact #E0F7FA {
+        * id : int <<PK>>
+        --
+        * name : varchar(120)
+        * email : varchar(120)
+        * phone : varchar(50)
+        * position : varchar(100)
+        * is_active : tinyint(1)
+        * created_at : datetime
+        * updated_at : datetime
+    }
+
+    entity SupplierAddress #E0F7FA {
+        * id : int <<PK>>
+        --
+        * supplier_id : int <<FK>>
+        * country_id : int <<FK>>
+        * zone_id : int <<FK>>
+        * city_id : int <<FK>>
+        * postal_code : varchar(10)
+        * street : varchar(255)
+        * number : varchar(32)
+        complement : varchar(255)
+        district : varchar(128)
+    }
+
+    entity SupplierContactManufacturer #E0F7FA {
+        * supplier_id : int <<PK, FK>>
+        * contact_id : int <<PK, FK>>
+        * manufacturer_id : int <<PK, FK>>
+        --
+        * created_at : datetime
     }
 }
 
@@ -595,11 +655,21 @@ Language "1" ||--|{ ProductAttribute : "translation"
 Language "1" ||--|{ SubscriptionPlanDescription : "translation"
 
 Country "1" ||--|{ Zone : "contains zones"
+Zone "1" ||--|{ City : "contains cities"
 Country "1" ||--|{ Address : "address country"
 Zone "1" ||--|{ Address : "address state/zone"
 
 TaxClass "1" ||--|{ TaxRule : "contains rules"
 TaxRate "1" ||--|{ TaxRule : "applied rate"
 TaxClass "1" ||--|{ Product : "tax configuration"
+
+' --- RELATIONSHIPS (Procurement Module) ---
+Supplier "1" ||--|| SupplierAddress : "located at"
+Supplier "1" ||--|{ SupplierContactManufacturer : "associated through"
+Contact "1" ||--|{ SupplierContactManufacturer : "linked to"
+Manufacturer "1" ||--|{ SupplierContactManufacturer : "represented by"
+Country "1" ||--|{ SupplierAddress : "address country"
+Zone "1" ||--|{ SupplierAddress : "address state/zone"
+City "1" ||--|{ SupplierAddress : "address city"
 
 @enduml

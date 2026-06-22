@@ -1,18 +1,18 @@
 {% extends 'admin/layouts/base.html.twig' %}
 
 {% block title %}
-	{{ title|default('Editar Fornecedor | Painel Administrativo') }}
+	{{ title|default((AdminLang.text_edit_title|default('Editar Fornecedor')) ~ ' | ' ~ (AdminLang.sidebar.title|default('Painel Administrativo'))) }}
 {% endblock %}
 
 {% block content %}
 	<div class="page-header">
 		<div>
-			<h2>Editar Fornecedor</h2>
-			<p class="page-subtitle">Modifique os detalhes do fornecedor e seu endereço.</p>
+			<h2>{{ AdminLang.text_edit_title|default('Editar Fornecedor') }}</h2>
+			<p class="page-subtitle">{{ AdminLang.text_edit_subtitle|default('Modifique os detalhes do fornecedor e seu endereço.') }}</p>
 		</div>
 		<a href="/LPDHED2dC7Gjrg2b/fornecedores" class="btn btn-secondary">
 			<i class="fas fa-arrow-left"></i>
-			<span>Voltar para Lista</span>
+			<span>{{ AdminLang.button_back|default('Voltar para Lista') }}</span>
 		</a>
 	</div>
 
@@ -26,55 +26,55 @@
 		<form action="/LPDHED2dC7Gjrg2b/fornecedores/{{ supplier.id }}/editar" method="POST">
 
 			<h3 style="margin-top: 0; margin-bottom: 1.5rem; color: #1e293b; border-bottom: 1px solid #e2e8f0; padding-bottom: 0.5rem; font-size: 1.15rem;">
-				<i class="fas fa-info-circle" style="color: #3b82f6; margin-right: 6px;"></i>Dados Cadastrais
+				<i class="fas fa-info-circle" style="color: #3b82f6; margin-right: 6px;"></i>{{ AdminLang.title_details|default('Dados Cadastrais') }}
 			</h3>
 
 			<div class="grid-2-cols grid-form-row">
 				<div>
-					<label for="company_name" class="form-label">Razão Social *</label>
+					<label for="company_name" class="form-label">{{ AdminLang.entry_company_name|default('Razão Social') }} *</label>
 					<input type="text" id="company_name" name="company_name" class="form-control" value="{{ supplier.companyName }}" required />
 					{% if errors.companyName %}
 						<div class="invalid-feedback">{{ errors.companyName }}</div>
 					{% endif %}
 				</div>
 				<div>
-					<label for="trade_name" class="form-label">Nome Fantasia</label>
+					<label for="trade_name" class="form-label">{{ AdminLang.entry_trade_name|default('Nome Fantasia') }}</label>
 					<input type="text" id="trade_name" name="trade_name" class="form-control" value="{{ supplier.tradeName }}" />
 				</div>
 			</div>
 
 			<div class="grid-3-cols grid-form-row">
 				<div>
-					<label for="tax_id" class="form-label">CNPJ *</label>
+					<label for="tax_id" class="form-label">{{ AdminLang.entry_tax_id|default('CNPJ') }} *</label>
 					<input type="text" id="tax_id" name="tax_id" class="form-control" placeholder="00.000.000/0000-00" value="{{ supplier.taxId }}" required />
 					{% if errors.taxId %}
 						<div class="invalid-feedback">{{ errors.taxId }}</div>
 					{% endif %}
 				</div>
 				<div>
-					<label for="state_registration" class="form-label">Inscrição Estadual</label>
+					<label for="state_registration" class="form-label">{{ AdminLang.entry_state_registration|default('Inscrição Estadual') }}</label>
 					<input type="text" id="state_registration" name="state_registration" class="form-control" value="{{ supplier.stateRegistration }}" />
 				</div>
 				<div>
-					<label for="municipal_registration" class="form-label">Inscrição Municipal</label>
+					<label for="municipal_registration" class="form-label">{{ AdminLang.entry_municipal_registration|default('Inscrição Municipal') }}</label>
 					<input type="text" id="municipal_registration" name="municipal_registration" class="form-control" value="{{ supplier.municipalRegistration }}" />
 				</div>
 			</div>
 
 			<div class="grid-3-cols grid-form-row">
 				<div>
-					<label for="email" class="form-label">E-mail *</label>
+					<label for="email" class="form-label">{{ AdminLang.entry_email|default('E-mail') }} *</label>
 					<input type="email" id="email" name="email" class="form-control" value="{{ supplier.email }}" required />
 					{% if errors.email %}
 						<div class="invalid-feedback">{{ errors.email }}</div>
 					{% endif %}
 				</div>
 				<div>
-					<label for="phone" class="form-label">Telefone</label>
+					<label for="phone" class="form-label">{{ AdminLang.entry_phone|default('Telefone') }}</label>
 					<input type="text" id="phone" name="phone" class="form-control" value="{{ supplier.phone }}" />
 				</div>
 				<div>
-					<label for="website" class="form-label">Website</label>
+					<label for="website" class="form-label">{{ AdminLang.entry_website|default('Website') }}</label>
 					<input type="text" id="website" name="website" class="form-control" placeholder="https://..." value="{{ supplier.website }}" />
 				</div>
 			</div>
@@ -82,41 +82,41 @@
 			<div style="margin-bottom: 2rem;">
 				<label style="font-weight: 600; color: #475569; font-size: 0.95rem; cursor: pointer; user-select: none; display: flex; align-items: center; gap: 8px;">
 					<input type="checkbox" name="is_active" value="1" {% if supplier.isActive %} checked {% endif %} style="width: 18px; height: 18px; accent-color: #3b82f6;"/>
-					Fornecedor Ativo?
+					{{ AdminLang.entry_active|default('Fornecedor Ativo?') }}
 				</label>
 			</div>
 
 			<h3 style="margin-top: 2rem; margin-bottom: 1.5rem; color: #1e293b; border-bottom: 1px solid #e2e8f0; padding-bottom: 0.5rem; font-size: 1.15rem;">
-				<i class="fas fa-map-marker-alt" style="color: #3b82f6; margin-right: 6px;"></i>Endereço Principal
+				<i class="fas fa-map-marker-alt" style="color: #3b82f6; margin-right: 6px;"></i>{{ AdminLang.title_address|default('Endereço Principal') }}
 			</h3>
 
 			<div class="grid-2-cols grid-form-row">
 				<div>
-					<label for="postal_code" class="form-label">CEP *</label>
+					<label for="postal_code" class="form-label">{{ AdminLang.entry_postal_code|default('CEP') }} *</label>
 					<div class="d-flex gap-2">
 						<input type="text" id="postal_code" name="postal_code" class="form-control" placeholder="00000-000" value="{{ address.postal_code|default('') }}" required />
-						<button class="btn-secondary" type="button" id="btn_cep_lookup">Buscar</button>
+						<button class="btn-secondary" type="button" id="btn_cep_lookup">{{ AdminLang.button_lookup|default('Buscar') }}</button>
 					</div>
 					{% if errors.postal_code %}
 						<div class="invalid-feedback">{{ errors.postal_code }}</div>
 					{% endif %}
 				</div>
 				<div>
-					<label for="district" class="form-label">Bairro</label>
+					<label for="district" class="form-label">{{ AdminLang.entry_district|default('Bairro') }}</label>
 					<input type="text" id="district" name="district" class="form-control" value="{{ address.district|default('') }}" />
 				</div>
 			</div>
 
 			<div class="grid-2to1-cols grid-form-row">
 				<div>
-					<label for="street" class="form-label">Rua / Logradouro *</label>
+					<label for="street" class="form-label">{{ AdminLang.entry_street|default('Rua / Logradouro') }} *</label>
 					<input type="text" id="street" name="street" class="form-control" value="{{ address.street|default('') }}" required />
 					{% if errors.street %}
 						<div class="invalid-feedback">{{ errors.street }}</div>
 					{% endif %}
 				</div>
 				<div>
-					<label for="number" class="form-label">Número *</label>
+					<label for="number" class="form-label">{{ AdminLang.entry_number|default('Número') }} *</label>
 					<input type="text" id="number" name="number" class="form-control" value="{{ address.number|default('') }}" required />
 					{% if errors.number %}
 						<div class="invalid-feedback">{{ errors.number }}</div>
@@ -125,15 +125,15 @@
 			</div>
 
 			<div class="mb-6">
-				<label for="complement" class="form-label">Complemento</label>
+				<label for="complement" class="form-label">{{ AdminLang.entry_complement|default('Complemento') }}</label>
 				<input type="text" id="complement" name="complement" class="form-control" value="{{ address.complement|default('') }}" />
 			</div>
 
 			<div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1.5rem; margin-bottom: 2rem;">
 				<div>
-					<label for="country_id" class="form-label">País *</label>
+					<label for="country_id" class="form-label">{{ AdminLang.entry_country|default('País') }} *</label>
 					<select id="country_id" name="country_id" class="form-control">
-						<option value="">Selecione...</option>
+						<option value="">{{ AdminLang.text_select_country|default('Selecione...') }}</option>
 						{% for country in countries %}
 							<option value="{{ country.id }}" {% if address and address.country and address.country.id == country.id %} selected {% endif %}>{{ country.name }}</option>
 						{% endfor %}
@@ -143,9 +143,9 @@
 					{% endif %}
 				</div>
 				<div>
-					<label for="zone_id" class="form-label">Estado *</label>
+					<label for="zone_id" class="form-label">{{ AdminLang.entry_zone|default('Estado') }} *</label>
 					<select id="zone_id" name="zone_id" class="form-control" {% if not zones %} disabled {% endif %}>
-						<option value="">Selecione o País...</option>
+						<option value="">{{ AdminLang.text_select_country_first|default('Selecione o País...') }}</option>
 						{% for zone in zones %}
 							<option value="{{ zone.id }}" {% if address and address.zone and address.zone.id == zone.id %} selected {% endif %} data-code="{{ zone.isoCode|replace({'BR-': ''}) }}">{{ zone.name }}
 								({{ zone.isoCode }})</option>
@@ -156,9 +156,9 @@
 					{% endif %}
 				</div>
 				<div>
-					<label for="city_id" class="form-label">Cidade *</label>
+					<label for="city_id" class="form-label">{{ AdminLang.entry_city|default('Cidade') }} *</label>
 					<select id="city_id" name="city_id" class="form-control" {% if not cities %} disabled {% endif %}>
-						<option value="">Selecione o Estado...</option>
+						<option value="">{{ AdminLang.text_select_zone|default('Selecione o Estado...') }}</option>
 						{% for city in cities %}
 							<option value="{{ city.id }}" {% if address and address.city and address.city.id == city.id %} selected {% endif %}>{{ city.name }}</option>
 						{% endfor %}
@@ -169,12 +169,48 @@
 				</div>
 			</div>
 
+			<!-- Seção de Contatos do Fornecedor -->
+			<div class="contacts-section" style="margin-top: 2rem; margin-bottom: 2rem;">
+				<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; border-bottom: 1px solid #e2e8f0; padding-bottom: 0.5rem;">
+					<h3 style="margin: 0; color: #1e293b; font-size: 1.15rem;">
+						<i class="fas fa-address-book" style="color: #3b82f6; margin-right: 6px;"></i>{{ AdminLang.title_contacts|default('Contatos do Fornecedor') }}
+					</h3>
+					<button type="button" id="btn_add_contact" class="btn btn-secondary" style="padding: 0.4rem 0.8rem; font-size: 0.85rem; display: flex; align-items: center; gap: 6px; cursor: pointer; background-color: #3b82f6; color: #fff; border: none; border-radius: 4px;">
+						<i class="fas fa-plus"></i> {{ AdminLang.button_add_contact|default('Adicionar Contato') }}
+					</button>
+				</div>
+
+				<div class="table-responsive" style="overflow-x: auto; background: #fff; border-radius: 8px; border: 1px solid #e2e8f0;">
+					<table class="table" id="contacts_table" style="width: 100%; border-collapse: collapse; margin-bottom: 0;">
+						<thead>
+							<tr style="background-color: #f8fafc; border-bottom: 1px solid #e2e8f0; text-align: left;">
+								<th style="padding: 0.75rem 1rem; font-weight: 600; color: #475569; font-size: 0.85rem; width: 22%;">{{ AdminLang.column_name|default('Nome') }} *</th>
+								<th style="padding: 0.75rem 1rem; font-weight: 600; color: #475569; font-size: 0.85rem; width: 22%;">{{ AdminLang.column_email|default('E-mail') }}</th>
+								<th style="padding: 0.75rem 1rem; font-weight: 600; color: #475569; font-size: 0.85rem; width: 15%;">{{ AdminLang.column_phone|default('Telefone') }}</th>
+								<th style="padding: 0.75rem 1rem; font-weight: 600; color: #475569; font-size: 0.85rem; width: 15%;">{{ AdminLang.column_position|default('Cargo') }}</th>
+								<th style="padding: 0.75rem 1rem; font-weight: 600; color: #475569; font-size: 0.85rem; width: 18%;">{{ AdminLang.column_manufacturer|default('Fabricante') }} *</th>
+								<th style="padding: 0.75rem 1rem; font-weight: 600; color: #475569; font-size: 0.85rem; width: 12%;">{{ AdminLang.column_status|default('Status') }}</th>
+								<th style="padding: 0.75rem 1rem; font-weight: 600; color: #475569; font-size: 0.85rem; width: 6%; text-align: center;">{{ AdminLang.column_actions|default('Ações') }}</th>
+							</tr>
+						</thead>
+						<tbody id="contacts_tbody">
+							<!-- Rows will be injected here dynamically -->
+						</tbody>
+					</table>
+				</div>
+				
+				<div id="no_contacts_alert" style="display: none; padding: 1.5rem; text-align: center; color: #64748b; background-color: #f8fafc; border: 1px dashed #cbd5e1; border-radius: 8px; margin-top: 0.5rem;">
+					<i class="fas fa-users-slash" style="font-size: 1.8rem; margin-bottom: 0.5rem; color: #94a3b8; display: block;"></i>
+					{{ AdminLang.text_no_contacts|default('Nenhum contato cadastrado para este fornecedor. Clique em <strong>"Adicionar Contato"</strong> acima.')|raw }}
+				</div>
+			</div>
+
 			<!-- Botões de Ação -->
 			<div class="form-actions">
-				<a href="/LPDHED2dC7Gjrg2b/fornecedores" class="btn btn-secondary">Cancelar</a>
+				<a href="/LPDHED2dC7Gjrg2b/fornecedores" class="btn btn-secondary">{{ AdminLang.button_cancel|default('Cancelar') }}</a>
 				<button type="submit" class="btn btn-primary">
 					<i class="fas fa-save"></i>
-					<span>Salvar Fornecedor</span>
+					<span>{{ AdminLang.button_save|default('Salvar Fornecedor') }}</span>
 				</button>
 			</div>
 		</form>
@@ -190,15 +226,15 @@ const btnCep = document.getElementById('btn_cep_lookup');
 
 function loadZones(countryId, selectedZoneId = 0, callback = null) {
 if (! countryId) {
-zoneSelect.innerHTML = '<option value="">Selecione o País...</option>';
+zoneSelect.innerHTML = '<option value="">{{ AdminLang.text_select_country_first|default("Selecione o País...")|escape("js") }}</option>';
 zoneSelect.disabled = true;
-citySelect.innerHTML = '<option value="">Selecione o Estado...</option>';
+citySelect.innerHTML = '<option value="">{{ AdminLang.text_select_zone|default("Selecione o Estado...")|escape("js") }}</option>';
 citySelect.disabled = true;
 return;
 }
 
 fetch (`/api/geo/paises/${countryId}/estados`).then(response => response.json()).then(data => {
-zoneSelect.innerHTML = '<option value="">Selecione o Estado...</option>';
+zoneSelect.innerHTML = '<option value="">{{ AdminLang.text_select_zone|default("Selecione o Estado...")|escape("js") }}</option>';
 data.zones.forEach(zone => {
 const option = document.createElement('option');
 option.value = zone.id;
@@ -224,13 +260,13 @@ callback();
 
 function loadCities(zoneId, selectedCityId = 0, callback = null) {
 if (! zoneId) {
-citySelect.innerHTML = '<option value="">Selecione o Estado...</option>';
+citySelect.innerHTML = '<option value="">{{ AdminLang.text_select_zone|default("Selecione o Estado...")|escape("js") }}</option>';
 citySelect.disabled = true;
 return;
 }
 
 fetch (`/api/geo/estados/${zoneId}/cidades`).then(response => response.json()).then(data => {
-citySelect.innerHTML = '<option value="">Selecione a Cidade...</option>';
+citySelect.innerHTML = '<option value="">{{ AdminLang.text_select_city|default("Selecione a Cidade...")|escape("js") }}</option>';
 data.cities.forEach(city => {
 const option = document.createElement('option');
 option.value = city.id;
@@ -261,7 +297,7 @@ loadCities(this.value);
 btnCep.addEventListener('click', function () {
 const cep = postcode.value.replace(/\D/g, '');
 if (cep.length !== 8) {
-alert('Informe um CEP válido com 8 dígitos.');
+alert('{{ AdminLang.alert_invalid_cep|default("Informe um CEP válido com 8 dígitos.")|escape("js") }}');
 return;
 }
 
@@ -270,10 +306,10 @@ btnCep.textContent = '...';
 
 fetch (`https://viacep.com.br/ws/${cep}/json/`).then(r => r.json()).then(json => {
 btnCep.disabled = false;
-btnCep.textContent = 'Buscar';
+btnCep.textContent = '{{ AdminLang.button_lookup|default("Buscar")|escape("js") }}';
 
 if (json.erro) {
-alert('CEP não encontrado.');
+alert('{{ AdminLang.alert_cep_not_found|default("CEP não encontrado.")|escape("js") }}');
 return;
 }
 
@@ -311,10 +347,130 @@ break;
 });
 }).catch(() => {
 btnCep.disabled = false;
-btnCep.textContent = 'Buscar';
-alert('Erro ao buscar o CEP.');
+btnCep.textContent = '{{ AdminLang.button_lookup|default("Buscar")|escape("js") }}';
+alert('{{ AdminLang.alert_cep_error|default("Erro ao buscar o CEP.")|escape("js") }}');
 });
 });
-});
+
+			// --- Supplier Contacts Dynamic Form Management ---
+			let contactIndex = 0;
+
+			function escapeHtml(string) {
+				if (!string) return '';
+				return String(string)
+					.replace(/&/g, '&amp;')
+					.replace(/</g, '&lt;')
+					.replace(/>/g, '&gt;')
+					.replace(/"/g, '&quot;')
+					.replace(/'/g, '&#039;');
+			}
+
+			function toggleTableVisibility() {
+				const tbody = document.getElementById('contacts_tbody');
+				const tableContainer = document.getElementById('contacts_table').parentNode;
+				const noContactsAlert = document.getElementById('no_contacts_alert');
+				
+				if (tbody.querySelectorAll('tr').length === 0) {
+					tableContainer.style.display = 'none';
+					noContactsAlert.style.display = 'block';
+				} else {
+					tableContainer.style.display = 'block';
+					noContactsAlert.style.display = 'none';
+				}
+			}
+
+			function addContactRow(contact = {}) {
+				const tbody = document.getElementById('contacts_tbody');
+				
+				const rowId = `contact_row_${contactIndex}`;
+				const tr = document.createElement('tr');
+				tr.id = rowId;
+				tr.style.borderBottom = '1px solid #e2e8f0';
+				tr.style.transition = 'background-color 0.2s';
+				tr.className = 'contact-row';
+				
+				// Hover effect
+				tr.addEventListener('mouseenter', () => { tr.style.backgroundColor = '#f8fafc'; });
+				tr.addEventListener('mouseleave', () => { tr.style.backgroundColor = 'transparent'; });
+
+				const id = contact.id || '';
+				const name = contact.name || '';
+				const email = contact.email || '';
+				const phone = contact.phone || '';
+				const position = contact.position || '';
+				const manufacturerId = contact.manufacturer_id || '';
+				const isActive = contact.is_active !== undefined ? contact.is_active : 1;
+
+				// Generate manufacturer options
+				let manufacturerOptions = '<option value="">{{ AdminLang.text_select_country|default("Selecione...")|escape("js") }}</option>';
+				{% for manufacturer in manufacturers %}
+					manufacturerOptions += `<option value="{{ manufacturer.id }}" ${manufacturerId == {{ manufacturer.id }} ? 'selected' : ''}>{{ manufacturer.name|escape('js') }}</option>`;
+				{% endfor %}
+
+				tr.innerHTML = `
+					<td style="padding: 0.5rem 0.75rem;">
+						<input type="hidden" name="contacts[${contactIndex}][id]" value="${id}" />
+						<input type="text" name="contacts[${contactIndex}][name]" value="${escapeHtml(name)}" class="form-control form-control-sm" required style="padding: 0.4rem 0.6rem; font-size: 0.9rem;" placeholder="{{ AdminLang.placeholder_contact_name|default("Nome do contato")|escape("js") }}" />
+					</td>
+					<td style="padding: 0.5rem 0.75rem;">
+						<input type="email" name="contacts[${contactIndex}][email]" value="${escapeHtml(email)}" class="form-control form-control-sm" style="padding: 0.4rem 0.6rem; font-size: 0.9rem;" placeholder="{{ AdminLang.placeholder_contact_email|default("email@exemplo.com")|escape("js") }}" />
+					</td>
+					<td style="padding: 0.5rem 0.75rem;">
+						<input type="text" name="contacts[${contactIndex}][phone]" value="${escapeHtml(phone)}" class="form-control form-control-sm" style="padding: 0.4rem 0.6rem; font-size: 0.9rem;" placeholder="{{ AdminLang.placeholder_contact_phone|default("(00) 00000-0000")|escape("js") }}" />
+					</td>
+					<td style="padding: 0.5rem 0.75rem;">
+						<input type="text" name="contacts[${contactIndex}][position]" value="${escapeHtml(position)}" class="form-control form-control-sm" style="padding: 0.4rem 0.6rem; font-size: 0.9rem;" placeholder="{{ AdminLang.placeholder_contact_position|default("Cargo")|escape("js") }}" />
+					</td>
+					<td style="padding: 0.5rem 0.75rem;">
+						<select name="contacts[${contactIndex}][manufacturer_id]" class="form-control form-control-sm" required style="padding: 0.4rem 0.6rem; font-size: 0.9rem;">
+							${manufacturerOptions}
+						</select>
+					</td>
+					<td style="padding: 0.5rem 0.75rem;">
+						<select name="contacts[${contactIndex}][is_active]" class="form-control form-control-sm" style="padding: 0.4rem 0.6rem; font-size: 0.9rem;">
+							<option value="1" ${isActive == 1 ? 'selected' : ''}>{{ AdminLang.text_active|default("Ativo")|escape("js") }}</option>
+							<option value="0" ${isActive == 0 ? 'selected' : ''}>{{ AdminLang.text_inactive|default("Inativo")|escape("js") }}</option>
+						</select>
+					</td>
+					<td style="padding: 0.5rem 0.75rem; text-align: center; vertical-align: middle;">
+						<button type="button" class="btn btn-sm btn-remove-contact" data-row="${rowId}" style="padding: 0.35rem 0.5rem; color: #ef4444; border: 1px solid #fecaca; background: #fff5f5; border-radius: 4px; cursor: pointer; transition: all 0.2s;" title="Remover contato">
+							<i class="fas fa-trash-alt"></i>
+						</button>
+					</td>
+				`;
+				
+				tbody.appendChild(tr);
+				contactIndex++;
+				
+				tr.querySelector('.btn-remove-contact').addEventListener('click', function() {
+					const rowIdToRemove = this.getAttribute('data-row');
+					document.getElementById(rowIdToRemove).remove();
+					toggleTableVisibility();
+				});
+
+				toggleTableVisibility();
+			}
+
+			document.getElementById('btn_add_contact').addEventListener('click', function() {
+				addContactRow();
+			});
+
+			// Preload existing contacts if they exist
+			{% if supplier.contacts is not empty %}
+				{% for contact in supplier.contacts %}
+					addContactRow({
+						id: "{{ contact.id|default('')|escape('js') }}",
+						name: "{{ contact.name|default('')|escape('js') }}",
+						email: "{{ contact.email|default('')|escape('js') }}",
+						phone: "{{ contact.phone|default('')|escape('js') }}",
+						position: "{{ contact.position|default('')|escape('js') }}",
+						manufacturer_id: "{{ contact.manufacturer_id|default('')|escape('js') }}",
+						is_active: {{ contact.is_active|default(1) }}
+					});
+				{% endfor %}
+			{% endif %}
+
+			toggleTableVisibility();
+		});
 	</script>
 {% endblock %}

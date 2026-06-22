@@ -1,0 +1,23 @@
+{
+    "sidebar": {
+        "title": "AgSonhos Admin",
+        "dashboard": "Painel Inicial",
+        "orders": "Vendas / Pedidos",
+        "returns": "Devoluções",
+        "customers": "Clientes",
+        "products": "Produtos",
+        "categories": "Categorias",
+        "manufacturers": "Fabricantes",
+        "suppliers": "Fornecedores",
+        "settings": "Configurações",
+        "logout": "Sair do Painel"
+    },
+    "topbar": {
+        "role": "Modo Administrador",
+        "default_name": "Administrador",
+        "default_email": "admin@agsonhos.com"
+    },
+    "language": {
+        "select": "Selecione o Idioma"
+    }
+}

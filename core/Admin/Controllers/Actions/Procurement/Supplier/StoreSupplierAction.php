@@ -67,11 +67,17 @@ class StoreSupplierAction extends BaseController implements \Alpha\Controller\Ac
 
         if (!empty($errors)) {
             $countries = $mapperFactory->get(GeoCountryMapper::class)->getCountries();
+            
+            $conn = \Alpha\Model\DataAccessObject\ConnectionDB::getInstance()->getConnection();
+            $stmtManufacturers = $conn->query("SELECT id, name FROM `" . DB_PREFIX . "manufacturer` ORDER BY name ASC");
+            $manufacturers = $stmtManufacturers->fetchAll(\PDO::FETCH_ASSOC);
+
             $html = $this->getTemplate('admin/catalog/supplier/create.html.twig', [
-                'title'     => 'Adicionar Fornecedor | Painel Administrativo',
-                'errors'    => $errors,
-                'data'      => $data,
-                'countries' => $countries
+                'title'         => 'Adicionar Fornecedor | Painel Administrativo',
+                'errors'        => $errors,
+                'data'          => $data,
+                'countries'     => $countries,
+                'manufacturers' => $manufacturers
             ]);
             $response->getBody()->write($html);
             return $response->withHeader('Content-Type', 'text/html; charset=utf-8');
@@ -91,6 +97,10 @@ class StoreSupplierAction extends BaseController implements \Alpha\Controller\Ac
             $supplier->setIsActive(isset($data['is_active']) && $data['is_active'] == '1');
             $supplier->setCreatedAt(date('Y-m-d H:i:s'));
             $supplier->setUpdatedAt(date('Y-m-d H:i:s'));
+
+            // Parse and set contacts
+            $contactsData = isset($data['contacts']) && is_array($data['contacts']) ? $data['contacts'] : [];
+            $supplier->setContacts($contactsData);
 
             $address = new Addresses();
             $address->setPostalCode($postalCode);
@@ -116,11 +126,17 @@ class StoreSupplierAction extends BaseController implements \Alpha\Controller\Ac
 
         } catch (\Throwable $e) {
             $countries = $mapperFactory->get(GeoCountryMapper::class)->getCountries();
+            
+            $conn = \Alpha\Model\DataAccessObject\ConnectionDB::getInstance()->getConnection();
+            $stmtManufacturers = $conn->query("SELECT id, name FROM `" . DB_PREFIX . "manufacturer` ORDER BY name ASC");
+            $manufacturers = $stmtManufacturers->fetchAll(\PDO::FETCH_ASSOC);
+
             $html = $this->getTemplate('admin/catalog/supplier/create.html.twig', [
-                'title'     => 'Adicionar Fornecedor | Painel Administrativo',
-                'errors'    => ['warning' => 'Erro ao salvar fornecedor: ' . $e->getMessage()],
-                'data'      => $data,
-                'countries' => $countries
+                'title'         => 'Adicionar Fornecedor | Painel Administrativo',
+                'errors'        => ['warning' => 'Erro ao salvar fornecedor: ' . $e->getMessage()],
+                'data'          => $data,
+                'countries'     => $countries,
+                'manufacturers' => $manufacturers
             ]);
             $response->getBody()->write($html);
             return $response->withHeader('Content-Type', 'text/html; charset=utf-8');

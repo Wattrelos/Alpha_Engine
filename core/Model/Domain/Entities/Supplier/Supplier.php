@@ -151,4 +151,17 @@ class Supplier extends BaseEntity
     {
         $this->addresses = $addresses;
     }
+
+    // Associacao estruturada com Contatos
+    private array $contacts = [];
+
+    public function getContacts(): array
+    {
+        return $this->contacts;
+    }
+
+    public function setContacts(array $contacts): void
+    {
+        $this->contacts = $contacts;
+    }
 }

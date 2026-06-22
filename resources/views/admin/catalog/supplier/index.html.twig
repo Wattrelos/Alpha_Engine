@@ -1,18 +1,18 @@
 {% extends 'admin/layouts/base.html.twig' %}
 
 {% block title %}
-	{{ title|default('Fornecedores | Painel Administrativo') }}
+	{{ title|default((AdminLang.heading_title|default('Fornecedores')) ~ ' | ' ~ (AdminLang.sidebar.title|default('Painel Administrativo'))) }}
 {% endblock %}
 
 {% block content %}
 	<div class="page-header">
 		<div>
-			<h2>Gerenciamento de Fornecedores</h2>
-			<p class="page-subtitle">Visualize, adicione ou edite os fornecedores cadastrados na Alpha Engine.</p>
+			<h2>{{ AdminLang.heading_title|default('Gerenciamento de Fornecedores') }}</h2>
+			<p class="page-subtitle">{{ AdminLang.text_subtitle|default('Visualize, adicione ou edite os fornecedores cadastrados na Alpha Engine.') }}</p>
 		</div>
 		<a href="/LPDHED2dC7Gjrg2b/fornecedores/criar" class="btn btn-primary btn-with-icon">
 			<i class="fas fa-plus"></i>
-			<span>Adicionar Fornecedor</span>
+			<span>{{ AdminLang.button_add|default('Adicionar Fornecedor') }}</span>
 		</a>
 	</div>
 
@@ -23,22 +23,22 @@
 				
 				<!-- Nome -->
 				<div class="form-group mb-0">
-					<label for="filter_name" class="form-label-sm">Razão Social</label>
-					<input type="text" id="filter_name" name="filter_name" class="form-control" value="{{ filters.filter_name }}" placeholder="Buscar por razão social..." />
+					<label for="filter_name" class="form-label-sm">{{ AdminLang.entry_company_name|default('Razão Social') }}</label>
+					<input type="text" id="filter_name" name="filter_name" class="form-control" value="{{ filters.filter_name }}" placeholder="{{ AdminLang.placeholder_search_company|default('Buscar por razão social...') }}" />
 				</div>
 
 				<!-- CNPJ -->
 				<div class="form-group mb-0">
-					<label for="filter_tax_id" class="form-label-sm">CNPJ</label>
-					<input type="text" id="filter_tax_id" name="filter_tax_id" class="form-control" value="{{ filters.filter_tax_id }}" placeholder="Buscar por CNPJ..." />
+					<label for="filter_tax_id" class="form-label-sm">{{ AdminLang.entry_tax_id|default('CNPJ') }}</label>
+					<input type="text" id="filter_tax_id" name="filter_tax_id" class="form-control" value="{{ filters.filter_tax_id }}" placeholder="{{ AdminLang.placeholder_search_tax_id|default('Buscar por CNPJ...') }}" />
 				</div>
  
 				<!-- Ações -->
 				<div class="d-flex gap-2">
-					<a href="/LPDHED2dC7Gjrg2b/fornecedores" class="btn flex-1 btn-secondary">Limpar</a>
+					<a href="/LPDHED2dC7Gjrg2b/fornecedores" class="btn flex-1 btn-secondary">{{ AdminLang.button_clear|default('Limpar') }}</a>
 					<button type="submit" class="btn btn-primary flex-1">
 						<i class="fas fa-filter"></i>
-						<span>Filtrar</span>
+						<span>{{ AdminLang.button_filter|default('Filtrar') }}</span>
 					</button>
 				</div>
  
@@ -51,12 +51,12 @@
 			<table class="table" style="margin: 0; width: 100%; border-collapse: collapse;">
 				<thead>
 					<tr>
-						<th>Razão Social</th>
-						<th>Nome Fantasia</th>
-						<th>CNPJ</th>
-						<th>E-mail / Telefone</th>
-						<th>Status</th>
-						<th class="text-right col-actions">Ações</th>
+						<th>{{ AdminLang.entry_company_name|default('Razão Social') }}</th>
+						<th>{{ AdminLang.entry_trade_name|default('Nome Fantasia') }}</th>
+						<th>{{ AdminLang.entry_tax_id|default('CNPJ') }}</th>
+						<th>{{ AdminLang.entry_email|default('E-mail') }} / {{ AdminLang.entry_phone|default('Telefone') }}</th>
+						<th>{{ AdminLang.column_status|default('Status') }}</th>
+						<th class="text-right col-actions">{{ AdminLang.column_actions|default('Ações') }}</th>
 					</tr>
 				</thead>
 				<tbody>
@@ -72,9 +72,9 @@
 								</td>
 								<td style="padding: 1rem; text-align: center;">
 									{% if supplier.is_active %}
-										<span style="display: inline-block; padding: 0.25rem 0.5rem; background: #dcfce7; color: #15803d; border-radius: 9999px; font-size: 0.75rem; font-weight: 600;">Ativo</span>
+										<span style="display: inline-block; padding: 0.25rem 0.5rem; background: #dcfce7; color: #15803d; border-radius: 9999px; font-size: 0.75rem; font-weight: 600;">{{ AdminLang.text_active|default('Ativo') }}</span>
 									{% else %}
-										<span style="display: inline-block; padding: 0.25rem 0.5rem; background: #fee2e2; color: #b91c1c; border-radius: 9999px; font-size: 0.75rem; font-weight: 600;">Inativo</span>
+										<span style="display: inline-block; padding: 0.25rem 0.5rem; background: #fee2e2; color: #b91c1c; border-radius: 9999px; font-size: 0.75rem; font-weight: 600;">{{ AdminLang.text_inactive|default('Inativo') }}</span>
 									{% endif %}
 								</td>
 								<td class="text-right">
@@ -82,7 +82,7 @@
 										<a href="/LPDHED2dC7Gjrg2b/fornecedores/{{ supplier.id }}/editar" class="btn btn-primary btn-sm" title="Editar">
 											<i class="fas fa-edit"></i>
 										</a>
-										<a href="/LPDHED2dC7Gjrg2b/fornecedores/{{ supplier.id }}/excluir" class="btn btn-danger btn-sm" title="Excluir" onclick="return confirm('Deseja realmente excluir este fornecedor? Seu endereço associado também será excluído.');">
+										<a href="/LPDHED2dC7Gjrg2b/fornecedores/{{ supplier.id }}/excluir" class="btn btn-danger btn-sm" title="Excluir" onclick="return confirm('{{ AdminLang.text_confirm_delete|default('Deseja realmente excluir este fornecedor? Seu endereço associado também será excluído.')|escape('js') }}');">
 											<i class="fas fa-trash-alt"></i>
 										</a>
 									</div>
@@ -93,7 +93,7 @@
 						<tr>
 							<td colspan="6" style="text-align: center; padding: 3rem; color: #64748b;">
 								<i class="fas fa-truck" style="font-size: 2.5rem; color: #cbd5e1; margin-bottom: 1rem; display: block;"></i>
-								Nenhum fornecedor cadastrado até o momento.
+								{{ AdminLang.text_empty|default('Nenhum fornecedor cadastrado até o momento.') }}
 							</td>
 						</tr>
 					{% endif %}
