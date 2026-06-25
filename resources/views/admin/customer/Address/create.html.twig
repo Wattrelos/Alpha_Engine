@@ -1,18 +1,18 @@
 {% extends 'admin/layouts/base.html.twig' %}
 
 {% block title %}
-	{{ title|default('Adicionar Endereço | Painel Administrativo') }}
+	{{ title|default((AdminLang.text_address_create|default('Adicionar Endereço')) ~ ' | ' ~ (AdminLang.sidebar.title|default('Painel Administrativo'))) }}
 {% endblock %}
 
 {% block content %}
 	<div class="page-header">
 		<div>
-			<h2>Adicionar Endereço</h2>
-			<p class="page-subtitle">Cadastre um novo endereço para o cliente: <strong>{{ customer.firstname }} {{ customer.lastname }}</strong></p>
+			<h2>{{ AdminLang.text_address_create|default('Adicionar Endereço') }}</h2>
+			<p class="page-subtitle">{{ AdminLang.text_address_create_subtitle|default('Cadastre um novo endereço para o cliente:') }} <strong>{{ customer.firstname }} {{ customer.lastname }}</strong></p>
 		</div>
 		<a href="/LPDHED2dC7Gjrg2b/clientes/{{ customer.id }}/editar?tab=addresses" class="btn btn-secondary">
 			<i class="fas fa-arrow-left"></i>
-			<span>Voltar</span>
+			<span>{{ AdminLang.button_back|default('Voltar') }}</span>
 		</a>
 	</div>
 
@@ -25,49 +25,49 @@
 	<div class="card card-large">
 		<form action="/LPDHED2dC7Gjrg2b/clientes/{{ customer.id }}/enderecos/criar" method="POST">
 			
-			<div class="grid-form-row" style="max-width: 50%;">
+			<div class="grid-form-row max-w-50">
 				<div>
-					<label for="postcode" class="form-label">CEP *</label>
-					<input type="text" id="postcode" name="postcode" class="form-control" value="{{ data.postcode|default('') }}" placeholder="00000000" required />
+					<label for="postcode" class="form-label">{{ AdminLang.entry_postcode|default('CEP') }} *</label>
+					<input type="text" id="postcode" name="postcode" class="form-control {% if errors.postcode %}is-invalid{% endif %}" value="{{ data.postcode|default('') }}" placeholder="00000000" required />
 					{% if errors.postcode %}<div class="invalid-feedback">{{ errors.postcode }}</div>{% endif %}
 				</div>
 			</div>
 
 			<div class="grid-2to1-cols grid-form-row">
 				<div>
-					<label for="street" class="form-label">Rua / Logradouro *</label>
-					<input type="text" id="street" name="street" class="form-control" value="{{ data.street|default('') }}" required />
+					<label for="street" class="form-label">{{ AdminLang.entry_street|default('Rua / Logradouro') }} *</label>
+					<input type="text" id="street" name="street" class="form-control {% if errors.street %}is-invalid{% endif %}" value="{{ data.street|default('') }}" required />
 					{% if errors.street %}<div class="invalid-feedback">{{ errors.street }}</div>{% endif %}
 				</div>
 				<div>
-					<label for="number" class="form-label">Número *</label>
-					<input type="number" id="number" name="number" class="form-control" value="{{ data.number|default('') }}" required />
+					<label for="number" class="form-label">{{ AdminLang.entry_number|default('Número') }} *</label>
+					<input type="number" id="number" name="number" class="form-control {% if errors.number %}is-invalid{% endif %}" value="{{ data.number|default('') }}" required />
 					{% if errors.number %}<div class="invalid-feedback">{{ errors.number }}</div>{% endif %}
 				</div>
 			</div>
 
 			<div class="grid-2-cols grid-form-row">
 				<div>
-					<label for="complement" class="form-label">Complemento</label>
-					<input type="text" id="complement" name="complement" class="form-control" value="{{ data.complement|default('') }}" />
+					<label for="complement" class="form-label">{{ AdminLang.entry_complement|default('Complemento') }}</label>
+					<input type="text" id="complement" name="complement" class="form-control {% if errors.complement %}is-invalid{% endif %}" value="{{ data.complement|default('') }}" />
 					{% if errors.complement %}<div class="invalid-feedback">{{ errors.complement }}</div>{% endif %}
 				</div>
 				<div>
-					<label for="neighborhood" class="form-label">Bairro *</label>
-					<input type="text" id="neighborhood" name="neighborhood" class="form-control" value="{{ data.neighborhood|default('') }}" required />
+					<label for="neighborhood" class="form-label">{{ AdminLang.entry_neighborhood|default('Bairro') }} *</label>
+					<input type="text" id="neighborhood" name="neighborhood" class="form-control {% if errors.neighborhood %}is-invalid{% endif %}" value="{{ data.neighborhood|default('') }}" required />
 					{% if errors.neighborhood %}<div class="invalid-feedback">{{ errors.neighborhood }}</div>{% endif %}
 				</div>
 			</div>
 
 			<div class="grid-3-cols grid-form-row">
 				<div>
-					<label for="city" class="form-label">Cidade *</label>
-					<input type="text" id="city" name="city" class="form-control" value="{{ data.city|default('') }}" required />
+					<label for="city" class="form-label">{{ AdminLang.entry_city|default('Cidade') }} *</label>
+					<input type="text" id="city" name="city" class="form-control {% if errors.city %}is-invalid{% endif %}" value="{{ data.city|default('') }}" required />
 					{% if errors.city %}<div class="invalid-feedback">{{ errors.city }}</div>{% endif %}
 				</div>
 				<div>
-					<label for="country_id" class="form-label">País *</label>
-					<select id="country_id" name="country_id" class="form-control">
+					<label for="country_id" class="form-label">{{ AdminLang.entry_country|default('País') }} *</label>
+					<select id="country_id" name="country_id" class="form-control {% if errors.country_id %}is-invalid{% endif %}">
 						{% for country in countries %}
 							<option value="{{ country.id }}" {% if data.country_id|default(76) == country.id %}selected{% endif %}>{{ country.name }}</option>
 						{% endfor %}
@@ -75,9 +75,9 @@
 					{% if errors.country_id %}<div class="invalid-feedback">{{ errors.country_id }}</div>{% endif %}
 				</div>
 				<div>
-					<label for="zone_id" class="form-label">Estado (UF) *</label>
-					<select id="zone_id" name="zone_id" class="form-control">
-						<option value="">Selecione...</option>
+					<label for="zone_id" class="form-label">{{ AdminLang.entry_zone|default('Estado (UF)') }} *</label>
+					<select id="zone_id" name="zone_id" class="form-control {% if errors.zone_id %}is-invalid{% endif %}">
+						<option value="">{{ AdminLang.text_select|default('Selecione...') }}</option>
 						{% for zone in zones %}
 							<option value="{{ zone.id }}" {% if data.zone_id|default(0) == zone.id %}selected{% endif %}>{{ zone.name }} ({{ zone.code }})</option>
 						{% endfor %}
@@ -86,17 +86,17 @@
 				</div>
 			</div>
 
-			<div style="margin-bottom: 2rem; display: flex; align-items: center; gap: 8px;">
-				<input type="checkbox" id="default" name="default" value="1" {% if data.default %}checked{% endif %} style="width: 18px; height: 18px; accent-color: #3b82f6;" />
-				<label for="default" style="font-weight: 600; color: #475569; font-size: 0.95rem; cursor: pointer; user-select: none;">Definir como Endereço Padrão</label>
+			<div class="d-flex align-center gap-2 mb-8">
+				<input type="checkbox" id="default" name="default" value="1" {% if data.default %}checked{% endif %} class="form-checkbox" />
+				<label for="default" class="form-checkbox-label">{{ AdminLang.entry_default_address|default('Definir como Endereço Padrão') }}</label>
 			</div>
 
 			<!-- Botões de Ação -->
 			<div class="form-actions">
-				<a href="/LPDHED2dC7Gjrg2b/clientes/{{ customer.id }}/editar?tab=addresses" class="btn btn-secondary">Cancelar</a>
+				<a href="/LPDHED2dC7Gjrg2b/clientes/{{ customer.id }}/editar?tab=addresses" class="btn btn-secondary">{{ AdminLang.button_cancel|default('Cancelar') }}</a>
 				<button type="submit" class="btn btn-primary">
 					<i class="fas fa-save"></i>
-					<span>Salvar Endereço</span>
+					<span>{{ AdminLang.button_save_address|default('Salvar Endereço') }}</span>
 				</button>
 			</div>
 		</form>

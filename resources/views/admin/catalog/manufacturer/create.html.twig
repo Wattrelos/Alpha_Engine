@@ -1,18 +1,18 @@
 {% extends 'admin/layouts/base.html.twig' %}
 
 {% block title %}
-	{{ title|default('Adicionar Fabricante | Painel Administrativo') }}
+	{{ title|default((AdminLang.text_add_title|default('Adicionar Fabricante')) ~ ' | ' ~ (AdminLang.sidebar.title|default('Painel Administrativo'))) }}
 {% endblock %}
 
 {% block content %}
 	<div class="page-header">
 		<div>
-			<h2>Adicionar Fabricante</h2>
-			<p class="page-subtitle">Cadastre um novo fabricante ou marca no catálogo.</p>
+			<h2>{{ AdminLang.text_add_title|default('Adicionar Fabricante') }}</h2>
+			<p class="page-subtitle">{{ AdminLang.text_add_subtitle|default('Cadastre um novo fabricante ou marca no catálogo.') }}</p>
 		</div>
 		<a href="/LPDHED2dC7Gjrg2b/fabricantes" class="btn btn-secondary">
 			<i class="fas fa-arrow-left"></i>
-			<span>Voltar para Lista</span>
+			<span>{{ AdminLang.button_back|default('Voltar para Lista') }}</span>
 		</a>
 	</div>
 
@@ -22,37 +22,37 @@
 				
 				<!-- Nome do Fabricante -->
 				<div class="form-group col-span-2 grid-form-row">
-					<label for="name" class="form-label-dark">Nome do Fabricante *</label>
+					<label for="name" class="form-label-dark">{{ AdminLang.entry_name|default('Nome do Fabricante') }} *</label>
 					<input type="text" id="name" name="name" class="form-control form-control-lg" required />
 				</div>
 
 				<!-- SEO URL (Keyword) -->
 				<div class="form-group mb-6">
-					<label for="seo_keyword" class="form-label-dark">SEO URL (Amigável)</label>
-					<input type="text" id="seo_keyword" name="seo_keyword" class="form-control form-control-lg" placeholder="ex: colchao-ortobom" />
+					<label for="seo_keyword" class="form-label-dark">{{ AdminLang.entry_seo_keyword|default('SEO URL (Amigável)') }}</label>
+					<input type="text" id="seo_keyword" name="seo_keyword" class="form-control form-control-lg" placeholder="{{ AdminLang.placeholder_seo_keyword|default('ex: colchao-ortobom') }}" />
 				</div>
 
 				<!-- Ordem de Exibição -->
 				<div class="form-group mb-6">
-					<label for="sort_order" class="form-label-dark">Ordem de Exibição</label>
+					<label for="sort_order" class="form-label-dark">{{ AdminLang.entry_sort_order|default('Ordem de Exibição') }}</label>
 					<input type="number" id="sort_order" name="sort_order" class="form-control form-control-lg" value="0" />
 				</div>
 
 				<!-- Logotipo / Imagem -->
 				<div class="form-group col-span-2 grid-form-row">
-					<label for="image" style="display: block; font-weight: 700; margin-bottom: 0.5rem; color: #0f172a; font-size: 1.1rem;">Logotipo (Imagem)</label>
+					<label for="image" class="form-label-lg">{{ AdminLang.entry_logo|default('Logotipo (Imagem)') }}</label>
 					<input type="file" id="image" name="image" accept="image/*" class="form-control form-control-lg" />
-					<p style="margin: 0.5rem 0 0 0; font-size: 0.8rem; color: #64748b;">Formatos aceitos: JPG, PNG, WEBP, GIF.</p>
+					<p class="form-text-muted">{{ AdminLang.text_accepted_formats|default('Formatos aceitos: JPG, PNG, WEBP, GIF.') }}</p>
 				</div>
 
 			</div>
 
 			<!-- Botões de Ação -->
 			<div class="form-actions">
-				<a href="/LPDHED2dC7Gjrg2b/fabricantes" class="btn btn-secondary">Cancelar</a>
+				<a href="/LPDHED2dC7Gjrg2b/fabricantes" class="btn btn-secondary">{{ AdminLang.button_cancel|default('Cancelar') }}</a>
 				<button type="submit" class="btn btn-primary">
 					<i class="fas fa-save"></i>
-					<span>Salvar Fabricante</span>
+					<span>{{ AdminLang.button_save|default('Salvar Fabricante') }}</span>
 				</button>
 			</div>
 		</form>

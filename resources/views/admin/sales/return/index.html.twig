@@ -1,26 +1,26 @@
 {% extends 'admin/layouts/base.html.twig' %}
 
 {% block title %}
-	{{ title|default('Devoluções | Painel Administrativo') }}
+	{{ title|default((AdminLang.heading_title|default('Devoluções')) ~ ' | ' ~ (AdminLang.sidebar.title|default('Painel Administrativo'))) }}
 {% endblock %}
 
 {% block content %}
 	<div class="page-header">
 		<div>
-			<h2>Gerenciamento de Devoluções</h2>
-			<p class="page-subtitle">Acompanhe as solicitações de RMA (Retorno de Mercadoria Autorizada), mude status e defina resoluções.</p>
+			<h2>{{ AdminLang.heading_title|default('Gerenciamento de Devoluções') }}</h2>
+			<p class="page-subtitle">{{ AdminLang.text_subtitle|default('Acompanhe as solicitações de RMA (Retorno de Mercadoria Autorizada), mude status e defina resoluções.') }}</p>
 		</div>
 	</div>
 
 	<!-- Stats Bar -->
-	<div style="display: flex; gap: 1.5rem; margin-bottom: 2rem; flex-wrap: wrap;">
-		<div class="card" style="flex: 1; min-width: 200px; margin: 0; padding: 1.25rem; display: flex; align-items: center; gap: 1rem; box-shadow: 0 1px 3px rgba(0,0,0,0.05);">
-			<div style="background: rgba(99, 102, 241, 0.1); color: var(--color-primary); width: 48px; height: 48px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 1.5rem;">
+	<div class="stats-bar-flex">
+		<div class="card stat-card-clean">
+			<div class="stat-icon-wrapper">
 				<i class="fas fa-undo"></i>
 			</div>
 			<div>
-				<h4 style="margin: 0; font-size: 0.85rem; color: var(--color-text-muted); text-transform: uppercase; letter-spacing: 0.05em;">Total de Casos</h4>
-				<p style="margin: 0.25rem 0 0; font-size: 1.5rem; font-weight: 700; color: var(--color-text-main);">{{ total }}</p>
+				<h4 class="stat-title-sm">{{ AdminLang.text_total_cases|default('Total de Casos') }}</h4>
+				<p class="stat-value-sm">{{ total }}</p>
 			</div>
 		</div>
 	</div>
@@ -28,31 +28,31 @@
 	<!-- Filtros de Busca -->
 	<div class="card">
 		<form method="GET" action="/LPDHED2dC7Gjrg2b/devolucoes">
-			<div class="grid-filters" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 1rem; align-items: end;">
+			<div class="grid-filters-returns">
 				
 				<!-- ID da Devolução -->
 				<div class="form-group mb-0">
-					<label for="filter_return_id" class="form-label-sm">ID Devolução</label>
-					<input type="text" id="filter_return_id" name="filter_return_id" class="form-control" value="{{ filters.filter_return_id }}" placeholder="Ex: 12" />
+					<label for="filter_return_id" class="form-label-sm">{{ AdminLang.entry_return_id|default('ID Devolução') }}</label>
+					<input type="text" id="filter_return_id" name="filter_return_id" class="form-control" value="{{ filters.filter_return_id }}" placeholder="{{ AdminLang.placeholder_return_id|default('Ex: 12') }}" />
 				</div>
 
 				<!-- ID do Pedido -->
 				<div class="form-group mb-0">
-					<label for="filter_order_id" class="form-label-sm">ID do Pedido</label>
-					<input type="text" id="filter_order_id" name="filter_order_id" class="form-control" value="{{ filters.filter_order_id }}" placeholder="Ex: 123" />
+					<label for="filter_order_id" class="form-label-sm">{{ AdminLang.entry_order_id|default('ID do Pedido') }}</label>
+					<input type="text" id="filter_order_id" name="filter_order_id" class="form-control" value="{{ filters.filter_order_id }}" placeholder="{{ AdminLang.placeholder_order_id|default('Ex: 123') }}" />
 				</div>
  
 				<!-- Cliente -->
 				<div class="form-group mb-0">
-					<label for="filter_customer" class="form-label-sm">Cliente</label>
-					<input type="text" id="filter_customer" name="filter_customer" class="form-control" value="{{ filters.filter_customer }}" placeholder="Nome do cliente..." />
+					<label for="filter_customer" class="form-label-sm">{{ AdminLang.entry_customer|default('Cliente') }}</label>
+					<input type="text" id="filter_customer" name="filter_customer" class="form-control" value="{{ filters.filter_customer }}" placeholder="{{ AdminLang.placeholder_customer|default('Nome do cliente...') }}" />
 				</div>
  
 				<!-- Status -->
 				<div class="form-group mb-0">
-					<label for="filter_return_status_id" class="form-label-sm">Status</label>
+					<label for="filter_return_status_id" class="form-label-sm">{{ AdminLang.entry_status|default('Status') }}</label>
 					<select id="filter_return_status_id" name="filter_return_status_id" class="form-control">
-						<option value="">-- Todos --</option>
+						<option value="">-- {{ AdminLang.text_all|default('Todos') }} --</option>
 						{% for s in statuses %}
 							<option value="{{ s.id }}" {% if filters.filter_return_status_id == s.id %}selected{% endif %}>{{ s.name }}</option>
 						{% endfor %}
@@ -61,16 +61,16 @@
  
 				<!-- Data de Criação -->
 				<div class="form-group mb-0">
-					<label for="filter_date_added" class="form-label-sm">Data de Inclusão</label>
+					<label for="filter_date_added" class="form-label-sm">{{ AdminLang.entry_date_added|default('Data de Inclusão') }}</label>
 					<input type="date" id="filter_date_added" name="filter_date_added" class="form-control" value="{{ filters.filter_date_added }}" />
 				</div>
 
 				<!-- Ações de Filtro -->
 				<div class="d-flex gap-2">
-					<a href="/LPDHED2dC7Gjrg2b/devolucoes" class="btn flex-1 btn-secondary" style="background: var(--color-bg-soft); border: 1px solid var(--color-border); color: var(--color-text-muted); text-align: center; line-height: 2.2;">Limpar</a>
+					<a href="/LPDHED2dC7Gjrg2b/devolucoes" class="btn flex-1 btn-secondary">{{ AdminLang.button_clear|default('Limpar') }}</a>
 					<button type="submit" class="btn btn-primary flex-1">
 						<i class="fas fa-filter"></i>
-						<span>Filtrar</span>
+						<span>{{ AdminLang.button_filter|default('Filtrar') }}</span>
 					</button>
 				</div>
  
@@ -79,19 +79,19 @@
 	</div>
 
 	<!-- Tabela de Solicitações -->
-	<div class="card" style="margin: 0; box-shadow: 0 1px 3px rgba(0,0,0,0.05); border-radius: var(--border-radius);">
+	<div class="card card-table mb-8">
 		<div class="overflow-x-auto">
-			<table class="table" style="margin: 0;">
+			<table class="table table-clean">
 				<thead>
 					<tr>
-						<th style="width: 80px;">ID</th>
-						<th style="width: 100px;">Pedido nº</th>
-						<th>Cliente</th>
-						<th>Produto</th>
-						<th>Modelo</th>
-						<th>Status</th>
-						<th>Data de Inclusão</th>
-						<th class="text-right" style="width: 100px;">Ações</th>
+						<th class="col-id-80">{{ AdminLang.column_id|default('ID') }}</th>
+						<th class="col-order-100">{{ AdminLang.column_order_id|default('Pedido nº') }}</th>
+						<th>{{ AdminLang.column_customer|default('Cliente') }}</th>
+						<th>{{ AdminLang.column_product|default('Produto') }}</th>
+						<th>{{ AdminLang.column_model|default('Modelo') }}</th>
+						<th>{{ AdminLang.column_status|default('Status') }}</th>
+						<th>{{ AdminLang.column_date_added|default('Data de Inclusão') }}</th>
+						<th class="text-right col-actions-100">{{ AdminLang.column_actions|default('Ações') }}</th>
 					</tr>
 				</thead>
 				<tbody>
@@ -100,7 +100,7 @@
 							<tr>
 								<td class="text-semibold text-dark">#{{ ret.return_id }}</td>
 								<td class="text-semibold text-dark">
-									<a href="/LPDHED2dC7Gjrg2b/pedidos/{{ ret.order_id }}" style="color: var(--color-primary); text-decoration: none; font-weight: 600;">
+									<a href="/LPDHED2dC7Gjrg2b/pedidos/{{ ret.order_id }}" class="text-decoration-none icon-primary text-semibold">
 										#{{ ret.order_id }}
 									</a>
 								</td>
@@ -119,7 +119,7 @@
 								<td>{{ ret.date_added }}</td>
 								<td class="text-right">
 									<div class="actions-wrapper">
-										<a href="/LPDHED2dC7Gjrg2b/devolucoes/{{ ret.return_id }}" class="btn btn-primary btn-sm" title="Visualizar Detalhes">
+										<a href="/LPDHED2dC7Gjrg2b/devolucoes/{{ ret.return_id }}" class="btn btn-primary btn-sm" title="{{ AdminLang.text_show_title|default('Visualizar Detalhes') }}">
 											<i class="fas fa-eye"></i>
 										</a>
 									</div>
@@ -128,9 +128,9 @@
 						{% endfor %}
 					{% else %}
 						<tr>
-							<td colspan="8" style="text-align: center; padding: 3rem; color: #64748b;">
-								<i class="fas fa-undo" style="font-size: 2.5rem; color: #cbd5e1; margin-bottom: 1rem; display: block;"></i>
-								Nenhuma solicitação de devolução encontrada.
+							<td colspan="8" class="table-empty-cell">
+								<i class="fas fa-undo table-empty-icon"></i>
+								{{ AdminLang.text_empty|default('Nenhuma solicitação de devolução encontrada.') }}
 							</td>
 						</tr>
 					{% endif %}
@@ -138,7 +138,7 @@
 			</table>
 		</div>
 		{% if total > limit %}
-			<div style="padding: 1.5rem; display: flex; justify-content: flex-end; border-top: 1px solid var(--color-border);">
+			<div class="table-pagination-bar">
 				{% include 'components/molecules/pagination.html.twig' %}
 			</div>
 		{% endif %}

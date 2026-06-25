@@ -1,19 +1,19 @@
 {% extends 'admin/layouts/base.html.twig' %}
 
 {% block title %}
-	{{ title|default('Configurações da Loja | Painel Administrativo') }}
+	{{ title|default((AdminLang.heading_title|default('Configurações da Loja')) ~ ' | ' ~ (AdminLang.sidebar.title|default('Painel Administrativo'))) }}
 {% endblock %}
 
 {% block content %}
 	<div class="page-header">
 		<div>
-			<h2>Configurações da Loja</h2>
-			<p class="page-subtitle">Gerencie as informações gerais, metadados SEO, imagens e redes sociais da sua loja.</p>
+			<h2>{{ AdminLang.heading_title|default('Configurações da Loja') }}</h2>
+			<p class="page-subtitle">{{ AdminLang.text_subtitle|default('Gerencie as informações gerais, metadados SEO, imagens e redes sociais da sua loja.') }}</p>
 		</div>
 	</div>
 
 	{% if success %}
-		<div style="padding: 1rem; margin-bottom: 1.5rem; background: #d1fae5; color: #065f46; border: 1px solid #a7f3d0; border-radius: 8px;">
+		<div class="alert-success-custom">
 			{{ success }}
 		</div>
 	{% endif %}
@@ -31,40 +31,40 @@
 	{% endif %}
 
 	<!-- Navegação por Abas -->
-	<div style="display: flex; gap: 1rem; margin-bottom: 2rem; border-bottom: 2px solid #e2e8f0; padding-bottom: 0px;">
+	<div class="tab-nav">
 		<button onclick="switchTab('general')" id="tab-btn-general" class="tab-button">
 			<i class="fas fa-store"></i>
-			<span>Geral</span>
+			<span>{{ AdminLang.tab_general|default('Geral') }}</span>
 		</button>
 		<button onclick="switchTab('seo')" id="tab-btn-seo" class="tab-button">
 			<i class="fas fa-search"></i>
-			<span>Metadados (SEO)</span>
+			<span>{{ AdminLang.tab_seo|default('Metadados (SEO)') }}</span>
 		</button>
 		<button onclick="switchTab('images')" id="tab-btn-images" class="tab-button">
 			<i class="fas fa-images"></i>
-			<span>Imagens</span>
+			<span>{{ AdminLang.tab_images|default('Imagens') }}</span>
 		</button>
 		<button onclick="switchTab('social')" id="tab-btn-social" class="tab-button">
 			<i class="fas fa-share-alt"></i>
-			<span>Redes Sociais</span>
+			<span>{{ AdminLang.tab_social|default('Redes Sociais') }}</span>
 		</button>
 	</div>
 
-	<div class="card" style="box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1), 0 2px 4px -1px rgba(0,0,0,0.06); border-radius: var(--border-radius); background: #fff; padding: 2.5rem; margin-bottom: 2rem;">
+	<div class="card card-large">
 		<form action="/LPDHED2dC7Gjrg2b/configuracoes" method="POST" enctype="multipart/form-data">
 
 			<!-- 1. Aba: Geral -->
 			<div id="tab-content-general" class="tab-content" style="display: none;">
-				<h3 style="margin-top: 0; margin-bottom: 1.5rem; color: #1e293b; border-bottom: 1px solid #f1f5f9; padding-bottom: 0.75rem;">Informações da Loja</h3>
+				<h3 class="section-title">{{ AdminLang.title_general|default('Informações da Loja') }}</h3>
 				
 				<div class="grid-2-cols grid-form-row">
 					<div>
-						<label for="config_name" class="form-label">Nome da Loja *</label>
+						<label for="config_name" class="form-label">{{ AdminLang.entry_name|default('Nome da Loja') }} *</label>
 						<input type="text" id="config_name" name="config_name" class="form-control" value="{{ settings.config_name }}" required />
 						{% if errors.config_name %}<div class="invalid-feedback">{{ errors.config_name }}</div>{% endif %}
 					</div>
 					<div>
-						<label for="config_owner" class="form-label">Proprietário da Loja *</label>
+						<label for="config_owner" class="form-label">{{ AdminLang.entry_owner|default('Proprietário da Loja') }} *</label>
 						<input type="text" id="config_owner" name="config_owner" class="form-control" value="{{ settings.config_owner }}" required />
 						{% if errors.config_owner %}<div class="invalid-feedback">{{ errors.config_owner }}</div>{% endif %}
 					</div>
@@ -72,19 +72,19 @@
 
 				<div class="grid-2-cols grid-form-row">
 					<div>
-						<label for="config_email" class="form-label">E-mail de Contato *</label>
+						<label for="config_email" class="form-label">{{ AdminLang.entry_email|default('E-mail de Contato') }} *</label>
 						<input type="email" id="config_email" name="config_email" class="form-control" value="{{ settings.config_email }}" required />
 						{% if errors.config_email %}<div class="invalid-feedback">{{ errors.config_email }}</div>{% endif %}
 					</div>
 					<div>
-						<label for="config_telephone" class="form-label">Telefone de Contato *</label>
+						<label for="config_telephone" class="form-label">{{ AdminLang.entry_telephone|default('Telefone de Contato') }} *</label>
 						<input type="text" id="config_telephone" name="config_telephone" class="form-control" value="{{ settings.config_telephone }}" required />
 						{% if errors.config_telephone %}<div class="invalid-feedback">{{ errors.config_telephone }}</div>{% endif %}
 					</div>
 				</div>
 
 				<div class="mb-6">
-					<label for="config_address" class="form-label">Endereço Físico *</label>
+					<label for="config_address" class="form-label">{{ AdminLang.entry_address|default('Endereço Físico') }} *</label>
 					<textarea id="config_address" name="config_address" class="form-control" required>{{ settings.config_address }}</textarea>
 					{% if errors.config_address %}<div class="invalid-feedback">{{ errors.config_address }}</div>{% endif %}
 				</div>
@@ -92,51 +92,51 @@
 
 			<!-- 2. Aba: SEO -->
 			<div id="tab-content-seo" class="tab-content" style="display: none;">
-				<h3 style="margin-top: 0; margin-bottom: 1.5rem; color: #1e293b; border-bottom: 1px solid #f1f5f9; padding-bottom: 0.75rem;">Metadados da Loja (SEO)</h3>
+				<h3 class="section-title">{{ AdminLang.title_seo|default('Metadados da Loja (SEO)') }}</h3>
 				
 				<div class="mb-6">
-					<label for="meta_title" class="form-label">Meta Título *</label>
+					<label for="meta_title" class="form-label">{{ AdminLang.entry_meta_title|default('Meta Título') }} *</label>
 					<input type="text" id="meta_title" name="meta_title" class="form-control" value="{{ meta_title }}" required />
 					{% if errors.meta_title %}<div class="invalid-feedback">{{ errors.meta_title }}</div>{% endif %}
 				</div>
 
 				<div class="mb-6">
-					<label for="meta_description" class="form-label">Meta Descrição</label>
+					<label for="meta_description" class="form-label">{{ AdminLang.entry_meta_description|default('Meta Descrição') }}</label>
 					<textarea id="meta_description" name="meta_description" class="form-control">{{ meta_description }}</textarea>
 				</div>
 
 				<div class="mb-6">
-					<label for="meta_keyword" class="form-label">Meta Palavras-chave</label>
-					<textarea id="meta_keyword" name="meta_keyword" class="form-control" placeholder="Separadas por vírgula...">{{ meta_keyword }}</textarea>
+					<label for="meta_keyword" class="form-label">{{ AdminLang.entry_meta_keyword|default('Meta Palavras-chave') }}</label>
+					<textarea id="meta_keyword" name="meta_keyword" class="form-control" placeholder="{{ AdminLang.placeholder_meta_keyword|default('Separadas por vírgula...') }}">{{ meta_keyword }}</textarea>
 				</div>
 			</div>
 
 			<!-- 3. Aba: Imagens -->
 			<div id="tab-content-images" class="tab-content" style="display: none;">
-				<h3 style="margin-top: 0; margin-bottom: 1.5rem; color: #1e293b; border-bottom: 1px solid #f1f5f9; padding-bottom: 0.75rem;">Imagens e Logotipos</h3>
+				<h3 class="section-title">{{ AdminLang.title_images|default('Imagens e Logotipos') }}</h3>
 				
-				<div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2.5rem; margin-bottom: 1.5rem;">
+				<div class="grid-images">
 					<!-- Logotipo -->
-					<div style="padding: 1.5rem; border: 1px solid #e2e8f0; border-radius: 8px; background: #f8fafc; display: flex; flex-direction: column; align-items: center; justify-content: space-between;">
-						<div style="text-align: center; width: 100%;">
-							<h4 style="margin-top: 0; margin-bottom: 1rem; color: #334155;">Logotipo da Loja</h4>
-							<div style="width: 100%; min-height: 120px; display: flex; align-items: center; justify-content: center; background: #fff; border: 1px dashed #cbd5e1; border-radius: 6px; padding: 10px; margin-bottom: 1rem;">
+					<div class="image-upload-card">
+						<div class="text-center w-100">
+							<h4 class="image-upload-title">{{ AdminLang.entry_logo|default('Logotipo da Loja') }}</h4>
+							<div class="image-preview-container">
 								{% if logo_url %}
-									<img src="{{ logo_url }}" alt="Logotipo Atual" style="max-height: 100px; max-width: 100%; object-fit: contain;" id="logo-preview" />
+									<img src="{{ logo_url }}" alt="Logotipo Atual" class="image-preview-logo" id="logo-preview" />
 								{% else %}
-									<span style="color: #94a3b8; font-size: 0.9rem;" id="logo-preview-placeholder">Nenhum logotipo enviado</span>
+									<span class="image-preview-placeholder" id="logo-preview-placeholder">{{ AdminLang.text_no_logo|default('Nenhum logotipo enviado') }}</span>
 								{% endif %}
 							</div>
 						</div>
-						<div style="width: 100%;">
-							<input type="file" id="config_logo" name="config_logo" accept="image/*" style="display: none;" onchange="previewImage(this, 'logo-preview')" />
-							<label for="config_logo" class="btn" style="background: #3b82f6; color: #fff; border: none; padding: 8px 16px; border-radius: 6px; font-weight: 600; display: inline-flex; align-items: center; gap: 8px; cursor: pointer; width: 100%; justify-content: center; margin-bottom: 0.5rem;">
-								<i class="fas fa-upload"></i> Enviar Logotipo
+						<div class="w-100">
+							<input type="file" id="config_logo" name="config_logo" accept="image/*" class="d-none" onchange="previewImage(this, 'logo-preview')" />
+							<label for="config_logo" class="btn btn-primary btn-upload">
+								<i class="fas fa-upload"></i> {{ AdminLang.button_upload_logo|default('Enviar Logotipo') }}
 							</label>
 							{% if settings.config_logo %}
-								<div style="display: flex; align-items: center; gap: 6px; margin-top: 0.5rem;">
-									<input type="checkbox" name="remove_logo" id="remove_logo" value="1" style="width: 16px; height: 16px;" />
-									<label for="remove_logo" style="font-size: 0.85rem; color: #64748b; font-weight: 500; cursor: pointer;">Remover logotipo atual</label>
+								<div class="remove-image-wrapper">
+									<input type="checkbox" name="remove_logo" id="remove_logo" value="1" class="remove-image-checkbox" />
+									<label for="remove_logo" class="remove-image-label">{{ AdminLang.text_remove_logo|default('Remover logotipo atual') }}</label>
 								</div>
 							{% endif %}
 							{% if errors.config_logo %}<div class="invalid-feedback">{{ errors.config_logo }}</div>{% endif %}
@@ -144,26 +144,26 @@
 					</div>
 
 					<!-- Favicon / Ícone -->
-					<div style="padding: 1.5rem; border: 1px solid #e2e8f0; border-radius: 8px; background: #f8fafc; display: flex; flex-direction: column; align-items: center; justify-content: space-between;">
-						<div style="text-align: center; width: 100%;">
-							<h4 style="margin-top: 0; margin-bottom: 1rem; color: #334155;">Ícone da Loja (Favicon)</h4>
-							<div style="width: 100%; min-height: 120px; display: flex; align-items: center; justify-content: center; background: #fff; border: 1px dashed #cbd5e1; border-radius: 6px; padding: 10px; margin-bottom: 1rem;">
+					<div class="image-upload-card">
+						<div class="text-center w-100">
+							<h4 class="image-upload-title">{{ AdminLang.entry_icon|default('Ícone da Loja (Favicon)') }}</h4>
+							<div class="image-preview-container">
 								{% if icon_url %}
-									<img src="{{ icon_url }}" alt="Ícone Atual" style="max-height: 64px; max-width: 64px; object-fit: contain;" id="icon-preview" />
+									<img src="{{ icon_url }}" alt="Ícone Atual" class="image-preview-icon" id="icon-preview" />
 								{% else %}
-									<span style="color: #94a3b8; font-size: 0.9rem;" id="icon-preview-placeholder">Nenhum ícone enviado</span>
+									<span class="image-preview-placeholder" id="icon-preview-placeholder">{{ AdminLang.text_no_icon|default('Nenhum ícone enviado') }}</span>
 								{% endif %}
 							</div>
 						</div>
-						<div style="width: 100%;">
-							<input type="file" id="config_icon" name="config_icon" accept="image/*" style="display: none;" onchange="previewImage(this, 'icon-preview')" />
-							<label for="config_icon" class="btn" style="background: #3b82f6; color: #fff; border: none; padding: 8px 16px; border-radius: 6px; font-weight: 600; display: inline-flex; align-items: center; gap: 8px; cursor: pointer; width: 100%; justify-content: center; margin-bottom: 0.5rem;">
-								<i class="fas fa-upload"></i> Enviar Favicon
+						<div class="w-100">
+							<input type="file" id="config_icon" name="config_icon" accept="image/*" class="d-none" onchange="previewImage(this, 'icon-preview')" />
+							<label for="config_icon" class="btn btn-primary btn-upload">
+								<i class="fas fa-upload"></i> {{ AdminLang.button_upload_icon|default('Enviar Favicon') }}
 							</label>
 							{% if settings.config_icon %}
-								<div style="display: flex; align-items: center; gap: 6px; margin-top: 0.5rem;">
-									<input type="checkbox" name="remove_icon" id="remove_icon" value="1" style="width: 16px; height: 16px;" />
-									<label for="remove_icon" style="font-size: 0.85rem; color: #64748b; font-weight: 500; cursor: pointer;">Remover favicon atual</label>
+								<div class="remove-image-wrapper">
+									<input type="checkbox" name="remove_icon" id="remove_icon" value="1" class="remove-image-checkbox" />
+									<label for="remove_icon" class="remove-image-label">{{ AdminLang.text_remove_icon|default('Remover favicon atual') }}</label>
 								</div>
 							{% endif %}
 							{% if errors.config_icon %}<div class="invalid-feedback">{{ errors.config_icon }}</div>{% endif %}
@@ -174,38 +174,38 @@
 
 			<!-- 4. Aba: Redes Sociais -->
 			<div id="tab-content-social" class="tab-content" style="display: none;">
-				<h3 style="margin-top: 0; margin-bottom: 1.5rem; color: #1e293b; border-bottom: 1px solid #f1f5f9; padding-bottom: 0.75rem;">Redes Sociais</h3>
+				<h3 class="section-title">{{ AdminLang.title_social|default('Redes Sociais') }}</h3>
 				
 				<div class="mb-6">
-					<label for="config_facebook" class="form-label">Página do Facebook</label>
-					<div style="display: flex; align-items: center;">
-						<span style="background: #f1f5f9; border: 1px solid #cbd5e1; border-right: none; border-radius: 6px 0 0 6px; padding: 0.65rem 1rem; color: #64748b;"><i class="fab fa-facebook-f"></i></span>
-						<input type="url" id="config_facebook" name="config_facebook" class="form-control" value="{{ settings.config_facebook|default('https://facebook.com') }}" style="width: 100%; padding: 0.65rem; border: 1px solid #cbd5e1; border-radius: 0 6px 6px 0; font-size: 0.95rem;" />
+					<label for="config_facebook" class="form-label">{{ AdminLang.entry_facebook|default('Página do Facebook') }}</label>
+					<div class="input-group">
+						<span class="input-group-addon"><i class="fab fa-facebook-f"></i></span>
+						<input type="url" id="config_facebook" name="config_facebook" class="form-control input-group-control" value="{{ settings.config_facebook|default('https://facebook.com') }}" />
 					</div>
 				</div>
 
 				<div class="mb-6">
-					<label for="config_instagram" class="form-label">Perfil do Instagram</label>
-					<div style="display: flex; align-items: center;">
-						<span style="background: #f1f5f9; border: 1px solid #cbd5e1; border-right: none; border-radius: 6px 0 0 6px; padding: 0.65rem 1rem; color: #64748b;"><i class="fab fa-instagram"></i></span>
-						<input type="url" id="config_instagram" name="config_instagram" class="form-control" value="{{ settings.config_instagram|default('https://instagram.com') }}" style="width: 100%; padding: 0.65rem; border: 1px solid #cbd5e1; border-radius: 0 6px 6px 0; font-size: 0.95rem;" />
+					<label for="config_instagram" class="form-label">{{ AdminLang.entry_instagram|default('Perfil do Instagram') }}</label>
+					<div class="input-group">
+						<span class="input-group-addon"><i class="fab fa-instagram"></i></span>
+						<input type="url" id="config_instagram" name="config_instagram" class="form-control input-group-control" value="{{ settings.config_instagram|default('https://instagram.com') }}" />
 					</div>
 				</div>
 
-				<div style="margin-bottom: 2rem;">
-					<label for="config_youtube" class="form-label">Canal do YouTube</label>
-					<div style="display: flex; align-items: center;">
-						<span style="background: #f1f5f9; border: 1px solid #cbd5e1; border-right: none; border-radius: 6px 0 0 6px; padding: 0.65rem 1rem; color: #64748b;"><i class="fab fa-youtube"></i></span>
-						<input type="url" id="config_youtube" name="config_youtube" class="form-control" value="{{ settings.config_youtube|default('https://youtube.com') }}" style="width: 100%; padding: 0.65rem; border: 1px solid #cbd5e1; border-radius: 0 6px 6px 0; font-size: 0.95rem;" />
+				<div class="mb-8">
+					<label for="config_youtube" class="form-label">{{ AdminLang.entry_youtube|default('Canal do YouTube') }}</label>
+					<div class="input-group">
+						<span class="input-group-addon"><i class="fab fa-youtube"></i></span>
+						<input type="url" id="config_youtube" name="config_youtube" class="form-control input-group-control" value="{{ settings.config_youtube|default('https://youtube.com') }}" />
 					</div>
 				</div>
 			</div>
 
 			<!-- Botões de Ação -->
 			<div class="form-actions">
-				<button type="submit" class="btn btn-primary" style="padding: 12px 30px; border-radius: 6px; font-weight: 600; display: inline-flex; align-items: center; gap: 8px; font-size: 1rem; box-shadow: 0 2px 4px rgba(59, 130, 246, 0.2);">
+				<button type="submit" class="btn btn-primary btn-lg">
 					<i class="fas fa-save"></i>
-					<span>Salvar Configurações</span>
+					<span>{{ AdminLang.button_save|default('Salvar Configurações') }}</span>
 				</button>
 			</div>
 		</form>
@@ -218,8 +218,7 @@
 			document.querySelectorAll('.tab-content').forEach(el => el.style.display = 'none');
 			// Remove classe de ativação dos botões
 			document.querySelectorAll('.tab-button').forEach(el => {
-				el.style.borderBottomColor = 'transparent';
-				el.style.color = '#64748b';
+				el.classList.remove('active');
 			});
 
 			// Mostra a aba selecionada
@@ -231,8 +230,7 @@
 			// Ativa o botão da aba selecionada
 			const btnEl = document.getElementById('tab-btn-' + tabName);
 			if (btnEl) {
-				btnEl.style.borderBottomColor = '#3b82f6';
-				btnEl.style.color = '#1e293b';
+				btnEl.classList.add('active');
 			}
 
 			// Atualiza a URL sem recarregar a página

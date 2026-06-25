@@ -1,85 +1,82 @@
 {% extends 'admin/layouts/base_auth.html.twig' %}
 
-{% block title %}Configuração Inicial | Painel Administrativo{% endblock %}
+{% block title %}
+	{{ title|default((AdminLang.text_setup_title|default('Configuração Inicial')) ~ ' | ' ~ (AdminLang.sidebar.title|default('Painel Administrativo'))) }}
+{% endblock %}
+
+{% block container_class %}auth-container-large{% endblock %}
 
 {% block content %}
-<div class="auth-card" style="max-width: 550px; width: 100%; padding: 2.5rem; background: #ffffff; border-radius: 1.5rem; box-shadow: 0 20px 40px rgba(0, 0, 0, 0.08); border: 1px solid #edf2f7; transform: translateY(0); transition: all 0.3s ease;">
-    <div class="auth-logo" style="text-align: center; margin-bottom: 2rem;">
-        <span style="font-size: 3.5rem; display: block; margin-bottom: 0.5rem; animation: bounce 2s infinite;">🌌</span>
-        <h2 style="color: #1a202c; font-size: 1.8rem; font-weight: 700; margin: 0; font-family: 'Inter', sans-serif;">Instalação Concluída</h2>
-        <p style="color: #718096; font-size: 0.95rem; margin: 0.5rem 0 0 0; font-family: 'Inter', sans-serif; line-height: 1.5;">Configure a credencial de Administrador Principal para começar a usar a loja.</p>
+<div class="auth-card auth-card-large">
+    <div class="auth-logo">
+        <span class="auth-logo-emoji">🌌</span>
+        <h2 class="auth-logo-title">{{ AdminLang.text_setup_heading|default('Instalação Concluída') }}</h2>
+        <p class="auth-logo-subtitle">{{ AdminLang.text_setup_subtitle|default('Configure a credencial de Administrador Principal para começar a usar a loja.') }}</p>
     </div>
 
-    <form action="{{ action }}" method="post" novalidate style="display: flex; flex-direction: column; gap: 1.25rem;">
+    <form action="{{ action }}" method="post" novalidate class="flex-column gap-1-25">
         
-        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+        <div class="grid-2-cols">
             <!-- Nome -->
-            <div class="form-group" style="display: flex; flex-direction: column; gap: 0.5rem;">
-                <label for="firstname" style="color: #4a5568; font-weight: 600; font-size: 0.85rem; font-family: 'Inter', sans-serif;">Nome</label>
-                <input type="text" name="firstname" id="firstname" class="form-control" placeholder="Ex: João" required style="width: 100%; padding: 10px 14px; border: 1px solid {% if errors.firstname %}#fc8181{% else %}#cbd5e0{% endif %}; border-radius: 0.5rem; font-size: 0.9rem; transition: border-color 0.2s;" value="{{ data.firstname }}">
+            <div class="form-group-flex">
+                <label for="firstname" class="form-label">{{ AdminLang.entry_firstname|default('Nome') }}</label>
+                <input type="text" name="firstname" id="firstname" class="form-control {% if errors.firstname %}is-invalid{% endif %}" placeholder="{{ AdminLang.placeholder_firstname|default('Ex: João') }}" required value="{{ data.firstname }}">
                 {% if errors.firstname %}
-                    <span style="color: #e53e3e; font-size: 0.75rem; font-family: 'Inter', sans-serif;">{{ errors.firstname }}</span>
+                    <span class="invalid-feedback">{{ errors.firstname }}</span>
                 {% endif %}
             </div>
 
             <!-- Sobrenome -->
-            <div class="form-group" style="display: flex; flex-direction: column; gap: 0.5rem;">
-                <label for="lastname" style="color: #4a5568; font-weight: 600; font-size: 0.85rem; font-family: 'Inter', sans-serif;">Sobrenome</label>
-                <input type="text" name="lastname" id="lastname" class="form-control" placeholder="Ex: Silva" required style="width: 100%; padding: 10px 14px; border: 1px solid {% if errors.lastname %}#fc8181{% else %}#cbd5e0{% endif %}; border-radius: 0.5rem; font-size: 0.9rem; transition: border-color 0.2s;" value="{{ data.lastname }}">
+            <div class="form-group-flex">
+                <label for="lastname" class="form-label">{{ AdminLang.entry_lastname|default('Sobrenome') }}</label>
+                <input type="text" name="lastname" id="lastname" class="form-control {% if errors.lastname %}is-invalid{% endif %}" placeholder="{{ AdminLang.placeholder_lastname|default('Ex: Silva') }}" required value="{{ data.lastname }}">
                 {% if errors.lastname %}
-                    <span style="color: #e53e3e; font-size: 0.75rem; font-family: 'Inter', sans-serif;">{{ errors.lastname }}</span>
+                    <span class="invalid-feedback">{{ errors.lastname }}</span>
                 {% endif %}
             </div>
         </div>
 
         <!-- E-mail -->
-        <div class="form-group" style="display: flex; flex-direction: column; gap: 0.5rem;">
-            <label for="email" style="color: #4a5568; font-weight: 600; font-size: 0.85rem; font-family: 'Inter', sans-serif;">E-mail</label>
-            <input type="email" name="email" id="email" class="form-control" placeholder="Ex: admin@agsonhos.com" required style="width: 100%; padding: 10px 14px; border: 1px solid {% if errors.email %}#fc8181{% else %}#cbd5e0{% endif %}; border-radius: 0.5rem; font-size: 0.9rem; transition: border-color 0.2s;" value="{{ data.email }}">
+        <div class="form-group-flex">
+            <label for="email" class="form-label">{{ AdminLang.entry_email|default('E-mail') }}</label>
+            <input type="email" name="email" id="email" class="form-control {% if errors.email %}is-invalid{% endif %}" placeholder="{{ AdminLang.placeholder_email|default('Ex: admin@agsonhos.com') }}" required value="{{ data.email }}">
             {% if errors.email %}
-                <span style="color: #e53e3e; font-size: 0.75rem; font-family: 'Inter', sans-serif;">{{ errors.email }}</span>
+                <span class="invalid-feedback">{{ errors.email }}</span>
             {% endif %}
         </div>
 
         <!-- Usuário -->
-        <div class="form-group" style="display: flex; flex-direction: column; gap: 0.5rem;">
-            <label for="username" style="color: #4a5568; font-weight: 600; font-size: 0.85rem; font-family: 'Inter', sans-serif;">Usuário de Acesso</label>
-            <input type="text" name="username" id="username" class="form-control" placeholder="Ex: admin" required style="width: 100%; padding: 10px 14px; border: 1px solid {% if errors.username %}#fc8181{% else %}#cbd5e0{% endif %}; border-radius: 0.5rem; font-size: 0.9rem; transition: border-color 0.2s;" value="{{ data.username }}">
+        <div class="form-group-flex">
+            <label for="username" class="form-label">{{ AdminLang.entry_username|default('Usuário de Acesso') }}</label>
+            <input type="text" name="username" id="username" class="form-control {% if errors.username %}is-invalid{% endif %}" placeholder="{{ AdminLang.placeholder_username|default('Ex: admin') }}" required value="{{ data.username }}">
             {% if errors.username %}
-                <span style="color: #e53e3e; font-size: 0.75rem; font-family: 'Inter', sans-serif;">{{ errors.username }}</span>
+                <span class="invalid-feedback">{{ errors.username }}</span>
             {% endif %}
         </div>
 
-        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+        <div class="grid-2-cols">
             <!-- Senha -->
-            <div class="form-group" style="display: flex; flex-direction: column; gap: 0.5rem;">
-                <label for="password" style="color: #4a5568; font-weight: 600; font-size: 0.85rem; font-family: 'Inter', sans-serif;">Senha</label>
-                <input type="password" name="password" id="password" class="form-control" placeholder="Min. 6 caracteres" required style="width: 100%; padding: 10px 14px; border: 1px solid {% if errors.password %}#fc8181{% else %}#cbd5e0{% endif %}; border-radius: 0.5rem; font-size: 0.9rem; transition: border-color 0.2s;">
+            <div class="form-group-flex">
+                <label for="password" class="form-label">{{ AdminLang.entry_password|default('Senha') }}</label>
+                <input type="password" name="password" id="password" class="form-control {% if errors.password %}is-invalid{% endif %}" placeholder="{{ AdminLang.placeholder_password|default('Min. 6 caracteres') }}" required>
                 {% if errors.password %}
-                    <span style="color: #e53e3e; font-size: 0.75rem; font-family: 'Inter', sans-serif;">{{ errors.password }}</span>
+                    <span class="invalid-feedback">{{ errors.password }}</span>
                 {% endif %}
             </div>
 
             <!-- Confirmar Senha -->
-            <div class="form-group" style="display: flex; flex-direction: column; gap: 0.5rem;">
-                <label for="confirm_password" style="color: #4a5568; font-weight: 600; font-size: 0.85rem; font-family: 'Inter', sans-serif;">Confirmar Senha</label>
-                <input type="password" name="confirm_password" id="confirm_password" class="form-control" placeholder="Repita a senha" required style="width: 100%; padding: 10px 14px; border: 1px solid {% if errors.confirm_password %}#fc8181{% else %}#cbd5e0{% endif %}; border-radius: 0.5rem; font-size: 0.9rem; transition: border-color 0.2s;">
+            <div class="form-group-flex">
+                <label for="confirm_password" class="form-label">{{ AdminLang.entry_confirm_password|default('Confirmar Senha') }}</label>
+                <input type="password" name="confirm_password" id="confirm_password" class="form-control {% if errors.confirm_password %}is-invalid{% endif %}" placeholder="{{ AdminLang.placeholder_confirm_password|default('Repita a senha') }}" required>
                 {% if errors.confirm_password %}
-                    <span style="color: #e53e3e; font-size: 0.75rem; font-family: 'Inter', sans-serif;">{{ errors.confirm_password }}</span>
+                    <span class="invalid-feedback">{{ errors.confirm_password }}</span>
                 {% endif %}
             </div>
         </div>
 
-        <button type="submit" class="btn btn-primary" style="width: 100%; padding: 14px; font-size: 1rem; font-weight: 600; border-radius: 0.5rem; margin-top: 1rem; cursor: pointer; transition: all 0.2s; background: #4f46e5; color: #fff; border: none; box-shadow: 0 4px 12px rgba(79, 70, 229, 0.25);">
-            Finalizar Configuração
+        <button type="submit" class="btn btn-primary auth-btn mt-4">
+            {{ AdminLang.button_setup_submit|default('Finalizar Configuração') }}
         </button>
     </form>
 </div>
-
-<style>
-    @keyframes bounce {
-        0%, 100% { transform: translateY(0); }
-        50% { transform: translateY(-8px); }
-    }
-</style>
 {% endblock %}

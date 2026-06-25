@@ -1,12 +1,14 @@
 {% extends 'admin/layouts/base_auth.html.twig' %}
 
-{% block title %}Entrar | Painel Administrativo{% endblock %}
+{% block title %}
+	{{ title|default((AdminLang.text_login_title|default('Entrar')) ~ ' | ' ~ (AdminLang.sidebar.title|default('Painel Administrativo'))) }}
+{% endblock %}
 
 {% block content %}
 <div class="auth-card">
     <div class="auth-logo">
-        <h2>AgSonhos</h2>
-        <p>Acesse o painel administrativo</p>
+        <h2>{{ AdminLang.text_login_heading|default('AgSonhos') }}</h2>
+        <p>{{ AdminLang.text_login_subtitle|default('Acesse o painel administrativo') }}</p>
     </div>
 
     {% if error %}
@@ -23,17 +25,17 @@
 
     <form action="{{ action }}" method="post" novalidate>
         <div class="form-group">
-            <label for="username">Usuário / E-mail</label>
-            <input type="text" name="username" id="username" class="form-control" placeholder="Digite seu usuário ou e-mail" required autofocus value="{{ username }}">
+            <label for="username" class="form-label">{{ AdminLang.entry_login_username|default('Usuário / E-mail') }}</label>
+            <input type="text" name="username" id="username" class="form-control" placeholder="{{ AdminLang.placeholder_login_username|default('Digite seu usuário ou e-mail') }}" required autofocus value="{{ username }}">
         </div>
 
         <div class="form-group">
-            <label for="password">Senha</label>
-            <input type="password" name="password" id="password" class="form-control" placeholder="Digite sua senha" required>
+            <label for="password" class="form-label">{{ AdminLang.entry_login_password|default('Senha') }}</label>
+            <input type="password" name="password" id="password" class="form-control" placeholder="{{ AdminLang.placeholder_login_password|default('Digite sua senha') }}" required>
         </div>
 
-        <button type="submit" class="btn btn-primary" style="width: 100%; padding: 12px; font-size: 1rem; margin-top: 10px;">
-            Entrar no Painel
+        <button type="submit" class="btn btn-primary auth-btn mt-2">
+            {{ AdminLang.button_login_submit|default('Entrar no Painel') }}
         </button>
     </form>
 </div>

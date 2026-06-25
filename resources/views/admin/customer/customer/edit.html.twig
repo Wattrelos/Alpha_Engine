@@ -1,23 +1,23 @@
 {% extends 'admin/layouts/base.html.twig' %}
 
 {% block title %}
-	{{ title|default('Editar Cliente | Painel Administrativo') }}
+	{{ title|default((AdminLang.text_edit_title|default('Editar Cliente')) ~ ' | ' ~ (AdminLang.sidebar.title|default('Painel Administrativo'))) }}
 {% endblock %}
 
 {% block content %}
 	<div class="page-header">
 		<div>
-			<h2>Editar Cliente</h2>
-			<p class="page-subtitle">Atualize as informações cadastrais e os endereços do cliente.</p>
+			<h2>{{ AdminLang.text_edit_title|default('Editar Cliente') }}</h2>
+			<p class="page-subtitle">{{ AdminLang.text_edit_subtitle|default('Atualize as informações cadastrais e os endereços do cliente.') }}</p>
 		</div>
 		<a href="/LPDHED2dC7Gjrg2b/clientes" class="btn btn-secondary">
 			<i class="fas fa-arrow-left"></i>
-			<span>Voltar para Lista</span>
+			<span>{{ AdminLang.button_back|default('Voltar para Lista') }}</span>
 		</a>
 	</div>
 
 	{% if success %}
-		<div style="padding: 1rem; margin-bottom: 1.5rem; background: #d1fae5; color: #065f46; border: 1px solid #a7f3d0; border-radius: 8px;">
+		<div class="alert-success-custom">
 			{{ success }}
 		</div>
 	{% endif %}
@@ -35,14 +35,14 @@
 	{% endif %}
 
 	<!-- Navegação por Abas -->
-	<div style="display: flex; gap: 1rem; margin-bottom: 1.5rem; border-bottom: 2px solid #e2e8f0; padding-bottom: 0px;">
-		<button onclick="switchTab('general')" id="tab-btn-general" class="tab-button" style="padding: 0.75rem 1.5rem; font-weight: 600; font-size: 1rem; border: none; border-bottom: 3px solid transparent; background: none; cursor: pointer; color: #64748b;">
-			<i class="fas fa-user-edit" style="margin-right: 6px;"></i>
-			Dados Gerais
+	<div class="tab-nav">
+		<button onclick="switchTab('general')" id="tab-btn-general" class="tab-button">
+			<i class="fas fa-user-edit icon-mr-2"></i>
+			{{ AdminLang.tab_general|default('Dados Gerais') }}
 		</button>
-		<button onclick="switchTab('addresses')" id="tab-btn-addresses" class="tab-button" style="padding: 0.75rem 1.5rem; font-weight: 600; font-size: 1rem; border: none; border-bottom: 3px solid transparent; background: none; cursor: pointer; color: #64748b;">
-			<i class="fas fa-map-marked-alt" style="margin-right: 6px;"></i>
-			Endereços ({{ addresses|length }})
+		<button onclick="switchTab('addresses')" id="tab-btn-addresses" class="tab-button">
+			<i class="fas fa-map-marked-alt icon-mr-2"></i>
+			{{ AdminLang.tab_addresses|default('Endereços') }} ({{ addresses|length }})
 		</button>
 	</div>
 
@@ -55,10 +55,10 @@
 				{% include 'admin/customer/customer/_form.html.twig' %}
 
 				<div class="form-actions">
-					<a href="/LPDHED2dC7Gjrg2b/clientes" class="btn btn-secondary">Cancelar</a>
+					<a href="/LPDHED2dC7Gjrg2b/clientes" class="btn btn-secondary">{{ AdminLang.button_cancel|default('Cancelar') }}</a>
 					<button type="submit" class="btn btn-primary">
 						<i class="fas fa-save"></i>
-						<span>Salvar Alterações</span>
+						<span>{{ AdminLang.button_save_changes|default('Salvar Alterações') }}</span>
 					</button>
 				</div>
 			</form>
@@ -68,57 +68,54 @@
 	<!-- Conteúdo: Aba Endereços -->
 	<div id="tab-content-addresses" class="tab-content" style="display: none;">
 		<div class="card card-large">
-			<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; border-bottom: 1px solid #e2e8f0; padding-bottom: 0.75rem;">
-				<h3 style="margin: 0; color: #1e293b;">Endereços Cadastrados</h3>
-				<a href="/LPDHED2dC7Gjrg2b/clientes/{{ customer.id }}/enderecos/criar" class="btn btn-primary" style="padding: 8px 16px; border-radius: 6px; font-weight: 600; text-decoration: none; display: inline-flex; align-items: center; gap: 6px;">
+			<div class="section-header">
+				<h3 class="mb-0 text-dark">{{ AdminLang.title_addresses|default('Endereços Cadastrados') }}</h3>
+				<a href="/LPDHED2dC7Gjrg2b/clientes/{{ customer.id }}/enderecos/criar" class="btn btn-primary btn-with-icon">
 					<i class="fas fa-plus"></i>
-					<span>Adicionar Endereço</span>
+					<span>{{ AdminLang.text_address_create|default('Adicionar Endereço') }}</span>
 				</a>
 			</div>
 			
 			{% if addresses %}
-				<div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 1.5rem;">
+				<div class="grid-cards">
 					{% for addr in addresses %}
-						<div style="padding: 1.25rem; border: 1px solid {% if addr.default %}#3b82f6{% else %}#e2e8f0{% endif %}; border-radius: 8px; background: {% if addr.default %}#f0f7ff{% else %}#f8fafc{% endif %}; position: relative; display: flex; flex-direction: column; justify-content: space-between; min-height: 180px;">
+						<div class="address-card {% if addr.default %}address-default{% endif %}">
 							<div>
 								{% if addr.default %}
-									<span style="position: absolute; top: 1.25rem; right: 1.25rem; background: #3b82f6; color: #fff; font-size: 0.75rem; font-weight: bold; padding: 2px 8px; border-radius: 20px;">Padrão</span>
+									<span class="badge-primary">{{ AdminLang.text_default|default('Padrão') }}</span>
 								{% endif %}
-								<p style="margin: 0 0 0.5rem 0; font-weight: bold; color: #1e293b;">{{ addr.firstname }} {{ addr.lastname }}</p>
-								<p style="margin: 0 0 0.25rem 0; color: #475569; font-size: 0.9rem;">
+								<p class="mb-2 font-medium text-dark">{{ addr.firstname }} {{ addr.lastname }}</p>
+								<p class="mb-1 text-muted text-sm">
 									{{ addr.street }}, Nº {{ addr.number }} {% if addr.complement %}({{ addr.complement }}){% endif %}
 								</p>
-								<p style="margin: 0 0 0.25rem 0; color: #475569; font-size: 0.9rem;">
+								<p class="mb-1 text-muted text-sm">
 									{{ addr.neighborhood }} - {{ addr.city }}/{{ addr.zone_code }}
 								</p>
-								<p style="margin: 0 0 1rem 0; color: #64748b; font-size: 0.85rem;">
+								<p class="mb-0 text-muted text-xs">
 									CEP: {{ addr.postcode }} | {{ addr.country }}
 								</p>
 							</div>
 							
-							<div style="display: flex; gap: 0.5rem; justify-content: flex-end; border-top: 1px solid #e2e8f0; padding-top: 0.75rem; margin-top: 0.5rem;">
-								<a href="/LPDHED2dC7Gjrg2b/clientes/{{ customer.id }}/enderecos/{{ addr.address_id }}/editar" class="btn btn-primary" style="padding: 6px 12px; font-size: 0.8rem; background: #3b82f6; display: inline-flex; align-items: center; gap: 4px; text-decoration: none;">
+							<div class="address-card-actions">
+								<a href="/LPDHED2dC7Gjrg2b/clientes/{{ customer.id }}/enderecos/{{ addr.address_id }}/editar" class="btn btn-primary btn-sm">
 									<i class="fas fa-edit"></i>
-									<span>Editar</span>
+									<span>{{ AdminLang.text_address_edit|default('Editar') }}</span>
 								</a>
 								
-								<a href="/LPDHED2dC7Gjrg2b/clientes/{{ customer.id }}/enderecos/{{ addr.address_id }}/excluir" class="btn btn-danger" onclick="return confirm('Deseja realmente excluir este endereço?');" style="padding: 6px 12px; font-size: 0.8rem; display: inline-flex; align-items: center; gap: 4px; text-decoration: none; color: #fff; background-color: #ef4444; border-radius: 4px; font-weight: 600;">
+								<a href="/LPDHED2dC7Gjrg2b/clientes/{{ customer.id }}/enderecos/{{ addr.address_id }}/excluir" class="btn btn-danger btn-sm" onclick="return confirm('{{ AdminLang.text_address_confirm_delete|default('Deseja realmente excluir este endereço?')|escape('js') }}');">
 									<i class="fas fa-trash-alt"></i>
-									<span>Excluir</span>
+									<span>{{ AdminLang.text_address_delete|default('Excluir') }}</span>
 								</a>
 							</div>
 						</div>
 					{% endfor %}
 				</div>
 			{% else %}
-				<div style="text-align: center; padding: 3rem; color: #64748b; background: #f8fafc; border-radius: 8px; border: 1px dashed #cbd5e1;">
-					<i class="fas fa-map-marker-alt" style="font-size: 2.5rem; color: #cbd5e1; margin-bottom: 0.75rem; display: block;"></i>
-					Nenhum endereço cadastrado para este cliente.
+				<div class="empty-box">
+					<i class="fas fa-map-marker-alt table-empty-icon"></i>
+					{{ AdminLang.text_no_addresses|default('Nenhum endereço cadastrado para este cliente.') }}
 				</div>
 			{% endif %}
-		</div>
-	</div>
-
 		</div>
 	</div>
 
@@ -129,8 +126,7 @@
 			document.querySelectorAll('.tab-content').forEach(el => el.style.display = 'none');
 			// Remove classe de ativação dos botões
 			document.querySelectorAll('.tab-button').forEach(el => {
-				el.style.borderBottomColor = 'transparent';
-				el.style.color = '#64748b';
+				el.classList.remove('active');
 			});
 
 			// Mostra a aba selecionada
@@ -142,8 +138,7 @@
 			// Ativa o botão da aba selecionada
 			const btnEl = document.getElementById('tab-btn-' + tabName);
 			if (btnEl) {
-				btnEl.style.borderBottomColor = '#3b82f6';
-				btnEl.style.color = '#1e293b';
+				btnEl.classList.add('active');
 			}
 
 			// Atualiza a URL sem recarregar a página

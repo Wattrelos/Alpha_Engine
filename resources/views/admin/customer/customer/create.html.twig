@@ -1,18 +1,18 @@
 {% extends 'admin/layouts/base.html.twig' %}
 
 {% block title %}
-	{{ title|default('Adicionar Cliente | Painel Administrativo') }}
+	{{ title|default((AdminLang.text_add_title|default('Adicionar Cliente')) ~ ' | ' ~ (AdminLang.sidebar.title|default('Painel Administrativo'))) }}
 {% endblock %}
 
 {% block content %}
 	<div class="page-header">
 		<div>
-			<h2>Adicionar Cliente</h2>
-			<p class="page-subtitle">Cadastre um novo cliente no banco de dados.</p>
+			<h2>{{ AdminLang.text_add_title|default('Adicionar Cliente') }}</h2>
+			<p class="page-subtitle">{{ AdminLang.text_add_subtitle|default('Cadastre um novo cliente no banco de dados.') }}</p>
 		</div>
 		<a href="/LPDHED2dC7Gjrg2b/clientes" class="btn btn-secondary">
 			<i class="fas fa-arrow-left"></i>
-			<span>Voltar para Lista</span>
+			<span>{{ AdminLang.button_back|default('Voltar para Lista') }}</span>
 		</a>
 	</div>
 
@@ -29,10 +29,10 @@
 
 			<!-- Botões de Ação -->
 			<div class="form-actions">
-				<a href="/LPDHED2dC7Gjrg2b/clientes" class="btn btn-secondary">Cancelar</a>
+				<a href="/LPDHED2dC7Gjrg2b/clientes" class="btn btn-secondary">{{ AdminLang.button_cancel|default('Cancelar') }}</a>
 				<button type="submit" class="btn btn-primary">
 					<i class="fas fa-save"></i>
-					<span>Salvar Cliente</span>
+					<span>{{ AdminLang.button_save|default('Salvar Cliente') }}</span>
 				</button>
 			</div>
 		</form>
