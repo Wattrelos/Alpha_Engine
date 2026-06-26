@@ -17,13 +17,13 @@
 	</div>
 
 	{% if success %}
-		<div style="padding: 1rem; margin-bottom: 1.5rem; background: #d1fae5; color: #065f46; border: 1px solid #a7f3d0; border-radius: 8px;">
+		<div class="alert-success-custom">
 			{{ success }}
 		</div>
 	{% endif %}
 
 	{% if error %}
-		<div style="padding: 1rem; margin-bottom: 1.5rem; background: #fee2e2; color: #991b1b; border: 1px solid #fecaca; border-radius: 8px;">
+		<div class="alert-danger-custom">
 			{{ error }}
 		</div>
 	{% endif %}
@@ -90,18 +90,18 @@
 		</form>
 	</div>
 
-	<div class="card" style="margin: 0; box-shadow: 0 1px 3px rgba(0,0,0,0.05); border-radius: var(--border-radius);">
+	<div class="card card-table">
 		<div class="overflow-x-auto">
-			<table class="table" style="margin: 0;">
+			<table class="table table-clean">
 				<thead>
 					<tr>
-						<th style="width: 60px;">{{ AdminLang.column_image|default('Imagem') }}</th>
+						<th class="col-w-60">{{ AdminLang.column_image|default('Imagem') }}</th>
 						<th>{{ AdminLang.column_name|default('Nome do Produto') }}</th>
 						<th>{{ AdminLang.column_model|default('Modelo') }}</th>
 						<th>{{ AdminLang.column_price|default('Preço') }}</th>
 						<th>{{ AdminLang.column_quantity|default('Quantidade') }}</th>
 						<th>{{ AdminLang.column_status|default('Status') }}</th>
-						<th class="text-right">{{ AdminLang.column_actions|default('Ações') }}</th>
+						<th class="text-right col-actions">{{ AdminLang.column_actions|default('Ações') }}</th>
 					</tr>
 				</thead>
 				<tbody>
@@ -110,9 +110,9 @@
 							<tr>
 								<td>
 									{% if product.image %}
-										<img src="{{ product.image }}" alt="{{ product.name }}" style="border-radius: 4px; border: 1px solid var(--color-border); max-width: 40px; max-height: 40px; background: #fff;" />
+										<img src="{{ product.image }}" alt="{{ product.name }}" class="table-image" />
 									{% else %}
-										<div style="width: 40px; height: 40px; border-radius: 4px; background: #f1f5f9; display: flex; align-items: center; justify-content: center; color: #94a3b8;">
+										<div class="table-image-placeholder">
 											<i class="fas fa-image"></i>
 										</div>
 									{% endif %}
@@ -122,7 +122,7 @@
 								<td class="text-semibold text-dark">{{ product.price }}</td>
 								<td>
 									{% if product.quantity <= 0 %}
-										<span style="color: #ef4444; font-weight: 600;">{{ AdminLang.text_out_of_stock|default('Esgotado') }}</span>
+										<span class="text-danger text-semibold">{{ AdminLang.text_out_of_stock|default('Esgotado') }}</span>
 									{% else %}
 										{{ product.quantity }}
 									{% endif %}
@@ -148,8 +148,8 @@
 						{% endfor %}
 					{% else %}
 						<tr>
-							<td colspan="7" style="text-align: center; padding: 3rem; color: #64748b;">
-								<i class="fas fa-box-open" style="font-size: 2.5rem; color: #cbd5e1; margin-bottom: 1rem; display: block;"></i>
+							<td colspan="7" class="table-empty-cell">
+								<i class="fas fa-box-open table-empty-icon"></i>
 								{{ AdminLang.text_empty|default('Nenhum produto cadastrado até o momento.') }}
 							</td>
 						</tr>
@@ -158,7 +158,7 @@
 			</table>
 		</div>
 		{% if total > limit %}
-			<div style="padding: 1.5rem; display: flex; justify-content: flex-end; border-top: 1px solid var(--color-border);">
+			<div class="table-pagination-bar">
 				{% include 'components/molecules/pagination.html.twig' %}
 			</div>
 		{% endif %}

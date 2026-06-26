@@ -46,9 +46,9 @@
 		</form>
 	</div>
 
-	<div class="card" style="margin: 0; box-shadow: 0 1px 3px rgba(0,0,0,0.05); border-radius: var(--border-radius); background: #fff;">
+	<div class="card card-table">
 		<div class="overflow-x-auto">
-			<table class="table" style="margin: 0; width: 100%; border-collapse: collapse;">
+			<table class="table table-clean">
 				<thead>
 					<tr>
 						<th>{{ AdminLang.entry_company_name|default('Razão Social') }}</th>
@@ -67,14 +67,14 @@
 								<td class="text-muted">{{ supplier.trade_name|default('-') }}</td>
 								<td class="text-muted">{{ supplier.tax_id }}</td>
 								<td class="text-muted">
-									<div style="font-weight: 500;">{{ supplier.email }}</div>
-									<div style="font-size: 0.8rem; color: #94a3b8;">{{ supplier.phone|default('-') }}</div>
+									<div class="supplier-contact-info">{{ supplier.email }}</div>
+									<div class="supplier-contact-subinfo">{{ supplier.phone|default('-') }}</div>
 								</td>
-								<td style="padding: 1rem; text-align: center;">
+								<td class="text-center">
 									{% if supplier.is_active %}
-										<span style="display: inline-block; padding: 0.25rem 0.5rem; background: #dcfce7; color: #15803d; border-radius: 9999px; font-size: 0.75rem; font-weight: 600;">{{ AdminLang.text_active|default('Ativo') }}</span>
+										<span class="status-pill status-pill-active">{{ AdminLang.text_active|default('Ativo') }}</span>
 									{% else %}
-										<span style="display: inline-block; padding: 0.25rem 0.5rem; background: #fee2e2; color: #b91c1c; border-radius: 9999px; font-size: 0.75rem; font-weight: 600;">{{ AdminLang.text_inactive|default('Inativo') }}</span>
+										<span class="status-pill status-pill-inactive">{{ AdminLang.text_inactive|default('Inativo') }}</span>
 									{% endif %}
 								</td>
 								<td class="text-right">
@@ -91,8 +91,8 @@
 						{% endfor %}
 					{% else %}
 						<tr>
-							<td colspan="6" style="text-align: center; padding: 3rem; color: #64748b;">
-								<i class="fas fa-truck" style="font-size: 2.5rem; color: #cbd5e1; margin-bottom: 1rem; display: block;"></i>
+							<td colspan="6" class="table-empty-cell">
+								<i class="fas fa-truck table-empty-icon"></i>
 								{{ AdminLang.text_empty|default('Nenhum fornecedor cadastrado até o momento.') }}
 							</td>
 						</tr>
@@ -101,7 +101,7 @@
 			</table>
 		</div>
 		{% if total > limit %}
-			<div style="padding: 1.5rem; display: flex; justify-content: flex-end; border-top: 1px solid var(--color-border);">
+			<div class="table-pagination-bar">
 				{% include 'components/molecules/pagination.html.twig' %}
 			</div>
 		{% endif %}
