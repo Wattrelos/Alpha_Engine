@@ -52,7 +52,7 @@ class SearchProductAction extends BaseController implements ActionInterface
                 'special'    => $special,
                 'price_formatted' => $priceFormatted,
                 'special_formatted' => $specialFormatted,
-                'image'      => !empty($p['image']) ? '/image/' . $p['image'] : '/image/no_image.png',
+                'image'      => !empty($p['image']) ? (strpos($p['image'], 'image/') === 0 ? '/' . $p['image'] : (strpos($p['image'], '/image/') === 0 ? $p['image'] : '/image/' . $p['image'])) : '/image/no_image.png',
                 'thumb'      => $imagePresenter->resize($p['image'] ?? '', 80, 80),
                 'quantity'   => (int)($p['quantity'] ?? 0),
             ];
