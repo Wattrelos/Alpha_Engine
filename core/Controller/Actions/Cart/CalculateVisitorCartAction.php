@@ -38,10 +38,13 @@ class CalculateVisitorCartAction implements ActionInterface
 
         $products = [];
         $subtotal = 0;
+        $taxAmount = 0.0;
 
         $priceRepository = RepositoryFactory::getInstance()->get(PriceRepository::class);
         $optionValueRepo = RepositoryFactory::getInstance()->get(ProductOptionValueRepository::class);
         $productMapper   = MapperFactory::getInstance()->get(ProductMapper::class);
+        $discountRepo    = RepositoryFactory::getInstance()->get(\Alpha\Model\Domain\Repositories\ProductDiscountRepository::class);
+        $seoRepository   = RepositoryFactory::getInstance()->get(\Alpha\Model\Domain\Repositories\SeoUrlRepository::class);
 
         $config = $this->container->has('config') ? $this->container->get('config') : null;
         $langId = $config ? (int)$config->get('config_language_id') : 2;
@@ -57,6 +60,87 @@ class CalculateVisitorCartAction implements ActionInterface
         if (!empty($productIds)) {
             $productDataMap = $productMapper->getProductsByIds($productIds, $langId, $storeId, $customerGroupId, $priceStatements);
             $productDataMap = array_column($productDataMap, null, 'id');
+
+            // Identifica e carrega em lote os produtos pai para variações (Evita N+1)
+            $parentIdsToFetch = [];
+            foreach ($productDataMap as $prod) {
+                $masterId = (int)($prod['master_id'] ?? 0);
+                if ($masterId > 0 && !isset($productDataMap[$masterId])) {
+                    $parentIdsToFetch[] = $masterId;
+                }
+            }
+
+            if (!empty($parentIdsToFetch)) {
+                $parentDataMap = $productMapper->getProductsByIds($parentIdsToFetch, $langId, $storeId, $customerGroupId, $priceStatements);
+                foreach ($parentDataMap as $parentProd) {
+                    $productDataMap[$parentProd['id']] = $parentProd;
+                }
+            }
+
+            // Hidratação e Herança das variações
+            foreach ($productDataMap as $id => &$prod) {
+                $masterId = (int)($prod['master_id'] ?? 0);
+                if ($masterId > 0 && isset($productDataMap[$masterId])) {
+                    $parent = $productDataMap[$masterId];
+
+                    // Preço Base
+                    if ((float)$prod['price'] <= 0.0) {
+                        $prod['price'] = $parent['price'];
+                    }
+
+                    // Preço Promocional (Special e Discount)
+                    if (!isset($prod['special']) || (float)$prod['special'] <= 0.0) {
+                        if ((float)$prod['price'] === (float)$parent['price']) {
+                            $prod['special'] = $parent['special'] ?? null;
+                        }
+                    }
+                    if (!isset($prod['discount']) || (float)$prod['discount'] <= 0.0) {
+                        if ((float)$prod['price'] === (float)$parent['price']) {
+                            $prod['discount'] = $parent['discount'] ?? null;
+                        }
+                    }
+
+                    // Classe de Imposto
+                    if (empty($prod['tax_class_id'])) {
+                        $prod['tax_class_id'] = $parent['tax_class_id'];
+                    }
+
+                    // Peso e Classe de Peso
+                    if ((float)$prod['weight'] <= 0.0) {
+                        $prod['weight'] = $parent['weight'];
+                        $prod['weight_class_id'] = $parent['weight_class_id'];
+                    }
+
+                    // Imagem
+                    if (empty($prod['image'])) {
+                        $prod['image'] = $parent['image'];
+                    }
+
+                    // Pontos
+                    if (empty($prod['points'])) {
+                        $prod['points'] = $parent['points'];
+                    }
+                    if (empty($prod['reward'])) {
+                        $prod['reward'] = $parent['reward'] ?? 0;
+                    }
+
+                    // Compra Mínima
+                    if (empty($prod['minimum']) || (int)$prod['minimum'] <= 1) {
+                        $prod['minimum'] = $parent['minimum'];
+                    }
+
+                    // Estoque Subtraível
+                    if (isset($parent['subtract'])) {
+                        $prod['subtract'] = $parent['subtract'];
+                    }
+
+                    // Frete Requerido
+                    if (isset($parent['shipping'])) {
+                        $prod['shipping'] = $parent['shipping'];
+                    }
+                }
+            }
+            unset($prod);
         }
 
         $imagePresenter = $this->imagePresenter;
@@ -64,6 +148,15 @@ class CalculateVisitorCartAction implements ActionInterface
         $routeContext = RouteContext::fromRequest($request);
         $routeParser = $routeContext->getRouteParser();
         $lang = $request->getAttribute('lang', 'pt-br');
+
+        $tax = $this->container->has('tax') ? $this->container->get('tax') : null;
+        if ($tax && isset($_SESSION['shipping_address'])) {
+            $shippingAddr = $_SESSION['shipping_address'];
+            $countryId = (int)($shippingAddr['country_id'] ?? 76);
+            $zoneId = (int)($shippingAddr['zone_id'] ?? 0);
+            $tax->setShippingAddress($countryId, $zoneId);
+            $tax->setPaymentAddress($countryId, $zoneId);
+        }
 
         foreach ($items as $item) {
             $productId = (int)$item['product_id'];
@@ -73,7 +166,25 @@ class CalculateVisitorCartAction implements ActionInterface
             $productInfo = $productDataMap[$productId] ?? null;
             if (!$productInfo) continue;
 
+            // progressive discount calculation
+            $activeDiscounts = $discountRepo->getActiveDiscounts($productInfo['id'], $customerGroupId);
+            $discountPrice = null;
+
+            foreach ($activeDiscounts as $discount) {
+                if ($quantity >= $discount->getQuantity()) {
+                    if ($discountPrice === null || $discount->getPrice() < $discountPrice) {
+                        $discountPrice = $discount->getPrice();
+                    }
+                }
+            }
+
             $basePrice = (float)$productInfo['price'];
+            if ((float)($productInfo['special'] ?? 0)) {
+                $basePrice = (float)$productInfo['special'];
+            } elseif ($discountPrice !== null) {
+                $basePrice = (float)$discountPrice;
+            }
+
             $optionPrice = 0.0;
             $optionData = [];
 
@@ -102,8 +213,20 @@ class CalculateVisitorCartAction implements ActionInterface
             }
 
             $unitPrice = $basePrice + $optionPrice;
+            $taxClassId = (int)($productInfo['tax_class_id'] ?? 0);
+            $taxPrice = ($tax && $config) ? $tax->calculate($unitPrice, $taxClassId, $config->get('config_tax')) : $unitPrice;
+
             $totalPrice = $unitPrice * $quantity;
+            $taxTotalPrice = $taxPrice * $quantity;
+
             $subtotal += $totalPrice;
+
+            if ($tax && $config && $productInfo['tax_class_id']) {
+                $taxRates = $tax->getRates($unitPrice, $productInfo['tax_class_id']);
+                foreach ($taxRates as $taxRate) {
+                    $taxAmount += $taxRate['amount'] * $quantity;
+                }
+            }
 
             $thumb = $imagePresenter->resize($productInfo['image'], 80, 80);
 
@@ -111,21 +234,28 @@ class CalculateVisitorCartAction implements ActionInterface
             // Base64 safe string representation
             $cartKey = $productId . '_' . str_replace(['+', '/', '='], ['-', '_', ''], base64_encode($optionStr));
 
+            $displayId = (int)($productInfo['master_id'] ?? 0) > 0 ? (int)$productInfo['master_id'] : $productId;
+            $keyword = $seoRepository->getKeywordByQuery('product_id', $displayId, 0, $langId);
+            $slug = !empty($keyword) ? $keyword : $displayId;
+
             $products[] = [
-                'cart_id'    => $cartKey,
-                'product_id' => $productId,
-                'thumb'      => $thumb,
+                'cart_id'        => $cartKey,
+                'product_id'     => $productId,
+                'master_id'      => (int)($productInfo['master_id'] ?? 0),
+                'thumb'          => $thumb,
                 'name'       => $productInfo['name'],
                 'model'      => $productInfo['model'],
                 'option'     => $optionData,
                 'quantity'   => $quantity,
                 'stock_quantity' => (int)$productInfo['quantity'],
                 'option_raw' => $optionStr,
-                'price'      => $currency ? $currency->format($unitPrice, $currencyCode) : 'R$ ' . number_format($unitPrice, 2, ',', '.'),
-                'total'      => $currency ? $currency->format($totalPrice, $currencyCode) : 'R$ ' . number_format($totalPrice, 2, ',', '.'),
-                'href'       => $routeParser->urlFor('product.detail', ['lang' => $lang, 'slug' => ($productInfo['keyword'] ?? (string)$productId)])
+                'price'      => $currency ? $currency->format($taxPrice, $currencyCode) : 'R$ ' . number_format($taxPrice, 2, ',', '.'),
+                'total'      => $currency ? $currency->format($taxTotalPrice, $currencyCode) : 'R$ ' . number_format($taxTotalPrice, 2, ',', '.'),
+                'href'       => $routeParser->urlFor('product.detail', ['lang' => $lang, 'slug' => (string)$slug])
             ];
         }
+
+        $grandTotal = $subtotal + $taxAmount;
 
         $totals = [
             [
@@ -134,7 +264,7 @@ class CalculateVisitorCartAction implements ActionInterface
             ],
             [
                 'title' => 'Total',
-                'text'  => $currency ? $currency->format($subtotal, $currencyCode) : 'R$ ' . number_format($subtotal, 2, ',', '.')
+                'text'  => $currency ? $currency->format($grandTotal, $currencyCode) : 'R$ ' . number_format($grandTotal, 2, ',', '.')
             ]
         ];
 

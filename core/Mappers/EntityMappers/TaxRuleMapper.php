@@ -23,8 +23,8 @@ class TaxRuleMapper {
             ->from(DB_PREFIX . 'tax_rule', 'tr1')
             ->leftJoin(DB_PREFIX . 'tax_rate', 'tr2', 'tr1.tax_rate_id = tr2.id') // Corrigido: tr1.tax_rate_id referencia tr2.id
             ->join(DB_PREFIX . 'tax_rate_to_customer_group', 'tr2cg', 'tr2.id = tr2cg.tax_rate_id')
-            ->leftJoin(DB_PREFIX . 'zone_to_geo_zone', 'z2gz', 'tr2.geo_zone_id = z2gz.geo_zone_id')
-            ->leftJoin(DB_PREFIX . 'geo_zone', 'gz', 'tr2.geo_zone_id = gz.id')
+            ->leftJoin(DB_PREFIX . 'zone_to_geo_zone', 'z2gz', 'tr2.geo_zones_id = z2gz.geo_zone_id')
+            ->leftJoin(DB_PREFIX . 'geo_zone', 'gz', 'tr2.geo_zones_id = gz.id')
             ->where("tr1.based = ?", [$based])
             ->where("tr2cg.customer_group_id = ?", [$customerGroupId])
             ->where("z2gz.country_id = ?", [$countryId])
@@ -36,7 +36,7 @@ class TaxRuleMapper {
                 'tr2.name AS tax_rate_name',
                 'tr2.rate AS tax_rate_rate',
                 'tr2.type AS tax_rate_type',
-                'tr2.geo_zone_id AS tax_rate_geo_zone_id'
+                'tr2.geo_zones_id AS tax_rate_geo_zone_id'
             )
             ->orderBy('tr1.priority', 'ASC');
 

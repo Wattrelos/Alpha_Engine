@@ -508,6 +508,7 @@ class CartRepository extends AbstractRepository implements BaseRepositoryInterfa
                 $products[] = [
                     'cart_id'               => $item['cart_id'] ?? $item['id'], // Interoperabilidade para chaves renomeadas
                     'product_id'            => $productInfo['id'],
+                    'master_id'             => (int)($productInfo['master_id'] ?? 0),
                     'name'                  => $productInfo['name'],
                     'model'                 => $productInfo['model'],
                     'shipping'              => $productInfo['shipping'],

@@ -1,0 +1,37 @@
+@startuml POS - Sales Representative Use Case
+
+left to right direction
+skinparam packageStyle rectangle
+
+actor "Sales Representative" as SalesRep
+actor "Customer" as Customer
+
+rectangle "POS System - Sales Module" {
+    usecase "Browse Product Catalog" as UC_Catalog
+    usecase "Check Stock Availability" as UC_Stock
+    usecase "Identify/Register Customer" as UC_Customer
+    usecase "Create Pre-Order" as UC_CreateOrder
+    usecase "Add Items to Cart" as UC_AddItems
+    usecase "Apply Discount" as UC_Discount
+    usecase "Save Order (Pending Payment)" as UC_SaveOrder
+    usecase "Generate Order Ticket" as UC_Ticket
+}
+
+' Relacionamentos do Vendedor
+SalesRep --> UC_Catalog
+SalesRep --> UC_Customer
+SalesRep --> UC_CreateOrder
+
+' Inclusões e Extensões
+UC_Catalog <.. UC_Stock : <<include>>
+UC_CreateOrder ..> UC_AddItems : <<include>>
+UC_CreateOrder ..> UC_SaveOrder : <<include>>
+UC_SaveOrder ..> UC_Ticket : <<include>>
+
+UC_AddItems <.. UC_Discount : <<extend>>
+
+' Interação do Cliente (Opcional no caso de uso, mas mostra o fluxo do negócio)
+Customer --> UC_Customer : Provides Details
+Customer --> UC_Ticket : Receives Ticket
+
+@endum

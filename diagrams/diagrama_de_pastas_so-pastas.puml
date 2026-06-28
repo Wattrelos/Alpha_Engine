@@ -139,16 +139,42 @@
 │       │   ├── molecules/                  # Moléculas
 │       │   └── organisms/                  # Organismos
 │       ├── layouts/                        # Estruturas base (header, footer, html base)
-│       └── pages/                          # Telas principais do E-commerce (catálogo, carrinho, user)
-│           ├── auth/                       # Telas do Painel de Controle (Backoffice)
-│           ├── cart/                       # Carrinho
-│           ├── category/                   # Categorias
-│           ├── errors/                     # Erros
-│           ├── information/                # Informações
-│           ├── product/                    # Produtos
-│           └── users/                      # Usuários
-│               ├── accounts/               # Contas
-│               └── addresses/              # Endereços
+│       ├── pages/                          # Telas principais do E-commerce (catálogo, carrinho, user)
+│       │   ├── auth/                       # Telas do Painel de Controle (Backoffice)
+│       │   ├── cart/                       # Carrinho
+│       │   ├── category/                   # Categorias
+│       │   ├── errors/                     # Erros
+│       │   ├── information/                # Informações
+│       │   ├── product/                    # Produtos
+│       │   └── users/                      # Usuários
+│       │       ├── accounts/               # Contas
+│       │       └── addresses/              # Endereços
+│       └── pos/                            # 🛒 POS (Point of Sale) substitui PDV
+│           ├── sales-rep/                  # 🧑‍💼 Subpasta do Vendedor (Sales Representative)
+│           │   ├── layout.twig                 # Estrutura base do PDV (HTML, CSS e JS principais)
+│           │   └── pages/                      # Páginas
+│           │       ├── auth/                   # Telas de autenticação
+│           │       ├── cart/                   # Carrinho
+│           │       ├── checkout/               # Checkout
+│           │       ├── customer/               # Clientes
+│           │       ├── information/            # Informações
+│           │       ├── location/               # Localização
+│           │       ├── main/                   # Main
+│           │       └── product/                # Produtos
+│           └── cashier/                    # 💰 Subpasta do Caixa (Cashier)
+│               ├── layout.twig               # Layout base do PDV (HTML, CSS e JS principais)
+│               └── pages/                    # Páginas
+│                   ├── auth/                 # Telas de autenticação
+│                   ├── cart/                 # Carrinho
+│                   ├── checkout/             # Checkout
+│                   ├── customer/             # Clientes
+│                   ├── information/          # Informações
+│                   ├── location/             # Localização
+│                   ├── main/                 # Main
+│                   └── product/              # Produtos
+│           └── components/                 # Componentes reutilizáveis
+│               ├── tabela_itens.twig       # Tabela de itens do carrinho
+│               └── modal_pagamento.twig    # Modal de pagamento
 └── tests/                                  # Testes
     └── scripts_uteis/                      # Scripts úteis
         ├── NovoEnderecamento/              # Novo Endereçamento

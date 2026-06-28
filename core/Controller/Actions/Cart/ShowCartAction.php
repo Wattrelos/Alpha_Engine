@@ -70,8 +70,9 @@ class ShowCartAction implements ActionInterface
 
         foreach ($productsRaw as $prod) {
             $prodId = (int)$prod['product_id'];
-            $keyword = $this->seoRepository->getKeywordByQuery('product_id', $prodId, 0, $languageId);
-            $slug = !empty($keyword) ? $keyword : $prodId;
+            $displayId = (int)($prod['master_id'] ?? 0) > 0 ? (int)$prod['master_id'] : $prodId;
+            $keyword = $this->seoRepository->getKeywordByQuery('product_id', $displayId, 0, $languageId);
+            $slug = !empty($keyword) ? $keyword : $displayId;
 
             // Formatação do link do produto
             $href = $routeParser->urlFor('product.detail', ['lang' => $lang, 'slug' => (string)$slug]);

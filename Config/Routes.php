@@ -108,6 +108,18 @@ return function (\Slim\App $app) {
 
             $group->get('/logout', \Alpha\Admin\Controllers\Actions\Auth\LogoutAction::class)->setName('admin.logout');
             $group->post('/idioma', \Alpha\Admin\Controllers\Actions\Common\SwitchAdminLanguageAction::class)->setName('admin.language.switch');
+
+            // PDV (POS) Rotas do Vendedor
+            $group->get('/pos/vendedor', \Alpha\Admin\Controllers\Actions\POS\ShowSalesRepDashboardAction::class)->setName('admin.pos.sales_rep');
+            $group->get('/pos/vendedor/checkout', \Alpha\Admin\Controllers\Actions\POS\ShowSalesRepCheckoutAction::class)->setName('admin.pos.sales_rep.checkout');
+            $group->get('/pos/produtos/buscar', \Alpha\Admin\Controllers\Actions\POS\SearchProductAction::class)->setName('admin.pos.products.search');
+            $group->get('/pos/clientes/buscar', \Alpha\Admin\Controllers\Actions\POS\SearchCustomerAction::class)->setName('admin.pos.customers.search');
+            $group->post('/pos/pedidos/salvar', \Alpha\Admin\Controllers\Actions\POS\CreatePreOrderAction::class)->setName('admin.pos.orders.save');
+
+            // PDV (POS) Rotas do Caixa
+            $group->get('/pos/caixa', \Alpha\Admin\Controllers\Actions\POS\ShowCashierDashboardAction::class)->setName('admin.pos.cashier');
+            $group->get('/pos/pedidos/{id:[0-9]+}', \Alpha\Admin\Controllers\Actions\POS\GetPreOrderAction::class)->setName('admin.pos.orders.get');
+            $group->post('/pos/pedidos/{id:[0-9]+}/pagar', \Alpha\Admin\Controllers\Actions\POS\PayOrderAction::class)->setName('admin.pos.orders.pay');
         })
         ->add(new \Alpha\Auth\Middleware\AdminLanguageMiddleware(
             $app->getContainer()->get(\Alpha\Model\Domain\Repositories\LanguageRepository::class),

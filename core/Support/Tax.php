@@ -108,7 +108,7 @@ class Tax
             ->join(DB_PREFIX . 'tax_rate_to_customer_group', 'tr2cg', 'tra.id = tr2cg.tax_rate_id')
             ->where('tr.tax_class_id = ?', [$tax_class_id])
             ->where('tr2cg.customer_group_id = ?', [$customer_group_id])
-            ->select('tr.based', 'tr.priority', 'tra.id AS tax_rate_id', 'tra.name', 'tra.rate', 'tra.type', 'tra.geo_zone_id');
+            ->select('tr.based', 'tr.priority', 'tra.id AS tax_rate_id', 'tra.name', 'tra.rate', 'tra.type', 'tra.geo_zones_id AS geo_zone_id');
 
         $rules = $dao->executeQuery($query);
 

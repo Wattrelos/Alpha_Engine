@@ -1,0 +1,183 @@
+@startuml "Idempotency Failure Flow"
+autonumber "<b>00:"
+
+header "Material Didático: Controle de Concorrência & Prevenção de Pedidos Duplicados"
+title "Evitando Falha de Idempotência (Double-Click) com Redis e UUID"
+
+<style>
+sequenceDiagram {
+    actor {
+        BackgroundColor #E3F2FD
+        BorderColor #1565C0
+        FontColor #0D47A1
+    }
+    participant {
+        BackgroundColor #EDE7F6
+        BorderColor #5E35B1
+        FontColor #311B92
+    }
+    database {
+        BackgroundColor #FFF3E0
+        BorderColor #EF6C00
+        FontColor #E65100
+    }
+    arrow {
+        LineColor #37474F
+    }
+    note {
+        BackgroundColor #FFFDE7
+        BorderColor #FBC02D
+        FontSize 12
+    }
+}
+</style>
+
+box "Frontend / Web" #E3F2FD
+    actor "Cliente (Cliques Duplos)" as Cliente
+    participant "Frontend App (JS)" as Front
+end box
+
+box "Backend / Infraestrutura" #F5F5F5
+    participant "Slim Action" as Action
+    participant "Domain Service" as Domain
+    database "Cache (Redis)" as Cache
+    database "Database" as DB
+end box
+
+' === NOTA EXPLICATIVA DE INTRODUÇÃO ===
+note over Cliente, DB #F1F8E9
+  <b>O que é Idempotência e por que precisamos dela?</b>
+  Idempotência é a propriedade pela qual uma mesma requisição executada múltiplas vezes produz exatamente o mesmo resultado.
+  <b>O Problema (Double-Click):</b> Um usuário clica duas vezes rapidamente no botão "Finalizar Compra". Sem uma trava de idempotência,
+  o servidor processaria ambos os cliques como compras distintas, gerando <b>dois pedidos</b> e cobrando o cliente duas vezes!
+  <b>A Solução:</b> Usamos um token único (UUID) no Frontend e um mecanismo de trava rápida (lock distribuído) com Redis no Backend.
+end note
+
+' --- PRIMEIRA REQUISICAO (A caminho) ---
+note over Cliente, Front #E1F5FE
+  <b>Passo 1: O Primeiro Clique (Original)</b>
+  O usuário clica pela primeira vez no botão de comprar. O fluxo inicia.
+end note
+Cliente -> Front : Clique 1 (Botão Comprar)
+activate Front
+    
+    note over Front #E1F5FE
+      <b>Geração de Token Único (UUID):</b>
+      O JavaScript gera um identificador único universal (UUID) para este checkout.
+      Se o usuário tentar reenviar este mesmo carrinho, usaremos o mesmo token.
+    end note
+    Front -> Front : Gera Token Único (UUID)
+    Front -> Action : HTTP POST /{lang}/checkout [Token: UUID-XYZ]
+    activate Action
+        
+        note over Action, Domain #FFF9C4
+          <b>Slim Action (Controller):</b>
+          Recebe a requisição e delega ao Domain Service para verificar
+          se esse token já está sendo ou foi processado.
+        end note
+        Action -> Domain : verificarIdempotencia(UUID-XYZ)
+        activate Domain
+            
+            note over Domain, Cache #FFE0B2
+              <b>Redis SETNX (Set if Not Exists):</b>
+              O Domain tenta gravar o token no Redis com status "PROCESSING".
+              O comando <b>SETNX</b> é atômico: se a chave não existir, ele a cria e retorna 1 (OK).
+              Se a chave já existir, ele não faz nada e retorna 0 (Erro).
+            end note
+            Domain -> Cache : SETNX(UUID-XYZ, "PROCESSING", expire: 5min)
+            activate Cache
+                Cache --> Domain : OK (Chave não existia)
+            deactivate Cache
+            
+            note over Domain #E8F5E9
+              <b>Lock Adquirido:</b>
+              Como a chave não existia no Redis, o lock foi criado com sucesso.
+              O fluxo de criação de pedido é liberado para continuar.
+            end note
+            Domain --> Action : Token Válido (Segue o fluxo)
+        deactivate Domain
+        
+        note over Action, DB #ECEFF1
+          <b>Operação de Escrita (Lenta):</b>
+          O backend começa a inserir os dados do pedido no MySQL.
+          Esta operação no banco leva algum tempo (ex: 500ms).
+        end note
+        ' Simulando lentidão ou processamento normal da requisição A
+        Action -> DB : Executa INSERT do Pedido...
+        activate DB
+        
+' --- SEGUNDA REQUISICAO (O Clique Duplo) ---
+note over Cliente, Front #FFEBEE
+  <b>Passo 2: O Segundo Clique (Double-Click)</b>
+  Enquanto a primeira inserção no banco de dados está ocorrendo, o usuário
+  clica novamente no botão por impaciência.
+end note
+Cliente -> Front : Clique 2 (Botão Comprar rápido)
+
+    note over Front, Action #FFEBEE
+      <b>Reenvio com o Mesmo Token:</b>
+      Como o Frontend está na mesma página de checkout, ele envia a requisição
+      utilizando o <b>mesmo</b> token UUID-XYZ gerado no primeiro clique.
+    end note
+    Front -> Action : HTTP POST /{lang}/checkout [Token: UUID-XYZ]
+    activate Action
+        Action -> Domain : verificarIdempotencia(UUID-XYZ)
+        activate Domain
+            
+            note over Domain, Cache #FFEBEE
+              <b>Bloqueio no Redis:</b>
+              O Domain tenta fazer SETNX para o mesmo token. O Redis nega
+              a escrita porque o UUID-XYZ já existe no cache (ainda está como "PROCESSING").
+            end note
+            Domain -> Cache : SETNX(UUID-XYZ, "PROCESSING")
+            activate Cache
+                Cache --> Domain : ERR (Chave já existe!)
+            deactivate Cache
+            
+            note over Domain #FFEBEE
+              <b>Detecção de Duplicidade:</b>
+              O Domain Service identifica o conflito e lança uma exceção
+              para impedir que a segunda requisição atinja o banco de dados.
+            end note
+            ' O domínio identifica a duplicidade e barra imediatamente
+            Domain --> Action : Throws DuplicateRequestException
+        deactivate Domain
+        
+        note over Action, Front #FFEBEE
+          <b>Resposta de Erro Controlada:</b>
+          O controller captura a exceção e retorna HTTP 422 (ou 409 Conflict)
+          com uma mensagem informando que a operação está em andamento.
+        end note
+        ' Backend responde a requisição B com erro controlado
+        Action --> Front : HTTP 422 Unprocessable Entity { error: "DUPLICATE_REQUEST", message: "Processamento em andamento." }
+    deactivate Action
+
+        note over DB, Action #E8F5E9
+          <b>Fim do Processamento Original:</b>
+          O banco de dados conclui a inserção do primeiro clique com sucesso.
+        end note
+        ' Conclusão tardia da primeira requisição A
+        DB --> Action : DB_Success
+        deactivate DB
+        
+        note over Action, Front #E8F5E9
+          <b>Resposta de Sucesso:</b>
+          O backend retorna HTTP 201 Created indicando que o pedido
+          foi criado com sucesso na primeira tentativa.
+        end note
+        Action --> Front : HTTP 201 Created (Pedido 1 Criado com Sucesso!)
+    deactivate Action
+
+    ' TRATAMENTO NO FRONTEND
+    note over Front #E8F5E9
+      <b>Resolução Inteligente no Cliente (JS):</b>
+      1. O Frontend ignora o erro 422 da segunda requisição (sabe que foi apenas duplicidade).
+      2. O Frontend processa o sucesso 201 da requisição original.
+      3. O usuário é redirecionado para a página de sucesso.
+      Resultado: Apenas 1 pedido criado, sem falhas ou transtornos!
+    end note
+    Front -> Front : Ignora o erro HTTP 422 da requisição duplicada
+    Front -> Front : Processa o HTTP 201 da requisição original
+    Front -> Cliente : Redireciona para a tela de Sucesso do Pedido
+deactivate Front
+@enduml

@@ -1,0 +1,296 @@
+{% extends " pos/layout.twig" %}
+
+{% block title %}{{ title }} | AgSonhos PDV{% endblock %}
+
+{% block extra_styles %}
+.success-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    height: 100%;
+    padding: 2rem;
+}
+
+.ticket-card {
+    background: rgba(19, 27, 46, 0.75);
+    backdrop-filter: blur(16px);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: var(--radius-xl);
+    width: 100%;
+    max-width: 480px;
+    padding: 2rem;
+    box-shadow: var(--shadow-lg);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position: relative;
+    border-top: 5px solid var(--success);
+}
+
+/* Success Header */
+.success-glow-ring {
+    width: 72px;
+    height: 72px;
+    background-color: var(--success-glow);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 1.25rem;
+    border: 1px solid rgba(16, 185, 129, 0.3);
+    animation: pulseGlow 2s infinite;
+}
+
+@keyframes pulseGlow {
+    0% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.4); }
+    70% { box-shadow: 0 0 0 15px rgba(16, 185, 129, 0); }
+    100% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
+}
+
+.success-icon {
+    font-size: 2.25rem;
+    color: var(--success);
+}
+
+.ticket-title {
+    font-family: var(--font-display);
+    font-size: 1.5rem;
+    font-weight: 800;
+    margin-bottom: 0.5rem;
+    text-align: center;
+}
+
+.ticket-subtitle {
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+    text-align: center;
+    margin-bottom: 2rem;
+}
+
+/* Large Ticket Code */
+.ticket-code-container {
+    background-color: var(--bg-primary);
+    border: 1px dashed var(--border);
+    border-radius: var(--radius-md);
+    padding: 1.25rem;
+    width: 100%;
+    text-align: center;
+    margin-bottom: 1.5rem;
+    position: relative;
+}
+
+.ticket-code-label {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    display: block;
+    margin-bottom: 0.35rem;
+}
+
+.ticket-number {
+    font-family: var(--font-display);
+    font-size: 2.5rem;
+    font-weight: 800;
+    color: var(--text-primary);
+    letter-spacing: 1px;
+}
+
+/* Receipt Details */
+.receipt-details {
+    width: 100%;
+    border-top: 1px solid rgba(255, 255, 255, 0.05);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    padding: 1.25rem 0;
+    margin-bottom: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.receipt-row {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.85rem;
+}
+
+.receipt-row-label {
+    color: var(--text-secondary);
+}
+
+.receipt-row-value {
+    font-weight: 600;
+}
+
+/* Barcode simulation */
+.barcode-simulation {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 2px;
+    height: 48px;
+    width: 100%;
+    background-color: white;
+    padding: 8px;
+    border-radius: var(--radius-sm);
+    margin-bottom: 2rem;
+}
+
+.barcode-line {
+    background-color: black;
+    height: 100%;
+}
+
+/* Button layout */
+.ticket-actions {
+    display: flex;
+    gap: 1rem;
+    width: 100%;
+}
+
+.action-btn {
+    flex: 1;
+    padding: 0.85rem;
+    border-radius: var(--radius-md);
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: 0.95rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    transition: var(--transition);
+}
+
+.btn-primary {
+    background-color: var(--accent);
+    color: white;
+    border: none;
+    box-shadow: 0 4px 10px var(--accent-glow);
+}
+
+.btn-primary:hover {
+    background-color: var(--accent-hover);
+    transform: translateY(-1px);
+}
+
+.btn-secondary {
+    background: transparent;
+    border: 1px solid var(--border);
+    color: var(--text-primary);
+}
+
+.btn-secondary:hover {
+    background-color: rgba(255, 255, 255, 0.03);
+    border-color: var(--text-secondary);
+    transform: translateY(-1px);
+}
+
+@media print {
+    body * {
+        visibility: hidden;
+    }
+    .ticket-card, .ticket-card * {
+        visibility: visible;
+    }
+    .ticket-card {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 100%;
+        max-width: 100%;
+        box-shadow: none;
+        border: none;
+        background: white;
+        color: black;
+    }
+    .ticket-code-container {
+        border-color: black;
+    }
+    .ticket-number, .receipt-row-value {
+        color: black;
+    }
+    .ticket-actions {
+        display: none;
+    }
+}
+{% endblock %}
+
+{% block content %}
+<div class="success-container">
+    <div class="ticket-card">
+        <!-- Glow Success Icon -->
+        <div class="success-glow-ring">
+            <i class="fas fa-check-circle success-icon"></i>
+        </div>
+        
+        <h2 class="ticket-title">Pré-Venda Emitida</h2>
+        <p class="ticket-subtitle">Oriente o cliente a apresentar o ticket abaixo no caixa para realizar o pagamento e retirar os produtos.</p>
+        
+        <!-- Ticket ID -->
+        <div class="ticket-code-container">
+            <span class="ticket-code-label">Senha / Ticket de Atendimento</span>
+            <span class="ticket-number">#{{ order_id }}</span>
+        </div>
+        
+        <!-- Details List -->
+        <div class="receipt-details">
+            <div class="receipt-row">
+                <span class="receipt-row-label">Cliente:</span>
+                <span class="receipt-row-value">{{ order.firstname }} {{ order.lastname }}</span>
+            </div>
+            <div class="receipt-row">
+                <span class="receipt-row-label">E-mail:</span>
+                <span class="receipt-row-value">{{ order.email|default('Não informado') }}</span>
+            </div>
+            <div class="receipt-row">
+                <span class="receipt-row-label">Telefone:</span>
+                <span class="receipt-row-value">{{ order.telephone|default('Não informado') }}</span>
+            </div>
+            <div class="receipt-row">
+                <span class="receipt-row-label">Vendedor:</span>
+                <span class="receipt-row-value">{{ logged_admin.name }}</span>
+            </div>
+            <div class="receipt-row">
+                <span class="receipt-row-label">Valor Total:</span>
+                <span class="receipt-row-value" style="color: var(--success); font-size: 1.05rem;">R$ {{ order.total|number_format(2, ',', '.') }}</span>
+            </div>
+        </div>
+        
+        <!-- CSS Simulated Barcode -->
+        <div class="barcode-simulation" id="barcode_container">
+            <!-- Injetado dinamicamente para parecer um código real -->
+        </div>
+        
+        <!-- Actions Row -->
+        <div class="ticket-actions">
+            <button onclick="window.print()" class="action-btn btn-secondary">
+                <i class="fas fa-print"></i>
+                Imprimir Ticket
+            </button>
+            <button onclick="window.location.href='/LPDHED2dC7Gjrg2b/pos/vendedor'" class="action-btn btn-primary">
+                <i class="fas fa-plus"></i>
+                Nova Venda
+            </button>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const barcodeContainer = document.getElementById('barcode_container');
+        
+        // Gera um código de barras de largura aleatória em CSS
+        const lines = [];
+        const pattern = [3,1,2,4,1,2,3,1,4,2,1,3,2,1,4,1,2,3,1,2,4,3,1,2,1,4,3,2,1,2,3,4,1,2,3,1];
+        
+        barcodeContainer.innerHTML = pattern.map(width => {
+            return `<div class="barcode-line" style="width: ${width}px;"></div>`;
+        }).join('');
+    });
+</script>
+{% endblock %}
