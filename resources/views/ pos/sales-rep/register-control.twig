@@ -93,6 +93,21 @@
         <button id="modal_close_btn" class="modal-close-btn">Entendido</button>
     </div>
 </div>
+
+<!-- Modal de Variações de Produto -->
+<div id="variants_modal" class="pos-modal">
+    <div class="modal-content" style="max-width: 600px; text-align: left;">
+        <div class="variants-modal-header">
+            <h3 class="variants-modal-title" id="variants_modal_title">Escolha a Variação</h3>
+            <button id="variants_modal_close_btn" class="variants-modal-close">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <div id="variants_modal_list" class="variants-list">
+            <!-- Injetado via Javascript -->
+        </div>
+    </div>
+</div>
 {% endblock %}
 
 {% block extra_scripts %}
@@ -169,6 +184,7 @@
             }
             
             productsGrid.innerHTML = productsDatabase.map(p => {
+                const hasVariants = p.variants && p.variants.length > 0;
                 const isOutOfStock = p.quantity <= 0;
                 const priceHtml = p.special_formatted 
                     ? `<span class="product-price-old">${p.price_formatted}</span> <span class="product-price" style="color: var(--success);">${p.special_formatted}</span>`
@@ -185,8 +201,8 @@
                             <p class="product-meta">Ref: ${p.model || 'N/A'}</p>
                             <div class="product-pricing">
                                 <div>${priceHtml}</div>
-                                <button class="add-btn" ${isOutOfStock ? 'disabled' : ''} onclick="event.stopPropagation(); addToCart(${p.product_id})">
-                                    <i class="fas ${isOutOfStock ? 'fa-ban' : 'fa-plus'}"></i>
+                                <button class="add-btn" ${isOutOfStock && !hasVariants ? 'disabled' : ''} onclick="event.stopPropagation(); addToCart(${p.product_id})">
+                                    <i class="fas ${hasVariants ? 'fa-list-ul' : (isOutOfStock ? 'fa-ban' : 'fa-plus')}"></i>
                                 </button>
                             </div>
                         </div>
@@ -196,7 +212,12 @@
         };
         
         window.triggerAdd = (productId, isOutOfStock) => {
-            if (!isOutOfStock) {
+            const product = productsDatabase.find(p => p.product_id === productId);
+            if (!product) return;
+            
+            if (product.variants && product.variants.length > 0) {
+                addToCart(productId);
+            } else if (!isOutOfStock) {
                 addToCart(productId);
             }
         };
@@ -254,10 +275,22 @@
             clearCustomerBtn.style.display = 'none';
         });
         
+        const variantsModal = document.getElementById('variants_modal');
+        const variantsModalTitle = document.getElementById('variants_modal_title');
+        const variantsModalList = document.getElementById('variants_modal_list');
+        const variantsModalCloseBtn = document.getElementById('variants_modal_close_btn');
+
+        variantsModalCloseBtn.addEventListener('click', () => {
+            variantsModal.style.display = 'none';
+        });
+
         // Fechar dropdown de clientes se clicar fora
         document.addEventListener('click', (e) => {
             if (!e.target.closest('.customer-search-dropdown')) {
                 customerSearchResults.style.display = 'none';
+            }
+            if (e.target === variantsModal) {
+                variantsModal.style.display = 'none';
             }
         });
 
@@ -265,6 +298,12 @@
         window.addToCart = (productId) => {
             const product = productsDatabase.find(p => p.product_id === productId);
             if (!product) return;
+            
+            // Se o produto tiver variações, abre o modal de variações
+            if (product.variants && product.variants.length > 0) {
+                openVariantsModal(product);
+                return;
+            }
             
             const existingItem = cart.find(item => item.product_id === productId);
             if (existingItem) {
@@ -285,6 +324,65 @@
                 });
             }
             
+            renderCart();
+        };
+
+        const openVariantsModal = (product) => {
+            variantsModalTitle.textContent = `Escolha a variação de: ${product.name}`;
+            variantsModalList.innerHTML = product.variants.map(v => {
+                const isOutOfStock = v.quantity <= 0;
+                return `
+                    <div class="variant-item-card">
+                        <div class="variant-info-wrapper">
+                            <img src="${v.image}" class="variant-image-thumb" onerror="this.src='/image/no_image.png'">
+                            <div class="variant-meta-wrapper">
+                                <span class="variant-name-text">${v.name}</span>
+                                <span class="variant-sku-text">Ref/SKU: ${v.sku || 'N/A'}</span>
+                            </div>
+                        </div>
+                        <div class="variant-action-wrapper">
+                            <div class="variant-price-info">
+                                <span class="variant-price-text">${v.price_formatted}</span>
+                                <span class="variant-stock-text ${isOutOfStock ? 'variant-stock-out' : 'variant-stock-in'}">
+                                    ${v.quantity} unid
+                                </span>
+                            </div>
+                            <button class="add-btn" ${isOutOfStock ? 'disabled' : ''} onclick="addVariantToCart(${product.product_id}, ${v.product_id})">
+                                <i class="fas ${isOutOfStock ? 'fa-ban' : 'fa-plus'}"></i>
+                            </button>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+            variantsModal.style.display = 'flex';
+        };
+
+        window.addVariantToCart = (productId, variantId) => {
+            const product = productsDatabase.find(p => p.product_id === productId);
+            if (!product) return;
+            
+            const variant = product.variants.find(v => v.product_id === variantId);
+            if (!variant) return;
+            
+            const existingItem = cart.find(item => item.product_id === variantId);
+            if (existingItem) {
+                if (existingItem.quantity < variant.quantity) {
+                    existingItem.quantity += 1;
+                } else {
+                    showModal('Limite de estoque', `Você já adicionou a quantidade máxima disponível (${variant.quantity} unid) de ${product.name} - ${variant.name}.`, 'fa-exclamation-circle', 'var(--warning)');
+                }
+            } else {
+                cart.push({
+                    product_id: variant.product_id,
+                    name: `${product.name} - ${variant.name}`,
+                    price: variant.price,
+                    image: variant.image,
+                    quantity: 1,
+                    max_quantity: variant.quantity
+                });
+            }
+            
+            variantsModal.style.display = 'none';
             renderCart();
         };
         

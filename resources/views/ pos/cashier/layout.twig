@@ -2,316 +2,6 @@
 
 {% block title %}{{ title }} | AgSonhos PDV{% endblock %}
 
-{% block extra_styles %}
-.cashier-workspace {
-    display: flex;
-    width: 100%;
-    height: 100%;
-    gap: 1.5rem;
-    padding: 1rem 0;
-}
-
-/* Esquerda: Painel de busca e pagamento */
-.payment-section {
-    flex: 1.2;
-    display: flex;
-    flex-direction: column;
-    gap: 1.25rem;
-}
-
-/* Direita: Detalhes do ticket */
-.ticket-section {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    background-color: var(--bg-secondary);
-    border-radius: var(--radius-lg);
-    border: 1px solid rgba(255, 255, 255, 0.05);
-    overflow: hidden;
-}
-
-/* Ticket Search Panel */
-.ticket-search-card {
-    display: flex;
-    flex-direction: column;
-    gap: 0.75rem;
-}
-
-.ticket-search-row {
-    display: flex;
-    gap: 0.75rem;
-}
-
-.ticket-search-input {
-    flex: 1;
-    background-color: var(--bg-primary);
-    border: 1px solid var(--border);
-    border-radius: var(--radius-md);
-    padding: 0.85rem 1rem;
-    color: var(--text-primary);
-    font-family: var(--font-sans);
-    font-size: 1.1rem;
-    font-weight: 700;
-    text-align: center;
-    letter-spacing: 2px;
-    outline: none;
-    transition: var(--transition);
-}
-
-.ticket-search-input:focus {
-    border-color: var(--accent);
-    box-shadow: 0 0 0 3px var(--accent-glow);
-}
-
-.search-btn {
-    padding: 0 1.5rem;
-    background-color: var(--accent);
-    color: white;
-    border: none;
-    border-radius: var(--radius-md);
-    font-family: var(--font-display);
-    font-weight: 700;
-    cursor: pointer;
-    transition: var(--transition);
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-}
-
-.search-btn:hover {
-    background-color: var(--accent-hover);
-}
-
-/* Payment Methods Grid */
-.payment-methods-grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 0.75rem;
-}
-
-.pay-method-card {
-    background-color: rgba(30, 41, 75, 0.3);
-    border: 1px solid var(--border);
-    border-radius: var(--radius-md);
-    padding: 1.25rem 0.75rem;
-    text-align: center;
-    cursor: pointer;
-    transition: var(--transition);
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 0.65rem;
-}
-
-.pay-method-card:hover {
-    border-color: var(--accent);
-    background-color: rgba(99, 102, 241, 0.05);
-}
-
-.pay-method-card.active {
-    border-color: var(--success);
-    background-color: var(--success-glow);
-    box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1);
-}
-
-.pay-method-icon {
-    font-size: 1.75rem;
-    color: var(--text-secondary);
-}
-
-.pay-method-card.active .pay-method-icon {
-    color: var(--success);
-}
-
-.pay-method-title {
-    font-size: 0.85rem;
-    font-weight: 600;
-}
-
-/* Payment Configuration Panels */
-.pay-config-panel {
-    display: none;
-    flex: 1;
-    min-height: 180px;
-}
-
-/* Calculator for Cash change */
-.cash-calculator {
-    display: flex;
-    flex-direction: column;
-    gap: 1rem;
-    width: 100%;
-}
-
-.calculator-row {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    gap: 1rem;
-}
-
-.calc-input-wrapper {
-    position: relative;
-    flex: 1;
-}
-
-.calc-currency-symbol {
-    position: absolute;
-    left: 0.75rem;
-    top: 50%;
-    transform: translateY(-50%);
-    font-weight: 700;
-    color: var(--text-muted);
-}
-
-.calc-input {
-    width: 100%;
-    padding: 0.75rem 0.75rem 0.75rem 2rem;
-    background-color: var(--bg-primary);
-    border: 1px solid var(--border);
-    border-radius: var(--radius-sm);
-    color: var(--text-primary);
-    font-size: 1.1rem;
-    font-weight: 700;
-    outline: none;
-}
-
-.calc-value-large {
-    font-family: var(--font-display);
-    font-size: 1.5rem;
-    font-weight: 800;
-    color: var(--warning);
-}
-
-/* Pix QR Code Mock */
-.pix-panel {
-    display: flex;
-    align-items: center;
-    gap: 1.5rem;
-    background-color: rgba(255, 255, 255, 0.02);
-    border-radius: var(--radius-md);
-    padding: 1rem;
-}
-
-.pix-qr-container {
-    width: 120px;
-    height: 120px;
-    background-color: white;
-    border-radius: 8px;
-    padding: 6px;
-    position: relative;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.pix-qr-img {
-    max-width: 100%;
-    max-height: 100%;
-}
-
-.pix-scanner-line {
-    position: absolute;
-    left: 0;
-    width: 100%;
-    height: 3px;
-    background-color: var(--success);
-    box-shadow: 0 0 8px var(--success);
-    animation: scanAnimation 2s linear infinite;
-}
-
-@keyframes scanAnimation {
-    0% { top: 0%; }
-    50% { top: 100%; }
-    100% { top: 0%; }
-}
-
-.pix-info {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    gap: 0.5rem;
-}
-
-/* Pre-order Details receipt preview (Right panel) */
-.ticket-header {
-    padding: 1.25rem;
-    border-bottom: 1px solid var(--border);
-    background-color: rgba(11, 15, 25, 0.3);
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
-
-.ticket-items-container {
-    flex: 1;
-    overflow-y: auto;
-    padding: 1.25rem;
-    display: flex;
-    flex-direction: column;
-    gap: 0.85rem;
-}
-
-.ticket-item {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    font-size: 0.85rem;
-    padding-bottom: 0.65rem;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.03);
-}
-
-.ticket-item-qty {
-    background-color: var(--bg-tertiary);
-    color: var(--text-secondary);
-    padding: 0.1rem 0.4rem;
-    border-radius: 4px;
-    font-size: 0.75rem;
-    font-weight: 600;
-    margin-right: 0.5rem;
-}
-
-.ticket-footer {
-    padding: 1.25rem;
-    border-top: 1px solid var(--border);
-    background-color: rgba(11, 15, 25, 0.4);
-    display: flex;
-    flex-direction: column;
-    gap: 0.75rem;
-}
-
-.confirm-pay-btn {
-    width: 100%;
-    padding: 1rem;
-    background: linear-gradient(135deg, var(--success), #059669);
-    color: white;
-    border: none;
-    border-radius: var(--radius-md);
-    font-family: var(--font-display);
-    font-size: 1.05rem;
-    font-weight: 700;
-    cursor: pointer;
-    box-shadow: 0 4px 12px var(--success-glow);
-    transition: var(--transition);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 0.5rem;
-}
-
-.confirm-pay-btn:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 6px 16px rgba(16, 185, 129, 0.3);
-}
-
-.confirm-pay-btn:disabled {
-    background: var(--border);
-    color: var(--text-muted);
-    cursor: not-allowed;
-    transform: none;
-    box-shadow: none;
-}
-{% endblock %}
 
 {% block content %}
 <div class="cashier-workspace">
@@ -319,8 +9,8 @@
     <div class="payment-section">
         <!-- Card 1: Localizar Ticket -->
         <div class="glass-card ticket-search-card">
-            <h3 style="font-family: var(--font-display); font-size: 1.05rem; font-weight: 700; display: flex; align-items: center; gap: 0.5rem;">
-                <i class="fas fa-search" style="color: var(--accent);"></i>
+            <h3>
+                <i class="fas fa-search"></i>
                 Localizar Pré-Venda
             </h3>
             <div class="ticket-search-row">
@@ -333,8 +23,8 @@
         </div>
 
         <!-- Card 2: Seletor de Pagamento -->
-        <div class="glass-card" style="flex: 1; display: flex; flex-direction: column; gap: 1.25rem;">
-            <h3 style="font-family: var(--font-display); font-size: 1.05rem; font-weight: 700;">
+        <div class="glass-card payment-selector-panel">
+            <h3 class="payment-selector-title">
                 Método de Pagamento
             </h3>
             
@@ -355,8 +45,8 @@
 
             <!-- Detalhes do Pagamento Selecionado -->
             <!-- Painel Pix -->
-            <div id="panel_Pix" class="pay-config-panel" style="display: flex;">
-                <div class="pix-panel" style="width: 100%;">
+            <div id="panel_Pix" class="pay-config-panel">
+                <div class="pix-panel">
                     <div class="pix-qr-container">
                         <!-- Simulated QR code pattern in CSS/SVG -->
                         <svg class="pix-qr-img" viewBox="0 0 100 100" fill="currentColor">
@@ -365,19 +55,19 @@
                         <div class="pix-scanner-line"></div>
                     </div>
                     <div class="pix-info">
-                        <span style="font-size: 0.8rem; color: var(--success); font-weight: 600;"><i class="fas fa-spinner fa-spin"></i> Aguardando Pix do cliente...</span>
-                        <p style="font-size: 0.75rem; color: var(--text-secondary);">Aponte a câmera do celular para o QR Code acima. O sistema identificará o pagamento automaticamente.</p>
-                        <button class="pos-exit-btn" style="padding: 0.3rem 0.6rem; font-size: 0.75rem; width: fit-content;" onclick="simulatePixReceived()">Simular Recebimento</button>
+                        <span class="pix-status-text"><i class="fas fa-spinner fa-spin"></i> Aguardando Pix do cliente...</span>
+                        <p class="pix-instructions">Aponte a câmera do celular para o QR Code acima. O sistema identificará o pagamento automaticamente.</p>
+                        <button class="pos-exit-btn pix-simulate-btn" onclick="simulatePixReceived()">Simular Recebimento</button>
                     </div>
                 </div>
             </div>
 
             <!-- Painel Cartão -->
             <div id="panel_Cartão" class="pay-config-panel">
-                <div style="background-color: rgba(255, 255, 255, 0.02); padding: 1.25rem; border-radius: var(--radius-md); border: 1px solid var(--border); display: flex; flex-direction: column; gap: 0.75rem; justify-content: center; width: 100%;">
-                    <span style="font-weight: 600; font-size: 0.85rem;"><i class="fas fa-terminal"></i> Terminal de Cartões TEF</span>
-                    <p style="font-size: 0.75rem; color: var(--text-secondary);">Insira ou aproxime o cartão do cliente na maquininha de pagamento. Aguarde a confirmação de aprovação do terminal.</p>
-                    <div style="background-color: var(--bg-primary); padding: 0.65rem; border-radius: 4px; border: 1px solid var(--border); text-align: center; font-size: 0.85rem; font-weight: 600; color: var(--warning);">
+                <div class="card-terminal-container">
+                    <span class="card-terminal-title"><i class="fas fa-terminal"></i> Terminal de Cartões TEF</span>
+                    <p class="card-terminal-instructions">Insira ou aproxime o cartão do cliente na maquininha de pagamento. Aguarde a confirmação de aprovação do terminal.</p>
+                    <div class="card-terminal-status">
                         <i class="fas fa-circle-notch fa-spin"></i> Aguardando transação na maquininha...
                     </div>
                 </div>
@@ -387,14 +77,14 @@
             <div id="panel_Dinheiro" class="pay-config-panel">
                 <div class="cash-calculator">
                     <div class="calculator-row">
-                        <span style="font-size: 0.85rem; color: var(--text-secondary);">Valor Recebido</span>
+                        <span class="cash-calc-label">Valor Recebido</span>
                         <div class="calc-input-wrapper">
                             <span class="calc-currency-symbol">R$</span>
                             <input type="number" id="cash_received_input" class="calc-input" placeholder="0,00" step="0.01">
                         </div>
                     </div>
-                    <div class="calculator-row" style="border-top: 1px solid rgba(255, 255, 255, 0.05); padding-top: 1rem;">
-                        <span style="font-size: 0.85rem; color: var(--text-secondary);">Troco Devido</span>
+                    <div class="calculator-row cash-change-row">
+                        <span class="cash-calc-label">Troco Devido</span>
                         <span id="cash_change_due" class="calc-value-large">R$ 0,00</span>
                     </div>
                 </div>
@@ -406,10 +96,10 @@
     <div class="ticket-section">
         <div class="ticket-header">
             <div>
-                <h2 style="font-family: var(--font-display); font-size: 1.1rem; font-weight: 700;">Detalhes do Pedido</h2>
-                <span id="ticket_id_badge" style="font-size: 0.75rem; color: var(--text-muted);">Nenhum ticket carregado</span>
+                <h2 class="ticket-title">Detalhes do Pedido</h2>
+                <span id="ticket_id_badge">Nenhum ticket carregado</span>
             </div>
-            <span id="ticket_status_badge" class="brand-badge" style="display: none;">Pendente</span>
+            <span id="ticket_status_badge" class="brand-badge">Pendente</span>
         </div>
 
         <!-- Lista de Itens do Pedido -->
@@ -424,7 +114,7 @@
         <div class="ticket-footer">
             <div class="total-row">
                 <span>Cliente</span>
-                <span id="ticket_customer_name" class="receipt-row-value" style="color: var(--text-primary);">N/A</span>
+                <span id="ticket_customer_name" class="receipt-row-value">N/A</span>
             </div>
             <div class="total-row grand-total">
                 <span>Total a Pagar</span>
@@ -442,7 +132,7 @@
 <!-- Modal de Alerta / Sucesso -->
 <div id="alert_modal" class="pos-modal">
     <div class="modal-content">
-        <i class="fas fa-check-circle modal-icon" id="modal_icon" style="color: var(--success);"></i>
+        <i class="fas fa-check-circle modal-icon" id="modal_icon"></i>
         <h3 class="modal-title" id="modal_title">Sucesso</h3>
         <p class="modal-msg" id="modal_message">Pagamento processado e venda concluída!</p>
         <button id="modal_close_btn" class="modal-close-btn">Confirmar</button>
@@ -552,9 +242,9 @@
                 <div class="ticket-item">
                     <div>
                         <span class="ticket-item-qty">${p.quantity}x</span>
-                        <span style="font-weight: 500;">${p.name}</span>
+                        <span class="ticket-item-name">${p.name}</span>
                     </div>
-                    <span style="font-weight: 600;">${formatMoney(p.total)}</span>
+                    <span class="ticket-item-price">${formatMoney(p.total)}</span>
                 </div>
             `).join('');
             

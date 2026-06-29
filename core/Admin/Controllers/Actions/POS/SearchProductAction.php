@@ -38,14 +38,43 @@ class SearchProductAction extends BaseController implements ActionInterface
 
         $products = [];
         foreach ($productsRaw as $p) {
+            $productId = (int)($p['product_id'] ?? $p['id'] ?? 0);
             $price = (float)$p['price'];
             $special = !empty($p['special']) ? (float)$p['special'] : null;
 
             $priceFormatted = $currency ? $currency->format($price, $currencyCode) : 'R$ ' . number_format($price, 2, ',', '.');
             $specialFormatted = $special !== null ? ($currency ? $currency->format($special, $currencyCode) : 'R$ ' . number_format($special, 2, ',', '.')) : null;
 
+            // Busca variações filhas do produto pai
+            $variantsRaw = $productRepo->getProductVariants($productId);
+            $variants = [];
+            foreach ($variantsRaw as $variant) {
+                if ($variant['status']) {
+                    // Não mostrar variação cuja quantidade seja <= 0 e o stock status seja "esgotado" (5)
+                    if ((int)$variant['quantity'] <= 0 && (int)$variant['stock_status_id'] === 5) {
+                        continue;
+                    }
+                    $vPriceRaw = (float)($variant['price'] ?? 0);
+                    if ($vPriceRaw <= 0.0) {
+                        $vPriceRaw = $price;
+                    }
+
+                    $vPriceFormatted = $currency ? $currency->format($vPriceRaw, $currencyCode) : 'R$ ' . number_format($vPriceRaw, 2, ',', '.');
+
+                    $variants[] = [
+                        'product_id'      => (int)$variant['id'],
+                        'name'            => $variant['variant'],
+                        'sku'             => $variant['sku'],
+                        'price'           => $vPriceRaw,
+                        'price_formatted' => $vPriceFormatted,
+                        'quantity'        => (int)$variant['quantity'],
+                        'image'           => !empty($variant['image']) ? (strpos($variant['image'], 'image/') === 0 ? '/' . $variant['image'] : (strpos($variant['image'], '/image/') === 0 ? $variant['image'] : '/image/' . $variant['image'])) : '/image/no_image.png'
+                    ];
+                }
+            }
+
             $products[] = [
-                'product_id' => (int)($p['product_id'] ?? $p['id'] ?? 0),
+                'product_id' => $productId,
                 'name'       => $p['name'],
                 'model'      => $p['model'] ?? '',
                 'price'      => $price,
@@ -55,6 +84,7 @@ class SearchProductAction extends BaseController implements ActionInterface
                 'image'      => !empty($p['image']) ? (strpos($p['image'], 'image/') === 0 ? '/' . $p['image'] : (strpos($p['image'], '/image/') === 0 ? $p['image'] : '/image/' . $p['image'])) : '/image/no_image.png',
                 'thumb'      => $imagePresenter->resize($p['image'] ?? '', 80, 80),
                 'quantity'   => (int)($p['quantity'] ?? 0),
+                'variants'   => $variants,
             ];
         }
 

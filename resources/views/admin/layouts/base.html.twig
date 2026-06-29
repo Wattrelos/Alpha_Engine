@@ -37,6 +37,18 @@
 						</a>
 					</li>
 					<li>
+						<a href="/LPDHED2dC7Gjrg2b/pos/vendedor">
+							<i class="fas fa-user sidebar-link-icon"></i>
+							{{ AdminLang.sidebar.pdv_seller|default('PDV Vendedor') }}
+						</a>
+					</li>
+					<li>
+						<a href="/LPDHED2dC7Gjrg2b/pos/caixa">
+							<i class="fas fa-cash-register sidebar-link-icon"></i>
+							{{ AdminLang.sidebar.pos|default('Caixa') }}
+						</a>
+					</li>
+					<li>
 						<a href="/LPDHED2dC7Gjrg2b/devolucoes">
 							<i class="fas fa-undo sidebar-link-icon"></i>
 							{{ AdminLang.sidebar.returns|default('Devoluções') }}
@@ -95,14 +107,15 @@
 					<div class="topbar-left">
 						<span class="topbar-role">{{ AdminLang.topbar.role|default('Modo Administrador') }}</span>
 					</div>
-					<div class="topbar-right" style="display: flex; align-items: center;">
+					<div
+						class="topbar-right" style="display: flex; align-items: center;">
 						<!-- Language Switcher Dropdown -->
 						<div class="topbar-language-select" style="margin-right: 25px; display: flex; align-items: center;">
 							<form action="/LPDHED2dC7Gjrg2b/idioma" method="POST" id="form_lang_switch" style="margin: 0; display: flex; align-items: center;">
 								<i class="fas fa-globe" style="color: #64748b; font-size: 1rem; margin-right: 6px;"></i>
 								<select name="language_code" onchange="document.getElementById('form_lang_switch').submit();" style="padding: 0.35rem 0.5rem; font-size: 0.85rem; border-radius: 4px; border: 1px solid #cbd5e1; cursor: pointer; color: #334155; background-color: #fff; outline: none; transition: border-color 0.2s; font-family: inherit; font-weight: 500;">
 									{% for l in languages %}
-										<option value="{{ l.code }}" {% if admin_lang_code == l.code %}selected{% endif %}>
+										<option value="{{ l.code }}" {% if admin_lang_code == l.code %} selected {% endif %}>
 											{{ l.name }}
 										</option>
 									{% endfor %}
@@ -133,17 +146,17 @@
 				</div>
 			</div>
 			<script>
-			document.addEventListener('DOMContentLoaded', () => {
-				const currentPath = window.location.pathname;
-				const links = document.querySelectorAll('.sidebar a');
-				links.forEach(link => {
-					link.classList.remove('active');
-					const href = link.getAttribute('href');
-					if (currentPath === href || (href !== '/LPDHED2dC7Gjrg2b/dashboard' && currentPath.startsWith(href))) {
-						link.classList.add('active');
-					}
-				});
-			});
+				document.addEventListener('DOMContentLoaded', () => {
+const currentPath = window.location.pathname;
+const links = document.querySelectorAll('.sidebar a');
+links.forEach(link => {
+link.classList.remove('active');
+const href = link.getAttribute('href');
+if (currentPath === href || (href !== '/LPDHED2dC7Gjrg2b/dashboard' && currentPath.startsWith(href))) {
+link.classList.add('active');
+}
+});
+});
 			</script>
 		</body>
 	</html>

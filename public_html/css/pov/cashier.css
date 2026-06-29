@@ -1,0 +1,571 @@
+.cashier-workspace {
+    display: flex;
+    width: 100%;
+    height: 100%;
+    gap: 1.5rem;
+    padding: 1rem 0;
+}
+
+/* Esquerda: Painel de busca e pagamento */
+.payment-section {
+    flex: 1.2;
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+}
+
+/* Direita: Detalhes do ticket */
+.ticket-section {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    background-color: var(--bg-secondary);
+    border-radius: var(--radius-lg);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    overflow: hidden;
+}
+
+/* Ticket Search Panel */
+.ticket-search-card {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.ticket-search-row {
+    display: flex;
+    gap: 0.75rem;
+}
+
+.ticket-search-input {
+    flex: 1;
+    background-color: var(--bg-primary);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    padding: 0.85rem 1rem;
+    color: var(--text-primary);
+    font-family: var(--font-sans);
+    font-size: 1.1rem;
+    font-weight: 700;
+    text-align: center;
+    letter-spacing: 2px;
+    outline: none;
+    transition: var(--transition);
+}
+
+.ticket-search-input:focus {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px var(--accent-glow);
+}
+
+.search-btn {
+    padding: 0 1.5rem;
+    background-color: var(--accent);
+    color: white;
+    border: none;
+    border-radius: var(--radius-md);
+    font-family: var(--font-display);
+    font-weight: 700;
+    cursor: pointer;
+    transition: var(--transition);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.search-btn:hover {
+    background-color: var(--accent-hover);
+}
+
+/* Payment Methods Grid */
+.payment-methods-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0.75rem;
+}
+
+.pay-method-card {
+    background-color: rgba(30, 41, 75, 0.3);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    padding: 1.25rem 0.75rem;
+    text-align: center;
+    cursor: pointer;
+    transition: var(--transition);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.65rem;
+}
+
+.pay-method-card:hover {
+    border-color: var(--accent);
+    background-color: rgba(99, 102, 241, 0.05);
+}
+
+.pay-method-card.active {
+    border-color: var(--success);
+    background-color: var(--success-glow);
+    box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1);
+}
+
+.pay-method-icon {
+    font-size: 1.75rem;
+    color: var(--text-secondary);
+}
+
+.pay-method-card.active .pay-method-icon {
+    color: var(--success);
+}
+
+.pay-method-title {
+    font-size: 0.85rem;
+    font-weight: 600;
+}
+
+/* Payment Configuration Panels */
+.pay-config-panel {
+    display: none;
+    flex: 1;
+    min-height: 180px;
+}
+
+/* Calculator for Cash change */
+.cash-calculator {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    width: 100%;
+}
+
+.calculator-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+}
+
+.calc-input-wrapper {
+    position: relative;
+    flex: 1;
+}
+
+.calc-currency-symbol {
+    position: absolute;
+    left: 0.75rem;
+    top: 50%;
+    transform: translateY(-50%);
+    font-weight: 700;
+    color: var(--text-muted);
+}
+
+.calc-input {
+    width: 100%;
+    padding: 0.75rem 0.75rem 0.75rem 2rem;
+    background-color: var(--bg-primary);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    color: var(--text-primary);
+    font-size: 1.1rem;
+    font-weight: 700;
+    outline: none;
+}
+
+.calc-value-large {
+    font-family: var(--font-display);
+    font-size: 1.5rem;
+    font-weight: 800;
+    color: var(--warning);
+}
+
+/* Pix QR Code Mock */
+.pix-panel {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    background-color: rgba(255, 255, 255, 0.02);
+    border-radius: var(--radius-md);
+    padding: 1rem;
+    width: 100%;
+}
+
+.pix-qr-container {
+    width: 120px;
+    height: 120px;
+    background-color: white;
+    border-radius: 8px;
+    padding: 6px;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.pix-qr-img {
+    max-width: 100%;
+    max-height: 100%;
+}
+
+.pix-scanner-line {
+    position: absolute;
+    left: 0;
+    width: 100%;
+    height: 3px;
+    background-color: var(--success);
+    box-shadow: 0 0 8px var(--success);
+    animation: scanAnimation 2s linear infinite;
+}
+
+@keyframes scanAnimation {
+    0% { top: 0%; }
+    50% { top: 100%; }
+    100% { top: 0%; }
+}
+
+.pix-info {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+/* Pre-order Details receipt preview (Right panel) */
+.ticket-header {
+    padding: 1.25rem;
+    border-bottom: 1px solid var(--border);
+    background-color: rgba(11, 15, 25, 0.3);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.ticket-items-container {
+    flex: 1;
+    overflow-y: auto;
+    padding: 1.25rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.85rem;
+}
+
+.ticket-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 0.85rem;
+    padding-bottom: 0.65rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+}
+
+.ticket-item-qty {
+    background-color: var(--bg-tertiary);
+    color: var(--text-secondary);
+    padding: 0.1rem 0.4rem;
+    border-radius: 4px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    margin-right: 0.5rem;
+}
+
+.ticket-footer {
+    padding: 1.25rem;
+    border-top: 1px solid var(--border);
+    background-color: rgba(11, 15, 25, 0.4);
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.confirm-pay-btn {
+    width: 100%;
+    padding: 1rem;
+    background: linear-gradient(135deg, var(--success), #059669);
+    color: white;
+    border: none;
+    border-radius: var(--radius-md);
+    font-family: var(--font-display);
+    font-size: 1.05rem;
+    font-weight: 700;
+    cursor: pointer;
+    box-shadow: 0 4px 12px var(--success-glow);
+    transition: var(--transition);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+}
+
+.confirm-pay-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(16, 185, 129, 0.3);
+}
+
+.confirm-pay-btn:disabled {
+    background: var(--border);
+    color: var(--text-muted);
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+}
+
+/* Extracted inline styles */
+
+.ticket-search-card h3 {
+    font-family: var(--font-display);
+    font-size: 1.05rem;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.ticket-search-card h3 i {
+    color: var(--accent);
+}
+
+.payment-selector-panel {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+}
+
+.payment-selector-title {
+    font-family: var(--font-display);
+    font-size: 1.05rem;
+    font-weight: 700;
+}
+
+#panel_Pix {
+    display: flex;
+}
+
+.pix-status-text {
+    font-size: 0.8rem;
+    color: var(--success);
+    font-weight: 600;
+}
+
+.pix-instructions {
+    font-size: 0.75rem;
+    color: var(--text-secondary);
+}
+
+.pix-simulate-btn {
+    padding: 0.3rem 0.6rem;
+    font-size: 0.75rem;
+    width: fit-content;
+}
+
+.card-terminal-container {
+    background-color: rgba(255, 255, 255, 0.02);
+    padding: 1.25rem;
+    border-radius: var(--radius-md);
+    border: 1px solid var(--border);
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    justify-content: center;
+    width: 100%;
+}
+
+.card-terminal-title {
+    font-weight: 600;
+    font-size: 0.85rem;
+}
+
+.card-terminal-instructions {
+    font-size: 0.75rem;
+    color: var(--text-secondary);
+}
+
+.card-terminal-status {
+    background-color: var(--bg-primary);
+    padding: 0.65rem;
+    border-radius: 4px;
+    border: 1px solid var(--border);
+    text-align: center;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--warning);
+}
+
+.cash-calc-label {
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+}
+
+.cash-change-row {
+    border-top: 1px solid rgba(255, 255, 255, 0.05);
+    padding-top: 1rem;
+}
+
+.ticket-title {
+    font-family: var(--font-display);
+    font-size: 1.1rem;
+    font-weight: 700;
+}
+
+#ticket_id_badge {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+}
+
+#ticket_status_badge {
+    display: none;
+}
+
+#ticket_customer_name {
+    color: var(--text-primary);
+}
+
+#modal_icon {
+    color: var(--success);
+}
+
+.ticket-item-name {
+    font-weight: 500;
+}
+
+.ticket-item-price {
+    font-weight: 600;
+}
+
+/* Variants modal styles */
+.variants-modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 0.75rem;
+}
+
+.variants-modal-title {
+    margin: 0;
+    font-size: 1.2rem;
+    font-family: var(--font-display);
+    font-weight: 700;
+}
+
+.variants-modal-close {
+    background: transparent;
+    border: none;
+    color: var(--text-secondary);
+    cursor: pointer;
+    font-size: 1.25rem;
+    transition: var(--transition);
+}
+
+.variants-modal-close:hover {
+    color: var(--danger);
+}
+
+.variants-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    max-height: 400px;
+    overflow-y: auto;
+    padding-right: 0.5rem;
+    margin-top: 1rem;
+}
+
+/* Premium Scrollbar */
+.variants-list::-webkit-scrollbar {
+    width: 6px;
+}
+
+.variants-list::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.02);
+    border-radius: 3px;
+}
+
+.variants-list::-webkit-scrollbar-thumb {
+    background: var(--border);
+    border-radius: 3px;
+}
+
+.variants-list::-webkit-scrollbar-thumb:hover {
+    background: var(--text-muted);
+}
+
+.variant-item-card {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: rgba(255, 255, 255, 0.02);
+    border: 1px solid var(--border);
+    padding: 0.85rem 1.25rem;
+    border-radius: var(--radius-md);
+    transition: var(--transition);
+    gap: 1rem;
+}
+
+.variant-item-card:hover {
+    border-color: var(--accent);
+    background-color: rgba(99, 102, 241, 0.04);
+    box-shadow: 0 4px 12px rgba(99, 102, 241, 0.1);
+    transform: translateY(-1px);
+}
+
+.variant-info-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.variant-image-thumb {
+    width: 48px;
+    height: 48px;
+    max-width: 48px;
+    max-height: 48px;
+    border-radius: var(--radius-sm);
+    object-fit: cover;
+    background-color: var(--bg-primary);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    flex-shrink: 0;
+}
+
+.variant-meta-wrapper {
+    display: flex;
+    flex-direction: column;
+}
+
+.variant-name-text {
+    font-weight: 600;
+    font-size: 0.9rem;
+    color: var(--text-primary);
+}
+
+.variant-sku-text {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+}
+
+.variant-action-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.variant-price-info {
+    text-align: right;
+}
+
+.variant-price-text {
+    font-weight: 700;
+    color: var(--text-primary);
+    display: block;
+}
+
+.variant-stock-text {
+    font-size: 0.75rem;
+}
+
+.variant-stock-in {
+    color: var(--text-secondary);
+}
+
+.variant-stock-out {
+    color: var(--danger);
+}

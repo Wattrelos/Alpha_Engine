@@ -1,37 +1,66 @@
-@startuml POS - Sales Representative Use Case
+@startuml POS - Sales Representative & Cashier Use Cases
 
 left to right direction
 skinparam packageStyle rectangle
+skinparam shadowing false
+skinparam actorStyle awesome
 
-actor "Sales Representative" as SalesRep
-actor "Customer" as Customer
+actor "Sales Representative\n(Vendedor)" as SalesRep
+actor "Customer\n(Cliente)" as Customer
+actor "Cashier\n(Caixa)" as Cashier
 
-rectangle "POS System - Sales Module" {
-    usecase "Browse Product Catalog" as UC_Catalog
-    usecase "Check Stock Availability" as UC_Stock
-    usecase "Identify/Register Customer" as UC_Customer
-    usecase "Create Pre-Order" as UC_CreateOrder
-    usecase "Add Items to Cart" as UC_AddItems
-    usecase "Apply Discount" as UC_Discount
-    usecase "Save Order (Pending Payment)" as UC_SaveOrder
-    usecase "Generate Order Ticket" as UC_Ticket
+rectangle "AgSonhos POS System" {
+    
+    package "Sales Module\n(Módulo Vendedor)" {
+        usecase "Browse Product Catalog\n(Navegar no Catálogo)" as UC_Catalog
+        usecase "Select Product Variations\n(Selecionar Variações)" as UC_Variants
+        usecase "Check Stock Availability\n(Verificar Estoque)" as UC_Stock
+        usecase "Identify/Register Customer\n(Identificar Cliente)" as UC_Customer
+        usecase "Create Pre-Order\n(Criar Pré-Venda)" as UC_CreateOrder
+        usecase "Add Items to Cart\n(Adicionar Itens)" as UC_AddItems
+        usecase "Save Pre-Order (Pending)\n(Salvar Pré-Venda)" as UC_SaveOrder
+        usecase "Generate Pre-Order Ticket\n(Gerar Ticket)" as UC_Ticket
+    }
+    
+    package "Cashier Module\n(Módulo Caixa)" {
+        usecase "Look up Pre-Order by Ticket\n(Localizar Pré-Venda)" as UC_SearchOrder
+        usecase "Process Payment\n(Processar Pagamento)" as UC_Payment
+        usecase "Finalize Payment & Sale\n(Finalizar Recebimento)" as UC_Finalize
+        usecase "Print Customer Receipt\n(Imprimir Recibo)" as UC_Receipt
+        
+        usecase "Pay via Pix (QR Code)\n(Pagar com Pix)" as UC_PayPix
+        usecase "Pay via Card (TEF)\n(Pagar com Cartão)" as UC_PayCard
+        usecase "Pay via Cash (Change Calc)\n(Pagar com Dinheiro)" as UC_PayCash
+    }
 }
 
-' Relacionamentos do Vendedor
+' Relacionamentos do Vendedor (Sales Representative)
 SalesRep --> UC_Catalog
 SalesRep --> UC_Customer
 SalesRep --> UC_CreateOrder
 
-' Inclusões e Extensões
+' Inclusões, Extensões e Generalizações no Módulo Vendedor
 UC_Catalog <.. UC_Stock : <<include>>
+UC_Catalog <.. UC_Variants : <<extend>>
 UC_CreateOrder ..> UC_AddItems : <<include>>
 UC_CreateOrder ..> UC_SaveOrder : <<include>>
 UC_SaveOrder ..> UC_Ticket : <<include>>
 
-UC_AddItems <.. UC_Discount : <<extend>>
+' Relacionamentos do Caixa (Cashier)
+Cashier --> UC_SearchOrder
+Cashier --> UC_Payment
+Cashier --> UC_Finalize
 
-' Interação do Cliente (Opcional no caso de uso, mas mostra o fluxo do negócio)
-Customer --> UC_Customer : Provides Details
-Customer --> UC_Ticket : Receives Ticket
+' Detalhes e Fluxos de Pagamento
+UC_Payment <|-- UC_PayPix
+UC_Payment <|-- UC_PayCard
+UC_Payment <|-- UC_PayCash
+UC_Finalize ..> UC_Receipt : <<include>>
+
+' Interações do Cliente (Customer)
+Customer --> UC_Customer : Provides details
+Customer <-- UC_Ticket : Receives ticket
+Customer --> Cashier : Presents ticket & pays
+UC_Payment <-- Customer : Interacts with payment method
 
 @endum
