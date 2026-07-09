@@ -1,0 +1,161 @@
+@startuml EERDiagramC4
+!include <C4/C4_Component>
+
+' Configurações de layout do C4
+LAYOUT_WITH_LEGEND()
+
+title Modelo de Dados Relacional (C4 Component Model) — Alpha Engine
+header Alpha Engine Database Architecture
+
+ContainerDb(db, "Alpha Engine Database", "MySQL / MariaDB", "Armazena todos os dados relacionais do e-commerce (catálogo, clientes, pedidos, etc.)") {
+
+    Container_Boundary(catalog, "Catalog Module") {
+        Component(product, "Product", "Table", "Produtos, preços, SKU, estoque e dimensões")
+        Component(product_desc, "ProductDescription", "Table", "Nomes, descrições e SEO dos produtos por idioma")
+        Component(category, "Category", "Table", "Estrutura de categorias (árvore com parent_id)")
+        Component(category_desc, "CategoryDescription", "Table", "Nomes e SEO das categorias por idioma")
+        Component(manufacturer, "Manufacturer", "Table", "Fabricantes e marcas dos produtos")
+        Component(product_image, "ProductImage", "Table", "Imagens adicionais dos produtos")
+        Component(product_to_category, "ProductToCategory", "Table", "Relação muitos-para-muitos de produtos e categorias")
+        Component(option, "Option", "Table", "Tipos de variações (ex: tamanho, cor)")
+        Component(option_value, "OptionValue", "Table", "Valores das variações (ex: P, M, G, Azul)")
+        Component(product_option, "ProductOption", "Table", "Variações configuradas para um produto")
+        Component(product_option_value, "ProductOptionValue", "Table", "Valores e ajustes de preço/estoque de variações do produto")
+        Component(review, "Review", "Table", "Avaliações e comentários de clientes sobre produtos")
+        Component(product_discount, "ProductDiscount", "Table", "Regras de descontos e preços promocionais")
+        Component(attribute, "Attribute", "Table", "Características técnicas dos produtos")
+        Component(attribute_group, "AttributeGroup", "Table", "Agrupamentos de atributos técnicos")
+        Component(product_attribute, "ProductAttribute", "Table", "Valores de atributos aplicados aos produtos")
+    }
+
+    Container_Boundary(customer, "Customer Module") {
+        Component(customer_tbl, "Customer", "Table", "Dados de clientes, credenciais, e-mail e status")
+        Component(customer_group, "CustomerGroup", "Table", "Perfis e grupos de clientes")
+        Component(address, "Address", "Table", "Endereços de faturamento e entrega dos clientes")
+        Component(customer_wishlist, "CustomerWishlist", "Table", "Lista de desejos de produtos dos clientes")
+        Component(customer_ip, "CustomerIp", "Table", "Histórico de IPs acessados pelos clientes")
+    }
+
+    Container_Boundary(checkout, "Checkout & Sales Module") {
+        Component(cart, "Cart", "Table", "Itens ativos no carrinho de compras")
+        Component(order, "Order", "Table", "Dados principais de pedidos, faturamento e entrega")
+        Component(order_product, "OrderProduct", "Table", "Produtos vendidos em cada pedido")
+        Component(order_option, "OrderOption", "Table", "Variações selecionadas nos produtos do pedido")
+        Component(order_history, "OrderHistory", "Table", "Histórico de transições de status do pedido (auditoria)")
+        Component(order_total, "OrderTotal", "Table", "Linhas de totalizadores do pedido (subtotal, frete, descontos)")
+        Component(order_status, "OrderStatus", "Table", "Status possíveis de um pedido")
+    }
+
+    Container_Boundary(subscription, "Subscription Module") {
+        Component(sub_plan, "SubscriptionPlan", "Table", "Planos de assinatura (frequência, ciclo, etc.)")
+        Component(sub_plan_desc, "SubscriptionPlanDescription", "Table", "Descrições dos planos de assinatura por idioma")
+        Component(subscription_tbl, "Subscription", "Table", "Contratos de assinaturas recorrentes dos clientes")
+        Component(sub_status, "SubscriptionStatus", "Table", "Status possíveis da assinatura")
+    }
+
+    Container_Boundary(localization, "Localization Module") {
+        Component(language, "Language", "Table", "Idiomas ativos no sistema")
+        Component(currency, "Currency", "Table", "Moedas configuradas e taxas de conversão")
+        Component(country, "Country", "Table", "Cadastro de países")
+        Component(zone, "Zone", "Table", "Estados e províncias vinculados aos países")
+        Component(city, "City", "Table", "Cidades vinculadas aos estados")
+        Component(tax_class, "TaxClass", "Table", "Classes de impostos aplicadas a produtos")
+        Component(tax_rate, "TaxRate", "Table", "Tabela de alíquotas de impostos")
+        Component(tax_rule, "TaxRule", "Table", "Regras fiscais ligando classes a taxas")
+    }
+
+    Container_Boundary(system, "System & Store") {
+        Component(store, "Store", "Table", "Configurações da loja (suporte a multi-lojas)")
+    }
+
+    Container_Boundary(procurement, "Procurement Module") {
+        Component(supplier, "Supplier", "Table", "Dados de fornecedores (CNPJ, Razão Social, etc.)")
+        Component(contact, "Contact", "Table", "Lista de contatos dos fornecedores")
+        Component(supplier_address, "SupplierAddress", "Table", "Endereços dos fornecedores")
+        Component(supplier_contact_manuf, "SupplierContactManufacturer", "Table", "Associação fornecedor, contato e fabricante")
+    }
+}
+
+' Relacionamentos (Catalog Module)
+Rel(product, product_desc, "descreve por", "1:N")
+Rel(product, product_image, "possui", "1:N")
+Rel(product, product_to_category, "categorizado em", "1:N")
+Rel(category, product_to_category, "contém", "1:N")
+Rel(category, category_desc, "descreve por", "1:N")
+Rel(category, category, "pai de", "0..1:N")
+Rel(manufacturer, product, "fabrica", "0..1:N")
+
+Rel(option, option_value, "define valores", "1:N")
+Rel(option, product_option, "oferecido por", "1:N")
+Rel(product_option, product_option_value, "variações", "1:N")
+Rel(option_value, product_option_value, "instancia", "1:N")
+Rel(product, product_option, "possui opções", "1:N")
+Rel(product, product_option_value, "possui detalhes de variantes", "1:N")
+
+Rel(product, product_discount, "oferecido com desconto", "1:N")
+Rel(product, product_attribute, "especificado por", "1:N")
+Rel(attribute, product_attribute, "define tipo", "1:N")
+Rel(attribute_group, attribute, "agrupa", "1:N")
+
+' Relacionamentos (Customer Module)
+Rel(customer_group, customer_tbl, "classifica", "1:N")
+Rel(customer_group, product_discount, "destina", "1:N")
+Rel(customer_tbl, address, "possui", "1:N")
+Rel(customer_tbl, address, "endereço padrão", "1:1")
+Rel(customer_tbl, customer_wishlist, "salva em", "1:N")
+Rel(product, customer_wishlist, "salvo em", "1:N")
+Rel(customer_tbl, customer_ip, "registra IP", "1:N")
+Rel(customer_tbl, review, "escreve", "1:N")
+Rel(product, review, "avaliado por", "1:N")
+
+' Relacionamentos (Checkout & Sales Module)
+Rel(customer_tbl, cart, "possui itens ativos", "1:N")
+Rel(product, cart, "item no carrinho", "1:N")
+Rel(sub_plan, cart, "plano de assinatura do item", "0..1:N")
+Rel(store, cart, "contexto da loja", "1:N")
+
+Rel(customer_tbl, order, "realiza", "1:N")
+Rel(store, order, "registra pedido", "1:N")
+Rel(order_status, order, "indica status", "1:N")
+Rel(language, order, "realizado em", "1:N")
+Rel(currency, order, "cobrado em", "1:N")
+
+Rel(order, order_product, "contém", "1:N")
+Rel(product, order_product, "vendido em", "1:N")
+Rel(order_product, order_option, "configurado por", "1:N")
+Rel(order, order_total, "totaliza custo", "1:N")
+Rel(order, order_history, "auditado por", "1:N")
+Rel(order_status, order_history, "estágio alcançado", "1:N")
+
+' Relacionamentos (Subscription Module)
+Rel(sub_plan, sub_plan_desc, "descreve por", "1:N")
+Rel(sub_plan, subscription_tbl, "fatura sob", "1:N")
+Rel(customer_tbl, subscription_tbl, "possui assinatura", "1:N")
+Rel(order, subscription_tbl, "faturado no pedido", "1:N")
+Rel(sub_status, subscription_tbl, "indica status", "1:N")
+
+' Relacionamentos (Localization Module)
+Rel(language, product_desc, "tradução", "1:N")
+Rel(language, category_desc, "tradução", "1:N")
+Rel(language, product_attribute, "tradução", "1:N")
+Rel(language, sub_plan_desc, "tradução", "1:N")
+
+Rel(country, zone, "contém estados", "1:N")
+Rel(zone, city, "contém cidades", "1:N")
+Rel(country, address, "país do endereço", "1:N")
+Rel(zone, address, "estado do endereço", "1:N")
+
+Rel(tax_class, tax_rule, "contém regras", "1:N")
+Rel(tax_rate, tax_rule, "alíquota aplicada", "1:N")
+Rel(tax_class, product, "configuração fiscal", "1:N")
+
+' Relacionamentos (Procurement Module)
+Rel(supplier, supplier_address, "localizado em", "1:1")
+Rel(supplier, supplier_contact_manuf, "associado via", "1:N")
+Rel(contact, supplier_contact_manuf, "vinculado a", "1:N")
+Rel(manufacturer, supplier_contact_manuf, "representado por", "1:N")
+Rel(country, supplier_address, "país do endereço", "1:N")
+Rel(zone, supplier_address, "estado do endereço", "1:N")
+Rel(city, supplier_address, "cidade do endereço", "1:N")
+
+@enduml

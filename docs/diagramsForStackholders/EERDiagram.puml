@@ -1,0 +1,675 @@
+@startuml EER_Diagram
+!theme plain
+skinparam linetype ortho
+skinparam packageStyle rectangle
+skinparam shadow shading false
+skinparam class {
+    BorderColor #444444
+    ArrowColor #555555
+}
+
+header Alpha Engine Domain Model
+title Enhanced Entity-Relationship (EER) Diagram for AI Agents
+
+package "Catalog Module" #FFF2CC {
+    entity Product #FFF9E6 {
+        * id : int <<PK>>
+        --
+        * model : varchar(64)
+        * sku : varchar(64)
+        * upc : varchar(12)
+        * ean : varchar(14)
+        * jan : varchar(13)
+        * isbn : varchar(13)
+        * mpn : varchar(64)
+        * location : varchar(128)
+        * variant : varchar(255)
+        * override : text
+        * price : decimal(15,4)
+        * quantity : int
+        * stock_status_id : int <<FK>>
+        * image : varchar(255)
+        * manufacturer_id : int <<FK>>
+        * shipping : tinyint(1)
+        * points : int
+        * tax_class_id : int <<FK>>
+        * date_available : date
+        * weight : decimal(15,8)
+        * weight_class_id : int <<FK>>
+        * length : decimal(15,8)
+        * width : decimal(15,8)
+        * height : decimal(15,8)
+        * length_class_id : int <<FK>>
+        * subtract : tinyint(1)
+        * minimum : int
+        * rating : int
+        * status : tinyint(1)
+        * sort_order : int
+        * date_added : datetime
+        * date_modified : datetime
+        * master_id : int <<FK>>
+    }
+
+    entity ProductDescription #FFF9E6 {
+        * product_id : int <<PK, FK>>
+        * language_id : int <<PK, FK>>
+        --
+        * name : varchar(255)
+        * description : text
+        * tag : text
+        * meta_title : varchar(255)
+        * meta_description : varchar(255)
+        * meta_keyword : varchar(255)
+    }
+
+    entity Category #FFF9E6 {
+        * id : int <<PK>>
+        --
+        * image : varchar(255)
+        * parent_id : int <<FK>>
+        * sort_order : int
+        * status : tinyint(1)
+    }
+
+    entity CategoryDescription #FFF9E6 {
+        * category_id : int <<PK, FK>>
+        * language_id : int <<PK, FK>>
+        --
+        * name : varchar(255)
+        * description : text
+        * meta_title : varchar(255)
+        * meta_description : varchar(255)
+        * meta_keyword : varchar(255)
+    }
+
+    entity Manufacturer #FFF9E6 {
+        * id : int <<PK>>
+        --
+        * name : varchar(64)
+        * image : varchar(255)
+        * sort_order : int
+    }
+
+    entity ProductImage #FFF9E6 {
+        * id : int <<PK>>
+        --
+        * product_id : int <<FK>>
+        * image : varchar(255)
+        * sort_order : int
+    }
+
+    entity ProductToCategory #FFF9E6 {
+        * product_id : int <<PK, FK>>
+        * category_id : int <<PK, FK>>
+    }
+
+    entity Option #FFF9E6 {
+        * id : int <<PK>>
+        --
+        * type : varchar(32)
+        * sort_order : int
+    }
+
+    entity OptionValue #FFF9E6 {
+        * id : int <<PK>>
+        --
+        * option_id : int <<FK>>
+        * image : varchar(255)
+        * sort_order : int
+    }
+
+    entity ProductOption #FFF9E6 {
+        * id : int <<PK>>
+        --
+        * product_id : int <<FK>>
+        * option_id : int <<FK>>
+        * value : text
+        * required : tinyint(1)
+    }
+
+    entity ProductOptionValue #FFF9E6 {
+        * id : int <<PK>>
+        --
+        * product_option_id : int <<FK>>
+        * product_id : int <<FK>>
+        * option_id : int <<FK>>
+        * option_value_id : int <<FK>>
+        * quantity : int
+        * subtract : tinyint(1)
+        * price : decimal(15,4)
+        * price_prefix : varchar(1)
+        * points : int
+        * points_prefix : varchar(1)
+        * weight : decimal(15,8)
+        * weight_prefix : varchar(1)
+    }
+
+    entity Review #FFF9E6 {
+        * id : int <<PK>>
+        --
+        * product_id : int <<FK>>
+        * customer_id : int <<FK>>
+        * author : varchar(64)
+        * text : text
+        * rating : int
+        * status : tinyint(1)
+        * date_added : datetime
+        * date_modified : datetime
+    }
+
+    entity ProductDiscount #FFF9E6 {
+        * id : int <<PK>>
+        --
+        * product_id : int <<FK>>
+        * customer_group_id : int <<FK>>
+        * quantity : int
+        * priority : int
+        * price : decimal(15,4)
+        * date_start : date
+        * date_end : date
+    }
+
+    entity Attribute #FFF9E6 {
+        * id : int <<PK>>
+        --
+        * attribute_group_id : int <<FK>>
+        * sort_order : int
+    }
+
+    entity AttributeGroup #FFF9E6 {
+        * id : int <<PK>>
+        --
+        * sort_order : int
+    }
+
+    entity ProductAttribute #FFF9E6 {
+        * product_id : int <<PK, FK>>
+        * attribute_id : int <<PK, FK>>
+        * language_id : int <<PK, FK>>
+        --
+        * text : text
+    }
+}
+
+package "Customer Module" #D5E8D4 {
+    entity Customer #F5FBF3 {
+        * id : int <<PK>>
+        --
+        * customer_group_id : int <<FK>>
+        * store_id : int <<FK>>
+        * language_id : int <<FK>>
+        * firstname : varchar(32)
+        * lastname : varchar(32)
+        * email : varchar(96)
+        * telephone : varchar(32)
+        * password : varchar(255)
+        * newsletter : tinyint(1)
+        * ip : varchar(40)
+        * status : tinyint(1)
+        * safe : tinyint(1)
+        * commenter : tinyint(1)
+        * token : varchar(255)
+        * code : varchar(40)
+        * date_added : datetime
+        * cpf_cnpj : varchar(20)
+        * persontype : varchar(20)
+        * address_id : int <<FK>>
+    }
+
+    entity CustomerGroup #F5FBF3 {
+        * id : int <<PK>>
+        --
+        * approval : int
+        * sort_order : int
+    }
+
+    entity Address #F5FBF3 {
+        * id : int <<PK>>
+        --
+        * customer_id : int <<FK>>
+        * firstname : varchar(32)
+        * lastname : varchar(32)
+        * company : varchar(40)
+        * street : varchar(128)
+        * number : int
+        * complement : varchar(128)
+        * district : varchar(128)
+        * city : varchar(128)
+        * postcode : varchar(10)
+        * country_id : int <<FK>>
+        * zone_id : int <<FK>>
+        * custom_field : text
+    }
+
+    entity CustomerWishlist #F5FBF3 {
+        * customer_id : int <<PK, FK>>
+        * product_id : int <<PK, FK>>
+        --
+        * date_added : datetime
+    }
+    
+    entity CustomerIp #F5FBF3 {
+        * id : int <<PK>>
+        --
+        * customer_id : int <<FK>>
+        * ip : varchar(40)
+        * store_id : int
+        * country : varchar(64)
+        * date_added : datetime
+    }
+}
+
+package "Checkout & Sales Module" #F8CECC {
+    entity Cart #FDF5F5 {
+        * id : int <<PK>>
+        --
+        * store_id : int <<FK>>
+        * customer_id : int <<FK>>
+        * token_session : varchar(255)
+        * product_id : int <<FK>>
+        * subscription_plan_id : int <<FK>>
+        * option : text
+        * quantity : int
+        * override : text
+        * price : decimal(15,4)
+        * date_added : datetime
+    }
+
+    entity Order #FDF5F5 {
+        * id : int <<PK>>
+        --
+        * store_id : int <<FK>>
+        * customer_id : int <<FK>>
+        * customer_group_id : int
+        * firstname : varchar(32)
+        * lastname : varchar(32)
+        * email : varchar(96)
+        * telephone : varchar(32)
+        * payment_firstname : varchar(32)
+        * payment_lastname : varchar(32)
+        * payment_company : varchar(40)
+        * payment_street : varchar(128)
+        * payment_number : int
+        * payment_complement : varchar(128)
+        * payment_district : varchar(128)
+        * payment_city : varchar(128)
+        * payment_postcode : varchar(10)
+        * payment_country : varchar(128)
+        * payment_country_id : int
+        * payment_zone : varchar(128)
+        * payment_zone_id : int
+        * payment_method : varchar(128)
+        * shipping_firstname : varchar(32)
+        * shipping_lastname : varchar(32)
+        * shipping_company : varchar(40)
+        * shipping_street : varchar(128)
+        * shipping_number : int
+        * shipping_complement : varchar(128)
+        * shipping_district : varchar(128)
+        * shipping_city : varchar(128)
+        * shipping_postcode : varchar(10)
+        * shipping_country : varchar(128)
+        * shipping_country_id : int
+        * shipping_zone : varchar(128)
+        * shipping_zone_id : int
+        * shipping_method : varchar(128)
+        * total : decimal(15,4)
+        * order_status_id : int <<FK>>
+        * affiliate_id : int
+        * commission : decimal(15,4)
+        * marketing_id : int
+        * tracking : varchar(64)
+        * language_id : int <<FK>>
+        * currency_id : int <<FK>>
+        * currency_code : varchar(3)
+        * currency_value : decimal(15,8)
+        * ip : varchar(40)
+        * forwarded_ip : varchar(40)
+        * user_agent : varchar(255)
+        * accept_language : varchar(255)
+        * date_added : datetime
+        * date_modified : datetime
+    }
+
+    entity OrderProduct #FDF5F5 {
+        * id : int <<PK>>
+        --
+        * order_id : int <<FK>>
+        * product_id : int <<FK>>
+        * name : varchar(255)
+        * model : varchar(64)
+        * quantity : int
+        * price : decimal(15,4)
+        * total : decimal(15,4)
+        * tax : decimal(15,4)
+        * reward : int
+    }
+
+    entity OrderOption #FDF5F5 {
+        * id : int <<PK>>
+        --
+        * order_id : int <<FK>>
+        * order_product_id : int <<FK>>
+        * product_option_id : int
+        * product_option_value_id : int
+        * name : varchar(255)
+        * value : text
+        * type : varchar(32)
+    }
+
+    entity OrderHistory #FDF5F5 {
+        * id : int <<PK>>
+        --
+        * order_id : int <<FK>>
+        * order_status_id : int <<FK>>
+        * notify : tinyint(1)
+        * comment : text
+        * date_added : datetime
+    }
+
+    entity OrderTotal #FDF5F5 {
+        * id : int <<PK>>
+        --
+        * order_id : int <<FK>>
+        * code : varchar(32)
+        * title : varchar(255)
+        * value : decimal(15,4)
+        * sort_order : int
+    }
+
+    entity OrderStatus #FDF5F5 {
+        * id : int <<PK>>
+        --
+        * name : varchar(32)
+    }
+}
+
+package "Subscription Module" #E1D5E7 {
+    entity SubscriptionPlan #F7F3FA {
+        * id : int <<PK>>
+        --
+        * trial_frequency : varchar(10)
+        * trial_cycle : int
+        * trial_duration : int
+        * trial_status : tinyint(1)
+        * frequency : varchar(10)
+        * cycle : int
+        * duration : int
+        * sort_order : int
+        * status : tinyint(1)
+    }
+
+    entity SubscriptionPlanDescription #F7F3FA {
+        * subscription_plan_id : int <<PK, FK>>
+        * language_id : int <<PK, FK>>
+        --
+        * name : varchar(255)
+    }
+
+    entity Subscription #F7F3FA {
+        * id : int <<PK>>
+        --
+        * order_id : int <<FK>>
+        * customer_id : int <<FK>>
+        * subscription_plan_id : int <<FK>>
+        * store_id : int <<FK>>
+        * payment_address_id : int
+        * payment_method : varchar(128)
+        * shipping_address_id : int
+        * shipping_method : varchar(128)
+        * trial_price : decimal(15,4)
+        * trial_tax : decimal(15,4)
+        * trial_frequency : varchar(10)
+        * trial_cycle : int
+        * trial_duration : int
+        * trial_remaining : int
+        * trial_status : tinyint(1)
+        * price : decimal(15,4)
+        * tax : decimal(15,4)
+        * frequency : varchar(10)
+        * cycle : int
+        * duration : int
+        * remaining : int
+        * date_next : datetime
+        * language : varchar(64)
+        * currency : varchar(64)
+        * subscription_status_id : int <<FK>>
+        * comment : text
+        * date_added : datetime
+        * date_modified : datetime
+    }
+
+    entity SubscriptionStatus #F7F3FA {
+        * id : int <<PK>>
+        --
+        * name : varchar(32)
+    }
+}
+
+package "Localization Module" #DAE8FC {
+    entity Language #F2F7FF {
+        * id : int <<PK>>
+        --
+        * name : varchar(32)
+        * code : varchar(5)
+        * locale : varchar(255)
+        * image : varchar(64)
+        * directory : varchar(32)
+        * status : tinyint(1)
+        * sort_order : int
+    }
+
+    entity Currency #F2F7FF {
+        * id : int <<PK>>
+        --
+        * title : varchar(32)
+        * code : varchar(3)
+        * symbol_left : varchar(12)
+        * symbol_right : varchar(12)
+        * decimal_place : char(1)
+        * value : float(15,8)
+        * status : tinyint(1)
+        * date_modified : datetime
+    }
+
+    entity Country #F2F7FF {
+        * id : int <<PK>>
+        --
+        * name : varchar(128)
+        * iso_code_2 : varchar(2)
+        * iso_code_3 : varchar(3)
+        * address_format : text
+        * postcode_required : tinyint(1)
+        * status : tinyint(1)
+    }
+
+    entity Zone #F2F7FF {
+        * id : int <<PK>>
+        --
+        * country_id : int <<FK>>
+        * name : varchar(128)
+        * code : varchar(32)
+        * status : tinyint(1)
+    }
+
+    entity City #F2F7FF {
+        * id : int <<PK>>
+        --
+        * zone_id : int <<FK>>
+        * name : varchar(128)
+        * is_served : tinyint(1)
+    }
+
+    entity TaxClass #F2F7FF {
+        * id : int <<PK>>
+        --
+        * title : varchar(32)
+        * description : varchar(255)
+        * date_added : datetime
+        * date_modified : datetime
+    }
+
+    entity TaxRate #F2F7FF {
+        * id : int <<PK>>
+        --
+        * name : varchar(32)
+        * rate : decimal(15,4)
+        * type : char(1)
+        * date_added : datetime
+        * date_modified : datetime
+    }
+
+    entity TaxRule #F2F7FF {
+        * id : int <<PK>>
+        --
+        * tax_class_id : int <<FK>>
+        * tax_rate_id : int <<FK>>
+        * based : varchar(10)
+        * priority : int
+    }
+}
+
+package "System & Store" #E3E3E3 {
+    entity Store #F9F9F9 {
+        * id : int <<PK>>
+        --
+        * name : varchar(64)
+        * url : varchar(255)
+    }
+}
+
+package "Procurement Module" #E0F2F1 {
+    entity Supplier #E0F7FA {
+        * id : int <<PK>>
+        --
+        * company_name : varchar(255)
+        * trade_name : varchar(255)
+        * tax_id : varchar(14)
+        * state_registration : varchar(32)
+        * municipal_registration : varchar(32)
+        * email : varchar(96)
+        * phone : varchar(32)
+        * website : varchar(255)
+        * is_active : tinyint(1)
+        * created_at : datetime
+        * updated_at : datetime
+    }
+
+    entity Contact #E0F7FA {
+        * id : int <<PK>>
+        --
+        * name : varchar(120)
+        * email : varchar(120)
+        * phone : varchar(50)
+        * position : varchar(100)
+        * is_active : tinyint(1)
+        * created_at : datetime
+        * updated_at : datetime
+    }
+
+    entity SupplierAddress #E0F7FA {
+        * id : int <<PK>>
+        --
+        * supplier_id : int <<FK>>
+        * country_id : int <<FK>>
+        * zone_id : int <<FK>>
+        * city_id : int <<FK>>
+        * postal_code : varchar(10)
+        * street : varchar(255)
+        * number : varchar(32)
+        complement : varchar(255)
+        district : varchar(128)
+    }
+
+    entity SupplierContactManufacturer #E0F7FA {
+        * supplier_id : int <<PK, FK>>
+        * contact_id : int <<PK, FK>>
+        * manufacturer_id : int <<PK, FK>>
+        --
+        * created_at : datetime
+    }
+}
+
+' --- RELATIONSHIPS (Catalog Module) ---
+Product "1" ||--|{ ProductDescription : "described by"
+Product "1" ||--|{ ProductImage : "has"
+Product "1" ||--|{ ProductToCategory : "categorized in"
+Category "1" ||--|{ ProductToCategory : "holds"
+Category "1" ||--|{ CategoryDescription : "described by"
+Category "0..1" |o--|{ Category : "parent of"
+Manufacturer "1" |o--|{ Product : "manufactures"
+
+Option "1" ||--|{ OptionValue : "defines values"
+Option "1" ||--|{ ProductOption : "offered by"
+ProductOption "1" ||--|{ ProductOptionValue : "variants"
+OptionValue "1" ||--|{ ProductOptionValue : "instantiates"
+Product "1" ||--|{ ProductOption : "has options"
+Product "1" ||--|{ ProductOptionValue : "has variant details"
+
+Product "1" ||--|{ ProductDiscount : "offered with discount"
+Product "1" ||--|{ ProductAttribute : "specified by"
+Attribute "1" ||--|{ ProductAttribute : "defines type"
+AttributeGroup "1" ||--|{ Attribute : "groups"
+
+' --- RELATIONSHIPS (Customer Module) ---
+CustomerGroup "1" ||--|{ Customer : "classifies"
+CustomerGroup "1" ||--|{ ProductDiscount : "targets"
+Customer "1" ||--|{ Address : "has"
+Customer "1" |o--|| Address : "default address"
+Customer "1" ||--|{ CustomerWishlist : "saves to"
+Product "1" ||--|{ CustomerWishlist : "saved on"
+Customer "1" ||--|{ CustomerIp : "logs IP"
+Customer "1" ||--|{ Review : "writes"
+Product "1" ||--|{ Review : "rated by"
+
+' --- RELATIONSHIPS (Checkout & Sales Module) ---
+Customer "1" ||--|{ Cart : "has active items"
+Product "1" ||--|{ Cart : "item in cart"
+SubscriptionPlan "1" |o--|{ Cart : "item subscription billing plan"
+Store "1" ||--|{ Cart : "contains cart context"
+
+Customer "1" ||--|{ Order : "places"
+Store "1" ||--|{ Order : "records order in context"
+OrderStatus "1" ||--|{ Order : "indicates status"
+Language "1" ||--|{ Order : "placed using"
+Currency "1" ||--|{ Order : "billed in"
+
+Order "1" ||--|{ OrderProduct : "contains"
+Product "1" ||--|{ OrderProduct : "sold in"
+OrderProduct "1" ||--|{ OrderOption : "configured by"
+Order "1" ||--|{ OrderTotal : "tallies cost"
+Order "1" ||--|{ OrderHistory : "audited by"
+OrderStatus "1" ||--|{ OrderHistory : "stage reached"
+
+' --- RELATIONSHIPS (Subscription Module) ---
+SubscriptionPlan "1" ||--|{ SubscriptionPlanDescription : "described by"
+SubscriptionPlan "1" ||--|{ Subscription : "bills under"
+Customer "1" ||--|{ Subscription : "holds subscription"
+Order "1" ||--|{ Subscription : "billed in order"
+SubscriptionStatus "1" ||--|{ Subscription : "indicates current state"
+
+' --- RELATIONSHIPS (Localization Module) ---
+Language "1" ||--|{ ProductDescription : "translation"
+Language "1" ||--|{ CategoryDescription : "translation"
+Language "1" ||--|{ ProductAttribute : "translation"
+Language "1" ||--|{ SubscriptionPlanDescription : "translation"
+
+Country "1" ||--|{ Zone : "contains zones"
+Zone "1" ||--|{ City : "contains cities"
+Country "1" ||--|{ Address : "address country"
+Zone "1" ||--|{ Address : "address state/zone"
+
+TaxClass "1" ||--|{ TaxRule : "contains rules"
+TaxRate "1" ||--|{ TaxRule : "applied rate"
+TaxClass "1" ||--|{ Product : "tax configuration"
+
+' --- RELATIONSHIPS (Procurement Module) ---
+Supplier "1" ||--|| SupplierAddress : "located at"
+Supplier "1" ||--|{ SupplierContactManufacturer : "associated through"
+Contact "1" ||--|{ SupplierContactManufacturer : "linked to"
+Manufacturer "1" ||--|{ SupplierContactManufacturer : "represented by"
+Country "1" ||--|{ SupplierAddress : "address country"
+Zone "1" ||--|{ SupplierAddress : "address state/zone"
+City "1" ||--|{ SupplierAddress : "address city"
+
+@enduml
