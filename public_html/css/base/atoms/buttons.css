@@ -1,0 +1,402 @@
+/* ==========================================================================
+   BUTTON SYSTEM — Alpha Engine Premium UI
+   ========================================================================== */
+
+/* ── 1. BOTÃO PRIMÁRIO (CTA) ── */
+.egen-btn-primary {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    background: linear-gradient(135deg, var(--premium-color-primary, #6366f1) 0%, var(--premium-color-secondary, #8b5cf6) 100%);
+    color: #ffffff !important;
+    font-size: 1rem;
+    font-weight: 700;
+    padding: 0.75rem 2rem;
+    border: none;
+    border-radius: 50px;
+    cursor: pointer;
+    white-space: nowrap;
+    letter-spacing: 0.3px;
+    box-shadow: 0 4px 14px var(--premium-shadow-color, rgba(99, 102, 241, 0.3));
+    transition: all var(--egen-transition, 0.25s ease);
+    position: relative;
+    overflow: hidden;
+    text-decoration: none;
+}
+
+.egen-btn-primary::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: rgba(255, 255, 255, 0);
+    transition: background var(--egen-transition, 0.25s ease);
+}
+
+.egen-btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px var(--premium-shadow-color, rgba(99, 102, 241, 0.45));
+    color: #ffffff !important;
+}
+
+.egen-btn-primary:hover::before {
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.egen-btn-primary:active {
+    transform: translateY(0);
+    box-shadow: 0 4px 14px var(--premium-shadow-color, rgba(99, 102, 241, 0.3));
+}
+
+/* Variante de compra sólida (Override do gradiente em formulários específicos) */
+.egen-wishlist-card__buy-form .egen-btn-primary,
+.egen-btn-buy {
+    width: 100%;
+    justify-content: center;
+    background: var(--egen-primary-color, #fc9003) !important;
+    box-shadow: var(--egen-shadow-btn, 0 4px 15px rgba(252, 144, 3, 0.4)) !important;
+}
+
+.egen-wishlist-card__buy-form .egen-btn-primary:hover,
+.egen-btn-buy:hover {
+    background: var(--egen-primary-hover, #e07b00) !important;
+    box-shadow: 0 6px 20px rgba(252, 144, 3, 0.5) !important;
+}
+
+
+/* ── 2. BOTÃO SECUNDÁRIO ── */
+.egen-btn-secondary {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    background: var(--premium-bg-card-hover, rgba(255, 255, 255, 0.05)) !important;
+    border: 1px solid var(--premium-border-card-inner, rgba(255, 255, 255, 0.06)) !important;
+    color: var(--egen-text-color, #e8eaed) !important;
+    padding: 0.75rem 1.5rem !important;
+    border-radius: 8px !important;
+    font-weight: 600 !important;
+    cursor: pointer;
+    text-decoration: none;
+    transition: all var(--egen-transition, 0.25s ease) !important;
+}
+
+.egen-btn-secondary:hover {
+    background: var(--premium-bg-card-dark, rgba(255, 255, 255, 0.02)) !important;
+    border-color: var(--premium-border-card, rgba(255, 255, 255, 0.08)) !important;
+    color: #ffffff !important;
+}
+
+.egen-btn-secondary.active {
+    background: var(--egen-primary-color, #fc9003) !important;
+    border-color: var(--egen-primary-color, #fc9003) !important;
+    color: #ffffff !important;
+}
+
+
+/* ── 3. BOTÃO OUTLINE ── */
+.egen-btn-outline {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: transparent;
+    color: var(--egen-text-color, #e8eaed);
+    border: 2px solid var(--egen-border-color, rgba(255, 255, 255, 0.1));
+    padding: 0.8rem 2rem;
+    font-weight: 700;
+    border-radius: 50px;
+    text-decoration: none;
+    transition: all var(--egen-transition, 0.25s ease);
+}
+
+.egen-btn-outline:hover {
+    border-color: var(--egen-primary-color, #fc9003);
+    color: #ffffff;
+    background: rgba(252, 144, 3, 0.08);
+}
+
+
+/* ── 4. BOTÃO 3D (MENU / NAVEGAÇÃO) ── */
+.egen-btn-3d {
+    text-shadow: 0 -1px 0 rgba(255, 117, 24, 0.25);
+    background-color: var(--egen-primary-color, #fc9003);
+    background-image: linear-gradient(to bottom, var(--egen-primary-color, #fc9003), var(--egen-primary-color-dark, #9c4902));
+    background-repeat: repeat-x;
+    border-color: var(--egen-primary-hover, #e07b00) var(--egen-primary-color-dark, #9c4902) var(--egen-primary-color-darker, #442200);
+    border-radius: 50px;
+}
+
+
+/* ── 5. BOTÕES DO CARRINHO (CART ACTIONS & BADGES) ── */
+.egen-btn-cart {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    background-color: var(--dark-color-1, #101418);
+    color: var(--light-color-1, #ffffff);
+    border: 2px solid var(--egen-primary-color, #fc9003);
+    border-radius: 50px;
+    padding: 0.55rem 1.4rem;
+    font-weight: 600;
+    font-size: 0.9rem;
+    text-decoration: none;
+    white-space: nowrap;
+    transition: all var(--transition-speed, 0.3s) ease;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+}
+
+.egen-btn-cart:hover,
+.egen-btn-cart:focus-visible {
+    background-color: var(--egen-primary-color, #fc9003);
+    border-color: var(--egen-primary-hover, #e07b00);
+    color: var(--light-color-1, #ffffff);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 15px rgba(252, 144, 3, 0.35);
+    outline: none;
+}
+
+.egen-btn-cart i {
+    font-size: 1.1rem;
+    color: var(--egen-primary-color, #fc9003);
+}
+
+.egen-btn-cart:hover i {
+    color: #ffffff;
+}
+
+.egen-cart-badge {
+    background-color: var(--egen-primary-color, #fc9003);
+    color: #ffffff;
+    font-size: 0.75rem;
+    font-weight: 700;
+    border-radius: 50px;
+    padding: 0.15rem 0.45rem;
+    min-width: 20px;
+    height: 20px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    line-height: 1;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+}
+
+
+/* ── 6. CONTROLES DE QUANTIDADE E AÇÕES DO CARRINHO ── */
+.cart-qty-btn,
+.guest-qty-btn {
+    width: 32px;
+    height: 34px;
+    background: rgba(255, 255, 255, 0.05);
+    border: none;
+    color: var(--egen-text-muted, #a0aab5);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all var(--egen-transition, 0.25s ease);
+    font-size: 0.75rem;
+}
+
+.cart-qty-btn:hover,
+.guest-qty-btn:hover {
+    background: rgba(255, 255, 255, 0.1);
+    color: var(--egen-text-color, #e8eaed);
+}
+
+.cart-qty-btn-minus {
+    border-right: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.cart-qty-btn-plus {
+    border-left: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.egen-cart-actions-btn {
+    display: flex;
+    gap: 0.25rem;
+}
+
+
+/* ── 7. BOTÕES DE ÍCONES (AÇÕES) ── */
+.egen-btn-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    border-radius: var(--egen-radius-sm, 6px);
+    border: none;
+    cursor: pointer;
+    font-size: 0.85rem;
+    transition: all var(--egen-transition, 0.25s ease);
+    text-decoration: none;
+}
+
+.egen-btn-icon--update,
+.cart-btn-update {
+    background-color: rgba(255, 255, 255, 0.05);
+    color: var(--egen-text-muted, #a0aab5);
+}
+
+.egen-btn-icon--update:hover,
+.cart-btn-update:hover {
+    background-color: var(--egen-primary-color, #fc9003);
+    color: #ffffff;
+}
+
+.egen-btn-icon--remove,
+.cart-btn-remove {
+    background-color: rgba(239, 68, 68, 0.08);
+    border: 1px solid rgba(239, 68, 68, 0.2);
+    border-radius: 8px;
+    color: var(--egen-danger, #ef4444);
+}
+
+.egen-btn-icon--remove:hover,
+.cart-btn-remove:hover {
+    background-color: var(--egen-danger, #ef4444);
+    border-color: var(--egen-danger, #ef4444);
+    color: #ffffff;
+    transform: scale(1.1);
+}
+
+.egen-btn-danger-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(239, 68, 68, 0.1);
+    color: var(--egen-danger, #ef4444);
+    border: 1px solid rgba(239, 68, 68, 0.2);
+    padding: 0.75rem 1rem;
+    border-radius: 8px;
+    transition: all 0.2s ease;
+}
+
+.egen-btn-danger-icon:hover {
+    background: var(--egen-danger, #ef4444);
+    color: #fff;
+}
+
+
+/* ── 8. BOTÕES DE PRODUTOS E VITRINE ── */
+.egen-product-buy {
+    display: flex;
+    gap: 0.75rem;
+}
+
+.egen-prod-overlay-btn {
+    color: #fff;
+    font-weight: 600;
+    font-size: 0.85rem;
+    background: rgba(255, 255, 255, 0.15);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    padding: 0.5rem 1.25rem;
+    border-radius: 100px;
+    backdrop-filter: blur(4px);
+}
+
+.egen-prod-btn-details {
+    flex: 1;
+    display: block;
+    text-align: center;
+    background: rgba(99, 102, 241, 0.12);
+    border: 1px solid rgba(99, 102, 241, 0.25);
+    color: #a5b4fc;
+    text-decoration: none;
+    font-size: 0.8rem;
+    font-weight: 600;
+    padding: 0.5rem;
+    border-radius: 8px;
+    transition: all 0.2s;
+}
+
+.egen-prod-btn-details:hover {
+    background: rgba(99, 102, 241, 0.25);
+    border-color: rgba(99, 102, 241, 0.5);
+    color: #c7d2fe;
+}
+
+.egen-prod-btn-cart {
+    width: 38px;
+    height: 38px;
+    background: linear-gradient(135deg, #6366f1, #8b5cf6);
+    border: none;
+    border-radius: 8px;
+    color: #fff;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    transition: all 0.2s;
+    box-shadow: 0 2px 8px rgba(99, 102, 241, 0.3);
+}
+
+.egen-prod-btn-cart:hover {
+    transform: scale(1.08);
+    box-shadow: 0 4px 14px rgba(99, 102, 241, 0.5);
+}
+
+.egen-prod-btn-cart:active {
+    transform: scale(0.96);
+}
+
+.egen-prod-btn-wishlist {
+    width: 38px;
+    height: 38px;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 8px;
+    color: var(--egen-danger-2, #f43f5e);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    transition: all 0.2s;
+}
+
+.egen-prod-btn-wishlist:hover {
+    background: rgba(244, 63, 94, 0.15);
+    border-color: rgba(244, 63, 94, 0.4);
+    transform: scale(1.08);
+}
+
+.egen-prod-btn-wishlist:active {
+    transform: scale(0.96);
+}
+
+
+/* ── 9. PAGINAÇÃO DA CATEGORIA ── */
+.egen-cat-page-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 38px;
+    height: 38px;
+    padding: 0 0.5rem;
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 8px;
+    color: var(--premium-text-muted, #94a3b8);
+    text-decoration: none;
+    font-size: 0.85rem;
+    font-weight: 500;
+    transition: all 0.2s;
+}
+
+.egen-cat-page-btn:hover {
+    background: rgba(99, 102, 241, 0.15);
+    border-color: rgba(99, 102, 241, 0.35);
+    color: #a5b4fc;
+}
+
+.egen-cat-page-btn--active {
+    background: linear-gradient(135deg, #6366f1, #8b5cf6);
+    border-color: transparent;
+    color: #fff;
+    font-weight: 700;
+    box-shadow: 0 2px 10px rgba(99, 102, 241, 0.4);
+    cursor: default;
+    pointer-events: none;
+}

@@ -1,0 +1,67 @@
+:root {
+    /* Paleta primária — herda da personalizada.css */
+    --egen-primary-color: #fc9003;
+    --egen-primary-color-dark: #9c4902;
+    --egen-primary-color-darker: #442200;
+    --egen-primary-hover: #e07b00;
+    --egen-accent-color: #ffc107;
+    --egen-danger: #ef4444;
+    --egen-danger-2: #f43f5e;
+
+    /* Tons de fundo */
+    --egen-bg-page: #0f1318;
+    --egen-bg-card: rgba(30, 34, 39, 0.85);
+    --egen-bg-input: rgba(255, 255, 255, 0.07);
+    --egen-bg-input-focus: rgba(252, 144, 3, 0.08);
+
+    /* Texto */
+    --egen-text-color: #e8eaed;
+    --egen-text-muted: #a0aab5;
+    --egen-text-label: #c8cdd4;
+
+    /* Bordas */
+    --egen-border-color: rgba(255, 255, 255, 0.1);
+    --egen-border-focus: #fc9003;
+
+    /* Formas */
+    --egen-radius: 10px;
+    --egen-radius-sm: 6px;
+
+    /* Sombras */
+    --egen-shadow-card: 0 20px 60px rgba(0, 0, 0, 0.5);
+    --egen-shadow-btn: 0 4px 15px rgba(252, 144, 3, 0.4);
+
+    /* Erros */
+    --egen-error-color: #f57d0c;
+
+    /* Transição */
+    --egen-transition: 0.25s ease;
+
+    --light-color-1: #ffffff;
+    --light-color-2: #f8f9fa;
+    --dark-color-1: #101418;
+    --dark-color-2: #1e2227;
+    --focus-color-1: #ffc107;
+    --transition-speed: 0.3s;
+
+    /* Premium UI Tokens */
+    --premium-bg-page: #0d0f14;
+    --premium-bg-card: rgba(255, 255, 255, 0.03);
+    --premium-bg-card-dark: rgba(255, 255, 255, 0.02);
+    --premium-bg-card-hover: rgba(255, 255, 255, 0.05);
+    --premium-bg-card-default: rgba(99, 102, 241, 0.05);
+    --premium-bg-header: rgba(99, 102, 241, 0.05);
+    --premium-bg-primary-light: rgba(99, 102, 241, 0.12);
+    --premium-text-primary: #f1f5f9;
+    --premium-text-secondary: #cbd5e1;
+    --premium-text-muted: #94a3b8;
+    --premium-color-primary: #6366f1;
+    --premium-color-primary-hover: #4f46e5;
+    --premium-color-secondary: #8b5cf6;
+    --premium-border-card: rgba(255, 255, 255, 0.08);
+    --premium-border-card-inner: rgba(255, 255, 255, 0.06);
+    --premium-border-glow: rgba(99, 102, 241, 0.2);
+    --premium-border-glow-hover: rgba(99, 102, 241, 0.5);
+    --premium-shadow-color: rgba(99, 102, 241, 0.3);
+    --premium-font-family: 'Inter', 'Outfit', system-ui, sans-serif;
+}
