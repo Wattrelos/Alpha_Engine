@@ -9,35 +9,35 @@ As diretrizes aqui descritas materializam as decisões tomadas no [ADR-001 (Idem
 ## 📋 Checklist de Validação Técnica
 
 ### 1. Camada 1: Apresentação e Infraestrutura (HTTP / Controlador)
-- [ ] **Validação do Token:** O `Slim Middleware` intercepta e rejeita requisições sem o cabeçalho `X-Idempotency-Key` (Retornar HTTP 400 Bad Request).
-- [ ] **Bloqueio de Duplicidade:** O `Slim Action` captura a exceção `DuplicateRequestException` vinda do domínio e responde imediatamente com `HTTP 422 Unprocessable Entity` e payload JSON padronizado.
-- [ ] **Sanitização de Entrada:** O payload do POST é validado e tipado em um DTO (Data Transfer Object) antes de atingir o `Domain Service`.
+- [x] **Validação do Token:** O `Slim Middleware` intercepta e rejeita requisições sem o cabeçalho `X-Idempotency-Key` (Retornar HTTP 400 Bad Request).
+- [x] **Bloqueio de Duplicidade:** O `Slim Action` captura a exceção `DuplicateRequestException` vinda do domínio e responde imediatamente com `HTTP 422 Unprocessable Entity` e payload JSON padronizado.
+- [x] **Sanitização de Entrada:** O payload do POST é validado e tipado em um DTO (Data Transfer Object) antes de atingir o `Domain Service`.
 
 ### 2. Camada 2: Domínio e Aplicação (Regras de Negócio)
-- [ ] **Atomicidade no Cache:** A checagem da chave no `Redis` é feita via comando atômico com tempo de expiração (`SET key value NX EX 300`). Não é permitido usar `EXISTS` seguido de `SET` isolados.
-- [ ] **Operações Isoladas em Memória:** Todos os cálculos de totais, checagem de cupons e regras de negócio ocorrem estritamente em memória. Nenhuma conexão persistente de escrita foi aberta nesta fase.
-- [ ] **Isolamento de Efeitos Colaterais:** O `EventDispatcher` foi configurado para disparar o `OrderCreatedEvent` de forma assíncrona, garantindo que falhas na mensageria não impactem a resposta para o usuário.
+- [x] **Atomicidade no Cache:** A checagem da chave no `Redis` é feita via comando atômico com tempo de expiração (`SET key value NX EX 300`). Não é permitido usar `EXISTS` seguido de `SET` isolados.
+- [x] **Operações Isoladas em Memória:** Todos os cálculos de totais, checagem de cupons e regras de negócio ocorrem estritamente em memória. Nenhuma conexão persistente de escrita foi aberta nesta fase.
+- [x] **Isolamento de Efeitos Colaterais:** O `EventDispatcher` foi configurado para disparar o `OrderCreatedEvent` de forma assíncrona, garantindo que falhas na mensageria não impactem a resposta para o usuário.
 
 ### 3. Camada 3: Persistência de Dados (Banco de Dados / ORM)
-- [ ] **Transação de Escopo Curto:** O comando `BEGIN TRANSACTION` do MySQL ocorre exclusivamente dentro do método `UoW::commit()`.
-- [ ] **Garantia de Rollback:** Todo o bloco físico de escrita (`Mapper`, `QB`, `DAO`) está encapsulado em uma estrutura `try/catch` que executa o `ROLLBACK` explícito em caso de qualquer exceção.
-- [ ] **Imutabilidade Estrutural:** Não foram utilizados comandos SQL de mutação direta (`UPDATE`) na tabela de pedidos para alterar estados históricos; novos estados geram novos registros ou seguem a máquina de estados prevista.
+- [x] **Transação de Escopo Curto:** O comando `BEGIN TRANSACTION` do MySQL ocorre exclusivamente dentro do método `UoW::commit()`.
+- [x] **Garantia de Rollback:** Todo o bloco físico de escrita (`Mapper`, `QB`, `DAO`) está encapsulado em uma estrutura `try/catch` que executa o `ROLLBACK` explícito em caso de qualquer exceção.
+- [x] **Imutabilidade Estrutural:** Não foram utilizados comandos SQL de mutação direta (`UPDATE`) na tabela de pedidos para alterar estados históricos; novos estados geram novos registros ou seguem a máquina de estados prevista.
 
 ---
 
 ## 🧪 Requisitos Obrigatórios de Testes e Qualidade
 
-- [ ] **Teste de Carga / Concorrência:** Existe um teste automatizado simulando disparos simultâneos (Race Condition) com a mesma `X-Idempotency-Key`, provando que apenas 1 requisição obtém sucesso e as demais falham com HTTP 422.
-- [ ] **Teste de Mutação da Transação:** Existe teste de unidade garantindo que se o `DAO` falhar no `INSERT`, os dados na memória gerenciados pela `Unit of Work` não fiquem em estado inconsistente ou "sujo".
-- [ ] **Cobertura de Código:** As classes `Domain Service (Idempotência)` e `Unit of Work` possuem cobertura de testes unitários mínima de 95%.
+- [x] **Teste de Carga / Concorrência:** Existe um teste automatizado simulando disparos simultâneos (Race Condition) com a mesma `X-Idempotency-Key`, provando que apenas 1 requisição obtém sucesso e as demais falham com HTTP 422.
+- [x] **Teste de Mutação da Transação:** Existe teste de unidade garantindo que se o `DAO` falhar no `INSERT`, os dados na memória gerenciados pela `Unit of Work` não fiquem em estado inconsistente ou "sujo".
+- [x] **Cobertura de Código:** As classes `Domain Service (Idempotência)` e `Unit of Work` possuem cobertura de testes unitários mínima de 95%.
 
 ---
 
 ## 🔒 Segurança e Observabilidade
 
-- [ ] **Mascaramento de Dados:** Dados sensíveis de pagamento (se houver no payload) não são impressos nos logs da aplicação.
-- [ ] **ID de Correlação:** A chave `X-Idempotency-Key` é injetada no contexto do Logger (Monolog) para servir como `Correlation ID` em toda a esteira de microserviços.
-- [ ] **Métricas:** Foram adicionados contadores (Counters) para monitorar a taxa de requisições duplicadas bloqueadas pelo sistema.
+- [x] **Mascaramento de Dados:** Dados sensíveis de pagamento (se houver no payload) não são impressos nos logs da aplicação.
+- [x] **ID de Correlação:** A chave `X-Idempotency-Key` é injetada no contexto do Logger (Monolog) para servir como `Correlation ID` em toda a esteira de microserviços.
+- [x] **Métricas:** Foram adicionados contadores (Counters) para monitorar a taxa de requisições duplicadas bloqueadas pelo sistema.
 
 ---
 

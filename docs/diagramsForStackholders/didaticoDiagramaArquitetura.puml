@@ -107,6 +107,7 @@ package "4. Camada de Domínio (Modelo & Regras de Negócio)" as Dominio #e8f5e9
     rectangle "Repositories (AbstractRepository)\n---\n• Interface conceitual de coleção de objetos\n• Abstrai a origem dos dados (BD/Cache/API)\n• Implementa Identity Map em memória" as Repos
     rectangle "Entities (BaseEntity / DTO)\n---\n• Objetos ricos representando conceitos de negócio\n• Ex: Product, Order, Customer, Category\n• Contém validações e comportamentos internos" as Entities
     rectangle "AlphaContainer\n---\n• Tradutor de rotas legadas e roteamento interno\n• Resolve chaves de busca para repositórios correspondentes" as AlphaContainer
+    rectangle "EventDispatcher & Events\n---\n• Padrão Observer no Domínio\n• Desacopla criação de pedidos de efeitos colaterais\n• Dispara OrderCreatedEvent pós-commit" as Events
 }
 note bottom of Dominio
   <b>Domain-Driven Design (DDD):</b>
@@ -139,6 +140,8 @@ package "6. Recursos Físicos e Suporte Transversal" as Infra #f3e5f5 {
     database "MySQL / MariaDB\n---\n• Banco de Dados Relacional\n• Armazena dados transacionais (pedidos, clientes, estoque)" as MySQL
     rectangle "CacheStrategy (Redis / Filesystem)\n---\n• Padrão Strategy para cacheamento flexível\n• Reduz carga do MySQL cacheando páginas e consultas lentas" as Cache
     rectangle "Support & Helpers\n---\n• Utils: Idiomas, Moedas, Impostos, Formatação\n• PSR-4 Autoloading e Helpers globais" as Support
+    rectangle "RabbitMQ & QueueService\n---\n• Broker de Mensageria e Fila 'order.created'\n• Publicação de payloads JSON persistentes" as Queue
+    rectangle "Worker CLI Consumer\n---\n• Processamento assíncrono em background\n• Consome mensagens de novos pedidos para ERP/E-mails" as Worker
 }
 
 ' ─────────────────────────────────────────────────────────────────────────────
@@ -196,5 +199,10 @@ AlphaContainer --> Mappers
 ' Suporte
 Repos --> Support : "Formatações/Cálculos"
 FrontAction --> Support
+
+' Eventos e Mensageria
+FrontAction --> Events : "6. Dispara OrderCreatedEvent"
+Events --> Queue : "7. Listener envia payload JSON"
+Queue --> Worker : "8. Worker consome assincronamente"
 
 @enduml

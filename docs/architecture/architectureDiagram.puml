@@ -35,6 +35,7 @@ package "4. Domain Layer" as Domain {
   [AbstractRepository] as Repos
   [BaseEntity] as Entities
   [AlphaContainer (Legacy Resolver)] as AlphaContainer
+  [EventDispatcher & Events] as Events
 }
 
 ' --- PERSISTENCE LAYER ---
@@ -51,6 +52,8 @@ package "6. Support & Database" as SupportLayer {
   database "MySQL 8.0" as MySQL
   [CacheStrategy (Redis/Filesystem)] as Cache
   [Support Utils] as Support
+  [RabbitMQ & QueueService] as Queue
+  [Worker CLI Consumer] as Worker
 }
 
 ' --- RELATIONSHIPS (FLOW OF COUPLING) ---
@@ -101,5 +104,10 @@ QB --> MySQL : Safe SQL execution
 ' Support cross-cutting concerns
 Repos --> Support : Calculations
 FrontAction --> Support : Formats
+
+' Asynchronous Events & Messaging Stack
+FrontAction --> Events : Dispatches OrderCreatedEvent
+Events --> Queue : Publishes to queue via QueueService
+Queue --> Worker : Asynchronously consumed by worker
 
 @enduml
