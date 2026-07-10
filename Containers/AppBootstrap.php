@@ -203,6 +203,14 @@ class AppBootstrap
         $this->container->bind('tax', $taxHelper);
         $this->container->bind(\Alpha\Support\Tax::class, $taxHelper);
 
+        // Alpha Engine: Inicialização do EventDispatcher e Ouvintes (RabbitMQ)
+        $queueService = new \Alpha\Events\QueueService();
+        $orderCreatedListener = new \Alpha\Events\OrderCreatedListener($queueService);
+        $eventDispatcher = new \Alpha\Events\EventDispatcher();
+        $eventDispatcher->addListener('order.created', $orderCreatedListener);
+
+        $this->container->bind(\Alpha\Events\EventDispatcher::class, $eventDispatcher);
+
         // Repositórios de Domínio
         $this->categoryRepository = new CategoryRepository($mapperFactory, $this->container);
         $productRepository = $repositoryFactory->get(ProductRepository::class);

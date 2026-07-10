@@ -15,12 +15,15 @@ box "Camada 1: Apresentação e Infraestrutura (HTTP / Controlador / View)" #E0F
     participant "Slim Middleware\n(Interceptador)" as Middleware
     participant "Slim Action\n(Controlador)" as Action
     participant "Twig Engine\n(Renderizador)" as Twig
+    queue "Mensageria (RabbitMQ)\n(Fila Assíncrona)" as Queue
 end box
 
 box "Camada 2: Domínio e Aplicação (Regras de Negócio e Serviços)" #FFF9C4
     participant "Domain Service\n(Idempotência)" as Domain
     database "Cache Idempotência\n(Redis)" as Cache
     participant "OrderRepository\n(Coleção)" as Repo
+    participant "EventDispatcher\n(Subject / Publicador)" as Dispatcher
+    participant "OrderCreatedListener\n(Observer / Assinante)" as Observer
 end box
 
 box "Camada 3: Persistência de Dados (Banco de Dados / ORM)" #FFEBEE
@@ -144,6 +147,21 @@ activate Middleware
                 
                 UoW -> DB : COMMIT (Grava permanentemente no banco)
                 UoW --> Action : Commit realizado com sucesso
+                
+                note over Action, Dispatcher: **Padrão Observer:** Após a persistência física ser consolidada,\no sistema dispara eventos para notificar outros subsistemas de forma desacoplada.
+                Action -> Dispatcher : dispatch(new OrderCreatedEvent(Order))
+                activate Dispatcher
+                    Dispatcher -> Observer : update(OrderCreatedEvent)
+                    activate Observer
+                        note right of Observer: O Observer reage enviando os dados do pedido\npara a fila de mensageria assíncrona.
+                        Observer -> Queue : publish("order.created", OrderData)
+                        activate Queue
+                            Queue --> Observer : Confirmação (Ack)
+                        deactivate Queue
+                        Observer --> Dispatcher : OK
+                    deactivate Observer
+                    Dispatcher --> Action : OK
+                deactivate Dispatcher
                     
             else #FFF8DC Bloco Catch [Tratamento de Exceções / Rollback]
                 note over UoW, DB: Se houver qualquer falha física ou lógica durante a persistência,\na transação é revertida integralmente no MySQL.

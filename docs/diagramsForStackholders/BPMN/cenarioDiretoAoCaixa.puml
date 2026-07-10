@@ -1,0 +1,21 @@
+@startuml
+title BPMN - Cenário 3: Direto ao Caixa / Supermercado (POS)
+
+!include _styles.puml
+
+|#F8FAFC|Cliente / Prateleira|
+start
+:Escolher produtos diretamente nas prateleiras;
+
+|Caixa|
+:Dirigir-se diretamente ao caixa para iniciar o processo;
+:Registrar e bipar produtos diretamente no terminal do caixa;
+:Identificar o Cliente no sistema;
+
+|Sistema POS (Back-end)|
+:Verificar duplicidade (Idempotência);
+:Iniciar transação e gravar pedido direto como "Pendente";
+
+!include _checkout_flow.puml
+
+@enduml

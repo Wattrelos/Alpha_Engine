@@ -1,0 +1,34 @@
+<style>
+document {
+    BackgroundColor #FFFFFF
+}
+title {
+    FontColor #1A202C
+    FontSize 16
+    FontName Helvetica
+}
+swimlane {
+    FontColor #2D3748
+    LineColor #718096
+    LineThickness 1.5
+}
+activity {
+    BackgroundColor #EDF2F7
+    LineColor #4A5568
+    FontColor #1A202C
+}
+diamond {
+    BackgroundColor #FFFBEB
+    LineColor #D69E2E
+    FontColor #744210
+}
+arrow {
+    LineColor #4A5568
+}
+note {
+    BackgroundColor #EFF6FF
+    LineColor #3182CE
+    FontColor #1D4ED8
+    FontSize 11
+}
+</style>

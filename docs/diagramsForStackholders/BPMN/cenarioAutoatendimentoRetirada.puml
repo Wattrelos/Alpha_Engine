@@ -1,0 +1,16 @@
+@startuml
+title BPMN - Cenário 4: Autoatendimento com Retirada (POS)
+
+!include _styles.puml
+
+|#F8FAFC|Cliente / Prateleira|
+start
+:Escolher produtos diretamente nas prateleiras;
+
+|Cliente / POS autoatendimento|
+:Gerar pedido e adicionar os itens no sistema via leitor de código de barras e reserva produtos em uma sacola;
+:Cliente realiza pagamento no autoatendimento;
+:Cliente retira os produtos;
+stop
+
+@enduml

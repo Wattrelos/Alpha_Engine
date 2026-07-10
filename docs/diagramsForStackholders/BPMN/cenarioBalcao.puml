@@ -1,0 +1,41 @@
+@startuml
+title BPMN - Cenário 1: Atendimento em Balcão (POS)
+
+!include _styles.puml
+
+|#F8FAFC|Cliente / Prateleira|
+start
+
+|Vendedor|
+:Cliente solicita produtos desejados ao vendedor;
+:Vendedor retira produtos da prateleira;
+:Vendedor gera pedido e adiciona os itens no sistema via leitor de código de barras e reserva produtos em uma sacola;
+:Identificar o Cliente no sistema;
+:Comandar "Salvar Pedido";
+
+|Sistema POS (Back-end)|
+:Verificar duplicidade do pedido (Idempotência);
+note right: Evita cliques duplos salvando chaves temporárias no Redis.
+:Iniciar transação no banco de dados;
+:Gravar o pedido com status "Pendente";
+note right
+    === REGRA DE NEGÓCIO DE ESTOQUE
+    Como não existe reserva de estoque no POS,
+    o vendedor deve retirar os produtos da prateleira
+    e guardar em uma sacola na área do caixa para
+    garantir a mercadoria até o cliente finalizar o
+    pagamento ou a devolução manual dos produtos
+    ao estoque em caso de cancelamento.
+  end note  
+:Confirmar transação e gerar número do pedido (#150);
+
+|Vendedor|
+:Imprimir ticket de pré-venda;
+:Entregar ticket e a sacola ao Cliente;
+
+|Caixa|
+:Receber ticket do Cliente e digitar o número (#150);
+
+!include _checkout_flow.puml
+
+@enduml

@@ -1,0 +1,54 @@
+label label_processar_dados_pedido
+
+|Sistema POS (Back-end)|
+:Recuperar dados do pedido e validar valores;
+
+|Caixa|
+:Processar pagamento (Cartão de Crédito/Débito);
+
+if (Pagamento aprovado?) then (sim)
+  :[Fluxo de Sucesso] Emitir cupom fiscal da venda;
+
+  |Sistema POS (Back-end)|
+  :Atualizar status do pedido para "Pago";
+  :Confirmar baixa definitiva do estoque;
+
+  |Caixa|
+  :Entregar produtos ao Cliente (ou liberar retirada);
+  stop
+else (não - Rejeitado por limite/saldo)
+  :[Fluxo de Exceção] Informar prevenção/rejeição ao Cliente;
+  
+  if (Cliente deseja tentar outra forma?) then (sim (Dinheiro, PIX ou outro cartão))
+    note right
+      **Política de Retentativa:**
+      O caixa pode tentar até 3 vezes
+      com meios diferentes antes de
+      sugerir o cancelamento.
+    end note
+    :[Troca de meio] Selecionar nova forma de pagamento no terminal;
+    goto label_processar_dados_pedido
+  else (não (Deseja cancelar o pedido))
+    :[Desistência]
+    
+    |Sistema POS (Back-end)|
+    
+    |Caixa|
+    :Comandar "Cancelar Pedido" no terminal;
+    
+    |Sistema POS (Back-end)|
+    :Alterar status do pedido para "Cancelado";
+    :Estornar reserva se houver (devolver itens ao estoque);
+    note left
+      **Garantia de Estoque:**
+      Libera os produtos imediatamente
+      para que voltem a ficar visíveis
+      no catálogo de vendas ou e-commerce.
+      No POS, o vendedor devolve o produto físico à prateleira.
+    end note
+    
+    |Caixa|
+    :Informar cancelamento e encerrar atendimento;
+    stop
+  endif
+endif

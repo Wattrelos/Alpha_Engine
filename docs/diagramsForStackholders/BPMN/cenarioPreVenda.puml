@@ -1,0 +1,33 @@
+@startuml
+title BPMN - Cenário 2: Autoatendimento com Pré-Venda (POS)
+
+!include _styles.puml
+
+|#F8FAFC|Cliente / Prateleira|
+start
+:Escolher produtos diretamente nas prateleiras;
+
+|Vendedor|
+:Dirigir-se ao vendedor para gerar o pedido no sistema;
+:Vendedor gera pedido e adiciona os itens no sistema via
+leitor de código de barras e reserva produtos em uma sacola;
+:Identificar o Cliente no sistema;
+:Comandar "Salvar Pedido";
+
+|Sistema POS (Back-end)|
+:Verificar duplicidade do pedido (Idempotência);
+:Iniciar transação no banco de dados;
+:Gravar o pedido com status "Pendente";
+:Reservar o estoque temporariamente;
+:Confirmar transação e gerar número do pedido (#150);
+
+|Vendedor|
+:Imprimir ticket de pré-venda;
+:Entregar ticket ao Cliente;
+
+|Caixa|
+:Receber ticket do Cliente e digitar o número (#150);
+
+!include _checkout_flow.puml
+
+@enduml

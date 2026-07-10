@@ -10,6 +10,8 @@ use Alpha\Model\Domain\Repositories\OrderRepository;
 use Alpha\Model\Domain\Repositories\CartRepository;
 use Alpha\Model\Domain\DTOs\OrderDataDTO;
 use Slim\Routing\RouteContext;
+use Alpha\Events\EventDispatcher;
+use Alpha\Events\OrderCreatedEvent;
 
 /**
  * SubmitCheckoutAction - Processa o fechamento de pedidos (POST /checkout).
@@ -17,10 +19,12 @@ use Slim\Routing\RouteContext;
 class SubmitCheckoutAction implements ActionInterface
 {
     private ContainerInterface $container;
+    private EventDispatcher $eventDispatcher;
 
-    public function __construct(ContainerInterface $container)
+    public function __construct(ContainerInterface $container, EventDispatcher $eventDispatcher)
     {
         $this->container = $container;
+        $this->eventDispatcher = $eventDispatcher;
     }
 
     public function __invoke(Request $request, Response $response, array $args): Response
@@ -348,6 +352,9 @@ class SubmitCheckoutAction implements ActionInterface
             // Alpha Engine: Confirma o pedido transicionando de 0 (Não confirmado) para o status padrão (Pendente)
             $defaultOrderStatusId = (int)($configSettings['config_order_status_id'] ?? 1);
             $orderRepository->confirm($orderId, $defaultOrderStatusId, 'Pedido realizado com sucesso via checkout.');
+
+            // Dispara o evento de pedido criado (Padrão Observer)
+            $this->eventDispatcher->dispatch(new OrderCreatedEvent($orderId, $orderDto));
 
             // Limpa o carrinho de compras
             $cartRepository->clear();

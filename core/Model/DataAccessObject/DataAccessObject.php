@@ -727,7 +727,7 @@ class DataAccessObject
 
         try {
             $conn = ConnectionDB::getInstance()->getConnection();
-            
+
             if (!$conn->inTransaction()) {
                 $conn->beginTransaction();
                 $managedTransaction = true;
@@ -998,6 +998,9 @@ class DataAccessObject
     /**
      * Alpha Engine: Debugger Ultra-Leve (Crash-Proof & Memory Safe)
      * Centraliza a auditoria de queries para leitura e escrita.
+     * Muito útil durante o desenvolvimento para depuração de queries.
+     * No futuro, podemos criar um arquivo de configuração para habilitar e desabilitar este método.
+     * Desabilitar em produção é altamente recomendado para evitar overhead de performance e segurança.
      */
     private function logDebugQuery(string $sql, array $params, ?float $startTime = null, ?int $affectedRowsOrId = null, array $sample = []): void
     {

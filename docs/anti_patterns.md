@@ -1,6 +1,6 @@
-# Débitos Técnicos e Anti-Patterns do código legado (Sanados e Isolados)
+# Débitos Técnicos e Anti-Patterns do código legado (Sanados e Consolidados)
 
-Este documento registra as falhas de design arquitetural originaisdo código legado e documenta como a **Alpha Engine** as neutralizou na transição para o modelo standalone. Como o banco de dados ainda preserva a estrutura de tabelas herdada para garantir a compatibilidade com dados de cadastros históricos, as incoerências de esquema foram isoladas na camada de acesso a dados (DAO/Mappers).
+Este documento registra as falhas de design arquitetural originais do código legado e documenta como a **Alpha Engine** as resolveu em sua totalidade. O banco de dados foi completamente modernizado, eliminando os antigos anti-patterns e garantindo integridade referencial nativa em nível de banco de dados (DBMS), com a normalização das tabelas e o uso de Foreign Keys reais.
 
 ---
 
@@ -85,22 +85,33 @@ O runtime de sessão é gerenciado exclusivamente pela Alpha Engine. O `SessionM
 
 ---
 
-## 5. Novo Sistema de Localização e Endereçamento (vs. Código Morto)
+## 5. Novo Sistema de Localização e Endereçamento (Sanado)
 **Módulo Afetado:** Geolocalização (`Country`, `Zone`, `City`) e Cadastro de Endereços de Clientes (`CustomerAddresses`).
 
-### O Problema Original / Transição:
-Originalmente, a localização e os endereços eram mapeados por tabelas legadas e classes não hierárquicas em subdiretórios planos.
-Como parte da modernização para o padrão de entidades e mappers limpos da Alpha Engine, foi estabelecido um novo sistema sob o namespace `Alpha\Model\Domain\Entities\Geo` (para entidades como `Country`, `Zone`, `City`) e `Alpha\Model\Domain\Entities\Customer\CustomerAddresses` (para endereços).
+### Solução Executada e Integridade de Banco:
+O sistema de localização legado (baseado em queries simples e chaves fracas sem restrições) foi totalmente descontinuado. Implementamos o novo modelo de domínio sob o namespace `Alpha\Model\Domain\Entities\Geo` (entidades `Country`, `Zone`, `City`) e `Alpha\Model\Domain\Entities\Customer\CustomerAddresses` para endereços de clientes. 
+As novas tabelas geográficas (`tbkk_geo_country`, `tbkk_geo_zone` e `tbkk_geo_city`) foram criadas e populadas no banco de dados com chaves estrangeiras restritivas reais, garantindo a integridade dos dados de endereçamento.
 
-### Classes e Repositórios Mortos (NÃO UTILIZAR OU TENTAR CONSERTAR):
-Para evitar conflitos e orientar desenvolvedores e IAs, os arquivos antigos foram renomeados com o sufixo `Deprecated.txt`. Eles representam **código morto** e **NÃO** devem ser utilizados, reabilitados ou modificados:
+### Classes e Repositórios Mortos (NÃO UTILIZAR):
+Os arquivos antigos foram renomeados com o sufixo `Deprecated.txt`. Eles representam **código morto** e não devem ser utilizados em nenhuma hipótese:
 * `core/Model/Domain/Entities/CountryDeprecated.txt` (Substituído por [`Country.php`](file:///var/www/html/agsonhos/core/Model/Domain/Entities/Geo/Country.php))
-* `core/Model/Domain/Entities/CountryDescriptionDeprecated.txt` (Descontinuado/Unificado no novo `Country`)
+* `core/Model/Domain/Entities/CountryDescriptionDeprecated.txt` (Descontinuado)
 * `core/Model/Domain/Repositories/AddressRepositoryDeprecated.txt` (Substituído por [`CustomerAddressesRepository.php`](file:///var/www/html/agsonhos/core/Model/Domain/Repositories/CustomerAddressesRepository.php))
 * `core/Model/Domain/Repositories/ZoneRepositoryDeprecated.txt` (Substituído por [`GeoZoneRepository.php`](file:///var/www/html/agsonhos/core/Model/Domain/Repositories/GeoZoneRepository.php))
-* `core/Model/Domain/Repositories/CountryRepositoryDeprecated.txt` (Substituído por mappers como [`GeoCountryMapper.php`](file:///var/www/html/agsonhos/core/Mappers/EntityMappers/GeoCountryMapper.php))
+* `core/Model/Domain/Repositories/CountryRepositoryDeprecated.txt` (Substituído por [`GeoCountryMapper.php`](file:///var/www/html/agsonhos/core/Mappers/EntityMappers/GeoCountryMapper.php))
 * `core/Mappers/EntityMappers/CountryMapperDeprecated.txt` (Substituído por [`GeoCountryMapper.php`](file:///var/www/html/agsonhos/core/Mappers/EntityMappers/GeoCountryMapper.php))
 
-### ⚠️ Lembrete de Arquitetura:
-* **Entidades Novas:** Sempre utilize as classes sob o namespace `Alpha\Model\Domain\Entities\Geo` e `Alpha\Model\Domain\Entities\Customer\CustomerAddresses`.
-* **Mapeamento:** O acesso aos países e estados ativos no front-end é feito via `GeoCountryMapper` e `GeoZoneMapper`. Não crie referências a classes deprecadas. Qualquer referência a esses arquivos legados ou tabelas desatualizadas causará incoerências e deve ser evitada.
+---
+
+## 6. Novo Módulo de Gestão de Fornecedores (Sanado)
+**Módulo Afetado:** Cadastro de Fornecedores (`Supplier`) e relacionamento com fabricantes e endereços.
+
+### O Problema Original:
+No código legado, não existia uma entidade ou estrutura de banco de dados para representar e auditar os fornecedores (`Suppliers`), impossibilitando a gestão de cadeias de suprimentos de forma estruturada.
+
+### Solução Executada:
+Criamos e normalizamos o novo esquema relacional de fornecedores em nível de banco de dados por meio das seguintes tabelas:
+*   `tbkk_supplier`: Cadastro central de fornecedores (CNPJ, Razão Social, etc.).
+*   `tbkk_supplier_address`: Mapeamento de endereços associados a cada fornecedor, integrado às tabelas geográficas (`tbkk_geo_country`, `tbkk_geo_zone`, `tbkk_geo_city`).
+*   `tbkk_supplier_contact_manufacturer`: Associação de muitos-para-muitos entre fornecedores, contatos de atendimento e fabricantes representados.
+A implementação conta com o novo namespace de domínio em `Alpha\Model\Domain\Entities\Supplier` e controladores administrativos específicos, garantindo conformidade total com o padrão Domain-Driven Design (DDD).
