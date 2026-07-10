@@ -1,0 +1,485 @@
+/* ══════════════════════════════════════════════════════
+   PÁGINA DE CHECKOUT (checkout.twig)
+   ══════════════════════════════════════════════════════ */
+.egen-checkout-page {
+    background-color: var(--egen-bg-page);
+    min-height: 100vh;
+    padding: 3rem 1rem;
+    box-sizing: border-box;
+}
+
+.egen-checkout-container {
+    max-width: 1000px;
+    margin: 0 auto;
+    width: 100%;
+}
+
+.egen-checkout-title {
+    font-size: 2.2rem;
+    font-weight: 800;
+    color: var(--egen-text-color);
+    margin: 0 0 2rem 0;
+    background: linear-gradient(135deg, #ffffff 0%, var(--egen-primary-color) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.egen-checkout-form {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+}
+
+.egen-checkout-steps {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+}
+
+.egen-checkout-step {
+    background: var(--egen-bg-card);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid rgba(252, 144, 3, 0.15);
+    border-radius: 16px;
+    padding: 2rem;
+    box-shadow: var(--egen-shadow-card);
+    position: relative;
+    overflow: hidden;
+    transition: transform 0.3s ease, border-color 0.3s ease;
+}
+
+.egen-checkout-step::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, var(--egen-primary-color), var(--egen-accent-color));
+    opacity: 0.7;
+}
+
+.egen-checkout-step-title {
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: var(--egen-primary-color);
+    margin: 0 0 1.5rem 0;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    font-family: var(--title-font, inherit);
+}
+
+.egen-checkout-step-title i {
+    font-size: 1.2rem;
+}
+
+.egen-checkout-identity-options,
+.egen-checkout-address-options {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+}
+
+
+
+/* Ocultar formulários inativos */
+.egen-checkout-form-hidden {
+    display: none !important;
+}
+
+/* Grid de duas colunas para form rows */
+.egen-form-row {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1.25rem;
+    margin-bottom: 1.25rem;
+}
+
+@media (min-width: 600px) {
+    .egen-form-row {
+        grid-template-columns: 1fr 1fr;
+    }
+}
+
+/* ── ESTILOS DO CHECKOUT EM ETAPAS (MULTI-STEP) ── */
+.egen-checkout-progress {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: relative;
+    margin-bottom: 3rem;
+    max-width: 500px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.egen-checkout-progress__line {
+    position: absolute;
+    top: 20px;
+    left: 10%;
+    right: 10%;
+    height: 3px;
+    background: var(--egen-border-color);
+    z-index: 1;
+    transition: background var(--egen-transition);
+}
+
+.egen-checkout-progress__step {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position: relative;
+    z-index: 2;
+    cursor: pointer;
+    flex: 1;
+}
+
+.egen-checkout-progress__circle {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: var(--egen-bg-page);
+    border: 2px solid var(--egen-border-color);
+    color: var(--egen-text-muted);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+    transition: all var(--egen-transition);
+}
+
+.egen-checkout-progress__label {
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: var(--egen-text-muted);
+    transition: color var(--egen-transition);
+    white-space: nowrap;
+}
+
+/* Etapa Ativa */
+.egen-checkout-progress__step.active .egen-checkout-progress__circle {
+    border-color: var(--egen-primary-color);
+    color: var(--egen-primary-color);
+    box-shadow: 0 0 10px rgba(252, 144, 3, 0.2);
+}
+
+.egen-checkout-progress__step.active .egen-checkout-progress__label {
+    color: var(--egen-text-color);
+}
+
+/* Etapa Concluída */
+.egen-checkout-progress__step.completed .egen-checkout-progress__circle {
+    background: var(--egen-primary-color);
+    border-color: var(--egen-primary-color);
+    color: #ffffff;
+}
+
+.egen-checkout-progress__step.completed .egen-checkout-progress__label {
+    color: var(--egen-primary-color);
+}
+
+/* Controle de Etapas do Checkout */
+.egen-checkout-step {
+    display: none;
+}
+
+.egen-checkout-step.active {
+    display: block;
+    animation: egenFadeIn 0.3s ease-out;
+}
+
+.egen-checkout-step-nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 2rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--egen-border-color);
+}
+
+/* Ajusta o alinhamento quando há apenas um botão (próximo na primeira etapa) */
+.egen-checkout-step[data-step="1"] .egen-checkout-step-nav {
+    justify-content: flex-end;
+}
+
+@keyframes egenFadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+
+/* ══════════════════════════════════════════════════════
+   MÉTODO DE PAGAMENTO (payment_method.twig)
+   ══════════════════════════════════════════════════════ */
+.egen-payment-methods-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 15px;
+    margin-top: 10px;
+}
+
+@media (min-width: 768px) {
+    .egen-payment-methods-grid {
+        grid-template-columns: 1fr 1fr;
+    }
+}
+
+.egen-payment-method-card {
+    display: block;
+    position: relative;
+    background: var(--egen-bg-input, rgba(255, 255, 255, 0.05));
+    border: 1px solid var(--egen-border-color, rgba(255, 255, 255, 0.1));
+    border-radius: 12px;
+    padding: 16px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.egen-payment-method-card:hover {
+    background: rgba(255, 255, 255, 0.08);
+    border-color: rgba(255, 255, 255, 0.2);
+}
+
+.egen-payment-method-card.active {
+    border-color: var(--egen-accent-color, #ff4081);
+    background: rgba(255, 64, 129, 0.05);
+    box-shadow: 0 0 10px rgba(255, 64, 129, 0.15);
+}
+
+.egen-payment-method-radio {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    accent-color: var(--egen-accent-color, #ff4081);
+    cursor: pointer;
+}
+
+.egen-payment-method-card-content {
+    display: flex;
+    align-items: flex-start;
+    gap: 15px;
+}
+
+.egen-payment-method-card-content i {
+    font-size: 24px;
+    margin-top: 2px;
+    color: var(--egen-accent-color, #ff4081);
+    width: 30px;
+    text-align: center;
+}
+
+.egen-payment-method-name {
+    display: block;
+    font-weight: 600;
+    font-size: 15px;
+    color: var(--egen-text-primary, #ffffff);
+    margin-bottom: 4px;
+}
+
+.egen-payment-method-desc {
+    display: block;
+    font-size: 12px;
+    color: var(--egen-text-secondary, #b3b3b3);
+    line-height: 1.4;
+}
+
+.egen-payment-note-group {
+    margin-top: 1.5rem;
+}
+
+/* Premium Checkout Steps Layout */
+.egen-checkout-page {
+    min-height: 100vh;
+    background: #0d0f14;
+    color: #e2e8f0;
+    font-family: 'Inter', system-ui, sans-serif;
+    padding: 3rem 1.5rem 5rem;
+}
+
+.egen-checkout-container {
+    max-width: 900px;
+    margin: 0 auto;
+}
+
+.egen-checkout-title {
+    font-size: clamp(1.8rem, 4vw, 2.4rem);
+    font-weight: 800;
+    color: #f1f5f9;
+    margin-bottom: 2.5rem;
+    letter-spacing: -0.02em;
+    background: linear-gradient(135deg, #ffffff 0%, #a5b4fc 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.egen-checkout-step {
+    background: rgba(255, 255, 255, 0.02);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    border-radius: 16px;
+    padding: 1.5rem 2rem;
+    margin-bottom: 1.5rem;
+    transition: all 0.3s ease;
+}
+
+.egen-checkout-step.active {
+    background: rgba(255, 255, 255, 0.04);
+    border-color: rgba(99, 102, 241, 0.25);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+}
+
+.egen-checkout-step-title {
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: #f1f5f9;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin: 0 0 1.5rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    padding-bottom: 1rem;
+}
+
+.egen-checkout-step-title i {
+    color: #a5b4fc;
+}
+
+.egen-checkout-progress {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: relative;
+    margin-bottom: 3.5rem;
+    padding: 0 1rem;
+}
+
+.egen-checkout-progress__line {
+    position: absolute;
+    top: 20px;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: rgba(255, 255, 255, 0.08);
+    z-index: 1;
+}
+
+.egen-checkout-progress__step {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.75rem;
+    position: relative;
+    z-index: 2;
+}
+
+.egen-checkout-progress__circle {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: #1e293b;
+    border: 2px solid rgba(255, 255, 255, 0.08);
+    color: #94a3b8;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 0.95rem;
+    transition: all 0.3s ease;
+}
+
+.egen-checkout-progress__step.active .egen-checkout-progress__circle {
+    background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+    border-color: #a5b4fc;
+    color: #ffffff;
+    box-shadow: 0 0 15px rgba(99, 102, 241, 0.4);
+}
+
+.egen-checkout-progress__label {
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: #64748b;
+    transition: color 0.3s ease;
+}
+
+.egen-checkout-progress__step.active .egen-checkout-progress__label {
+    color: #a5b4fc;
+}
+
+/* Nav Buttons & Form Buttons */
+.egen-checkout-step-nav {
+    display: flex;
+    justify-content: flex-end;
+    gap: 1rem;
+    margin-top: 2rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.05);
+    padding-top: 1.5rem;
+}
+
+/* Identity button choices */
+.egen-checkout-identity-options,
+.egen-checkout-address-options {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+}
+
+@media(min-width: 640px) {
+
+    .egen-checkout-identity-options,
+    .egen-checkout-address-options {
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    }
+}
+
+.egen-checkout-identity-options button,
+.egen-checkout-address-options button {
+    padding: 1.25rem !important;
+    border-radius: 12px !important;
+    justify-content: center;
+    background: rgba(255, 255, 255, 0.02) !important;
+    border: 1px solid rgba(255, 255, 255, 0.06) !important;
+}
+
+.egen-checkout-identity-options button:hover,
+.egen-checkout-address-options button:hover {
+    border-color: rgba(99, 102, 241, 0.3) !important;
+    background: rgba(99, 102, 241, 0.04) !important;
+}
+
+/* Alert styles */
+.egen-alert {
+    background: rgba(239, 68, 68, 0.1);
+    border: 1px solid rgba(239, 68, 68, 0.2);
+    color: #fca5a5;
+    padding: 1rem;
+    border-radius: 8px;
+    margin-bottom: 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.egen-alert.egen-alert--success {
+    background: rgba(46, 204, 113, 0.15);
+    border: 1px solid rgba(46, 204, 113, 0.3);
+    color: #2ecc71;
+}
+
+.egen-alert.egen-alert--danger {
+    background: rgba(239, 68, 68, 0.1);
+    border: 1px solid rgba(239, 68, 68, 0.2);
+    color: #fca5a5;
+}

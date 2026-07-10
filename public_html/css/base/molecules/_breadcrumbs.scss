@@ -1,0 +1,49 @@
+/* ══════════════════════════════════════════════════════
+   BREADCRUMBS (breadcrumbs.twig)
+   ══════════════════════════════════════════════════════ */
+.egen-breadcrumb {
+    display: inline-flex;
+    flex-wrap: wrap;
+    align-items: center;
+    padding: 0.5rem 1rem;
+    margin: 0 0 1.5rem 0;
+    list-style: none;
+    background-color: var(--egen-bg-card);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid var(--egen-border-color);
+    border-radius: var(--egen-radius);
+    gap: 0.5rem;
+}
+
+.egen-breadcrumb__item {
+    display: flex;
+    align-items: center;
+    font-size: 0.875rem;
+    color: var(--egen-text-muted);
+}
+
+.egen-breadcrumb__item:not(:last-child)::after {
+    content: "/";
+    margin-left: 0.5rem;
+    color: var(--egen-text-muted);
+    opacity: 0.4;
+    font-weight: 300;
+}
+
+.egen-breadcrumb__link {
+    color: var(--egen-primary-color);
+    text-decoration: none;
+    transition: color var(--egen-transition);
+    font-weight: 500;
+}
+
+.egen-breadcrumb__link:hover {
+    color: var(--egen-primary-hover);
+    text-decoration: underline;
+}
+
+.egen-breadcrumb__text {
+    color: var(--egen-text-color);
+    font-weight: 600;
+}

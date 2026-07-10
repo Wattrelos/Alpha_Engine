@@ -1,0 +1,129 @@
+/* ══════════════════════════════════════════════════
+   INFO/INSTITUTIONAL PAGE — Alpha Engine Premium UI
+   ══════════════════════════════════════════════════ */
+@import '../shared-mixins';
+
+#info-page {
+    min-height: 100vh;
+    background: var(--premium-bg-page);
+    color: var(--premium-text-secondary);
+    font-family: var(--premium-font-family);
+}
+
+.info-hero {
+    @extend %premium-hero;
+}
+
+.info-hero-inner {
+    margin: 0 auto;
+    max-width: 900px;
+}
+
+.info-breadcrumb {
+    @extend %premium-breadcrumb;
+    margin-bottom: 1.75rem;
+}
+
+.info-hero-title {
+    font-weight: 700;
+    color: var(--premium-text-primary);
+    letter-spacing: -0.02em;
+    font-size: clamp(1.5rem, 3vw, 2.2rem);
+    margin: 0 0 0.25rem;
+}
+
+.info-hero-sub {
+    color: var(--premium-text-muted);
+    font-size: 0.9rem;
+    margin: 0;
+}
+
+.info-hero-content {
+    display: flex;
+    align-items: center;
+    gap: 1.25rem;
+}
+
+.info-icon {
+    width: 64px;
+    height: 64px;
+    background: linear-gradient(135deg, rgba(99,102,241,0.25), rgba(139,92,246,0.25));
+    border: 1px solid var(--premium-border-glow);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--premium-color-secondary);
+    flex-shrink: 0;
+}
+
+.info-wrapper {
+    margin: 0 auto;
+    max-width: 900px;
+    padding: 3rem 1.5rem 6rem;
+}
+
+.info-card {
+    @extend %premium-card;
+    border-color: rgba(255, 255, 255, 0.07);
+    padding: 2.5rem 3rem;
+    box-shadow: 0 20px 50px rgba(0,0,0,0.3);
+}
+
+.info-body-content {
+    line-height: 1.8;
+    font-size: 1.05rem;
+    color: var(--premium-text-secondary);
+    
+    p {
+        margin-bottom: 1.5rem;
+    }
+    
+    h2, h3, h4 {
+        color: var(--premium-text-primary);
+        font-weight: 700;
+        margin-top: 2rem;
+        margin-bottom: 1rem;
+    }
+    
+    h2 { 
+        font-size: 1.5rem; 
+        border-bottom: 1px solid var(--premium-border-card-inner); 
+        padding-bottom: 0.5rem; 
+    }
+    
+    h3 { 
+        font-size: 1.25rem; 
+    }
+    
+    ul, ol {
+        margin-bottom: 1.5rem;
+        padding-left: 1.5rem;
+    }
+    
+    li {
+        margin-bottom: 0.5rem;
+    }
+    
+    strong {
+        color: #f8fafc;
+    }
+    
+    a {
+        color: var(--premium-color-secondary);
+        text-decoration: none;
+        transition: color 0.2s;
+        border-bottom: 1px dotted rgba(139, 92, 246, 0.4);
+        
+        &:hover {
+            color: #a5b4fc;
+            border-bottom-style: solid;
+        }
+    }
+}
+
+@media (max-width: 640px) {
+    .info-hero { padding: 2.5rem 1rem 2rem; }
+    .info-wrapper { padding: 2rem 1rem 4rem; }
+    .info-card { padding: 1.5rem; }
+}

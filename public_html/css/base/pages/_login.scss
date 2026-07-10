@@ -1,0 +1,314 @@
+/* ══════════════════════════════════════════════════════
+   PÁGINA DE LOGIN (Container e Elementos Premium UI)
+   ══════════════════════════════════════════════════════ */
+#account-login-page {
+    min-height: 100vh;
+    background: #0d0f14;
+    color: #e2e8f0;
+    font-family: 'Inter', 'Outfit', system-ui, sans-serif;
+}
+
+.login-hero {
+    background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 50%, #0f172a 100%);
+    border-bottom: 1px solid rgba(252, 144, 3, 0.25);
+    padding: 3rem 2rem 2.5rem;
+}
+
+.login-hero-inner {
+    max-width: 960px;
+    margin: 0 auto;
+}
+
+.login-breadcrumb {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.8rem;
+    color: #94a3b8;
+    margin-bottom: 1.5rem;
+}
+
+.login-breadcrumb a {
+    color: #94a3b8;
+    text-decoration: none;
+    transition: color 0.2s;
+}
+
+.login-breadcrumb a:hover {
+    color: #fc9003;
+}
+
+.login-breadcrumb .sep {
+    color: #475569;
+}
+
+.login-breadcrumb .current {
+    color: #fc9003;
+    font-weight: 500;
+}
+
+.login-hero-title {
+    font-size: clamp(1.6rem, 3vw, 2.2rem);
+    font-weight: 700;
+    color: #f1f5f9;
+    margin: 0 0 0.5rem;
+    letter-spacing: -0.02em;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.login-hero-icon {
+    width: 44px;
+    height: 44px;
+    flex-shrink: 0;
+    background: linear-gradient(135deg, rgba(252, 144, 3, 0.2), rgba(255, 193, 7, 0.2));
+    border: 1px solid rgba(252, 144, 3, 0.35);
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #ff1707;
+}
+
+.login-hero-sub {
+    color: #94a3b8;
+    font-size: 0.9rem;
+    margin: 0;
+}
+
+.login-wrapper {
+    max-width: 960px;
+    margin: 0 auto;
+    padding: 3rem 1.5rem 5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+}
+
+.login-alert {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 1rem 1.25rem;
+    border-radius: 10px;
+    font-size: 0.9rem;
+}
+
+.login-alert--danger {
+    background: rgba(239, 68, 68, 0.1);
+    border: 1px solid rgba(239, 68, 68, 0.25);
+    color: #fca5a5;
+}
+
+.login-alert--success {
+    background: rgba(34, 197, 94, 0.1);
+    border: 1px solid rgba(34, 197, 94, 0.25);
+    color: #86efac;
+}
+
+.login-grid-container {
+    display: grid;
+    grid-template-columns: 1fr 1.2fr;
+    gap: 2rem;
+    align-items: stretch;
+}
+
+.login-grid-col {
+    display: flex;
+}
+
+@media (max-width: 768px) {
+    .login-grid-container {
+        grid-template-columns: 1fr;
+        gap: 1.5rem;
+    }
+}
+
+/* ══════════════════════════════════════════════════════
+   CARD DE LOGIN (form-login.twig + card-register.twig)
+   ══════════════════════════════════════════════════════ */
+
+/* Card glassmorphism compartilhado entre login e card-register */
+.egen-login-card {
+    background: var(--egen-bg-card);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid rgba(252, 144, 3, 0.2);
+    border-radius: 16px;
+    padding: 2rem 2rem 1.75rem;
+    box-shadow: var(--egen-shadow-card);
+    box-sizing: border-box;
+    width: 100%;
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Faixa decorativa no topo — igual ao register */
+.egen-login-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, var(--egen-primary-color), var(--egen-accent-color), var(--egen-primary-color));
+    background-size: 200% 100%;
+    animation: shimmer-bar 3s linear infinite;
+}
+
+/* Título e subtítulo do login */
+.egen-login-title {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--egen-text-color);
+    margin: 0 0 0.35rem 0;
+    font-family: var(--title-font, inherit);
+}
+
+.egen-login-subtitle {
+    font-size: 0.9rem;
+    color: var(--egen-text-muted);
+    margin-bottom: 1.75rem;
+}
+
+/* ──────────────────────────────────────────────────────
+   CARD "Novo Cliente" (card-register.twig)
+   ────────────────────────────────────────────────────── */
+
+/* Usa o mesmo padrão glassmorphism do card de login */
+.egen-card-register {
+    background: var(--egen-bg-card);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid rgba(252, 144, 3, 0.2);
+    border-radius: 16px;
+    box-shadow: var(--egen-shadow-card);
+    box-sizing: border-box;
+    width: 100%;
+    height: 100%;
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    padding: 0;
+    /* controlado pelos filhos */
+}
+
+/* Faixa laranja animada no topo */
+.egen-card-register::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, var(--egen-primary-color), var(--egen-accent-color), var(--egen-primary-color));
+    background-size: 200% 100%;
+    animation: shimmer-bar 3s linear infinite;
+}
+
+/* Área de conteúdo (título + descrição) */
+.egen-card-register__body {
+    flex: 1;
+    padding: 2rem 2rem 1.25rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+/* Título do card */
+.egen-card-register__title {
+    font-size: 1.5rem;
+    font-weight: 700;
+    margin: 0;
+    background: linear-gradient(135deg, #ffffff 0%, var(--egen-primary-color) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    font-family: var(--title-font, inherit);
+}
+
+/* Subtítulo em negrito */
+.egen-card-register__subtitle {
+    font-size: 0.95rem;
+    color: var(--egen-primary-color);
+    margin: 0;
+}
+
+.egen-card-register__subtitle strong {
+    font-weight: 600;
+}
+
+/* Descrição */
+.egen-card-register__desc {
+    font-size: 0.9rem;
+    color: var(--egen-text-muted);
+    line-height: 1.6;
+    margin: 0.25rem 0 0 0;
+    flex: 1;
+}
+
+/* Rodapé do card: botão alinhado à direita */
+.egen-card-register__footer {
+    padding: 1.25rem 2rem 2rem;
+    display: flex;
+    justify-content: flex-end;
+    border-top: 1px solid var(--egen-border-color);
+    margin-top: auto;
+}
+
+
+/* --- CAMPOS DO FORMULÁRIO (MOLÉCULAS) --- */
+.egen-form-group {
+    margin-bottom: 1.25rem;
+    display: flex;
+    flex-direction: column;
+}
+
+.egen-form-label {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--egen-text-color);
+    margin-bottom: 0.5rem;
+}
+
+.egen-form-input {
+    width: 100%;
+    padding: 0.6rem 0.75rem;
+    font-size: 1rem;
+    color: var(--egen-text-color);
+    background-color: var(--egen-bg-input);
+    border: 1px solid var(--egen-border-color);
+    border-radius: 4px;
+    box-sizing: border-box;
+    transition: border-color 0.2s;
+}
+
+/* Efeito de clique no campo */
+.egen-form-input:focus {
+    border-color: var(--egen-primary-color);
+    outline: none;
+}
+
+/* --- LINK DE ESQUECI A SENHA --- */
+.egen-link-forgotten {
+    font-size: 0.85rem;
+    color: var(--egen-primary-color);
+    text-decoration: none;
+    margin-top: 0.5rem;
+    align-self: flex-start;
+}
+
+.egen-link-forgotten:hover {
+    text-decoration: underline;
+}
+
+/* --- ÁREA DO BOTÃO (ALINHAMENTO) --- */
+.egen-form-actions {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 1.5rem;
+}

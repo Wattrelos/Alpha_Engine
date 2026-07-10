@@ -1,0 +1,304 @@
+/* ══════════════════════════════════════════════════════
+   ESTILOS PRÊMIUM DA HOME PAGE
+   ══════════════════════════════════════════════════════ */
+.egen-hero-section {
+    position: relative;
+    border-radius: 20px;
+    overflow: hidden;
+    margin-bottom: 3rem;
+    box-shadow: var(--egen-shadow-card);
+    border: 1px solid rgba(252, 144, 3, 0.15);
+}
+
+.egen-hero-card {
+    background: linear-gradient(135deg, rgba(16, 20, 24, 0.9) 0%, rgba(30, 34, 39, 0.7) 100%),
+        url('/image/seamless/scandinavian-roof-tile-seamless.jpg') center/cover;
+    padding: 5rem 3rem;
+    display: flex;
+    align-items: center;
+    min-height: 400px;
+}
+
+.egen-hero-content {
+    max-width: 650px;
+}
+
+.egen-hero-title {
+    font-size: 3rem;
+    font-weight: 800;
+    line-height: 1.2;
+    margin-bottom: 1.5rem;
+    background: linear-gradient(135deg, #ffffff 0%, var(--egen-primary-color) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.egen-hero-subtitle {
+    font-size: 1.2rem;
+    color: var(--egen-text-muted);
+    line-height: 1.6;
+    margin-bottom: 2.5rem;
+}
+
+.egen-hero-actions {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+}
+
+
+
+/* Responsividade do Hero Premium */
+@media (max-width: 991px) {
+    .egen-hero-card {
+        padding: 4rem 2.5rem;
+        min-height: 350px;
+    }
+
+    .egen-hero-title {
+        font-size: 2.5rem;
+    }
+}
+
+@media (max-width: 768px) {
+    .egen-hero-card {
+        padding: 3rem 1.75rem;
+        min-height: 300px;
+    }
+
+    .egen-hero-title {
+        font-size: 2.2rem;
+    }
+
+    .egen-hero-subtitle {
+        font-size: 1.1rem;
+        margin-bottom: 2rem;
+    }
+}
+
+@media (max-width: 640px) {
+    .egen-hero-actions .egen-btn-primary {
+        width: auto;
+    }
+}
+
+@media (max-width: 576px) {
+    .egen-hero-card {
+        padding: 2rem 1.25rem;
+        text-align: center;
+        justify-content: center;
+    }
+
+    .egen-hero-title {
+        font-size: 1.75rem;
+    }
+
+    .egen-hero-subtitle {
+        font-size: 0.95rem;
+        margin-bottom: 1.75rem;
+    }
+
+    .egen-hero-actions {
+        flex-direction: column;
+        align-items: stretch;
+        width: 100%;
+        gap: 0.75rem;
+    }
+
+    .egen-hero-actions .egen-btn-primary,
+    .egen-hero-actions .egen-btn-outline {
+        display: inline-flex;
+        width: 100% !important;
+        justify-content: center;
+        box-sizing: border-box;
+    }
+}
+
+/* Category Grid & Cards */
+.egen-section-title {
+    font-size: 2rem;
+    font-weight: 800;
+    background: linear-gradient(135deg, #ffffff 0%, var(--egen-primary-color) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin-bottom: 2rem;
+}
+
+.egen-category-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 3rem;
+}
+
+.egen-category-card {
+    background: var(--egen-bg-card);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid var(--egen-border-color);
+    border-radius: 16px;
+    padding: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    text-decoration: none;
+    transition: all var(--egen-transition);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
+}
+
+.egen-category-card:hover {
+    transform: translateY(-5px);
+    border-color: rgba(252, 144, 3, 0.4);
+    box-shadow: 0 15px 35px rgba(252, 144, 3, 0.2);
+}
+
+.egen-category-card__image-wrapper {
+    width: 100%;
+    height: 140px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #ffffff;
+    border-radius: 12px;
+    padding: 1rem;
+    margin-bottom: 1.25rem;
+    overflow: hidden;
+}
+
+.egen-category-card__image-wrapper img {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+    transition: transform var(--egen-transition);
+}
+
+.egen-category-card:hover .egen-category-card__image-wrapper img {
+    transform: scale(1.08);
+}
+
+.egen-category-card__no-image {
+    font-size: 3.5rem;
+    height: 140px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 1.25rem;
+    background: rgba(255, 255, 255, 0.05);
+    width: 100%;
+    border-radius: 12px;
+    border: 1px solid var(--egen-border-color);
+}
+
+.egen-category-card__content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.25rem;
+}
+
+.egen-category-card__name {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--egen-text-color);
+    transition: color var(--egen-transition);
+}
+
+.egen-category-card:hover .egen-category-card__name {
+    color: var(--egen-primary-color);
+}
+
+.egen-category-card__count {
+    font-size: 0.8rem;
+    color: var(--egen-text-muted);
+}
+
+/* Diferenciais Premium da Home */
+.egen-advantages {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 4rem;
+    position: relative;
+}
+
+.egen-advantage-card {
+    background: var(--egen-bg-card);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid var(--egen-border-color);
+    border-radius: 16px;
+    padding: 1.5rem;
+    display: flex;
+    gap: 1rem;
+    align-items: flex-start;
+    transition: all var(--egen-transition);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+}
+
+.egen-advantage-card:hover {
+    transform: translateY(-4px);
+    border-color: rgba(252, 144, 3, 0.4);
+    box-shadow: 0 15px 35px rgba(252, 144, 3, 0.15);
+}
+
+.egen-advantage-icon {
+    font-size: 2rem;
+    flex-shrink: 0;
+    line-height: 1;
+    background: linear-gradient(135deg, var(--egen-primary-color), var(--egen-accent-color));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.egen-advantage-info {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+}
+
+.egen-advantage-title {
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--egen-text-color);
+    margin: 0;
+}
+
+.egen-advantage-desc {
+    font-size: 0.85rem;
+    color: var(--egen-text-muted);
+    margin: 0;
+    line-height: 1.4;
+}
+
+/* Decorações extras para a Home Page */
+.egen-section-header {
+    text-align: center;
+    margin-bottom: 2.5rem;
+    position: relative;
+}
+
+.egen-section-header .egen-section-title {
+    display: inline-block;
+    margin-bottom: 0.5rem;
+}
+
+.egen-section-header::after {
+    content: '';
+    display: block;
+    width: 60px;
+    height: 3px;
+    background: linear-gradient(90deg, var(--egen-primary-color), var(--egen-accent-color));
+    margin: 0.5rem auto 0;
+    border-radius: 2px;
+}
+
+.egen-section-subtitle {
+    font-size: 1rem;
+    color: var(--egen-text-muted);
+    max-width: 600px;
+    margin: 0 auto;
+}

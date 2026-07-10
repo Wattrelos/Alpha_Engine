@@ -1,0 +1,238 @@
+/* ==========================================================================
+   Premium Dark Mode: Order History & Details
+   ========================================================================== */
+.egen-order-page {
+    margin-top: 3rem;
+    margin-bottom: 5rem;
+    max-width: 1100px;
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+}
+
+.egen-order-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+}
+
+@media (min-width: 768px) {
+    .egen-order-grid {
+        grid-template-columns: 1fr 1fr;
+    }
+}
+
+.egen-order-card-title {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: #f1f5f9;
+    margin: 0 0 1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    padding-bottom: 0.75rem;
+}
+
+.egen-order-card-content {
+    font-size: 0.9rem;
+    color: #cbd5e1;
+    line-height: 1.6;
+}
+
+.egen-order-meta {
+    margin-top: 1rem;
+    padding-top: 0.75rem;
+    border-top: 1px dashed rgba(255, 255, 255, 0.06);
+    font-size: 0.85rem;
+    color: #94a3b8;
+}
+
+.egen-order-meta strong {
+    color: var(--egen-primary-color);
+}
+
+.egen-order-products {
+    padding: 0;
+    overflow: hidden;
+}
+
+.egen-order-products .egen-order-card-title {
+    padding: 1.25rem 1.5rem;
+    background: rgba(252, 144, 3, 0.05);
+    margin: 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+}
+
+.egen-cart-table .col-center {
+    text-align: center;
+}
+
+.egen-cart-table .col-right {
+    text-align: right;
+}
+
+.egen-order-totals {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    padding: 1.5rem;
+    background: rgba(0, 0, 0, 0.15);
+    border-top: 1px solid rgba(255, 255, 255, 0.05);
+    gap: 0.75rem;
+}
+
+.egen-order-total-row {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    max-width: 320px;
+    font-size: 0.9rem;
+    color: #cbd5e1;
+}
+
+.egen-order-total-row span {
+    color: #94a3b8;
+}
+
+.egen-order-total-row strong {
+    color: #f1f5f9;
+    font-weight: 600;
+}
+
+.egen-order-total-row--final {
+    font-size: 1.2rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    padding-top: 0.75rem;
+    margin-top: 0.25rem;
+}
+
+.egen-order-total-row--final span {
+    color: var(--egen-primary-color);
+    font-weight: 700;
+}
+
+.egen-order-total-row--final strong {
+    color: #ffffff;
+    font-weight: 800;
+}
+
+.egen-timeline-wrap {
+    padding: 1rem 0 0 0;
+}
+
+.egen-timeline {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+}
+
+.egen-timeline::before {
+    content: '';
+    position: absolute;
+    left: 7px;
+    top: 5px;
+    bottom: 5px;
+    width: 2px;
+    background: rgba(255, 255, 255, 0.06);
+}
+
+.egen-timeline-item {
+    position: relative;
+    padding-left: 2rem;
+}
+
+.egen-timeline-dot {
+    position: absolute;
+    left: 0;
+    top: 6px;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background: var(--egen-bg-card);
+    border: 3px solid rgba(252, 144, 3, 0.5);
+    z-index: 2;
+    transition: all 0.3s ease;
+}
+
+.egen-timeline-item:hover .egen-timeline-dot {
+    border-color: var(--egen-accent-color);
+    background: var(--egen-primary-color);
+    box-shadow: 0 0 10px rgba(252, 144, 3, 0.6);
+}
+
+.egen-timeline-content {
+    background: rgba(255, 255, 255, 0.015);
+    border: 1px solid rgba(255, 255, 255, 0.04);
+    border-radius: 12px;
+    padding: 1.25rem;
+}
+
+.egen-timeline-header {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.5rem;
+    margin-bottom: 0.75rem;
+}
+
+.egen-status-pill {
+    display: inline-block;
+    padding: 0.25rem 0.75rem;
+    border-radius: 100px;
+    font-size: 0.78rem;
+    font-weight: 600;
+    letter-spacing: 0.03em;
+    background: rgba(245, 158, 11, 0.15);
+    color: #fbbf24;
+    border: 1px solid rgba(245, 158, 11, 0.3);
+}
+
+.egen-status-pill.status-completo,
+.egen-status-pill.status-entregue {
+    background: rgba(34, 197, 94, 0.12);
+    color: #4ade80;
+    border-color: rgba(34, 197, 94, 0.3);
+}
+
+.egen-status-pill.status-cancelado,
+.egen-status-pill.status-recusado {
+    background: rgba(239, 68, 68, 0.12);
+    color: #f87171;
+    border-color: rgba(239, 68, 68, 0.3);
+}
+
+.egen-status-pill.status-enviado,
+.egen-status-pill.status-em-transporte {
+    background: rgba(59, 130, 246, 0.12);
+    color: #60a5fa;
+    border-color: rgba(59, 130, 246, 0.3);
+}
+
+.egen-timeline-date {
+    font-size: 0.8rem;
+    color: #64748b;
+}
+
+.egen-timeline-comment {
+    font-size: 0.88rem;
+    color: #94a3b8;
+    line-height: 1.5;
+    background: rgba(0, 0, 0, 0.15);
+    padding: 0.75rem 1rem;
+    border-radius: 8px;
+    border-left: 3px solid rgba(252, 144, 3, 0.4);
+}
+
+.egen-timeline-empty {
+    text-align: center;
+    color: #94a3b8;
+    margin: 0;
+    padding: 1rem 0;
+}
+
+.font-tabular {
+    font-variant-numeric: tabular-nums;
+}

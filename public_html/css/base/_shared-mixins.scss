@@ -1,0 +1,87 @@
+// Placeholders para reaproveitamento de estilos premium
+
+// 1. Hero premium compartilhado
+%premium-hero {
+    background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 50%, #0f172a 100%);
+    border-bottom: 1px solid var(--premium-border-glow, rgba(99, 102, 241, 0.2));
+    padding: 3rem 2rem 2.5rem;
+}
+
+// 2. Breadcrumbs premium
+%premium-breadcrumb {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.8rem;
+    color: var(--premium-text-muted, #94a3b8);
+    
+    a {
+        color: var(--premium-text-muted, #94a3b8);
+        text-decoration: none;
+        transition: color 0.2s;
+        
+        &:hover {
+            color: var(--premium-color-secondary, #8b5cf6);
+        }
+    }
+    
+    .sep {
+        color: #475569;
+    }
+    
+    .current {
+        color: var(--premium-color-secondary, #8b5cf6);
+        font-weight: 500;
+    }
+}
+
+// 3. Botões premium com gradiente
+%premium-button {
+    display: inline-flex;
+    align-items: center;
+    background: linear-gradient(135deg, var(--premium-color-primary, #6366f1) 0%, var(--premium-color-secondary, #8b5cf6) 100%);
+    color: #ffffff;
+    text-decoration: none;
+    border: none;
+    padding: 0.75rem 2rem;
+    border-radius: 10px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease-in-out;
+    box-shadow: 0 4px 15px var(--premium-shadow-color, rgba(99, 102, 241, 0.3));
+    font-family: inherit;
+    font-size: 0.95rem;
+
+    &:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(99, 102, 241, 0.5);
+        color: #ffffff;
+    }
+}
+
+// 4. Cards glassmorphism
+%premium-card {
+    background: var(--premium-bg-card, rgba(255, 255, 255, 0.03));
+    border: 1px solid var(--premium-border-card, rgba(255, 255, 255, 0.08));
+    border-radius: 16px;
+    backdrop-filter: blur(8px);
+}
+
+// 5. Inputs premium
+%premium-input {
+    background: rgba(15, 23, 42, 0.6);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 10px;
+    padding: 0.875rem 1.25rem;
+    color: var(--premium-text-primary, #f1f5f9);
+    font-size: 0.95rem;
+    font-family: inherit;
+    transition: all 0.2s ease-in-out;
+
+    &:focus {
+        outline: none;
+        border-color: var(--premium-color-primary, #6366f1);
+        box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.15);
+        background: rgba(15, 23, 42, 0.8);
+    }
+}

@@ -1,0 +1,291 @@
+/* ══════════════════════════════════════════════════════
+   PÁGINA DE CADASTRO — Container Principal
+   ══════════════════════════════════════════════════════ */
+
+/* Fundo escuro da página de cadastro */
+.egen-register-page {
+    min-height: 100vh;
+    background-color: var(--egen-bg-page);
+    background-image:
+        radial-gradient(ellipse at 15% 20%, rgba(252, 144, 3, 0.08) 0%, transparent 50%),
+        radial-gradient(ellipse at 85% 80%, rgba(252, 144, 3, 0.05) 0%, transparent 50%);
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    padding: 3rem 1rem;
+    box-sizing: border-box;
+}
+
+/* Card glassmorphism */
+.egen-register-container {
+    width: 100%;
+    max-width: 860px;
+    margin: 0 auto;
+    padding: 2.5rem 3rem;
+    background: var(--egen-bg-card);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid rgba(252, 144, 3, 0.2);
+    border-radius: 16px;
+    box-shadow: var(--egen-shadow-card);
+    box-sizing: border-box;
+    position: relative;
+    overflow: hidden;
+}
+
+/* Faixa decorativa laranja no topo do card */
+.egen-register-container::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, var(--egen-primary-color), var(--egen-accent-color), var(--egen-primary-color));
+    background-size: 200% 100%;
+    animation: shimmer-bar 3s linear infinite;
+}
+
+@keyframes shimmer-bar {
+    0% {
+        background-position: 200% 0;
+    }
+
+    100% {
+        background-position: -200% 0;
+    }
+}
+
+
+/* Título da página */
+.egen-register-title {
+    font-size: 2rem;
+    font-weight: 800;
+    color: var(--egen-text-color);
+    margin: 0 0 0.5rem 0;
+    letter-spacing: -0.5px;
+    background: linear-gradient(135deg, #ffffff 0%, var(--egen-primary-color) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+/* Subtítulo / link "já tem conta?" */
+.egen-register-subtitle {
+    font-size: 0.95rem;
+    color: var(--egen-text-muted);
+    margin-bottom: 2.5rem;
+}
+
+.egen-register-subtitle a {
+    color: var(--egen-primary-color);
+    text-decoration: none;
+    font-weight: 600;
+    transition: color var(--egen-transition);
+}
+
+.egen-register-subtitle a:hover {
+    color: var(--egen-accent-color);
+    text-decoration: underline;
+}
+
+
+/* ── Fieldsets e Legends ── */
+.egen-fieldset {
+    border: none;
+    padding: 0;
+    margin: 0 0 2rem 0;
+}
+
+.egen-legend {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--egen-primary-color);
+    margin-bottom: 1.5rem;
+    padding-bottom: 0.6rem;
+    width: 100%;
+    position: relative;
+    letter-spacing: 0.3px;
+}
+
+.egen-legend::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    width: 40px;
+    height: 2px;
+    background: linear-gradient(90deg, var(--egen-primary-color), var(--egen-accent-color));
+    border-radius: 2px;
+}
+
+
+/* ── Grid de 2 colunas ── */
+.egen-form-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 1.25rem 1.75rem;
+}
+
+/* ── Grupo de campo ── */
+.egen-form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+}
+
+/* ── Labels ── */
+.egen-form-label {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--egen-text-label);
+    letter-spacing: 0.3px;
+    text-transform: uppercase;
+}
+
+/* Asterisco de obrigatório */
+.egen-required .egen-form-label::after {
+    content: " *";
+    color: var(--egen-error-color);
+}
+
+/* ── Inputs e Selects ── */
+.egen-form-input,
+.egen-form-select {
+    width: 100%;
+    padding: 0.7rem 1rem;
+    font-size: 0.95rem;
+    color: var(--egen-text-color);
+    background-color: var(--egen-bg-input);
+    border: 1px solid var(--egen-border-color);
+    border-radius: var(--egen-radius-sm);
+    box-sizing: border-box;
+    transition: border-color var(--egen-transition),
+        background-color var(--egen-transition),
+        box-shadow var(--egen-transition);
+    appearance: none;
+    -webkit-appearance: none;
+}
+
+/* Garante legibilidade das opções em selects sob temas escuros */
+.egen-form-input option,
+.egen-form-select option {
+    background-color: #1e2227;
+    color: #e8eaed;
+}
+
+.egen-form-input::placeholder {
+    color: rgba(160, 170, 181, 0.5);
+}
+
+.egen-form-input:focus,
+.egen-form-select:focus {
+    border-color: var(--egen-border-focus);
+    background-color: var(--egen-bg-input-focus);
+    box-shadow: 0 0 0 3px rgba(252, 144, 3, 0.15);
+    outline: none;
+}
+
+
+/* ── Mensagem de erro ── */
+.egen-invalid-feedback {
+    color: var(--egen-error-color);
+    font-size: 0.8rem;
+    margin-top: 0.2rem;
+    display: none;
+    animation: fadeInDown 0.2s ease;
+}
+
+@keyframes fadeInDown {
+    from {
+        opacity: 0;
+        transform: translateY(-4px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.text-danger {
+    color: var(--egen-error-color);
+    font-size: 0.8rem;
+    margin-top: 0.2rem;
+}
+
+/* ── Captcha ── */
+.egen-captcha-wrapper {
+    margin-bottom: 1.5rem;
+}
+
+/* ── Rodapé do formulário (termos + botão) ── */
+.egen-form-footer {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 1rem;
+    border-top: 1px solid var(--egen-border-color);
+    padding-top: 1.5rem;
+    margin-top: 2rem;
+}
+
+/* Checkbox + label de aceite dos termos */
+.egen-form-agree {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    flex: 1;
+}
+
+.egen-form-checkbox {
+    width: 18px;
+    height: 18px;
+    cursor: pointer;
+    accent-color: var(--egen-primary-color);
+    flex-shrink: 0;
+}
+
+.egen-agree-label {
+    font-size: 0.875rem;
+    color: var(--egen-text-muted);
+    cursor: pointer;
+    line-height: 1.4;
+}
+
+.egen-agree-label a {
+    color: var(--egen-primary-color);
+    text-decoration: none;
+    font-weight: 600;
+}
+
+.egen-agree-label a:hover {
+    color: var(--egen-accent-color);
+    text-decoration: underline;
+}
+
+
+/* ── Responsividade ── */
+@media (max-width: 640px) {
+    .egen-register-container {
+        padding: 1.5rem 1.25rem;
+        margin: 1rem;
+        border-radius: 12px;
+    }
+
+    .egen-register-title {
+        font-size: 1.5rem;
+    }
+
+    .egen-form-footer {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .egen-btn-primary {
+        width: 100%;
+        justify-content: center;
+    }
+}

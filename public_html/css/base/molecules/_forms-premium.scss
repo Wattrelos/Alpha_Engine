@@ -1,0 +1,79 @@
+/* Premium Form Grid and Groups */
+.egen-form-grid-premium {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1.25rem 1.5rem;
+    margin-bottom: 1.25rem;
+}
+
+@media(min-width: 768px) {
+    .egen-form-grid-premium {
+        grid-template-columns: 1fr 1fr;
+    }
+}
+
+.egen-form-group-premium {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.egen-form-label-premium {
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: #94a3b8;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+}
+
+.egen-form-input-premium,
+.egen-form-select-premium {
+    width: 100%;
+    background: rgba(255, 255, 255, 0.03) !important;
+    border: 1px solid rgba(255, 255, 255, 0.08) !important;
+    border-radius: 8px !important;
+    padding: 0.8rem 1rem !important;
+    color: #f1f5f9 !important;
+    font-family: inherit !important;
+    font-size: 0.95rem !important;
+    transition: all 0.2s ease !important;
+    box-sizing: border-box;
+}
+
+.egen-form-input-premium::placeholder {
+    color: #475569 !important;
+}
+
+.egen-form-input-premium:focus,
+.egen-form-select-premium:focus {
+    outline: none !important;
+    background: rgba(99, 102, 241, 0.04) !important;
+    border-color: rgba(99, 102, 241, 0.4) !important;
+    box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.15) !important;
+}
+
+/* Custom Select Arrow */
+.egen-select-wrapper-premium {
+    position: relative;
+    display: flex;
+    align-items: center;
+    width: 100%;
+}
+
+.egen-select-wrapper-premium select {
+    padding-right: 2.5rem !important;
+    appearance: none !important;
+    -webkit-appearance: none !important;
+}
+
+.egen-select-arrow-premium {
+    position: absolute;
+    right: 1rem;
+    color: #64748b;
+    pointer-events: none;
+    display: flex;
+    align-items: center;
+}
