@@ -1,0 +1,194 @@
+@startuml "Optimized_Full_Recording_and_Reverse_Readback_Workflow"
+
+' --- Configurações de Estilo Moderno ---
+<style>
+sequenceDiagram {
+    ParticipantPadding 20
+    MessageAlign center
+    roundcorner 10
+    
+    ' Estilo das setas e linhas
+    arrow {
+        LineColor #263238
+        FontColor #263238
+        FontSize 12
+    }
+    
+    ' Estilo geral dos grupos (alt, loop, group)
+    group {
+        BackgroundColor #FBFCFD
+        LineColor #90A4AE
+        LineThickness 1
+        FontColor #37474F
+        FontSize 13
+    }
+    
+    ' Estilo das notas
+    note {
+        BackgroundColor #FFF9C4
+        BorderColor #FBC02D
+        FontColor #5D4037
+        FontSize 11
+    }
+}
+</style>
+
+autonumber
+title "Order Lifecycle Flow: Optimized Write & Reverse Read"
+
+' --- CAMADA DE APRESENTAÇÃO E INFRA ---
+box "Presentation & Infrastructure" #E1F5FE
+    actor "Client" as Cliente #FFE0B2
+    participant "Slim Middleware" as Middleware #0288D1
+    participant "Slim Action" as Action #0288D1
+    participant "Twig Engine" as Twig #0288D1
+    queue "RabbitMQ" as Rabbit #FFD54F
+end box
+
+' --- CAMADA DE DOMÍNIO ---
+box "Domain & Application" #E8F5E9
+    participant "Domain Service" as Domain #43A047
+    participant "Repository" as Repo #43A047
+    participant "Event Dispatcher" as Event #43A047
+end box
+
+' --- CAMADA DE PERSISTÊNCIA ---
+box "Persistence Layer" #FFF3E0
+    participant "Unit Of Work" as UoW #F57C00
+    participant "Data Mapper" as Mapper #F57C00
+    participant "Query Builder" as QB #F57C00
+    participant "Dynamic DAO" as DAO #F57C00
+    database "MySQL DB" as DB #455A64
+end box
+
+' --- INÍCIO DO FLUXO ---
+Cliente -> Middleware : HTTP Request
+activate Middleware
+    Middleware -> Action : __invoke(Request)
+    activate Action
+        
+    ' --- FLUXO DE LEITURA ---
+    alt #F5F5F5 READ ROUTE (GET /order/{id})
+        note over Cliente, Action: Purpose: Fetch order details for display
+        
+        Action -> Repo : findById(id)
+        activate Repo
+            Repo -> QB : select()->where('id', id)
+            activate QB
+                QB -> QB : buildSQL()
+                QB --> Repo : SQL String
+            deactivate QB
+            
+            Repo -> DAO : query(SQL)
+            activate DAO
+                DAO -> DB : SELECT * FROM orders...
+                activate DB
+                DB --> DAO : Raw Dataset
+                deactivate DB
+                DAO --> Repo : Raw Dataset
+            deactivate DAO
+            
+            note over Repo, Mapper: **Hydration Phase**: Transforming SQL rows into Objects
+            Repo -> Mapper : mapToDomain(RawData)
+            activate Mapper
+                Mapper --> Repo : OrderEntity
+            deactivate Mapper
+            Repo --> Action : OrderEntity
+        deactivate Repo
+        
+        Action -> Twig : render('details.twig', Entity)
+        activate Twig
+            Twig --> Action : HTML / JSON Response
+        deactivate Twig
+        
+    ' --- FLUXO DE ESCRITA ---
+    else #EDF2F7 WRITE ROUTE (POST /checkout)
+        note over Cliente, Action: **Security**: X-Idempotency-Key header check
+        note over Action, Domain: Prevent duplicate orders via Redis (SET NX)
+
+        Action -> Domain : verifyIdempotency(Token)
+        activate Domain
+            Domain --> Action : Token OK / Proceed
+        deactivate Domain
+
+        note over Action, Repo: Business logic execution (Pricing, Coupons, Stock)
+        Action -> Domain : processBusinessRule()
+        activate Domain
+            Domain -> Repo : save(Entity)
+            activate Repo
+                note over Repo, UoW: **UoW Pattern**: Keeps changes in memory first
+                Repo -> UoW : registerNew(Entity)
+                activate UoW
+                    UoW --> Repo : Acknowledged
+                deactivate UoW
+                Repo --> Domain : Acknowledged
+            deactivate Repo
+            Domain --> Action : State Updated
+        deactivate Domain
+        
+        note over Action, UoW: **Atomic Commit**: Starts physical DB transaction
+        Action -> UoW : commit()
+        activate UoW
+            
+            group #FFFFFF Try [Physical Persistence]
+                UoW -> DB : BEGIN TRANSACTION
+                
+                UoW -> Mapper : mapToDatabase(Entity)
+                activate Mapper
+                    Mapper -> QB : insertInto()->values()
+                    activate QB
+                        QB -> QB : buildSQL()
+                        QB --> Mapper : SQL + Bindings
+                    deactivate QB
+                    
+                    Mapper -> DAO : execute(SQL, Bindings)
+                    activate DAO
+                        DAO -> DB : INSERT INTO orders...
+                        activate DB
+                        DB --> DAO : DB_Success
+                        deactivate DB
+                        DAO --> Mapper : Persistence Meta
+                    deactivate DAO
+                    Mapper --> UoW : Mapping Done
+                deactivate Mapper
+                
+                UoW -> DB : COMMIT
+                UoW --> Action : Committed
+                
+                note over Action, Event: **Post-Commit**: Triggers Async Side Effects
+                Action -> Event : dispatch(OrderCreated)
+                activate Event
+                    Event -> Rabbit : Publish to Queue
+                    activate Rabbit
+                    Rabbit --> Event : ACK
+                    deactivate Rabbit
+                    Event --> Action : Events Sent
+                deactivate Event
+                
+            else #FFEBEE Catch [Exception / Rollback]
+                note over UoW, DB: **Failure Recovery**: No data is saved
+                UoW -> DB : ROLLBACK TRANSACTION
+                UoW --> Action : Error Thrown
+            end
+        deactivate UoW
+
+        ' --- RESPOSTA FINAL ---
+        alt #E8F5E9 Success Case
+            Action -> Twig : render('success.twig')
+            activate Twig
+                Twig --> Action : HTML Page
+            deactivate Twig
+        else #FFEBEE Failure Case
+            Action -> Twig : render('error.twig')
+            activate Twig
+                Twig --> Action : Error Message
+            deactivate Twig
+        end
+    end
+
+    Action --> Middleware : Response Object
+    deactivate Action
+    Middleware --> Cliente : HTTP Response
+deactivate Middleware
+
+@enduml

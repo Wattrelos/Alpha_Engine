@@ -13,7 +13,7 @@ title Enhanced Entity-Relationship (EER) Diagram for AI Agents
 
 package "Catalog Module" #FFF2CC {
     entity Product #FFF9E6 {
-        * id : int <<PK>>
+        * id : BIGINT <<PK>>
         --
         * model : varchar(64)
         * sku : varchar(64)
@@ -671,5 +671,16 @@ Manufacturer "1" ||--|{ SupplierContactManufacturer : "represented by"
 Country "1" ||--|{ SupplierAddress : "address country"
 Zone "1" ||--|{ SupplierAddress : "address state/zone"
 City "1" ||--|{ SupplierAddress : "address city"
+
+legend right
+  == Mapeamento de Tipos (Arquitetura)
+  * **Banco de Dados (DB)** -> **PHP (64-bit)**
+  * BIGINT (8 bytes, PK/FK) -> int (8-byte integer)
+  * INT (4 bytes) -> int
+  * TINYINT(1) -> bool
+  * VARCHAR / TEXT -> string
+  * DECIMAL -> string
+  * DATETIME / DATE -> DateTimeInterface
+endlegend
 
 @enduml

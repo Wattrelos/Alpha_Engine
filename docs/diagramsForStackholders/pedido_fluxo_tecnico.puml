@@ -1,28 +1,45 @@
 @startuml "Fluxo_Completo_Gravacao_e_Leitura_Reversa_Otimizado"
 autonumber
 
+skinparam style strictuml
+skinparam BoxPadding 15
+skinparam ParticipantPadding 15
+skinparam sequence {
+    ArrowColor #2A75D3
+    ActorBorderColor #2A75D3
+    ActorBackgroundColor #E8F0FE
+    LifeLineBorderColor #2A75D3
+    LifeLineBackgroundColor #85BBF0
+    ParticipantBorderColor #555555
+    ParticipantBackgroundColor #F9F9F9
+    DatabaseBorderColor #2CA02C
+    DatabaseBackgroundColor #D4EDDA
+    QueueBorderColor #FF8C00
+    QueueBackgroundColor #FFF3CD
+}
+
 title Fluxo de Criação e Leitura de Pedidos (Escrita/Leitura Reversa)
 
-box "Apresentação e Infraestrutura"
+box "Apresentação e Infraestrutura" #FFE5CC
     actor "Cliente" as Cliente
     participant "Slim Middleware" as Middleware
     participant "Slim Action" as Action
     participant "Twig Engine" as Twig
-    queue "RabbitMQ" as Rabbit
+    queue "RabbitMQ" as Rabbit #FFF3CD
 end box
 
-box "Domínio e Aplicação"
+box "Domínio e Aplicação" #D5E8D4
     participant "Domain Service" as Domain
     participant "Repository" as Repo
     participant "Event Dispatcher" as Event
 end box
 
-box "Persistência"
+box "Persistência" #DAE8FC
     participant "Unit Of Work" as UoW
     participant "Data Mapper" as Mapper
     participant "Query Builder" as QB
     participant "Dynamic DAO" as DAO
-    database "Database" as DB
+    database "Database" as DB #D4EDDA
 end box
 
 Cliente -> Middleware : Requisição HTTP
@@ -31,7 +48,10 @@ activate Middleware
     activate Action
         
     alt ROTA DE LEITURA (HTTP GET /pedido/{id})
-        note over Cliente, Action: GET /pedido/{id} - Leitura de detalhes do pedido
+        note over Cliente, Action #DAE8FC
+            **Fase de Leitura Otimizada (Leitura Reversa)**
+            Carrega informações para exibição de forma rápida.
+        end note
         
         Action -> Repo : findById(id)
         activate Repo
@@ -50,7 +70,7 @@ activate Middleware
                 DAO --> Repo : Raw Data
             deactivate DAO
             
-            note over Repo, Mapper: Hydration: RawData para Domain Entity
+            note over Repo, Mapper #D5E8D4: **Hydration:** Converte dados puros (RawData) em Objeto de Domínio (Entity)
             Repo -> Mapper : mapToDomain(RawData)
             activate Mapper
                 Mapper --> Repo : Entity
@@ -64,20 +84,23 @@ activate Middleware
         deactivate Twig
         
     else ROTA DE ESCRITA (HTTP POST /{lang}/checkout)
-        note over Cliente, Action: POST /checkout (Escrita) - Evita duplo clique com X-Idempotency-Key
-        note over Action, Domain: Idempotência: Salva token no Redis (SET NX EX)
+        note over Cliente, Action #F8CECC
+            **Fase de Escrita Transacional e Segura**
+            Garante integridade física, evita cliques duplos e desacopla eventos.
+        end note
 
+        note over Action, Domain #F8CECC: **1. Idempotência:** Impede compras duplicadas com a mesma chave (janela de 5 min)
         Action -> Domain : verificarIdempotencia(RequestToken)
         activate Domain
             Domain --> Action : Token Valido / Novo Pedido
         deactivate Domain
 
-        note over Action, Repo: Preparação em memória (totais/cupons) antes da transação
+        note over Action, Repo #D5E8D4: **2. Processamento In-Memory:** Todas as validações ocorrem sem travar o banco
         Action -> Domain : processarRegraNegocio()
         activate Domain
             Domain -> Repo : save(Entity)
             activate Repo
-                note over Repo, UoW: UoW: Registra novo pedido em memória
+                note over Repo, UoW #DAE8FC: **Unit of Work (UoW):** Apenas registra a entidade em memória
                 Repo -> UoW : registerNew(Entity)
                 activate UoW
                     UoW --> Repo : OK
@@ -87,7 +110,7 @@ activate Middleware
             Domain --> Action : StateUpdated
         deactivate Domain
         
-        note over Action, UoW: Transação curta no MySQL no commit
+        note over Action, UoW #DAE8FC: **3. Late Binding (Transação Curta):** Abre transação MySQL apenas no commit final
         Action -> UoW : commit()
         activate UoW
             
@@ -116,7 +139,7 @@ activate Middleware
                 UoW -> DB : COMMIT
                 UoW --> Action : Committed
                 
-                note over Action, Event: Eventos assíncronos disparados estritamente pós-commit
+                note over Action, Event #FFF3CD: **4. Desacoplamento:** Mensagens publicadas em fila assíncrona pós-commit
                 Action -> Event : dispatch(OrderCreatedEvent)
                 activate Event
                     Event -> Rabbit : Publicar evento na fila (RabbitMQ)
@@ -127,19 +150,20 @@ activate Middleware
                 deactivate Event
                 
             else Catch [Exceção / Rollback]
-                note over UoW, DB: Falha: Transação revertida (Rollback)
+                note over UoW, DB #F8CECC: **Tratamento de Falha:** Garante consistência realizando ROLLBACK completo
                 UoW -> DB : ROLLBACK TRANSACTION
                 UoW --> Action : Throws Exception (Rollback)
             end
         deactivate UoW
 
         alt Fluxo de Sucesso
-            note over Action, Twig: Finalização: Limpa carrinho e monta resposta
+            note over Action, Twig #D5E8D4: Limpa o carrinho do usuário e apresenta tela de sucesso
             Action -> Twig : render('sucesso.twig')
             activate Twig
                 Twig --> Action : HTML Response
             deactivate Twig
         else Fluxo de Falha
+            note over Action, Twig #F8CECC: Mostra tela amigável informando o erro ocorrido
             Action -> Twig : render('erro.twig')
             activate Twig
                 Twig --> Action : HTML Error Page

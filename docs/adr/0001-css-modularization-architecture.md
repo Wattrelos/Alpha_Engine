@@ -1,15 +1,45 @@
-# ADR 1: Estratégia Híbrida de Modularização e Compilação de CSS/SCSS
+---
+adr: 1
+title: Estratégia Híbrida de Modularização e Compilação de CSS/SCSS
+status: Approved
+date: 2026-07-10
+authors:
+  - Antigravity AI
+  - Kiruma
+impacted_components:
+  - directory: public_html/css/custom/
+  - file: composer.json
+  - file: public_html/css/custom/_shared-mixins.scss
+rules:
+  compilation:
+    engine: "scssphp/scssphp"
+    command: "composer build-css"
+    no_node_production: true
+  bundling:
+    unified_bundle: "new-stylesheet.css"
+    unified_pages:
+      - Home
+      - Category
+      - Product Detail
+      - Cart
+    lazy_loaded_modules:
+      - addresses.css
+      - orders.css
+      - returns-institutional.css
+  reuse_pattern:
+    method: "Sass Placeholders"
+    file: "_shared-mixins.scss"
+---
 
-* **Status:** Aprovado
-* **Data:** 2026-07-10
-* **Autores:** Antigravity AI & Kiruma (Pair Programming)
+# ADR 001: Estratégia Híbrida de Modularização e Compilação de CSS/SCSS
+
+## Status
+Aprovado (2026-07-10)
 
 ## Contexto
-
 O e-commerce Alpha Engine possuía um arquivo de estilo monolítico (`new-stylesheet.css`) com mais de 4500 linhas de código, dificultando a manutenibilidade, a especialização de estilos e a evolução do design. Com a introdução do Sass (SCSS) para modularizar os arquivos por componentes e páginas, surgiu a necessidade de definir como esses arquivos compilados devem ser servidos no ambiente de produção: se consolidamos tudo em um único pacote de estilos ou se fragmentamos um arquivo `.css` para cada página do site.
 
 ## Decisão
-
 Adotamos uma **Estratégia Híbrida de Entrega de CSS**:
 
 1.  **Bundle Principal Unificado (`new-stylesheet.css`):**
@@ -31,10 +61,11 @@ Adotamos uma **Estratégia Híbrida de Entrega de CSS**:
 
 ## Consequências
 
-*   **Positivas:**
-    *   **Manutenibilidade:** O código-fonte está perfeitamente organizado em pequenos arquivos SCSS especializados (Atoms, Molecules, Pages).
-    *   **Performance:** A jornada principal de compras se beneficia totalmente do cache do navegador.
-    *   **Redução de Redundância:** Estilos comuns são herdados via placeholders do Sass, garantindo um código enxuto e consistente em todas as páginas.
-    *   **Independência de Ambiente:** Compilação nativa em PHP sem dependência de dependências Node/npm complexas em produção.
-*   **Negativas:**
-    *   Necessidade de executar `composer build-css` manualmente (ou integrado a um CI/CD) sempre que houver alterações visuais nos arquivos `.scss`.
+### Positivas (Prós)
+*   **Manutenibilidade:** O código-fonte está perfeitamente organizado em pequenos arquivos SCSS especializados (Atoms, Molecules, Pages).
+*   **Performance:** A jornada principal de compras se beneficia totalmente do cache do navegador.
+*   **Redução de Redundância:** Estilos comuns são herdados via placeholders do Sass, garantindo um código enxuto e consistente em todas as páginas.
+*   **Independência de Ambiente:** Compilação nativa em PHP sem dependência de dependências Node/npm complexas em produção.
+
+### Negativas (Contras)
+*   Necessidade de executar `composer build-css` manualmente (ou integrado a um CI/CD) sempre que houver alterações visuais nos arquivos `.scss`.

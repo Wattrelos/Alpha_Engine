@@ -11,7 +11,17 @@ start
 :Dirigir-se ao vendedor para gerar o pedido no sistema;
 :Vendedor gera pedido e adiciona os itens no sistema via
 leitor de código de barras e reserva produtos em uma sacola;
-:Identificar o Cliente no sistema;
+note right
+    === REGRA DE NEGÓCIO DE ESTOQUE
+    Como não existe reserva de estoque no POS,
+    o vendedor deve retirar os produtos da prateleira
+    e guardar em uma sacola na área do caixa para
+    garantir a mercadoria até o cliente finalizar o
+    pagamento ou a devolução manual dos produtos
+    ao estoque em caso de cancelamento.
+  end note  
+:Identificar o Cliente no sistema (Cadastrado) ou cadastrar o cliente
+no momento da compra ou comprar como visitante(nao cadastrado);
 :Comandar "Salvar Pedido";
 
 |Sistema POS (Back-end)|
