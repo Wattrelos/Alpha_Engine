@@ -1,0 +1,121 @@
+@startuml
+autonumber
+skinparam BoxPadding 10
+skinparam ParticipantPadding 10
+
+actor "Cliente" as Cliente
+box "Sistema de Barbearia (Java)" #LightBlue
+    participant "AgendaController" as Ctrl
+    participant "ServiceRegistry" as Registry
+    participant "AgendamentoService" as Service
+    participant "UnitOfWork" as UoW
+    participant "GenericRepository" as Repo
+    participant "DataMapper" as Mapper
+end box
+database "MySQL" as DB
+
+== Passo 1: Consultar Horários Disponíveis ==
+
+Cliente -> Ctrl : solicitarHorariosLivres(servicoId, profissionalId, data)
+activate Ctrl
+
+Ctrl -> Registry : getService("Agendamento")
+activate Registry
+Registry --> Ctrl : AgendamentoService
+deactivate Registry
+
+Ctrl -> Service : getHorariosDisponiveis(servicoId, profissionalId, dataStr)
+activate Service
+
+Service -> UoW : new UnitOfWork()
+activate UoW
+Service -> UoW : getConnection()
+UoW --> Service : Connection
+deactivate UoW
+
+Service -> DB : SELECT em tab_dias_funcionamento (verifica se abre e limites)
+activate DB
+DB --> Service : Dados de Funcionamento
+deactivate DB
+
+Service -> DB : SELECT em tab_grade_horarios (busca slots do dia)
+activate DB
+DB --> Service : Lista de GradeHorarios
+deactivate DB
+
+Service -> DB : SELECT em tab_agendamento (busca agendamentos do dia)
+activate DB
+DB --> Service : Agendamentos existentes
+deactivate DB
+
+Note over Service : Valida colisão de horários\ne duração em memória
+
+Service --> Ctrl : List<Map<String, Object>> (slots de 20 em 20 min com status)
+deactivate Service
+
+Ctrl --> Cliente : JSON de horários livres
+deactivate Ctrl
+
+== Passo 2: Confirmar o Agendamento ==
+
+Cliente -> Ctrl : confirmarReserva(servicoId, profissionalId, dataHora, clienteDados...)
+activate Ctrl
+
+Ctrl -> Service : confirmarReserva(servicoId, profissionalId, dataStr, horaStr, clienteDados...)
+activate Service
+
+Service -> UoW : new UnitOfWork()
+activate UoW
+Service -> UoW : getConnection()
+UoW --> Service : Connection
+deactivate UoW
+
+Service -> DB : SELECT em tab_dias_funcionamento e tab_grade_horarios
+activate DB
+DB --> Service : Detalhes do dia e do slot GradeHorarios
+deactivate DB
+
+Note over Service : Valida se o horário selecionado\nestá dentro dos limites de funcionamento
+
+Service -> Service : determinarProfissionalLivre(...)
+activate Service
+Service -> DB : SELECT COUNT(*) em tab_agendamento (valida colisão/overlap)
+activate DB
+DB --> Service : count
+deactivate DB
+deactivate Service
+
+alt Profissional está livre
+    Service -> Service : instanciar novo Agendamento\n(associa GradeHorarios)
+    Service -> Repo : create(agendamento)
+    activate Repo
+    
+    Repo -> UoW : getConnection()
+    activate UoW
+    UoW --> Repo : Connection
+    deactivate UoW
+    
+    Repo -> Mapper : getTableName() / getColumnName() / convertToTargetType()
+    activate Mapper
+    Mapper --> Repo : Metadados SQL mapeados
+    deactivate Mapper
+    
+    Repo -> DB : INSERT INTO tab_agendamento (grade_horarios_id, hora_inicio, hora_fim...)
+    activate DB
+    DB --> Repo : Sucesso (id gerado)
+    deactivate DB
+    
+    Repo --> Service : Agendamento salvo
+    deactivate Repo
+    
+    Service --> Ctrl : Agendamento confirmado
+    Ctrl --> Cliente : Redireciona para /order-confirmation?id=...
+else Horário ocupado / Indisponível
+    Service --> Ctrl : Lança exceção (RuntimeException)
+    Ctrl --> Cliente : Redireciona com mensagem de erro
+end
+
+deactivate Service
+deactivate Ctrl
+
+@enduml

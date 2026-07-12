@@ -1,0 +1,334 @@
+@startuml
+autonumber
+skinparam BoxPadding 10
+skinparam ParticipantPadding 10
+
+actor "Administrador" as Admin
+box "Painel Administrativo (Java/Thymeleaf/JS)" #LightGreen
+    participant "Navegador (HTML/JS)" as UI
+    participant "GenericViewController" as ViewCtrl
+    participant "JsonController" as JsonCtrl
+    participant "SimpleObjectFactory" as Factory
+    participant "EntityMapper" as Mapper
+    participant "ServiceRegistry" as Registry
+    participant "AgendamentoService" as Service
+    participant "UnitOfWork" as UoW
+    participant "GenericRepository" as Repo
+    participant "DataMapper" as DBMap
+end box
+database "MySQL" as DB
+
+== Passo 1: Listagem de Agendamentos ==
+
+Admin -> UI : Acessa /MRYnZpAsC9sp/listar/Agendamento
+activate UI
+
+UI -> ViewCtrl : GET /MRYnZpAsC9sp/listar/Agendamento
+activate ViewCtrl
+
+ViewCtrl -> Factory : create("Agendamento")
+activate Factory
+Factory --> ViewCtrl : Instância vazia de Agendamento
+deactivate Factory
+
+ViewCtrl -> Mapper : fillEntity(entidadeBase, request)
+activate Mapper
+Mapper --> ViewCtrl : Filtro de Agendamento (WHERE)
+deactivate Mapper
+
+ViewCtrl -> Registry : getService("Agendamento")
+activate Registry
+Registry --> ViewCtrl : AgendamentoService
+deactivate Registry
+
+ViewCtrl -> Service : read(filtro)
+activate Service
+
+Service -> UoW : new UnitOfWork()
+activate UoW
+Service -> Repo : query(filtro)
+activate Repo
+
+Repo -> UoW : getConnection()
+UoW --> Repo : Connection
+
+Repo -> DBMap : getTableName() / getColumnName()
+activate DBMap
+DBMap --> Repo : Metadados SQL (tab_agendamento...)
+deactivate DBMap
+
+Repo -> DB : SELECT * FROM tab_agendamento WHERE ...
+activate DB
+DB --> Repo : ResultSet
+deactivate DB
+
+Repo --> Service : List<Agendamento>
+deactivate Repo
+
+UoW --> Service : close()
+deactivate UoW
+
+Service --> ViewCtrl : List<Agendamento>
+deactivate Service
+
+Note over ViewCtrl, UI : Valida permissão do usuário logado na sessão\n(GERENCIAR_TODAS_AGENDAS) para exibir as ações
+
+ViewCtrl --> UI : Retorna admin/listagem-dinamica.html
+deactivate ViewCtrl
+
+UI --> Admin : Exibe tabela com a lista de agendamentos e botões CRUD
+deactivate UI
+
+
+== Passo 2: Cadastro de Novo Agendamento ==
+
+Admin -> UI : Clica em "Criar Agendamento"
+activate UI
+
+UI -> ViewCtrl : GET /MRYnZpAsC9sp/create/Agendamento
+activate ViewCtrl
+
+ViewCtrl -> Factory : create("Agendamento")
+activate Factory
+Factory --> ViewCtrl : Instância vazia de Agendamento
+deactivate Factory
+
+loop Para cada relacionamento (ManyToOne) de Agendamento
+    ViewCtrl -> Registry : getService(relacionamentoName)
+    activate Registry
+    Registry --> ViewCtrl : IService da FK (ex: ProfissionalService)
+    deactivate Registry
+    
+    ViewCtrl -> Service : read(fkInstance)
+    activate Service
+    Service --> ViewCtrl : List<IEntity> (ex: Profissionais ativos)
+    deactivate Service
+end
+
+ViewCtrl --> UI : Retorna admin/create.html (com selects de chaves estrangeiras)
+deactivate ViewCtrl
+
+UI --> Admin : Exibe o formulário de cadastro dinâmico
+
+Admin -> UI : Preenche os dados e clica em "Cadastrar"
+
+UI -> JsonCtrl : POST /create-json (FormData com entity=Agendamento)
+activate JsonCtrl
+
+JsonCtrl -> Factory : create("Agendamento")
+activate Factory
+Factory --> JsonCtrl : Instância vazia
+deactivate Factory
+
+JsonCtrl -> Mapper : fillEntity(target, request)
+activate Mapper
+Mapper --> JsonCtrl : Agendamento preenchido com dados do formulário
+deactivate Mapper
+
+JsonCtrl -> Registry : getService("Agendamento")
+activate Registry
+Registry --> JsonCtrl : AgendamentoService
+deactivate Registry
+
+JsonCtrl -> Service : create(entidadePreenchida)
+activate Service
+
+Service -> UoW : new UnitOfWork()
+activate UoW
+
+Service -> UoW : beginTransaction()
+
+Service -> Repo : save(entidadePreenchida)
+activate Repo
+
+Repo -> DBMap : getTableName() / getColumnName()
+activate DBMap
+DBMap --> Repo : Metadados SQL
+deactivate DBMap
+
+Repo -> DB : INSERT INTO tab_agendamento (grade_horarios_id, profissional_id...) VALUES (...)
+activate DB
+DB --> Repo : Sucesso (id gerado)
+deactivate DB
+
+Repo --> Service : Agendamento salvo
+deactivate Repo
+
+Service -> UoW : commit()
+deactivate UoW
+
+Service --> JsonCtrl : Agendamento salvo
+deactivate Service
+
+JsonCtrl --> UI : Retorna ID e dados do Agendamento (HTTP 200 OK)
+deactivate JsonCtrl
+
+UI --> Admin : Alerta de Sucesso / Limpa Formulário
+deactivate UI
+
+
+== Passo 3: Edição de Agendamento ==
+
+Admin -> UI : Clica em "Editar"
+activate UI
+
+UI -> ViewCtrl : GET /MRYnZpAsC9sp/editar/Agendamento?id=X
+activate ViewCtrl
+
+ViewCtrl -> Factory : create("Agendamento")
+activate Factory
+Factory --> ViewCtrl : Instância vazia de Agendamento
+deactivate Factory
+
+ViewCtrl -> Mapper : fillEntity(entidadeBase, request)
+activate Mapper
+Mapper --> ViewCtrl : Filtro por ID
+deactivate Mapper
+
+ViewCtrl -> Registry : getService("Agendamento")
+activate Registry
+Registry --> ViewCtrl : AgendamentoService
+deactivate Registry
+
+ViewCtrl -> Service : read(filtro)
+activate Service
+Service --> ViewCtrl : List com o Agendamento de ID X
+deactivate Service
+
+loop Para cada relacionamento (ManyToOne)
+    ViewCtrl -> Registry : getService(relacionamentoName)
+    activate Registry
+    Registry --> ViewCtrl : IService da FK
+    deactivate Registry
+    ViewCtrl -> Service : read(fkInstance)
+    activate Service
+    Service --> ViewCtrl : List com as opções da FK
+    deactivate Service
+end
+
+ViewCtrl --> UI : Retorna admin/edit.html (formulário preenchido)
+deactivate ViewCtrl
+
+UI --> Admin : Exibe o formulário de edição com os valores atuais
+
+Admin -> UI : Altera os dados e clica em "Atualizar"
+
+UI -> JsonCtrl : POST /update-json (FormData com entity=Agendamento e id=X)
+activate JsonCtrl
+
+JsonCtrl -> Factory : create("Agendamento")
+activate Factory
+Factory --> JsonCtrl : Instância vazia
+deactivate Factory
+
+JsonCtrl -> Mapper : fillEntity(target, request)
+activate Mapper
+Mapper --> JsonCtrl : Agendamento editado com os novos dados
+deactivate Mapper
+
+JsonCtrl -> Registry : getService("Agendamento")
+activate Registry
+Registry --> JsonCtrl : AgendamentoService
+deactivate Registry
+
+JsonCtrl -> Service : update(entidadePreenchida)
+activate Service
+
+Service -> UoW : new UnitOfWork()
+activate UoW
+
+Service -> UoW : beginTransaction()
+
+Service -> Repo : update(entidadePreenchida)
+activate Repo
+
+Repo -> DBMap : getTableName() / getColumnName()
+activate DBMap
+DBMap --> Repo : Metadados SQL
+deactivate DBMap
+
+Repo -> DB : UPDATE tab_agendamento SET ... WHERE id = X
+activate DB
+DB --> Repo : Sucesso
+deactivate DB
+
+Repo --> Service : ID atualizado
+deactivate Repo
+
+Service -> UoW : commit()
+deactivate UoW
+
+Service --> JsonCtrl : ID atualizado
+deactivate Service
+
+JsonCtrl --> UI : Retorna ID atualizado (HTTP 200 OK)
+deactivate JsonCtrl
+
+UI --> Admin : Alerta de Sucesso / Recarrega página
+deactivate UI
+
+
+== Passo 4: Exclusão de Agendamento ==
+
+Admin -> UI : Clica em "Excluir"
+activate UI
+
+UI --> Admin : Exibe Modal de confirmação do Bootstrap
+
+Admin -> UI : Confirma exclusão
+
+UI -> JsonCtrl : DELETE /delete-json?entity=Agendamento&id=X
+activate JsonCtrl
+
+JsonCtrl -> Factory : create("Agendamento")
+activate Factory
+Factory --> JsonCtrl : Instância vazia
+deactivate Factory
+
+JsonCtrl -> Mapper : fillEntity(target, request)
+activate Mapper
+Mapper --> JsonCtrl : Agendamento preenchido com ID
+deactivate Mapper
+
+JsonCtrl -> Registry : getService("Agendamento")
+activate Registry
+Registry --> JsonCtrl : AgendamentoService
+deactivate Registry
+
+JsonCtrl -> Service : delete(filtro)
+activate Service
+
+Service -> UoW : new UnitOfWork()
+activate UoW
+
+Service -> UoW : beginTransaction()
+
+Service -> Repo : delete(filtro)
+activate Repo
+
+Repo -> DBMap : getTableName()
+activate DBMap
+DBMap --> Repo : Metadados SQL
+deactivate DBMap
+
+Repo -> DB : DELETE FROM tab_agendamento WHERE id = X
+activate DB
+DB --> Repo : Sucesso
+deactivate DB
+
+Repo --> Service : ID deletado
+deactivate Repo
+
+Service -> UoW : commit()
+deactivate UoW
+
+Service --> JsonCtrl : ID deletado
+deactivate Service
+
+JsonCtrl --> UI : Retorna ID deletado (HTTP 200 OK)
+deactivate JsonCtrl
+
+UI --> Admin : Recarrega a página automaticamente (atualiza lista)
+deactivate UI
+
+@enduml

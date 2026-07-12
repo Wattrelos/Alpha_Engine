@@ -1,0 +1,114 @@
+regras_de_negocio:
+  produtos:
+    - id: RN001
+      nome: variacoes_de_unidades
+      tipo: pisos_e_azulejos
+      unidades_disponiveis: [peca, metro_quadrado]
+      comportamento: calculo_automatico_preco_total
+      variaveis: [quantidade, unidade_selecionada]
+
+    - id: RN002
+      nome: peso_e_dimensoes
+      campos_obrigatorios: [peso, altura, largura, comprimento]
+      finalidade: calculo_de_frete
+      impacto: alta_sensibilidade_custo_envio
+
+    - id: RN003
+      nome: informacoes_tecnicas
+      obrigatorio: true
+      detalhes_por_categoria:
+        ferramentas: [voltagem]
+        tintas: [especificacoes_de_uso]
+        cimento: [resistencia, tempo_de_secagem]
+      objetivo: evitar_erros_de_compra
+
+    - id: RN004
+      nome: kit_de_produtos
+      funcionalidade: criar_combos
+      beneficios: [descontos, facilidade_compra]
+      exemplos_permitidos:
+        - combo_bruto: [blocos_tijolos, areia, cimento, pedra]
+        - combo_pintura: [tintas, pinceis, lixas, base, seladoras]
+
+  estoque_e_logistica:
+    - id: RN005
+      nome: controle_estoque_rigoroso
+      atualizacao: automatica_pos_venda
+      bloqueio: evitar_venda_itens_indisponiveis
+      regra_especial: monitoramento_continuo_para_itens_pesados_ou_alta_demanda
+
+    - id: RN006
+      nome: alerta_baixo_estoque
+      gatilho: estoque_atual <= nivel_minimo_predefinido
+      acao: enviar_alerta_equipe_administrativa
+
+    - id: RN007
+      nome: multiplas_opcoes_frete
+      criterio_selecao: dimensoes_e_peso
+      modalidades:
+        itens_pequenos_leves: Correios
+        itens_pesados_volumosos: Transportadoras
+
+    - id: RN008
+      nome: frete_gratis_e_retirada
+      condicoes_frete_gratis:
+        valor_minimo_pedido: true
+        restricao_geografica: regras_especificas_por_regiao
+      opcao_alternativa: retirada_na_loja_fisica
+
+  cliente:
+    - id: RN009
+      nome: politica_de_devolucao
+      status: ativo
+
+    - id: RN010
+      nome: clareza_na_troca
+      foco_categorias_sensiveis: [tintas_cores, materiais_de_acabamento]
+
+    - id: RN011
+      nome: direito_de_arrependimento
+      prazo_cdc: 7_dias
+      regras_de_aceite:
+        embalagem_original: obrigatorio
+        embalagem_violada: "recusado (excecao: defeito de fabricacao)"
+      excecao_regra:
+        retirada_loja_fisica: "nao possui direito aos 7 dias de arrependimento"
+
+    - id: RN012
+      nome: documentacao_obrigatoria_retorno
+      itens_obrigatorios: [nota_fiscal, selo_etiqueta_de_garantia]
+
+    - id: RN013
+      nome: comunicacao_atrasos
+      tipo_acao: notificacao_proativa_cliente
+      objetivo: [gerenciar_expectativas, manter_credibilidade]
+
+    - id: RN014
+      nome: suporte_pos_venda
+      canais_disponiveis: [chat_online, telefone]
+      escopo: [duvidas_instalacao, uso_de_produtos]
+
+  preco:
+    - id: RN015
+      nome: descontos_por_volume
+      modelo: progressivo
+      aplicabilidade: [cimento, areia, tijolos, telhas]
+      publico_alvo: [clientes_construindo, clientes_reformando]
+
+    - id: RN016
+      nome: descontos_por_modalidade
+      condicoes_avista: [dinheiro, PIX]
+
+    - id: RN017
+      nome: preco_varejo_e_atacado
+      segmentacao:
+        varejo: pessoa_fisica
+        atacado: empresas
+      criterios_mudanca: [volume_de_compra, tipo_de_cadastro]
+
+    - id: RN018
+      nome: campanhas_por_categoria
+      funcionalidade: criar_promocoes_direcionadas
+      exemplos:
+        - Semana do Piso e Revestimento
+        - Mês das Ferramentas

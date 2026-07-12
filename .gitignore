@@ -58,3 +58,4 @@ tests/ # Arquivos de testes
 /public_html/image/product/*
 # Ignora Imagens em cache
 /public_html/image/cache/*
+BusinessKnowledgeBase/

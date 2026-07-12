@@ -87,10 +87,13 @@
 ├── diagrams/                               # Diagramas da aplicação
 │   ├── adr/                                # Diagramas de ADR (Action-Domain-Responder)
 │   ├── architecture/                       # Diagramas de arquitetura em linguagem densa visando o agente AI
-│   └── diagrams/                          # Diagramas da lógica central
-│      diagramsForStackholders/              # Diagramas em linguagem amigável, com cores, estilos e comentários, visando stakeholders
+│   ├── diagrams/                           # Diagramas da lógica central
+│   └── diagramsForStackholders/            # Diagramas em linguagem amigável, com cores, estilos e comentários, visando stakeholders
 ├── docs/                                   # 📚 Arquivos de Documentação Arquitetural e Progresso
-│   └── diagrams/
+│   └── requeriments/
+│       ├── business_rules/                 # 🎯 Regras de negócio
+│       ├── functional/                     # 🧩 Requerimentos funcionais
+│       └── non_functional/               # 🔍 Requerimentos não funcionais
 ├── public_html/                            # 🌐 Webroot (Document Root exposto e servido para a Internet)
 │   ├── LPDHED2dC7Gjrg2b/                   # Root público
 │   ├── css/                                # Folhas de estilo (Estilos centralizados)
