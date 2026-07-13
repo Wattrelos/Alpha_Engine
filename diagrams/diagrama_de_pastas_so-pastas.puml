@@ -90,6 +90,11 @@
 │   ├── diagrams/                           # Diagramas da lógica central
 │   └── diagramsForStackholders/            # Diagramas em linguagem amigável, com cores, estilos e comentários, visando stakeholders
 ├── docs/                                   # 📚 Arquivos de Documentação Arquitetural e Progresso
+│   ├── adr/                                # 📝 Architecture Decision Records (ADRs)
+│   ├── architecture/                       # 🏗️ Arquitetura do software
+│   ├── kb/                                 # 🧠 Base de conhecimento
+│   ├── DoD/                                # 🎯 Definition of Done (DoD)
+│   ├── sequences/                          # 🔄 Sequências (Fluxogramas da lógica central em linguagem amigável, com cores, estilos e comentários, visando stakeholders)
 │   └── requeriments/
 │       ├── business_rules/                 # 🎯 Regras de negócio
 │       ├── functional/                     # 🧩 Requerimentos funcionais
