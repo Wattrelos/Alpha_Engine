@@ -1,0 +1,21 @@
+---
+type: "Governance_Rule"
+target: "Traceability_Engine"
+version: "1.0"
+---
+
+traceability_rules:
+  bidirectional_mapping:
+    rule_id: TRC_001
+    description: "Todo Requisito Funcional (RF) que altere fluxo, cálculo ou comportamento deve obrigatoriamente referenciar uma ou mais Regras de Negócio (RN) através da chave 'trace'."
+    validation: "Se RF contiver lógica condicional e 'trace' for nulo/vazio -> REJEITAR_PR"
+
+  orphaned_nodes_check:
+    rule_id: TRC_002
+    description: "Varredura reversa de integridade."
+    validation: "Toda RN declarada em 'business-rules.yaml' deve ser citada em pelo menos um campo 'trace' de 'functional_requirements.yaml'. Se RN ativa não tiver mapeamento -> ALERTAR_DEV_REGRA_ORFA"
+
+  impact_analysis_matrix:
+    rule_id: TRC_003
+    description: "Cálculo de impacto de alteração técnica."
+    logic: "Se uma RN for modificada, o agente deve listar todos os RFs associados e forçar a atualização imediata dos diagramas de sequência (.puml) correspondentes."

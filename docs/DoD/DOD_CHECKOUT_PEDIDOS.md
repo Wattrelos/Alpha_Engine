@@ -1,48 +1,49 @@
-# Definition of Done (DoD) - Fluxo de Fechamento de Pedidos (Checkout)
+---
+type: "Quality_Governance"
+scope: "Checkout_Closing_Flow"
+trace_adr: ["ADR-001"]
+trace_diagram: "FluxoPedido.puml"
+version: "1.0"
+---
 
-Este documento estabelece os critérios obrigatórios de qualidade, arquitetura e segurança que devem ser cumpridos pelo desenvolvedor antes de submeter qualquer alteração no fluxo de checkout para revisão de código (Pull Request). 
+# 📋 Definition of Done (DoD) - Checkout
 
-As diretrizes aqui descritas materializam as decisões tomadas no [ADR-001 (Idempotência e UoW)](./ADR_Idempotency_UoW.md) e baseiam-se na topologia do diagrama `FluxoDidaticoPedido.puml`.
+## 🛠️ Lógica de Validação por Camada
+
+### C1: HTTP / Controller
+- [ ] **Auth & Idempotency:** Interceptação via `Slim Middleware`. `X-Idempotency-Key` ausente -> `HTTP 400`.
+- [ ] **Duplicidade:** Capturar `DuplicateRequestException` vinda do domínio -> `HTTP 422` (JSON padronizado).
+- [ ] **Sanitização:** Payload POST obrigatoriamente tipado em DTO antes do `Domain Service`.
+
+### C2: Domínio & Aplicação
+- [ ] **Redis Atomic:** Checagem e trava via operação atômica única: `SET key value NX EX 300`. Proibido `EXISTS` + `SET`.
+- [ ] **In-Memory Logic:** Cálculos, cupons e regras exclusivamente em memória. Escrita em DB proibida nesta fase.
+- [ ] **Async Side-Effects:** Disparar `OrderCreatedEvent` via `EventDispatcher` assíncrono. Falha na mensageria não bloqueia resposta.
+
+### C3: Persistência & DB
+- [ ] **Short Transaction:** `BEGIN TRANSACTION` restrito ao escopo do método `UoW::commit()`.
+- [ ] **Rollback Safety:** Blocos físicos (`Mapper`, `QB`, `DAO`) encapsulados em `try/catch` com `ROLLBACK` explícito em exceções.
+- [ ] **Imutabilidade:** Alteração de estado histórico via novos registros ou máquina de estados. Proibido `UPDATE` direto em dados históricos.
 
 ---
 
-## 📋 Checklist de Validação Técnica
+## 🧪 Testes & Quality Thresholds
 
-### 1. Camada 1: Apresentação e Infraestrutura (HTTP / Controlador)
-- [x] **Validação do Token:** O `Slim Middleware` intercepta e rejeita requisições sem o cabeçalho `X-Idempotency-Key` (Retornar HTTP 400 Bad Request).
-- [x] **Bloqueio de Duplicidade:** O `Slim Action` captura a exceção `DuplicateRequestException` vinda do domínio e responde imediatamente com `HTTP 422 Unprocessable Entity` e payload JSON padronizado.
-- [x] **Sanitização de Entrada:** O payload do POST é validado e tipado em um DTO (Data Transfer Object) antes de atingir o `Domain Service`.
-
-### 2. Camada 2: Domínio e Aplicação (Regras de Negócio)
-- [x] **Atomicidade no Cache:** A checagem da chave no `Redis` é feita via comando atômico com tempo de expiração (`SET key value NX EX 300`). Não é permitido usar `EXISTS` seguido de `SET` isolados.
-- [x] **Operações Isoladas em Memória:** Todos os cálculos de totais, checagem de cupons e regras de negócio ocorrem estritamente em memória. Nenhuma conexão persistente de escrita foi aberta nesta fase.
-- [x] **Isolamento de Efeitos Colaterais:** O `EventDispatcher` foi configurado para disparar o `OrderCreatedEvent` de forma assíncrona, garantindo que falhas na mensageria não impactem a resposta para o usuário.
-
-### 3. Camada 3: Persistência de Dados (Banco de Dados / ORM)
-- [x] **Transação de Escopo Curto:** O comando `BEGIN TRANSACTION` do MySQL ocorre exclusivamente dentro do método `UoW::commit()`.
-- [x] **Garantia de Rollback:** Todo o bloco físico de escrita (`Mapper`, `QB`, `DAO`) está encapsulado em uma estrutura `try/catch` que executa o `ROLLBACK` explícito em caso de qualquer exceção.
-- [x] **Imutabilidade Estrutural:** Não foram utilizados comandos SQL de mutação direta (`UPDATE`) na tabela de pedidos para alterar estados históricos; novos estados geram novos registros ou seguem a máquina de estados prevista.
+- [ ] **Race Condition Test:** Automatizado. Simular disparos simultâneos com mesma `X-Idempotency-Key` -> 1 Sucesso, demais `HTTP 422`.
+- [ ] **Transaction Mutation Test:** Validar que falha de `INSERT` no `DAO` mantém dados da `Unit of Work` limpos (sem estado sujo).
+- [ ] **Coverage:** Mínimo 95% em `Domain Service (Idempotência)` e `Unit of Work`.
 
 ---
 
-## 🧪 Requisitos Obrigatórios de Testes e Qualidade
+## 🔒 Segurança & Observabilidade
 
-- [x] **Teste de Carga / Concorrência:** Existe um teste automatizado simulando disparos simultâneos (Race Condition) com a mesma `X-Idempotency-Key`, provando que apenas 1 requisição obtém sucesso e as demais falham com HTTP 422.
-- [x] **Teste de Mutação da Transação:** Existe teste de unidade garantindo que se o `DAO` falhar no `INSERT`, os dados na memória gerenciados pela `Unit of Work` não fiquem em estado inconsistente ou "sujo".
-- [x] **Cobertura de Código:** As classes `Domain Service (Idempotência)` e `Unit of Work` possuem cobertura de testes unitários mínima de 95%.
-
----
-
-## 🔒 Segurança e Observabilidade
-
-- [x] **Mascaramento de Dados:** Dados sensíveis de pagamento (se houver no payload) não são impressos nos logs da aplicação.
-- [x] **ID de Correlação:** A chave `X-Idempotency-Key` é injetada no contexto do Logger (Monolog) para servir como `Correlation ID` em toda a esteira de microserviços.
-- [x] **Métricas:** Foram adicionados contadores (Counters) para monitorar a taxa de requisições duplicadas bloqueadas pelo sistema.
+- [ ] **Data Masking:** Mascarar dados sensíveis de pagamento. Proibido escrita em logs corporativos.
+- [ ] **Correlation ID:** Injetar `X-Idempotency-Key` no contexto do `Monolog` para rastreamento distribuído.
+- [ ] **Metrics:** Incrementar contadores (`Counters`) específicos para requisições duplicadas bloqueadas.
 
 ---
 
-## 🚀 Critérios de Revisão do Pull Request (PR)
+## 🚀 PR Review Criteria (Revisão Oblíqua)
 
-Para o Revisor (Reviewer) aprovar este código:
-1. O desenvolvedor deve anexar evidências (print dos testes ou log do CI/CD) provando a resiliência contra o clique duplo.
-2. O código do repositório correspondente ao diagrama PlantUML não pode conter vazamento de infraestrutura (consultas SQL brutas fora do DAO).
+1. **Evidências:** Anexar logs do CI/CD ou prints provando bloqueio de clique duplo.
+2. **Leaking:** Validar isolamento de camadas. Consultas SQL brutas fora da camada de persistência (`DAO`) -> Rejeitar PR.

@@ -1,53 +1,53 @@
-requisitos_nao_funcionais:
+non_functional_requirements:
   - id: RNF001
-    categoria: Usabilidade
-    nome: Interface intuitiva
-    descricao: A interface deve ser intuitiva e de fácil navegação, especialmente para encontrar produtos específicos.
-    metrica_aceite: Taxa de sucesso na busca e conclusão de fluxo de compra acima de 90% em testes de usuário.
-    rastreabilidade_rf: [RF011, RF012]
+    category: Usabilidade
+    name: Interface intuitiva
+    description: A interface deve ser intuitiva e de fácil navegação, especialmente para encontrar produtos específicos.
+    acceptance_metric: Taxa de sucesso na busca e conclusão de fluxo de compra acima de 90% em testes de usuário.
+    traceability_rf: [RF011, RF012]
 
   - id: RNF002
-    categoria: Desempenho
-    nome: Velocidade de carregamento
-    descricao: As páginas do site devem carregar rapidamente, mesmo com muitas imagens e dados técnicos.
-    metrica_aceite: Tempo de carregamento de página (Largest Contentful Paint - LCP) < 2.5 segundos em redes 4G/Banda Larga.
-    rastreabilidade_rf: [RF001, RF002, RF012]
+    category: Desempenho
+    name: Velocidade de carregamento
+    description: As páginas do site devem carregar rapidamente, mesmo com muitas imagens e dados técnicos.
+    acceptance_metric: Tempo de carregamento de página (Largest Contentful Paint - LCP) < 2.5 segundos em redes 4G/Banda Larga.
+    traceability_rf: [RF001, RF002, RF012]
 
   - id: RNF003
-    categoria: Segurança
-    nome: Proteção de dados financeiros e pessoais
-    descricao: O sistema deve proteger as informações pessoais e financeiras dos clientes, usando criptografia SSL.
-    tecnologia: Protocolo TLS 1.3, conformidade com LGPD e criptografia AES-256 para dados sensíveis em repouso.
-    rastreabilidade_rf: [RF014, RF019]
+    category: Segurança
+    name: Proteção de dados financeiros e pessoais
+    description: O sistema deve proteger as informações pessoais e financeiras dos clientes, usando criptografia SSL.
+    tecnology: Protocolo TLS 1.3, conformidade com LGPD e criptografia AES-256 para dados sensíveis em repouso.
+    traceability_rf: [RF014, RF019]
 
   - id: RNF004
-    categoria: Confiabilidade
-    nome: Disponibilidade do sistema
-    descricao: O sistema deve estar disponível 99,9% do tempo, minimizando indisponibilidade.
-    metrica_aceite: Tempo máximo de inatividade (downtime) de 8.76 horas por ano ou 43.8 minutos por mês.
+    category: Confiabilidade
+    name: Disponibilidade do sistema
+    description: O sistema deve estar disponível 99,9% do tempo, minimizando indisponibilidade.
+    acceptance_metric: Tempo máximo de inatividade (downtime) de 8.76 horas por ano ou 43.8 minutos por mês.
 
   - id: RNF005
-    categoria: Escalabilidade
-    nome: Suporte a picos de tráfego
-    descricao: A plataforma deve ser capaz de lidar com picos de tráfego, como em promoções, sem comprometer a performance.
-    estrategia_tecnica: Auto-scaling de infraestrutura na nuvem e uso de CDN para distribuição de mídia.
-    rastreabilidade_rf: [RF018, RF023]
+    category: Escalabilidade
+    name: Suporte a picos de tráfego
+    description: A plataforma deve ser capaz de lidar com picos de tráfego, como em promoções, sem comprometer a performance.
+    technical_strategy: Auto-scaling de infraestrutura na nuvem e uso de CDN para distribuição de mídia.
+    traceability_rf: [RF018, RF023]
 
   - id: RNF006
-    categoria: Integração
-    nome: Sincronização com ERP externo
-    descricao: O e-commerce deve se integrar com o sistema de gestão (ERP) da loja para sincronizar estoque, pedidos e informações de cliente.
+    category: Integração
+    name: Sincronização com ERP externo
+    description: O e-commerce deve se integrar com o sistema de gestão (ERP) da loja para sincronizar estoque, pedidos e informações de cliente.
     mecanismo: Webhooks orientados a eventos ou fila de mensagens (RabbitMQ/Kafka) para sincronização em tempo real.
-    rastreabilidade_rf: [RF006, RF016, RF020]
+    traceability_rf: [RF006, RF016, RF020]
 
   - id: RNF007
-    categoria: Acessibilidade
-    nome: Design responsivo multi-dispositivo
-    descricao: O site deve ser acessível em diferentes dispositivos (computador, tablet e celular), com um design responsivo.
-    metrica_aceite: Adaptação de layout sem quebra de componentes em viewports de 320px até 3840px.
+    category: Acessibilidade
+    name: Design responsivo multi-dispositivo
+    description: O site deve ser acessível em diferentes dispositivos (computador, tablet e celular), com um design responsivo.
+    acceptance_metric: Adaptação de layout sem quebra de componentes em viewports de 320px até 3840px.
 
   - id: RNF008
-    categoria: Segurança do site
-    nome: Proteção de diretórios via servidor
-    descricao: Todas as pastas e subpastas devem ter segurança adicional com arquivos .htaccess, impedindo acesso direto às subpastas do site.
-    implementação: Configuração de diretivas "Options -Indexes" no Apache para prevenir Directory Listing.
+    category: Segurança do site
+    name: Proteção de diretórios via servidor
+    description: Todas as pastas e subpastas devem ter segurança adicional com arquivos .htaccess, impedindo acesso direto às subpastas do site.
+    implementation: Configuração de diretivas "Options -Indexes" no Apache para prevenir Directory Listing.

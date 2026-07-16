@@ -1,114 +1,114 @@
-regras_de_negocio:
-  produtos:
+business_rules:
+  products:
     - id: RN001
-      nome: variacoes_de_unidades
-      tipo: pisos_e_azulejos
-      unidades_disponiveis: [peca, metro_quadrado]
-      comportamento: calculo_automatico_preco_total
-      variaveis: [quantidade, unidade_selecionada]
+      name: variacoes_de_unidades
+      type: pisos_e_azulejos
+      available_units: [peca, metro_quadrado]
+      behavior: calculo_automatico_preco_total
+      variables: [quantidade, unidade_selecionada]
 
     - id: RN002
-      nome: peso_e_dimensoes
-      campos_obrigatorios: [peso, altura, largura, comprimento]
-      finalidade: calculo_de_frete
-      impacto: alta_sensibilidade_custo_envio
+      name: peso_e_dimensoes
+      required_fields: [peso, altura, largura, comprimento]
+      purpose: calculo_de_frete
+      impact: alta_sensibilidade_custo_envio
 
     - id: RN003
-      nome: informacoes_tecnicas
-      obrigatorio: true
-      detalhes_por_categoria:
-        ferramentas: [voltagem]
-        tintas: [especificacoes_de_uso]
-        cimento: [resistencia, tempo_de_secagem]
-      objetivo: evitar_erros_de_compra
+      name: informacoes_tecnicas
+      required: true
+      details_by_category:
+        tools: [voltagem]
+        tints: [especificacoes_de_uso]
+        cement: [resistencia, tempo_de_secagem]
+      purpose: evitar_erros_de_compra
 
     - id: RN004
-      nome: kit_de_produtos
-      funcionalidade: criar_combos
-      beneficios: [descontos, facilidade_compra]
-      exemplos_permitidos:
-        - combo_bruto: [blocos_tijolos, areia, cimento, pedra]
-        - combo_pintura: [tintas, pinceis, lixas, base, seladoras]
+      name: kit_de_produtos
+      functionality: criar_combos
+      benefits: [descontos, facilidade_compra]
+      examples: 
+        - raw_combo: [bricks, sand, cement, stone]
+        - paint_combo: [paints, brushes, sanders, base, sealants]
 
-  estoque_e_logistica:
+  inventory_and_logistics:
     - id: RN005
-      nome: controle_estoque_rigoroso
-      atualizacao: automatica_pos_venda
-      bloqueio: evitar_venda_itens_indisponiveis
-      regra_especial: monitoramento_continuo_para_itens_pesados_ou_alta_demanda
+      name: controle_estoque_rigoroso
+      update: automatica_pos_venda
+      avoid_sale: itens_indisponiveis
+      special_rule: monitoramento_continuo_para_itens_pesados_ou_alta_demanda
 
     - id: RN006
-      nome: alerta_baixo_estoque
-      gatilho: estoque_atual <= nivel_minimo_predefinido
-      acao: enviar_alerta_equipe_administrativa
+      name: alerta_baixo_estoque
+      trigger: estoque_atual <= nivel_minimo_predefinido
+      action: enviar_alerta_equipe_administrativa
 
     - id: RN007
-      nome: multiplas_opcoes_frete
-      criterio_selecao: dimensoes_e_peso
-      modalidades:
-        itens_pequenos_leves: Correios
-        itens_pesados_volumosos: Transportadoras
+      name: multiplas_opcoes_frete
+      selection_criteria: dimensoes_e_peso
+      modalities:
+        small_light_items: Correios
+        large_heavy_items: Transportadoras
 
     - id: RN008
-      nome: frete_gratis_e_retirada
-      condicoes_frete_gratis:
-        valor_minimo_pedido: true
-        restricao_geografica: regras_especificas_por_regiao
-      opcao_alternativa: retirada_na_loja_fisica
+      name: frete_gratis_e_retirada
+      free_shipping_conditions:
+        minimal_amount: true
+        regional_restriction: regras_especificas_por_regiao
+      alternative_option: retirada_na_loja_fisica
 
-  cliente:
+  customer:
     - id: RN009
-      nome: politica_de_devolucao
+      name: politica_de_devolucao
       status: ativo
 
     - id: RN010
-      nome: clareza_na_troca
-      foco_categorias_sensiveis: [tintas_cores, materiais_de_acabamento]
+      name: clareza_na_troca
+      focus_sensitive_categories: [tintas_cores, materiais_de_acabamento]
 
     - id: RN011
-      nome: direito_de_arrependimento
+      name: direito_de_arrependimento
       prazo_cdc: 7_dias
-      regras_de_aceite:
-        embalagem_original: obrigatorio
-        embalagem_violada: "recusado (excecao: defeito de fabricacao)"
-      excecao_regra:
-        retirada_loja_fisica: "nao possui direito aos 7 dias de arrependimento"
+      acceptance_rules::
+        original_package: obrigatorio
+        damaged_package: "recusado (excecao: defeito de fabricacao)"
+      exception_rule:
+        store_pickup: "nao possui direito aos 7 dias de arrependimento"
 
     - id: RN012
-      nome: documentacao_obrigatoria_retorno
-      itens_obrigatorios: [nota_fiscal, selo_etiqueta_de_garantia]
+      name: documentacao_obrigatoria_retorno
+      required_documentos: [nota_fiscal, selo_etiqueta_de_garantia]
 
     - id: RN013
-      nome: comunicacao_atrasos
-      tipo_acao: notificacao_proativa_cliente
-      objetivo: [gerenciar_expectativas, manter_credibilidade]
+      name: comunicacao_atrasos
+      action_type: notificacao_proativa_cliente
+      objective: [gerenciar_expectativas, manter_credibilidade]
 
     - id: RN014
-      nome: suporte_pos_venda
-      canais_disponiveis: [chat_online, telefone]
-      escopo: [duvidas_instalacao, uso_de_produtos]
+      name: suporte_pos_venda
+      available_channels: [chat_online, telefone]
+      scope: [duvidas_instalacao, uso_de_produtos]
 
-  preco:
+  pricing:
     - id: RN015
-      nome: descontos_por_volume
-      modelo: progressivo
+      name: descontos_por_volume
+      model: progressivo
       aplicabilidade: [cimento, areia, tijolos, telhas]
-      publico_alvo: [clientes_construindo, clientes_reformando]
+      target_public: [clientes_construindo, clientes_reformando]
 
     - id: RN016
-      nome: descontos_por_modalidade
-      condicoes_avista: [dinheiro, PIX]
+      name: descontos_por_modalidade
+      cash_payment_conditions: [dinheiro, PIX]
 
     - id: RN017
-      nome: preco_varejo_e_atacado
-      segmentacao:
-        varejo: pessoa_fisica
-        atacado: empresas
-      criterios_mudanca: [volume_de_compra, tipo_de_cadastro]
+      name: preco_varejo_e_atacado
+      segmentation:
+        retail: pessoa_fisica
+        wholesale: empresas
+      change_criteria: [volume_de_compra, tipo_de_cadastro]
 
     - id: RN018
-      nome: campanhas_por_categoria
-      funcionalidade: criar_promocoes_direcionadas
-      exemplos:
+      name: campanhas_por_categoria
+      funcionality: criar_promocoes_direcionadas
+      examples:
         - Semana do Piso e Revestimento
         - Mês das Ferramentas

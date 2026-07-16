@@ -1,0 +1,111 @@
+{
+  "glossary_meta": {
+    "title": "Alpha Engine Agent-Optimized Prompt Glossary",
+    "version": "1.1",
+    "purpose": "Define standard terms, abbreviations, priority tags, and architectural patterns to align prompt instructions and source code generation for LLM agents."
+  },
+  "priorities": {
+    "H": {
+      "term": "High Priority / Critical",
+      "definition": "Funcionalidade crítica ou de alta prioridade que afeta a estabilidade do sistema, segurança ou fluxo principal de checkout."
+    },
+    "M": {
+      "term": "Medium Priority",
+      "definition": "Funcionalidade de prioridade média que adiciona valor mas não impede a operação principal se falhar."
+    },
+    "L": {
+      "term": "Low Priority",
+      "definition": "Funcionalidade de baixa prioridade, melhorias estéticas ou micro-interações."
+    }
+  },
+  "requirement_prefixes": {
+    "SYS_PERMIT": {
+      "prefix": "O sistema deve permitir ao usuário executar a seguinte ação:",
+      "use_case": "Descrever ações explícitas do usuário na interface."
+    },
+    "SYS_EXEC": {
+      "prefix": "O sistema deve executar ou gerenciar de forma automatizada e em background o seguinte processo:",
+      "use_case": "Descrever tarefas cron, filas RabbitMQ ou processamento assíncrono."
+    },
+    "IMG_HD": {
+      "prefix": "Imagens e fotografias em alta resolução com suporte a zoom dinâmico e otimização de renderização",
+      "use_case": "Descrever requisitos visuais de carregamento de imagens."
+    },
+    "INTEG": {
+      "prefix": "Integração segura via protocolo criptografado ou SDK oficial com o gateway/serviço externo:",
+      "use_case": "Descrever chamadas de API de terceiros, gateways de pagamento, ou logística."
+    },
+    "CRUD": {
+      "prefix": "Permitir operações completas de criação, leitura, atualização e exclusão de registros por um perfil administrativo",
+      "use_case": "Descrever operações administrativas de tabelas no painel."
+    },
+    "REALTIME": {
+      "prefix": "Sincronização imediata de dados com latência próxima de zero e atualização de estado em tempo real",
+      "use_case": "Descrever atualizações dinâmicas de interface e eventos reativos."
+    }
+  },
+  "domain_abbreviations": {
+    "PDP": {
+      "term": "Product Detail Page",
+      "definition": "Página de Detalhes do Produto. Contém informações completas, variações, mídias, preços e botão de compra."
+    },
+    "PLP": {
+      "term": "Product List Page / Category Page",
+      "definition": "Página de Listagem de Produtos ou página de Categoria."
+    },
+    "BOPIS": {
+      "term": "Buy Online, Pick Up In Store",
+      "definition": "Modelo de compra online com opção de retirada física na loja."
+    },
+    "SHIPTOS": {
+      "term": "Ship-To Addresses",
+      "definition": "Endereços cadastrados de entrega associados à conta do cliente."
+    },
+    "POS": {
+      "term": "Point of Sale (PDV)",
+      "definition": "Ponto de Venda. Sistema utilizado pelos vendedores e caixas da loja física (SalesRep / Cashier)."
+    }
+  },
+  "architectural_concepts": {
+    "DDD": {
+      "term": "Domain-Driven Design",
+      "definition": "Design Orientado a Domínio. Divisão do código por regras de negócio e entidades puras, separadas da infraestrutura."
+    },
+    "POPO": {
+      "term": "Plain Old PHP Object",
+      "definition": "Objeto PHP puro. Entidades fortemente tipadas sem herança de frameworks de persistência ou SQL."
+    },
+    "DAO": {
+      "term": "Data Access Object",
+      "definition": "Objeto de Acesso a Dados. Classe que constrói queries seguras e hidrata POPOs usando PDO e Reflection API."
+    },
+    "UoW": {
+      "term": "Unit of Work",
+      "definition": "Unidade de Trabalho. Centraliza transações do banco de dados garantindo atomicidade nas operações multi-tabelas."
+    },
+    "Identity Map": {
+      "term": "Mapa de Identidade",
+      "definition": "Cache em memória RAM por ciclo de requisição que evita a execução de consultas repetitivas ao banco."
+    },
+    "Proxy Pattern": {
+      "term": "Lazy Loading via Proxy",
+      "definition": "Carregamento tardio de relacionamentos complexos, executando queries SQL apenas quando a propriedade é acessada."
+    },
+    "Skinny Controller / Action": {
+      "term": "Single Action Controller",
+      "definition": "Controladores focados em uma única ação (invocáveis), delegando a lógica de negócios para a camada de domínio."
+    },
+    "Atomic Design": {
+      "term": "Design Atômico no Twig",
+      "definition": "Separação dos templates Twig em Atoms, Molecules, Organisms, Layouts e Pages."
+    },
+    "WSOD": {
+      "term": "White Screen of Death",
+      "definition": "Tela Branca da Morte. Estado catastrófico de erro silencioso evitado pelo Widget Isolation da ViewRenderer."
+    }
+  },
+  "agent_instructions": {
+    "requirement_parsing": "Ao ler especificações contendo os prefixos em 'requirement_prefixes', o agente deve gerar testes e código alinhados diretamente com a definição do caso de uso.",
+    "code_generation_alignment": "Toda classe criada deve respeitar os conceitos em 'architectural_concepts'. Por exemplo, se for criar uma nova tabela, deve implementar o DAO e o Mapper correspondentes, encapsulando as escritas na Unit of Work se envolver transações."
+  }
+}

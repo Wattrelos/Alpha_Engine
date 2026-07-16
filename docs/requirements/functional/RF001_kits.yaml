@@ -1,143 +1,143 @@
-requisitos_funcionais:
-  modulo_produto:
+functional_requirements:
+  product_module:
     - id: RF001
-      prioridade: Alta
-      nome: Cadastro de produtos com fotos
-      descricao: O sistema deve permitir o cadastro de produtos com fotos em alta resolução.
-      rastreabilidade_rn: [RN003]
+      prio: H
+      name: Cadastro produtos + fotos
+      desc: SYS_PERMIT cadastro produtos com IMG_HD.
+      trace: [RN003]
 
     - id: RF002
-      prioridade: Alta
-      nome: Exibição de especificações técnicas
-      descricao: O sistema deve exibir descrições detalhadas e especificações técnicas (dimensão, peso, material) de cada produto.
-      rastreabilidade_rn: [RN002, RN003]
+      prio: H
+      name: Exibição specs técnicas
+      desc: SYS_PERMIT exibir dimensões, peso e material do produto.
+      trace: [RN002, RN003]
 
     - id: RF003
-      prioridade: Média
-      nome: Categorização de produtos
-      descricao: O sistema deve permitir a categorização de produtos por tipo (elétrico, hidráulico, pisos), marca, cor e aplicação.
+      prio: M
+      name: Categorização produtos
+      desc: SYS_PERMIT agrupar por tipo (elétrico, hidráulico, pisos), marca, cor, aplicação.
 
     - id: RF004
-      prioridade: Média
-      nome: Venda por diferentes unidades
-      descricao: O sistema deve permitir a venda de produtos por diferentes unidades de medida (unidade, metro quadrado, caixa, kilo, litro) e criar tabelas de unidades.
-      rastreabilidade_rn: [RN001]
+      prio: M
+      name: Venda múltiplas unidades
+      desc: SYS_PERMIT venda por un, m², cx, kg, L + tabelas de conversão.
+      trace: [RN001]
 
     - id: RF005
-      prioridade: Alta
-      nome: CRUD completo de produtos por Admin
-      descricao: O sistema deve permitir que o administrador inclua, altere, exclua e gerencie informações detalhadas dos produtos, como nome, descrição, preço, imagens de qualidade, vídeos, SKUs e peso.
+      prio: H
+      name: CRUD Admin produtos
+      desc: CRUD completo de name, desc, preço, IMG_HD, vídeos, SKUs e peso.
 
     - id: RF006
-      prioridade: Alta
-      nome: Gestão automatizada de inventário
-      descricao: O software deve gerenciar automaticamente o inventário, atualizando a disponibilidade do produto em tempo real à medida que as vendas ocorrem e permitindo a consulta de saldo ou estoque.
-      rastreabilidade_rn: [RN005]
+      prio: H
+      name: Gestão automática inventário
+      desc: SYS_EXEC estoque: REALTIME pós-venda + consulta saldo.
+      trace: [RN005]
 
-  modulo_compra:
+  module_purchase:
     - id: RF007
-      prioridade: Baixa
-      nome: Criação de kits/combos
-      descricao: O sistema deve permitir a criação de kits ou "combos" de produtos.
-      rastreabilidade_rn: [RN004]
+      prio: L
+      name: Criação kits/combos
+      desc: SYS_PERMIT agrupar produtos em combos promocionais.
+      trace: [RN004]
 
     - id: RF008
-      prioridade: Baixa
-      nome: Sugestões de produtos relacionados
-      descricao: O sistema deve apresentar sugestões de produtos relacionados para incentivar compras adicionais.
+      prio: L
+      name: Sugestão correlatos
+      desc: SYS_PERMIT exibir Recomendações Cross-selling na jornada.
 
     - id: RF009
-      prioridade: Alta
-      nome: Gestão do carrinho de compras
-      descricao: O sistema deve ter um carrinho de compras que permite adicionar, remover e alterar a quantidade de itens.
+      prio: H
+      name: Cartão/Carrinho compras
+      desc: SYS_PERMIT adicionar, remover, alterar quantidade itens.
 
     - id: RF010
-      prioridade: Alta
-      nome: Cálculo dinâmico de frete
-      descricao: O sistema deve calcular o frete com base no peso, volume e endereço de entrega.
-      rastreabilidade_rn: [RN002, RN007, RN008]
+      prio: H
+      name: Cálculo frete dinâmico
+      desc: SYS_EXEC cálculo frete via peso, volume, CEP destino.
+      trace: [RN002, RN007, RN008]
 
     - id: RF011
-      prioridade: Média
-      nome: Busca eficiente e filtros
-      descricao: O site deve oferecer uma barra de busca eficiente e filtros (por preço, categoria, marca, atributos) para ajudar os usuários.
+      prio: M
+      name: Busca + filtros eficientes
+      desc: SYS_PERMIT busca indexada + filtros preço, categoria, marca, atributos.
 
     - id: RF012
-      prioridade: Média
-      nome: Página dedicada do produto
-      descricao: Cada produto deve ter uma página dedicada com informações completas, imagens ampliáveis e opções de seleção de variações.
+      prio: M
+      name: PDP (Product Detail Page)
+      desc: SYS_PERMIT página dedicada: specs, IMG_HD, seletor variações.
 
     - id: RF013
-      prioridade: Baixa
-      nome: Avaliações e comentários (Opcional)
-      descricao: Permitir que os clientes avaliem e comentem sobre os produtos para aumentar a confiança e credibilidade.
+      prio: L
+      name: Avaliações/Reviews
+      desc: SYS_PERMIT ratings, reviews, comentários clientes.
 
-  modulo_usuario:
+  module_user:
     - id: RF014
-      prioridade: Alta
-      nome: Cadastro e Autenticação
-      descricao: O sistema deve permitir o cadastro de usuários e o login com e-mail/senha ou redes sociais.
+      prio: H
+      name: Auth/Sign-up
+      desc: SYS_PERMIT login Email/Senha ou Social Auth (OAuth2).
 
     - id: RF015
-      prioridade: Baixa
-      nome: Recuperação de senha
-      descricao: O sistema deve permitir a recuperação de senha.
+      prio: L
+      name: Reset senha
+      desc: SYS_PERMIT fluxo de recuperação de credenciais.
 
     - id: RF016
-      prioridade: Alta
-      nome: Histórico de pedidos
-      descricao: O sistema deve armazenar o histórico de pedidos para cada usuário.
+      prio: H
+      name: Histórico pedidos
+      desc: SYS_EXEC persistência e exibição de compras passadas/user.
 
     - id: RF017
-      prioridade: Baixa
-      nome: Múltiplos endereços de entrega
-      descricao: O sistema deve permitir que o usuário salve diferentes endereços de entrega.
+      prio: L
+      name: Múltiplos SHIPTOS
+      desc: SYS_PERMIT salvar múltiplos endereços de entrega/user.
 
-  modulo_pagamento:
+  module_payment:
     - id: RF018
-      prioridade: Alta
-      nome: Múltiplas opções de pagamento
-      descricao: O sistema deve oferecer múltiplas opções de pagamento (cartão de crédito, boleto, PIX).
-      rastreabilidade_rn: [RN016]
+      prio: H
+      name: Multi-meios pagamento
+      desc: SYS_PERMIT checkout via Cartão, Boleto, PIX.
+      trace: [RN016]
 
     - id: RF019
-      prioridade: Baixa
-      nome: Integração com gateway seguro
-      descricao: O sistema deve integrar-se com um sistema de pagamento seguro.
+      prio: L
+      name: INTEG Gateway
+      desc: INTEG com gateway de pagamento seguro.
 
     - id: RF020
-      prioridade: Alta
-      nome: Emissão de Nota Fiscal Eletrônica (NF-e)
-      descricao: O sistema deve emitir nota fiscal eletrônica.
-      rastreabilidade_rn: [RN012]
+      prio: H
+      name: Faturamento / NF-e
+      desc: SYS_EXEC emissão automática de NF-e.
+      trace: [RN012]
 
-  modulo_logistica:
+  module_logistics:
     - id: RF021
-      prioridade: Média
-      nome: Opções de modalidade de entrega
-      descricao: O sistema deve oferecer opções de entrega (retirada na loja, entrega padrão).
-      rastreabilidade_rn: [RN008]
+      prio: M
+      name: Modalidades entrega
+      desc: SYS_PERMIT escolha BOPIS (retirada loja) ou entrega padrão.
+      trace: [RN008]
 
     - id: RF022
-      prioridade: Média
-      nome: Rastreamento de pedido
-      descricao: O sistema deve permitir o acompanhamento do status do pedido e da entrega.
-      rastreabilidade_rn: [RN013]
+      prio: M
+      name: Last-mile tracking
+      desc: SYS_PERMIT rastreio REALTIME status pedido/entrega.
+      trace: [RN013]
 
-  modulo_administracao:
+  module_administration:
     - id: RF023
-      prioridade: Alta
-      nome: Gestão de catálogo e preços
-      descricao: O sistema deve permitir ao administrador gerenciar o catálogo de produtos e preços.
-      rastreabilidade_rn: [RN017, RN018]
+      prio: H
+      name: Gestão catálogo/preços
+      desc: CRUD Admin para catálogo global e tabelas precificação.
+      trace: [RN017, RN018]
 
     - id: RF024
-      prioridade: Baixa
-      nome: Painel de alerta de baixo estoque
-      descricao: O sistema deve ter um painel de controle de estoque para alertar sobre produtos com baixa quantidade.
-      rastreabilidade_rn: [RN006]
+      prio: L
+      name: Alerta Stockout
+      desc: SYS_PERMIT dashboard/alerta automático de threshold mínimo estoque.
+      trace: [RN006]
 
     - id: RF025
-      prioridade: Média
-      nome: Relatórios gerenciais
-      descricao: O sistema deve permitir a emissão de relatórios de vendas e desempenho.
+      prio: M
+      name: Analytics / Relatórios
+      desc: SYS_PERMIT exportar relatórios gerenciais vendas/performance.
