@@ -116,3 +116,27 @@ Criamos e normalizamos o novo esquema relacional de fornecedores em nível de ba
 *   `tbkk_supplier_address`: Mapeamento de endereços associados a cada fornecedor, integrado às tabelas geográficas (`tbkk_geo_country`, `tbkk_geo_zone`, `tbkk_geo_city`).
 *   `tbkk_supplier_contact_manufacturer`: Associação de muitos-para-muitos entre fornecedores, contatos de atendimento e fabricantes representados.
 A implementação conta com o novo namespace de domínio em `Alpha\Model\Domain\Entities\Supplier` e controladores administrativos específicos, garantindo conformidade total com o padrão Domain-Driven Design (DDD).
+
+---
+
+## 7. Formulários HTML Sem Injeção de Tokens Anti-CSRF (Sanado)
+**Módulo Afetado:** Todos os formulários HTML com envio `POST`, `PUT`, `DELETE` ou `PATCH` (Admin e Front-end).
+
+### O Problema Original:
+Criar ou renderizar formulários HTML Twig sem os campos ocultos do token CSRF (`{{ csrf.keys.name }}` e `{{ csrf.keys.value }}`) faz com que a submissão do formulário seja enviada ao servidor sem as credenciais de segurança exigidas pelo `CsrfGuardMiddleware`. Isso resulta na rejeição da requisição com erro `HTTP 400 - Requisição Rejeitada (CSRF)` ("Sua sessão expirou ou a validação de segurança do formulário falhou").
+
+### A Solução Padronizada na Alpha Engine:
+É obrigatório que todo e qualquer formulário HTML que envie dados via métodos de alteração inclua o bloco condicional de tokens no template Twig:
+
+```twig
+<form method="POST" action="...">
+    {% if csrf %}
+        <input type="hidden" name="{{ csrf.keys.name }}" value="{{ csrf.name }}">
+        <input type="hidden" name="{{ csrf.keys.value }}" value="{{ csrf.value }}">
+    {% endif %}
+    ...
+</form>
+```
+
+Para formulários assíncronos submetidos via JavaScript, deve-se extrair as variáveis de segurança das meta-tags `<meta name="csrf-*">` renderizadas no layout base (`base.html.twig` / `admin/layouts/base.html.twig`) ou injetar os campos via `form-validator.js`.
+

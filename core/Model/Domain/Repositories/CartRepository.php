@@ -56,10 +56,10 @@ class CartRepository extends AbstractRepository implements BaseRepositoryInterfa
         return property_exists($this, 'container') && $this->container->has('weight') ? $this->container->get('weight') : null;
     }
 
-    private function getLanguageId(): int
+    public function getLanguageId(): int
     {
         $config = $this->getConfig();
-        return (int)($config ? $config->get('config_language_id') : 2);
+        return (int)($config ? $config->get('config_language_id') : ($this->language_id ?? 2));
     }
 
     // ─────────────────────────────────────────────────────────

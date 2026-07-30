@@ -21,12 +21,29 @@ class UserGroupRepository extends AbstractRepository implements BaseRepositoryIn
 
     public function find(int $id): ?InterfaceEntity
     {
-        return $this->getMapper()->findById($id);
+        $langId = $this->getLanguageId();
+        return $this->getMapper()->findWithLanguage($id, $langId);
+    }
+
+    public function findWithLanguage(int $id, int $languageId): ?UserGroup
+    {
+        return $this->getMapper()->findWithLanguage($id, $languageId);
     }
 
     public function findAll(): array
     {
-        return $this->getMapper()->findAll();
+        $langId = $this->getLanguageId();
+        return $this->getMapper()->findAllWithLanguage($langId);
+    }
+
+    public function findAllWithLanguage(int $languageId): array
+    {
+        return $this->getMapper()->findAllWithLanguage($languageId);
+    }
+
+    public function findDescriptions(int $userGroupId): array
+    {
+        return $this->getMapper()->findDescriptions($userGroupId);
     }
 
     public function findBy(array $criteria, ?array $orderBy = null, ?int $limit = null, ?int $offset = null): array
@@ -41,11 +58,25 @@ class UserGroupRepository extends AbstractRepository implements BaseRepositoryIn
 
     public function save(UserGroup $userGroup): ?int
     {
-        return $this->getMapper()->save($userGroup);
+        $id = $this->getMapper()->save($userGroup);
+        if ($id && !empty($userGroup->getDescriptions())) {
+            $this->getMapper()->saveDescriptions($id, $userGroup->getDescriptions());
+        }
+        return $id;
+    }
+
+    public function saveWithDescriptions(UserGroup $userGroup, array $namesByLanguage): ?int
+    {
+        $id = $this->getMapper()->save($userGroup);
+        if ($id && !empty($namesByLanguage)) {
+            $this->getMapper()->saveDescriptions($id, $namesByLanguage);
+        }
+        return $id;
     }
 
     public function delete(int $id): bool
     {
+        $this->getMapper()->deleteDescriptions($id);
         return $this->getMapper()->delete($id);
     }
 

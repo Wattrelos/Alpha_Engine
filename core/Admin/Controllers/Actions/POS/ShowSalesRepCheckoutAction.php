@@ -21,12 +21,12 @@ class ShowSalesRepCheckoutAction extends BaseController implements ActionInterfa
         $orderId = isset($queryParams['order_id']) ? (int)$queryParams['order_id'] : 0;
 
         $loggedAdmin = $request->getAttribute('logged_admin');
-        
+
         /** @var OrderRepository $orderRepo */
         $orderRepo = $this->getRepository(OrderRepository::class);
         $order = $orderRepo->getOrder($orderId);
 
-        $html = $this->getTemplate(' pos/sales-rep/checkout.twig', [
+        $html = $this->getTemplate('pos/sales-rep/checkout.twig', [
             'title' => 'Pré-Venda Concluída | PDV',
             'logged_admin' => $loggedAdmin,
             'order_id' => $orderId,

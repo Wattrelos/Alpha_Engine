@@ -30,6 +30,15 @@ Este documento compila o conjunto de recomendações, especificações técnicas
   - Adotada **Inicialização Preguiçosa (*Lazy Initialization*)** para garantir que a sessão PHP esteja ativa antes de instanciar o `Guard`.
   - Tratamento de falhas customizado: Retorna respostas `HTTP 400` estruturadas em JSON para requisições AJAX e página HTML defensiva para formulários convencionais.
   - Injeção automática das meta-tags `<meta name="csrf-*">` nos layouts Twig e no manipulador [form-validator.js](file:///var/www/html/agsonhos/public_html/js/custom/form-validator.js).
+  - **Regra Obrigatória para Novos Desenvolvimentos:**
+    - **Formulários Twig (`POST`, `PUT`, `DELETE`):** Todo formulário HTML deve conter obrigatoriamente a injeção do bloco de inputs ocultos do CSRF:
+      ```twig
+      {% if csrf %}
+          <input type="hidden" name="{{ csrf.keys.name }}" value="{{ csrf.name }}">
+          <input type="hidden" name="{{ csrf.keys.value }}" value="{{ csrf.value }}">
+      {% endif %}
+      ```
+    - **Requisições AJAX / JavaScript:** Desenvolvedores e agentes devem garantir a inclusão das chaves e valores CSRF extraídos das meta-tags `csrf-key-name`, `csrf-key-value`, `csrf-name` e `csrf-value` no payload (`FormData` ou JSON) da requisição.
 - **Teste Automatizado**: `tests/security_tests/teste_csrf.php`
 
 ---

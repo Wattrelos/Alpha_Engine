@@ -37,11 +37,29 @@ class CsrfGuardMiddleware implements MiddlewareInterface
     {
         if ($this->guard === null) {
             if (session_status() === PHP_SESSION_NONE && !headers_sent()) {
+                if (defined('APPLICATION') && APPLICATION === 'admin') {
+                    session_name('admin_session_id');
+                }
                 @session_start();
             }
 
             $responseFactory = new ResponseFactory();
-            $guard = new Guard($responseFactory);
+
+            if (!isset($_SESSION['csrf']) || !is_array($_SESSION['csrf'])) {
+                $_SESSION['csrf'] = [];
+            }
+            foreach ($_SESSION['csrf'] as $k => $v) {
+                if (!is_string($v) || !is_string($k)) {
+                    unset($_SESSION['csrf'][$k]);
+                }
+            }
+
+            if (session_status() === PHP_SESSION_ACTIVE) {
+                $guard = new Guard($responseFactory);
+            } else {
+                $guard = new Guard($responseFactory, 'csrf', $_SESSION['csrf']);
+            }
+
             $guard->setPersistentTokenMode(true);
 
             // Define Handler de Falha customizado para interceptar rejeições CSRF

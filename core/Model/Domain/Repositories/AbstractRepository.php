@@ -113,6 +113,14 @@ abstract class AbstractRepository
     }
 
     /**
+     * Retorna explicitamente o ID do Idioma ativo.
+     */
+    public function getLanguageId(): int
+    {
+        return (int)($this->language_id ?? 2);
+    }
+
+    /**
      * Implementação padrão para index. 
      * Pode ser sobrescrito nas classes filhas para lógicas complexas de paginação.
      */
@@ -122,5 +130,14 @@ abstract class AbstractRepository
             return $this->mapperFactory->get($this->mapperClass)->findBy($filters);
         }
         return [];
+    }
+
+    public function clearIdentityMap(): void
+    {
+        if ($this->mapperClass) {
+            $this->mapperFactory->get($this->mapperClass)->clearIdentityMap();
+        } else {
+            \Alpha\Model\DataAccessObject\DataAccessObject::clearIdentityMap();
+        }
     }
 }

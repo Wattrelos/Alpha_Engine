@@ -7,6 +7,7 @@ use Alpha\Controller\Actions\ActionInterface;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Psr\Http\Message\ResponseInterface as Response;
 use Alpha\Model\Domain\Repositories\UserGroupRepository;
+use Alpha\Model\Domain\Repositories\LanguageRepository;
 use Alpha\Model\Domain\Entities\UserGroup;
 use Slim\Routing\RouteContext;
 
@@ -32,15 +33,37 @@ class CreateUserGroupAction extends BaseController implements ActionInterface
     {
         /** @var UserGroupRepository $userGroupRepo */
         $userGroupRepo = $this->getRepository(UserGroupRepository::class);
+        /** @var LanguageRepository $languageRepo */
+        $languageRepo = $this->getRepository(LanguageRepository::class);
+        
+        $languages = $languageRepo->findAll();
         $error = null;
 
         if ($request->getMethod() === 'POST') {
             $parsedBody = $request->getParsedBody() ?? [];
-            $name = trim($parsedBody['name'] ?? '');
+            $names = $parsedBody['name'] ?? [];
             $accessPermissions = $parsedBody['permission']['access'] ?? [];
             $modifyPermissions = $parsedBody['permission']['modify'] ?? [];
 
-            if (empty($name)) {
+            // Se name for string única (fallback)
+            if (!is_array($names)) {
+                $singleName = trim((string)$names);
+                $names = [];
+                foreach ($languages as $lang) {
+                    $names[$lang->getId()] = $singleName;
+                }
+            }
+
+            // Pega um nome genérico para a coluna legada name em user_group
+            $firstName = '';
+            foreach ($names as $n) {
+                if (!empty(trim((string)$n))) {
+                    $firstName = trim((string)$n);
+                    break;
+                }
+            }
+
+            if (empty($firstName)) {
                 $error = 'O nome do papel é obrigatório.';
             } else {
                 $permissionJson = json_encode([
@@ -49,8 +72,9 @@ class CreateUserGroupAction extends BaseController implements ActionInterface
                 ], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
 
                 $userGroup = new UserGroup();
-                $userGroup->setName($name);
+                $userGroup->setName($firstName);
                 $userGroup->setPermission($permissionJson);
+                $userGroup->setDescriptions($names);
 
                 $userGroupRepo->save($userGroup);
 
@@ -68,7 +92,12 @@ class CreateUserGroupAction extends BaseController implements ActionInterface
         $html = $this->getTemplate('admin/user_group/user_group_form.html.twig', [
             'title'       => 'Novo Papel | Painel Administrativo',
             'modules'     => $this->modules,
-            'user_group'  => ['name' => '', 'permission' => ['access' => [], 'modify' => []]],
+            'languages'   => $languages,
+            'user_group'  => [
+                'name'         => '',
+                'descriptions' => [],
+                'permission'   => ['access' => [], 'modify' => []]
+            ],
             'is_edit'     => false,
             'error'       => $error
         ]);

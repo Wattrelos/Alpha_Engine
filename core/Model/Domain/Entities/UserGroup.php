@@ -15,6 +15,7 @@ class UserGroup extends BaseEntity
     private string $name = '';
     private string $description = '';
     private string $permission = '';
+    private array $descriptions = [];
 
     public function getName(): string
     {
@@ -50,4 +51,24 @@ class UserGroup extends BaseEntity
     }
 
     public function getPermissionArray(): array { return json_decode($this->permission, true) ?: []; }
+
+    public function getDescriptions(): array
+    {
+        return $this->descriptions;
+    }
+
+    public function setDescriptions(array $descriptions): self
+    {
+        $this->descriptions = $descriptions;
+        return $this;
+    }
+
+    public function getNameByLanguage(int $languageId): string
+    {
+        if (isset($this->descriptions[$languageId])) {
+            $desc = $this->descriptions[$languageId];
+            return is_array($desc) ? ($desc['name'] ?? '') : (string)$desc;
+        }
+        return $this->name;
+    }
 }

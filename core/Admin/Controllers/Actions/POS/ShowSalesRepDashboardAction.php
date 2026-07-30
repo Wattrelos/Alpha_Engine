@@ -18,7 +18,7 @@ class ShowSalesRepDashboardAction extends BaseController implements ActionInterf
     {
         $loggedAdmin = $request->getAttribute('logged_admin');
 
-        $html = $this->getTemplate(' pos/sales-rep/register-control.twig', [
+        $html = $this->getTemplate('pos/sales-rep/register-control.twig', [
             'title' => 'PDV - Painel do Vendedor',
             'logged_admin' => $loggedAdmin,
         ]);

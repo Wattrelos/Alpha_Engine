@@ -23,6 +23,10 @@
 	{% endif %}
 	<div class="card card-large">
 		<form action="/LPDHED2dC7Gjrg2b/fornecedores/{{ supplier.id }}/editar" method="POST">
+			{% if csrf %}
+				<input type="hidden" name="{{ csrf.keys.name }}" value="{{ csrf.name }}">
+				<input type="hidden" name="{{ csrf.keys.value }}" value="{{ csrf.value }}">
+			{% endif %}
 
 			<h3 class="form-section-title mt-0">
 				<i class="fas fa-info-circle"></i>{{ AdminLang.title_details|default('Dados Cadastrais') }}

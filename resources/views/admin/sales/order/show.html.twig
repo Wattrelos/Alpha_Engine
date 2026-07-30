@@ -229,6 +229,10 @@
 				<i class="fas fa-edit card-title-icon"></i> {{ AdminLang.title_update }}
 			</h3>
 			<form action="/LPDHED2dC7Gjrg2b/pedidos/{{ order.id }}/status" method="POST">
+				{% if csrf %}
+					<input type="hidden" name="{{ csrf.keys.name }}" value="{{ csrf.name }}">
+					<input type="hidden" name="{{ csrf.keys.value }}" value="{{ csrf.value }}">
+				{% endif %}
 				<div class="form-group">
 					<label for="order_status_id" class="form-label">{{ AdminLang.entry_new_status }}</label>
 					<select name="order_status_id" id="order_status_id" class="form-control" required>

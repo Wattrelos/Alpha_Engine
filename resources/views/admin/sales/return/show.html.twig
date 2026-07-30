@@ -220,6 +220,10 @@
 				<i class="fas fa-edit icon-primary icon-mr-2"></i> {{ AdminLang.title_update_request|default('Atualizar Solicitação') }}
 			</h3>
 			<form id="update-status-form" action="/LPDHED2dC7Gjrg2b/devolucoes/{{ return.id }}/status" method="POST">
+				{% if csrf %}
+					<input type="hidden" name="{{ csrf.keys.name }}" value="{{ csrf.name }}">
+					<input type="hidden" name="{{ csrf.keys.value }}" value="{{ csrf.value }}">
+				{% endif %}
 				<input type="hidden" name="version" id="return_version" value="{{ return.version }}">
 				
 				<!-- Novo Status -->

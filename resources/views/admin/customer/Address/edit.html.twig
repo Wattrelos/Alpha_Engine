@@ -24,6 +24,10 @@
 
 	<div class="card card-large">
 		<form action="/LPDHED2dC7Gjrg2b/clientes/{{ customer.id }}/enderecos/{{ address.id }}/editar" method="POST">
+			{% if csrf %}
+				<input type="hidden" name="{{ csrf.keys.name }}" value="{{ csrf.name }}">
+				<input type="hidden" name="{{ csrf.keys.value }}" value="{{ csrf.value }}">
+			{% endif %}
 			
 			<div class="grid-form-row max-w-50">
 				<div>

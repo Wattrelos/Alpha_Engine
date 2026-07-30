@@ -7,6 +7,7 @@ use Alpha\Controller\Actions\ActionInterface;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Psr\Http\Message\ResponseInterface as Response;
 use Alpha\Model\Domain\Repositories\UserGroupRepository;
+use Alpha\Model\Domain\Repositories\LanguageRepository;
 use Alpha\Model\Domain\Entities\UserGroup;
 use Slim\Routing\RouteContext;
 
@@ -33,6 +34,9 @@ class EditUserGroupAction extends BaseController implements ActionInterface
         $id = (int)($args['id'] ?? 0);
         /** @var UserGroupRepository $userGroupRepo */
         $userGroupRepo = $this->getRepository(UserGroupRepository::class);
+        /** @var LanguageRepository $languageRepo */
+        $languageRepo = $this->getRepository(LanguageRepository::class);
+
         /** @var UserGroup|null $group */
         $group = $userGroupRepo->find($id);
 
@@ -46,15 +50,32 @@ class EditUserGroupAction extends BaseController implements ActionInterface
             return $response->withHeader('Location', $url)->withStatus(302);
         }
 
+        $languages = $languageRepo->findAll();
         $error = null;
 
         if ($request->getMethod() === 'POST') {
             $parsedBody = $request->getParsedBody() ?? [];
-            $name = trim($parsedBody['name'] ?? '');
+            $names = $parsedBody['name'] ?? [];
             $accessPermissions = $parsedBody['permission']['access'] ?? [];
             $modifyPermissions = $parsedBody['permission']['modify'] ?? [];
 
-            if (empty($name)) {
+            if (!is_array($names)) {
+                $singleName = trim((string)$names);
+                $names = [];
+                foreach ($languages as $lang) {
+                    $names[$lang->getId()] = $singleName;
+                }
+            }
+
+            $firstName = '';
+            foreach ($names as $n) {
+                if (!empty(trim((string)$n))) {
+                    $firstName = trim((string)$n);
+                    break;
+                }
+            }
+
+            if (empty($firstName)) {
                 $error = 'O nome do papel é obrigatório.';
             } else {
                 $permissionJson = json_encode([
@@ -62,8 +83,9 @@ class EditUserGroupAction extends BaseController implements ActionInterface
                     'modify' => array_values($modifyPermissions),
                 ], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
 
-                $group->setName($name);
+                $group->setName($firstName);
                 $group->setPermission($permissionJson);
+                $group->setDescriptions($names);
 
                 $userGroupRepo->save($group);
 
@@ -79,14 +101,17 @@ class EditUserGroupAction extends BaseController implements ActionInterface
         }
 
         $permissions = $group->getPermissionArray();
+        $descriptions = $userGroupRepo->findDescriptions($id);
 
         $html = $this->getTemplate('admin/user_group/user_group_form.html.twig', [
             'title'       => 'Editar Papel | Painel Administrativo',
             'modules'     => $this->modules,
+            'languages'   => $languages,
             'user_group'  => [
-                'id'         => $group->getId(),
-                'name'       => $group->getName(),
-                'permission' => [
+                'id'           => $group->getId(),
+                'name'         => $group->getName(),
+                'descriptions' => $descriptions,
+                'permission'   => [
                     'access' => $permissions['access'] ?? [],
                     'modify' => $permissions['modify'] ?? []
                 ]

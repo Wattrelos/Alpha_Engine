@@ -14,6 +14,12 @@ use Alpha\Auth\Middleware\SecurityHeadersMiddleware;
 
 require __DIR__ . '/../vendor/autoload.php';
 
+if (file_exists(__DIR__ . '/../.env')) {
+    $dotenv = Dotenv\Dotenv::createImmutable(__DIR__ . '/../');
+    $dotenv->safeLoad();
+}
+
+
 // Redireciona caminhos do admin localizados (ex: /pt-br/LPDHED2dC7Gjrg2b/) de volta para o admin correto
 $requestUri = $_SERVER['REQUEST_URI'] ?? '';
 if (preg_match('#^/(pt-br|en|es)/LPDHED2dC7Gjrg2b(/.*)?$#i', $requestUri, $matches)) {
@@ -28,7 +34,12 @@ if (preg_match('#^/(pt-br|en|es)/LPDHED2dC7Gjrg2b(/.*)?$#i', $requestUri, $match
 //    Não inicializa o frameworkdo código legado — apenas defines.
 // ─────────────────────────────────────────────────────────
 if (!defined('APPLICATION')) {
-    define('APPLICATION', 'catalog');
+    $uri = $_SERVER['REQUEST_URI'] ?? '';
+    if (str_contains($uri, '/LPDHED2dC7Gjrg2b')) {
+        define('APPLICATION', 'admin');
+    } else {
+        define('APPLICATION', 'catalog');
+    }
 }
 require_once __DIR__ . '/../config.php';
 
@@ -117,6 +128,10 @@ $container->bind(Twig::class, $twig);
 AppFactory::setContainer($container);
 $app = AppFactory::create();
 
+if (defined('APPLICATION') && APPLICATION === 'admin') {
+    $app->setBasePath('/LPDHED2dC7Gjrg2b');
+}
+
 // Adiciona o Middleware do Twig para injetar as rotas de forma dinâmica
 $app->add(TwigMiddleware::create($app, $twig));
 
@@ -160,6 +175,7 @@ $errorMiddleware->setErrorHandler(
 if (!$isDev) {
     $errorMiddleware->setDefaultErrorHandler(
         function ($request, Throwable $exception, bool $displayErrorDetails, bool $logErrors, bool $logErrorDetails) use ($twigEnv) {
+            error_log("ALPHA 500 ERROR: " . $exception->getMessage() . "\n" . $exception->getTraceAsString());
             $response = new \Slim\Psr7\Response();
 
             $isXmlHttpRequest = strtolower($request->getHeaderLine('X-Requested-With')) === 'xmlhttprequest';

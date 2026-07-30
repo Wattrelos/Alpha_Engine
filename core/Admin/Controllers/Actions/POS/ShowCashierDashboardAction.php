@@ -18,7 +18,7 @@ class ShowCashierDashboardAction extends BaseController implements ActionInterfa
     {
         $loggedAdmin = $request->getAttribute('logged_admin');
 
-        $html = $this->getTemplate(' pos/cashier/layout.twig', [
+        $html = $this->getTemplate('pos/cashier/layout.twig', [
             'title' => 'PDV - Painel do Caixa',
             'logged_admin' => $loggedAdmin,
         ]);
