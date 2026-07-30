@@ -1,0 +1,17 @@
+{% extends 'admin/layouts/base.html.twig' %}
+
+{% block title %}Erro Interno no Servidor | Painel Administrativo{% endblock %}
+
+{% block content %}
+	<div class="error-card">
+		<div class="error-card-emoji">⚠️</div>
+		<h1 class="error-card-title">500 - Erro Interno no Servidor</h1>
+		<p class="error-card-text">
+			{{ message|default('Ocorreu uma falha inesperada no processamento do painel administrativo. O erro foi registrado para análise.') }}
+		</p>
+		<a href="/LPDHED2dC7Gjrg2b/dashboard" class="btn btn-primary error-card-btn">
+			<i class="fas fa-arrow-left"></i>
+			<span>Voltar ao Painel Inicial</span>
+		</a>
+	</div>
+{% endblock %}

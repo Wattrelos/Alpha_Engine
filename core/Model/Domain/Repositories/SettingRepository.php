@@ -15,7 +15,7 @@ class SettingRepository extends AbstractRepository implements BaseRepositoryInte
 {
     private array $data = [];
     private bool $isLoaded = false;
-    private int $loadedStoreId = 1; // New default value to prevent unexpected behavior
+    private int $loadedStoreId = -1;
 
     protected function getMapper(): SettingMapper
     {
@@ -23,7 +23,7 @@ class SettingRepository extends AbstractRepository implements BaseRepositoryInte
     }
 
     /**
-     * Carrega as configurações da loja atual (e da default) via Mapper apenas 1 vez.
+     * Carrega as configurações da loja atual via Mapper apenas 1 vez por loja.
      */
     private function loadForStore(int $storeId): void
     {
@@ -34,16 +34,17 @@ class SettingRepository extends AbstractRepository implements BaseRepositoryInte
         }
     }
 
-    public function getSettings(int $storeId = 0): array
+    public function getSettings(?int $storeId = null): array
     {
+        $storeId = $storeId ?? $this->getStoreId();
         $this->loadForStore($storeId);
 
-        // O banco de dados já cuidou da filtragem e da ordenação correta.
         return $this->data;
     }
 
-    public function getSetting(string $code, int $storeId = 0): array
+    public function getSetting(string $code, ?int $storeId = null): array
     {
+        $storeId = $storeId ?? $this->getStoreId();
         $this->loadForStore($storeId);
         $settingData = [];
 
@@ -59,8 +60,9 @@ class SettingRepository extends AbstractRepository implements BaseRepositoryInte
         return $settingData;
     }
 
-    public function getValue(string $key, int $storeId = 0): string
+    public function getValue(string $key, ?int $storeId = null): string
     {
+        $storeId = $storeId ?? $this->getStoreId();
         $this->loadForStore($storeId);
         foreach ($this->data as $row) {
             if ((int)$row['store_id'] === $storeId && $row['key'] === $key) {
@@ -88,8 +90,9 @@ class SettingRepository extends AbstractRepository implements BaseRepositoryInte
         return null;
     }
 
-    public function editSetting(string $code, array $data, int $storeId = 1): void
+    public function editSetting(string $code, array $data, ?int $storeId = null): void
     {
+        $storeId = $storeId ?? $this->getStoreId();
         $dao = new \Alpha\Model\DataAccessObject\DataAccessObject();
         
         // 1. Delete existing settings for this store and code

@@ -1,0 +1,184 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://agsonhos.com.br/schemas/OrderDataDTO.json",
+  "title": "OrderDataDTO",
+  "description": "Especificação formal do DTO de dados de criação de pedido na Alpha Engine",
+  "type": "object",
+  "required": [
+    "store_id",
+    "language_id",
+    "payment_firstname",
+    "payment_lastname",
+    "payment_street",
+    "payment_city",
+    "payment_postcode",
+    "products",
+    "total"
+  ],
+  "properties": {
+    "store_id": {
+      "type": "integer",
+      "minimum": 1,
+      "default": 1,
+      "description": "ID da loja principal ancorada em tbkk_store (Loja 1 padrão)"
+    },
+    "language_id": {
+      "type": "integer",
+      "default": 2,
+      "description": "ID do idioma ativo (2 = pt-br)"
+    },
+    "currency_id": {
+      "type": "integer",
+      "default": 1
+    },
+    "customer_id": {
+      "type": "integer",
+      "minimum": 0,
+      "default": 0,
+      "description": "0 para visitantes anônimos, > 0 para clientes autenticados"
+    },
+    "customer_group_id": {
+      "type": "integer",
+      "default": 1
+    },
+    "firstname": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 32
+    },
+    "lastname": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 32
+    },
+    "email": {
+      "type": "string",
+      "format": "email"
+    },
+    "telephone": {
+      "type": "string"
+    },
+    "payment_firstname": {
+      "type": "string",
+      "minLength": 1
+    },
+    "payment_lastname": {
+      "type": "string",
+      "minLength": 1
+    },
+    "payment_company": {
+      "type": "string"
+    },
+    "payment_street": {
+      "type": "string",
+      "minLength": 1
+    },
+    "payment_number": {
+      "type": "integer"
+    },
+    "payment_complement": {
+      "type": "string"
+    },
+    "payment_district": {
+      "type": "string"
+    },
+    "payment_city": {
+      "type": "string",
+      "minLength": 1
+    },
+    "payment_postcode": {
+      "type": "string"
+    },
+    "payment_country_id": {
+      "type": "integer",
+      "default": 76
+    },
+    "payment_zone_id": {
+      "type": "integer"
+    },
+    "payment_method": {
+      "type": "string"
+    },
+    "payment_code": {
+      "type": "string"
+    },
+    "shipping_firstname": {
+      "type": "string"
+    },
+    "shipping_lastname": {
+      "type": "string"
+    },
+    "shipping_street": {
+      "type": "string"
+    },
+    "shipping_city": {
+      "type": "string"
+    },
+    "shipping_postcode": {
+      "type": "string"
+    },
+    "shipping_country_id": {
+      "type": "integer"
+    },
+    "shipping_zone_id": {
+      "type": "integer"
+    },
+    "shipping_method": {
+      "type": "string"
+    },
+    "shipping_code": {
+      "type": "string"
+    },
+    "products": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": [
+          "product_id",
+          "quantity",
+          "price",
+          "total"
+        ],
+        "properties": {
+          "product_id": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "name": {
+            "type": "string"
+          },
+          "model": {
+            "type": "string"
+          },
+          "quantity": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "price": {
+            "type": "number",
+            "minimum": 0.0
+          },
+          "total": {
+            "type": "number",
+            "minimum": 0.0
+          }
+        }
+      }
+    },
+    "totals": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      }
+    },
+    "total": {
+      "type": "number",
+      "minimum": 0.0
+    },
+    "comment": {
+      "type": "string"
+    }
+  },
+  "additionalProperties": true
+}

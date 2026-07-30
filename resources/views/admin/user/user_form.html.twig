@@ -1,0 +1,91 @@
+{% extends 'admin/layouts/base.html.twig' %}
+
+{% block title %}{{ title }}{% endblock %}
+
+{% block content %}
+	<div class="page-header">
+		<div>
+			<h2>{% if is_edit %}Editar Funcionário{% else %}Novo Funcionário{% endif %}</h2>
+			<p class="page-subtitle">Cadastre ou edite as informações de colaboradores e defina suas credenciais e permissões.</p>
+		</div>
+		<a href="/admin/usuarios" class="btn btn-secondary btn-with-icon">
+			<i class="fas fa-arrow-left"></i>
+			<span>Voltar para Lista</span>
+		</a>
+	</div>
+
+	{% if error %}
+		<div class="alert-danger-custom">
+			{{ error }}
+		</div>
+	{% endif %}
+
+	<form method="POST" action="{% if is_edit %}/admin/usuarios/{{ user.id }}/editar{% else %}/admin/usuarios/criar{% endif %}">
+		<div class="card">
+			<h3 class="text-md font-semibold text-dark mb-3 border-b pb-2">Dados Pessoais & Identificação</h3>
+			
+			<div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+				<div class="form-group">
+					<label for="firstname" class="form-label font-semibold">Nome *</label>
+					<input type="text" id="firstname" name="firstname" class="form-control" value="{{ user.firstname }}" required placeholder="Ex: Carlos" />
+				</div>
+				<div class="form-group">
+					<label for="lastname" class="form-label font-semibold">Sobrenome *</label>
+					<input type="text" id="lastname" name="lastname" class="form-control" value="{{ user.lastname }}" required placeholder="Ex: Oliveira" />
+				</div>
+			</div>
+
+			<div class="form-group mb-4">
+				<label for="email" class="form-label font-semibold">Endereço de E-mail *</label>
+				<input type="email" id="email" name="email" class="form-control" value="{{ user.email }}" required placeholder="carlos.oliveira@empresa.com" />
+			</div>
+
+			<h3 class="text-md font-semibold text-dark mb-3 border-b pb-2 pt-3">Credenciais de Acesso & Permissão</h3>
+
+			<div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+				<div class="form-group">
+					<label for="username" class="form-label font-semibold">Nome de Usuário (Username) *</label>
+					<input type="text" id="username" name="username" class="form-control" value="{{ user.username }}" required placeholder="Ex: coliveira" />
+				</div>
+				<div class="form-group">
+					<label for="user_group_id" class="form-label font-semibold">Papel / Grupo de Permissões *</label>
+					<select id="user_group_id" name="user_group_id" class="form-control" required>
+						<option value="">-- Selecione o Papel --</option>
+						{% for g in user_groups %}
+							<option value="{{ g.id }}" {% if user.user_group_id == g.id %}selected{% endif %}>{{ g.name }}</option>
+						{% endfor %}
+					</select>
+				</div>
+			</div>
+
+			<div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+				<div class="form-group">
+					<label for="password" class="form-label font-semibold">
+						{% if is_edit %}Nova Senha (deixe em branco para não alterar){% else %}Senha de Acesso *{% endif %}
+					</label>
+					<input type="password" id="password" name="password" class="form-control" {% if not is_edit %}required{% endif %} placeholder="Mínimo 4 caracteres" />
+				</div>
+				<div class="form-group">
+					<label for="confirm_password" class="form-label font-semibold">Confirmação de Senha</label>
+					<input type="password" id="confirm_password" name="confirm_password" class="form-control" {% if not is_edit %}required{% endif %} placeholder="Repita a senha" />
+				</div>
+			</div>
+
+			<div class="form-group mb-4 pt-2">
+				<label for="status" class="form-label font-semibold">Status do Acesso</label>
+				<select id="status" name="status" class="form-control">
+					<option value="1" {% if user.status == 1 or user.status == true %}selected{% endif %}>Ativo (Permitir Acesso ao Painel)</option>
+					<option value="0" {% if user.status == 0 or user.status == false %}selected{% endif %}>Inativo (Bloquear Acesso)</option>
+				</select>
+			</div>
+
+			<div class="d-flex justify-content-end gap-2 mt-4 pt-3 border-t">
+				<a href="/admin/usuarios" class="btn btn-secondary">Cancelar</a>
+				<button type="submit" class="btn btn-primary btn-with-icon">
+					<i class="fas fa-save"></i>
+					<span>Salvar Funcionário</span>
+				</button>
+			</div>
+		</div>
+	</form>
+{% endblock %}

@@ -26,11 +26,15 @@ $languageId = $bootstrap->getLanguageId();
 $language = $bootstrap->getLanguage();
 $seoUrlRepository = $bootstrap->getSeoUrlRepository();
 
+$appEnv = $_ENV['APP_ENV'] ?? 'production';
+$appDebug = filter_var($_ENV['APP_DEBUG'] ?? false, FILTER_VALIDATE_BOOLEAN);
+$isDev = ($appEnv === 'development') && $appDebug;
+
 // 3. TWIG WRAPPER
 $twig = Twig::create(__DIR__ . '/../../resources/views', [
     'cache'       => __DIR__ . '/../../storage/cache/twig_slim',
-    'auto_reload' => true,
-    'debug'       => true,
+    'auto_reload' => $isDev,
+    'debug'       => $isDev,
 ]);
 $twigEnv = $twig->getEnvironment();
 $twigEnv->addExtension(new \Alpha\Support\Twig\UrlExtension($seoUrlRepository));
@@ -51,9 +55,48 @@ $app = AppFactory::create();
 // Define o BasePath para o roteamento funcionar relativo ao diretório oculto do admin
 $app->setBasePath('/LPDHED2dC7Gjrg2b');
 
+use Alpha\Auth\Middleware\CsrfGuardMiddleware;
+use Alpha\Auth\Middleware\SecurityHeadersMiddleware;
+
 $app->add(TwigMiddleware::create($app, $twig));
+$app->add(new CsrfGuardMiddleware($twigEnv));
+$app->add(new SecurityHeadersMiddleware());
 $app->addRoutingMiddleware();
-$app->addErrorMiddleware(true, true, true);
+
+$errorMiddleware = $app->addErrorMiddleware($isDev, true, true);
+
+if (!$isDev) {
+    $errorMiddleware->setDefaultErrorHandler(
+        function ($request, Throwable $exception, bool $displayErrorDetails, bool $logErrors, bool $logErrorDetails) use ($twigEnv) {
+            $response = new \Slim\Psr7\Response();
+
+            $isXmlHttpRequest = strtolower($request->getHeaderLine('X-Requested-With')) === 'xmlhttprequest';
+            $acceptsJson = str_contains(strtolower($request->getHeaderLine('Accept')), 'application/json');
+
+            if ($isXmlHttpRequest || $acceptsJson) {
+                $response->getBody()->write((string)json_encode([
+                    'error' => [
+                        'warning' => 'Ocorreu um erro interno no servidor ao processar sua requisição.'
+                    ]
+                ], JSON_UNESCAPED_UNICODE));
+                return $response
+                    ->withHeader('Content-Type', 'application/json')
+                    ->withStatus(500);
+            }
+
+            try {
+                $html = $twigEnv->render('admin/pages/errors/500.html.twig', [
+                    'message' => 'Ocorreu um problema interno no servidor ao processar a operação administrativa.'
+                ]);
+            } catch (Throwable $e) {
+                $html = '<!DOCTYPE html><html lang="pt-BR"><head><meta charset="UTF-8"><title>500 - Erro Interno no Servidor</title></head><body><h1>500 - Erro Interno no Servidor</h1><p>Ocorreu um erro inesperado.</p></body></html>';
+            }
+
+            $response->getBody()->write($html);
+            return $response->withStatus(500);
+        }
+    );
+}
 
 // 6. CARREGA ROTAS
 $routes = require __DIR__ . '/../../Config/Routes.php';

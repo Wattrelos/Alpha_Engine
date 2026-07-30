@@ -85,7 +85,7 @@ class LayoutRepository extends AbstractRepository implements BaseRepositoryInter
             
             // Verifica se o mapper suporta findIdByRoute com segurança
             $layoutId = method_exists($layoutMapper, 'findIdByRoute') 
-                ? $layoutMapper->findIdByRoute($route, (int)$this->config->get('config_store_id')) 
+                ? $layoutMapper->findIdByRoute($route, $this->getStoreId()) 
                 : 0;
         }
 

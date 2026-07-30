@@ -31,8 +31,8 @@ class LogoutAction implements ActionInterface
             $this->authService->destroySession($sessionId);
         }
 
-        // Define o cabeçalho Set-Cookie para expirar/limpar o cookie do painel administrativo
-        $cookieValue = 'admin_session_id=; Path=/; Expires=Thu, 01 Jan 1970 00:00:00 GMT; HttpOnly; SameSite=Lax';
+        // Define o cabeçalho Set-Cookie para expirar/limpar o cookie do painel administrativo de forma segura
+        $cookieValue = \Alpha\Support\CookieHelper::makeCookieHeader($request, 'admin_session_id', '', -1);
 
         $routeContext = RouteContext::fromRequest($request);
         $routeParser = $routeContext->getRouteParser();

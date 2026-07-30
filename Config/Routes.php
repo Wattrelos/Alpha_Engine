@@ -2,6 +2,7 @@
 
 use Slim\Routing\RouteCollectorProxy;
 use Alpha\Auth\Middleware\SessionMiddleware;
+use Alpha\Auth\Middleware\RateLimitMiddleware;
 
 // Importe suas Actions aqui...
 use Alpha\Controller\Actions\Main\HomeAction;
@@ -39,12 +40,15 @@ use Alpha\Controller\Actions\Location\GetZonesAction;
 
 return function (\Slim\App $app) {
 
+    $authRateLimiter = new RateLimitMiddleware(10, 60, 'auth');
+    $apiRateLimiter = new RateLimitMiddleware(60, 60, 'api');
+
     // ─────────────────────────────────────────────────────────
     // ROTAS DO PAINEL ADMINISTRATIVO (ADMIN)
     // ─────────────────────────────────────────────────────────
     if (defined('APPLICATION') && APPLICATION === 'admin') {
         $app->get('/', \Alpha\Admin\Controllers\Actions\Auth\ShowLoginAction::class)->setName('admin.login.form');
-        $app->post('/login', \Alpha\Admin\Controllers\Actions\Auth\LoginAction::class)->setName('admin.login.submit');
+        $app->post('/login', \Alpha\Admin\Controllers\Actions\Auth\LoginAction::class)->setName('admin.login.submit')->add($authRateLimiter);
         $app->get('/setup', \Alpha\Admin\Controllers\Actions\Auth\ShowSetupAction::class)->setName('admin.setup.form');
         $app->post('/setup', \Alpha\Admin\Controllers\Actions\Auth\SetupAction::class)->setName('admin.setup.submit');
         
@@ -106,6 +110,18 @@ return function (\Slim\App $app) {
             $group->get('/devolucoes/{id:[0-9]+}', \Alpha\Admin\Controllers\Actions\Sales\Return\ShowReturnAction::class)->setName('admin.returns.show');
             $group->post('/devolucoes/{id:[0-9]+}/status', \Alpha\Admin\Controllers\Actions\Sales\Return\UpdateReturnStatusAction::class)->setName('admin.returns.update_status');
 
+            // Gestão de Funcionários (Usuários Admin)
+            $group->get('/usuarios', \Alpha\Admin\Controllers\Actions\User\User\ListUsersAction::class)->setName('admin.user.list');
+            $group->map(['GET', 'POST'], '/usuarios/criar', \Alpha\Admin\Controllers\Actions\User\User\CreateUserAction::class)->setName('admin.user.create');
+            $group->map(['GET', 'POST'], '/usuarios/{id:[0-9]+}/editar', \Alpha\Admin\Controllers\Actions\User\User\EditUserAction::class)->setName('admin.user.edit');
+            $group->get('/usuarios/{id:[0-9]+}/excluir', \Alpha\Admin\Controllers\Actions\User\User\DeleteUserAction::class)->setName('admin.user.delete');
+
+            // Gestão de Papéis (Grupos de Permissão)
+            $group->get('/papeis', \Alpha\Admin\Controllers\Actions\User\UserGroup\ListUserGroupsAction::class)->setName('admin.user_group.list');
+            $group->map(['GET', 'POST'], '/papeis/criar', \Alpha\Admin\Controllers\Actions\User\UserGroup\CreateUserGroupAction::class)->setName('admin.user_group.create');
+            $group->map(['GET', 'POST'], '/papeis/{id:[0-9]+}/editar', \Alpha\Admin\Controllers\Actions\User\UserGroup\EditUserGroupAction::class)->setName('admin.user_group.edit');
+            $group->get('/papeis/{id:[0-9]+}/excluir', \Alpha\Admin\Controllers\Actions\User\UserGroup\DeleteUserGroupAction::class)->setName('admin.user_group.delete');
+
             $group->get('/logout', \Alpha\Admin\Controllers\Actions\Auth\LogoutAction::class)->setName('admin.logout');
             $group->post('/idioma', \Alpha\Admin\Controllers\Actions\Common\SwitchAdminLanguageAction::class)->setName('admin.language.switch');
 
@@ -166,41 +182,34 @@ return function (\Slim\App $app) {
     // ─────────────────────────────────────────────────────────
     // 2. APIs INTERNAS DA APLICAÇÃO
     // ─────────────────────────────────────────────────────────
-    // API para calcular dados do carrinho do visitante (localStorage)
-    $app->post('/api/carrinho/dados', CalculateVisitorCartAction::class);
-
-    // API para sincronizar o carrinho local do visitante com o banco de dados após login
-    $app->post('/api/carrinho/sincronizar', SyncCartAction::class);
-
-    // API para buscar estados (zones) de um país específico
-    $app->get('/api/paises/{country_id:[0-9]+}/estados', GetZonesAction::class);
-
-    // Novas APIs do sistema de endereçamento Geo
-    $app->get('/api/geo/paises/{country_id:[0-9]+}/estados', \Alpha\Controller\Actions\Location\GetGeoZonesAction::class);
-    $app->get('/api/geo/estados/{zone_id:[0-9]+}/cidades', \Alpha\Controller\Actions\Location\GetGeoCitiesAction::class);
-
-    // API para salvar dados de CEP/ViaCEP consultados
-    $app->post('/api/carrinho/salvar-cep', \Alpha\Controller\Actions\Cart\SaveShippingCepAction::class);
+    $app->group('/api', function (RouteCollectorProxy $api) {
+        $api->post('/carrinho/dados', CalculateVisitorCartAction::class);
+        $api->post('/carrinho/sincronizar', SyncCartAction::class);
+        $api->get('/paises/{country_id:[0-9]+}/estados', GetZonesAction::class);
+        $api->get('/geo/paises/{country_id:[0-9]+}/estados', \Alpha\Controller\Actions\Location\GetGeoZonesAction::class);
+        $api->get('/geo/estados/{zone_id:[0-9]+}/cidades', \Alpha\Controller\Actions\Location\GetGeoCitiesAction::class);
+        $api->post('/carrinho/salvar-cep', \Alpha\Controller\Actions\Cart\SaveShippingCepAction::class);
+    })->add($apiRateLimiter);
 
     // ─────────────────────────────────────────────────────────
     // 3. GRUPO DE ROTAS INTERNACIONALIZADAS
     // ─────────────────────────────────────────────────────────
-    $app->group('/{lang:pt-br|en|es}', function (RouteCollectorProxy $group) {
+    $app->group('/{lang:pt-br|en|es}', function (RouteCollectorProxy $group) use ($authRateLimiter) {
 
         // Página Inicial do Idioma
         $group->get('', HomeAction::class)->setName('home');
 
         // Login
         $group->get('/login', ShowLoginFormAction::class)->setName('login.form');
-        $group->post('/login', LoginAction::class)->setName('login.submit');
+        $group->post('/login', LoginAction::class)->setName('login.submit')->add($authRateLimiter);
 
         // Recuperar e Resetar Senha
-        $group->map(['GET', 'POST'], '/recuperar-senha', RequestPasswordResetAction::class)->setName('account.recuperar-senha');
+        $group->map(['GET', 'POST'], '/recuperar-senha', RequestPasswordResetAction::class)->setName('account.recuperar-senha')->add($authRateLimiter);
         $group->map(['GET', 'POST'], '/resetar-senha', ResetPasswordAction::class)->setName('account.resetar-senha');
 
         // Cadastro
         $group->get('/cadastro', ShowRegistrationFormAction::class)->setName('register.form');
-        $group->post('/cadastro', RegisterAction::class)->setName('register.submit');
+        $group->post('/cadastro', RegisterAction::class)->setName('register.submit')->add($authRateLimiter);
 
         // Logout
         $group->get('/logout', LogoutAction::class)->setName('logout');

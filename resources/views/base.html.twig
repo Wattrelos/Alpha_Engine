@@ -5,6 +5,12 @@
 		<title>{% block title %}{{ title|default('AgSonhos') }}{% endblock %}</title>
 		<meta name="viewport" content="width=device-width, initial-scale=1">
 		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		{% if csrf %}
+			<meta name="csrf-name" content="{{ csrf.name }}">
+			<meta name="csrf-value" content="{{ csrf.value }}">
+			<meta name="csrf-key-name" content="{{ csrf.keys.name }}">
+			<meta name="csrf-key-value" content="{{ csrf.keys.value }}">
+		{% endif %}
 		{% if description %}
 			<meta name="description" content="{{ description }}"/>
 		{% endif %}

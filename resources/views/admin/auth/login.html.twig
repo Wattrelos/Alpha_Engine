@@ -24,6 +24,10 @@
     {% endif %}
 
     <form action="{{ action }}" method="post" novalidate>
+        {% if csrf %}
+            <input type="hidden" name="{{ csrf.keys.name }}" value="{{ csrf.name }}">
+            <input type="hidden" name="{{ csrf.keys.value }}" value="{{ csrf.value }}">
+        {% endif %}
         <div class="form-group">
             <label for="username" class="form-label">{{ AdminLang.entry_login_username|default('Usuário / E-mail') }}</label>
             <input type="text" name="username" id="username" class="form-control" placeholder="{{ AdminLang.placeholder_login_username|default('Digite seu usuário ou e-mail') }}" required autofocus value="{{ username }}">

@@ -1,0 +1,67 @@
+{% extends 'admin/layouts/base.html.twig' %}
+
+{% block title %}{{ title }}{% endblock %}
+
+{% block content %}
+	<div class="page-header">
+		<div>
+			<h2>{% if is_edit %}Editar Papel{% else %}Novo Papel de Usuário{% endif %}</h2>
+			<p class="page-subtitle">Defina os privilégios de navegação (Acessar) e modificação (Alterar) para cada módulo do sistema.</p>
+		</div>
+		<a href="/admin/papeis" class="btn btn-secondary btn-with-icon">
+			<i class="fas fa-arrow-left"></i>
+			<span>Voltar para Lista</span>
+		</a>
+	</div>
+
+	{% if error %}
+		<div class="alert-danger-custom">
+			{{ error }}
+		</div>
+	{% endif %}
+
+	<form method="POST" action="{% if is_edit %}/admin/papeis/{{ user_group.id }}/editar{% else %}/admin/papeis/criar{% endif %}">
+		<div class="card">
+			<div class="form-group mb-4">
+				<label for="name" class="form-label font-semibold">Nome do Papel / Perfil *</label>
+				<input type="text" id="name" name="name" class="form-control" value="{{ user_group.name }}" required placeholder="Ex: Vendedor PDV, Gerente de Estoque, Suporte" />
+			</div>
+
+			<h3 class="text-md font-semibold text-dark mb-3">Matriz de Permissões por Módulo</h3>
+			<p class="text-sm text-muted mb-4">Marque as caixas para autorizar acesso ou edição nos respectivos módulos:</p>
+
+			<div class="overflow-x-auto">
+				<table class="table table-clean">
+					<thead>
+						<tr>
+							<th>Módulo do Sistema</th>
+							<th class="text-center col-w-140">Permissão de Visualizar (Acessar)</th>
+							<th class="text-center col-w-140">Permissão de Edição (Modificar)</th>
+						</tr>
+					</thead>
+					<tbody>
+						{% for routeKey, moduleName in modules %}
+							<tr>
+								<td class="text-semibold text-dark">{{ moduleName }} <span class="text-xs text-muted">({{ routeKey }})</span></td>
+								<td class="text-center">
+									<input type="checkbox" name="permission[access][]" value="{{ routeKey }}" {% if routeKey in user_group.permission.access %}checked{% endif %} class="form-checkbox" />
+								</td>
+								<td class="text-center">
+									<input type="checkbox" name="permission[modify][]" value="{{ routeKey }}" {% if routeKey in user_group.permission.modify %}checked{% endif %} class="form-checkbox" />
+								</td>
+							</tr>
+						{% endfor %}
+					</tbody>
+				</table>
+			</div>
+
+			<div class="d-flex justify-content-end gap-2 mt-4 pt-3 border-t">
+				<a href="/admin/papeis" class="btn btn-secondary">Cancelar</a>
+				<button type="submit" class="btn btn-primary btn-with-icon">
+					<i class="fas fa-save"></i>
+					<span>Salvar Papel</span>
+				</button>
+			</div>
+		</div>
+	</form>
+{% endblock %}

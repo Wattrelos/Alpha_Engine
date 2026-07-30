@@ -1,6 +1,10 @@
 {# Container principal do formulário (antigo border rounded p-3...) #}
 <div class="egen-login-card">
 	<form id="form-login" action="{{ action }}" method="post" data-oc-toggle="ajax">
+		{% if csrf %}
+			<input type="hidden" name="{{ csrf.keys.name }}" value="{{ csrf.name }}"/>
+			<input type="hidden" name="{{ csrf.keys.value }}" value="{{ csrf.value }}"/>
+		{% endif %}
 
 		{# Textos do topo (Átomos/Moléculas de texto) #}
 		{# Títulos #}

@@ -1,0 +1,140 @@
+{% extends 'admin/layouts/base.html.twig' %}
+
+{% block title %}{{ title }}{% endblock %}
+
+{% block content %}
+	<div class="page-header">
+		<div>
+			<h2>Funcionários & Usuários</h2>
+			<p class="page-subtitle">Gerencie os acessos do painel administrativo e defina os papéis de cada colaborador.</p>
+		</div>
+		<a href="/admin/usuarios/criar" class="btn btn-primary btn-with-icon">
+			<i class="fas fa-user-plus"></i>
+			<span>Cadastrar Funcionário</span>
+		</a>
+	</div>
+
+	{% if success %}
+		<div class="alert-success-custom">
+			{{ success }}
+		</div>
+	{% endif %}
+
+	{% if error %}
+		<div class="alert-danger-custom">
+			{{ error }}
+		</div>
+	{% endif %}
+
+	<!-- Painel de Filtros de Busca -->
+	<div class="card mb-4">
+		<form method="GET" action="/admin/usuarios">
+			<div class="grid-filters">
+				
+				<!-- Username -->
+				<div class="form-group mb-0">
+					<label for="filter_username" class="form-label-sm">Username</label>
+					<input type="text" id="filter_username" name="filter_username" class="form-control" value="{{ filters.filter_username }}" placeholder="Buscar por usuário..." />
+				</div>
+
+				<!-- Nome -->
+				<div class="form-group mb-0">
+					<label for="filter_name" class="form-label-sm">Nome / Sobrenome</label>
+					<input type="text" id="filter_name" name="filter_name" class="form-control" value="{{ filters.filter_name }}" placeholder="Buscar por nome..." />
+				</div>
+
+				<!-- Papel / Grupo -->
+				<div class="form-group mb-0">
+					<label for="filter_user_group_id" class="form-label-sm">Papel / Grupo</label>
+					<select id="filter_user_group_id" name="filter_user_group_id" class="form-control">
+						<option value="">-- Todos os Papéis --</option>
+						{% for g in user_groups %}
+							<option value="{{ g.id }}" {% if filters.filter_user_group_id == g.id %}selected{% endif %}>{{ g.name }}</option>
+						{% endfor %}
+					</select>
+				</div>
+
+				<!-- Status -->
+				<div class="form-group mb-0">
+					<label for="filter_status" class="form-label-sm">Status</label>
+					<select id="filter_status" name="filter_status" class="form-control">
+						<option value="">-- Todos --</option>
+						<option value="1" {% if filters.filter_status == '1' %}selected{% endif %}>Ativo</option>
+						<option value="0" {% if filters.filter_status == '0' %}selected{% endif %}>Inativo</option>
+					</select>
+				</div>
+
+				<!-- Ações -->
+				<div class="d-flex gap-2">
+					<a href="/admin/usuarios" class="btn flex-1 btn-secondary">Limpar</a>
+					<button type="submit" class="btn btn-primary flex-1">
+						<i class="fas fa-filter"></i>
+						<span>Filtrar</span>
+					</button>
+				</div>
+
+			</div>
+		</form>
+	</div>
+
+	<div class="card card-table">
+		<div class="overflow-x-auto">
+			<table class="table table-clean">
+				<thead>
+					<tr>
+						<th class="col-w-60">ID</th>
+						<th>Funcionário</th>
+						<th>Username</th>
+						<th>E-mail</th>
+						<th>Papel / Perfil</th>
+						<th>Status</th>
+						<th>Data Cadastro</th>
+						<th class="text-right col-actions">Ações</th>
+					</tr>
+				</thead>
+				<tbody>
+					{% if users %}
+						{% for user in users %}
+							<tr>
+								<td class="text-muted">#{{ user.user_id }}</td>
+								<td class="text-semibold text-dark">{{ user.name }}</td>
+								<td class="font-mono text-sm">{{ user.username }}</td>
+								<td>{{ user.email }}</td>
+								<td>
+									<span class="status-pill status-approved">
+										<i class="fas fa-shield-alt mr-1"></i> {{ user.user_group }}
+									</span>
+								</td>
+								<td>
+									{% if user.status %}
+										<span class="status-pill status-approved">Ativo</span>
+									{% else %}
+										<span class="status-pill status-cancelled">Inativo</span>
+									{% endif %}
+								</td>
+								<td class="text-sm text-muted">{{ user.date_added }}</td>
+								<td class="text-right">
+									<div class="actions-wrapper">
+										<a href="/admin/usuarios/{{ user.user_id }}/editar" class="btn btn-primary btn-sm" title="Editar Funcionário">
+											<i class="fas fa-edit"></i>
+										</a>
+										<a href="/admin/usuarios/{{ user.user_id }}/excluir" class="btn btn-danger btn-sm" title="Excluir Funcionário" onclick="return confirm('Deseja realmente excluir este funcionário?');">
+											<i class="fas fa-trash-alt"></i>
+										</a>
+									</div>
+								</td>
+							</tr>
+						{% endfor %}
+					{% else %}
+						<tr>
+							<td colspan="8" class="table-empty-cell">
+								<i class="fas fa-users-slash table-empty-icon"></i>
+								Nenhum funcionário encontrado.
+							</td>
+						</tr>
+					{% endif %}
+				</tbody>
+			</table>
+		</div>
+	</div>
+{% endblock %}

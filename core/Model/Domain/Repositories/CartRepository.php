@@ -56,15 +56,6 @@ class CartRepository extends AbstractRepository implements BaseRepositoryInterfa
         return property_exists($this, 'container') && $this->container->has('weight') ? $this->container->get('weight') : null;
     }
 
-    private function getStoreId(): int
-    {
-        $config = $this->getConfig();
-        if ($config && $config->get('config_store_id')) {
-            return (int)$config->get('config_store_id');
-        }
-        return 1;
-    }
-
     private function getLanguageId(): int
     {
         $config = $this->getConfig();
@@ -129,7 +120,7 @@ class CartRepository extends AbstractRepository implements BaseRepositoryInterfa
         }
 
         if ($existingCartId > 0) {
-            $mapper->updateItem($existingCartId, $quantity, $this->getCustomerId(), $this->getSessionId());
+            $mapper->updateItem($existingCartId, $quantity, $this->getCustomerId(), $this->getSessionId(), $this->getStoreId());
         } else {
             $mapper->addItem(
                 $this->getCustomerId(),
@@ -153,7 +144,7 @@ class CartRepository extends AbstractRepository implements BaseRepositoryInterfa
      */
     public function update(int $cartId, int $quantity): void
     {
-        $this->getMapper()->updateItem($cartId, $quantity, $this->getCustomerId(), $this->getSessionId());
+        $this->getMapper()->updateItem($cartId, $quantity, $this->getCustomerId(), $this->getSessionId(), $this->getStoreId());
         $this->isLoaded = false;
         $this->cachedSubTotal = null;
         $this->cachedWeight = null;
@@ -164,7 +155,7 @@ class CartRepository extends AbstractRepository implements BaseRepositoryInterfa
      */
     public function remove(int $cartId): void
     {
-        $this->getMapper()->removeItem($cartId, $this->getCustomerId(), $this->getSessionId());
+        $this->getMapper()->removeItem($cartId, $this->getCustomerId(), $this->getSessionId(), $this->getStoreId());
         $this->isLoaded = false;
         $this->cachedSubTotal = null;
         $this->cachedWeight = null;

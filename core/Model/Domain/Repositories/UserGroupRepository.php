@@ -3,6 +3,7 @@
 namespace Alpha\Model\Domain\Repositories;
 
 use Alpha\Mappers\EntityMappers\UserGroupMapper;
+use Alpha\Model\Domain\Entities\UserGroup;
 use Alpha\Model\Domain\InterfaceEntity;
 
 /**
@@ -36,5 +37,20 @@ class UserGroupRepository extends AbstractRepository implements BaseRepositoryIn
     public function findOneBy(array $criteria): ?InterfaceEntity
     {
         return $this->getMapper()->findOneBy($criteria);
+    }
+
+    public function save(UserGroup $userGroup): ?int
+    {
+        return $this->getMapper()->save($userGroup);
+    }
+
+    public function delete(int $id): bool
+    {
+        return $this->getMapper()->delete($id);
+    }
+
+    public function countUsersInGroup(int $userGroupId): int
+    {
+        return $this->getMapper()->countUsersInGroup($userGroupId);
     }
 }

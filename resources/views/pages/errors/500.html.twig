@@ -1,0 +1,16 @@
+{% extends 'layouts/base.html.twig' %}
+
+{% block title %}{{ title|default('Erro Interno no Servidor | AgSonhos') }}{% endblock %}
+
+{% block content %}
+    <div style="max-width: 600px; margin: 4rem auto; padding: 2.5rem; text-align: center; font-family: sans-serif; background: #fff; border-radius: 1.5rem; box-shadow: 0 10px 30px rgba(0,0,0,0.08);">
+        <div style="font-size: 4.5rem; margin-bottom: 1rem;">⚙️</div>
+        <h1 style="color: #0f172a; font-size: 2.2rem; margin-top: 0; font-weight: 700;">Erro Interno no Servidor</h1>
+        <p style="color: #64748b; font-size: 1.05rem; line-height: 1.6; margin-bottom: 2rem;">
+            Ocorreu um problema inesperado ao processar sua requisição. Nossa equipe já foi notificada e estamos trabalhando na solução.
+        </p>
+        <a href="/" style="display: inline-block; padding: 0.8rem 2rem; background: #0284c7; color: #fff; text-decoration: none; font-weight: 600; border-radius: 50px; box-shadow: 0 4px 6px -1px rgba(2,132,199,0.3); transition: all 0.2s;">
+            Voltar para a Página Inicial
+        </a>
+    </div>
+{% endblock %}

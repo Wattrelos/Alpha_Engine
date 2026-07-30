@@ -7,14 +7,14 @@
 				{{ entry_firstname }}
 				<span class="text-danger">*</span>
 			</label>
-			<input type="text" name="shipping_firstname" value="{{ shipping_firstname }}" placeholder="{{ entry_firstname }}" id="input-shipping-firstname" class="egen-form-input-premium" required/>
+			<input type="text" name="shipping_firstname" value="{{ shipping_firstname }}" placeholder="{{ entry_firstname }}" id="input-shipping-firstname" class="egen-form-input-premium" data-required="true"/>
 		</div>
 		<div class="egen-form-group-premium">
 			<label for="input-shipping-lastname" class="egen-form-label-premium">
 				{{ entry_lastname }}
 				<span class="text-danger">*</span>
 			</label>
-			<input type="text" name="shipping_lastname" value="{{ shipping_lastname }}" placeholder="{{ entry_lastname }}" id="input-shipping-lastname" class="egen-form-input-premium" required/>
+			<input type="text" name="shipping_lastname" value="{{ shipping_lastname }}" placeholder="{{ entry_lastname }}" id="input-shipping-lastname" class="egen-form-input-premium" data-required="true"/>
 		</div>
 	</div>
 
@@ -29,7 +29,7 @@
 				<span class="text-danger">*</span>
 			</label>
 			<div class="egen-select-wrapper-premium">
-				<select name="shipping_country_id" id="input-shipping-country" class="egen-form-select-premium" required>
+				<select name="shipping_country_id" id="input-shipping-country" class="egen-form-select-premium" data-required="true">
 					{% for country in countries %}
 						<option value="{{ country.id }}" {% if country.id == shipping_country_id %}selected{% endif %}>{{ country.name }}</option>
 					{% endfor %}
@@ -45,14 +45,14 @@
 				{{ entry_postcode }}
 				<span class="text-danger">*</span>
 			</label>
-			<input type="text" name="shipping_postcode" value="{{ shipping_postcode }}" placeholder="{{ entry_postcode }}" id="input-shipping-postcode" class="egen-form-input-premium" required/>
+			<input type="text" name="shipping_postcode" value="{{ shipping_postcode }}" placeholder="{{ entry_postcode }}" id="input-shipping-postcode" class="egen-form-input-premium" data-required="true"/>
 		</div>
 		<div class="egen-form-group-premium">
 			<label for="input-shipping-address-1" class="egen-form-label-premium">
 				{{ entry_street }}
 				<span class="text-danger">*</span>
 			</label>
-			<input type="text" name="shipping_street" value="{{ shipping_street }}" placeholder="{{ entry_street }}" id="input-shipping-address-1" class="egen-form-input-premium" required/>
+			<input type="text" name="shipping_street" value="{{ shipping_street }}" placeholder="{{ entry_street }}" id="input-shipping-address-1" class="egen-form-input-premium" data-required="true"/>
 		</div>
 	</div>
 
@@ -62,7 +62,7 @@
 				Número
 				<span class="text-danger">*</span>
 			</label>
-			<input type="number" name="shipping_number" value="{{ shipping_number }}" placeholder="Número" id="input-shipping-number" class="egen-form-input-premium" required/>
+			<input type="number" name="shipping_number" value="{{ shipping_number }}" placeholder="Número" id="input-shipping-number" class="egen-form-input-premium" data-required="true"/>
 		</div>
 		<div class="egen-form-group-premium">
 			<label for="input-shipping-address-2" class="egen-form-label-premium">{{ entry_complement }}</label>
@@ -76,14 +76,14 @@
 				Bairro
 				<span class="text-danger">*</span>
 			</label>
-			<input type="text" name="shipping_neighborhood" value="{{ shipping_neighborhood }}" placeholder="Bairro" id="input-shipping-neighborhood" class="egen-form-input-premium" required/>
+			<input type="text" name="shipping_neighborhood" value="{{ shipping_neighborhood }}" placeholder="Bairro" id="input-shipping-neighborhood" class="egen-form-input-premium" data-required="true"/>
 		</div>
 		<div class="egen-form-group-premium">
 			<label for="input-shipping-city" class="egen-form-label-premium">
 				{{ entry_city }}
 				<span class="text-danger">*</span>
 			</label>
-			<input type="text" name="shipping_city" value="{{ shipping_city }}" placeholder="{{ entry_city }}" id="input-shipping-city" class="egen-form-input-premium" required/>
+			<input type="text" name="shipping_city" value="{{ shipping_city }}" placeholder="{{ entry_city }}" id="input-shipping-city" class="egen-form-input-premium" data-required="true"/>
 		</div>
 	</div>
 
@@ -93,7 +93,7 @@
 				Estado
 				<span class="text-danger">*</span>
 			</label>
-			<input type="text" name="shipping_zone_id" id="input-shipping-zone" value="{{ shipping_zone_id }}" placeholder="Estado" class="egen-form-input-premium" readonly required/>
+			<input type="text" name="shipping_zone_id" id="input-shipping-zone" value="{{ shipping_zone_id }}" placeholder="Estado" class="egen-form-input-premium" readonly data-required="true"/>
 		</div>
 		<div class="egen-form-group-premium"></div>
 	</div>

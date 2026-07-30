@@ -189,6 +189,23 @@ package "Catalog Module" #FFF2CC {
         --
         * text : text
     }
+
+    entity Identifier #FFF9E6 {
+        * id : int <<PK>>
+        --
+        * name : varchar(64)
+        * code : varchar(64)
+        * validation : varchar(255)
+        * status : tinyint(1)
+    }
+
+    entity ProductCode #FFF9E6 {
+        * id : int <<PK>>
+        --
+        * product_id : int <<FK>>
+        * code : varchar(64)
+        * value : varchar(255)
+    }
 }
 
 package "Customer Module" #D5E8D4 {
@@ -238,7 +255,32 @@ package "Customer Module" #D5E8D4 {
         * postcode : varchar(10)
         * country_id : int <<FK>>
         * zone_id : int <<FK>>
-        * custom_field : text
+    }
+
+    entity CustomerAddresses #F5FBF3 {
+        * id : int <<PK>>
+        --
+        * customer_id : int <<FK>>
+        * country_id : int <<FK>>
+        * zone_id : int <<FK>>
+        * city_id : int <<FK>>
+        * postal_code : varchar(10)
+        * street : varchar(255)
+        * number : varchar(32)
+        complement : varchar(255)
+        district : varchar(128)
+    }
+
+    entity CustomerAffiliate #F5FBF3 {
+        * id : int <<PK>>
+        --
+        * customer_id : int <<FK>>
+        * company : varchar(255)
+        * website : varchar(255)
+        * tracking : varchar(64)
+        * commission : decimal(15,4)
+        * status : tinyint(1)
+        * date_added : datetime
     }
 
     entity CustomerWishlist #F5FBF3 {
@@ -536,6 +578,54 @@ package "System & Store" #E3E3E3 {
         * name : varchar(64)
         * url : varchar(255)
     }
+
+    entity Extension #F9F9F9 {
+        * id : int <<PK>>
+        --
+        * extension : varchar(255)
+        * type : varchar(32)
+        * code : varchar(32)
+    }
+
+    entity SeoUrl #F9F9F9 {
+        * id : int <<PK>>
+        --
+        * store_id : int <<FK>>
+        * language_id : int <<FK>>
+        * key : varchar(64)
+        * value : varchar(255)
+        * keyword : varchar(255)
+        * sort_order : int
+    }
+
+    entity Setting #F9F9F9 {
+        * id : int <<PK>>
+        --
+        * store_id : int <<FK>>
+        * code : varchar(128)
+        * key : varchar(128)
+        * value : text
+        * serialized : tinyint(1)
+    }
+
+    entity Session #F9F9F9 {
+        * session_id : varchar(255) <<PK>>
+        --
+        * data : text
+        * expire : datetime
+    }
+
+    entity Cron #F9F9F9 {
+        * id : int <<PK>>
+        --
+        * code : varchar(64)
+        * description : text
+        * cycle : varchar(12)
+        * action : text
+        * status : tinyint(1)
+        * date_added : datetime
+        * date_modified : datetime
+    }
 }
 
 package "Procurement Module" #E0F2F1 {
@@ -608,14 +698,19 @@ Product "1" ||--|{ ProductOptionValue : "has variant details"
 
 Product "1" ||--|{ ProductDiscount : "offered with discount"
 Product "1" ||--|{ ProductAttribute : "specified by"
+Product "1" ||--|{ ProductCode : "has codes"
 Attribute "1" ||--|{ ProductAttribute : "defines type"
 AttributeGroup "1" ||--|{ Attribute : "groups"
+Identifier "1" |o--|{ ProductCode : "formats code"
+Identifier "1" |o--|{ Product : "validates code format for"
 
 ' --- RELATIONSHIPS (Customer Module) ---
 CustomerGroup "1" ||--|{ Customer : "classifies"
 CustomerGroup "1" ||--|{ ProductDiscount : "targets"
 Customer "1" ||--|{ Address : "has"
 Customer "1" |o--|| Address : "default address"
+Customer "1" ||--|{ CustomerAddresses : "has addresses"
+Customer "1" |o--|| CustomerAffiliate : "has affiliate profile"
 Customer "1" ||--|{ CustomerWishlist : "saves to"
 Product "1" ||--|{ CustomerWishlist : "saved on"
 Customer "1" ||--|{ CustomerIp : "logs IP"
@@ -671,6 +766,13 @@ Manufacturer "1" ||--|{ SupplierContactManufacturer : "represented by"
 Country "1" ||--|{ SupplierAddress : "address country"
 Zone "1" ||--|{ SupplierAddress : "address state/zone"
 City "1" ||--|{ SupplierAddress : "address city"
+
+' --- RELATIONSHIPS (System & Store) ---
+Extension "1" |o--|{ Store : "configured for"
+Store "1" ||--|{ SeoUrl : "defines URL keywords"
+Language "1" ||--|{ SeoUrl : "localized keyword"
+Store "1" ||--|{ Setting : "configures store"
+Store "1" ||--|{ Session : "stores session context"
 
 legend right
   == Mapeamento de Tipos (Arquitetura)

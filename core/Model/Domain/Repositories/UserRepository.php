@@ -97,4 +97,19 @@ class UserRepository extends AbstractRepository implements BaseRepositoryInterfa
     {
         $this->getMapper()->deleteLoginAttempts($username);
     }
+
+    public function save(User $user): ?int
+    {
+        return $this->getMapper()->save($user);
+    }
+
+    public function delete(int $id): bool
+    {
+        return $this->getMapper()->delete($id);
+    }
+
+    public function getPaginatedUsers(array $filters = [], int $page = 1, int $limit = 10): array
+    {
+        return $this->getMapper()->paginate($filters, $page, $limit);
+    }
 }

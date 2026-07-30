@@ -9,6 +9,8 @@ use Containers\AppBootstrap;
 use Alpha\Mappers\EntityMappers\InformationMapper;
 use Alpha\Auth\Middleware\LanguageMiddleware;
 use Alpha\Auth\Middleware\LegacyRouteRedirectMiddleware;
+use Alpha\Auth\Middleware\CsrfGuardMiddleware;
+use Alpha\Auth\Middleware\SecurityHeadersMiddleware;
 
 require __DIR__ . '/../vendor/autoload.php';
 
@@ -46,13 +48,18 @@ $seoUrlRepository = $bootstrap->getSeoUrlRepository();
 $languageRepository = $bootstrap->getLanguageRepository();
 $informationRepository = $bootstrap->getInformationRepository();
 
+// Detecta o modo de desenvolvimento/depuração com base no ambiente (.env)
+$appEnv = $_ENV['APP_ENV'] ?? 'production';
+$appDebug = filter_var($_ENV['APP_DEBUG'] ?? false, FILTER_VALIDATE_BOOLEAN);
+$isDev = ($appEnv === 'development') && $appDebug;
+
 // ─────────────────────────────────────────────────────────
 // 3. TWIG — Loader e Instanciação via Slim Twig wrapper
 // ─────────────────────────────────────────────────────────
 $twig = Twig::create(__DIR__ . '/../resources/views', [
     'cache'       => __DIR__ . '/../storage/cache/twig_slim',
-    'auto_reload' => true,
-    'debug'       => true,
+    'auto_reload' => $isDev,
+    'debug'       => $isDev,
 ]);
 $twigEnv = $twig->getEnvironment();
 $twigEnv->addExtension(new \Alpha\Support\Twig\UrlExtension($seoUrlRepository));
@@ -110,6 +117,12 @@ $app->add(TwigMiddleware::create($app, $twig));
 // Adiciona o Middleware de Idioma para processar a variável {lang} após o roteador
 $app->add(new LanguageMiddleware($languageRepository, $twigEnv, $registry));
 
+// Adiciona a Proteção Anti-CSRF
+$app->add(new CsrfGuardMiddleware($twigEnv));
+
+// Adiciona os Cabeçalhos de Segurança HTTP (Security Headers)
+$app->add(new SecurityHeadersMiddleware());
+
 $app->addRoutingMiddleware();
 
 // Adiciona o Middleware de Redirecionamento de Rotas Legadas (executa primeiro)
@@ -122,9 +135,9 @@ $routes = require __DIR__ . '/../Config/Routes.php';
 $routes($app);
 
 // ─────────────────────────────────────────────────────────
-// 8. HANDLER GLOBAL DE 404
+// 8. HANDLERS GLOBAIS DE ERRO (404 & 500)
 // ─────────────────────────────────────────────────────────
-$errorMiddleware = $app->addErrorMiddleware(true, true, true);
+$errorMiddleware = $app->addErrorMiddleware($isDev, true, true);
 $errorMiddleware->setErrorHandler(
     HttpNotFoundException::class,
     function ($request, $exception) use ($twigEnv) {
@@ -137,5 +150,39 @@ $errorMiddleware->setErrorHandler(
         return $response->withStatus(404);
     }
 );
+
+if (!$isDev) {
+    $errorMiddleware->setDefaultErrorHandler(
+        function ($request, Throwable $exception, bool $displayErrorDetails, bool $logErrors, bool $logErrorDetails) use ($twigEnv) {
+            $response = new \Slim\Psr7\Response();
+
+            $isXmlHttpRequest = strtolower($request->getHeaderLine('X-Requested-With')) === 'xmlhttprequest';
+            $acceptsJson = str_contains(strtolower($request->getHeaderLine('Accept')), 'application/json');
+
+            if ($isXmlHttpRequest || $acceptsJson) {
+                $response->getBody()->write((string)json_encode([
+                    'error' => [
+                        'warning' => 'Ocorreu um erro interno no servidor ao processar sua requisição.'
+                    ]
+                ], JSON_UNESCAPED_UNICODE));
+                return $response
+                    ->withHeader('Content-Type', 'application/json')
+                    ->withStatus(500);
+            }
+
+            try {
+                $html = $twigEnv->render('pages/errors/500.html.twig', [
+                    'title'       => 'Erro Interno no Servidor | AgSonhos',
+                    'description' => 'Ocorreu um problema ao processar sua requisição.',
+                ]);
+            } catch (Throwable $e) {
+                $html = '<!DOCTYPE html><html lang="pt-BR"><head><meta charset="UTF-8"><title>500 - Erro Interno no Servidor</title></head><body><h1>500 - Erro Interno no Servidor</h1><p>Ocorreu um erro inesperado.</p></body></html>';
+            }
+
+            $response->getBody()->write($html);
+            return $response->withStatus(500);
+        }
+    );
+}
 
 $app->run();

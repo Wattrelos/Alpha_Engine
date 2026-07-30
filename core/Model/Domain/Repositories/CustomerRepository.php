@@ -54,7 +54,17 @@ class CustomerRepository extends AbstractRepository implements BaseRepositoryInt
 
     public function find(int $id): ?Customer
     {
-        return $this->getMapper()->findById($id);
+        $customer = $this->getMapper()->findById($id);
+        if (!$customer) {
+            return null;
+        }
+
+        $storeId = $this->store_id;
+        if ($storeId > 0 && $customer->getStoreId() !== $storeId) {
+            return null;
+        }
+
+        return $customer;
     }
 
     /**
@@ -62,7 +72,13 @@ class CustomerRepository extends AbstractRepository implements BaseRepositoryInt
      */
     public function findByEmail(string $email): ?Customer
     {
-        $results = $this->getMapper()->search(['email' => $email]);
+        $criteria = ['email' => $email];
+        $storeId = $this->store_id;
+        if ($storeId > 0) {
+            $criteria['store_id'] = $storeId;
+        }
+
+        $results = $this->getMapper()->search($criteria);
         return $results[0] ?? null;
     }
 
@@ -144,7 +160,7 @@ class CustomerRepository extends AbstractRepository implements BaseRepositoryInt
     public function registerCustomer(array $data): array
     {
         // Inicialização de fallbacks resilientes para rodar tantono código legado quanto no Slim standalone
-        $storeId = (int)$this->getConfigValue('config_store_id', 1);
+        $storeId = $this->getStoreId();
         $languageId = (int)$this->getConfigValue('config_language_id', 2);
         $defaultGroupId = (int)$this->getConfigValue('config_customer_group_id', 1);
 

@@ -11,6 +11,12 @@
 		<link rel="stylesheet" href="/css/admin/admin.css">
 		<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 		<link rel="stylesheet" href="/fonts/fontawesome/css/all.min.css">
+		{% if csrf %}
+			<meta name="csrf-name" content="{{ csrf.name }}">
+			<meta name="csrf-value" content="{{ csrf.value }}">
+			<meta name="csrf-key-name" content="{{ csrf.keys.name }}">
+			<meta name="csrf-key-value" content="{{ csrf.keys.value }}">
+		{% endif %}
 	</head>
 	<body class="admin-body">
 		<div
@@ -112,6 +118,10 @@
 						<!-- Language Switcher Dropdown -->
 						<div class="topbar-language-select" style="margin-right: 25px; display: flex; align-items: center;">
 							<form action="/LPDHED2dC7Gjrg2b/idioma" method="POST" id="form_lang_switch" style="margin: 0; display: flex; align-items: center;">
+								{% if csrf %}
+									<input type="hidden" name="{{ csrf.keys.name }}" value="{{ csrf.name }}">
+									<input type="hidden" name="{{ csrf.keys.value }}" value="{{ csrf.value }}">
+								{% endif %}
 								<i class="fas fa-globe" style="color: #64748b; font-size: 1rem; margin-right: 6px;"></i>
 								<select name="language_code" onchange="document.getElementById('form_lang_switch').submit();" style="padding: 0.35rem 0.5rem; font-size: 0.85rem; border-radius: 4px; border: 1px solid #cbd5e1; cursor: pointer; color: #334155; background-color: #fff; outline: none; transition: border-color 0.2s; font-family: inherit; font-weight: 500;">
 									{% for l in languages %}

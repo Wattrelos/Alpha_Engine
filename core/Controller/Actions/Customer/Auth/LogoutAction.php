@@ -31,8 +31,8 @@ class LogoutAction implements ActionInterface
             $this->authService->destroySession($sessionId);
         }
 
-        // 3. Define o cabeçalho Set-Cookie para expirar/limpar o cookie do navegador
-        $cookieValue = 'session_id=; Path=/; Expires=Thu, 01 Jan 1970 00:00:00 GMT; HttpOnly; SameSite=Lax';
+        // 3. Define o cabeçalho Set-Cookie para expirar/limpar o cookie do navegador de forma segura
+        $cookieValue = \Alpha\Support\CookieHelper::makeCookieHeader($request, 'session_id', '', -1);
 
         // 4. Redireciona para a tela de login pública de forma dinâmica
         $routeContext = RouteContext::fromRequest($request);

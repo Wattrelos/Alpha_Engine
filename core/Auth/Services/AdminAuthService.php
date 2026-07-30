@@ -67,7 +67,7 @@ class AdminAuthService extends AbstractAuthService
     }
 
     /**
-     * Registra o evento de login no arquivo de log administrativo.
+     * Registra o evento de login no arquivo de log administrativo aplicando higienização LGPD.
      */
     private function logAdminLogin(string $status, string $username, string $ip): void
     {
@@ -78,7 +78,9 @@ class AdminAuthService extends AbstractAuthService
         $logFile = $logDir . 'admin_login.log';
         $timestamp = date('Y-m-d H:i:s');
         $userAgent = $_SERVER['HTTP_USER_AGENT'] ?? 'Unknown User-Agent';
-        $logEntry = sprintf("[%s] [%s] User: '%s' | IP: '%s' | UA: '%s'\n", $timestamp, $status, $username, $ip, $userAgent);
-        @file_put_contents($logFile, $logEntry, FILE_APPEND);
+        $cleanUsername = \Alpha\Support\LgpdSanitizer::sanitizeLogMessage($username);
+        $logEntry = sprintf("[%s] [%s] User: '%s' | IP: '%s' | UA: '%s'\n", $timestamp, $status, $cleanUsername, $ip, $userAgent);
+        $sanitizedLogEntry = \Alpha\Support\LgpdSanitizer::sanitizeLogMessage($logEntry);
+        @file_put_contents($logFile, $sanitizedLogEntry, FILE_APPEND);
     }
 }

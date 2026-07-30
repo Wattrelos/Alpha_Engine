@@ -24,7 +24,7 @@ class SitemapRepository extends AbstractRepository implements BaseRepositoryInte
     public function getSitemapData(): Collection
     {
         $data = [];
-        $store_id = (int)$this->config->get('config_store_id');
+        $store_id = $this->getStoreId();
         $language_id = (int)$this->config->get('config_language_id');
         $language_param = 'language=' . $this->config->get('config_language');
         $customer_token = isset($this->session->data['customer_token']) ? '&customer_token=' . $this->session->data['customer_token'] : '';

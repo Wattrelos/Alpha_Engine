@@ -61,6 +61,102 @@
 		</div>
 	</div>
 
+	<!-- Quick Actions Grid (Atalhos Rápidos por Permissão) -->
+	<div class="card mb-4" style="margin-bottom: 2rem;">
+		<h3 style="margin: 0 0 0.5rem 0; font-size: 1.1rem; font-weight: 700; color: #1e293b;">
+			<i class="fas fa-bolt text-primary mr-2"></i> Atalhos Rápidos do Sistema
+		</h3>
+		<p class="text-sm text-muted mb-4">Ferramentas de acesso rápido autorizadas para o seu perfil ({% if logged_admin.user_group_id == 1 %}Super Administrator{% else %}Colaborador{% endif %}):</p>
+		
+		<div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(210px, 1fr)); gap: 1rem;">
+			
+			{% if logged_admin.user_group_id == 1 or 'user/user' in logged_admin_permissions.access %}
+				<a href="/admin/usuarios" class="card" style="margin: 0; padding: 1rem; text-decoration: none; border: 1px solid #e2e8f0; transition: all 0.2s ease; display: flex; align-items: center; gap: 0.8rem; background: #ffffff;">
+					<div class="stat-icon-box icon-blue" style="width: 42px; height: 42px; font-size: 1.1rem;">
+						<i class="fas fa-users-cog"></i>
+					</div>
+					<div>
+						<h4 style="margin: 0; font-size: 0.95rem; font-weight: 700; color: #0f172a;">Funcionários</h4>
+						<span style="font-size: 0.75rem; color: #64748b;">Gerenciar Colaboradores</span>
+					</div>
+				</a>
+			{% endif %}
+
+			{% if logged_admin.user_group_id == 1 or 'user/user_group' in logged_admin_permissions.access %}
+				<a href="/admin/papeis" class="card" style="margin: 0; padding: 1rem; text-decoration: none; border: 1px solid #e2e8f0; transition: all 0.2s ease; display: flex; align-items: center; gap: 0.8rem; background: #ffffff;">
+					<div class="stat-icon-box icon-purple" style="width: 42px; height: 42px; font-size: 1.1rem;">
+						<i class="fas fa-user-shield"></i>
+					</div>
+					<div>
+						<h4 style="margin: 0; font-size: 0.95rem; font-weight: 700; color: #0f172a;">Papéis & Permissões</h4>
+						<span style="font-size: 0.75rem; color: #64748b;">Perfis de Acesso</span>
+					</div>
+				</a>
+			{% endif %}
+
+			{% if logged_admin.user_group_id == 1 or 'pos/sales_rep' in logged_admin_permissions.access %}
+				<a href="/admin/pos/vendedor" class="card" style="margin: 0; padding: 1rem; text-decoration: none; border: 1px solid #e2e8f0; transition: all 0.2s ease; display: flex; align-items: center; gap: 0.8rem; background: #ffffff;">
+					<div class="stat-icon-box icon-green" style="width: 42px; height: 42px; font-size: 1.1rem;">
+						<i class="fas fa-cash-register"></i>
+					</div>
+					<div>
+						<h4 style="margin: 0; font-size: 0.95rem; font-weight: 700; color: #0f172a;">PDV Vendedor</h4>
+						<span style="font-size: 0.75rem; color: #64748b;">Vendas Balcão / Loja</span>
+					</div>
+				</a>
+			{% endif %}
+
+			{% if logged_admin.user_group_id == 1 or 'pos/cashier' in logged_admin_permissions.access %}
+				<a href="/admin/pos/caixa" class="card" style="margin: 0; padding: 1rem; text-decoration: none; border: 1px solid #e2e8f0; transition: all 0.2s ease; display: flex; align-items: center; gap: 0.8rem; background: #ffffff;">
+					<div class="stat-icon-box icon-yellow" style="width: 42px; height: 42px; font-size: 1.1rem;">
+						<i class="fas fa-receipt"></i>
+					</div>
+					<div>
+						<h4 style="margin: 0; font-size: 0.95rem; font-weight: 700; color: #0f172a;">PDV Caixa</h4>
+						<span style="font-size: 0.75rem; color: #64748b;">Recebimentos / Fatura</span>
+					</div>
+				</a>
+			{% endif %}
+
+			{% if logged_admin.user_group_id == 1 or 'catalog/product' in logged_admin_permissions.access %}
+				<a href="/admin/produtos" class="card" style="margin: 0; padding: 1rem; text-decoration: none; border: 1px solid #e2e8f0; transition: all 0.2s ease; display: flex; align-items: center; gap: 0.8rem; background: #ffffff;">
+					<div class="stat-icon-box icon-blue" style="width: 42px; height: 42px; font-size: 1.1rem;">
+						<i class="fas fa-box"></i>
+					</div>
+					<div>
+						<h4 style="margin: 0; font-size: 0.95rem; font-weight: 700; color: #0f172a;">Produtos</h4>
+						<span style="font-size: 0.75rem; color: #64748b;">Catálogo de Itens</span>
+					</div>
+				</a>
+			{% endif %}
+
+			{% if logged_admin.user_group_id == 1 or 'procurement/supplier' in logged_admin_permissions.access %}
+				<a href="/admin/fornecedores" class="card" style="margin: 0; padding: 1rem; text-decoration: none; border: 1px solid #e2e8f0; transition: all 0.2s ease; display: flex; align-items: center; gap: 0.8rem; background: #ffffff;">
+					<div class="stat-icon-box icon-purple" style="width: 42px; height: 42px; font-size: 1.1rem;">
+						<i class="fas fa-truck-loading"></i>
+					</div>
+					<div>
+						<h4 style="margin: 0; font-size: 0.95rem; font-weight: 700; color: #0f172a;">Fornecedores</h4>
+						<span style="font-size: 0.75rem; color: #64748b;">Gestão de Suprimentos</span>
+					</div>
+				</a>
+			{% endif %}
+
+			{% if logged_admin.user_group_id == 1 or 'setting/store_setting' in logged_admin_permissions.access or 'setting/setting' in logged_admin_permissions.access %}
+				<a href="/admin/configuracoes" class="card" style="margin: 0; padding: 1rem; text-decoration: none; border: 1px solid #e2e8f0; transition: all 0.2s ease; display: flex; align-items: center; gap: 0.8rem; background: #ffffff;">
+					<div class="stat-icon-box icon-yellow" style="width: 42px; height: 42px; font-size: 1.1rem;">
+						<i class="fas fa-cogs"></i>
+					</div>
+					<div>
+						<h4 style="margin: 0; font-size: 0.95rem; font-weight: 700; color: #0f172a;">Configurações</h4>
+						<span style="font-size: 0.75rem; color: #64748b;">Ajustes da Loja</span>
+					</div>
+				</a>
+			{% endif %}
+
+		</div>
+	</div>
+
 	<!-- Two-column grid -->
 	<div class="dashboard-grid">
 		<!-- Recent Sales Card -->

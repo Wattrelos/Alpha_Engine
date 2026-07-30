@@ -46,7 +46,7 @@ No código legado, o `store_id = 1` é usado como identificador da **loja princi
 - O `SettingMapper::findByStoreId()` faz `WHERE store_id = 1 OR store_id = ?`, ou seja, hardcoda a inexistência de `id=0` como loja global — isso é um vazamento do legado para dentro da Alpha Engine.
 
 ### A Situação Atual na Alpha Engine:
-Com a criação do registro `id = 1` em `tbkk_store`, o sistema passa a ter **uma loja real registrada**. O padrão `config_store_id = 1` (configurado em `tbkk_setting`) torna toda a resolução de `store_id` legítima e rastreável. Os repositórios que fazem `?? 0` continuam funcionando, mas agora o `0` apenas cobre o caso de container não inicializado (erro de bootstrap), não mais o caso de operação normal.
+Com a criação do registro `id = 1` em `tbkk_store`, o sistema passa a ter **uma loja real registrada**. O padrão `config_store_id = 1` (configurado em `tbkk_setting`) torna toda a resolução de `store_id` legítima e rastreável. A resolução de `store_id` em `AbstractRepository::getStoreId()` retorna dinamicamente o ID da loja ativa a partir do container PSR-11 ou headers de requisição (com fallback seguro para `1`), eliminando completamente o anti-pattern do `store_id = 0`.
 
 ### ✅ Recomendação: Exigir ao menos 1 registro real em `store`
 A abordagem correta — e adotada — é **manter ao menos um registro válido em `tbkk_store`** (ex: `id = 1`, a loja principal). Isso porque:
@@ -59,18 +59,19 @@ A abordagem correta — e adotada — é **manter ao menos um registro válido e
 | Debugging / auditoria | ❌ "Pertence à loja 0" não informa nada | ✅ "Pertence à loja Agsonhos Principal" é auditável |
 | Hidratação da entidade `Store` | ❌ DAO retorna `null` (via Pseudo-Null) ou explode | ✅ DAO hidrata um `Store` real com `name` e `url` |
 
-### 🧹 Ação de Saneamento (Executada em 2026-06-04):
+### 🧹 Ação de Saneamento (Concluída):
 1. ✅ **Registro `id=1` mantido** em `tbkk_store` como loja principal permanente.
-2. ✅ **`tbkk_setting` migrado**: 216 linhas com `store_id = 1` atualizadas para `store_id = 1`. FK `fk_setting_store` criada: `tbkk_setting.store_id → tbkk_store.id ON UPDATE CASCADE`.
-3. ✅ **`SettingMapper::findByStoreId()`** simplificado: `WHERE store_id = 1 OR store_id = ?` → `WHERE store_id = ?`.
-4. ✅ **Fallbacks `?? 0` / `: 0` substituídos por `RuntimeException`** nos seguintes arquivos:
+2. ✅ **`tbkk_setting` migrado**: Registros de configurações associados a `store_id = 1`. FK `fk_setting_store` criada: `tbkk_setting.store_id → tbkk_store.id ON UPDATE CASCADE`.
+3. ✅ **`SettingMapper::findByStoreId()`** simplificado: `WHERE store_id = ?`.
+4. ✅ **Resolução unificada de `store_id`**: Centralizada em `AbstractRepository::getStoreId()` com fallback estrito para a loja principal `1`:
    - [`AbstractRepository.php`](file:///var/www/html/agsonhos/core/Model/Domain/Repositories/AbstractRepository.php)
    - [`WishlistRepository.php`](file:///var/www/html/agsonhos/core/Model/Domain/Repositories/WishlistRepository.php)
    - [`CartRepository.php`](file:///var/www/html/agsonhos/core/Model/Domain/Repositories/CartRepository.php)
+   - [`SettingRepository.php`](file:///var/www/html/agsonhos/core/Model/Domain/Repositories/SettingRepository.php)
    - [`BaseController.php`](file:///var/www/html/agsonhos/core/Controller/BaseController.php)
    - [`ThemeMapper.php`](file:///var/www/html/agsonhos/core/Mappers/EntityMappers/ThemeMapper.php)
    - [`SubmitCheckoutAction.php`](file:///var/www/html/agsonhos/core/Controller/Actions/Cart/SubmitCheckoutAction.php)
-5. ✅ **Saneamento de `store_id = 0` residual**: Corrigida a carga do bootstrap em [`AppBootstrap.php`](file:///var/www/html/agsonhos/Containers/AppBootstrap.php), menu institucional em [`index.php`](file:///var/www/html/agsonhos/public_html/index.php) e resolvedor de SEO em [`ShowInformationAction.php`](file:///var/www/html/agsonhos/core/Controller/Actions/Information/ShowInformationAction.php) para referenciar a loja principal real `store_id = 1` ao invés da inexistente loja `0`. Mapeada também a hidratação em [`InformationRepository.php`](file:///var/www/html/agsonhos/core/Model/Domain/Repositories/InformationRepository.php).
+5. ✅ **Saneamento de `store_id = 0` residual**: Corrigida a carga do bootstrap em [`AppBootstrap.php`](file:///var/www/html/agsonhos/Containers/AppBootstrap.php), menu institucional em [`index.php`](file:///var/www/html/agsonhos/public_html/index.php) e resolvedor de SEO em [`ShowInformationAction.php`](file:///var/www/html/agsonhos/core/Controller/Actions/Information/ShowInformationAction.php) para referenciar a loja principal real `store_id = 1`.
 
 ---
 

@@ -27,7 +27,7 @@ class ThemeRepository extends AbstractRepository
         $cacheKey = $theme . '_' . $route;
 
         if (!array_key_exists($cacheKey, $this->themeCache)) {
-            $this->themeCache[$cacheKey] = $this->getMapper()->getTheme($route, $theme);
+            $this->themeCache[$cacheKey] = $this->getMapper()->getTheme($route, $theme, $this->getStoreId());
         }
 
         return $this->themeCache[$cacheKey];

@@ -17,13 +17,17 @@ class ThemeMapper extends BaseMapper
     /**
      * Busca as informações de tema baseadas na rota e na loja ativa.
      */
-    public function getTheme(string $route, string $theme): ?array
+    public function getTheme(string $route, string $theme, int $storeId = 0): ?array
     {
-        // Alpha Engine: Pega o Store ID de forma dinâmica pelo contexto global da loja
-        if (!$this->container) {
-            throw new \RuntimeException('[Alpha Engine] Container não disponível no ThemeMapper. Falha de bootstrap.');
+        if ($storeId <= 0) {
+            if ($this->container && $this->container->has('storeId')) {
+                $storeId = (int)$this->container->get('storeId');
+            } elseif ($this->container && $this->container->has('config')) {
+                $storeId = (int)$this->container->get('config')->get('config_store_id');
+            } else {
+                $storeId = 1;
+            }
         }
-        $storeId = (int)$this->container->get('config')->get('config_store_id');
 
         $query = (new QueryBuilder())
             ->select('*')

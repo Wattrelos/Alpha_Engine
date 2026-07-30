@@ -1,0 +1,98 @@
+openapi: 3.1.0
+info:
+  title: Alpha Engine - API de Checkout & Idempotência
+  description: |
+    Especificação de contrato OpenAPI 3.1 para a API de finalização de pedidos (Checkout)
+    na Alpha Engine. Inclui suporte a cabeçalhos de idempotência transacional (`X-Idempotency-Key`)
+    e isolamento multi-tenant por `store_id`.
+  version: 1.0.0
+servers:
+  - url: https://loja.agsonhos.com.br/{lang}
+    description: Servidor Principal
+    variables:
+      lang:
+        default: pt-br
+        enum:
+          - pt-br
+          - en-us
+
+paths:
+  /checkout:
+    post:
+      summary: Processar e Finalizar Pedido (Checkout)
+      description: |
+        Endpoint transacional para submissão e conversão do carrinho em pedido (`Order`).
+        Requer token anti-CSRF ou cabeçalho de idempotência `X-Idempotency-Key`.
+      operationId: submitCheckout
+      headers:
+        X-Idempotency-Key:
+          schema:
+            type: string
+            format: uuid
+          required: false
+          description: Chave única de idempotência para prevenir pedidos duplicados por clique duplo.
+        HTTP_X_STORE_ID:
+          schema:
+            type: integer
+            default: 1
+          required: false
+          description: ID do tenant/loja ativa (Default = 1).
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: './schemas/OrderDataDTO.json'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: './schemas/OrderDataDTO.json'
+      responses:
+        '201':
+          description: Pedido criado e confirmado com sucesso.
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - success
+                  - id
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  id:
+                    type: integer
+                    description: O ID do pedido gerado no banco de dados.
+                    example: 45019
+        '422':
+          description: Erro de idempotência (Requisição duplicada em processamento) ou erro de validação de dados.
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - error
+                  - message
+                properties:
+                  error:
+                    type: string
+                    example: DUPLICATE_REQUEST
+                  message:
+                    type: string
+                    example: Processamento em andamento. Por favor, aguarde.
+        '500':
+          description: Falha no servidor ou erro de persistência transacional.
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - error
+                  - message
+                properties:
+                  error:
+                    type: string
+                    example: ORDER_CREATION_FAILED
+                  message:
+                    type: string
+                    example: Erro ao processar o seu pedido.

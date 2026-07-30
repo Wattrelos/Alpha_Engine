@@ -14,9 +14,23 @@ document.addEventListener('DOMContentLoaded', () => {
                 return;
             }
 
-            // Garante validação nativa dos campos obrigatórios da etapa atual do formulário
-            if (typeof form.checkValidity === 'function' && !form.checkValidity()) {
-                form.reportValidity();
+            // Valida campos obrigatórios visíveis da etapa atual
+            const inputsVisiveis = Array.from(form.querySelectorAll('[data-required="true"]')).filter(input => {
+                return !input.closest('.egen-checkout-form-hidden, .egen-checkout-step:not(.active)');
+            });
+
+            let formValido = true;
+            for (const input of inputsVisiveis) {
+                if (!input.value || !input.value.trim()) {
+                    input.classList.add('is-invalid');
+                    formValido = false;
+                } else {
+                    input.classList.remove('is-invalid');
+                }
+            }
+
+            if (!formValido) {
+                exibirMensagemErro("Por favor, preencha todos os campos obrigatórios visíveis.");
                 return;
             }
 

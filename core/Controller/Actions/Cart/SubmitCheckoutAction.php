@@ -247,7 +247,7 @@ class SubmitCheckoutAction implements ActionInterface
             $cartRepository->initializeContext();
 
             $orderData = [];
-            $orderData['store_id']    = (int)($configSettings['config_store_id'] ?? 1);
+            $orderData['store_id']    = $this->container->has('storeId') ? (int)$this->container->get('storeId') : (int)($configSettings['config_store_id'] ?? 1);
             $orderData['language_id'] = (int)($configSettings['config_language_id'] ?? 2);
             $orderData['currency_id'] = (int)($configSettings['config_currency_id'] ?? 1);
 

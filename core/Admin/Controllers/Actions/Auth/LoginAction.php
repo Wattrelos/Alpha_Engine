@@ -62,11 +62,8 @@ class LoginAction implements ActionInterface
             // Cria a sessão administrativa (Redis ou PHP Native Session)
             $sessionId = $this->authService->createSession($userData);
 
-            // Define o Cookie de Sessão Administrativa de forma segura
-            $cookieValue = sprintf(
-                'admin_session_id=%s; Path=/; HttpOnly; SameSite=Lax; Max-Age=7200',
-                $sessionId
-            );
+            // Define o Cookie de Sessão Administrativa de forma segura com suporte a HTTPS (Secure)
+            $cookieValue = \Alpha\Support\CookieHelper::makeCookieHeader($request, 'admin_session_id', $sessionId, 7200);
 
             $dashboardUrl = $routeParser->urlFor('admin.dashboard');
             

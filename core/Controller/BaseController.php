@@ -34,9 +34,8 @@ abstract class BaseController
     {
         $this->container = $container;
 
-        // Resolve configSettings (array) do AppContainer
         $settings = $container->has('configSettings') ? $container->get('configSettings') : [];
-        $this->storeId    = (int)($settings['config_store_id'] ?? 1);
+        $this->storeId    = $container->has('storeId') ? (int)$container->get('storeId') : (int)($settings['config_store_id'] ?? 1);
         $this->languageId = (int)($settings['config_language_id'] ?? 2);
 
         // Inicia o renderizador de view blindado contra WSOD

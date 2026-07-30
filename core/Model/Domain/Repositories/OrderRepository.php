@@ -75,7 +75,7 @@ class OrderRepository extends AbstractRepository implements BaseRepositoryInterf
     // --- Legacy Bridges (account/order) ---
 
     public function getOrder(int $order_id, int $customer_id = 0): array {
-        return $this->getMapper()->getOrderArray($order_id, $customer_id);
+        return $this->getMapper()->getOrderArray($order_id, $customer_id, $this->store_id);
     }
 
     public function getOrders(int $customer_id, int $start = 0, int $limit = 20): array {

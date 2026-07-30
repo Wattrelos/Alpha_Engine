@@ -364,7 +364,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
             if (action === 'register') {
                 const registerForm = document.getElementById('checkout-register-form');
-                const inputs = registerForm.querySelectorAll('input[required]');
+                const inputs = registerForm.querySelectorAll('input[data-required="true"], input[required]');
                 inputs.forEach(input => {
                     if (!input.value.trim()) {
                         input.classList.add('is-invalid');
@@ -402,7 +402,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const billingForm = document.getElementById('checkout-billing-address');
             // Só valida se o formulário de cobrança estiver visível
             if (billingForm && !billingForm.classList.contains('egen-checkout-form-hidden')) {
-                const inputs = billingForm.querySelectorAll('input[required], select[required]');
+                const inputs = billingForm.querySelectorAll('input[data-required="true"], select[data-required="true"], input[required], select[required]');
                 inputs.forEach(input => {
                     if (!input.value.trim()) {
                         input.classList.add('is-invalid');
@@ -430,7 +430,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (step === 3) {
             const shippingForm = document.getElementById('checkout-shipping-address');
             if (shippingForm && !shippingForm.classList.contains('egen-checkout-form-hidden')) {
-                const inputs = shippingForm.querySelectorAll('input[required], select[required]');
+                const inputs = shippingForm.querySelectorAll('input[data-required="true"], select[data-required="true"], input[required], select[required]');
                 inputs.forEach(input => {
                     if (!input.value.trim()) {
                         input.classList.add('is-invalid');

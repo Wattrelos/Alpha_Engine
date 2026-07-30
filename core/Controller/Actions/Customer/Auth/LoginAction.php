@@ -44,11 +44,8 @@ class LoginAction implements ActionInterface
         // Se autenticou com sucesso, cria a sessão no Redis
         $sessionId = $this->authService->createSession($user);
 
-        // Define o Cookie de Sessão de forma segura
-        $cookieValue = sprintf(
-            'session_id=%s; Path=/; HttpOnly; SameSite=Lax; Max-Age=7200',
-            $sessionId
-        );
+        // Define o Cookie de Sessão de forma segura com suporte a HTTPS (Secure)
+        $cookieValue = \Alpha\Support\CookieHelper::makeCookieHeader($request, 'session_id', $sessionId, 7200);
 
         // Obtém o parser de rotas para obter a URL do painel da conta
         $routeContext = RouteContext::fromRequest($request);

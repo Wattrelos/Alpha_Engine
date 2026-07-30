@@ -76,12 +76,16 @@ class CartMapper extends BaseMapper
     /**
      * Atualiza a quantidade de um item existente no carrinho.
      */
-    public function updateItem(int $cartId, int $quantity, int $customerId, string $sessionId): void
+    public function updateItem(int $cartId, int $quantity, int $customerId, string $sessionId, int $storeId = 0): void
     {
         $query = (new QueryBuilder())
             ->update($this->getFullTableName())
             ->set('quantity', $quantity)
             ->where('id = ?', [$cartId]); // Alpha Engine: PK padronizada como id
+
+        if ($storeId > 0) {
+            $query->where('store_id = ?', [$storeId]);
+        }
 
         if ($customerId) {
             $query->where('customer_id = ?', [$customerId]);
@@ -95,11 +99,15 @@ class CartMapper extends BaseMapper
     /**
      * Remove um item específico do carrinho.
      */
-    public function removeItem(int $cartId, int $customerId, string $sessionId): void
+    public function removeItem(int $cartId, int $customerId, string $sessionId, int $storeId = 0): void
     {
         $query = (new QueryBuilder())
             ->delete($this->getFullTableName())
             ->where('id = ?', [$cartId]);
+
+        if ($storeId > 0) {
+            $query->where('store_id = ?', [$storeId]);
+        }
 
         if ($customerId) {
             $query->where('customer_id = ?', [$customerId]);

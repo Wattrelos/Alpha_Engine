@@ -53,6 +53,14 @@ class AdminSessionMiddleware
         'admin.orders.show' => 'sale/order',
         'admin.orders.invoice' => 'sale/order',
         'admin.orders.update_status' => 'sale/order',
+        'admin.user.list' => 'user/user',
+        'admin.user.create' => 'user/user',
+        'admin.user.edit' => 'user/user',
+        'admin.user.delete' => 'user/user',
+        'admin.user_group.list' => 'user/user_group',
+        'admin.user_group.create' => 'user/user_group',
+        'admin.user_group.edit' => 'user/user_group',
+        'admin.user_group.delete' => 'user/user_group',
     ];
 
     public function __construct(?\Psr\Container\ContainerInterface $container = null)
@@ -127,10 +135,27 @@ class AdminSessionMiddleware
         $user = json_decode($sessionData);
         $request = $request->withAttribute('logged_admin', $user);
 
-        // Injeta os dados do administrador globalmente no Twig
+        // --- Carrega permissões do papel (UserGroup) ---
+        $userGroupId = isset($user->user_group_id) ? (int)$user->user_group_id : 0;
+        $permissions = ['access' => [], 'modify' => []];
+
+        if ($userGroupId > 0) {
+            try {
+                $userGroupRepo = \Alpha\Model\Domain\Repositories\RepositoryFactory::getInstance()->get(\Alpha\Model\Domain\Repositories\UserGroupRepository::class);
+                $userGroup = $userGroupRepo->find($userGroupId);
+                if ($userGroup instanceof \Alpha\Model\Domain\Entities\UserGroup) {
+                    $permissions = $userGroup->getPermissionArray();
+                }
+            } catch (\Exception $e) {
+                // Ignora erros
+            }
+        }
+
+        // Injeta os dados do administrador e suas permissões globalmente no Twig
         if ($this->container && $this->container->has(\Twig\Environment::class)) {
             $twig = $this->container->get(\Twig\Environment::class);
             $twig->addGlobal('logged_admin', $user);
+            $twig->addGlobal('logged_admin_permissions', $permissions);
         }
 
         // --- Verificação de privilégios / permissões ---
@@ -140,31 +165,16 @@ class AdminSessionMiddleware
         $permissionKey = self::ROUTE_PERMISSION_MAP[$routeName] ?? null;
 
         if ($permissionKey) {
-            $userGroupId = isset($user->user_group_id) ? (int)$user->user_group_id : 0;
-            $permissions = [];
-
-            if ($userGroupId > 0) {
-                try {
-                    $userGroupRepo = \Alpha\Model\Domain\Repositories\RepositoryFactory::getInstance()->get(\Alpha\Model\Domain\Repositories\UserGroupRepository::class);
-                    $userGroup = $userGroupRepo->find($userGroupId);
-                    if ($userGroup instanceof \Alpha\Model\Domain\Entities\UserGroup) {
-                        $permissions = $userGroup->getPermissionArray();
-                    }
-                } catch (\Exception $e) {
-                    // Ignora erros de carregamento e assume permissões vazias
-                }
-            }
-
             $accessList = $permissions['access'] ?? [];
             $modifyList = $permissions['modify'] ?? [];
             $isModify = in_array(strtoupper($request->getMethod()), ['POST', 'PUT', 'DELETE', 'PATCH']);
 
             if ($isModify) {
-                if (!in_array($permissionKey, $modifyList)) {
+                if ($userGroupId !== 1 && !in_array($permissionKey, $modifyList)) {
                     return $this->render403('Você não tem privilégios de alteração para este recurso.');
                 }
             } else {
-                if (!in_array($permissionKey, $accessList)) {
+                if ($userGroupId !== 1 && !in_array($permissionKey, $accessList)) {
                     return $this->render403('Você não tem permissão para visualizar esta página.');
                 }
             }

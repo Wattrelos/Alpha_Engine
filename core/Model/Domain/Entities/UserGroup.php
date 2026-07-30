@@ -13,6 +13,7 @@ use Alpha\Model\Domain\BaseEntity;
 class UserGroup extends BaseEntity
 {
     private string $name = '';
+    private string $description = '';
     private string $permission = '';
 
     public function getName(): string
@@ -23,6 +24,17 @@ class UserGroup extends BaseEntity
     public function setName(string $name): self
     {
         $this->name = $name;
+        return $this;
+    }
+
+    public function getDescription(): string
+    {
+        return $this->description;
+    }
+
+    public function setDescription(string $description): self
+    {
+        $this->description = $description;
         return $this;
     }
 

@@ -17,6 +17,10 @@
 		<p class="egen-register-subtitle">{{ text_account_already|raw }}</p>
 
 		<form id="form-register" action="{{ register }}" method="post" data-oc-toggle="ajax" class="egen-form">
+			{% if csrf %}
+				<input type="hidden" name="{{ csrf.keys.name }}" value="{{ csrf.name }}"/>
+				<input type="hidden" name="{{ csrf.keys.value }}" value="{{ csrf.value }}"/>
+			{% endif %}
 
 			<fieldset id="account" class="egen-fieldset">
 				<legend class="egen-legend">{{ text_your_details }}</legend>

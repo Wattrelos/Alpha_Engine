@@ -25,9 +25,10 @@ Detalhamento das árvores de agregação e grafos de objetos:
 *   ✅ **Clientes**: `Customer`, `CustomerApproval`, `CustomerHistory`, `CustomerLogin`, `CustomerOnline`, `CustomerReward`, `CustomerTransaction`, `Address`, `CustomerGroup`, `Notification`.
 *   ✅ **Módulos e Extensões**: `Extension`, `ExtensionInstall`, `ExtensionPath`, `Module`.
 
-### 3. Infraestrutura e Banco de Dados
-Explicação técnica sobre o `DataAccessObject` (DAO), abstração de transações aninhadas e segurança com PDO. (Ver Diagrama)
+### 3. Infraestrutura, Segurança e Banco de Dados
+Explicação técnica sobre o `DataAccessObject` (DAO), abstração de transações aninhadas e hardening de segurança com PDO.
 *   Segurança, Sistema e Infraestrutura
+*   ✅ **[Guia de Recomendações e Diretrizes de Segurança](file:///var/www/html/agsonhos/docs/architecture/security_recommendations.md)** (100% Implementado: CSRF, Security Headers, Secure Cookies, Rate Limiting com Redis, Hardening Produção, Isolamento Multi-Tenant, Proteção de Uploads e LGPD).
 *   Desacoplamento do Sistema de Sessões
 
 ### 4. Persistência (Mappers & Repositories)

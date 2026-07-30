@@ -11,6 +11,12 @@
 		<!-- Chamando os estilos do admin a partir do caminho correto na public_html -->
 		<link rel="stylesheet" href="/css/admin/admin.css">
 		<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+		{% if csrf %}
+			<meta name="csrf-name" content="{{ csrf.name }}">
+			<meta name="csrf-value" content="{{ csrf.value }}">
+			<meta name="csrf-key-name" content="{{ csrf.keys.name }}">
+			<meta name="csrf-key-value" content="{{ csrf.keys.value }}">
+		{% endif %}
 	</head>
 	<body class="auth-body">
 		<div class="auth-container {% block container_class %}{% endblock %}">

@@ -1,0 +1,77 @@
+{% extends 'admin/layouts/base.html.twig' %}
+
+{% block title %}{{ title }}{% endblock %}
+
+{% block content %}
+	<div class="page-header">
+		<div>
+			<h2>Papéis & Permissões</h2>
+			<p class="page-subtitle">Gerencie os perfis de acesso e privilégios dos funcionários no painel de controle.</p>
+		</div>
+		<a href="/admin/papeis/criar" class="btn btn-primary btn-with-icon">
+			<i class="fas fa-user-shield"></i>
+			<span>Adicionar Novo Papel</span>
+		</a>
+	</div>
+
+	{% if success %}
+		<div class="alert-success-custom">
+			{{ success }}
+		</div>
+	{% endif %}
+
+	{% if error %}
+		<div class="alert-danger-custom">
+			{{ error }}
+		</div>
+	{% endif %}
+
+	<div class="card card-table">
+		<div class="overflow-x-auto">
+			<table class="table table-clean">
+				<thead>
+					<tr>
+						<th class="col-w-60">ID</th>
+						<th>Nome do Papel / Grupo</th>
+						<th>Funcionários Atrelados</th>
+						<th class="text-right col-actions">Ações</th>
+					</tr>
+				</thead>
+				<tbody>
+					{% if user_groups %}
+						{% for group in user_groups %}
+							<tr>
+								<td class="text-muted">#{{ group.user_group_id }}</td>
+								<td class="text-semibold text-dark">{{ group.name }}</td>
+								<td>
+									<span class="status-pill status-approved">
+										<i class="fas fa-users mr-1"></i> {{ group.total_users }} funcionário(s)
+									</span>
+								</td>
+								<td class="text-right">
+									<div class="actions-wrapper">
+										<a href="/admin/papeis/{{ group.user_group_id }}/editar" class="btn btn-primary btn-sm" title="Editar Permissões">
+											<i class="fas fa-edit"></i>
+										</a>
+										{% if group.user_group_id != 1 %}
+											<a href="/admin/papeis/{{ group.user_group_id }}/excluir" class="btn btn-danger btn-sm" title="Excluir Papel" onclick="return confirm('Deseja realmente excluir este papel de usuário?');">
+												<i class="fas fa-trash-alt"></i>
+											</a>
+										{% endif %}
+									</div>
+								</td>
+							</tr>
+						{% endfor %}
+					{% else %}
+						<tr>
+							<td colspan="4" class="table-empty-cell">
+								<i class="fas fa-user-shield table-empty-icon"></i>
+								Nenhum papel de usuário cadastrado.
+							</td>
+						</tr>
+					{% endif %}
+				</tbody>
+			</table>
+		</div>
+	</div>
+{% endblock %}

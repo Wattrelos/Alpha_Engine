@@ -171,9 +171,21 @@ document.addEventListener('DOMContentLoaded', () => {
                 submitBtn.innerHTML = 'Processando...';
             }
 
+            // Prepara o FormData e injeta automaticamente os tokens CSRF das meta-tags se ausentes
+            const formData = new FormData(form);
+            const metaNameKey = document.querySelector('meta[name="csrf-key-name"]')?.content || 'csrf_name';
+            const metaValueKey = document.querySelector('meta[name="csrf-key-value"]')?.content || 'csrf_value';
+            const metaName = document.querySelector('meta[name="csrf-name"]')?.content;
+            const metaValue = document.querySelector('meta[name="csrf-value"]')?.content;
+
+            if (metaName && metaValue && !formData.has(metaNameKey)) {
+                formData.append(metaNameKey, metaName);
+                formData.append(metaValueKey, metaValue);
+            }
+
             fetch(form.action, {
                 method: form.method || 'POST',
-                body: new FormData(form),
+                body: formData,
                 headers: {
                     'X-Requested-With': 'XMLHttpRequest'
                 }
@@ -188,12 +200,18 @@ document.addEventListener('DOMContentLoaded', () => {
                     // Redireciona em caso de sucesso
                     const isAuthForm = form.action.includes('/login') || form.action.includes('/cadastro');
                     if (isAuthForm && typeof guestCart !== 'undefined' && guestCart.getItems().length > 0) {
+                        const syncPayload = { items: guestCart.getItems() };
+                        if (metaName && metaValue) {
+                            syncPayload[metaNameKey] = metaName;
+                            syncPayload[metaValueKey] = metaValue;
+                        }
                         fetch('/api/carrinho/sincronizar', {
                             method: 'POST',
                             headers: {
-                                'Content-Type': 'application/json'
+                                'Content-Type': 'application/json',
+                                'X-Requested-With': 'XMLHttpRequest'
                             },
-                            body: JSON.stringify({ items: guestCart.getItems() })
+                            body: JSON.stringify(syncPayload)
                         })
                         .then(res => res.json())
                         .then(syncData => {

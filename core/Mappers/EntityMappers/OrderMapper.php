@@ -257,7 +257,7 @@ class OrderMapper extends BaseMapper
         return (int)$orderId;
     }
 
-    public function getOrderArray(int $orderId, int $customerId = 0): array
+    public function getOrderArray(int $orderId, int $customerId = 0, int $storeId = 0): array
     {
         $query = (new QueryBuilder())
             ->select('*', 'id AS order_id')
@@ -267,6 +267,10 @@ class OrderMapper extends BaseMapper
 
         if ($customerId > 0) {
             $query->where("customer_id = ?", [$customerId]);
+        }
+
+        if ($storeId > 0) {
+            $query->where("store_id = ?", [$storeId]);
         }
 
         $results = $this->dao->executeQuery($query);

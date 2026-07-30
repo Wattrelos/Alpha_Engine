@@ -25,8 +25,8 @@ Este documento registra o avanço na reestruturação e desacoplamento do módul
   - `SessionMiddleware` e `SignatureMiddleware` ajustados para operar de forma encriptada consumindo a chave e dados de conexão do Redis vindos diretamente do `.env`.
 
 ### 4. Correção de Integridade e Fallbacks (Esta Rodada)
-- **Resiliência do CustomerRepository contra Registry Nulo**:
-  - Implementação dos métodos utilitários privados `getConfigValue` e `getTranslation` que fornecem caminhos alternativos de injeção (usando `SettingRepository` e arquivos físicos locais PHP de idioma) quando serviços clássicosdo código legado como `config` e `language` não estão presentes no `Registry` da aplicação standalone.
+- **Resiliência e Resolução Standalone no CustomerRepository**:
+  - Implementação dos métodos utilitários privados `getConfigValue` e `getTranslation` que fornecem resolução desacoplada via `SettingRepository`, `AbstractRepository::getStoreId()` e arquivos físicos locais PHP de idioma quando os serviços não chegam pré-injetados pelo container PSR-11 `AppContainer`.
   - Saneamento de chamadas diretas que disparavam `Call to a member function get() on null` nos fluxos de validação de CPF/CNPJ, campos customizados e validações de tamanho de senha.
 - **Bootstrap da Aplicação**:
   - Inclusão dos helpers nativos de validação (`general.php`, `filter.php`, `validation.php`) no bootstrap `public_html/index.php`.

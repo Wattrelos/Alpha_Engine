@@ -71,14 +71,29 @@ abstract class AbstractRepository
      */
     public function __get(string $key): mixed
     {
-        if ($this->container) {
-            if ($key === 'store_id') {
-                if (!$this->container->has('configSettings')) {
-                    return 1;
-                }
-                $settings = $this->container->get('configSettings');
-                return (int)($settings['config_store_id'] ?? 1);
+        if ($key === 'store_id') {
+            if ($this->container && $this->container->has('storeId')) {
+                return (int)$this->container->get('storeId');
             }
+            if ($this->container && $this->container->has('configSettings')) {
+                $settings = $this->container->get('configSettings');
+                if (isset($settings['config_store_id'])) {
+                    return (int)$settings['config_store_id'];
+                }
+            }
+            if ($this->container && $this->container->has('config')) {
+                $config = $this->container->get('config');
+                if ($config && method_exists($config, 'get') && $config->get('config_store_id') !== null) {
+                    return (int)$config->get('config_store_id');
+                }
+            }
+            if (!empty($_SERVER['HTTP_X_STORE_ID']) && is_numeric($_SERVER['HTTP_X_STORE_ID'])) {
+                return (int)$_SERVER['HTTP_X_STORE_ID'];
+            }
+            return 1; // Loja Principal / Padrão (tbkk_store id = 1)
+        }
+
+        if ($this->container) {
             if ($key === 'language_id') {
                 return $this->container->has('languageId') ? (int)$this->container->get('languageId') : 2;
             }
@@ -87,6 +102,14 @@ abstract class AbstractRepository
             }
         }
         return null;
+    }
+
+    /**
+     * Retorna explicitamente o ID da Loja ativa para isolamento de tenant.
+     */
+    public function getStoreId(): int
+    {
+        return (int)($this->store_id ?? 1);
     }
 
     /**
