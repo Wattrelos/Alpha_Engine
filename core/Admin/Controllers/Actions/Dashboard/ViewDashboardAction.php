@@ -23,10 +23,16 @@ class ViewDashboardAction implements ActionInterface
 
     public function __invoke(Request $request, Response $response, array $args): Response
     {
-        // Se a página/view do dashboard não existir ou for simples, criamos um placeholder
-        $html = $this->twig->render('admin/pages/dashboard/index.html.twig', [
-            'title' => 'Dashboard | Painel Administrativo',
-        ]);
+        try {
+            $html = $this->twig->render('admin/pages/dashboard/index.html.twig', [
+                'title' => 'Dashboard | Painel Administrativo',
+            ]);
+        } catch (\Throwable $e) {
+            $this->twig->setCache(false);
+            $html = $this->twig->render('admin/pages/dashboard/index.html.twig', [
+                'title' => 'Dashboard | Painel Administrativo',
+            ]);
+        }
 
         $response->getBody()->write($html);
         return $response->withHeader('Content-Type', 'text/html; charset=utf-8');

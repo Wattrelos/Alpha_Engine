@@ -46,22 +46,25 @@ A **Alpha Engine** é um ecossistema de e-commerce totalmente independente e aut
 
 ## 2. Mapa do Workspace (Diretórios Principais)
 
-*   **Ponto de Entrada (Bootstrap):** [`public_html/index.php`](file:///var/www/html/agsonhos/public_html/index.php)
+*   **Ponto de Entrada (Bootstrap):** [`public_html/index.php`](file:///var/www/html/agsonhos/public_html/index.php) (Front-end) e [`public_html/LPDHED2dC7Gjrg2b/index.php`](file:///var/www/html/agsonhos/public_html/LPDHED2dC7Gjrg2b/index.php) (Admin Ofuscado)
+*   **Especificações de Contrato (Spec-Driven):** [`docs/specs/`](file:///var/www/html/agsonhos/docs/specs/) (OpenAPI 3.1, JSON Schema DTOs, Gherkin BDD)
 *   **Configuração de Rotas:** [`Config/Routes.php`](file:///var/www/html/agsonhos/Config/Routes.php)
 *   **Camada de Controladores (Actions):**
     *   **Frontend (E-commerce):** [`core/Controller/Actions/`](file:///var/www/html/agsonhos/core/Controller/Actions/) (Namespace `Alpha\Controller\Actions\`)
     *   **Painel Admin:** [`core/Admin/Controllers/Actions/`](file:///var/www/html/agsonhos/core/Admin/Controllers/Actions/) (Namespace `Alpha\Admin\Controllers\Actions\`)
+        *   [`User/User/`](file:///var/www/html/agsonhos/core/Admin/Controllers/Actions/User/User/) - Gestão de Funcionários
+        *   [`User/UserGroup/`](file:///var/www/html/agsonhos/core/Admin/Controllers/Actions/User/UserGroup/) - Gestão de Papéis & Permissões
 *   **Apresentação (Views Twig):** [`resources/views/`](file:///var/www/html/agsonhos/resources/views/)
 *   **Camada de Domínio (DDD):**
-    *   **Repositories:** [`core/Model/Domain/Repositories/`](file:///var/www/html/agsonhos/core/Model/Domain/Repositories/)
-    *   **Domain Entities (POPOs PHP 8.4):** [`core/Model/Domain/Entities/`](file:///var/www/html/agsonhos/core/Model/Domain/Entities/)
+    *   **Repositories:** [`core/Model/Domain/Repositories/`](file:///var/www/html/agsonhos/core/Model/Domain/Repositories/) (`UserRepository.php`, `UserGroupRepository.php`, `CartRepository.php`, etc.)
+    *   **Domain Entities (POPOs PHP 8.4):** [`core/Model/Domain/Entities/`](file:///var/www/html/agsonhos/core/Model/Domain/Entities/) (`User.php`, `UserGroup.php`)
         *   [`Customer/`](file:///var/www/html/agsonhos/core/Model/Domain/Entities/Customer/) - Entidades de Clientes
         *   [`Supplier/`](file:///var/www/html/agsonhos/core/Model/Domain/Entities/Supplier/) - Entidades de Fornecedores
         *   [`Geo/`](file:///var/www/html/agsonhos/core/Model/Domain/Entities/Geo/) - Entidades Geográficas
 *   **Camada de Persistência:**
-    *   **Data Mappers:** [`core/Mappers/EntityMappers/`](file:///var/www/html/agsonhos/core/Mappers/EntityMappers/)
+    *   **Data Mappers:** [`core/Mappers/EntityMappers/`](file:///var/www/html/agsonhos/core/Mappers/EntityMappers/) (`UserMapper.php`, `UserGroupMapper.php`)
     *   **DataAccessObject (DAO):** [`core/Model/DataAccessObject/`](file:///var/www/html/agsonhos/core/Model/DataAccessObject/)
-*   **Gerenciador de Container (Legacy & DI):** [`core/AlphaContainer.php`](file:///var/www/html/agsonhos/core/AlphaContainer.php)
+*   **Gerenciador de Container (Legacy & DI):** [`core/AlphaContainer.php`](file:///var/www/html/agsonhos/core/AlphaContainer.php) e [`Containers/AppContainer.php`](file:///var/www/html/agsonhos/Containers/AppContainer.php)
 
 ---
 

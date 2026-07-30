@@ -58,7 +58,7 @@ class CreateUserGroupAction extends BaseController implements ActionInterface
                     $routeContext = RouteContext::fromRequest($request);
                     $url = $routeContext->getRouteParser()->urlFor('admin.user_group.list') . '?success=' . urlencode('Papel criado com sucesso!');
                 } catch (\Throwable $e) {
-                    $url = '/admin/papeis?success=' . urlencode('Papel criado com sucesso!');
+                    $url = '/LPDHED2dC7Gjrg2b/papeis?success=' . urlencode('Papel criado com sucesso!');
                 }
 
                 return $response->withHeader('Location', $url)->withStatus(302);

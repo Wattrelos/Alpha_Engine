@@ -77,7 +77,7 @@ class CreateUserAction extends BaseController implements ActionInterface
                     $routeContext = RouteContext::fromRequest($request);
                     $url = $routeContext->getRouteParser()->urlFor('admin.user.list') . '?success=' . urlencode('Funcionário cadastrado com sucesso!');
                 } catch (\Throwable $e) {
-                    $url = '/admin/usuarios?success=' . urlencode('Funcionário cadastrado com sucesso!');
+                    $url = '/LPDHED2dC7Gjrg2b/usuarios?success=' . urlencode('Funcionário cadastrado com sucesso!');
                 }
 
                 return $response->withHeader('Location', $url)->withStatus(302);

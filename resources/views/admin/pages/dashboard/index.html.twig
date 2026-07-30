@@ -7,7 +7,7 @@
 {% block content %}
 	<div class="page-header">
 		<h2>{{ title|default('Painel Inicial') }}</h2>
-		<p class="page-subtitle">Bem-vindo de volta! Aqui está o resumo das atividades da AgSonhos hoje.</p>
+		<p class="page-subtitle">Bem-vindo de volta! Aqui está o resumo das atividades da AgSonhos e Construções de hoje.</p>
 	</div>
 
 	<!-- Stats Grid -->
@@ -71,7 +71,7 @@
 		<div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(210px, 1fr)); gap: 1rem;">
 			
 			{% if logged_admin.user_group_id == 1 or 'user/user' in logged_admin_permissions.access %}
-				<a href="/admin/usuarios" class="card" style="margin: 0; padding: 1rem; text-decoration: none; border: 1px solid #e2e8f0; transition: all 0.2s ease; display: flex; align-items: center; gap: 0.8rem; background: #ffffff;">
+				<a href="/LPDHED2dC7Gjrg2b/usuarios" class="card" style="margin: 0; padding: 1rem; text-decoration: none; border: 1px solid #e2e8f0; transition: all 0.2s ease; display: flex; align-items: center; gap: 0.8rem; background: #ffffff;">
 					<div class="stat-icon-box icon-blue" style="width: 42px; height: 42px; font-size: 1.1rem;">
 						<i class="fas fa-users-cog"></i>
 					</div>
@@ -83,7 +83,7 @@
 			{% endif %}
 
 			{% if logged_admin.user_group_id == 1 or 'user/user_group' in logged_admin_permissions.access %}
-				<a href="/admin/papeis" class="card" style="margin: 0; padding: 1rem; text-decoration: none; border: 1px solid #e2e8f0; transition: all 0.2s ease; display: flex; align-items: center; gap: 0.8rem; background: #ffffff;">
+				<a href="/LPDHED2dC7Gjrg2b/papeis" class="card" style="margin: 0; padding: 1rem; text-decoration: none; border: 1px solid #e2e8f0; transition: all 0.2s ease; display: flex; align-items: center; gap: 0.8rem; background: #ffffff;">
 					<div class="stat-icon-box icon-purple" style="width: 42px; height: 42px; font-size: 1.1rem;">
 						<i class="fas fa-user-shield"></i>
 					</div>
@@ -95,7 +95,7 @@
 			{% endif %}
 
 			{% if logged_admin.user_group_id == 1 or 'pos/sales_rep' in logged_admin_permissions.access %}
-				<a href="/admin/pos/vendedor" class="card" style="margin: 0; padding: 1rem; text-decoration: none; border: 1px solid #e2e8f0; transition: all 0.2s ease; display: flex; align-items: center; gap: 0.8rem; background: #ffffff;">
+				<a href="/LPDHED2dC7Gjrg2b/pos/vendedor" class="card" style="margin: 0; padding: 1rem; text-decoration: none; border: 1px solid #e2e8f0; transition: all 0.2s ease; display: flex; align-items: center; gap: 0.8rem; background: #ffffff;">
 					<div class="stat-icon-box icon-green" style="width: 42px; height: 42px; font-size: 1.1rem;">
 						<i class="fas fa-cash-register"></i>
 					</div>
@@ -107,7 +107,7 @@
 			{% endif %}
 
 			{% if logged_admin.user_group_id == 1 or 'pos/cashier' in logged_admin_permissions.access %}
-				<a href="/admin/pos/caixa" class="card" style="margin: 0; padding: 1rem; text-decoration: none; border: 1px solid #e2e8f0; transition: all 0.2s ease; display: flex; align-items: center; gap: 0.8rem; background: #ffffff;">
+				<a href="/LPDHED2dC7Gjrg2b/pos/caixa" class="card" style="margin: 0; padding: 1rem; text-decoration: none; border: 1px solid #e2e8f0; transition: all 0.2s ease; display: flex; align-items: center; gap: 0.8rem; background: #ffffff;">
 					<div class="stat-icon-box icon-yellow" style="width: 42px; height: 42px; font-size: 1.1rem;">
 						<i class="fas fa-receipt"></i>
 					</div>
@@ -119,7 +119,7 @@
 			{% endif %}
 
 			{% if logged_admin.user_group_id == 1 or 'catalog/product' in logged_admin_permissions.access %}
-				<a href="/admin/produtos" class="card" style="margin: 0; padding: 1rem; text-decoration: none; border: 1px solid #e2e8f0; transition: all 0.2s ease; display: flex; align-items: center; gap: 0.8rem; background: #ffffff;">
+				<a href="/LPDHED2dC7Gjrg2b/produtos" class="card" style="margin: 0; padding: 1rem; text-decoration: none; border: 1px solid #e2e8f0; transition: all 0.2s ease; display: flex; align-items: center; gap: 0.8rem; background: #ffffff;">
 					<div class="stat-icon-box icon-blue" style="width: 42px; height: 42px; font-size: 1.1rem;">
 						<i class="fas fa-box"></i>
 					</div>
@@ -131,7 +131,7 @@
 			{% endif %}
 
 			{% if logged_admin.user_group_id == 1 or 'procurement/supplier' in logged_admin_permissions.access %}
-				<a href="/admin/fornecedores" class="card" style="margin: 0; padding: 1rem; text-decoration: none; border: 1px solid #e2e8f0; transition: all 0.2s ease; display: flex; align-items: center; gap: 0.8rem; background: #ffffff;">
+				<a href="/LPDHED2dC7Gjrg2b/fornecedores" class="card" style="margin: 0; padding: 1rem; text-decoration: none; border: 1px solid #e2e8f0; transition: all 0.2s ease; display: flex; align-items: center; gap: 0.8rem; background: #ffffff;">
 					<div class="stat-icon-box icon-purple" style="width: 42px; height: 42px; font-size: 1.1rem;">
 						<i class="fas fa-truck-loading"></i>
 					</div>
@@ -143,7 +143,7 @@
 			{% endif %}
 
 			{% if logged_admin.user_group_id == 1 or 'setting/store_setting' in logged_admin_permissions.access or 'setting/setting' in logged_admin_permissions.access %}
-				<a href="/admin/configuracoes" class="card" style="margin: 0; padding: 1rem; text-decoration: none; border: 1px solid #e2e8f0; transition: all 0.2s ease; display: flex; align-items: center; gap: 0.8rem; background: #ffffff;">
+				<a href="/LPDHED2dC7Gjrg2b/configuracoes" class="card" style="margin: 0; padding: 1rem; text-decoration: none; border: 1px solid #e2e8f0; transition: all 0.2s ease; display: flex; align-items: center; gap: 0.8rem; background: #ffffff;">
 					<div class="stat-icon-box icon-yellow" style="width: 42px; height: 42px; font-size: 1.1rem;">
 						<i class="fas fa-cogs"></i>
 					</div>

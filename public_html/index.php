@@ -56,8 +56,14 @@ $isDev = ($appEnv === 'development') && $appDebug;
 // ─────────────────────────────────────────────────────────
 // 3. TWIG — Loader e Instanciação via Slim Twig wrapper
 // ─────────────────────────────────────────────────────────
+$twigCacheDir = __DIR__ . '/../storage/cache/twig_slim';
+if (!is_dir($twigCacheDir)) {
+    @mkdir($twigCacheDir, 0777, true);
+}
+@chmod($twigCacheDir, 0777);
+
 $twig = Twig::create(__DIR__ . '/../resources/views', [
-    'cache'       => __DIR__ . '/../storage/cache/twig_slim',
+    'cache'       => $twigCacheDir,
     'auto_reload' => $isDev,
     'debug'       => $isDev,
 ]);

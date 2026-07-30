@@ -29,7 +29,7 @@ class EditUserAction extends BaseController implements ActionInterface
                 $routeContext = RouteContext::fromRequest($request);
                 $url = $routeContext->getRouteParser()->urlFor('admin.user.list') . '?error=' . urlencode('Funcionário não encontrado.');
             } catch (\Throwable $e) {
-                $url = '/admin/usuarios?error=' . urlencode('Funcionário não encontrado.');
+                $url = '/LPDHED2dC7Gjrg2b/usuarios?error=' . urlencode('Funcionário não encontrado.');
             }
             return $response->withHeader('Location', $url)->withStatus(302);
         }
@@ -93,7 +93,7 @@ class EditUserAction extends BaseController implements ActionInterface
                     $routeContext = RouteContext::fromRequest($request);
                     $url = $routeContext->getRouteParser()->urlFor('admin.user.list') . '?success=' . urlencode('Funcionário atualizado com sucesso!');
                 } catch (\Throwable $e) {
-                    $url = '/admin/usuarios?success=' . urlencode('Funcionário atualizado com sucesso!');
+                    $url = '/LPDHED2dC7Gjrg2b/usuarios?success=' . urlencode('Funcionário atualizado com sucesso!');
                 }
 
                 return $response->withHeader('Location', $url)->withStatus(302);

@@ -31,8 +31,14 @@ $appDebug = filter_var($_ENV['APP_DEBUG'] ?? false, FILTER_VALIDATE_BOOLEAN);
 $isDev = ($appEnv === 'development') && $appDebug;
 
 // 3. TWIG WRAPPER
+$twigCacheDir = __DIR__ . '/../../storage/cache/twig_slim';
+if (!is_dir($twigCacheDir)) {
+    @mkdir($twigCacheDir, 0777, true);
+}
+@chmod($twigCacheDir, 0777);
+
 $twig = Twig::create(__DIR__ . '/../../resources/views', [
-    'cache'       => __DIR__ . '/../../storage/cache/twig_slim',
+    'cache'       => $twigCacheDir,
     'auto_reload' => $isDev,
     'debug'       => $isDev,
 ]);

@@ -8,7 +8,7 @@
 			<h2>Papéis & Permissões</h2>
 			<p class="page-subtitle">Gerencie os perfis de acesso e privilégios dos funcionários no painel de controle.</p>
 		</div>
-		<a href="/admin/papeis/criar" class="btn btn-primary btn-with-icon">
+		<a href="/LPDHED2dC7Gjrg2b/papeis/criar" class="btn btn-primary btn-with-icon">
 			<i class="fas fa-user-shield"></i>
 			<span>Adicionar Novo Papel</span>
 		</a>
@@ -50,11 +50,11 @@
 								</td>
 								<td class="text-right">
 									<div class="actions-wrapper">
-										<a href="/admin/papeis/{{ group.user_group_id }}/editar" class="btn btn-primary btn-sm" title="Editar Permissões">
+										<a href="/LPDHED2dC7Gjrg2b/papeis/{{ group.user_group_id }}/editar" class="btn btn-primary btn-sm" title="Editar Permissões">
 											<i class="fas fa-edit"></i>
 										</a>
 										{% if group.user_group_id != 1 %}
-											<a href="/admin/papeis/{{ group.user_group_id }}/excluir" class="btn btn-danger btn-sm" title="Excluir Papel" onclick="return confirm('Deseja realmente excluir este papel de usuário?');">
+											<a href="/LPDHED2dC7Gjrg2b/papeis/{{ group.user_group_id }}/excluir" class="btn btn-danger btn-sm" title="Excluir Papel" onclick="return confirm('Deseja realmente excluir este papel de usuário?');">
 												<i class="fas fa-trash-alt"></i>
 											</a>
 										{% endif %}

@@ -80,5 +80,24 @@ Este documento registra o avanço na reestruturação e desacoplamento do módul
   - Adicionada a validação do status ativo (`isStatus()`) da entidade cliente.
   - Integrada a contagem falha (`addLoginAttempt`) e a limpeza das tentativas (`resetLoginAttempts`) na persistência do banco após login bem-sucedido.
 
+### 7. Gestão de Funcionários, Papéis & Permissões (RBAC) e Atalhos do Dashboard
+- **Módulo de Papéis & Permissões (`UserGroup`)**:
+  - Implementação de repositório e mappers em [UserGroupRepository.php](file:///var/www/html/agsonhos/core/Model/Domain/Repositories/UserGroupRepository.php) e [UserGroupMapper.php](file:///var/www/html/agsonhos/core/Mappers/EntityMappers/UserGroupMapper.php).
+  - Métodos de persistência `save()`, `delete()` e `countUsersInGroup()`.
+  - Matriz visual de permissões por módulo no painel administrativo ([user_group_form.html.twig](file:///var/www/html/agsonhos/resources/views/admin/user_group/user_group_form.html.twig)) com autorizações granulares para leitura (`access`) e modificação (`modify`).
+  - Proteção de integridade: bloqueio de exclusão do grupo `Super Administrator` (ID 1) e de papéis com colaboradores ativos vinculados.
+- **Módulo de Funcionários / Colaboradores (`User`)**:
+  - Implementação de repositório e mappers em [UserRepository.php](file:///var/www/html/agsonhos/core/Model/Domain/Repositories/UserRepository.php) e [UserMapper.php](file:///var/www/html/agsonhos/core/Mappers/EntityMappers/UserMapper.php).
+  - Tabela paginada com filtros e formulário completo de cadastro e edição ([user_list.html.twig](file:///var/www/html/agsonhos/resources/views/admin/user/user_list.html.twig) e [user_form.html.twig](file:///var/www/html/agsonhos/resources/views/admin/user/user_form.html.twig)).
+  - Hashing de senhas via `password_hash()` e verificação `password_verify()`.
+  - Proteção de segurança: bloqueio automático contra autoexclusão da própria conta do administrador logado.
+- **Atalhos Dinâmicos no Dashboard Condicionados ao Papel**:
+  - Criação do grid de **Atalhos Rápidos do Sistema** em [index.html.twig](file:///var/www/html/agsonhos/resources/views/admin/pages/dashboard/index.html.twig).
+  - O [AdminSessionMiddleware.php](file:///var/www/html/agsonhos/core/Auth/Middleware/AdminSessionMiddleware.php) injeta `logged_admin_permissions` globalmente no Twig. Os botões de atalho (Funcionários, Papéis, PDV Vendedor, PDV Caixa, Produtos, Fornecedores, Configurações) são exibidos condicionalmente às permissões ativas do perfil logado.
+- **Infraestrutura & Mapeamento de Rotas Mascaradas**:
+  - Mapeamento das rotas `/usuarios` e `/papeis` sob o prefixo seguro `/LPDHED2dC7Gjrg2b/`.
+  - Execução de `composer dump-autoload` para atualização do mapa de classes autoritativo (`"classmap-authoritative": true`).
+  - Utilitário de limpeza de cache de templates [clean_cache.php](file:///var/www/html/agsonhos/public_html/clean_cache.php) e tratamento defensivo `setCache(false)` em [ViewDashboardAction.php](file:///var/www/html/agsonhos/core/Admin/Controllers/Actions/Dashboard/ViewDashboardAction.php).
+
 
 

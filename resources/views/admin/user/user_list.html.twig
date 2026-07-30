@@ -8,7 +8,7 @@
 			<h2>Funcionários & Usuários</h2>
 			<p class="page-subtitle">Gerencie os acessos do painel administrativo e defina os papéis de cada colaborador.</p>
 		</div>
-		<a href="/admin/usuarios/criar" class="btn btn-primary btn-with-icon">
+		<a href="/LPDHED2dC7Gjrg2b/usuarios/criar" class="btn btn-primary btn-with-icon">
 			<i class="fas fa-user-plus"></i>
 			<span>Cadastrar Funcionário</span>
 		</a>
@@ -28,7 +28,7 @@
 
 	<!-- Painel de Filtros de Busca -->
 	<div class="card mb-4">
-		<form method="GET" action="/admin/usuarios">
+		<form method="GET" action="/LPDHED2dC7Gjrg2b/usuarios">
 			<div class="grid-filters">
 				
 				<!-- Username -->
@@ -66,7 +66,7 @@
 
 				<!-- Ações -->
 				<div class="d-flex gap-2">
-					<a href="/admin/usuarios" class="btn flex-1 btn-secondary">Limpar</a>
+					<a href="/LPDHED2dC7Gjrg2b/usuarios" class="btn flex-1 btn-secondary">Limpar</a>
 					<button type="submit" class="btn btn-primary flex-1">
 						<i class="fas fa-filter"></i>
 						<span>Filtrar</span>
@@ -115,10 +115,10 @@
 								<td class="text-sm text-muted">{{ user.date_added }}</td>
 								<td class="text-right">
 									<div class="actions-wrapper">
-										<a href="/admin/usuarios/{{ user.user_id }}/editar" class="btn btn-primary btn-sm" title="Editar Funcionário">
+										<a href="/LPDHED2dC7Gjrg2b/usuarios/{{ user.user_id }}/editar" class="btn btn-primary btn-sm" title="Editar Funcionário">
 											<i class="fas fa-edit"></i>
 										</a>
-										<a href="/admin/usuarios/{{ user.user_id }}/excluir" class="btn btn-danger btn-sm" title="Excluir Funcionário" onclick="return confirm('Deseja realmente excluir este funcionário?');">
+										<a href="/LPDHED2dC7Gjrg2b/usuarios/{{ user.user_id }}/excluir" class="btn btn-danger btn-sm" title="Excluir Funcionário" onclick="return confirm('Deseja realmente excluir este funcionário?');">
 											<i class="fas fa-trash-alt"></i>
 										</a>
 									</div>

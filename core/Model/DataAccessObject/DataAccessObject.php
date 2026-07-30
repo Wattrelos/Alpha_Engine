@@ -1004,7 +1004,8 @@ class DataAccessObject
      */
     private function logDebugQuery(string $sql, array $params, ?float $startTime = null, ?int $affectedRowsOrId = null, array $sample = []): void
     {
-        if (!defined('DIR_LOGS')) return;
+        // Desativado por padrão para otimização de I/O e segurança
+        return;
 
         $logFile = DIR_LOGS . 'queries.php';
         if (!file_exists($logFile)) {

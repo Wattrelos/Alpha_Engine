@@ -149,3 +149,8 @@ Toda nova funcionalidade ou refatoração desenvolvida na **Alpha Engine** deve 
 - [x] O comando `composer audit` foi executado com sucesso e não há dependências vulneráveis na aplicação.
 - [x] A lógica de cupons e descontos foi testada contra valores negativos ou uso cumulativo indevido.
 - [x] Os uploads de arquivos passam por um novo nome gerado aleatoriamente (ex: UUID) para evitar ataques de Path Traversal e colisão de arquivos.
+- [x] O painel administrativo utiliza o prefixo de rota mascarado/ofuscado (/LPDHED2dC7Gjrg2b/).
+- [x] O controle de acesso ao painel aplica autorização baseada em funções (RBAC) via `UserGroup` (`access` e `modify`).
+- [x] A exclusão de contas proíbe a autoexclusão do superuser ativo e bloqueia a remoção de papéis com funcionários vinculados.
+- [x] Novos controladores são adicionados ao mapa estático autoritativo do Composer via `composer dump-autoload`.
+
