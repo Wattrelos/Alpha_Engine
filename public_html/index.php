@@ -13,7 +13,52 @@ use Alpha\Auth\Middleware\CsrfGuardMiddleware;
 use Alpha\Auth\Middleware\InstallationCheckMiddleware;
 use Alpha\Support\EnvironmentManager;
 
-require __DIR__ . '/../vendor/autoload.php';
+// ─────────────────────────────────────────────────────────
+// 0. VERIFICAÇÃO E AUTO-INSTALAÇÃO DE DEPENDÊNCIAS (COMPOSER)
+// ─────────────────────────────────────────────────────────
+$autoloadPath = __DIR__ . '/../vendor/autoload.php';
+
+if (!file_exists($autoloadPath)) {
+    if (function_exists('exec')) {
+        @exec('composer install --no-interaction --optimize-autoloader 2>&1', $output, $returnCode);
+    }
+
+    if (!file_exists($autoloadPath)) {
+        header('Content-Type: text/html; charset=utf-8');
+        http_response_code(503);
+        echo '<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dependências Ausentes | Alpha Engine</title>
+    <style>
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: #0c0f17; color: #f3f4f6; display: flex; align-items: center; justify-content: center; min-height: 100vh; margin: 0; padding: 20px; }
+        .card { background: rgba(22, 27, 38, 0.9); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 16px; padding: 40px; max-width: 540px; width: 100%; box-shadow: 0 20px 40px rgba(0,0,0,0.6); text-align: center; }
+        .icon { font-size: 3rem; margin-bottom: 16px; }
+        h1 { font-size: 1.4rem; color: #ff6b00; margin-bottom: 12px; font-weight: 700; }
+        p { color: #9ca3af; font-size: 0.9rem; line-height: 1.6; margin-bottom: 20px; }
+        .code-box { background: #000; border: 1px solid #333; border-radius: 8px; padding: 14px 18px; font-family: monospace; font-size: 1rem; color: #10b981; text-align: center; margin-bottom: 20px; font-weight: bold; }
+        .btn-reload { background: #ff6b00; color: #fff; border: none; padding: 12px 24px; border-radius: 8px; font-size: 0.9rem; font-weight: 600; cursor: pointer; text-decoration: none; display: inline-block; transition: background 0.2s; }
+        .btn-reload:hover { background: #e05d00; }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <div class="icon">📦</div>
+        <h1>Dependências do Composer Ausentes</h1>
+        <p>A pasta <code>vendor/</code> não foi encontrada. Execute o comando abaixo no terminal da pasta do projeto para carregar os componentes:</p>
+        <div class="code-box">composer install</div>
+        <p style="font-size: 0.8rem; color: #6b7280;">Após rodar o comando, recarregue a página para acessar o assistente de instalação.</p>
+        <a href="" onclick="window.location.reload(); return false;" class="btn-reload">Recarregar Página</a>
+    </div>
+</body>
+</html>';
+        exit;
+    }
+}
+
+require $autoloadPath;
 
 if (file_exists(__DIR__ . '/../.env')) {
     $dotenv = Dotenv\Dotenv::createImmutable(__DIR__ . '/../');

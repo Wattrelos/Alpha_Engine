@@ -8,6 +8,10 @@
 
 ## 1. Protocolo de Integração & Fluxo de Execução
 
+0. **Verificação de Autoload (`vendor/autoload.php`)**:
+   - Antes do boot, o `index.php` verifica se a pasta `vendor/` existe. Caso esteja ausente (ex: novo clone por alunos/devs sem rodar o Composer), tenta disparar `exec('composer install')` automaticamente.
+   - Caso o servidor web restrinja `exec()`, exibe uma tela amigável nativa em HTML puro orientando a execução de `composer install` no terminal.
+
 1. **Intercepção Global (`InstallationCheckMiddleware`)**:
    - Se `APP_INSTALLED=false`: Redireciona qualquer requisição HTTP pública para o assistente `/setup`. Desvia o boot de conexões com banco de dados para evitar exceções antes da criação das tabelas.
    - Se `APP_INSTALLED=true`: Inicializa normalmente a Alpha Engine e bloqueia qualquer tentativa de acesso ao `/setup` com `403 Forbidden`.
