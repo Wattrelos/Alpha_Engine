@@ -74,6 +74,10 @@ class EnvironmentManager
                 }
 
                 $data[$key] = $value;
+                if (!isset($_ENV[$key])) {
+                    $_ENV[$key] = $value;
+                    putenv("{$key}={$value}");
+                }
             }
         }
 

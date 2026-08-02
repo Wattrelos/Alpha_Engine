@@ -5,8 +5,14 @@ $root = str_replace('\\', '/', realpath(__DIR__)) . '/';
 // HTTP
 define('HTTP_SERVER', 'http://' . ($_SERVER['HTTP_HOST'] ?? 'localhost') . '/');
 
-// DIR
 define('DIR_ROOT', $root);
+
+// Carrega variáveis de ambiente do arquivo .env se ainda não tiverem sido carregadas
+if (class_exists('Dotenv\Dotenv') && file_exists(DIR_ROOT . '.env')) {
+    $dotenv = Dotenv\Dotenv::createImmutable(DIR_ROOT);
+    $dotenv->safeLoad();
+}
+
 define('DIR_APPLICATION', DIR_ROOT . 'catalog/');
 define('DIR_EXTENSION',   DIR_ROOT . 'extension/');
 define('DIR_IMAGE',       DIR_ROOT . 'public_html/');
@@ -89,10 +95,10 @@ define('DIR_UPLOAD',      DIR_STORAGE . 'upload/');   // Caminho: storage/upload
 // DB
 define('DB_DRIVER',   $_ENV['DB_DRIVER'] ?? getenv('DB_DRIVER') ?: 'mysqli');
 define('DB_HOSTNAME', $_ENV['DB_HOSTNAME'] ?? getenv('DB_HOSTNAME') ?: '127.0.0.1');
-define('DB_USERNAME', $_ENV['DB_USERNAME'] ?? getenv('DB_USERNAME') ?: 'root');
-define('DB_PASSWORD', $_ENV['DB_PASSWORD'] ?? getenv('DB_PASSWORD') ?: '42010052');
-define('DB_DATABASE', $_ENV['DB_DATABASE'] ?? getenv('DB_DATABASE') ?: 'AlphaAgsonhos');
 define('DB_PORT',     $_ENV['DB_PORT'] ?? getenv('DB_PORT') ?: '3306');
+define('DB_USERNAME', $_ENV['DB_USERNAME'] ?? getenv('DB_USERNAME') ?: 'root');
+define('DB_PASSWORD', $_ENV['DB_PASSWORD'] ?? getenv('DB_PASSWORD') ?: '');
+define('DB_DATABASE', $_ENV['DB_DATABASE'] ?? getenv('DB_DATABASE') ?: '');
 define('DB_PREFIX',   $_ENV['DB_PREFIX'] ?? getenv('DB_PREFIX') ?: 'agsc_');
 define('DB_SSL_KEY', '');
 define('DB_SSL_CERT', '');
