@@ -12,6 +12,11 @@
    - Antes do boot, o `index.php` verifica se a pasta `vendor/` existe. Caso esteja ausente (ex: novo clone por alunos/devs sem rodar o Composer), tenta disparar `exec('composer install')` automaticamente.
    - Caso o servidor web restrinja `exec()`, exibe uma tela amigável nativa em HTML puro orientando a execução de `composer install` no terminal.
 
+0.1 **Auto-Criação e Permissões da Pasta `storage/`**:
+   - Em [config.php](file:///var/www/html/agsonhos/config.php), o sistema verifica a existência e permissão da pasta `storage/` e subpastas (`cache/`, `cache/twig_slim/`, `cache/twig_setup/`, `cache/alpha_proxies/`, `download/`, `logs/`, `session/`, `upload/`).
+   - Se algum diretório não existir, o sistema tenta criá-lo automaticamente via `@mkdir($path, 0777, true)` e ajusta as permissões com `@chmod($path, 0777)`.
+   - Se a permissão não puder ser ajustada (ex: restrição do sistema operacional), é exibida uma tela HTML estilizada em dark mode indicando a rota exata e a instrução `chmod -R 775 storage/`.
+
 1. **Intercepção Global (`InstallationCheckMiddleware`)**:
    - Se `APP_INSTALLED=false`: Redireciona qualquer requisição HTTP pública para o assistente `/setup`. Desvia o boot de conexões com banco de dados para evitar exceções antes da criação das tabelas.
    - Se `APP_INSTALLED=true`: Inicializa normalmente a Alpha Engine e bloqueia qualquer tentativa de acesso ao `/setup` com `403 Forbidden`.

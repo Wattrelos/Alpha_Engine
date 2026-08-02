@@ -11,11 +11,70 @@ define('DIR_APPLICATION', DIR_ROOT . 'catalog/');
 define('DIR_EXTENSION',   DIR_ROOT . 'extension/');
 define('DIR_IMAGE',       DIR_ROOT . 'public_html/');
 define('DIR_SYSTEM',      DIR_ROOT . 'system/');
-define('DIR_STORAGE',     DIR_ROOT . 'storage/'); // Certifique-se que esta pasta existe
+define('DIR_STORAGE',     DIR_ROOT . 'storage/');
 
-// Validação básica da pasta storage
-if (!is_dir(DIR_STORAGE) || !is_writable(DIR_STORAGE)) {
-    die('Erro: A pasta storage não foi encontrada ou não possui permissão de escrita em ' . DIR_STORAGE);
+// Auto-criação e validação inteligente das pastas de armazenamento
+$storageDirs = [
+    DIR_STORAGE,
+    DIR_STORAGE . 'cache/',
+    DIR_STORAGE . 'cache/twig_slim/',
+    DIR_STORAGE . 'cache/twig_setup/',
+    DIR_STORAGE . 'cache/alpha_proxies/',
+    DIR_STORAGE . 'download/',
+    DIR_STORAGE . 'logs/',
+    DIR_STORAGE . 'session/',
+    DIR_STORAGE . 'upload/',
+];
+
+$failedStorageDir = null;
+foreach ($storageDirs as $sDir) {
+    if (!is_dir($sDir)) {
+        @mkdir($sDir, 0777, true);
+    }
+    if (is_dir($sDir) && !is_writable($sDir)) {
+        @chmod($sDir, 0777);
+    }
+    if (!is_dir($sDir) || !is_writable($sDir)) {
+        $failedStorageDir = $sDir;
+        break;
+    }
+}
+
+if ($failedStorageDir !== null) {
+    header('Content-Type: text/html; charset=utf-8');
+    http_response_code(503);
+    echo '<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Permissão de Armazenamento | Alpha Engine</title>
+    <style>
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: #0c0f17; color: #f3f4f6; display: flex; align-items: center; justify-content: center; min-height: 100vh; margin: 0; padding: 20px; }
+        .card { background: rgba(22, 27, 38, 0.9); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 16px; padding: 40px; max-width: 580px; width: 100%; box-shadow: 0 20px 40px rgba(0,0,0,0.6); text-align: center; }
+        .icon { font-size: 3rem; margin-bottom: 16px; }
+        h1 { font-size: 1.4rem; color: #ef4444; margin-bottom: 12px; font-weight: 700; }
+        p { color: #9ca3af; font-size: 0.9rem; line-height: 1.6; margin-bottom: 20px; }
+        .path-box { background: rgba(239, 68, 68, 0.1); border: 1px solid rgba(239, 68, 68, 0.3); color: #f87171; border-radius: 8px; padding: 10px 14px; font-family: monospace; font-size: 0.85rem; margin-bottom: 20px; word-break: break-all; }
+        .code-box { background: #000; border: 1px solid #333; border-radius: 8px; padding: 14px 18px; font-family: monospace; font-size: 0.9rem; color: #10b981; text-align: center; margin-bottom: 20px; font-weight: bold; }
+        .btn-reload { background: #ff6b00; color: #fff; border: none; padding: 12px 24px; border-radius: 8px; font-size: 0.9rem; font-weight: 600; cursor: pointer; text-decoration: none; display: inline-block; transition: background 0.2s; }
+        .btn-reload:hover { background: #e05d00; }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <div class="icon">📁</div>
+        <h1>Permissão de Armazenamento Ausente</h1>
+        <p>A pasta de armazenamento <code>storage/</code> não possui permissão de gravação pelo servidor web no caminho abaixo:</p>
+        <div class="path-box">' . htmlspecialchars($failedStorageDir) . '</div>
+        <p>Execute o comando abaixo no terminal da raiz do projeto para conceder permissão de gravação:</p>
+        <div class="code-box">chmod -R 775 storage/</div>
+        <p style="font-size: 0.8rem; color: #6b7280;">Após aplicar a permissão no sistema operacional, recarregue esta página.</p>
+        <a href="" onclick="window.location.reload(); return false;" class="btn-reload">Recarregar Página</a>
+    </div>
+</body>
+</html>';
+    exit;
 }
 
 define('DIR_LANGUAGE',    DIR_APPLICATION . 'language/');
