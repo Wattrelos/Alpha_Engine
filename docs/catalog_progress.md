@@ -78,3 +78,14 @@ Para elevar a manutenibilidade visual e unificar o design premium da Alpha Engin
     *   [_cart.scss](file:///var/www/html/agsonhos/public_html/css/base/pages/_cart.scss): Carrinho de compras.
     *   [_checkout.scss](file:///var/www/html/agsonhos/public_html/css/base/pages/_checkout.scss): Fluxo de fechamento de pedido.
 
+---
+
+## ⚡ 7. Busca Textual de Alta Performance (MySQL Full-Text Search)
+
+Substituição da busca legada via `LIKE '%...%'` por recurso nativo de **MySQL Full-Text Search**:
+*   **Índice FULLTEXT Composto**: Adicionado o índice `idx_ft_product_search` nas colunas `(name, description, tag)` da tabela `agsc_product_description`.
+*   **Modo Booleano & Sanitização**: O método `prepareFullTextQuery()` no [ProductMapper](file:///var/www/html/agsonhos/core/Mappers/EntityMappers/ProductMapper.php) higieniza caracteres de sintaxe booleana e adiciona operadores `+` e wildcards `*` para permitir buscas por prefixos (ex: `"smart tv"` $\rightarrow$ `"+smart* +tv*"`).
+*   **Fallback de Segurança**: Para buscas por modelo (`p.model`) ou termos com menos de 3 caracteres (ex: `"TV"`), o sistema executa automaticamente o fallback estruturado garantindo que nenhum produto seja ignorado por limitações de tamanho de token do InnoDB.
+*   **Diagrama de Sequência e EER**: Atualizados os diagramas [product_search.puml](file:///var/www/html/agsonhos/docs/workflows/sequence_diagrams/product_search.puml) e [EERDiagram.puml](file:///var/www/html/agsonhos/docs/database/EERDiagram.puml) documentando a nova estrutura de dados e fluxo de execução.
+
+

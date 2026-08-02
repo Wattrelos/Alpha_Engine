@@ -28,14 +28,13 @@ define('DIR_SESSION',     DIR_STORAGE . 'session/');  // Caminho: storage/sessio
 define('DIR_UPLOAD',      DIR_STORAGE . 'upload/');   // Caminho: storage/upload/
 
 // DB
-define('DB_DRIVER', 'mysqli');
-// define('DB_HOSTNAME', 'srv1722.hstgr.io'); // Ou o IP do seu servidor de banco
-define('DB_HOSTNAME', '127.0.0.1'); // Ou o IP do seu servidor de banco
-define('DB_USERNAME', 'root');
-define('DB_PASSWORD', '42010052');
-define('DB_DATABASE', 'AlphaAgsonhos');
-define('DB_PORT', '3306');
-define('DB_PREFIX', 'agsc_');
+define('DB_DRIVER',   $_ENV['DB_DRIVER'] ?? getenv('DB_DRIVER') ?: 'mysqli');
+define('DB_HOSTNAME', $_ENV['DB_HOSTNAME'] ?? getenv('DB_HOSTNAME') ?: '127.0.0.1');
+define('DB_USERNAME', $_ENV['DB_USERNAME'] ?? getenv('DB_USERNAME') ?: 'root');
+define('DB_PASSWORD', $_ENV['DB_PASSWORD'] ?? getenv('DB_PASSWORD') ?: '42010052');
+define('DB_DATABASE', $_ENV['DB_DATABASE'] ?? getenv('DB_DATABASE') ?: 'AlphaAgsonhos');
+define('DB_PORT',     $_ENV['DB_PORT'] ?? getenv('DB_PORT') ?: '3306');
+define('DB_PREFIX',   $_ENV['DB_PREFIX'] ?? getenv('DB_PREFIX') ?: 'agsc_');
 define('DB_SSL_KEY', '');
 define('DB_SSL_CERT', '');
 define('DB_SSL_CA', '');

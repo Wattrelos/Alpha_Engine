@@ -43,6 +43,11 @@ return function (\Slim\App $app) {
     $authRateLimiter = new RateLimitMiddleware(10, 60, 'auth');
     $apiRateLimiter = new RateLimitMiddleware(60, 60, 'api');
 
+    // Rotas do Assistente de Instalação (Setup Wizard)
+    $app->get('/setup', \Alpha\Controller\Actions\Setup\ShowSetupAction::class)->setName('setup.show');
+    $app->post('/setup/test-db', \Alpha\Controller\Actions\Setup\TestDatabaseConnectionAction::class)->setName('setup.test_db');
+    $app->post('/setup/process', \Alpha\Controller\Actions\Setup\ProcessInstallationAction::class)->setName('setup.process');
+
     // ─────────────────────────────────────────────────────────
     // ROTAS DO PAINEL ADMINISTRATIVO (ADMIN)
     // ─────────────────────────────────────────────────────────

@@ -54,9 +54,9 @@ package "Catalog Module" #FFF2CC {
         * product_id : int <<PK, FK>>
         * language_id : int <<PK, FK>>
         --
-        * name : varchar(255)
-        * description : text
-        * tag : text
+        * name : varchar(255) <<FULLTEXT idx_ft_product_search>>
+        * description : text <<FULLTEXT idx_ft_product_search>>
+        * tag : text <<FULLTEXT idx_ft_product_search>>
         * meta_title : varchar(255)
         * meta_description : varchar(255)
         * meta_keyword : varchar(255)

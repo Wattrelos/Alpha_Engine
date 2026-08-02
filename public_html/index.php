@@ -10,7 +10,8 @@ use Alpha\Mappers\EntityMappers\InformationMapper;
 use Alpha\Auth\Middleware\LanguageMiddleware;
 use Alpha\Auth\Middleware\LegacyRouteRedirectMiddleware;
 use Alpha\Auth\Middleware\CsrfGuardMiddleware;
-use Alpha\Auth\Middleware\SecurityHeadersMiddleware;
+use Alpha\Auth\Middleware\InstallationCheckMiddleware;
+use Alpha\Support\EnvironmentManager;
 
 require __DIR__ . '/../vendor/autoload.php';
 
@@ -19,20 +20,18 @@ if (file_exists(__DIR__ . '/../.env')) {
     $dotenv->safeLoad();
 }
 
+$envManager = new EnvironmentManager(__DIR__ . '/../.env');
+$isInstalled = $envManager->isInstalled();
+$requestUri = $_SERVER['REQUEST_URI'] ?? '';
+$isSetupRoute = (str_starts_with($requestUri, '/setup') || str_starts_with($requestUri, '/install'));
 
 // Redireciona caminhos do admin localizados (ex: /pt-br/LPDHED2dC7Gjrg2b/) de volta para o admin correto
-$requestUri = $_SERVER['REQUEST_URI'] ?? '';
 if (preg_match('#^/(pt-br|en|es)/LPDHED2dC7Gjrg2b(/.*)?$#i', $requestUri, $matches)) {
     $remaining = $matches[2] ?? '';
     header('Location: /LPDHED2dC7Gjrg2b' . $remaining, true, 302);
     exit;
 }
 
-// ─────────────────────────────────────────────────────────
-// 1. BANCO DE DADOS
-//    config.php define apenas as constantes DB_* e DIR_*.
-//    Não inicializa o frameworkdo código legado — apenas defines.
-// ─────────────────────────────────────────────────────────
 if (!defined('APPLICATION')) {
     $uri = $_SERVER['REQUEST_URI'] ?? '';
     if (str_contains($uri, '/LPDHED2dC7Gjrg2b')) {
@@ -41,10 +40,44 @@ if (!defined('APPLICATION')) {
         define('APPLICATION', 'catalog');
     }
 }
+
+// ─────────────────────────────────────────────────────────
+// CONTROLE DE ESTADO DE INSTALAÇÃO (UNINSTALLED FLOW)
+// ─────────────────────────────────────────────────────────
+if (!$isInstalled) {
+    if (!$isSetupRoute && !preg_match('/\.(png|jpg|jpeg|gif|css|js|ico|svg|woff|woff2|ttf|eot)$/i', $requestUri)) {
+        header('Location: /setup', true, 302);
+        exit;
+    }
+
+    require_once __DIR__ . '/../config.php';
+
+    $app = AppFactory::create();
+    $twigCacheDir = __DIR__ . '/../storage/cache/twig_setup';
+    if (!is_dir($twigCacheDir)) {
+        @mkdir($twigCacheDir, 0777, true);
+    }
+    $twig = Twig::create(__DIR__ . '/../resources/views', [
+        'cache'       => false,
+        'auto_reload' => true,
+        'debug'       => true,
+    ]);
+
+    $app->add(TwigMiddleware::create($app, $twig));
+    $app->addRoutingMiddleware();
+
+    $app->get('/setup', \Alpha\Controller\Actions\Setup\ShowSetupAction::class);
+    $app->post('/setup/test-db', \Alpha\Controller\Actions\Setup\TestDatabaseConnectionAction::class);
+    $app->post('/setup/process', \Alpha\Controller\Actions\Setup\ProcessInstallationAction::class);
+
+    $app->run();
+    exit;
+}
+
 require_once __DIR__ . '/../config.php';
 
 // ─────────────────────────────────────────────────────────
-// 2. BOOTSTRAP DA ALPHA ENGINE
+// 2. BOOTSTRAP DA ALPHA ENGINE (INSTALLED FLOW)
 //    Inicializa dependências, registros, repositórios e serviços.
 // ─────────────────────────────────────────────────────────
 $bootstrap = AppBootstrap::boot();
@@ -143,6 +176,9 @@ $app->add(new CsrfGuardMiddleware($twigEnv));
 
 // Adiciona os Cabeçalhos de Segurança HTTP (Security Headers)
 $app->add(new SecurityHeadersMiddleware());
+
+// Adiciona o Middleware de Estado de Instalação (Bloqueia re-instalação se já instalado)
+$app->add(new InstallationCheckMiddleware($envManager));
 
 $app->addRoutingMiddleware();
 
