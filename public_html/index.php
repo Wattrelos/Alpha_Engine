@@ -10,6 +10,7 @@ use Alpha\Mappers\EntityMappers\InformationMapper;
 use Alpha\Auth\Middleware\LanguageMiddleware;
 use Alpha\Auth\Middleware\LegacyRouteRedirectMiddleware;
 use Alpha\Auth\Middleware\CsrfGuardMiddleware;
+use Alpha\Auth\Middleware\SecurityHeadersMiddleware;
 use Alpha\Auth\Middleware\InstallationCheckMiddleware;
 use Alpha\Support\EnvironmentManager;
 
@@ -234,7 +235,7 @@ $app->add(new LanguageMiddleware($languageRepository, $twigEnv, $registry));
 $app->add(new CsrfGuardMiddleware($twigEnv));
 
 // Adiciona os Cabeçalhos de Segurança HTTP (Security Headers)
-$app->add(new SecurityHeadersMiddleware());
+$app->add(new \Alpha\Auth\Middleware\SecurityHeadersMiddleware());
 
 // Adiciona o Middleware de Estado de Instalação (Bloqueia re-instalação se já instalado)
 $app->add(new InstallationCheckMiddleware($envManager));
