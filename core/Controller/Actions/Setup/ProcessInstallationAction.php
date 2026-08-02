@@ -96,8 +96,8 @@ class ProcessInstallationAction
 
             $pdo->exec($sqlContent);
 
-            // 4. Gravação de Configurações da Loja
-            $stmtConfig = $pdo->prepare("INSERT INTO `{$prefix}setting` (`store_id`, `code`, `key`, `value`, `serialized`) VALUES (0, 'config', 'config_name', ?, 0), (0, 'config', 'config_email', ?, 0) ON DUPLICATE KEY UPDATE `value` = VALUES(`value`)");
+            // 4. Gravação de Configurações da Loja (store_id = 1)
+            $stmtConfig = $pdo->prepare("INSERT INTO `{$prefix}setting` (`store_id`, `code`, `key`, `value`, `serialized`) VALUES (1, 'config', 'config_name', ?, 0), (1, 'config', 'config_email', ?, 0) ON DUPLICATE KEY UPDATE `value` = VALUES(`value`)");
             $stmtConfig->execute([$storeName, $storeEmail]);
 
             // 5. Criação do Super Admin (Hash Argon2ID)
@@ -107,7 +107,7 @@ class ProcessInstallationAction
             $stmtCheckUser = $pdo->prepare("DELETE FROM `{$prefix}user` WHERE `username` = ? OR `email` = ?");
             $stmtCheckUser->execute([$adminUser, $adminEmail]);
 
-            $stmtAdmin = $pdo->prepare("INSERT INTO `{$prefix}user` (`user_group_id`, `username`, `password`, `firstname`, `lastname`, `email`, `image`, `code`, `ip`, `status`, `date_added`) VALUES (1, ?, ?, ?, ?, ?, '', '', '127.0.0.1', 1, ?)");
+            $stmtAdmin = $pdo->prepare("INSERT INTO `{$prefix}user` (`user_group_id`, `username`, `password`, `firstname`, `lastname`, `email`, `image`, `ip`, `status`, `date_added`) VALUES (1, ?, ?, ?, ?, ?, '', '127.0.0.1', 1, ?)");
             $stmtAdmin->execute([
                 $adminUser,
                 $adminHash,
