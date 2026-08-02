@@ -15,8 +15,17 @@ class ShowSetupAction
     private TwigEnvironment $twig;
     private EnvironmentManager $envManager;
 
-    public function __construct(TwigEnvironment $twig, ?EnvironmentManager $envManager = null)
+    public function __construct(?TwigEnvironment $twig = null, ?EnvironmentManager $envManager = null)
     {
+        if ($twig === null) {
+            $viewsDir = realpath(__DIR__ . '/../../../../resources/views') ?: (__DIR__ . '/../../../../resources/views');
+            $twigWrapper = \Slim\Views\Twig::create($viewsDir, [
+                'cache'       => false,
+                'auto_reload' => true,
+                'debug'       => true,
+            ]);
+            $twig = $twigWrapper->getEnvironment();
+        }
         $this->twig = $twig;
         $this->envManager = $envManager ?? new EnvironmentManager();
     }

@@ -97,7 +97,7 @@ if (!$isInstalled) {
 
     require_once __DIR__ . '/../config.php';
 
-    $app = AppFactory::create();
+    $setupContainer = new \Containers\AppContainer();
     $twigCacheDir = __DIR__ . '/../storage/cache/twig_setup';
     if (!is_dir($twigCacheDir)) {
         @mkdir($twigCacheDir, 0777, true);
@@ -107,6 +107,16 @@ if (!$isInstalled) {
         'auto_reload' => true,
         'debug'       => true,
     ]);
+
+    $setupContainer->bind(Environment::class, $twig->getEnvironment());
+    $setupContainer->bind(Twig::class, $twig);
+    $setupContainer->bind(EnvironmentManager::class, $envManager);
+    $setupContainer->bind(\Alpha\Controller\Actions\Setup\ShowSetupAction::class, new \Alpha\Controller\Actions\Setup\ShowSetupAction($twig->getEnvironment(), $envManager));
+    $setupContainer->bind(\Alpha\Controller\Actions\Setup\TestDatabaseConnectionAction::class, new \Alpha\Controller\Actions\Setup\TestDatabaseConnectionAction());
+    $setupContainer->bind(\Alpha\Controller\Actions\Setup\ProcessInstallationAction::class, new \Alpha\Controller\Actions\Setup\ProcessInstallationAction($envManager));
+
+    AppFactory::setContainer($setupContainer);
+    $app = AppFactory::create();
 
     $app->add(TwigMiddleware::create($app, $twig));
     $app->addRoutingMiddleware();
