@@ -96,7 +96,7 @@ class ListCustomersAction extends BaseController implements \Alpha\Controller\Ac
             $routeContext = \Slim\Routing\RouteContext::fromRequest($request);
             $baseUrl = $routeContext->getRouteParser()->urlFor('admin.customer.list');
         } catch (\Throwable $e) {
-            $baseUrl = '/LPDHED2dC7Gjrg2b/clientes';
+            $baseUrl = (defined('ADMIN_PATH') ? ADMIN_PATH : '/LPDHED2dC7Gjrg2b') . '/clientes';
         }
         $url = $baseUrl . '?' . ($urlQueryString ? $urlQueryString . '&' : '') . 'page={page}';
 

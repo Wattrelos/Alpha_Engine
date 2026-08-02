@@ -10,7 +10,7 @@
 			<h2>{{ AdminLang.heading_title|default('Gerenciamento de Fornecedores') }}</h2>
 			<p class="page-subtitle">{{ AdminLang.text_subtitle|default('Visualize, adicione ou edite os fornecedores cadastrados na Alpha Engine.') }}</p>
 		</div>
-		<a href="/LPDHED2dC7Gjrg2b/fornecedores/criar" class="btn btn-primary btn-with-icon">
+		<a href="{{ admin_path }}/fornecedores/criar" class="btn btn-primary btn-with-icon">
 			<i class="fas fa-plus"></i>
 			<span>{{ AdminLang.button_add|default('Adicionar Fornecedor') }}</span>
 		</a>
@@ -18,7 +18,7 @@
 
 	<!-- Painel de Filtros de Busca -->
 	<div class="card">
-		<form method="GET" action="/LPDHED2dC7Gjrg2b/fornecedores">
+		<form method="GET" action="{{ admin_path }}/fornecedores">
 			<div class="grid-filters">
 				
 				<!-- Nome -->
@@ -35,7 +35,7 @@
  
 				<!-- Ações -->
 				<div class="d-flex gap-2">
-					<a href="/LPDHED2dC7Gjrg2b/fornecedores" class="btn flex-1 btn-secondary">{{ AdminLang.button_clear|default('Limpar') }}</a>
+					<a href="{{ admin_path }}/fornecedores" class="btn flex-1 btn-secondary">{{ AdminLang.button_clear|default('Limpar') }}</a>
 					<button type="submit" class="btn btn-primary flex-1">
 						<i class="fas fa-filter"></i>
 						<span>{{ AdminLang.button_filter|default('Filtrar') }}</span>
@@ -79,10 +79,10 @@
 								</td>
 								<td class="text-right">
 									<div class="actions-wrapper">
-										<a href="/LPDHED2dC7Gjrg2b/fornecedores/{{ supplier.id }}/editar" class="btn btn-primary btn-sm" title="Editar">
+										<a href="{{ admin_path }}/fornecedores/{{ supplier.id }}/editar" class="btn btn-primary btn-sm" title="Editar">
 											<i class="fas fa-edit"></i>
 										</a>
-										<a href="/LPDHED2dC7Gjrg2b/fornecedores/{{ supplier.id }}/excluir" class="btn btn-danger btn-sm" title="Excluir" onclick="return confirm('{{ AdminLang.text_confirm_delete|default('Deseja realmente excluir este fornecedor? Seu endereço associado também será excluído.')|escape('js') }}');">
+										<a href="{{ admin_path }}/fornecedores/{{ supplier.id }}/excluir" class="btn btn-danger btn-sm" title="Excluir" onclick="return confirm('{{ AdminLang.text_confirm_delete|default('Deseja realmente excluir este fornecedor? Seu endereço associado também será excluído.')|escape('js') }}');">
 											<i class="fas fa-trash-alt"></i>
 										</a>
 									</div>

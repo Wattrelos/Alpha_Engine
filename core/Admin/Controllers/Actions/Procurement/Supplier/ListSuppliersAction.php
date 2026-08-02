@@ -51,7 +51,7 @@ class ListSuppliersAction extends BaseController implements \Alpha\Controller\Ac
             $routeContext = \Slim\Routing\RouteContext::fromRequest($request);
             $baseUrl = $routeContext->getRouteParser()->urlFor('admin.supplier.list');
         } catch (\Throwable $e) {
-            $baseUrl = '/LPDHED2dC7Gjrg2b/fornecedores';
+            $baseUrl = (defined('ADMIN_PATH') ? ADMIN_PATH : '/LPDHED2dC7Gjrg2b') . '/fornecedores';
         }
         $url = $baseUrl . '?' . ($urlQueryString ? $urlQueryString . '&' : '') . 'page={page}';
 

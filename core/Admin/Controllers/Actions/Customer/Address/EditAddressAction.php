@@ -77,7 +77,7 @@ class EditAddressAction extends BaseController implements \Alpha\Controller\Acti
                     $_SESSION['success'] = 'Endereço atualizado com sucesso!';
                     
                     return $response
-                        ->withHeader('Location', '/LPDHED2dC7Gjrg2b/clientes/' . $customerId . '/editar?tab=addresses')
+                        ->withHeader('Location', (defined('ADMIN_PATH') ? ADMIN_PATH : '/LPDHED2dC7Gjrg2b') . '/clientes/' . $customerId . '/editar?tab=addresses')
                         ->withStatus(302);
                 } catch (\Throwable $e) {
                     $errors['warning'] = 'Erro ao atualizar endereço: ' . $e->getMessage();

@@ -96,7 +96,8 @@ class UpdateReturnStatusAction extends BaseController implements \Alpha\Controll
                 $routeContext = \Slim\Routing\RouteContext::fromRequest($request);
                 $redirectUrl = $routeContext->getRouteParser()->urlFor('admin.returns.show', ['id' => $returnId]);
             } catch (\Throwable $e) {
-                $redirectUrl = '/LPDHED2dC7Gjrg2b/devolucoes/' . $returnId;
+                $adminPath = defined('ADMIN_PATH') ? ADMIN_PATH : '/LPDHED2dC7Gjrg2b';
+                $redirectUrl = $adminPath . '/devolucoes/' . $returnId;
             }
 
             return $response->withHeader('Location', $redirectUrl . '?success=1')->withStatus(302);
@@ -133,7 +134,8 @@ class UpdateReturnStatusAction extends BaseController implements \Alpha\Controll
                 $routeContext = \Slim\Routing\RouteContext::fromRequest($request);
                 $redirectUrl = $routeContext->getRouteParser()->urlFor('admin.returns.show', ['id' => $returnId]);
             } catch (\Throwable $err) {
-                $redirectUrl = '/LPDHED2dC7Gjrg2b/devolucoes/' . $returnId;
+                $adminPath = defined('ADMIN_PATH') ? ADMIN_PATH : '/LPDHED2dC7Gjrg2b';
+                $redirectUrl = $adminPath . '/devolucoes/' . $returnId;
             }
 
             return $response->withHeader('Location', $redirectUrl . '?error=concurrency_conflict')->withStatus(302);

@@ -159,7 +159,7 @@ class UpdateStoreSettingAction extends BaseController implements \Alpha\Controll
                 $_SESSION['success'] = 'Configurações da loja atualizadas com sucesso!';
                 
                 return $response
-                    ->withHeader('Location', '/LPDHED2dC7Gjrg2b/configuracoes')
+                    ->withHeader('Location', (defined('ADMIN_PATH') ? ADMIN_PATH : '/LPDHED2dC7Gjrg2b') . '/configuracoes')
                     ->withStatus(302);
             } catch (\Throwable $e) {
                 $errors['warning'] = 'Erro ao persistir configurações no banco: ' . $e->getMessage();

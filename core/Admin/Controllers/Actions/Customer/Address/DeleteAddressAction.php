@@ -41,7 +41,7 @@ class DeleteAddressAction extends BaseController implements \Alpha\Controller\Ac
         }
 
         return $response
-            ->withHeader('Location', '/LPDHED2dC7Gjrg2b/clientes/' . $customerId . '/editar?tab=addresses')
+            ->withHeader('Location', (defined('ADMIN_PATH') ? ADMIN_PATH : '/LPDHED2dC7Gjrg2b') . '/clientes/' . $customerId . '/editar?tab=addresses')
             ->withStatus(302);
     }
 }

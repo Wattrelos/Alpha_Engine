@@ -17,8 +17,9 @@ class DeleteProductAction extends BaseController implements \Alpha\Controller\Ac
         $productId = isset($args['id']) ? (int)$args['id'] : 0;
 
         if ($productId <= 0) {
+            $adminPath = defined('ADMIN_PATH') ? ADMIN_PATH : '/LPDHED2dC7Gjrg2b';
             return $response
-                ->withHeader('Location', '/LPDHED2dC7Gjrg2b/produtos?error=' . urlencode('ID do produto inválido.'))
+                ->withHeader('Location', $adminPath . '/produtos?error=' . urlencode('ID do produto inválido.'))
                 ->withStatus(302);
         }
 
@@ -33,7 +34,7 @@ class DeleteProductAction extends BaseController implements \Alpha\Controller\Ac
             if (!$exists) {
                 $conn->rollBack();
                 return $response
-                    ->withHeader('Location', '/LPDHED2dC7Gjrg2b/produtos?error=' . urlencode('Produto não encontrado.'))
+                    ->withHeader('Location', $adminPath . '/produtos?error=' . urlencode('Produto não encontrado.'))
                     ->withStatus(302);
             }
 
@@ -93,7 +94,7 @@ class DeleteProductAction extends BaseController implements \Alpha\Controller\Ac
             }
 
             return $response
-                ->withHeader('Location', '/LPDHED2dC7Gjrg2b/produtos?success=' . urlencode('Produto excluído com sucesso.'))
+                ->withHeader('Location', $adminPath . '/produtos?success=' . urlencode('Produto excluído com sucesso.'))
                 ->withStatus(302);
         } catch (\Throwable $e) {
             if ($conn->inTransaction()) {
@@ -101,7 +102,7 @@ class DeleteProductAction extends BaseController implements \Alpha\Controller\Ac
             }
             error_log("Erro ao deletar produto: " . $e->getMessage());
             return $response
-                ->withHeader('Location', '/LPDHED2dC7Gjrg2b/produtos?error=' . urlencode('Erro ao deletar produto: ' . $e->getMessage()))
+                ->withHeader('Location', $adminPath . '/produtos?error=' . urlencode('Erro ao deletar produto: ' . $e->getMessage()))
                 ->withStatus(302);
         }
     }

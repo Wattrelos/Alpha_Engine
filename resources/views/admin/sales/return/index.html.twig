@@ -27,7 +27,7 @@
 
 	<!-- Filtros de Busca -->
 	<div class="card">
-		<form method="GET" action="/LPDHED2dC7Gjrg2b/devolucoes">
+		<form method="GET" action="{{ admin_path }}/devolucoes">
 			<div class="grid-filters-returns">
 				
 				<!-- ID da Devolução -->
@@ -67,7 +67,7 @@
 
 				<!-- Ações de Filtro -->
 				<div class="d-flex gap-2">
-					<a href="/LPDHED2dC7Gjrg2b/devolucoes" class="btn flex-1 btn-secondary">{{ AdminLang.button_clear|default('Limpar') }}</a>
+					<a href="{{ admin_path }}/devolucoes" class="btn flex-1 btn-secondary">{{ AdminLang.button_clear|default('Limpar') }}</a>
 					<button type="submit" class="btn btn-primary flex-1">
 						<i class="fas fa-filter"></i>
 						<span>{{ AdminLang.button_filter|default('Filtrar') }}</span>
@@ -100,7 +100,7 @@
 							<tr>
 								<td class="text-semibold text-dark">#{{ ret.return_id }}</td>
 								<td class="text-semibold text-dark">
-									<a href="/LPDHED2dC7Gjrg2b/pedidos/{{ ret.order_id }}" class="text-decoration-none icon-primary text-semibold">
+									<a href="{{ admin_path }}/pedidos/{{ ret.order_id }}" class="text-decoration-none icon-primary text-semibold">
 										#{{ ret.order_id }}
 									</a>
 								</td>
@@ -119,7 +119,7 @@
 								<td>{{ ret.date_added }}</td>
 								<td class="text-right">
 									<div class="actions-wrapper">
-										<a href="/LPDHED2dC7Gjrg2b/devolucoes/{{ ret.return_id }}" class="btn btn-primary btn-sm" title="{{ AdminLang.text_show_title|default('Visualizar Detalhes') }}">
+										<a href="{{ admin_path }}/devolucoes/{{ ret.return_id }}" class="btn btn-primary btn-sm" title="{{ AdminLang.text_show_title|default('Visualizar Detalhes') }}">
 											<i class="fas fa-eye"></i>
 										</a>
 									</div>

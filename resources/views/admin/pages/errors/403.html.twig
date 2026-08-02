@@ -9,7 +9,7 @@
 		<p class="error-card-text">
 			{{ message|default('Você não tem privilégios suficientes para acessar ou modificar este recurso.') }}
 		</p>
-		<a href="/LPDHED2dC7Gjrg2b/dashboard" class="btn btn-primary error-card-btn">
+		<a href="{{ admin_path }}/dashboard" class="btn btn-primary error-card-btn">
 			<i class="fas fa-arrow-left"></i>
 			<span>Voltar ao Painel Inicial</span>
 		</a>

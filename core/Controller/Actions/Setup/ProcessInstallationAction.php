@@ -34,9 +34,23 @@ class ProcessInstallationAction
         $user = trim($params['db_user'] ?? 'root');
         $pass = (string)($params['db_pass'] ?? '');
         $database = trim($params['db_name'] ?? 'MyDatabase');
-        $prefix = trim($params['db_prefix'] ?? 'tbkk_');
+        
+        $prefix = trim($params['db_prefix'] ?? 'agsc_');
+        $prefix = preg_replace('/[^a-zA-Z0-9_]/', '', $prefix);
+        if (empty($prefix)) {
+            $prefix = 'agsc_';
+        }
+        if (!str_ends_with($prefix, '_')) {
+            $prefix .= '_';
+        }
 
-        $storeName = trim($params['store_name'] ?? 'My Story');
+        $adminDir = trim($params['admin_dir'] ?? '');
+        $adminDir = preg_replace('/[^a-zA-Z0-9_-]/', '', $adminDir);
+        if (empty($adminDir)) {
+            $adminDir = 'adm_' + EnvironmentManager::generateRandomKey(12);
+        }
+
+        $storeName = trim($params['store_name'] ?? 'My Store');
         $storeEmail = trim($params['store_email'] ?? '');
 
         $adminFirstname = trim($params['admin_firstname'] ?? 'Administrador');
@@ -97,8 +111,13 @@ class ProcessInstallationAction
             $pdo->exec($sqlContent);
 
             // 4. Gravação de Configurações da Loja (store_id = 1)
-            $stmtConfig = $pdo->prepare("INSERT INTO `{$prefix}setting` (`store_id`, `code`, `key`, `value`, `serialized`) VALUES (1, 'config', 'config_name', ?, 0), (1, 'config', 'config_email', ?, 0) ON DUPLICATE KEY UPDATE `value` = VALUES(`value`)");
-            $stmtConfig->execute([$storeName, $storeEmail]);
+            $stmtConfig = $pdo->prepare("INSERT INTO `{$prefix}setting` (`store_id`, `code`, `key`, `value`, `serialized`) VALUES 
+                (1, 'config', 'config_name', ?, 0), 
+                (1, 'config', 'config_email', ?, 0),
+                (1, 'config', 'config_db_prefix', ?, 0),
+                (1, 'config', 'config_admin_dir', ?, 0)
+                ON DUPLICATE KEY UPDATE `value` = VALUES(`value`)");
+            $stmtConfig->execute([$storeName, $storeEmail, $prefix, $adminDir]);
 
             // 5. Criação do Super Admin (Hash Argon2ID)
             $adminHash = password_hash($adminPass, PASSWORD_ARGON2ID);
@@ -117,7 +136,36 @@ class ProcessInstallationAction
                 date('Y-m-d H:i:s')
             ]);
 
-            // 6. Atualização Atômica do Arquivo .env
+            // 6. Gerenciamento do Diretório Físico do Dashboard em public_html/
+            $publicHtmlDir = realpath(__DIR__ . '/../../../../public_html') ?: (__DIR__ . '/../../../../public_html');
+            $targetAdminDir = $publicHtmlDir . '/' . $adminDir;
+
+            $existingAdminDir = null;
+            if (is_dir($publicHtmlDir)) {
+                $items = scandir($publicHtmlDir);
+                foreach ($items as $item) {
+                    if ($item === '.' || $item === '..' || $item === $adminDir) continue;
+                    $itemPath = $publicHtmlDir . '/' . $item;
+                    if (is_dir($itemPath) && file_exists($itemPath . '/index.php')) {
+                        $content = file_get_contents($itemPath . '/index.php');
+                        if (str_contains($content, 'APPLICATION') || str_contains($content, 'AppBootstrap')) {
+                            $existingAdminDir = $itemPath;
+                            break;
+                        }
+                    }
+                }
+            }
+
+            if ($existingAdminDir && $existingAdminDir !== $targetAdminDir && !is_dir($targetAdminDir)) {
+                @rename($existingAdminDir, $targetAdminDir);
+            } elseif (!is_dir($targetAdminDir)) {
+                @mkdir($targetAdminDir, 0755, true);
+                if (!file_exists($targetAdminDir . '/.htaccess')) {
+                    file_put_contents($targetAdminDir . '/.htaccess', "RewriteEngine On\nOptions -Indexes\nRewriteCond %{REQUEST_FILENAME} !-f\nRewriteCond %{REQUEST_FILENAME} !-d\nRewriteRule ^ index.php [QSA,L]\n");
+                }
+            }
+
+            // 7. Atualização Atômica do Arquivo .env
             $envData = [
                 'APP_ENV'              => 'development',
                 'APP_DEBUG'            => 'true',
@@ -129,6 +177,7 @@ class ProcessInstallationAction
                 'DB_PASSWORD'          => $pass,
                 'DB_DATABASE'          => $database,
                 'DB_PREFIX'            => $prefix,
+                'ADMIN_DIR'            => $adminDir,
                 'JWT_SECRET_KEY'       => EnvironmentManager::generateRandomKey(32),
                 'API_SIGNATURE_SECRET' => EnvironmentManager::generateRandomKey(32),
                 'REDIS_HOST'           => '127.0.0.1',
@@ -141,7 +190,7 @@ class ProcessInstallationAction
             }
 
             return $this->jsonResponse($response, true, 'Instalação concluída com sucesso! O sistema foi provisionado e configurado.', 200, [
-                'redirect' => '/LPDHED2dC7Gjrg2b'
+                'redirect' => '/' . $adminDir
             ]);
         } catch (Throwable $e) {
             return $this->jsonResponse($response, false, 'Erro no provisionamento: ' . $e->getMessage());

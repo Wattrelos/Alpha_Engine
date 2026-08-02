@@ -11,11 +11,11 @@
 			<p class="page-subtitle">{{ AdminLang.text_show_subtitle|default('Visualize o perfil completo, endereços e histórico de compras.') }}</p>
 		</div>
 		<div class="d-flex gap-2">
-			<a href="/LPDHED2dC7Gjrg2b/clientes" class="btn btn-secondary">
+			<a href="{{ admin_path }}/clientes" class="btn btn-secondary">
 				<i class="fas fa-arrow-left"></i>
 				<span>{{ AdminLang.button_back|default('Voltar') }}</span>
 			</a>
-			<a href="/LPDHED2dC7Gjrg2b/clientes/{{ customer.id }}/editar" class="btn btn-primary btn-with-icon">
+			<a href="{{ admin_path }}/clientes/{{ customer.id }}/editar" class="btn btn-primary btn-with-icon">
 				<i class="fas fa-user-edit"></i>
 				<span>{{ AdminLang.button_edit_profile|default('Editar Cadastro') }}</span>
 			</a>

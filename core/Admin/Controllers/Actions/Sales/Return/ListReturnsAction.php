@@ -109,7 +109,7 @@ class ListReturnsAction extends BaseController implements \Alpha\Controller\Acti
             $routeContext = \Slim\Routing\RouteContext::fromRequest($request);
             $baseUrl = $routeContext->getRouteParser()->urlFor('admin.returns.index');
         } catch (\Throwable $e) {
-            $baseUrl = '/LPDHED2dC7Gjrg2b/devolucoes';
+            $baseUrl = (defined('ADMIN_PATH') ? ADMIN_PATH : '/LPDHED2dC7Gjrg2b') . '/devolucoes';
         }
         $url = $baseUrl . '?' . ($urlQueryString ? $urlQueryString . '&' : '') . 'page={page}';
 

@@ -70,16 +70,18 @@ $isInstalled = $envManager->isInstalled();
 $requestUri = $_SERVER['REQUEST_URI'] ?? '';
 $isSetupRoute = (str_starts_with($requestUri, '/setup') || str_starts_with($requestUri, '/install'));
 
-// Redireciona caminhos do admin localizados (ex: /pt-br/LPDHED2dC7Gjrg2b/) de volta para o admin correto
-if (preg_match('#^/(pt-br|en|es)/LPDHED2dC7Gjrg2b(/.*)?$#i', $requestUri, $matches)) {
+// Redireciona caminhos do admin localizados (ex: /pt-br/{ADMIN_DIR}/) de volta para o admin correto
+$adminDirConst = defined('ADMIN_DIR') ? ADMIN_DIR : 'LPDHED2dC7Gjrg2b';
+$adminPattern = preg_quote($adminDirConst, '#');
+if (preg_match('#^/(pt-br|en|es)/' . $adminPattern . '(/.*)?$#i', $requestUri, $matches)) {
     $remaining = $matches[2] ?? '';
-    header('Location: /LPDHED2dC7Gjrg2b' . $remaining, true, 302);
+    header('Location: /' . $adminDirConst . $remaining, true, 302);
     exit;
 }
 
 if (!defined('APPLICATION')) {
     $uri = $_SERVER['REQUEST_URI'] ?? '';
-    if (str_contains($uri, '/LPDHED2dC7Gjrg2b')) {
+    if (str_contains($uri, '/' . $adminDirConst)) {
         define('APPLICATION', 'admin');
     } else {
         define('APPLICATION', 'catalog');
@@ -187,6 +189,8 @@ $twigEnv->addGlobal('store',      $storeData);
 $twigEnv->addGlobal('home',       '/');
 $twigEnv->addGlobal('lang',       $language ? $language->getCode() : 'pt-br');
 $twigEnv->addGlobal('direction',  'ltr');
+$twigEnv->addGlobal('admin_dir',  defined('ADMIN_DIR') ? ADMIN_DIR : 'LPDHED2dC7Gjrg2b');
+$twigEnv->addGlobal('admin_path', defined('ADMIN_PATH') ? ADMIN_PATH : '/LPDHED2dC7Gjrg2b');
 
 // Resolve as páginas institucionais para o rodapé usando URLs amigáveis
 $mapperFactory = $registry->get('alpha_mapper_factory');
@@ -217,7 +221,7 @@ AppFactory::setContainer($container);
 $app = AppFactory::create();
 
 if (defined('APPLICATION') && APPLICATION === 'admin') {
-    $app->setBasePath('/LPDHED2dC7Gjrg2b');
+    $app->setBasePath(defined('ADMIN_PATH') ? ADMIN_PATH : '/LPDHED2dC7Gjrg2b');
 }
 
 // Adiciona o Middleware do Twig para injetar as rotas de forma dinâmica

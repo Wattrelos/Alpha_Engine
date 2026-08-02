@@ -129,7 +129,7 @@ class EditCustomerAction extends BaseController implements \Alpha\Controller\Act
                     $_SESSION['success'] = 'Cliente atualizado com sucesso!';
 
                     return $response
-                        ->withHeader('Location', '/LPDHED2dC7Gjrg2b/clientes')
+                        ->withHeader('Location', (defined('ADMIN_PATH') ? ADMIN_PATH : '/LPDHED2dC7Gjrg2b') . '/clientes')
                         ->withStatus(302);
 
                 } catch (\Throwable $e) {

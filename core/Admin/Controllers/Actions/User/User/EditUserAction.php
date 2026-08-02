@@ -29,7 +29,8 @@ class EditUserAction extends BaseController implements ActionInterface
                 $routeContext = RouteContext::fromRequest($request);
                 $url = $routeContext->getRouteParser()->urlFor('admin.user.list') . '?error=' . urlencode('Funcionário não encontrado.');
             } catch (\Throwable $e) {
-                $url = '/LPDHED2dC7Gjrg2b/usuarios?error=' . urlencode('Funcionário não encontrado.');
+                $adminPath = defined('ADMIN_PATH') ? ADMIN_PATH : '/LPDHED2dC7Gjrg2b';
+                $url = $adminPath . '/usuarios?error=' . urlencode('Funcionário não encontrado.');
             }
             return $response->withHeader('Location', $url)->withStatus(302);
         }
@@ -93,7 +94,8 @@ class EditUserAction extends BaseController implements ActionInterface
                     $routeContext = RouteContext::fromRequest($request);
                     $url = $routeContext->getRouteParser()->urlFor('admin.user.list') . '?success=' . urlencode('Funcionário atualizado com sucesso!');
                 } catch (\Throwable $e) {
-                    $url = '/LPDHED2dC7Gjrg2b/usuarios?success=' . urlencode('Funcionário atualizado com sucesso!');
+                    $adminPath = defined('ADMIN_PATH') ? ADMIN_PATH : '/LPDHED2dC7Gjrg2b';
+                    $url = $adminPath . '/usuarios?success=' . urlencode('Funcionário atualizado com sucesso!');
                 }
 
                 return $response->withHeader('Location', $url)->withStatus(302);

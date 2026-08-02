@@ -82,7 +82,7 @@ class DeleteCategoryAction extends BaseController implements \Alpha\Controller\A
 
         // Redirect back to list
         return $response
-            ->withHeader('Location', '/LPDHED2dC7Gjrg2b/categorias')
+            ->withHeader('Location', (defined('ADMIN_PATH') ? ADMIN_PATH : '/LPDHED2dC7Gjrg2b') . '/categorias')
             ->withStatus(302);
     }
 

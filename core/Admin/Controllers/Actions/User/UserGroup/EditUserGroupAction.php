@@ -45,7 +45,8 @@ class EditUserGroupAction extends BaseController implements ActionInterface
                 $routeContext = RouteContext::fromRequest($request);
                 $url = $routeContext->getRouteParser()->urlFor('admin.user_group.list') . '?error=' . urlencode('Papel não encontrado.');
             } catch (\Throwable $e) {
-                $url = '/LPDHED2dC7Gjrg2b/papeis?error=' . urlencode('Papel não encontrado.');
+                $adminPath = defined('ADMIN_PATH') ? ADMIN_PATH : '/LPDHED2dC7Gjrg2b';
+                $url = $adminPath . '/papeis?error=' . urlencode('Papel não encontrado.');
             }
             return $response->withHeader('Location', $url)->withStatus(302);
         }
@@ -93,7 +94,8 @@ class EditUserGroupAction extends BaseController implements ActionInterface
                     $routeContext = RouteContext::fromRequest($request);
                     $url = $routeContext->getRouteParser()->urlFor('admin.user_group.list') . '?success=' . urlencode('Papel atualizado com sucesso!');
                 } catch (\Throwable $e) {
-                    $url = '/LPDHED2dC7Gjrg2b/papeis?success=' . urlencode('Papel atualizado com sucesso!');
+                    $adminPath = defined('ADMIN_PATH') ? ADMIN_PATH : '/LPDHED2dC7Gjrg2b';
+                    $url = $adminPath . '/papeis?success=' . urlencode('Papel atualizado com sucesso!');
                 }
 
                 return $response->withHeader('Location', $url)->withStatus(302);

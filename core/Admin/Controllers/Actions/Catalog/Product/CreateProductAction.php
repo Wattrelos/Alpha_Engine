@@ -151,7 +151,7 @@ class CreateProductAction extends BaseController implements \Alpha\Controller\Ac
 
             // Redirect back to list
             return $response
-                ->withHeader('Location', '/LPDHED2dC7Gjrg2b/produtos')
+                ->withHeader('Location', (defined('ADMIN_PATH') ? ADMIN_PATH : '/LPDHED2dC7Gjrg2b') . '/produtos')
                 ->withStatus(302);
         }
 

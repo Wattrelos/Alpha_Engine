@@ -83,7 +83,7 @@ class ListManufacturersAction extends BaseController implements \Alpha\Controlle
             $routeContext = \Slim\Routing\RouteContext::fromRequest($request);
             $baseUrl = $routeContext->getRouteParser()->urlFor('admin.manufacturer.list');
         } catch (\Throwable $e) {
-            $baseUrl = '/LPDHED2dC7Gjrg2b/fabricantes';
+            $baseUrl = (defined('ADMIN_PATH') ? ADMIN_PATH : '/LPDHED2dC7Gjrg2b') . '/fabricantes';
         }
         $url = $baseUrl . '?' . ($urlQueryString ? $urlQueryString . '&' : '') . 'page={page}';
 

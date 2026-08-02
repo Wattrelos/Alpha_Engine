@@ -10,7 +10,7 @@
 			<h2>{{ AdminLang.text_edit_title|default('Editar Cliente') }}</h2>
 			<p class="page-subtitle">{{ AdminLang.text_edit_subtitle|default('Atualize as informações cadastrais e os endereços do cliente.') }}</p>
 		</div>
-		<a href="/LPDHED2dC7Gjrg2b/clientes" class="btn btn-secondary">
+		<a href="{{ admin_path }}/clientes" class="btn btn-secondary">
 			<i class="fas fa-arrow-left"></i>
 			<span>{{ AdminLang.button_back|default('Voltar para Lista') }}</span>
 		</a>
@@ -49,7 +49,7 @@
 	<!-- Conteúdo: Aba Dados Gerais -->
 	<div id="tab-content-general" class="tab-content" style="display: none;">
 		<div class="card card-large">
-			<form action="/LPDHED2dC7Gjrg2b/clientes/{{ customer.id }}/editar" method="POST">
+			<form action="{{ admin_path }}/clientes/{{ customer.id }}/editar" method="POST">
 				{% if csrf %}
 					<input type="hidden" name="{{ csrf.keys.name }}" value="{{ csrf.name }}">
 					<input type="hidden" name="{{ csrf.keys.value }}" value="{{ csrf.value }}">
@@ -59,7 +59,7 @@
 				{% include 'admin/customer/customer/_form.html.twig' %}
 
 				<div class="form-actions">
-					<a href="/LPDHED2dC7Gjrg2b/clientes" class="btn btn-secondary">{{ AdminLang.button_cancel|default('Cancelar') }}</a>
+					<a href="{{ admin_path }}/clientes" class="btn btn-secondary">{{ AdminLang.button_cancel|default('Cancelar') }}</a>
 					<button type="submit" class="btn btn-primary">
 						<i class="fas fa-save"></i>
 						<span>{{ AdminLang.button_save_changes|default('Salvar Alterações') }}</span>
@@ -74,7 +74,7 @@
 		<div class="card card-large">
 			<div class="section-header">
 				<h3 class="mb-0 text-dark">{{ AdminLang.title_addresses|default('Endereços Cadastrados') }}</h3>
-				<a href="/LPDHED2dC7Gjrg2b/clientes/{{ customer.id }}/enderecos/criar" class="btn btn-primary btn-with-icon">
+				<a href="{{ admin_path }}/clientes/{{ customer.id }}/enderecos/criar" class="btn btn-primary btn-with-icon">
 					<i class="fas fa-plus"></i>
 					<span>{{ AdminLang.text_address_create|default('Adicionar Endereço') }}</span>
 				</a>
@@ -101,12 +101,12 @@
 							</div>
 							
 							<div class="address-card-actions">
-								<a href="/LPDHED2dC7Gjrg2b/clientes/{{ customer.id }}/enderecos/{{ addr.address_id }}/editar" class="btn btn-primary btn-sm">
+								<a href="{{ admin_path }}/clientes/{{ customer.id }}/enderecos/{{ addr.address_id }}/editar" class="btn btn-primary btn-sm">
 									<i class="fas fa-edit"></i>
 									<span>{{ AdminLang.text_address_edit|default('Editar') }}</span>
 								</a>
 								
-								<a href="/LPDHED2dC7Gjrg2b/clientes/{{ customer.id }}/enderecos/{{ addr.address_id }}/excluir" class="btn btn-danger btn-sm" onclick="return confirm('{{ AdminLang.text_address_confirm_delete|default('Deseja realmente excluir este endereço?')|escape('js') }}');">
+								<a href="{{ admin_path }}/clientes/{{ customer.id }}/enderecos/{{ addr.address_id }}/excluir" class="btn btn-danger btn-sm" onclick="return confirm('{{ AdminLang.text_address_confirm_delete|default('Deseja realmente excluir este endereço?')|escape('js') }}');">
 									<i class="fas fa-trash-alt"></i>
 									<span>{{ AdminLang.text_address_delete|default('Excluir') }}</span>
 								</a>

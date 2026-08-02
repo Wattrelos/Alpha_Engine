@@ -10,14 +10,14 @@
 			<h2>{{ AdminLang.heading_title_edit }}</h2>
 			<p class="page-subtitle">{{ AdminLang.text_subtitle_edit }}</p>
 		</div>
-		<a href="/LPDHED2dC7Gjrg2b/produtos" class="btn btn-secondary">
+		<a href="{{ admin_path }}/produtos" class="btn btn-secondary">
 			<i class="fas fa-arrow-left"></i>
 			<span>{{ AdminLang.button_back }}</span>
 		</a>
 	</div>
 
 	<div class="card card-large">
-		<form action="/LPDHED2dC7Gjrg2b/produtos/{{ product.id }}/editar" method="POST" enctype="multipart/form-data">
+		<form action="{{ admin_path }}/produtos/{{ product.id }}/editar" method="POST" enctype="multipart/form-data">
 			{% if csrf %}
 				<input type="hidden" name="{{ csrf.keys.name }}" value="{{ csrf.name }}">
 				<input type="hidden" name="{{ csrf.keys.value }}" value="{{ csrf.value }}">
@@ -242,7 +242,7 @@
 
 			<!-- Botões de Ação -->
 			<div class="form-actions">
-				<a href="/LPDHED2dC7Gjrg2b/produtos" class="btn btn-secondary">{{ AdminLang.button_cancel }}</a>
+				<a href="{{ admin_path }}/produtos" class="btn btn-secondary">{{ AdminLang.button_cancel }}</a>
 				<button type="submit" class="btn btn-primary">
 					<i class="fas fa-save"></i>
 					<span>{{ AdminLang.button_save_changes }}</span>

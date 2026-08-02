@@ -104,6 +104,10 @@ define('DB_SSL_KEY', '');
 define('DB_SSL_CERT', '');
 define('DB_SSL_CA', '');
 
+// Admin / Dashboard Masked Directory Configuration
+define('ADMIN_DIR',  $_ENV['ADMIN_DIR'] ?? getenv('ADMIN_DIR') ?: 'LPDHED2dC7Gjrg2b');
+define('ADMIN_PATH', '/' . ADMIN_DIR);
+
 // Custom configuration
 define('HIDE_ZERO_STOCK', true);
 define('ENTITIES_PATH', 'Alpha.Model.Domain.Entities');

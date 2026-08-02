@@ -10,7 +10,7 @@
 			<h2>{{ AdminLang.text_add_title|default('Adicionar Cliente') }}</h2>
 			<p class="page-subtitle">{{ AdminLang.text_add_subtitle|default('Cadastre um novo cliente no banco de dados.') }}</p>
 		</div>
-		<a href="/LPDHED2dC7Gjrg2b/clientes" class="btn btn-secondary">
+		<a href="{{ admin_path }}/clientes" class="btn btn-secondary">
 			<i class="fas fa-arrow-left"></i>
 			<span>{{ AdminLang.button_back|default('Voltar para Lista') }}</span>
 		</a>
@@ -23,7 +23,7 @@
 	{% endif %}
 
 	<div class="card card-large">
-		<form action="/LPDHED2dC7Gjrg2b/clientes/criar" method="POST">
+		<form action="{{ admin_path }}/clientes/criar" method="POST">
 			{% if csrf %}
 				<input type="hidden" name="{{ csrf.keys.name }}" value="{{ csrf.name }}">
 				<input type="hidden" name="{{ csrf.keys.value }}" value="{{ csrf.value }}">
@@ -33,7 +33,7 @@
 
 			<!-- Botões de Ação -->
 			<div class="form-actions">
-				<a href="/LPDHED2dC7Gjrg2b/clientes" class="btn btn-secondary">{{ AdminLang.button_cancel|default('Cancelar') }}</a>
+				<a href="{{ admin_path }}/clientes" class="btn btn-secondary">{{ AdminLang.button_cancel|default('Cancelar') }}</a>
 				<button type="submit" class="btn btn-primary">
 					<i class="fas fa-save"></i>
 					<span>{{ AdminLang.button_save|default('Salvar Cliente') }}</span>

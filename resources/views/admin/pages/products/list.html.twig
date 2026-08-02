@@ -10,7 +10,7 @@
 			<h2>{{ AdminLang.heading_title|default('Gerenciamento de Produtos') }}</h2>
 			<p class="page-subtitle">{{ AdminLang.text_subtitle|default('Visualize, adicione ou edite os produtos cadastrados na sua loja.') }}</p>
 		</div>
-		<a href="/LPDHED2dC7Gjrg2b/produtos/criar" class="btn btn-primary btn-with-icon">
+		<a href="{{ admin_path }}/produtos/criar" class="btn btn-primary btn-with-icon">
 			<i class="fas fa-plus"></i>
 			<span>{{ AdminLang.button_add|default('Adicionar Produto') }}</span>
 		</a>
@@ -30,7 +30,7 @@
 
 	<!-- Painel de Filtros de Busca -->
 	<div class="card">
-		<form method="GET" action="/LPDHED2dC7Gjrg2b/produtos">
+		<form method="GET" action="{{ admin_path }}/produtos">
 			<div class="grid-filters">
 				
 				<!-- Nome -->
@@ -79,7 +79,7 @@
  
 				<!-- Ações -->
 				<div class="d-flex gap-2">
-					<a href="/LPDHED2dC7Gjrg2b/produtos" class="btn flex-1 btn-secondary">{{ AdminLang.button_clear|default('Limpar') }}</a>
+					<a href="{{ admin_path }}/produtos" class="btn flex-1 btn-secondary">{{ AdminLang.button_clear|default('Limpar') }}</a>
 					<button type="submit" class="btn btn-primary flex-1">
 						<i class="fas fa-filter"></i>
 						<span>{{ AdminLang.button_filter|default('Filtrar') }}</span>
@@ -136,10 +136,10 @@
 								</td>
 								<td class="text-right">
 									<div class="actions-wrapper">
-										<a href="/LPDHED2dC7Gjrg2b/produtos/{{ product.product_id }}/editar" class="btn btn-primary btn-sm" title="{{ AdminLang.text_edit|default('Editar') }}">
+										<a href="{{ admin_path }}/produtos/{{ product.product_id }}/editar" class="btn btn-primary btn-sm" title="{{ AdminLang.text_edit|default('Editar') }}">
 											<i class="fas fa-edit"></i>
 										</a>
-										<a href="/LPDHED2dC7Gjrg2b/produtos/{{ product.product_id }}/excluir" class="btn btn-danger btn-sm" title="{{ AdminLang.text_delete|default('Excluir') }}" onclick="return confirm('{{ AdminLang.text_confirm_delete|default('Deseja realmente excluir este produto?')|escape('js') }}');">
+										<a href="{{ admin_path }}/produtos/{{ product.product_id }}/excluir" class="btn btn-danger btn-sm" title="{{ AdminLang.text_delete|default('Excluir') }}" onclick="return confirm('{{ AdminLang.text_confirm_delete|default('Deseja realmente excluir este produto?')|escape('js') }}');">
 											<i class="fas fa-trash-alt"></i>
 										</a>
 									</div>

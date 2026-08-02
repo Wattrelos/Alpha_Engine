@@ -10,7 +10,7 @@
 			<h2>{{ AdminLang.heading_title|default('Gerenciamento de Clientes') }}</h2>
 			<p class="page-subtitle">{{ AdminLang.text_subtitle|default('Visualize, adicione ou edite as contas de clientes da sua loja.') }}</p>
 		</div>
-		<a href="/LPDHED2dC7Gjrg2b/clientes/criar" class="btn btn-primary btn-with-icon">
+		<a href="{{ admin_path }}/clientes/criar" class="btn btn-primary btn-with-icon">
 			<i class="fas fa-plus"></i>
 			<span>{{ AdminLang.button_add|default('Adicionar Cliente') }}</span>
 		</a>
@@ -18,7 +18,7 @@
 
 	<!-- Painel de Filtros de Busca -->
 	<div class="card">
-		<form method="GET" action="/LPDHED2dC7Gjrg2b/clientes">
+		<form method="GET" action="{{ admin_path }}/clientes">
 			<div class="grid-filters">
 				
 				<!-- Nome -->
@@ -56,7 +56,7 @@
  
 				<!-- Ações -->
 				<div class="d-flex gap-2">
-					<a href="/LPDHED2dC7Gjrg2b/clientes" class="btn flex-1 btn-secondary">{{ AdminLang.button_clear|default('Limpar') }}</a>
+					<a href="{{ admin_path }}/clientes" class="btn flex-1 btn-secondary">{{ AdminLang.button_clear|default('Limpar') }}</a>
 					<button type="submit" class="btn btn-primary flex-1">
 						<i class="fas fa-filter"></i>
 						<span>{{ AdminLang.button_filter|default('Filtrar') }}</span>
@@ -99,10 +99,10 @@
 								<td class="text-muted">{{ customer.date_added }}</td>
 								<td class="text-right">
 									<div class="actions-wrapper">
-										<a href="/LPDHED2dC7Gjrg2b/clientes/{{ customer.customer_id }}" class="btn btn-sm" title="{{ AdminLang.text_show_title|default('Visualizar Detalhes') }}">
+										<a href="{{ admin_path }}/clientes/{{ customer.customer_id }}" class="btn btn-sm" title="{{ AdminLang.text_show_title|default('Visualizar Detalhes') }}">
 											<i class="fas fa-eye"></i>
 										</a>
-										<a href="/LPDHED2dC7Gjrg2b/clientes/{{ customer.customer_id }}/editar" class="btn btn-primary btn-sm" title="{{ AdminLang.text_edit_title|default('Editar') }}">
+										<a href="{{ admin_path }}/clientes/{{ customer.customer_id }}/editar" class="btn btn-primary btn-sm" title="{{ AdminLang.text_edit_title|default('Editar') }}">
 											<i class="fas fa-edit"></i>
 										</a>
 									</div>

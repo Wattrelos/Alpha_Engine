@@ -10,7 +10,7 @@
 			<h2>{{ AdminLang.text_address_create|default('Adicionar Endereço') }}</h2>
 			<p class="page-subtitle">{{ AdminLang.text_address_create_subtitle|default('Cadastre um novo endereço para o cliente:') }} <strong>{{ customer.firstname }} {{ customer.lastname }}</strong></p>
 		</div>
-		<a href="/LPDHED2dC7Gjrg2b/clientes/{{ customer.id }}/editar?tab=addresses" class="btn btn-secondary">
+		<a href="{{ admin_path }}/clientes/{{ customer.id }}/editar?tab=addresses" class="btn btn-secondary">
 			<i class="fas fa-arrow-left"></i>
 			<span>{{ AdminLang.button_back|default('Voltar') }}</span>
 		</a>
@@ -23,7 +23,7 @@
 	{% endif %}
 
 	<div class="card card-large">
-		<form action="/LPDHED2dC7Gjrg2b/clientes/{{ customer.id }}/enderecos/criar" method="POST">
+		<form action="{{ admin_path }}/clientes/{{ customer.id }}/enderecos/criar" method="POST">
 			{% if csrf %}
 				<input type="hidden" name="{{ csrf.keys.name }}" value="{{ csrf.name }}">
 				<input type="hidden" name="{{ csrf.keys.value }}" value="{{ csrf.value }}">
@@ -97,7 +97,7 @@
 
 			<!-- Botões de Ação -->
 			<div class="form-actions">
-				<a href="/LPDHED2dC7Gjrg2b/clientes/{{ customer.id }}/editar?tab=addresses" class="btn btn-secondary">{{ AdminLang.button_cancel|default('Cancelar') }}</a>
+				<a href="{{ admin_path }}/clientes/{{ customer.id }}/editar?tab=addresses" class="btn btn-secondary">{{ AdminLang.button_cancel|default('Cancelar') }}</a>
 				<button type="submit" class="btn btn-primary">
 					<i class="fas fa-save"></i>
 					<span>{{ AdminLang.button_save_address|default('Salvar Endereço') }}</span>

@@ -22,7 +22,8 @@ class DeleteUserGroupAction extends BaseController implements ActionInterface
                 $routeContext = RouteContext::fromRequest($request);
                 return $routeContext->getRouteParser()->urlFor('admin.user_group.list') . '?' . $msgKey . '=' . urlencode($msg);
             } catch (\Throwable $e) {
-                return '/LPDHED2dC7Gjrg2b/papeis?' . $msgKey . '=' . urlencode($msg);
+                $adminPath = defined('ADMIN_PATH') ? ADMIN_PATH : '/LPDHED2dC7Gjrg2b';
+                return $adminPath . '/papeis?' . $msgKey . '=' . urlencode($msg);
             }
         };
 

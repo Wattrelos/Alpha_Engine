@@ -417,6 +417,18 @@
                             <label for="admin_pass_confirm">Confirmar Senha</label>
                             <input type="password" id="admin_pass_confirm" name="admin_pass_confirm" placeholder="••••••••" required>
                         </div>
+                        <div class="form-group full-width">
+                            <label for="admin_dir">Caminho/Pasta do Dashboard (Mascaramento de Segurança)</label>
+                            <div style="display: flex; gap: 8px;">
+                                <input type="text" id="admin_dir" name="admin_dir" value="{{ default_admin_dir|default('LPDHED2dC7Gjrg2b') }}" placeholder="ex: painel_seguro" required>
+                                <button type="button" class="btn btn-secondary" id="btn-generate-admin-dir" style="white-space: nowrap;">
+                                    🎲 Gerar Aleatório
+                                </button>
+                            </div>
+                            <small style="color: var(--text-secondary); font-size: 0.78rem; margin-top: 4px;">
+                                Esta pasta será usada para acessar o painel administrativo (ex: <code>http://seudominio.com/<span id="admin-dir-preview">{{ default_admin_dir|default('LPDHED2dC7Gjrg2b') }}</span></code>).
+                            </small>
+                        </div>
                     </div>
                 </form>
 
@@ -436,7 +448,7 @@
                     <p style="color: var(--text-secondary); font-size: 0.95rem; margin-bottom: 24px;">
                         O banco de dados foi provisionado, o Super Admin foi criado e o arquivo <code>.env</code> foi atualizado com a flag <code>APP_INSTALLED=true</code>.
                     </p>
-                    <a href="/LPDHED2dC7Gjrg2b" class="btn btn-primary" style="text-decoration: none; padding: 12px 28px; font-size: 1rem;">
+                    <a href="/{{ default_admin_dir|default('LPDHED2dC7Gjrg2b') }}" id="btn-goto-admin" class="btn btn-primary" style="text-decoration: none; padding: 12px 28px; font-size: 1rem;">
                         Acessar Painel Administrativo →
                     </a>
                 </div>
@@ -509,6 +521,48 @@
             }
         });
 
+        // Gerador de String Aleatória para Mascaramento de Dashboard
+        function generateRandomMaskString(length = 16) {
+            const chars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+            let result = '';
+            const cryptoObj = window.crypto || window.msCrypto;
+            if (cryptoObj && cryptoObj.getRandomValues) {
+                const values = new Uint8Array(length);
+                cryptoObj.getRandomValues(values);
+                for (let i = 0; i < length; i++) {
+                    result += chars[values[i] % chars.length];
+                }
+            } else {
+                for (let i = 0; i < length; i++) {
+                    result += chars.charAt(Math.floor(Math.random() * chars.length));
+                }
+            }
+            return result;
+        }
+
+        const adminDirInput = document.getElementById('admin_dir');
+        const adminDirPreview = document.getElementById('admin-dir-preview');
+
+        if (adminDirInput && adminDirPreview) {
+            adminDirInput.addEventListener('input', function() {
+                const cleanVal = this.value.replace(/[^a-zA-Z0-9_-]/g, '').trim();
+                adminDirPreview.textContent = cleanVal || 'admin';
+            });
+        }
+
+        const btnGenAdminDir = document.getElementById('btn-generate-admin-dir');
+        if (btnGenAdminDir) {
+            btnGenAdminDir.addEventListener('click', function() {
+                const randomDir = 'adm_' + generateRandomMaskString(12);
+                if (adminDirInput) {
+                    adminDirInput.value = randomDir;
+                }
+                if (adminDirPreview) {
+                    adminDirPreview.textContent = randomDir;
+                }
+            });
+        }
+
         // Concluir e Processar Instalação
         document.getElementById('btn-process-install').addEventListener('click', async function() {
             const btn = this;
@@ -532,6 +586,12 @@
                 const data = await res.json();
 
                 if (data.success) {
+                    if (data.redirect) {
+                        const gotoAdminBtn = document.getElementById('btn-goto-admin');
+                        if (gotoAdminBtn) {
+                            gotoAdminBtn.setAttribute('href', data.redirect);
+                        }
+                    }
                     goToStep(4);
                 } else {
                     showAlert(`❌ ${data.message}`, 'danger');

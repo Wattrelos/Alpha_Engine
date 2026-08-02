@@ -143,7 +143,7 @@ class StoreSupplierAction extends BaseController implements \Alpha\Controller\Ac
         }
 
         return $response
-            ->withHeader('Location', '/LPDHED2dC7Gjrg2b/fornecedores')
+            ->withHeader('Location', (defined('ADMIN_PATH') ? ADMIN_PATH : '/LPDHED2dC7Gjrg2b') . '/fornecedores')
             ->withStatus(302);
     }
 }

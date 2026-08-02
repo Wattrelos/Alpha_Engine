@@ -298,7 +298,7 @@ class UpdateProductAction extends BaseController implements ActionInterface
 
         // Redireciona de volta para a listagem
         return $response
-            ->withHeader('Location', '/LPDHED2dC7Gjrg2b/produtos')
+            ->withHeader('Location', (defined('ADMIN_PATH') ? ADMIN_PATH : '/LPDHED2dC7Gjrg2b') . '/produtos')
             ->withStatus(302);
     }
 }

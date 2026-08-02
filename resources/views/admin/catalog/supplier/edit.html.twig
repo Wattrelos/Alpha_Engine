@@ -10,7 +10,7 @@
 			<h2>{{ AdminLang.text_edit_title|default('Editar Fornecedor') }}</h2>
 			<p class="page-subtitle">{{ AdminLang.text_edit_subtitle|default('Modifique os detalhes do fornecedor e seu endereço.') }}</p>
 		</div>
-		<a href="/LPDHED2dC7Gjrg2b/fornecedores" class="btn btn-secondary">
+		<a href="{{ admin_path }}/fornecedores" class="btn btn-secondary">
 			<i class="fas fa-arrow-left"></i>
 			<span>{{ AdminLang.button_back|default('Voltar para Lista') }}</span>
 		</a>
@@ -22,7 +22,7 @@
 		</div>
 	{% endif %}
 	<div class="card card-large">
-		<form action="/LPDHED2dC7Gjrg2b/fornecedores/{{ supplier.id }}/editar" method="POST">
+		<form action="{{ admin_path }}/fornecedores/{{ supplier.id }}/editar" method="POST">
 			{% if csrf %}
 				<input type="hidden" name="{{ csrf.keys.name }}" value="{{ csrf.name }}">
 				<input type="hidden" name="{{ csrf.keys.value }}" value="{{ csrf.value }}">
@@ -210,7 +210,7 @@
 
 			<!-- Botões de Ação -->
 			<div class="form-actions">
-				<a href="/LPDHED2dC7Gjrg2b/fornecedores" class="btn btn-secondary">{{ AdminLang.button_cancel|default('Cancelar') }}</a>
+				<a href="{{ admin_path }}/fornecedores" class="btn btn-secondary">{{ AdminLang.button_cancel|default('Cancelar') }}</a>
 				<button type="submit" class="btn btn-primary">
 					<i class="fas fa-save"></i>
 					<span>{{ AdminLang.button_save|default('Salvar Fornecedor') }}</span>

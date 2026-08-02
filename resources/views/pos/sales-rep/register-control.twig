@@ -154,7 +154,7 @@
 
         // 1. Carrega Produtos inicialmente
         const loadProducts = (query = '') => {
-            fetch(`/LPDHED2dC7Gjrg2b/pos/produtos/buscar?q=${encodeURIComponent(query)}`)
+            fetch(`{{ admin_path }}/pos/produtos/buscar?q=${encodeURIComponent(query)}`)
                 .then(res => res.json())
                 .then(data => {
                     productsDatabase = data;
@@ -234,7 +234,7 @@
             }
             
             customerSearchTimeout = setTimeout(() => {
-                fetch(`/LPDHED2dC7Gjrg2b/pos/clientes/buscar?q=${encodeURIComponent(query)}`)
+                fetch(`{{ admin_path }}/pos/clientes/buscar?q=${encodeURIComponent(query)}`)
                     .then(res => res.json())
                     .then(data => {
                         if (data.length === 0) {
@@ -466,7 +466,7 @@
                 idempotency_key: idempotencyKey
             };
             
-            fetch('/LPDHED2dC7Gjrg2b/pos/pedidos/salvar', {
+            fetch('{{ admin_path }}/pos/pedidos/salvar', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -491,7 +491,7 @@
             .then(data => {
                 if (data.success && data.order_id) {
                     // Sucesso: Redireciona para tela de checkout sucesso
-                    window.location.href = `/LPDHED2dC7Gjrg2b/pos/vendedor/checkout?order_id=${data.order_id}`;
+                    window.location.href = `{{ admin_path }}/pos/vendedor/checkout?order_id=${data.order_id}`;
                 } else {
                     throw new Error(data.error || 'Falha ao processar pré-venda.');
                 }

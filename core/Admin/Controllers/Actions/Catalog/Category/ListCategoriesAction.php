@@ -88,7 +88,7 @@ class ListCategoriesAction extends BaseController implements \Alpha\Controller\A
             $routeContext = \Slim\Routing\RouteContext::fromRequest($request);
             $baseUrl = $routeContext->getRouteParser()->urlFor('admin.category.list');
         } catch (\Throwable $e) {
-            $baseUrl = '/LPDHED2dC7Gjrg2b/categorias';
+            $baseUrl = (defined('ADMIN_PATH') ? ADMIN_PATH : '/LPDHED2dC7Gjrg2b') . '/categorias';
         }
         $url = $baseUrl . '?' . ($urlQueryString ? $urlQueryString . '&' : '') . 'page={page}';
 

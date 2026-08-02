@@ -70,7 +70,7 @@ class CreateAddressAction extends BaseController implements \Alpha\Controller\Ac
                     $_SESSION['success'] = 'Endereço cadastrado com sucesso!';
                     
                     return $response
-                        ->withHeader('Location', '/LPDHED2dC7Gjrg2b/clientes/' . $customerId . '/editar?tab=addresses')
+                        ->withHeader('Location', (defined('ADMIN_PATH') ? ADMIN_PATH : '/LPDHED2dC7Gjrg2b') . '/clientes/' . $customerId . '/editar?tab=addresses')
                         ->withStatus(302);
                 } catch (\Throwable $e) {
                     $errors['warning'] = 'Erro ao cadastrar endereço: ' . $e->getMessage();

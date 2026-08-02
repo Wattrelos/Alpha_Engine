@@ -22,7 +22,8 @@ class DeleteUserAction extends BaseController implements ActionInterface
                 $routeContext = RouteContext::fromRequest($request);
                 return $routeContext->getRouteParser()->urlFor('admin.user.list') . '?' . $msgKey . '=' . urlencode($msg);
             } catch (\Throwable $e) {
-                return '/LPDHED2dC7Gjrg2b/usuarios?' . $msgKey . '=' . urlencode($msg);
+                $adminPath = defined('ADMIN_PATH') ? ADMIN_PATH : '/LPDHED2dC7Gjrg2b';
+                return $adminPath . '/usuarios?' . $msgKey . '=' . urlencode($msg);
             }
         };
 

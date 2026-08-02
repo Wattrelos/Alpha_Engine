@@ -1,6 +1,7 @@
 async function updateReturnStatus(id, payload) {
     try {
-        const response = await fetch(`/LPDHED2dC7Gjrg2b/devolucoes/${id}/status`, {
+        const adminPath = window.ADMIN_PATH || (window.location.pathname.includes('/devolucoes') ? window.location.pathname.substring(0, window.location.pathname.indexOf('/devolucoes')) : '');
+        const response = await fetch(`${adminPath}/devolucoes/${id}/status`, {
             method: 'POST',
             headers: { 
                 'Content-Type': 'application/json',

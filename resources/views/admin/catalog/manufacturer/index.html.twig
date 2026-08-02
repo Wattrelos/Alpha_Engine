@@ -10,7 +10,7 @@
 			<h2>{{ AdminLang.heading_title|default('Gerenciamento de Fabricantes') }}</h2>
 			<p class="page-subtitle">{{ AdminLang.text_subtitle|default('Visualize, adicione ou edite os fabricantes e marcas cadastrados.') }}</p>
 		</div>
-		<a href="/LPDHED2dC7Gjrg2b/fabricantes/criar" class="btn btn-primary btn-with-icon">
+		<a href="{{ admin_path }}/fabricantes/criar" class="btn btn-primary btn-with-icon">
 			<i class="fas fa-plus"></i>
 			<span>{{ AdminLang.button_add|default('Adicionar Fabricante') }}</span>
 		</a>
@@ -18,7 +18,7 @@
 
 	<!-- Painel de Filtros de Busca -->
 	<div class="card">
-		<form method="GET" action="/LPDHED2dC7Gjrg2b/fabricantes">
+		<form method="GET" action="{{ admin_path }}/fabricantes">
 			<div class="grid-filters">
 				
 				<!-- Nome -->
@@ -29,7 +29,7 @@
  
 				<!-- Ações -->
 				<div class="d-flex gap-2">
-					<a href="/LPDHED2dC7Gjrg2b/fabricantes" class="btn flex-1 btn-secondary">{{ AdminLang.button_clear|default('Limpar') }}</a>
+					<a href="{{ admin_path }}/fabricantes" class="btn flex-1 btn-secondary">{{ AdminLang.button_clear|default('Limpar') }}</a>
 					<button type="submit" class="btn btn-primary flex-1">
 						<i class="fas fa-filter"></i>
 						<span>{{ AdminLang.button_filter|default('Filtrar') }}</span>
@@ -68,10 +68,10 @@
 								<td class="text-muted">{{ manufacturer.sort_order }}</td>
 								<td class="text-right">
 									<div class="actions-wrapper">
-										<a href="/LPDHED2dC7Gjrg2b/fabricantes/{{ manufacturer.manufacturer_id }}/editar" class="btn btn-primary btn-sm" title="Editar">
+										<a href="{{ admin_path }}/fabricantes/{{ manufacturer.manufacturer_id }}/editar" class="btn btn-primary btn-sm" title="Editar">
 											<i class="fas fa-edit"></i>
 										</a>
-										<a href="/LPDHED2dC7Gjrg2b/fabricantes/{{ manufacturer.manufacturer_id }}/excluir" class="btn btn-danger btn-sm" title="Excluir" onclick="return confirm('{{ AdminLang.text_confirm_delete|default('Deseja realmente excluir este fabricante? Todos os produtos vinculados serão desassociados.')|escape('js') }}');">
+										<a href="{{ admin_path }}/fabricantes/{{ manufacturer.manufacturer_id }}/excluir" class="btn btn-danger btn-sm" title="Excluir" onclick="return confirm('{{ AdminLang.text_confirm_delete|default('Deseja realmente excluir este fabricante? Todos os produtos vinculados serão desassociados.')|escape('js') }}');">
 											<i class="fas fa-trash-alt"></i>
 										</a>
 									</div>

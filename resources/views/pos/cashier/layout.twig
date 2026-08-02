@@ -182,7 +182,7 @@
             searchTicketBtn.disabled = true;
             searchTicketBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
             
-            fetch(`/LPDHED2dC7Gjrg2b/pos/pedidos/${ticketId}`)
+            fetch(`{{ admin_path }}/pos/pedidos/${ticketId}`)
                 .then(res => {
                     if (!res.ok) {
                         throw new Error('Ticket não encontrado.');
@@ -326,7 +326,7 @@
                 payment_method: selectedMethod
             };
             
-            fetch(`/LPDHED2dC7Gjrg2b/pos/pedidos/${currentTicket.order_id}/pagar`, {
+            fetch(`{{ admin_path }}/pos/pedidos/${currentTicket.order_id}/pagar`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'

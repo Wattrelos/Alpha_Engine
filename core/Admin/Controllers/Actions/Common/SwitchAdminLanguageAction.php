@@ -37,7 +37,7 @@ class SwitchAdminLanguageAction extends BaseController implements \Alpha\Control
         // Get referer to redirect user back to their current page
         $referer = $request->getHeaderLine('Referer');
         if (empty($referer)) {
-            $referer = '/LPDHED2dC7Gjrg2b/dashboard';
+            $referer = (defined('ADMIN_PATH') ? ADMIN_PATH : '/LPDHED2dC7Gjrg2b') . '/dashboard';
         }
 
         return $response

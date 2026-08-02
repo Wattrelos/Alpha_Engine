@@ -83,7 +83,7 @@ class StoreManufacturerAction extends BaseController implements \Alpha\Controlle
 
         // Redireciona de volta para a lista
         return $response
-            ->withHeader('Location', '/LPDHED2dC7Gjrg2b/fabricantes')
+            ->withHeader('Location', (defined('ADMIN_PATH') ? ADMIN_PATH : '/LPDHED2dC7Gjrg2b') . '/fabricantes')
             ->withStatus(302);
     }
 

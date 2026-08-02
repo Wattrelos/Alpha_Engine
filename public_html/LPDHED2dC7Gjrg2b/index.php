@@ -54,6 +54,8 @@ $twigEnv->addExtension(new \Alpha\Support\Twig\UrlExtension($seoUrlRepository));
 $twigEnv->addGlobal('settings',   $configSettings);
 $twigEnv->addGlobal('name',       $configSettings['config_name'] ?? 'AG Sonhos e Construções');
 $twigEnv->addGlobal('lang',       $language ? $language->getCode() : 'pt-br');
+$twigEnv->addGlobal('admin_dir',  defined('ADMIN_DIR') ? ADMIN_DIR : basename(__DIR__));
+$twigEnv->addGlobal('admin_path', defined('ADMIN_PATH') ? ADMIN_PATH : '/' . basename(__DIR__));
 
 // 4. BIND NO CONTAINER
 $container->bind(Environment::class, $twigEnv);
@@ -64,7 +66,7 @@ AppFactory::setContainer($container);
 $app = AppFactory::create();
 
 // Define o BasePath para o roteamento funcionar relativo ao diretório oculto do admin
-$app->setBasePath('/LPDHED2dC7Gjrg2b');
+$app->setBasePath('/' . (defined('ADMIN_DIR') ? ADMIN_DIR : basename(__DIR__)));
 
 use Alpha\Auth\Middleware\CsrfGuardMiddleware;
 use Alpha\Auth\Middleware\SecurityHeadersMiddleware;

@@ -8,7 +8,7 @@
 			<h2>{% if is_edit %}Editar Funcionário{% else %}Novo Funcionário{% endif %}</h2>
 			<p class="page-subtitle">Cadastre ou edite as informações de colaboradores e defina suas credenciais e permissões.</p>
 		</div>
-		<a href="/LPDHED2dC7Gjrg2b/usuarios" class="btn btn-secondary btn-with-icon">
+		<a href="{{ admin_path }}/usuarios" class="btn btn-secondary btn-with-icon">
 			<i class="fas fa-arrow-left"></i>
 			<span>Voltar para Lista</span>
 		</a>
@@ -20,7 +20,7 @@
 		</div>
 	{% endif %}
 
-	<form method="POST" action="{% if is_edit %}/LPDHED2dC7Gjrg2b/usuarios/{{ user.id }}/editar{% else %}/LPDHED2dC7Gjrg2b/usuarios/criar{% endif %}">
+	<form method="POST" action="{% if is_edit %}{{ admin_path }}/usuarios/{{ user.id }}/editar{% else %}{{ admin_path }}/usuarios/criar{% endif %}">
 		{% if csrf %}
 			<input type="hidden" name="{{ csrf.keys.name }}" value="{{ csrf.name }}">
 			<input type="hidden" name="{{ csrf.keys.value }}" value="{{ csrf.value }}">
@@ -84,7 +84,7 @@
 			</div>
 
 			<div class="d-flex justify-content-end gap-2 mt-4 pt-3 border-t">
-				<a href="/LPDHED2dC7Gjrg2b/usuarios" class="btn btn-secondary">Cancelar</a>
+				<a href="{{ admin_path }}/usuarios" class="btn btn-secondary">Cancelar</a>
 				<button type="submit" class="btn btn-primary btn-with-icon">
 					<i class="fas fa-save"></i>
 					<span>Salvar Funcionário</span>

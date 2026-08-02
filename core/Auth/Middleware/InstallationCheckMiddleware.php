@@ -65,12 +65,13 @@ class InstallationCheckMiddleware implements MiddlewareInterface
                     ->withStatus(403);
             }
 
+            $adminPath = defined('ADMIN_PATH') ? ADMIN_PATH : ('/' . ($_ENV['ADMIN_DIR'] ?? 'LPDHED2dC7Gjrg2b'));
             $html = '<!DOCTYPE html><html lang="pt-BR"><head><meta charset="UTF-8"><title>403 Proibido</title>' .
                     '<style>body{font-family:sans-serif;background:#121212;color:#fff;display:flex;align-items:center;justify-content:center;height:100vh;margin:0;}' .
                     '.box{background:#1e1e1e;padding:40px;border-radius:12px;text-align:center;box-shadow:0 8px 24px rgba(0,0,0,0.5);max-width:480px;}' .
                     'h1{color:#e74c3c;margin-top:0;}a{color:#3498db;text-decoration:none;font-weight:bold;}</style></head><body>' .
                     '<div class="box"><h1>403 Proibido</h1><p>O sistema já foi instalado e provisionado anteriormente.</p>' .
-                    '<p><a href="/">Ir para a Loja</a> | <a href="/LPDHED2dC7Gjrg2b">Painel Administrativo</a></p></div></body></html>';
+                    '<p><a href="/">Ir para a Loja</a> | <a href="' . htmlspecialchars($adminPath) . '">Painel Administrativo</a></p></div></body></html>';
 
             $response->getBody()->write($html);
             return $response->withStatus(403);

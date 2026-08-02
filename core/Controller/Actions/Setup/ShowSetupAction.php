@@ -86,7 +86,8 @@ class ShowSetupAction
             'default_port'            => $_ENV['DB_PORT'] ?? '3306',
             'default_user'            => $_ENV['DB_USERNAME'] ?? 'root',
             'default_db'              => $_ENV['DB_DATABASE'] ?? 'myDatabase',
-            'default_prefix'          => $_ENV['DB_PREFIX'] ?? 'tbkk_',
+            'default_prefix'          => $_ENV['DB_PREFIX'] ?? 'agsc_',
+            'default_admin_dir'       => $_ENV['ADMIN_DIR'] ?? 'LPDHED2dC7Gjrg2b',
         ]);
 
         $response->getBody()->write($html);

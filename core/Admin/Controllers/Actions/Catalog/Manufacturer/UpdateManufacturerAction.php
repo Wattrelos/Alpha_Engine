@@ -105,7 +105,7 @@ class UpdateManufacturerAction extends BaseController implements \Alpha\Controll
 
         // Redirect back to list
         return $response
-            ->withHeader('Location', '/LPDHED2dC7Gjrg2b/fabricantes')
+            ->withHeader('Location', (defined('ADMIN_PATH') ? ADMIN_PATH : '/LPDHED2dC7Gjrg2b') . '/fabricantes')
             ->withStatus(302);
     }
 

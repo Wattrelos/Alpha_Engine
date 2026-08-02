@@ -14,7 +14,7 @@
 
 	<!-- Painel de Filtros de Busca -->
 	<div class="card">
-		<form method="GET" action="/LPDHED2dC7Gjrg2b/pedidos">
+		<form method="GET" action="{{ admin_path }}/pedidos">
 			<div class="grid-filters-order">
 				
 				<!-- ID do Pedido -->
@@ -54,7 +54,7 @@
 
 				<!-- Ações -->
 				<div class="d-flex gap-2">
-					<a href="/LPDHED2dC7Gjrg2b/pedidos" class="btn flex-1 btn-secondary">{{ AdminLang.button_clear }}</a>
+					<a href="{{ admin_path }}/pedidos" class="btn flex-1 btn-secondary">{{ AdminLang.button_clear }}</a>
 					<button type="submit" class="btn btn-primary flex-1">
 						<i class="fas fa-filter"></i>
 						<span>{{ AdminLang.button_filter }}</span>
@@ -99,10 +99,10 @@
 								<td>{{ order.date_modified }}</td>
 								<td class="text-right">
 									<div class="actions-wrapper">
-										<a href="/LPDHED2dC7Gjrg2b/pedidos/{{ order.order_id }}" class="btn btn-primary btn-sm" title="{{ AdminLang.button_view }}">
+										<a href="{{ admin_path }}/pedidos/{{ order.order_id }}" class="btn btn-primary btn-sm" title="{{ AdminLang.button_view }}">
 											<i class="fas fa-eye"></i>
 										</a>
-										<a href="/LPDHED2dC7Gjrg2b/pedidos/{{ order.order_id }}/fatura" target="_blank" class="btn btn-secondary btn-sm" title="{{ AdminLang.button_invoice }}">
+										<a href="{{ admin_path }}/pedidos/{{ order.order_id }}/fatura" target="_blank" class="btn btn-secondary btn-sm" title="{{ AdminLang.button_invoice }}">
 											<i class="fas fa-print"></i>
 										</a>
 									</div>

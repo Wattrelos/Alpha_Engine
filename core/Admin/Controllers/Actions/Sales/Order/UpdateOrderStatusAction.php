@@ -35,7 +35,8 @@ class UpdateOrderStatusAction extends BaseController implements \Alpha\Controlle
             $routeContext = \Slim\Routing\RouteContext::fromRequest($request);
             $redirectUrl = $routeContext->getRouteParser()->urlFor('admin.orders.show', ['id' => $orderId]);
         } catch (\Throwable $e) {
-            $redirectUrl = '/LPDHED2dC7Gjrg2b/pedidos/' . $orderId;
+            $adminPath = defined('ADMIN_PATH') ? ADMIN_PATH : '/LPDHED2dC7Gjrg2b';
+            $redirectUrl = $adminPath . '/pedidos/' . $orderId;
         }
 
         return $response->withHeader('Location', $redirectUrl . '?success=1')->withStatus(302);

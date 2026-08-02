@@ -8,7 +8,7 @@
 	<div class="page-header mb-8">
 		<div>
 			<div class="d-flex align-center gap-2 mb-2">
-				<a href="/LPDHED2dC7Gjrg2b/devolucoes" class="text-muted text-decoration-none">{{ AdminLang.heading_title|default('Devoluções') }}</a>
+				<a href="{{ admin_path }}/devolucoes" class="text-muted text-decoration-none">{{ AdminLang.heading_title|default('Devoluções') }}</a>
 				<span class="text-muted">/</span>
 				<span class="text-semibold text-dark">{{ AdminLang.text_show_heading|default('Devolução') }} #{{ return.id }}</span>
 			</div>
@@ -16,7 +16,7 @@
 			<p class="page-subtitle">{{ AdminLang.text_show_subtitle|default('Visualização completa dos dados da solicitação de devolução, produto e histórico de status.') }}</p>
 		</div>
 		<div>
-			<a href="/LPDHED2dC7Gjrg2b/devolucoes" class="btn btn-secondary">
+			<a href="{{ admin_path }}/devolucoes" class="btn btn-secondary">
 				<i class="fas fa-arrow-left"></i> {{ AdminLang.button_back|default('Voltar') }}
 			</a>
 		</div>
@@ -53,7 +53,7 @@
 				<tr class="tr-info">
 					<td class="text-muted">{{ AdminLang.entry_order_id|default('ID do Pedido') }}:</td>
 					<td class="text-semibold text-dark text-right">
-						<a href="/LPDHED2dC7Gjrg2b/pedidos/{{ return.order_id }}" class="text-decoration-none icon-primary text-semibold">
+						<a href="{{ admin_path }}/pedidos/{{ return.order_id }}" class="text-decoration-none icon-primary text-semibold">
 							#{{ return.order_id }}
 						</a>
 					</td>
@@ -219,7 +219,7 @@
 			<h3 class="card-section-title">
 				<i class="fas fa-edit icon-primary icon-mr-2"></i> {{ AdminLang.title_update_request|default('Atualizar Solicitação') }}
 			</h3>
-			<form id="update-status-form" action="/LPDHED2dC7Gjrg2b/devolucoes/{{ return.id }}/status" method="POST">
+			<form id="update-status-form" action="{{ admin_path }}/devolucoes/{{ return.id }}/status" method="POST">
 				{% if csrf %}
 					<input type="hidden" name="{{ csrf.keys.name }}" value="{{ csrf.name }}">
 					<input type="hidden" name="{{ csrf.keys.value }}" value="{{ csrf.value }}">
