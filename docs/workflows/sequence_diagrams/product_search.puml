@@ -1,0 +1,127 @@
+@startuml "Busca de Produtos - Diagrama de Sequência"
+
+autonumber
+skinparam BoxPadding 10
+skinparam ParticipantPadding 10
+
+actor "Usuário/Browser" as User
+
+box "0. Slim 4 Framework & Middlewares" #F9F9F9
+    participant "public_html/index.php" as Entrypoint
+    participant "LanguageMiddleware" as LangMW
+    participant "SessionMiddleware" as SessionMW
+end box
+
+box "2. Application Actions" #EBF5FB
+    participant "Front-end Actions" as FrontAction
+end box
+
+box "4. Domain Layer" #E8F8F5
+    participant "RepositoryFactory" as RepoFactory
+    participant "AbstractRepository" as Repos
+end box
+
+box "5. Persistence & Database" #FEF9E7
+    participant "MapperFactory" as MapperFactory
+    participant "BaseMapper" as Mappers
+    participant "DataAccessObject (DAO)" as DAO
+    participant "QueryBuilder" as QB
+    database "MySQL 8.0" as MySQL
+end box
+
+box "3. Presentation" #FBEEE6
+    participant "TwigEnvironment" as Twig
+    participant "Twig Templates" as Views
+end box
+
+' --- INÍCIO DO FLUXO ---
+
+User -> Entrypoint : GET /produtos?busca=smart+tv
+activate Entrypoint
+
+'= 1. MIDDLEWARE STACK =
+Entrypoint -> LangMW : process(Request)
+activate LangMW
+LangMW -> SessionMW : process(Request)
+activate SessionMW
+
+'= 2. ACTION EXECUTION =
+SessionMW -> FrontAction : __invoke(Request, Response)
+activate FrontAction
+
+' Instanciação do Repositório via Factory
+FrontAction -> RepoFactory : getRepository('Product')
+activate RepoFactory
+RepoFactory -> Repos : new ProductRepository()
+activate Repos
+Repos --> RepoFactory : instance
+RepoFactory --> FrontAction : ProductRepository
+deactivate RepoFactory
+
+' Chamada da busca no Domínio
+FrontAction -> Repos : searchProducts('smart tv')
+
+'= 3. PERSISTENCE LAYER =
+Repos -> MapperFactory : getMapper('Product')
+activate MapperFactory
+MapperFactory -> Mappers : new ProductMapper()
+activate Mappers
+Mappers --> MapperFactory : instance
+MapperFactory --> Repos : ProductMapper
+deactivate MapperFactory
+
+' Construção da Query SQL com FULLTEXT
+Repos -> Mappers : getProducts($filterData)
+Mappers -> Mappers : prepareFullTextQuery('smart tv')
+Mappers -> DAO : executeQuery($query)
+activate DAO
+DAO -> QB : where("MATCH(pd.name, pd.description, pd.tag) AGAINST(? IN BOOLEAN MODE) OR p.model LIKE ?")
+activate QB
+QB --> DAO : SQL Statement + Bindings ("+smart* +tv*")
+deactivate QB
+
+'= 4. DATABASE SEARCH =
+DAO -> MySQL : Execute SQL ("+smart* +tv*")
+activate MySQL
+MySQL --> DAO : Raw Results Array (15k context match)
+deactivate MySQL
+
+DAO --> Mappers : Raw Data Array
+deactivate DAO
+
+' Hidratação dos dados brutos em Entidades do Domínio
+Mappers -> Repos : Hydrate Raw Data to ProductEntities
+deactivate Mappers
+Repos --> FrontAction : Collection of ProductEntities
+deactivate Repos
+
+'= 5. PRESENTATION LAYER (TWIG) =
+FrontAction -> Twig : render('products/list.twig', [products])
+activate Twig
+Twig -> Views : Compile & Inject Data
+activate Views
+Views --> Twig : Raw HTML text
+deactivate Views
+Twig --> FrontAction : Response with HTML Body
+deactivate Twig
+
+' Retorno da pilha de middlewares
+FrontAction --> SessionMW : Response
+deactivate FrontAction
+SessionMW --> LangMW : Response
+deactivate SessionMW
+LangMW --> Entrypoint : Response
+deactivate LangMW
+
+Entrypoint --> User : 200 OK (HTML Page)
+deactivate Entrypoint
+
+@enduml
+
+' ## Principais pontos destacados no fluxo:
+
+'   1. Passagem limpa de camadas: O fluxo respeita estritamente o desacoplamento proposto na arquitetura (Framework → Middleware → Action → Domain → Persistence → DB).
+'   2. Separação de responsabilidades de persistência: A Action não sabe o que é SQL. O QueryBuilder (Passo 15) monta especificamente a cláusula MATCH() AGAINST() do FULLTEXT, mantendo a infraestrutura isolada do domínio.
+'   3. Hidratação: O Mapper recebe os dados brutos do MySQL e devolve entidades hidratadas (Passo 19) para o repositório, garantindo o padrão DDD da sua arquitetura.
+
+' Se você quiser, posso detalhar como ficaria o trecho de código específico do ProductMapper ou do QueryBuilder para injetar corretamente os modificadores booleanos (+ e *) na string de busca antes de enviar ao MySQL.

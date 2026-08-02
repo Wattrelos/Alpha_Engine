@@ -106,7 +106,14 @@ class ProductMapper extends BaseMapper {
 
         // Filtros de busca
         if (!empty($data['filter_name'])) {
-            $query->where("(pd.name LIKE ? OR p.model = ?)", ["%" . $data['filter_name'] . "%", $data['filter_name']]);
+            $rawSearch = trim($data['filter_name']);
+            $ftQueryStr = $this->prepareFullTextQuery($rawSearch);
+
+            if (mb_strlen($rawSearch) >= 3 && !empty($ftQueryStr)) {
+                $query->where("(MATCH(pd.name, pd.description, pd.tag) AGAINST(? IN BOOLEAN MODE) OR p.model LIKE ?)", [$ftQueryStr, "%" . $rawSearch . "%"]);
+            } else {
+                $query->where("(pd.name LIKE ? OR pd.tag LIKE ? OR p.model LIKE ?)", ["%" . $rawSearch . "%", "%" . $rawSearch . "%", "%" . $rawSearch . "%"]);
+            }
         }
 
         if (!empty($data['filter_manufacturer_id'])) {
@@ -304,7 +311,14 @@ class ProductMapper extends BaseMapper {
               ->where("p.master_id = 0");
 
         if (!empty($data['filter_name'])) {
-            $query->where("(pd.name LIKE ? OR p.model = ?)", ["%" . $data['filter_name'] . "%", $data['filter_name']]);
+            $rawSearch = trim($data['filter_name']);
+            $ftQueryStr = $this->prepareFullTextQuery($rawSearch);
+
+            if (mb_strlen($rawSearch) >= 3 && !empty($ftQueryStr)) {
+                $query->where("(MATCH(pd.name, pd.description, pd.tag) AGAINST(? IN BOOLEAN MODE) OR p.model LIKE ?)", [$ftQueryStr, "%" . $rawSearch . "%"]);
+            } else {
+                $query->where("(pd.name LIKE ? OR pd.tag LIKE ? OR p.model LIKE ?)", ["%" . $rawSearch . "%", "%" . $rawSearch . "%", "%" . $rawSearch . "%"]);
+            }
         }
 
         if (!empty($data['filter_category_id'])) {
@@ -646,5 +660,26 @@ class ProductMapper extends BaseMapper {
             ->select('ps.*', 'sp.frequency', 'sp.duration', 'sp.cycle', 'sp.trial_status', 'sp.trial_frequency', 'sp.trial_duration', 'sp.trial_cycle', 'spd.name');
 
         return $this->dao->executeQuery($query);
+    }
+
+    /**
+     * Prepara e sanitiza a string de busca para ser utilizada no MySQL IN BOOLEAN MODE.
+     * Transforma "smart tv" em "+smart* +tv*", removendo caracteres reservadores de sintaxe booleana.
+     */
+    public function prepareFullTextQuery(string $searchTerm): string {
+        $cleanTerm = preg_replace('/[+\-><()~*\"@]+/', ' ', $searchTerm);
+        $words = preg_split('/\s+/', trim($cleanTerm));
+        $formattedWords = [];
+        foreach ($words as $word) {
+            $word = trim($word);
+            if (mb_strlen($word) >= 1) {
+                if (mb_strlen($word) >= 2) {
+                    $formattedWords[] = '+' . $word . '*';
+                } else {
+                    $formattedWords[] = '+' . $word;
+                }
+            }
+        }
+        return implode(' ', $formattedWords);
     }
 }
