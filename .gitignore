@@ -40,7 +40,6 @@ composer.lock
 .idea/
 *.swp
 *.log
-*.sql
 .DS_Store
 Thumbs.db
 
