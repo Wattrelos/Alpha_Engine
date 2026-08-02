@@ -33,16 +33,16 @@ class ProcessInstallationAction
         $port = trim($params['db_port'] ?? '3306');
         $user = trim($params['db_user'] ?? 'root');
         $pass = (string)($params['db_pass'] ?? '');
-        $database = trim($params['db_name'] ?? 'AlphaAgsonhos');
-        $prefix = trim($params['db_prefix'] ?? 'agsc_');
+        $database = trim($params['db_name'] ?? 'MyDatabase');
+        $prefix = trim($params['db_prefix'] ?? 'tbkk_');
 
-        $storeName = trim($params['store_name'] ?? 'AgSonhos E-commerce');
-        $storeEmail = trim($params['store_email'] ?? 'atendimento@agsonhos.com');
+        $storeName = trim($params['store_name'] ?? 'My Story');
+        $storeEmail = trim($params['store_email'] ?? '');
 
         $adminFirstname = trim($params['admin_firstname'] ?? 'Administrador');
         $adminLastname = trim($params['admin_lastname'] ?? 'SaaS');
         $adminUser = trim($params['admin_user'] ?? 'admin');
-        $adminEmail = trim($params['admin_email'] ?? 'admin@agsonhos.com');
+        $adminEmail = trim($params['admin_email'] ?? 'admin@mystore.com');
         $adminPass = (string)($params['admin_pass'] ?? '');
         $adminPassConfirm = (string)($params['admin_pass_confirm'] ?? '');
 
@@ -102,7 +102,7 @@ class ProcessInstallationAction
 
             // 5. Criação do Super Admin (Hash Argon2ID)
             $adminHash = password_hash($adminPass, PASSWORD_ARGON2ID);
-            
+
             // Limpa usuários existentes com o mesmo username ou insere
             $stmtCheckUser = $pdo->prepare("DELETE FROM `{$prefix}user` WHERE `username` = ? OR `email` = ?");
             $stmtCheckUser->execute([$adminUser, $adminEmail]);

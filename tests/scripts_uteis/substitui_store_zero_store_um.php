@@ -6,7 +6,7 @@
 $host = 'localhost';
 $user = 'root';
 $password = '42010052';
-$dbname = 'AlphaAgsonhos';
+$dbname = 'myDatabase';
 $prefix = 'tbkk_'; // Lembre-se de colocar o prefixo do seu banco de dados
 
 try {

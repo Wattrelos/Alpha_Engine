@@ -85,8 +85,8 @@ class ShowSetupAction
             'default_host'            => $_ENV['DB_HOSTNAME'] ?? '127.0.0.1',
             'default_port'            => $_ENV['DB_PORT'] ?? '3306',
             'default_user'            => $_ENV['DB_USERNAME'] ?? 'root',
-            'default_db'              => $_ENV['DB_DATABASE'] ?? 'AlphaAgsonhos',
-            'default_prefix'          => $_ENV['DB_PREFIX'] ?? 'agsc_',
+            'default_db'              => $_ENV['DB_DATABASE'] ?? 'myDatabase',
+            'default_prefix'          => $_ENV['DB_PREFIX'] ?? 'tbkk_',
         ]);
 
         $response->getBody()->write($html);
