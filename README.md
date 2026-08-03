@@ -1,3 +1,15 @@
+## ⚠️ Disclaimer (Aviso Legal)
+
+**Este software ainda está em fase de desenvolvimento e testes.** 
+
+Embora o projeto apresente um estado avançado de maturação, ele **não passou por todas as validações de segurança e funcionalidade**, e **não foi testado em ambiente de produção**.
+
+* **Licenciamento:** Este projeto é distribuído sob os termos da licença **GPL (GNU General Public License)**.
+* **Uso por sua conta e risco:** O código é fornecido "no estado em que se encontra" (as-is), sem garantias de qualquer tipo, expressas ou implícitas.
+* **Ambiente seguro:** Recomendamos fortemente que a execução e os testes deste software sejam realizados exclusivamente em ambientes isolados de desenvolvimento ou homologação.
+* **Responsabilidade:** Os desenvolvedores não se responsabilizam por quaisquer danos, perda de dados, brechas de segurança ou interrupções de serviço que possam decorrer do uso deste software.
+
+
 # 🚀 Alpha Engine - Documentação Técnica
 
 Bem-vindo ao repositório central da **Alpha Engine**, um sistema de e-commerce moderno e standalone desenvolvido totalmente do zero (abrangendo bootstrap, rotas, controllers e views). A engine antigado código legado foi completamente abandonada de nosso runtime, restando seu código apenas como referência conceitual e de banco de dados. Este ecossistema implementa padrões rígidos como **Repository Pattern**, **Data Mappers** e **Domain-Driven Design (DDD)** para assegurar máxima performance e escalabilidade.
