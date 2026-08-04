@@ -11,7 +11,4 @@ Os autores originais e detentores dos direitos autorais do projeto:
 
 ## 🤝 Contribuidores
 
-Agradecemos a todas as pessoas que ajudaram a melhorar este software com correções de bugs, documentação ou novas funcionalidades:
 
-* **Gabriel Calidônio André** - *Correção de bugs e testes*
-* **Wallace Francis Miranda** - *Revisão da documentação*
