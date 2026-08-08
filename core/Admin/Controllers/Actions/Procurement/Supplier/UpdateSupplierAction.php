@@ -93,9 +93,9 @@ class UpdateSupplierAction extends BaseController implements \Alpha\Controller\A
                 }
             }
 
-            $conn = \Alpha\Model\DataAccessObject\ConnectionDB::getInstance()->getConnection();
-            $stmtManufacturers = $conn->query("SELECT id, name FROM `" . DB_PREFIX . "manufacturer` ORDER BY name ASC");
-            $manufacturers = $stmtManufacturers->fetchAll(\PDO::FETCH_ASSOC);
+            /** @var \Alpha\Model\Domain\Repositories\ManufacturerRepository $manufacturerRepo */
+            $manufacturerRepo = $this->getRepository(\Alpha\Model\Domain\Repositories\ManufacturerRepository::class);
+            $manufacturers = $manufacturerRepo->getManufacturers();
 
             // Temporarily set contacts from parsed body so they are returned to form if validation fails
             $contactsData = isset($data['contacts']) && is_array($data['contacts']) ? $data['contacts'] : [];
@@ -174,9 +174,9 @@ class UpdateSupplierAction extends BaseController implements \Alpha\Controller\A
                 }
             }
 
-            $conn = \Alpha\Model\DataAccessObject\ConnectionDB::getInstance()->getConnection();
-            $stmtManufacturers = $conn->query("SELECT id, name FROM `" . DB_PREFIX . "manufacturer` ORDER BY name ASC");
-            $manufacturers = $stmtManufacturers->fetchAll(\PDO::FETCH_ASSOC);
+            /** @var \Alpha\Model\Domain\Repositories\ManufacturerRepository $manufacturerRepo */
+            $manufacturerRepo = $this->getRepository(\Alpha\Model\Domain\Repositories\ManufacturerRepository::class);
+            $manufacturers = $manufacturerRepo->getManufacturers();
 
             // Temporarily set contacts back to Supplier entity in case of error
             $contactsData = isset($data['contacts']) && is_array($data['contacts']) ? $data['contacts'] : [];

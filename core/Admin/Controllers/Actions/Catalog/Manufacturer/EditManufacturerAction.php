@@ -3,9 +3,9 @@
 namespace Alpha\Admin\Controllers\Actions\Catalog\Manufacturer;
 
 use Alpha\Controller\BaseController;
+use Alpha\Model\Domain\Repositories\ManufacturerRepository;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Psr\Http\Message\ResponseInterface as Response;
-use Alpha\Model\DataAccessObject\ConnectionDB;
 
 class EditManufacturerAction extends BaseController implements \Alpha\Controller\Actions\ActionInterface
 {
@@ -18,19 +18,11 @@ class EditManufacturerAction extends BaseController implements \Alpha\Controller
             return $response->withStatus(400);
         }
 
-        $conn = ConnectionDB::getInstance()->getConnection();
+        /** @var ManufacturerRepository $manufacturerRepository */
+        $manufacturerRepository = $this->getRepository(ManufacturerRepository::class);
 
-        // 1. Fetch manufacturer details
-        $stmtCat = $conn->prepare("
-            SELECT m.*,
-                   (SELECT keyword FROM `" . DB_PREFIX . "seo_url` 
-                    WHERE `key` = 'manufacturer_id' AND `value` = CAST(m.id AS CHAR) 
-                      AND store_id = ? AND language_id = ? LIMIT 1) AS seo_keyword
-            FROM `" . DB_PREFIX . "manufacturer` m
-            WHERE m.id = ?
-        ");
-        $stmtCat->execute([$this->storeId, $this->languageId, $manufacturerId]);
-        $manufacturer = $stmtCat->fetch(\PDO::FETCH_ASSOC);
+        // Busca o fabricante com SEO Keyword via Repositório de Domínio
+        $manufacturer = $manufacturerRepository->getManufacturerForEdit($manufacturerId, $this->storeId, $this->languageId);
 
         if (!$manufacturer) {
             $response->getBody()->write('Fabricante não encontrado.');
@@ -46,3 +38,4 @@ class EditManufacturerAction extends BaseController implements \Alpha\Controller
         return $response->withHeader('Content-Type', 'text/html; charset=utf-8');
     }
 }
+

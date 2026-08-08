@@ -5,7 +5,7 @@ status: Approved
 date: 2026-07-10
 authors:
   - Antigravity AI
-  - Kiruma
+  - Josias
 impacted_components:
   - directory: public_html/css/custom/
   - file: composer.json

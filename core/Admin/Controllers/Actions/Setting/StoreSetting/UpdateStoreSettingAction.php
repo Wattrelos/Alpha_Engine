@@ -178,21 +178,19 @@ class UpdateStoreSettingAction extends BaseController implements \Alpha\Controll
         }
 
         // Fetch countries & Brazilian zones (UF)
-        $dao = new DataAccessObject();
         $countries = [];
         $zones = [];
         try {
             $countryRepo = $this->getRepository(\Alpha\Model\Domain\Repositories\CountryRepository::class);
             $countries = $countryRepo->getCountries();
 
-            $zoneBuilder = (new QueryBuilder())
-                ->from(DB_PREFIX . 'zone', 'z')
-                ->join(DB_PREFIX . 'zone_description', 'zd', 'z.id = zd.zone_id')
-                ->select('z.id', 'zd.name', 'z.code')
-                ->where('z.country_id = 30')
-                ->where('zd.language_id = ?', [$this->languageId])
-                ->orderBy('zd.name', 'ASC');
-            $zones = $dao->executeQuery($zoneBuilder);
+            /** @var \Alpha\Mappers\EntityMappers\GeoZoneMapper $zoneMapper */
+            $zoneMapper = $this->getMapper(\Alpha\Mappers\EntityMappers\GeoZoneMapper::class);
+            $zones = array_map(fn($z) => [
+                'id'   => $z->getId(),
+                'name' => $z->getName(),
+                'code' => method_exists($z, 'getIsoCode') ? $z->getIsoCode() : ($z->getCode() ?? '')
+            ], $zoneMapper->getZonesByCountryId(30));
         } catch (\Throwable $ex) {}
 
         // Set warnings

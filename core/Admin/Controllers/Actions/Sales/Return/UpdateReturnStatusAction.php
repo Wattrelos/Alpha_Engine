@@ -6,6 +6,7 @@ use Alpha\Controller\BaseController;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Psr\Http\Message\ResponseInterface as Response;
 use Alpha\Model\Domain\Repositories\OrderReturnRepository;
+use Alpha\Model\Domain\Repositories\ReturnDictionaryRepository;
 use Alpha\Model\Domain\Repositories\ReturnHistoryRepository;
 use Alpha\Model\Domain\Entities\ReturnHistory;
 use Alpha\Model\DataAccessObject\UnitOfWork;
@@ -110,11 +111,17 @@ class UpdateReturnStatusAction extends BaseController implements \Alpha\Controll
             /** @var \Alpha\Model\Domain\Entities\OrderReturn|null $freshOrderReturn */
             $freshOrderReturn = $returnRepo->find($returnId);
 
-            // Carrega o nome do status atualizado do banco de dados
-            $conn = \Alpha\Model\DataAccessObject\ConnectionDB::getInstance()->getConnection();
-            $stmt = $conn->prepare("SELECT name FROM `" . DB_PREFIX . "return_status` WHERE id = ? AND language_id = ?");
-            $stmt->execute([$freshOrderReturn->getReturnStatusId(), $this->languageId]);
-            $statusName = $stmt->fetchColumn() ?: 'Desconhecido';
+            // Carrega o nome do status atualizado via repositório
+            /** @var ReturnDictionaryRepository $dictRepo */
+            $dictRepo = $this->getRepository(ReturnDictionaryRepository::class);
+            $statuses = $dictRepo->getStatusesByLanguage($this->languageId);
+            $statusName = 'Desconhecido';
+            foreach ($statuses as $st) {
+                if (method_exists($st, 'getId') && $st->getId() === $freshOrderReturn->getReturnStatusId()) {
+                    $statusName = method_exists($st, 'getName') ? $st->getName() : 'Desconhecido';
+                    break;
+                }
+            }
 
             if ($this->isJsonRequest($request)) {
                 $response->getBody()->write(json_encode([

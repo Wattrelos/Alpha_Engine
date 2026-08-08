@@ -118,4 +118,97 @@ class OrderReturnMapper extends BaseMapper
             'date_ordered'     => $data['date_ordered'] ?? ''
         ]);
     }
+
+    /**
+     * Retorna a listagem de devoluções filtrada e paginada para o Admin.
+     */
+    public function getAdminReturnsPaginated(array $filters, int $page, int $limit, int $languageId): array
+    {
+        $start = max(0, ($page - 1) * $limit);
+
+        $builder = (new QueryBuilder())
+            ->from(DB_PREFIX . 'product_return', 'r')
+            ->leftJoin(DB_PREFIX . 'return_status', 'rs', 'r.return_status_id = rs.id AND rs.language_id = ' . (int)$languageId);
+
+        if (!empty($filters['filter_return_id'])) {
+            $builder->where('r.id = ?', [(int)$filters['filter_return_id']]);
+        }
+
+        if (!empty($filters['filter_order_id'])) {
+            $builder->where('r.order_id = ?', [(int)$filters['filter_order_id']]);
+        }
+
+        if (!empty($filters['filter_customer'])) {
+            $builder->where("CONCAT(r.firstname, ' ', r.lastname) LIKE ?", ['%' . $filters['filter_customer'] . '%']);
+        }
+
+        if (!empty($filters['filter_return_status_id'])) {
+            $builder->where('r.return_status_id = ?', [(int)$filters['filter_return_status_id']]);
+        }
+
+        if (!empty($filters['filter_date_added'])) {
+            $builder->where('DATE(r.date_added) = ?', [$filters['filter_date_added']]);
+        }
+
+        $count = $this->dao->executeCount($builder);
+
+        $builder->select(
+            'r.id',
+            'r.order_id',
+            'r.firstname',
+            'r.lastname',
+            'r.product',
+            'r.model',
+            'r.date_added',
+            'r.return_status_id',
+            'rs.name AS status_name'
+        )
+        ->orderBy('r.id', 'DESC')
+        ->limit($limit)
+        ->offset($start);
+
+        $rows = $this->dao->executeQuery($builder);
+
+        return [
+            'total' => $count,
+            'data'  => $rows
+        ];
+    }
+
+    /**
+     * Busca dados detalhados de uma devolução para a tela de exibição admin.
+     */
+    public function getAdminReturnDetails(int $returnId, int $languageId): ?array
+    {
+        $builder = (new QueryBuilder())
+            ->from(DB_PREFIX . 'product_return', 'r')
+            ->leftJoin(DB_PREFIX . 'return_reason', 'rr', 'r.return_reason_id = rr.id AND rr.language_id = ' . (int)$languageId)
+            ->leftJoin(DB_PREFIX . 'return_action', 'ra', 'r.return_action_id = ra.id AND ra.language_id = ' . (int)$languageId)
+            ->leftJoin(DB_PREFIX . 'return_status', 'rs', 'r.return_status_id = rs.id AND rs.language_id = ' . (int)$languageId)
+            ->where('r.id = ?', [$returnId])
+            ->select(
+                'r.*',
+                'rr.name AS reason_name',
+                'ra.name AS action_name',
+                'rs.name AS status_name'
+            );
+
+        $rows = $this->dao->executeQuery($builder);
+        return $rows ? $rows[0] : null;
+    }
+
+    /**
+     * Busca o histórico de alterações de uma devolução.
+     */
+    public function getAdminReturnHistories(int $returnId, int $languageId): array
+    {
+        $builder = (new QueryBuilder())
+            ->from(DB_PREFIX . 'return_history', 'rh')
+            ->leftJoin(DB_PREFIX . 'return_status', 'rs', 'rh.return_status_id = rs.id AND rs.language_id = ' . (int)$languageId)
+            ->where('rh.return_id = ?', [$returnId])
+            ->orderBy('rh.date_added', 'DESC')
+            ->select('rh.date_added', 'rs.name AS status', 'rh.comment', 'rh.notify');
+
+        return $this->dao->executeQuery($builder);
+    }
 }

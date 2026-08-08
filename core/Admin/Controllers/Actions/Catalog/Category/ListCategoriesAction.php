@@ -3,9 +3,9 @@
 namespace Alpha\Admin\Controllers\Actions\Catalog\Category;
 
 use Alpha\Controller\BaseController;
+use Alpha\Model\Domain\Repositories\CategoryRepository;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Psr\Http\Message\ResponseInterface as Response;
-use Alpha\Model\DataAccessObject\ConnectionDB;
 
 class ListCategoriesAction extends BaseController implements \Alpha\Controller\Actions\ActionInterface
 {
@@ -17,54 +17,14 @@ class ListCategoriesAction extends BaseController implements \Alpha\Controller\A
             $page = 1;
         }
         $limit = 15;
-        $start = ($page - 1) * $limit;
 
-        $conn = ConnectionDB::getInstance()->getConnection();
+        /** @var CategoryRepository $categoryRepository */
+        $categoryRepository = $this->getRepository(CategoryRepository::class);
 
-        // 1. Processa Filtros
-        $where = [];
-        $params = [];
-
-        if (!empty($queryParams['filter_name'])) {
-            $where[] = "cd.name LIKE ?";
-            $params[] = "%" . $queryParams['filter_name'] . "%";
-        }
-
-        if (isset($queryParams['filter_status']) && $queryParams['filter_status'] !== '') {
-            $where[] = "c.status = ?";
-            $params[] = (int)$queryParams['filter_status'];
-        }
-
-        $whereSql = '';
-        if ($where) {
-            $whereSql = "WHERE " . implode(" AND ", $where);
-        }
-
-        // 2. Query do total
-        $countQuery = "
-            SELECT COUNT(DISTINCT c.id) 
-            FROM `" . DB_PREFIX . "category` c
-            LEFT JOIN `" . DB_PREFIX . "category_description` cd ON c.id = cd.category_id AND cd.language_id = ?
-            $whereSql
-        ";
-        $stmtCount = $conn->prepare($countQuery);
-        $stmtCount->execute(array_merge([$this->languageId], $params));
-        $totalCategories = (int)$stmtCount->fetchColumn();
-
-        // 3. Query dos dados com paginação
-        $dataQuery = "
-            SELECT c.id, c.image, cd.name, c.sort_order, c.status,
-                   (SELECT name FROM `" . DB_PREFIX . "category_description` cd2 
-                    WHERE cd2.category_id = c.parent_id AND cd2.language_id = cd.language_id LIMIT 1) AS parent_name
-            FROM `" . DB_PREFIX . "category` c
-            LEFT JOIN `" . DB_PREFIX . "category_description` cd ON c.id = cd.category_id AND cd.language_id = ?
-            $whereSql
-            ORDER BY cd.name ASC
-            LIMIT " . (int)$limit . " OFFSET " . (int)$start;
-        
-        $stmtData = $conn->prepare($dataQuery);
-        $stmtData->execute(array_merge([$this->languageId], $params));
-        $categoriesData = $stmtData->fetchAll(\PDO::FETCH_ASSOC);
+        // Busca dados paginados e filtrados via Repositório de Domínio
+        $result = $categoryRepository->getCategoriesPaginated($queryParams, $page, $limit, $this->languageId);
+        $totalCategories = $result['total'];
+        $categoriesData = $result['data'];
 
         $imagePresenter = $this->getImagePresenter();
         $categories = [];
@@ -106,3 +66,4 @@ class ListCategoriesAction extends BaseController implements \Alpha\Controller\A
         return $response->withHeader('Content-Type', 'text/html; charset=utf-8');
     }
 }
+

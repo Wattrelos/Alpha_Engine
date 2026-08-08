@@ -149,4 +149,31 @@ class OrderReturnRepository extends AbstractRepository implements BaseRepository
     {
         return $this->getMapper()->save($entity);
     }
+
+    /**
+     * Retorna a listagem paginada e filtrada de devoluções para o Admin.
+     */
+    public function getAdminReturnsPaginated(array $filters, int $page = 1, int $limit = 15, ?int $languageId = null): array
+    {
+        $lId = $languageId ?? $this->language_id;
+        return $this->getMapper()->getAdminReturnsPaginated($filters, $page, $limit, $lId);
+    }
+
+    /**
+     * Busca dados detalhados de uma devolução para o Admin.
+     */
+    public function getAdminReturnDetails(int $returnId, ?int $languageId = null): ?array
+    {
+        $lId = $languageId ?? $this->language_id;
+        return $this->getMapper()->getAdminReturnDetails($returnId, $lId);
+    }
+
+    /**
+     * Busca o histórico de alterações de uma devolução para o Admin.
+     */
+    public function getAdminReturnHistories(int $returnId, ?int $languageId = null): array
+    {
+        $lId = $languageId ?? $this->language_id;
+        return $this->getMapper()->getAdminReturnHistories($returnId, $lId);
+    }
 }

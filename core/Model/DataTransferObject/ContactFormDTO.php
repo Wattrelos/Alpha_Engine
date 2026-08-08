@@ -30,7 +30,7 @@ class ContactFormDTO extends BaseDTO
      */
     public function validateUniqueEmail(mixed $value, array $context): bool|string
     {
-        /** @var \Alpha\Mappers\Account\CustomerMapper $customerMapper */
+        /** @var \Alpha\Mappers\EntityMappers\CustomerMapper $customerMapper */
         $customerMapper = $context['customer_mapper'] ?? null;
 
         if ($customerMapper) {

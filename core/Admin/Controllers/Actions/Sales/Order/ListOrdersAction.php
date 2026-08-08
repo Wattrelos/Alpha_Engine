@@ -3,10 +3,10 @@
 namespace Alpha\Admin\Controllers\Actions\Sales\Order;
 
 use Alpha\Controller\BaseController;
-use Psr\Http\Message\ServerRequestInterface as Request;
-use Psr\Http\Message\ResponseInterface as Response;
 use Alpha\Model\Domain\Repositories\OrderRepository;
 use Alpha\Model\Domain\Repositories\OrderStatusRepository;
+use Psr\Http\Message\ServerRequestInterface as Request;
+use Psr\Http\Message\ResponseInterface as Response;
 
 class ListOrdersAction extends BaseController implements \Alpha\Controller\Actions\ActionInterface
 {
@@ -18,76 +18,14 @@ class ListOrdersAction extends BaseController implements \Alpha\Controller\Actio
             $page = 1;
         }
         $limit = 15;
-        $start = ($page - 1) * $limit;
 
-        $conn = \Alpha\Model\DataAccessObject\ConnectionDB::getInstance()->getConnection();
+        /** @var OrderRepository $orderRepo */
+        $orderRepo = $this->getRepository(OrderRepository::class);
 
-        $where = [];
-        $params = [];
-
-        // Filter by Order ID
-        if (!empty($queryParams['filter_order_id'])) {
-            $where[] = "o.id = ?";
-            $params[] = (int)$queryParams['filter_order_id'];
-        }
-
-        // Filter by Customer
-        if (!empty($queryParams['filter_customer'])) {
-            $where[] = "CONCAT(o.firstname, ' ', o.lastname) LIKE ?";
-            $params[] = "%" . $queryParams['filter_customer'] . "%";
-        }
-
-        // Filter by Status
-        if (!empty($queryParams['filter_order_status_id'])) {
-            $where[] = "o.order_status_id = ?";
-            $params[] = (int)$queryParams['filter_order_status_id'];
-        }
-
-        // Filter by Total
-        if (!empty($queryParams['filter_total'])) {
-            $where[] = "o.total = ?";
-            $params[] = (float)$queryParams['filter_total'];
-        }
-
-        // Filter by Date Added
-        if (!empty($queryParams['filter_date_added'])) {
-            $where[] = "DATE(o.date_added) = ?";
-            $params[] = $queryParams['filter_date_added'];
-        }
-
-        // Filter by Date Modified
-        if (!empty($queryParams['filter_date_modified'])) {
-            $where[] = "DATE(o.date_modified) = ?";
-            $params[] = $queryParams['filter_date_modified'];
-        }
-
-        $whereSql = '';
-        if ($where) {
-            $whereSql = "WHERE " . implode(" AND ", $where);
-        }
-
-        // Query Total Count
-        $countQuery = "
-            SELECT COUNT(o.id)
-            FROM `" . DB_PREFIX . "order` o
-            $whereSql
-        ";
-        $stmtCount = $conn->prepare($countQuery);
-        $stmtCount->execute($params);
-        $totalOrders = (int)$stmtCount->fetchColumn();
-
-        // Query Data
-        $dataQuery = "
-            SELECT o.id, o.firstname, o.lastname, o.total, o.currency_code, o.currency_value, o.date_added, o.date_modified, os.name AS status_name
-            FROM `" . DB_PREFIX . "order` o
-            LEFT JOIN `" . DB_PREFIX . "order_status` os ON o.order_status_id = os.id AND os.language_id = ?
-            $whereSql
-            ORDER BY o.id DESC
-            LIMIT " . (int)$limit . " OFFSET " . (int)$start;
-        
-        $stmtData = $conn->prepare($dataQuery);
-        $stmtData->execute(array_merge([$this->languageId], $params));
-        $ordersData = $stmtData->fetchAll(\PDO::FETCH_ASSOC);
+        // Busca a listagem paginada e filtrada via Repositório de Domínio
+        $result = $orderRepo->getAdminOrdersPaginated($queryParams, $page, $limit, $this->languageId);
+        $totalOrders = $result['total'];
+        $ordersData = $result['data'];
 
         $orders = [];
         foreach ($ordersData as $o) {
@@ -101,12 +39,12 @@ class ListOrdersAction extends BaseController implements \Alpha\Controller\Actio
             ];
         }
 
-        // Load statuses for the select filter
+        // Carrega status para o filtro select
         /** @var OrderStatusRepository $statusRepo */
         $statusRepo = $this->getRepository(OrderStatusRepository::class);
         $statuses = $statusRepo->getOrderStatuses();
 
-        // Pagination URL reconstruction
+        // Reconstrução de URL de paginação
         $urlParams = $queryParams;
         unset($urlParams['page']);
         $urlQueryString = http_build_query($urlParams);
@@ -134,3 +72,4 @@ class ListOrdersAction extends BaseController implements \Alpha\Controller\Actio
         return $response->withHeader('Content-Type', 'text/html; charset=utf-8');
     }
 }
+

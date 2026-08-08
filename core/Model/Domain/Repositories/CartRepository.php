@@ -250,7 +250,7 @@ class CartRepository extends AbstractRepository implements BaseRepositoryInterfa
                     $zone = $zoneRepository->findOneBy(['isoCode' => $zoneCode]);
                     if ($zone) {
                         $zoneId = $zone->getId();
-                        $countryId = $zone->getCountryId();
+                        $countryId = method_exists($zone, 'getCountryId') ? $zone->getCountryId() : (int)($zone['country_id'] ?? $zone['countryId'] ?? $countryId);
                         $session->data['shipping_address']['zone_id'] = $zoneId;
                         $session->data['shipping_address']['country_id'] = $countryId;
                     }

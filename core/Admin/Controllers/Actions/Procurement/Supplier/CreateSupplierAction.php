@@ -3,10 +3,11 @@
 namespace Alpha\Admin\Controllers\Actions\Procurement\Supplier;
 
 use Alpha\Controller\BaseController;
-use Psr\Http\Message\ServerRequestInterface as Request;
-use Psr\Http\Message\ResponseInterface as Response;
-use Alpha\Mappers\MapperFactory;
 use Alpha\Mappers\EntityMappers\GeoCountryMapper;
+use Alpha\Mappers\MapperFactory;
+use Alpha\Model\Domain\Repositories\ManufacturerRepository;
+use Psr\Http\Message\ResponseInterface as Response;
+use Psr\Http\Message\ServerRequestInterface as Request;
 
 class CreateSupplierAction extends BaseController implements \Alpha\Controller\Actions\ActionInterface
 {
@@ -17,9 +18,9 @@ class CreateSupplierAction extends BaseController implements \Alpha\Controller\A
         $countryMapper = $mapperFactory->get(GeoCountryMapper::class);
         $countries = $countryMapper->getCountries();
 
-        $conn = \Alpha\Model\DataAccessObject\ConnectionDB::getInstance()->getConnection();
-        $stmtManufacturers = $conn->query("SELECT id, name FROM `" . DB_PREFIX . "manufacturer` ORDER BY name ASC");
-        $manufacturers = $stmtManufacturers->fetchAll(\PDO::FETCH_ASSOC);
+        /** @var ManufacturerRepository $manufacturerRepo */
+        $manufacturerRepo = $this->getRepository(ManufacturerRepository::class);
+        $manufacturers = $manufacturerRepo->getManufacturers();
 
         $html = $this->getTemplate('admin/catalog/supplier/create.html.twig', [
             'title'         => 'Adicionar Fornecedor | Painel Administrativo',
@@ -31,3 +32,4 @@ class CreateSupplierAction extends BaseController implements \Alpha\Controller\A
         return $response->withHeader('Content-Type', 'text/html; charset=utf-8');
     }
 }
+

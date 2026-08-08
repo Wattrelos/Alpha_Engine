@@ -508,4 +508,126 @@ class ProductRepository extends AbstractRepository implements BaseRepositoryInte
         $mapper = $this->mapperFactory->get(ProductMapper::class);
         return $mapper->getProductVariants($productId, $this->language_id);
     }
+
+    /**
+     * Retorna a listagem paginada e filtrada de produtos para a tabela do Admin.
+     */
+    public function getAdminProductsPaginated(array $filters, int $page = 1, int $limit = 15, ?int $languageId = null): array
+    {
+        $lId = $languageId ?? $this->language_id;
+        /** @var ProductMapper $mapper */
+        $mapper = $this->mapperFactory->get(ProductMapper::class);
+        return $mapper->getAdminProductsPaginated($filters, $page, $limit, $lId);
+    }
+
+    /**
+     * Busca dados do produto para edição no Admin.
+     */
+    public function getAdminProductForEdit(int $productId, ?int $languageId = null): ?array
+    {
+        $lId = $languageId ?? $this->language_id;
+        /** @var ProductMapper $mapper */
+        $mapper = $this->mapperFactory->get(ProductMapper::class);
+        return $mapper->getAdminProductForEdit($productId, $lId);
+    }
+
+    /**
+     * Retorna lista de IDs de categorias vinculadas ao produto.
+     */
+    public function getAdminProductCategoryIds(int $productId): array
+    {
+        /** @var ProductMapper $mapper */
+        $mapper = $this->mapperFactory->get(ProductMapper::class);
+        return $mapper->getAdminProductCategoryIds($productId);
+    }
+
+    /**
+     * Retorna lista de status de estoque para select.
+     */
+    public function getStockStatuses(?int $languageId = null): array
+    {
+        $lId = $languageId ?? $this->language_id;
+        /** @var ProductMapper $mapper */
+        $mapper = $this->mapperFactory->get(ProductMapper::class);
+        return $mapper->getStockStatuses($lId);
+    }
+
+    /**
+     * Cria um novo produto e invalida os caches.
+     */
+    public function createAdminProduct(array $data, ?int $storeId = null, ?int $languageId = null): int
+    {
+        $sId = $storeId ?? $this->store_id;
+        $lId = $languageId ?? $this->language_id;
+        /** @var ProductMapper $mapper */
+        $mapper = $this->mapperFactory->get(ProductMapper::class);
+
+        $productId = $mapper->createAdminProduct($data, $sId, $lId);
+        $this->clearProductCaches($productId, $sId, $lId);
+
+        return $productId;
+    }
+
+    /**
+     * Atualiza um produto e suas variações e invalida os caches.
+     */
+    public function updateAdminProduct(int $productId, array $data, ?int $storeId = null, ?int $languageId = null): bool
+    {
+        $sId = $storeId ?? $this->store_id;
+        $lId = $languageId ?? $this->language_id;
+        /** @var ProductMapper $mapper */
+        $mapper = $this->mapperFactory->get(ProductMapper::class);
+
+        $success = $mapper->updateAdminProduct($productId, $data, $sId, $lId);
+        if ($success) {
+            $this->clearProductCaches($productId, $sId, $lId);
+        }
+
+        return $success;
+    }
+
+    /**
+     * Exclui um produto e invalida os caches.
+     */
+    public function deleteAdminProduct(int $productId, ?int $storeId = null, ?int $languageId = null): bool
+    {
+        $sId = $storeId ?? $this->store_id;
+        $lId = $languageId ?? $this->language_id;
+        /** @var ProductMapper $mapper */
+        $mapper = $this->mapperFactory->get(ProductMapper::class);
+
+        $success = $mapper->deleteAdminProduct($productId);
+        if ($success) {
+            $this->clearProductCaches($productId, $sId, $lId);
+        }
+
+        return $success;
+    }
+
+    /**
+     * Limpa todas as chaves de cache relacionadas a um produto.
+     */
+    public function clearProductCaches(int $productId, ?int $storeId = null, ?int $languageId = null): void
+    {
+        $sId = $storeId ?? $this->store_id;
+        $lId = $languageId ?? $this->language_id;
+
+        if ($this->cache) {
+            $this->cache->delete("product.images.p{$productId}");
+            $this->cache->delete("product.codes.p{$productId}");
+
+            for ($s = 1; $s <= 5; $s++) {
+                for ($l = 1; $l <= 5; $l++) {
+                    $this->cache->delete("product.options.p{$productId}.l{$l}");
+                    $this->cache->delete("product.subscriptions.p{$productId}.l{$l}");
+                    $this->cache->delete("product.attributes.p{$productId}.l{$l}");
+                    for ($cg = 1; $cg <= 5; $cg++) {
+                        $this->cache->delete("product.{$productId}.{$l}.{$s}.{$cg}");
+                        $this->cache->delete("product.discounts.p{$productId}.cg{$cg}");
+                        $this->cache->delete("product.related.p{$productId}.l{$l}.s{$s}.cg{$cg}");
+                    }
+                }
+            }
+        }
+    }
 }

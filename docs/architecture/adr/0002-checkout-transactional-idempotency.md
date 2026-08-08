@@ -5,7 +5,7 @@ status: Approved
 date: 2026-07-10
 authors:
   - Gemini 3 Pro AI
-  - Kiruma
+  - Josias
 impacted_components:
   - route: "POST /{lang}/checkout"
   - patterns:

@@ -25,10 +25,17 @@ class CartAction implements ActionInterface
         // Inicializa o contexto do carrinho (mescla sessão com login)
         $this->cartRepository->initializeContext();
 
-        $cartPageData = $this->cartRepository->getCartPageData()->getData();
-        $cartListData = $this->cartRepository->getCartListDisplayData()->getData();
-        
-        $viewData = array_merge($cartPageData, $cartListData);
+        $products = $this->cartRepository->getProducts();
+        $totals = [];
+        $taxes = $this->cartRepository->getTaxes();
+        $totalVal = 0.0;
+        $this->cartRepository->getTotals($totals, $taxes, $totalVal);
+
+        $viewData = [
+            'heading_title' => 'Carrinho de Compras',
+            'products'      => $products,
+            'totals'        => $totals
+        ];
         
         $title = $viewData['heading_title'] ?? 'Carrinho de Compras';
         

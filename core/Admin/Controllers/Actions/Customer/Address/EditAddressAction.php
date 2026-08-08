@@ -105,13 +105,14 @@ class EditAddressAction extends BaseController implements \Alpha\Controller\Acti
             'name' => $c->getName()
         ], $countryMapper->getCountries());
 
-        // Fetch zones (Brazil)
-        $zoneBuilder = (new QueryBuilder())
-            ->from(DB_PREFIX . 'geo_zones', 'z')
-            ->select('z.id', 'z.name', 'z.iso_code AS code')
-            ->where('z.country_id = 76')
-            ->orderBy('z.name', 'ASC');
-        $zones = $dao->executeQuery($zoneBuilder);
+        // Fetch zones (Brazil) using GeoZoneMapper
+        /** @var \Alpha\Mappers\EntityMappers\GeoZoneMapper $zoneMapper */
+        $zoneMapper = $this->getMapper(\Alpha\Mappers\EntityMappers\GeoZoneMapper::class);
+        $zones = array_map(fn($z) => [
+            'id'   => $z->getId(),
+            'name' => $z->getName(),
+            'code' => method_exists($z, 'getIsoCode') ? $z->getIsoCode() : ($z->getCode() ?? '')
+        ], $zoneMapper->getZonesByCountryId(76));
 
         $html = $this->getTemplate('admin/customer/Address/edit.html.twig', [
             'title'      => 'Editar Endereço | Painel Administrativo',
@@ -127,3 +128,4 @@ class EditAddressAction extends BaseController implements \Alpha\Controller\Acti
         return $response->withHeader('Content-Type', 'text/html; charset=utf-8');
     }
 }
+

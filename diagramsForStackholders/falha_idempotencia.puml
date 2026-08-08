@@ -1,183 +1,151 @@
-@startuml "Idempotency Failure Flow"
-autonumber "<b>00:"
+@startuml
+' Fundo branco em toda a folha
+skinparam backgroundColor #FFFFFF
+skinparam shadowing false
 
-header "Material Didático: Controle de Concorrência & Prevenção de Pedidos Duplicados"
-title "Evitando Falha de Idempotência (Double-Click) com Redis e UUID"
-
-<style>
-sequenceDiagram {
-    actor {
-        BackgroundColor #E3F2FD
-        BorderColor #1565C0
-        FontColor #0D47A1
-    }
-    participant {
-        BackgroundColor #EDE7F6
-        BorderColor #5E35B1
-        FontColor #311B92
-    }
-    database {
-        BackgroundColor #FFF3E0
-        BorderColor #EF6C00
-        FontColor #E65100
-    }
-    arrow {
-        LineColor #37474F
-    }
-    note {
-        BackgroundColor #FFFDE7
-        BorderColor #FBC02D
-        FontSize 12
-    }
+' --- CONFIGURAÇÃO VISUAL DA LEGENDA ---
+skinparam legend {
+    BackgroundColor #e5f2ffff
+    BorderColor #A0AAB5
+    FontSize 11
 }
-</style>
 
-box "Frontend / Web" #E3F2FD
-    actor "Cliente (Cliques Duplos)" as Cliente
+' --- ETIQUETA DE IDENTIFICAÇÃO DO BLUEPRINT ---
+legend top left
+  |= <size:14>**Blueprint: Diagrama de Sequência - Idempotência & Mensageria**</size> |= <size:14>**Padrões & Mecanismos Arquiteturais**</size> |
+  | **Tipo:** Artefato de Software / Comportamental (UML 2.5 Sequence) | **Idempotência Distribuição:** Lock atômico via Redis `SETNX` |
+  | **Versão:** v1.0.4 • **Data:** 05/08/2026 | **Prevenção de Duplicidade:** Proteção de Checkout (Double-Click) |
+  | **Autor:** Josias da Conceição Sobrinho © 2026 | **Persistência ACID:** Transação isolada via `UnitOfWork` |
+  | **Licença:** MIT License (Open Source) | **Mensageria Assíncrona:** Evento `OrderCreatedEvent` + RabbitMQ |
+  | **Status:** <color:green>**Em desenvolvimento (95%). Sujeito a alterações**</color> | **Resposta Resiliente:** Ignora falhas de clique duplo no JS |
+  | <size:9><color:gray>Disponibilizado nos termos da licença MIT. Permissão livre concedida.</color></size> | |
+endlegend
+
+autonumber "<b>[00]"
+
+header "Material Didático: Controle de Concorrência, Idempotência & Prevenção de Duplicidade"
+title "Fluxo de Idempotência com Redis SETNX, Unit of Work e Mensageria (RabbitMQ)"
+
+box "Frontend / Web" #E0F7FA
+    actor "Cliente (Clique Duplo)" as Cliente
     participant "Frontend App (JS)" as Front
 end box
 
-box "Backend / Infraestrutura" #F5F5F5
-    participant "Slim Action" as Action
-    participant "Domain Service" as Domain
-    database "Cache (Redis)" as Cache
-    database "Database" as DB
+box "Backend / Controle de Concorrência" #FFF9C4
+    participant "Slim Action (Checkout)" as Action
+    participant "IdempotencyService\n(Serviço de Trava)" as Domain
+    database "Redis Cache\n(Lock Distribúdo)" as Cache
+    participant "EventDispatcher & Events\n(Eventos de Domínio)" as Events
+end box
+
+box "Persistência Transacional & Fila" #FFEBEE
+    participant "UnitOfWork & Repositories\n(Transação ACID)" as UoW
+    database "MySQL Database\n(Persistência Física)" as DB
+    participant "RabbitMQ Fila\n(Broker de Mensagens)" as Queue
+    participant "Worker CLI Consumer\n(Processamento Assíncrono)" as Worker
 end box
 
 ' === NOTA EXPLICATIVA DE INTRODUÇÃO ===
-note over Cliente, DB #F1F8E9
-  <b>O que é Idempotência e por que precisamos dela?</b>
-  Idempotência é a propriedade pela qual uma mesma requisição executada múltiplas vezes produz exatamente o mesmo resultado.
-  <b>O Problema (Double-Click):</b> Um usuário clica duas vezes rapidamente no botão "Finalizar Compra". Sem uma trava de idempotência,
-  o servidor processaria ambos os cliques como compras distintas, gerando <b>dois pedidos</b> e cobrando o cliente duas vezes!
-  <b>A Solução:</b> Usamos um token único (UUID) no Frontend e um mecanismo de trava rápida (lock distribuído) com Redis no Backend.
+note over Cliente, Worker #F1F8E9
+  <b>O que é Idempotência e por que é vital no E-commerce?</b>
+  Idempotência garante que uma requisição executada repetidamente produza o mesmo resultado final sem duplicar efeitos colaterais.
+  <b>O Problema do Clique Duplo (Double-Click):</b> Impaciente, o usuário clica duas vezes no botão "Finalizar Compra".
+  <b>A Solução Arquitetural:</b>
+  1. O Frontend gera um token único (UUID) enviado no cabeçalho `X-Idempotency-Key`.
+  2. O Backend obtém uma trava atômica no <b>Redis (SETNX)</b> antes de abrir transação.
+  3. A segunda requisição bate no Redis, detecta o Lock e é abortada <b>sem tocar no banco MySQL ou enfileirar no RabbitMQ</b>.
 end note
 
-' --- PRIMEIRA REQUISICAO (A caminho) ---
-note over Cliente, Front #E1F5FE
-  <b>Passo 1: O Primeiro Clique (Original)</b>
-  O usuário clica pela primeira vez no botão de comprar. O fluxo inicia.
-end note
-Cliente -> Front : Clique 1 (Botão Comprar)
+' ═════════════════════════════════════════════════════════════════════════════
+' PASSO 1: PRIMEIRA REQUISIÇÃO (DADOS ORIGINAIS)
+' ═════════════════════════════════════════════════════════════════════════════
+note over Cliente, Front #E1F5FE: **[Passo 1: O Primeiro Clique (Original)]**\nO usuário clica no botão "Finalizar Compra". O JS gera um UUID único para o checkout.
+
+Cliente -> Front : Clique 1 (Botão Finalizar Compra)
 activate Front
-    
-    note over Front #E1F5FE
-      <b>Geração de Token Único (UUID):</b>
-      O JavaScript gera um identificador único universal (UUID) para este checkout.
-      Se o usuário tentar reenviar este mesmo carrinho, usaremos o mesmo token.
-    end note
-    Front -> Front : Gera Token Único (UUID)
-    Front -> Action : HTTP POST /{lang}/checkout [Token: UUID-XYZ]
+    Front -> Front : Gera Token Único (UUID: 9b1deb4d-3b7d-414d)
+    Front -> Action : HTTP POST /{lang}/checkout [Header X-Idempotency-Key: 9b1deb4d]
     activate Action
         
-        note over Action, Domain #FFF9C4
-          <b>Slim Action (Controller):</b>
-          Recebe a requisição e delega ao Domain Service para verificar
-          se esse token já está sendo ou foi processado.
-        end note
-        Action -> Domain : verificarIdempotencia(UUID-XYZ)
+        note over Action, Domain: **Verificação de Trava Atômica:**\nVerifica no Redis se a chave de idempotência já está bloqueada.
+        Action -> Domain : acquireLock("9b1deb4d")
         activate Domain
-            
-            note over Domain, Cache #FFE0B2
-              <b>Redis SETNX (Set if Not Exists):</b>
-              O Domain tenta gravar o token no Redis com status "PROCESSING".
-              O comando <b>SETNX</b> é atômico: se a chave não existir, ele a cria e retorna 1 (OK).
-              Se a chave já existir, ele não faz nada e retorna 0 (Erro).
-            end note
-            Domain -> Cache : SETNX(UUID-XYZ, "PROCESSING", expire: 5min)
+            Domain -> Cache : SETNX("idempotency:9b1deb4d", "PROCESSING", expire: 300)
             activate Cache
-                Cache --> Domain : OK (Chave não existia)
+                Cache --> Domain : 1 (OK - Lock Adquirido com Sucesso)
             deactivate Cache
-            
-            note over Domain #E8F5E9
-              <b>Lock Adquirido:</b>
-              Como a chave não existia no Redis, o lock foi criado com sucesso.
-              O fluxo de criação de pedido é liberado para continuar.
-            end note
-            Domain --> Action : Token Válido (Segue o fluxo)
+            Domain --> Action : Lock Concedido (Segue o fluxo)
         deactivate Domain
         
-        note over Action, DB #ECEFF1
-          <b>Operação de Escrita (Lenta):</b>
-          O backend começa a inserir os dados do pedido no MySQL.
-          Esta operação no banco leva algum tempo (ex: 500ms).
-        end note
-        ' Simulando lentidão ou processamento normal da requisição A
-        Action -> DB : Executa INSERT do Pedido...
-        activate DB
-        
-' --- SEGUNDA REQUISICAO (O Clique Duplo) ---
-note over Cliente, Front #FFEBEE
-  <b>Passo 2: O Segundo Clique (Double-Click)</b>
-  Enquanto a primeira inserção no banco de dados está ocorrendo, o usuário
-  clica novamente no botão por impaciência.
-end note
-Cliente -> Front : Clique 2 (Botão Comprar rápido)
+        ' ESCRITA NO BANCO VIA UNIT OF WORK
+        note over Action, UoW: **Transação ACID (Unit of Work):**\nO backend inicia a gravação transacional do pedido no MySQL.
+        Action -> UoW : transaction(callback)
+        activate UoW
+            UoW -> DB : BEGIN TRANSACTION
+            UoW -> DB : INSERT INTO tbkk_order (id, total, status_id) VALUES (...)
+            activate DB
+            
+' ═════════════════════════════════════════════════════════════════════════════
+' PASSO 2: SEGUNDA REQUISIÇÃO SIMULTÂNEA (CLIQUE DUPLO BLOQUEADO)
+' ═════════════════════════════════════════════════════════════════════════════
+note over Cliente, Front #FFEBEE: **[Passo 2: O Segundo Clique (Double-Click)]**\nEnquanto o MySQL ainda grava o primeiro pedido, o usuário clica novamente.
 
-    note over Front, Action #FFEBEE
-      <b>Reenvio com o Mesmo Token:</b>
-      Como o Frontend está na mesma página de checkout, ele envia a requisição
-      utilizando o <b>mesmo</b> token UUID-XYZ gerado no primeiro clique.
-    end note
-    Front -> Action : HTTP POST /{lang}/checkout [Token: UUID-XYZ]
+Cliente -> Front : Clique 2 (Segundo clique rápido)
+    Front -> Action : HTTP POST /{lang}/checkout [Mesmo Header X-Idempotency-Key: 9b1deb4d]
     activate Action
-        Action -> Domain : verificarIdempotencia(UUID-XYZ)
+        Action -> Domain : acquireLock("9b1deb4d")
         activate Domain
-            
-            note over Domain, Cache #FFEBEE
-              <b>Bloqueio no Redis:</b>
-              O Domain tenta fazer SETNX para o mesmo token. O Redis nega
-              a escrita porque o UUID-XYZ já existe no cache (ainda está como "PROCESSING").
-            end note
-            Domain -> Cache : SETNX(UUID-XYZ, "PROCESSING")
+            Domain -> Cache : SETNX("idempotency:9b1deb4d", "PROCESSING")
             activate Cache
-                Cache --> Domain : ERR (Chave já existe!)
+                note right of Cache: **Chave já Existe!** O Redis nega o Lock.\nRetorna 0 para a segunda chamada.
+                Cache --> Domain : 0 (ERR - Locked)
             deactivate Cache
             
-            note over Domain #FFEBEE
-              <b>Detecção de Duplicidade:</b>
-              O Domain Service identifica o conflito e lança uma exceção
-              para impedir que a segunda requisição atinja o banco de dados.
-            end note
-            ' O domínio identifica a duplicidade e barra imediatamente
-            Domain --> Action : Throws DuplicateRequestException
+            create IdempotencyException
+            Domain -> IdempotencyException : throw new IdempotencyLockException("Requisição em andamento")
+            Domain --> Action : Lança IdempotencyLockException
         deactivate Domain
         
-        note over Action, Front #FFEBEE
-          <b>Resposta de Erro Controlada:</b>
-          O controller captura a exceção e retorna HTTP 422 (ou 409 Conflict)
-          com uma mensagem informando que a operação está em andamento.
-        end note
-        ' Backend responde a requisição B com erro controlado
-        Action --> Front : HTTP 422 Unprocessable Entity { error: "DUPLICATE_REQUEST", message: "Processamento em andamento." }
+        note over Action, Front #FFEBEE: **Bloqueio Imediato sem Efeitos Colaterais:**\nNenhum SQL é executado no MySQL e NENHUMA mensagem é enviada ao RabbitMQ.
+        Action --> Front : HTTP 429 Too Many Requests {error: "DUPLICATE_REQUEST", message: "Processando..."}
     deactivate Action
 
-        note over DB, Action #E8F5E9
-          <b>Fim do Processamento Original:</b>
-          O banco de dados conclui a inserção do primeiro clique com sucesso.
-        end note
-        ' Conclusão tardia da primeira requisição A
-        DB --> Action : DB_Success
-        deactivate DB
+' ═════════════════════════════════════════════════════════════════════════════
+' PASSO 3: CONCLUSÃO DA PRIMEIRA REQUISIÇÃO & MENSAGERIA ASSÍNCRONA
+' ═════════════════════════════════════════════════════════════════════════════
+            DB --> UoW : Registros Inseridos
+            deactivate DB
+            UoW -> DB : COMMIT TRANSACTION
+            UoW --> Action : Transação Finalizada (Pedido #1050 Criado)
+        deactivate UoW
         
-        note over Action, Front #E8F5E9
-          <b>Resposta de Sucesso:</b>
-          O backend retorna HTTP 201 Created indicando que o pedido
-          foi criado com sucesso na primeira tentativa.
-        end note
-        Action --> Front : HTTP 201 Created (Pedido 1 Criado com Sucesso!)
+        ' DISPARO DO EVENTO E ENFILEIRAMENTO NO RABBITMQ
+        note over Action, Events: **Barramento de Eventos:** Após o COMMIT, dispara o evento de domínio.
+        Action -> Events : dispatch(new OrderCreatedEvent(orderId: 1050))
+        activate Events
+            Events -> Queue : publish("order.created", payload: {order_id: 1050})
+            activate Queue
+                Queue --> Events : ACK (Mensagem Enfileirada)
+            deactivate Queue
+            Events --> Action : Evento Concluído
+        deactivate Events
+        
+        Action --> Front : HTTP 201 Created {success: true, order_id: 1050}
     deactivate Action
 
-    ' TRATAMENTO NO FRONTEND
-    note over Front #E8F5E9
-      <b>Resolução Inteligente no Cliente (JS):</b>
-      1. O Frontend ignora o erro 422 da segunda requisição (sabe que foi apenas duplicidade).
-      2. O Frontend processa o sucesso 201 da requisição original.
-      3. O usuário é redirecionado para a página de sucesso.
-      Resultado: Apenas 1 pedido criado, sem falhas ou transtornos!
-    end note
-    Front -> Front : Ignora o erro HTTP 422 da requisição duplicada
-    Front -> Front : Processa o HTTP 201 da requisição original
-    Front -> Cliente : Redireciona para a tela de Sucesso do Pedido
+    ' PROCESSAMENTO PELO WORKER EM BACKGROUND
+    note over Queue, Worker #F3E5F5: **Processamento Assíncrono Desacoplado:**\nO Worker processa a única mensagem no RabbitMQ. Sem e-mails ou cobranças duplicadas!
+    Queue -> Worker : Consome mensagem (order_id: 1050)
+    activate Worker
+        Worker -> Worker : Processa pagamento no gateway, envia e-mail e gera nota fiscal
+        Worker --> Queue : ACK (Concluído)
+    deactivate Worker
+
+    ' RESOLUÇÃO NO FRONTEND
+    note over Front #E8F5E9: **Resolução Inteligente no Cliente (JS):**\n1. O Frontend intercepta o HTTP 429 da requisição duplicada e a descarta em silêncio.\n2. O Frontend recebe o HTTP 201 Created da requisição original.\n3. O usuário é redirecionado para a tela de Sucesso com o Pedido #1050.
+    Front -> Front : Descarta resposta HTTP 429 da duplicada
+    Front -> Front : Processa resposta HTTP 201 original
+    Front -> Cliente : Redireciona para /checkout/sucesso?order_id=1050
 deactivate Front
+
 @enduml

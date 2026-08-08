@@ -475,4 +475,21 @@ class CustomerRepository extends AbstractRepository implements BaseRepositoryInt
     {
         return $this->getMapper()->getTransactionTotalSum($customerId);
     }
+
+    /**
+     * Busca clientes ativos por nome, email ou telefone para o PDV (POS).
+     */
+    public function searchActiveCustomers(string $searchQuery, int $limit = 15): array
+    {
+        return $this->getMapper()->searchActiveCustomers($searchQuery, $limit);
+    }
+
+    /**
+     * Retorna a listagem paginada e filtrada de clientes para o Admin.
+     */
+    public function getAdminCustomersPaginated(array $filters, int $page = 1, int $limit = 15, ?int $languageId = null): array
+    {
+        $lId = $languageId ?? (int)$this->getConfigValue('config_language_id', 2);
+        return $this->getMapper()->getAdminCustomersPaginated($filters, $page, $limit, $lId);
+    }
 }

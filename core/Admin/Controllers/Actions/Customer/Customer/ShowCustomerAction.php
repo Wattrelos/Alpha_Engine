@@ -3,11 +3,12 @@
 namespace Alpha\Admin\Controllers\Actions\Customer\Customer;
 
 use Alpha\Controller\BaseController;
-use Psr\Http\Message\ServerRequestInterface as Request;
-use Psr\Http\Message\ResponseInterface as Response;
-use Alpha\Model\DataAccessObject\DataAccessObject;
-use Alpha\Model\DataAccessObject\QueryBuilder;
 use Alpha\Model\Domain\Repositories\CustomerAddressesRepository;
+use Alpha\Model\Domain\Repositories\CustomerGroupRepository;
+use Alpha\Model\Domain\Repositories\CustomerRepository;
+use Alpha\Model\Domain\Repositories\OrderRepository;
+use Psr\Http\Message\ResponseInterface as Response;
+use Psr\Http\Message\ServerRequestInterface as Request;
 
 class ShowCustomerAction extends BaseController implements \Alpha\Controller\Actions\ActionInterface
 {
@@ -20,22 +21,32 @@ class ShowCustomerAction extends BaseController implements \Alpha\Controller\Act
             return $response->withStatus(400);
         }
 
-        $dao = new DataAccessObject();
+        /** @var CustomerRepository $customerRepo */
+        $customerRepo = $this->getRepository(CustomerRepository::class);
+        $customerEntity = $customerRepo->find($customerId);
 
-        // 1. Fetch customer details
-        $customerBuilder = (new QueryBuilder())
-            ->from(DB_PREFIX . 'customer', 'c')
-            ->select('c.*', 'cgd.name AS customer_group')
-            ->leftJoin(DB_PREFIX . 'customer_group_description', 'cgd', 'c.customer_group_id = cgd.customer_group_id AND cgd.language_id = ' . (int)$this->languageId)
-            ->where('c.id = ?', [$customerId]);
-
-        $customerData = $dao->executeQuery($customerBuilder);
-        $customer = $customerData[0] ?? null;
-
-        if (!$customer) {
+        if (!$customerEntity) {
             $response->getBody()->write('Cliente não encontrado.');
             return $response->withStatus(404);
         }
+
+        /** @var CustomerGroupRepository $groupRepo */
+        $groupRepo = $this->getRepository(CustomerGroupRepository::class);
+        $group = $groupRepo->getCustomerGroup((int)$customerEntity->getCustomerGroupId(), $this->languageId);
+        $groupName = $group['name'] ?? 'Padrão';
+
+        $customerData = [
+            'id'             => $customerEntity->getId(),
+            'firstname'      => $customerEntity->getFirstname(),
+            'lastname'       => $customerEntity->getLastname(),
+            'email'          => $customerEntity->getEmail(),
+            'telephone'      => $customerEntity->getTelephone(),
+            'customer_group' => $groupName,
+            'status'         => $customerEntity->getStatus(),
+            'persontype'     => $customerEntity->getPersontype(),
+            'cpf_cnpj'       => $customerEntity->getCpfCnpj(),
+            'date_added'     => $customerEntity->getDateAdded()
+        ];
 
         // 2. Fetch addresses
         /** @var CustomerAddressesRepository $addressRepo */
@@ -43,29 +54,23 @@ class ShowCustomerAction extends BaseController implements \Alpha\Controller\Act
         $addresses = $addressRepo->getAddresses($customerId);
 
         // 3. Fetch recent orders
-        $ordersBuilder = (new QueryBuilder())
-            ->from(DB_PREFIX . 'order', 'o')
-            ->leftJoin(DB_PREFIX . 'order_status', 'os', 'o.order_status_id = os.id AND os.language_id = ' . (int)$this->languageId)
-            ->select('o.id', 'o.total', 'o.date_added', 'os.name AS status')
-            ->where('o.customer_id = ?', [$customerId])
-            ->orderBy('o.date_added', 'DESC')
-            ->limit(5);
-
-        $ordersData = $dao->executeQuery($ordersBuilder);
+        /** @var OrderRepository $orderRepo */
+        $orderRepo = $this->getRepository(OrderRepository::class);
+        $ordersData = $orderRepo->getOrders($customerId, 0, 5);
 
         $orders = [];
         foreach ($ordersData as $o) {
             $orders[] = [
-                'order_id'   => $o['id'],
-                'total'      => 'R$ ' . number_format((float)$o['total'], 2, ',', '.'),
-                'date_added' => date('d/m/Y H:i', strtotime($o['date_added'])),
+                'order_id'   => $o['order_id'] ?? $o['id'] ?? 0,
+                'total'      => 'R$ ' . number_format((float)($o['total'] ?? 0), 2, ',', '.'),
+                'date_added' => !empty($o['date_added']) ? date('d/m/Y H:i', strtotime($o['date_added'])) : '',
                 'status'     => $o['status'] ?? 'Pendente'
             ];
         }
 
         $html = $this->getTemplate('admin/customer/customer/show.html.twig', [
             'title'     => 'Detalhes do Cliente | Painel Administrativo',
-            'customer'  => $customer,
+            'customer'  => $customerData,
             'addresses' => $addresses,
             'orders'    => $orders
         ]);
@@ -74,3 +79,4 @@ class ShowCustomerAction extends BaseController implements \Alpha\Controller\Act
         return $response->withHeader('Content-Type', 'text/html; charset=utf-8');
     }
 }
+

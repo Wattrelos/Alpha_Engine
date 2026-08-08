@@ -176,4 +176,13 @@ class OrderRepository extends AbstractRepository implements BaseRepositoryInterf
         }
         return null;
     }
+
+    /**
+     * Retorna a listagem paginada e filtrada de pedidos para o Admin.
+     */
+    public function getAdminOrdersPaginated(array $filters, int $page = 1, int $limit = 15, ?int $languageId = null): array
+    {
+        $lId = $languageId ?? $this->language_id;
+        return $this->getMapper()->getAdminOrdersPaginated($filters, $page, $limit, $lId);
+    }
 }

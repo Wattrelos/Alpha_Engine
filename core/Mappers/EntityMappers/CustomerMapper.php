@@ -155,4 +155,66 @@ class CustomerMapper extends BaseMapper
         $row = $stmt->fetch(\PDO::FETCH_ASSOC);
         return $row ? (float)($row['total'] ?? 0.0) : 0.0;
     }
+
+    /**
+     * Busca clientes ativos por nome, email ou telefone para o PDV (POS).
+     */
+    public function searchActiveCustomers(string $searchQuery, int $limit = 15): array
+    {
+        $like = '%' . $searchQuery . '%';
+
+        $builder = (new QueryBuilder())
+            ->select('id', 'firstname', 'lastname', 'email', 'telephone')
+            ->from(DB_PREFIX . 'customer')
+            ->where('status = 1', [])
+            ->where("(CONCAT(firstname, ' ', lastname) LIKE ? OR email LIKE ? OR telephone LIKE ?)", [$like, $like, $like])
+            ->limit($limit);
+
+        return $this->dao->executeQuery($builder);
+    }
+
+    /**
+     * Retorna a listagem de clientes filtrada e paginada para o Admin.
+     */
+    public function getAdminCustomersPaginated(array $filters, int $page, int $limit, int $languageId): array
+    {
+        $start = max(0, ($page - 1) * $limit);
+
+        $builder = (new QueryBuilder())
+            ->from(DB_PREFIX . 'customer', 'c');
+
+        if (!empty($filters['filter_name'])) {
+            $builder->where("CONCAT(c.firstname, ' ', c.lastname) LIKE ?", ["%" . $filters['filter_name'] . "%"]);
+        }
+
+        if (!empty($filters['filter_email'])) {
+            $builder->where("c.email LIKE ?", ["%" . $filters['filter_email'] . "%"]);
+        }
+
+        if (!empty($filters['filter_customer_group_id'])) {
+            $builder->where("c.customer_group_id = ?", [(int)$filters['filter_customer_group_id']]);
+        }
+
+        if (isset($filters['filter_status']) && $filters['filter_status'] !== '') {
+            $builder->where("c.status = ?", [(int)$filters['filter_status']]);
+        }
+
+        $count = $this->dao->executeCount($builder);
+
+        $builder->select(
+            'c.id', 'c.firstname', 'c.lastname', 'c.email', 'c.telephone', 'c.status', 'c.date_added',
+            "(SELECT name FROM `" . DB_PREFIX . "customer_group_description` cgd WHERE cgd.customer_group_id = c.customer_group_id AND cgd.language_id = " . (int)$languageId . " LIMIT 1) AS customer_group"
+        )
+        ->orderBy('c.date_added', 'DESC')
+        ->orderBy('c.firstname', 'ASC')
+        ->limit($limit)
+        ->offset($start);
+
+        $rows = $this->dao->executeQuery($builder);
+
+        return [
+            'total' => $count,
+            'data'  => $rows
+        ];
+    }
 }

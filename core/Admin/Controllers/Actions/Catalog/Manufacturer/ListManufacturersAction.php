@@ -3,9 +3,9 @@
 namespace Alpha\Admin\Controllers\Actions\Catalog\Manufacturer;
 
 use Alpha\Controller\BaseController;
+use Alpha\Model\Domain\Repositories\ManufacturerRepository;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Psr\Http\Message\ResponseInterface as Response;
-use Alpha\Model\DataAccessObject\ConnectionDB;
 
 class ListManufacturersAction extends BaseController implements \Alpha\Controller\Actions\ActionInterface
 {
@@ -17,51 +17,14 @@ class ListManufacturersAction extends BaseController implements \Alpha\Controlle
             $page = 1;
         }
         $limit = 15;
-        $start = ($page - 1) * $limit;
 
-        $conn = ConnectionDB::getInstance()->getConnection();
+        /** @var ManufacturerRepository $manufacturerRepository */
+        $manufacturerRepository = $this->getRepository(ManufacturerRepository::class);
 
-        // 1. Processa Filtros
-        $where = [];
-        $params = [];
-
-        // Filtro de Loja
-        $where[] = "m2s.store_id = ?";
-        $params[] = $this->storeId;
-
-        if (!empty($queryParams['filter_name'])) {
-            $where[] = "m.name LIKE ?";
-            $params[] = "%" . $queryParams['filter_name'] . "%";
-        }
-
-        $whereSql = '';
-        if ($where) {
-            $whereSql = "WHERE " . implode(" AND ", $where);
-        }
-
-        // 2. Query do total
-        $countQuery = "
-            SELECT COUNT(DISTINCT m.id) 
-            FROM `" . DB_PREFIX . "manufacturer` m
-            INNER JOIN `" . DB_PREFIX . "manufacturer_to_store` m2s ON m.id = m2s.manufacturer_id
-            $whereSql
-        ";
-        $stmtCount = $conn->prepare($countQuery);
-        $stmtCount->execute($params);
-        $totalManufacturers = (int)$stmtCount->fetchColumn();
-
-        // 3. Query dos dados com paginação
-        $dataQuery = "
-            SELECT m.*
-            FROM `" . DB_PREFIX . "manufacturer` m
-            INNER JOIN `" . DB_PREFIX . "manufacturer_to_store` m2s ON m.id = m2s.manufacturer_id
-            $whereSql
-            ORDER BY m.name ASC
-            LIMIT " . (int)$limit . " OFFSET " . (int)$start;
-        
-        $stmtData = $conn->prepare($dataQuery);
-        $stmtData->execute($params);
-        $manufacturersData = $stmtData->fetchAll(\PDO::FETCH_ASSOC);
+        // Busca fabricantes filtrados e paginados via Repositório de Domínio
+        $result = $manufacturerRepository->getManufacturersPaginated($queryParams, $page, $limit, $this->storeId);
+        $totalManufacturers = $result['total'];
+        $manufacturersData = $result['data'];
 
         $imagePresenter = $this->getImagePresenter();
         $manufacturers = [];
@@ -101,3 +64,4 @@ class ListManufacturersAction extends BaseController implements \Alpha\Controlle
         return $response->withHeader('Content-Type', 'text/html; charset=utf-8');
     }
 }
+

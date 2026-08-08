@@ -36,7 +36,7 @@ class ProcessPaymentAction implements ActionInterface
             }
 
             // 1. Inicia a transação atômica
-            $this->uow->begin();
+            $this->uow->start();
 
             // 2. Recupera o Pedido para validação
             $order = $this->orderRepository->getOrder($orderId);

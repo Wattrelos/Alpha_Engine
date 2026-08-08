@@ -412,4 +412,64 @@ class OrderMapper extends BaseMapper
 
         return $this->dao->executeCount($query);
     }
+
+    /**
+     * Retorna a listagem de pedidos filtrada e paginada para o Admin.
+     */
+    public function getAdminOrdersPaginated(array $filters, int $page, int $limit, int $languageId): array
+    {
+        $start = max(0, ($page - 1) * $limit);
+
+        $builder = (new QueryBuilder())
+            ->from(DB_PREFIX . 'order', 'o')
+            ->leftJoin(DB_PREFIX . 'order_status', 'os', 'o.order_status_id = os.id AND os.language_id = ' . (int)$languageId);
+
+        if (!empty($filters['filter_order_id'])) {
+            $builder->where('o.id = ?', [(int)$filters['filter_order_id']]);
+        }
+
+        if (!empty($filters['filter_customer'])) {
+            $builder->where("CONCAT(o.firstname, ' ', o.lastname) LIKE ?", ['%' . $filters['filter_customer'] . '%']);
+        }
+
+        if (!empty($filters['filter_order_status_id'])) {
+            $builder->where('o.order_status_id = ?', [(int)$filters['filter_order_status_id']]);
+        }
+
+        if (!empty($filters['filter_total'])) {
+            $builder->where('o.total = ?', [(float)$filters['filter_total']]);
+        }
+
+        if (!empty($filters['filter_date_added'])) {
+            $builder->where('DATE(o.date_added) = ?', [$filters['filter_date_added']]);
+        }
+
+        if (!empty($filters['filter_date_modified'])) {
+            $builder->where('DATE(o.date_modified) = ?', [$filters['filter_date_modified']]);
+        }
+
+        $count = $this->dao->executeCount($builder);
+
+        $builder->select(
+            'o.id',
+            'o.firstname',
+            'o.lastname',
+            'o.total',
+            'o.currency_code',
+            'o.currency_value',
+            'o.date_added',
+            'o.date_modified',
+            'os.name AS status_name'
+        )
+        ->orderBy('o.id', 'DESC')
+        ->limit($limit)
+        ->offset($start);
+
+        $rows = $this->dao->executeQuery($builder);
+
+        return [
+            'total' => $count,
+            'data'  => $rows
+        ];
+    }
 }

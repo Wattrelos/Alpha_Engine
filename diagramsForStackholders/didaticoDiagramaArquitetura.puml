@@ -1,4 +1,24 @@
 @startuml
+' Fundo branco em toda a folha
+skinparam backgroundColor #FFFFFF
+' --- CONFIGURAÇÃO VISUAL DA ETIQUETA ---
+skinparam legend {
+    BackgroundColor #e5f2ffff
+    BorderColor #A0AAB5
+    FontSize 11
+}
+
+' --- ETIQUETA DE IDENTIFICAÇÃO DO BLUEPRINT ---
+legend top left
+
+  |= <size:14>**Blueprint: Diagrama de Arquitetura**</size> |
+  | **Tipo:** Arquitetura de Software / Componentes |
+  | **Versão:** v1.0.3 | **Data:** 05/08/2026 |
+  | **Autor:** Josias da Conceição Sobrinho © 2026|
+  | **Licença:** MIT License (Open Source) |
+  | <size:9><color:gray>Disponibilizado nos termos da licença MIT. Permissão livre concedida.</color></size> |
+  | **Status:** <color:green>**Em desenvolvimento (95%). Sujeito a alterações**</color> |
+endlegend
 ' ─────────────────────────────────────────────────────────────────────────────
 ' Alpha Engine — Diagrama Didático de Arquitetura para Banner Acadêmico
 ' Focado em Estudantes de Computação / Engenharia de Software
@@ -36,7 +56,7 @@ note as Intro
   2. <b>Middleware Pipeline:</b> Processamento de requisição/resposta em camadas (Chain of Responsibility).
   3. <b>Single Action Controllers:</b> Controladores de ação única baseados no método mágico __invoke().
   4. <b>Domain-Driven Design (DDD):</b> Repositórios protegendo e encapsulando as regras e entidades de domínio.
-  5. <b>Persistence Decoupling (Data Mapper + DAO):</b> Separação total entre lógica de domínio e banco de dados.
+  5. <b>Persistence Decoupling (Data Mapper + UoW + DAO):</b> Separação total entre lógica de domínio, transações ACID e banco de dados.
 end note
 
 ' ═════════════════════════════════════════════════════════════════════════════
@@ -47,7 +67,7 @@ package "0. Entrada e Inicialização (Bootstrap & IoC)" as Slim #dce8f5 {
     rectangle "Config/Routes.php\n---\n• Definição de rotas HTTP\n• Mapeamento de URIs para Actions\n• Associação de middlewares específicos por rota" as Routes
     rectangle "AppContainer (PSR-11 Container)\n---\n• Gerenciador de Dependências (DI)\n• Auto-resolução por Reflection\n• Evita acoplamento rígido (New classes)" as AppContainer
 }
-note top of Slim
+note left of Slim
   <b>Camada de Entrada:</b>
   Todo tráfego HTTP é centralizado no <i>index.php</i>.
   O <b>Container PSR-11</b> atua como Service Locator
@@ -63,7 +83,7 @@ package "1. Pipeline de Middlewares (Interceptadores HTTP)" as Middlewares #f3e5
     rectangle "SessionMiddleware\n---\n• Valida sessão do cliente (e-commerce)\n• Restringe acesso à área do cliente (/account/*)" as SessionMW
     rectangle "LegacyRouteRedirectMiddleware\n---\n• Analisa URLs antigas legadas\n• Redireciona via HTTP 301 para a nova estrutura de URLs" as LegacyMW
 }
-note right of Middlewares
+note top of Middlewares
   <b>Padrão Chain of Responsibility (Middleware):</b>
   A requisição passa por filtros sucessivos. Cada
   middleware executa uma tarefa prévia (ex: autenticação)
@@ -119,18 +139,20 @@ end note
 ' ═════════════════════════════════════════════════════════════════════════════
 ' CAMADA 5 — Infraestrutura de Persistência
 ' ═════════════════════════════════════════════════════════════════════════════
-package "5. Infraestrutura de Persistência (Data Mapper & DAO)" as Persistencia #fff3e0 {
+package "5. Infraestrutura de Persistência (Data Mapper, UoW & DAO)" as Persistencia #fff3e0 {
     rectangle "MapperFactory (Singleton)\n---\n• Fábrica para gerenciar instâncias de Mappers" as MapperFactory
     rectangle "Entity Mappers (BaseMapper)\n---\n• Mapeia campos do Banco de Dados <-> Atributos da Entidade\n• Traduz estruturas relacionais em grafos de objetos" as Mappers
     rectangle "Observers (Mappers/Observers/)\n---\n• Padrão Observer para efeitos colaterais\n• Dispara ações (ex: enviar email) após eventos de escrita" as Observers
+    rectangle "UnitOfWork (UoW)\n---\n• Gerenciador de Transações ACID\n• Garante atomicidade em operações multi-tabelas (ex: Checkout e PDV)\n• Controla o início, commit e rollback via PDO" as UoW
     rectangle "DataAccessObject (DAO)\n---\n• Ponto de execução física de queries SQL\n• Evita escrita manual de conexões PDO" as DAO
+    rectangle "Identity Map (Cache em RAM)\n---\n• Mantém mapa de objetos hidratados em memória durante a requisição\n• Elimina consultas duplicadas (prevenção de queries N+1)" as IdentityMap
     rectangle "QueryBuilder\n---\n• Construtor fluído de SQL parametrizado\n• Previne ataques de SQL Injection utilizando prepared statements" as QB
 }
 note bottom of Persistencia
-  <b>Padrão Data Mapper vs ActiveRecord:</b>
-  Diferente do ActiveRecord (onde o objeto se salva no BD),
-  o Data Mapper separa a Entidade de Domínio do mecanismo de banco.
-  Isso deixa as Entidades limpas e testáveis sem mockar o banco.
+  <b>Padrões Data Mapper, Unit of Work e Identity Map:</b>
+  - <b>Data Mapper:</b> Separa as Entidades de Domínio do mecanismo de banco de dados.
+  - <b>Unit of Work:</b> Garante atomicidade (ACID) transacional em operações multi-tabelas.
+  - <b>Identity Map:</b> Garante que cada registro seja instanciado uma única vez na memória RAM.
 end note
 
 ' ═════════════════════════════════════════════════════════════════════════════
@@ -138,7 +160,7 @@ end note
 ' ═════════════════════════════════════════════════════════════════════════════
 package "6. Recursos Físicos e Suporte Transversal" as Infra #f3e5f5 {
     database "MySQL / MariaDB\n---\n• Banco de Dados Relacional\n• Armazena dados transacionais (pedidos, clientes, estoque)" as MySQL
-    rectangle "CacheStrategy (Redis / Filesystem)\n---\n• Padrão Strategy para cacheamento flexível\n• Reduz carga do MySQL cacheando páginas e consultas lentas" as Cache
+    database "Redis (Cache & Sessões)\n---\n• Armazenamento em memória (In-Memory Data Store)\n• Valida sessões ativas e realiza cache de dados/consultas" as Redis
     rectangle "Support & Helpers\n---\n• Utils: Idiomas, Moedas, Impostos, Formatação\n• PSR-4 Autoloading e Helpers globais" as Support
     rectangle "RabbitMQ & QueueService\n---\n• Broker de Mensageria e Fila 'order.created'\n• Publicação de payloads JSON persistentes" as Queue
     rectangle "Worker CLI Consumer\n---\n• Processamento assíncrono em background\n• Consome mensagens de novos pedidos para ERP/E-mails" as Worker
@@ -159,6 +181,10 @@ Routes --> AdminMW
 Routes --> SessionMW
 Routes --> LegacyMW
 
+' Validação de Sessão via Redis
+AdminMW --> Redis : "Valida sessão do Admin"
+SessionMW --> Redis : "Valida sessão do Cliente"
+
 ' Disparo das Actions
 LangMW --> FrontAction : "5a. Executa Action"
 AdminMW --> AdminAction : "5b. Executa Action"
@@ -173,6 +199,11 @@ AdminAction --> BaseCtrl : "Usa métodos comuns"
 BaseCtrl --> Twig : "Renderiza"
 Twig --> Views : "Compila templates Twig"
 
+' Controle Transacional (Unit of Work)
+FrontAction --> UoW : "Inicia transação multi-tabelas (ex: Checkout)"
+AdminAction --> UoW : "Inicia transação multi-tabelas (ex: Venda PDV)"
+UoW --> DAO : "Gerencia transação PDO (start/commit/rollback)"
+
 ' Lógica de Negócio e Repositórios
 FrontAction --> Repos : "Consulta/Persiste"
 AdminAction --> RepoFactory : "Obtém Repositório"
@@ -182,12 +213,14 @@ AuthServices --> Repos : "Valida credenciais"
 ' Mapeamento e Persistência
 Repos --> Entities : "Retorna/Modifica"
 Repos --> MapperFactory : "Obtém Mapper"
-Repos --> Cache : "Cacheia dados frequentes"
+Repos --> Redis : "Cacheia consultas frequentes"
+Repos --> UoW : "Fronteira de transação"
 MapperFactory ..> Mappers : "Cria/Retorna"
 Mappers ..> Observers : "Notifica alterações (Eventos)"
 Mappers --> DAO : "Envia dados mapeados"
 
 ' Acesso a Dados Físico
+DAO --> IdentityMap : "Consulta cache em RAM (N+1)"
 DAO --> QB : "Usa Builder para montar query"
 DAO --> MySQL : "Executa SQL parametrizado"
 QB --> MySQL : "Gera SQL"

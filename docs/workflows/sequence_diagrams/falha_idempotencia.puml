@@ -1,65 +1,96 @@
-@startuml "Idempotency Failure Flow"
-autonumber "<b>00:"
+@startuml
+autonumber "<b>[00]"
 
-box "Frontend / Web"
-    actor "Cliente (Cliques Duplos)" as Cliente
-    participant "Frontend App (JS)" as Front
+header "Alpha Engine Workflow: Technical Idempotency & Queue Protection"
+title "Idempotency Control Sequence (Redis Lock, UnitOfWork & RabbitMQ)"
+
+box "Frontend / Web Client"
+    actor "Client" as Client
+    participant "Frontend (JS)" as Front
 end box
 
-box "Backend / Infraestrutura"
-    participant "Slim Action" as Action
-    participant "Domain Service" as Domain
-    database "Cache (Redis)" as Cache
-    database "Database" as DB
+box "Application Layer"
+    participant "CheckoutAction" as Action
+    participant "IdempotencyService" as Idempotency
+    participant "EventDispatcher" as Events
 end box
 
-' --- PRIMEIRA REQUISICAO (A caminho) ---
-Cliente -> Front : Clique 1 (Botão Comprar)
+box "Infrastructure Layer"
+    database "Redis Cache" as Redis
+    participant "UnitOfWork" as UoW
+    database "MySQL Database" as MySQL
+    participant "QueueService (RabbitMQ)" as RabbitMQ
+    participant "Worker CLI Consumer" as Worker
+end box
+
+' === FIRST REQUEST (ORIGINAL) ===
+Client -> Front : Click "Submit Order"
 activate Front
-    Front -> Front : Gera Token Único (UUID)
-    Front -> Action : HTTP POST /{lang}/checkout [Token: UUID-XYZ]
+    Front -> Front : generateUUID() -> idempotencyKey
+    Front -> Action : HTTP POST /{lang}/checkout\n[Header: X-Idempotency-Key = "uuid-1234"]
     activate Action
-        Action -> Domain : verificarIdempotencia(UUID-XYZ)
-        activate Domain
-            Domain -> Cache : SETNX(UUID-XYZ, "PROCESSING", expire: 5min)
-            activate Cache
-                Cache --> Domain : OK (Chave não existia)
-            deactivate Cache
-            Domain --> Action : Token Válido (Segue o fluxo)
-        deactivate Domain
         
-        ' Simulando lentidão ou processamento normal da requisição A
-        Action -> DB : Executa INSERT do Pedido...
-        activate DB
+        Action -> Idempotency : acquireLock("uuid-1234", ttl = 300)
+        activate Idempotency
+            Idempotency -> Redis : SETNX("idempotency:uuid-1234", "PROCESSING", EX 300)
+            activate Redis
+                Redis --> Idempotency : 1 (Lock Acquired)
+            deactivate Redis
+            Idempotency --> Action : true (Lock Granted)
+        deactivate Idempotency
         
-' --- SEGUNDA REQUISICAO (O Clique Duplo) ---
-Cliente -> Front : Clique 2 (Botão Comprar rápido)
-    Front -> Action : HTTP POST /{lang}/checkout [Token: UUID-XYZ]
+        Action -> UoW : transaction(callable)
+        activate UoW
+            UoW -> MySQL : BEGIN TRANSACTION
+            UoW -> MySQL : INSERT INTO tbkk_order (...)
+            activate MySQL
+
+' === SECOND CONCURRENT REQUEST (DOUBLE CLICK) ===
+Client -> Front : Click "Submit Order" (Double Click)
+    Front -> Action : HTTP POST /{lang}/checkout\n[Header: X-Idempotency-Key = "uuid-1234"]
     activate Action
-        Action -> Domain : verificarIdempotencia(UUID-XYZ)
-        activate Domain
-            Domain -> Cache : SETNX(UUID-XYZ, "PROCESSING")
-            activate Cache
-                Cache --> Domain : ERR (Chave já existe!)
-            deactivate Cache
-            
-            ' O domínio identifica a duplicidade e barra imediatamente
-            Domain --> Action : Throws DuplicateRequestException
-        deactivate Domain
+        Action -> Idempotency : acquireLock("uuid-1234", ttl = 300)
+        activate Idempotency
+            Idempotency -> Redis : SETNX("idempotency:uuid-1234", "PROCESSING", EX 300)
+            activate Redis
+                Redis --> Idempotency : 0 (Key Exists / Locked)
+            deactivate Redis
+            Idempotency -> Idempotency : throw new IdempotencyLockException("Duplicate request")
+            Idempotency --> Action : throws IdempotencyLockException
+        deactivate Idempotency
         
-        ' Backend responde a requisição B com erro controlado
-        Action --> Front : HTTP 422 Unprocessable Entity { error: "DUPLICATE_REQUEST", message: "Processamento em andamento." }
+        Action --> Front : HTTP 429 Too Many Requests\n{error: "DUPLICATE_REQUEST"}
     deactivate Action
 
-        ' Conclusão tardia da primeira requisição A
-        DB --> Action : DB_Success
-        deactivate DB
-        Action --> Front : HTTP 201 Created (Pedido 1 Criado com Sucesso!)
+' === FIRST REQUEST TRANSACTION COMPLETION & MESSAGING ===
+            MySQL --> UoW : Rows Inserted
+            deactivate MySQL
+            UoW -> MySQL : COMMIT TRANSACTION
+            UoW --> Action : Transaction Success (orderId = 1050)
+        deactivate UoW
+        
+        Action -> Events : dispatch(new OrderCreatedEvent(1050))
+        activate Events
+            Events -> RabbitMQ : publish("order.created", payload)
+            activate RabbitMQ
+                RabbitMQ --> Events : ACK (Enqueued)
+            deactivate RabbitMQ
+            Events --> Action : Event Dispatched
+        deactivate Events
+        
+        Action --> Front : HTTP 201 Created\n{success: true, order_id: 1050}
     deactivate Action
 
-    ' TRATAMENTO NO FRONTEND
-    Front -> Front : Ignora o erro HTTP 422 da requisição duplicada
-    Front -> Front : Processa o HTTP 201 da requisição original
-    Front -> Cliente : Redireciona para a tela de Sucesso do Pedido
+    ' ASYNCHRONOUS CONSUMPTION BY WORKER
+    RabbitMQ -> Worker : Consume Message (order_id: 1050)
+    activate Worker
+        Worker -> Worker : Process Payment & Email Notification
+        Worker --> RabbitMQ : ACK
+    deactivate Worker
+
+    Front -> Front : Ignore HTTP 429 Error
+    Front -> Front : Process HTTP 201 Response
+    Front -> Client : Redirect to /checkout/success?order_id=1050
 deactivate Front
+
 @enduml

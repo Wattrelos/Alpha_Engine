@@ -4,9 +4,11 @@ namespace Alpha\Admin\Controllers\Actions\Catalog\Product;
 
 use Alpha\Controller\BaseController;
 use Alpha\Controller\Actions\ActionInterface;
+use Alpha\Model\Domain\Repositories\CategoryRepository;
+use Alpha\Model\Domain\Repositories\ManufacturerRepository;
+use Alpha\Model\Domain\Repositories\ProductRepository;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
-use Alpha\Model\Domain\Repositories\ProductRepository;
 
 class EditProductAction extends BaseController implements ActionInterface
 {
@@ -21,18 +23,13 @@ class EditProductAction extends BaseController implements ActionInterface
 
         /** @var ProductRepository $productRepo */
         $productRepo = $this->getRepository(ProductRepository::class);
-        
-        $conn = \Alpha\Model\DataAccessObject\ConnectionDB::getInstance()->getConnection();
-        
-        // 1. Busca os dados do produto
-        $stmt = $conn->prepare("
-            SELECT p.*, pd.name, pd.description 
-            FROM `" . DB_PREFIX . "product` p
-            LEFT JOIN `" . DB_PREFIX . "product_description` pd ON p.id = pd.product_id AND pd.language_id = ?
-            WHERE p.id = ?
-        ");
-        $stmt->execute([$this->languageId, $productId]);
-        $product = $stmt->fetch(\PDO::FETCH_ASSOC);
+        /** @var CategoryRepository $categoryRepo */
+        $categoryRepo = $this->getRepository(CategoryRepository::class);
+        /** @var ManufacturerRepository $manufacturerRepo */
+        $manufacturerRepo = $this->getRepository(ManufacturerRepository::class);
+
+        // 1. Busca os dados do produto via repositório
+        $product = $productRepo->getAdminProductForEdit($productId, $this->languageId);
 
         if (!$product) {
             $response->getBody()->write('Produto não encontrado.');
@@ -40,34 +37,18 @@ class EditProductAction extends BaseController implements ActionInterface
         }
 
         // 2. Busca lista de fabricantes para o select
-        $stmtManufacturers = $conn->query("SELECT id, name FROM `" . DB_PREFIX . "manufacturer` ORDER BY name ASC");
-        $manufacturers = $stmtManufacturers->fetchAll(\PDO::FETCH_ASSOC);
+        $manufacturers = $manufacturerRepo->getManufacturers();
 
         // 3. Busca lista de status de estoque para o select
-        $stmtStockStatuses = $conn->prepare("SELECT id, name FROM `" . DB_PREFIX . "stock_status` WHERE language_id = ? ORDER BY name ASC");
-        $stmtStockStatuses->execute([$this->languageId]);
-        $stockStatuses = $stmtStockStatuses->fetchAll(\PDO::FETCH_ASSOC);
+        $stockStatuses = $productRepo->getStockStatuses($this->languageId);
 
-        // 3.1. Busca lista de todas as categorias
-        $stmtCategories = $conn->prepare("
-            SELECT c.id, cd.name 
-            FROM `" . DB_PREFIX . "category` c 
-            LEFT JOIN `" . DB_PREFIX . "category_description` cd ON c.id = cd.category_id AND cd.language_id = ? 
-            ORDER BY cd.name ASC
-        ");
-        $stmtCategories->execute([$this->languageId]);
-        $categories = $stmtCategories->fetchAll(\PDO::FETCH_ASSOC);
+        // 4. Busca lista de todas as categorias
+        $categories = $categoryRepo->getCategoriesForSelect($this->languageId);
 
-        // 3.2. Busca categorias atualmente vinculadas ao produto
-        $stmtProdCategories = $conn->prepare("
-            SELECT category_id 
-            FROM `" . DB_PREFIX . "product_to_category` 
-            WHERE product_id = ?
-        ");
-        $stmtProdCategories->execute([$productId]);
-        $productCategories = $stmtProdCategories->fetchAll(\PDO::FETCH_COLUMN);
+        // 5. Busca categorias atualmente vinculadas ao produto
+        $productCategories = $productRepo->getAdminProductCategoryIds($productId);
 
-        // 4. Busca as variações (produtos filhos) cadastradas
+        // 6. Busca as variações (produtos filhos) cadastradas
         $variants = $productRepo->getProductVariants($productId);
 
         $html = $this->getTemplate('admin/pages/products/edit.html.twig', [
@@ -84,3 +65,4 @@ class EditProductAction extends BaseController implements ActionInterface
         return $response;
     }
 }
+

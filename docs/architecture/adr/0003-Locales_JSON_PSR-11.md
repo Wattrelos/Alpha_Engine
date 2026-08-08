@@ -5,7 +5,7 @@ status: Accepted
 date: 2026-07-11
 authors:
   - Antigravity AI
-  - Kiruma
+  - Josias
 impacted_components:
   - namespace: Alpha\Support\Language
     path: /var/www/html/agsonhos/core/Support/Language.php

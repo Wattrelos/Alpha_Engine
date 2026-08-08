@@ -1,4 +1,28 @@
 @startuml EER_Diagram
+' Fundo branco em toda a folha
+skinparam backgroundColor #FFFFFF
+skinparam shadowing false
+
+' --- CONFIGURAÇÃO VISUAL DA LEGENDA ---
+skinparam legend {
+    BackgroundColor #e5f2ffff
+    BorderColor #A0AAB5
+    FontSize 11
+}
+
+' --- ETIQUETA DE IDENTIFICAÇÃO DO BLUEPRINT & MAPEAMENTO DE TIPOS ---
+legend top left
+  |= <size:14>**Blueprint: Modelo de Dados do Sistema**</size> |= <size:14>**Mapeamento de Tipos (Arquitetura)**</size> |
+  | **Tipo:** Arquitetura de Dados / Modelo Físico | **Banco de Dados (DB)** -> **PHP (64-bit)** |
+  | **Versão:** v1.0.8  | BIGINT (8 bytes, PK/FK) -> int (8-byte integer) |
+  | **Data:** 05/08/2026 | INT (4 bytes) -> int |
+  | **Autor:** Josias da Conceição Sobrinho © 2026 | TINYINT(1) -> bool |
+  | **Licença:** MIT License (Open Source) | VARCHAR / TEXT -> string |
+  | **Status:** <color:green>**Em desenvolvimento (80%). Sujeito a alterações**</color> | DATETIME / DATE -> DateTimeInterface |
+  | <size:9><color:gray>Disponibilizado nos termos da licença MIT. Permissão livre concedida.</color></size> |
+endlegend
+
+
 !theme plain
 skinparam linetype ortho
 skinparam packageStyle rectangle

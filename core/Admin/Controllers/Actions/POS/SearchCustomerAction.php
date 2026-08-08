@@ -6,9 +6,9 @@ namespace Alpha\Admin\Controllers\Actions\POS;
 
 use Alpha\Controller\BaseController;
 use Alpha\Controller\Actions\ActionInterface;
+use Alpha\Model\Domain\Repositories\CustomerRepository;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Psr\Http\Message\ResponseInterface as Response;
-use Alpha\Model\DataAccessObject\ConnectionDB;
 
 /**
  * Action responsável por buscar clientes ativos no sistema para o PDV (POS).
@@ -20,22 +20,9 @@ class SearchCustomerAction extends BaseController implements ActionInterface
         $queryParams = $request->getQueryParams();
         $query = $queryParams['q'] ?? '';
 
-        $conn = ConnectionDB::getInstance()->getConnection();
-        
-        $stmt = $conn->prepare("
-            SELECT id, firstname, lastname, email, telephone
-            FROM `" . DB_PREFIX . "customer`
-            WHERE status = 1 AND (
-                CONCAT(firstname, ' ', lastname) LIKE ? OR
-                email LIKE ? OR
-                telephone LIKE ?
-            )
-            LIMIT 15
-        ");
-
-        $likeQuery = "%" . $query . "%";
-        $stmt->execute([$likeQuery, $likeQuery, $likeQuery]);
-        $customersRaw = $stmt->fetchAll(\PDO::FETCH_ASSOC);
+        /** @var CustomerRepository $customerRepo */
+        $customerRepo = $this->getRepository(CustomerRepository::class);
+        $customersRaw = $customerRepo->searchActiveCustomers($query, 15);
 
         $customers = [];
         foreach ($customersRaw as $c) {
@@ -51,3 +38,4 @@ class SearchCustomerAction extends BaseController implements ActionInterface
         return $response->withHeader('Content-Type', 'application/json');
     }
 }
+

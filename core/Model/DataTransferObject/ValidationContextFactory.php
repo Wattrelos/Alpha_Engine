@@ -3,7 +3,7 @@
 namespace Alpha\Model\DataTransferObject;
 
 use Alpha\Mappers\MapperFactory;
-use Alpha\Mappers\Account\CustomerMapper;
+use Alpha\Mappers\EntityMappers\CustomerMapper;
 
 /**
  * ValidationContextFactory - Centraliza a geração do array de contexto 

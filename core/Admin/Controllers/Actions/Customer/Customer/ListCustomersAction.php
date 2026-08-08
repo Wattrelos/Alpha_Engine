@@ -3,10 +3,10 @@
 namespace Alpha\Admin\Controllers\Actions\Customer\Customer;
 
 use Alpha\Controller\BaseController;
-use Psr\Http\Message\ServerRequestInterface as Request;
+use Alpha\Model\Domain\Repositories\CustomerGroupRepository;
+use Alpha\Model\Domain\Repositories\CustomerRepository;
 use Psr\Http\Message\ResponseInterface as Response;
-use Alpha\Model\DataAccessObject\DataAccessObject;
-use Alpha\Model\DataAccessObject\QueryBuilder;
+use Psr\Http\Message\ServerRequestInterface as Request;
 
 class ListCustomersAction extends BaseController implements \Alpha\Controller\Actions\ActionInterface
 {
@@ -18,52 +18,14 @@ class ListCustomersAction extends BaseController implements \Alpha\Controller\Ac
             $page = 1;
         }
         $limit = 15;
-        $start = ($page - 1) * $limit;
 
-        $dao = new DataAccessObject();
+        /** @var CustomerRepository $customerRepo */
+        $customerRepo = $this->getRepository(CustomerRepository::class);
 
-        // 1. Processa Filtros (QueryBuilder de Contagem)
-        $countBuilder = (new QueryBuilder())
-            ->from(DB_PREFIX . 'customer', 'c');
-
-        // Processa Filtros (QueryBuilder de Dados)
-        $dataBuilder = (new QueryBuilder())
-            ->from(DB_PREFIX . 'customer', 'c')
-            ->select(
-                'c.id', 'c.firstname', 'c.lastname', 'c.email', 'c.telephone', 'c.status', 'c.date_added',
-                "(SELECT name FROM `" . DB_PREFIX . "customer_group_description` cgd WHERE cgd.customer_group_id = c.customer_group_id AND cgd.language_id = " . (int)$this->languageId . " LIMIT 1) AS customer_group"
-            );
-
-        if (!empty($queryParams['filter_name'])) {
-            $countBuilder->where("CONCAT(c.firstname, ' ', c.lastname) LIKE ?", ["%" . $queryParams['filter_name'] . "%"]);
-            $dataBuilder->where("CONCAT(c.firstname, ' ', c.lastname) LIKE ?", ["%" . $queryParams['filter_name'] . "%"]);
-        }
-
-        if (!empty($queryParams['filter_email'])) {
-            $countBuilder->where("c.email LIKE ?", ["%" . $queryParams['filter_email'] . "%"]);
-            $dataBuilder->where("c.email LIKE ?", ["%" . $queryParams['filter_email'] . "%"]);
-        }
-
-        if (!empty($queryParams['filter_customer_group_id'])) {
-            $countBuilder->where("c.customer_group_id = ?", [(int)$queryParams['filter_customer_group_id']]);
-            $dataBuilder->where("c.customer_group_id = ?", [(int)$queryParams['filter_customer_group_id']]);
-        }
-
-        if (isset($queryParams['filter_status']) && $queryParams['filter_status'] !== '') {
-            $countBuilder->where("c.status = ?", [(int)$queryParams['filter_status']]);
-            $dataBuilder->where("c.status = ?", [(int)$queryParams['filter_status']]);
-        }
-
-        // 2. Executa Contagem Total
-        $totalCustomers = $dao->executeCount($countBuilder);
-
-        // 3. Executa Query de Dados Paginados
-        $dataBuilder->orderBy('c.date_added', 'DESC')
-            ->orderBy('c.firstname', 'ASC')
-            ->limit($limit)
-            ->offset($start);
-        
-        $customersData = $dao->executeQuery($dataBuilder);
+        // Busca dados paginados e filtrados via repositório de domínio
+        $result = $customerRepo->getAdminCustomersPaginated($queryParams, $page, $limit, $this->languageId);
+        $totalCustomers = $result['total'];
+        $customersData = $result['data'];
 
         $customers = [];
         foreach ($customersData as $row) {
@@ -77,15 +39,18 @@ class ListCustomersAction extends BaseController implements \Alpha\Controller\Ac
             ];
         }
 
-        // Lista de grupos de clientes para o filtro usando QueryBuilder
-        $groupBuilder = (new QueryBuilder())
-            ->from(DB_PREFIX . 'customer_group', 'cg')
-            ->join(DB_PREFIX . 'customer_group_description', 'cgd', 'cg.id = cgd.customer_group_id')
-            ->select('cg.id', 'cgd.name')
-            ->where('cgd.language_id = ?', [$this->languageId])
-            ->orderBy('cg.sort_order', 'ASC');
-        
-        $customerGroups = $dao->executeQuery($groupBuilder);
+        // Lista de grupos de clientes para o filtro usando o repositório
+        /** @var CustomerGroupRepository $groupRepo */
+        $groupRepo = $this->getRepository(CustomerGroupRepository::class);
+        $customerGroupsRaw = $groupRepo->getCustomerGroups($this->languageId);
+
+        $customerGroups = [];
+        foreach ($customerGroupsRaw as $cg) {
+            $customerGroups[] = [
+                'id'   => $cg['customer_group_id'] ?? $cg['id'] ?? 0,
+                'name' => $cg['name'] ?? ''
+            ];
+        }
 
         // Reconstrói URL de paginação preservando os filtros ativos
         $urlParams = $queryParams;
@@ -115,3 +80,4 @@ class ListCustomersAction extends BaseController implements \Alpha\Controller\Ac
         return $response->withHeader('Content-Type', 'text/html; charset=utf-8');
     }
 }
+

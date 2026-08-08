@@ -682,4 +682,305 @@ class ProductMapper extends BaseMapper {
         }
         return implode(' ', $formattedWords);
     }
+
+    /**
+     * Retorna a listagem paginada e filtrada de produtos para o Admin.
+     */
+    public function getAdminProductsPaginated(array $filters, int $page, int $limit, int $languageId): array
+    {
+        $start = max(0, ($page - 1) * $limit);
+
+        $builder = (new QueryBuilder())
+            ->from(DB_PREFIX . 'product', 'p')
+            ->leftJoin(DB_PREFIX . 'product_description', 'pd', 'p.id = pd.product_id AND pd.language_id = ' . (int)$languageId)
+            ->where('p.master_id = 0');
+
+        if (!empty($filters['filter_name'])) {
+            $builder->where('pd.name LIKE ?', ['%' . $filters['filter_name'] . '%']);
+        }
+
+        if (!empty($filters['filter_ean'])) {
+            $builder->where('p.ean = ?', [$filters['filter_ean']]);
+        }
+
+        if (!empty($filters['filter_category_id'])) {
+            $builder->where('p.id IN (SELECT product_id FROM `' . DB_PREFIX . 'product_to_category` WHERE category_id = ?)', [(int)$filters['filter_category_id']]);
+        }
+
+        if (!empty($filters['filter_manufacturer_id'])) {
+            $builder->where('p.manufacturer_id = ?', [(int)$filters['filter_manufacturer_id']]);
+        }
+
+        if (isset($filters['filter_status']) && $filters['filter_status'] !== '') {
+            $builder->where('p.status = ?', [(int)$filters['filter_status']]);
+        }
+
+        $count = $this->dao->executeCount($builder);
+
+        $builder->select(
+            'p.id',
+            'p.image',
+            'pd.name',
+            'p.model',
+            'p.price',
+            'p.quantity',
+            'p.status',
+            '(SELECT MIN(CASE WHEN pv.price > 0 THEN pv.price ELSE p.price END) FROM `' . DB_PREFIX . 'product` pv WHERE pv.master_id = p.id AND pv.status = 1) AS min_variant_price',
+            '(SELECT MAX(CASE WHEN pv.price > 0 THEN pv.price ELSE p.price END) FROM `' . DB_PREFIX . 'product` pv WHERE pv.master_id = p.id AND pv.status = 1) AS max_variant_price'
+        )
+        ->orderBy('pd.name', 'ASC')
+        ->limit($limit)
+        ->offset($start);
+
+        $rows = $this->dao->executeQuery($builder);
+
+        return [
+            'total' => $count,
+            'data'  => $rows
+        ];
+    }
+
+    /**
+     * Busca dados completos de um produto para formulário de edição do Admin.
+     */
+    public function getAdminProductForEdit(int $productId, int $languageId): ?array
+    {
+        $builder = (new QueryBuilder())
+            ->from(DB_PREFIX . 'product', 'p')
+            ->leftJoin(DB_PREFIX . 'product_description', 'pd', 'p.id = pd.product_id AND pd.language_id = ' . (int)$languageId)
+            ->where('p.id = ?', [$productId])
+            ->select('p.*', 'pd.name', 'pd.description');
+
+        $rows = $this->dao->executeQuery($builder);
+        return $rows ? $rows[0] : null;
+    }
+
+    /**
+     * Retorna os IDs de categorias vinculados ao produto.
+     */
+    public function getAdminProductCategoryIds(int $productId): array
+    {
+        $builder = (new QueryBuilder())
+            ->from(DB_PREFIX . 'product_to_category')
+            ->where('product_id = ?', [$productId])
+            ->select('category_id');
+
+        $rows = $this->dao->executeQuery($builder);
+        return array_column($rows, 'category_id');
+    }
+
+    /**
+     * Retorna a lista de status de estoque para formulários.
+     */
+    public function getStockStatuses(int $languageId): array
+    {
+        $builder = (new QueryBuilder())
+            ->from(DB_PREFIX . 'stock_status')
+            ->where('language_id = ?', [$languageId])
+            ->orderBy('name', 'ASC')
+            ->select('id', 'name');
+
+        return $this->dao->executeQuery($builder);
+    }
+
+    /**
+     * Cria um produto e seus dados correlatos de forma atômica.
+     */
+    public function createAdminProduct(array $data, int $storeId, int $languageId): int
+    {
+        $uow = new \Alpha\Model\DataAccessObject\UnitOfWork();
+        $productId = 0;
+
+        $uow->transaction(function () use ($data, $storeId, $languageId, &$productId) {
+            $name = trim($data['name'] ?? '');
+            $model = trim($data['model'] ?? '');
+            $price = (float)($data['price'] ?? 0.0);
+            $quantity = (int)($data['quantity'] ?? 0);
+            $status = isset($data['status']) ? (int)$data['status'] : 1;
+            $description = $data['description'] ?? '';
+            $ean = trim($data['ean'] ?? '');
+            $stockStatusId = (int)($data['stock_status_id'] ?? 7);
+            $manufacturerId = (int)($data['manufacturer_id'] ?? 0);
+            $dbManufacturerId = $manufacturerId === 0 ? null : $manufacturerId;
+            $dateAvailable = trim($data['date_available'] ?? '');
+            if (empty($dateAvailable)) {
+                $dateAvailable = date('Y-m-d');
+            }
+            $imagePath = $data['image'] ?? '';
+            $categoryIds = isset($data['product_category']) && is_array($data['product_category']) ? $data['product_category'] : [];
+
+            // 1. Inserção na tabela product
+            $sqlProd = "INSERT INTO `" . DB_PREFIX . "product` (`master_id`, `model`, `sku`, `upc`, `ean`, `jan`, `isbn`, `mpn`, `location`, `variant`, `override`, `quantity`, `stock_status_id`, `image`, `manufacturer_id`, `shipping`, `price`, `points`, `tax_class_id`, `date_available`, `weight`, `weight_class_id`, `length`, `width`, `height`, `length_class_id`, `subtract`, `minimum`, `rating`, `sort_order`, `status`, `date_added`, `date_modified`, `ncm`, `cest`) VALUES (0, ?, '', '', ?, '', '', '', '', '', '', ?, ?, ?, ?, 1, ?, 0, 0, ?, 0.00000000, 0, 0.00000000, 0.00000000, 0.00000000, 0, 1, 1, 0, 0, ?, NOW(), NOW(), '', '')";
+            $this->dao->executeRawSQL($sqlProd, [$model, $ean, $quantity, $stockStatusId, $imagePath, $dbManufacturerId, $price, $dateAvailable, $status]);
+
+            $conn = \Alpha\Model\DataAccessObject\ConnectionDB::getInstance()->getConnection();
+            $productId = (int)$conn->lastInsertId();
+
+            // 2. Inserção nas descrições de idioma
+            $stmtLangs = $conn->query("SELECT id FROM `" . DB_PREFIX . "language`");
+            $languages = $stmtLangs->fetchAll(\PDO::FETCH_COLUMN);
+
+            $sqlDesc = "INSERT INTO `" . DB_PREFIX . "product_description` (`product_id`, `language_id`, `name`, `description`, `tag`, `meta_title`, `meta_description`, `meta_keyword`) VALUES (?, ?, ?, ?, '', ?, '', '')";
+            foreach ($languages as $langId) {
+                $this->dao->executeRawSQL($sqlDesc, [$productId, $langId, $name, $description, $name]);
+            }
+
+            // 3. Inserção em product_to_store
+            $effectiveStoreId = $storeId > 0 ? $storeId : 1;
+            $sqlStore = "INSERT INTO `" . DB_PREFIX . "product_to_store` (`product_id`, `store_id`) VALUES (?, ?)";
+            $this->dao->executeRawSQL($sqlStore, [$productId, $effectiveStoreId]);
+
+            // 4. Inserção em product_to_category
+            if (!empty($categoryIds)) {
+                $sqlCat = "INSERT INTO `" . DB_PREFIX . "product_to_category` (`product_id`, `category_id`) VALUES (?, ?)";
+                foreach ($categoryIds as $catId) {
+                    $this->dao->executeRawSQL($sqlCat, [$productId, (int)$catId]);
+                }
+            }
+        });
+
+        return $productId;
+    }
+
+    /**
+     * Atualiza um produto e suas variações/categorias de forma atômica.
+     */
+    public function updateAdminProduct(int $productId, array $data, int $storeId, int $languageId): bool
+    {
+        $uow = new \Alpha\Model\DataAccessObject\UnitOfWork();
+
+        return (bool)$uow->transaction(function () use ($productId, $data, $storeId, $languageId) {
+            $name = trim($data['name'] ?? '');
+            $model = trim($data['model'] ?? '');
+            $price = (float)($data['price'] ?? 0.0);
+            $quantity = (int)($data['quantity'] ?? 0);
+            $status = isset($data['status']) ? (int)$data['status'] : 1;
+            $description = $data['description'] ?? '';
+            $ean = trim($data['ean'] ?? '');
+            $stockStatusId = (int)($data['stock_status_id'] ?? 0);
+            $manufacturerId = (int)($data['manufacturer_id'] ?? 0);
+            $dbManufacturerId = $manufacturerId === 0 ? null : $manufacturerId;
+            $dateAvailable = trim($data['date_available'] ?? '');
+            if (empty($dateAvailable)) {
+                $dateAvailable = date('Y-m-d');
+            }
+
+            $existing = $this->getAdminProductForEdit($productId, $languageId);
+            if (!$existing) {
+                return false;
+            }
+
+            $currentImagePath = $existing['image'] ?? '';
+            $removeImage = isset($data['remove_image']) && $data['remove_image'] == '1';
+            $newImagePath = $removeImage ? '' : (!empty($data['image']) ? $data['image'] : $currentImagePath);
+
+            // 1. Atualiza tabela principal product
+            $sqlUpd = "UPDATE `" . DB_PREFIX . "product` SET `model` = ?, `price` = ?, `quantity` = ?, `status` = ?, `ean` = ?, `stock_status_id` = ?, `manufacturer_id` = ?, `date_available` = ?, `image` = ?, `date_modified` = NOW() WHERE `id` = ?";
+            $this->dao->executeRawSQL($sqlUpd, [$model, $price, $quantity, $status, $ean, $stockStatusId, $dbManufacturerId, $dateAvailable, $newImagePath, $productId]);
+
+            // 2. Atualiza product_description
+            $sqlDesc = "UPDATE `" . DB_PREFIX . "product_description` SET `name` = ?, `description` = ? WHERE `product_id` = ? AND `language_id` = ?";
+            $this->dao->executeRawSQL($sqlDesc, [$name, $description, $productId, $languageId]);
+
+            // 3. Processa Variações (Produtos Filhos)
+            if (isset($data['variants']) && is_array($data['variants'])) {
+                foreach ($data['variants'] as $index => $v) {
+                    $vId = (int)($v['id'] ?? 0);
+                    $vName = trim($v['name'] ?? '');
+                    $vSku = trim($v['sku'] ?? '');
+                    $vPrice = (float)($v['price'] ?? 0.0);
+                    $vQuantity = (int)($v['quantity'] ?? 0);
+                    $vStatus = isset($v['status']) ? (int)$v['status'] : 1;
+                    $vDelete = isset($v['delete']) && $v['delete'] == '1';
+
+                    if (empty($vName)) {
+                        continue;
+                    }
+
+                    if ($vId > 0) {
+                        if ($vDelete) {
+                            $this->dao->executeRawSQL("DELETE FROM `" . DB_PREFIX . "product` WHERE `id` = ? AND `master_id` = ?", [$vId, $productId]);
+                            $this->dao->executeRawSQL("DELETE FROM `" . DB_PREFIX . "product_description` WHERE `product_id` = ?", [$vId]);
+                            $this->dao->executeRawSQL("DELETE FROM `" . DB_PREFIX . "product_to_store` WHERE `product_id` = ?", [$vId]);
+                            $this->dao->executeRawSQL("DELETE FROM `" . DB_PREFIX . "product_to_category` WHERE `product_id` = ?", [$vId]);
+                        } else {
+                            $vExisting = $this->getAdminProductForEdit($vId, $languageId);
+                            $vCurrentImagePath = $vExisting['image'] ?? '';
+                            $vRemoveImage = isset($v['remove_image']) && $v['remove_image'] == '1';
+                            $vNewImagePath = $vRemoveImage ? '' : (!empty($v['image']) ? $v['image'] : $vCurrentImagePath);
+
+                            $sqlVUpd = "UPDATE `" . DB_PREFIX . "product` SET `sku` = ?, `price` = ?, `quantity` = ?, `status` = ?, `variant` = ?, `model` = ?, `stock_status_id` = ?, `manufacturer_id` = ?, `date_available` = ?, `image` = ?, `date_modified` = NOW() WHERE `id` = ? AND `master_id` = ?";
+                            $this->dao->executeRawSQL($sqlVUpd, [$vSku, $vPrice, $vQuantity, $vStatus, $vName, $model . '-' . $vSku, $stockStatusId, $dbManufacturerId, $dateAvailable, $vNewImagePath, $vId, $productId]);
+
+                            $vFullName = $name . ' - ' . $vName;
+                            $this->dao->executeRawSQL("UPDATE `" . DB_PREFIX . "product_description` SET `name` = ?, `description` = ? WHERE `product_id` = ?", [$vFullName, $description, $vId]);
+                        }
+                    } elseif (!$vDelete) {
+                        $vNewImagePath = $v['image'] ?? '';
+                        $sqlVIns = "INSERT INTO `" . DB_PREFIX . "product` (`master_id`, `model`, `sku`, `upc`, `ean`, `jan`, `isbn`, `mpn`, `location`, `variant`, `override`, `quantity`, `stock_status_id`, `image`, `manufacturer_id`, `shipping`, `price`, `points`, `tax_class_id`, `date_available`, `weight`, `weight_class_id`, `length`, `width`, `height`, `length_class_id`, `subtract`, `minimum`, `rating`, `sort_order`, `status`, `date_added`, `date_modified`, `ncm`, `cest`) VALUES (?, ?, ?, '', '', '', '', '', '', ?, '', ?, ?, ?, ?, 1, ?, 0, 0, ?, 0.00000000, 0, 0.00000000, 0.00000000, 0.00000000, 0, 1, 1, 0, 0, ?, NOW(), NOW(), '', '')";
+                        $this->dao->executeRawSQL($sqlVIns, [$productId, $model . '-' . $vSku, $vSku, $vName, $vQuantity, $stockStatusId, $vNewImagePath, $dbManufacturerId, $vPrice, $dateAvailable, $vStatus]);
+
+                        $conn = \Alpha\Model\DataAccessObject\ConnectionDB::getInstance()->getConnection();
+                        $newVariantId = (int)$conn->lastInsertId();
+
+                        $stmtLangs = $conn->query("SELECT id FROM `" . DB_PREFIX . "language`");
+                        $languages = $stmtLangs->fetchAll(\PDO::FETCH_COLUMN);
+
+                        $vFullName = $name . ' - ' . $vName;
+                        foreach ($languages as $langId) {
+                            $this->dao->executeRawSQL("INSERT INTO `" . DB_PREFIX . "product_description` (`product_id`, `language_id`, `name`, `description`, `tag`, `meta_title`, `meta_description`, `meta_keyword`) VALUES (?, ?, ?, ?, '', ?, '', '')", [$newVariantId, $langId, $vFullName, $description, $vFullName]);
+                        }
+
+                        $effectiveStoreId = $storeId > 0 ? $storeId : 1;
+                        $this->dao->executeRawSQL("INSERT INTO `" . DB_PREFIX . "product_to_store` (`product_id`, `store_id`) VALUES (?, ?)", [$newVariantId, $effectiveStoreId]);
+                    }
+                }
+            }
+
+            // 4. Edição em Lote para variações
+            $this->dao->executeRawSQL("UPDATE `" . DB_PREFIX . "product` SET `manufacturer_id` = ?, `stock_status_id` = ?, `date_available` = ?, `date_modified` = NOW() WHERE `master_id` = ?", [$dbManufacturerId, $stockStatusId, $dateAvailable, $productId]);
+
+            // 5. Atualizar categorias do pai e sincronizar com filhas
+            $categoryIds = isset($data['product_category']) && is_array($data['product_category']) ? $data['product_category'] : [];
+            $this->dao->executeRawSQL("DELETE FROM `" . DB_PREFIX . "product_to_category` WHERE `product_id` = ?", [$productId]);
+            if (!empty($categoryIds)) {
+                foreach ($categoryIds as $catId) {
+                    $this->dao->executeRawSQL("INSERT INTO `" . DB_PREFIX . "product_to_category` (`product_id`, `category_id`) VALUES (?, ?)", [$productId, (int)$catId]);
+                }
+            }
+
+            $this->dao->executeRawSQL("DELETE FROM `" . DB_PREFIX . "product_to_category` WHERE `product_id` IN (SELECT `id` FROM `" . DB_PREFIX . "product` WHERE `master_id` = ?)", [$productId]);
+            $this->dao->executeRawSQL("INSERT INTO `" . DB_PREFIX . "product_to_category` (`product_id`, `category_id`) SELECT p.id, pc.category_id FROM `" . DB_PREFIX . "product` p JOIN `" . DB_PREFIX . "product_to_category` pc ON pc.product_id = ? WHERE p.master_id = ?", [$productId, $productId]);
+
+            return true;
+        });
+    }
+
+    /**
+     * Exclui um produto e suas tabelas secundárias de forma atômica.
+     */
+    public function deleteAdminProduct(int $productId): bool
+    {
+        $uow = new \Alpha\Model\DataAccessObject\UnitOfWork();
+
+        return (bool)$uow->transaction(function () use ($productId) {
+            $tables = [
+                'product_attribute', 'product_code', 'product_description', 'product_discount',
+                'product_filter', 'product_image', 'product_option', 'product_option_value',
+                'product_report', 'product_reward', 'product_subscription', 'product_to_category',
+                'product_to_layout', 'product_to_store', 'product_viewed', 'review', 'cart',
+                'customer_wishlist', 'coupon_product', 'subscription_product'
+            ];
+
+            foreach ($tables as $tbl) {
+                $this->dao->executeRawSQL("DELETE FROM `" . DB_PREFIX . "{$tbl}` WHERE `product_id` = ?", [$productId]);
+            }
+
+            $this->dao->executeRawSQL("DELETE FROM `" . DB_PREFIX . "product_related` WHERE `product_id` = ? OR `related_id` = ?", [$productId, $productId]);
+            $this->dao->executeRawSQL("DELETE FROM `" . DB_PREFIX . "seo_url` WHERE `key` = 'product_id' AND `value` = CAST(? AS CHAR)", [$productId]);
+            $this->dao->executeRawSQL("DELETE FROM `" . DB_PREFIX . "product` WHERE `id` = ?", [$productId]);
+
+            return true;
+        });
+    }
 }

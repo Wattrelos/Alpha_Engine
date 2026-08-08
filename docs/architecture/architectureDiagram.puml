@@ -45,12 +45,14 @@ package "5. Persistence Infrastructure" as Persistence {
   [Observers] as Observers
   [DataAccessObject (DAO)] as DAO
   [QueryBuilder] as QB
+  [UnitOfWork (UoW)] as UoW
+  [Identity Map] as IdentityMap
 }
 
 ' --- INFRASTRUCTURE & SUPPORT ---
 package "6. Support & Database" as SupportLayer {
   database "MySQL 8.0" as MySQL
-  [CacheStrategy (Redis/Filesystem)] as Cache
+  database "Redis (Cache & Session)" as Redis
   [Support Utils] as Support
   [RabbitMQ & QueueService] as Queue
   [Worker CLI Consumer] as Worker
@@ -71,6 +73,10 @@ Routes --> LegacyMW : Legacy Group
 Routes --> FrontAction : Dispatches
 Routes --> AdminAction : Dispatches
 
+' Session / Middleware Persistence
+AdminMW --> Redis : Validates admin session
+SessionMW --> Redis : Validates customer session
+
 ' Action Resolution & Execution
 Container ..> FrontAction : DI Constructor Injection
 Container ..> AdminAction : DI Constructor Injection
@@ -81,6 +87,8 @@ FrontAction --> Twig : Renders Views
 FrontAction --> Repos : Dependency injection
 FrontAction --> AuthServices : Session management
 AuthServices --> Repos : Credentials check
+FrontAction --> UoW : Transactional operations (e.g. Checkout)
+AdminAction --> UoW : Transactional operations (e.g. POS Sale)
 
 ' View Layer
 Twig --> Views : Compiles
@@ -89,7 +97,8 @@ Twig --> Views : Compiles
 RepoFactory ..> Repos : Instantiates
 Repos --> Entities : Hydrates
 Repos --> MapperFactory : Requests Mapper
-Repos --> Cache : Read/Write query cache
+Repos --> Redis : Read/Write query cache
+Repos --> UoW : Transactional boundary
 AlphaContainer --> Repos : Resolves legacy calls
 AlphaContainer --> Mappers : Resolves legacy mappers
 
@@ -98,8 +107,10 @@ MapperFactory ..> Mappers : Instantiates
 Mappers ..> Observers : Triggers hooks (events)
 Mappers --> DAO : Executes statements
 DAO --> QB : Builds query statements
+DAO --> IdentityMap : Memory RAM Caching (N+1 prevention)
 DAO --> MySQL : Persistent state updates
 QB --> MySQL : Safe SQL execution
+UoW --> DAO : Coordinates ACID transactions (start/commit/rollback)
 
 ' Support cross-cutting concerns
 Repos --> Support : Calculations

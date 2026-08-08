@@ -175,10 +175,104 @@ class ManufacturerRepository extends AbstractRepository implements BaseRepositor
      * @param int $categoryId
      * @return array
      */
+    /**
+     * Alpha Engine: Recupera fabricantes associados aos produtos de uma categoria ou subcategorias
+     *
+     * @param int $categoryId
+     * @return array
+     */
     public function getManufacturersByCategory(int $categoryId): array
     {
         /** @var \Alpha\Mappers\EntityMappers\ManufacturerMapper $mapper */
         $mapper = $this->mapperFactory->get(ManufacturerMapper::class);
         return $mapper->getManufacturersByCategory($categoryId, $this->store_id);
+    }
+
+    /**
+     * Retorna a listagem de fabricantes filtrada e paginada para o admin.
+     */
+    public function getManufacturersPaginated(array $filters, int $page = 1, int $limit = 15, ?int $storeId = null): array
+    {
+        $sId = $storeId ?? $this->store_id;
+        /** @var ManufacturerMapper $mapper */
+        $mapper = $this->mapperFactory->get(ManufacturerMapper::class);
+        return $mapper->getAdminManufacturersPaginated($filters, $page, $limit, $sId);
+    }
+
+    /**
+     * Busca um fabricante para edição no admin.
+     */
+    public function getManufacturerForEdit(int $manufacturerId, ?int $storeId = null, ?int $languageId = null): ?array
+    {
+        $sId = $storeId ?? $this->store_id;
+        $lId = $languageId ?? $this->language_id;
+        /** @var ManufacturerMapper $mapper */
+        $mapper = $this->mapperFactory->get(ManufacturerMapper::class);
+        return $mapper->getAdminManufacturerForEdit($manufacturerId, $sId, $lId);
+    }
+
+    /**
+     * Cria um novo fabricante e invalida o cache.
+     */
+    public function createManufacturer(array $data, ?int $storeId = null, ?int $languageId = null): int
+    {
+        $sId = $storeId ?? $this->store_id;
+        $lId = $languageId ?? $this->language_id;
+        /** @var ManufacturerMapper $mapper */
+        $mapper = $this->mapperFactory->get(ManufacturerMapper::class);
+
+        $manufacturerId = $mapper->createManufacturer($data, $sId, $lId);
+        $this->clearManufacturerCaches($manufacturerId, $sId, $lId);
+
+        return $manufacturerId;
+    }
+
+    /**
+     * Atualiza um fabricante e invalida o cache.
+     */
+    public function updateManufacturer(int $manufacturerId, array $data, ?int $storeId = null, ?int $languageId = null): bool
+    {
+        $sId = $storeId ?? $this->store_id;
+        $lId = $languageId ?? $this->language_id;
+        /** @var ManufacturerMapper $mapper */
+        $mapper = $this->mapperFactory->get(ManufacturerMapper::class);
+
+        $success = $mapper->updateManufacturer($manufacturerId, $data, $sId, $lId);
+        if ($success) {
+            $this->clearManufacturerCaches($manufacturerId, $sId, $lId);
+        }
+
+        return $success;
+    }
+
+    /**
+     * Exclui um fabricante e invalida o cache.
+     */
+    public function deleteManufacturer(int $manufacturerId, ?int $storeId = null, ?int $languageId = null): bool
+    {
+        $sId = $storeId ?? $this->store_id;
+        $lId = $languageId ?? $this->language_id;
+        /** @var ManufacturerMapper $mapper */
+        $mapper = $this->mapperFactory->get(ManufacturerMapper::class);
+
+        $success = $mapper->deleteManufacturer($manufacturerId);
+        if ($success) {
+            $this->clearManufacturerCaches($manufacturerId, $sId, $lId);
+        }
+
+        return $success;
+    }
+
+    /**
+     * Limpa o cache de fabricantes.
+     */
+    public function clearManufacturerCaches(int $manufacturerId, ?int $storeId = null, ?int $languageId = null): void
+    {
+        $sId = $storeId ?? $this->store_id;
+        $lId = $languageId ?? $this->language_id;
+
+        if ($this->cache) {
+            $this->cache->delete("manufacturer.{$manufacturerId}.{$lId}.{$sId}");
+        }
     }
 }

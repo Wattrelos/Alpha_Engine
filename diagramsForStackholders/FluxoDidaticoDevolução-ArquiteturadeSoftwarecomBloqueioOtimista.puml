@@ -1,45 +1,71 @@
-@startuml "Fluxo Didático de Devolução - Arquitetura de Software com Bloqueio Otimista"
+@startuml
+' Fundo branco em toda a folha
+skinparam backgroundColor #FFFFFF
+skinparam shadowing false
+
+' --- CONFIGURAÇÃO VISUAL DA LEGENDA ---
+skinparam legend {
+    BackgroundColor #e5f2ffff
+    BorderColor #A0AAB5
+    FontSize 11
+}
+
+' --- ETIQUETA DE IDENTIFICAÇÃO DO BLUEPRINT ---
+legend top left
+  |= <size:14>**Blueprint: Diagrama de Sequência - RMA & Bloqueio Otimista**</size> |= <size:14>**Padrões & Mecanismos Arquiteturais**</size> |
+  | **Tipo:** Artefato de Software / Comportamental (UML 2.5 Sequence) | **Bloqueio Otimista (Optimistic Lock):** Controle por coluna `version` |
+  | **Versão:** v1.0.4 • **Data:** 05/08/2026 | **Unidade de Trabalho (Unit of Work):** Transações ACID no PDO |
+  | **Autor:** Josias da Conceição Sobrinho © 2026 | **Data Mapper + Repository:** Isolamento de modelo de dados |
+  | **Licença:** MIT License (Open Source) | **Mensageria Assíncrona:** Eventos de Domínio + RabbitMQ + Worker |
+  | **Status:** <color:green>**Em desenvolvimento (95%). Sujeito a alterações**</color> | **Tratamento de Concorrência:** Resposta HTTP 409 Conflict |
+  | <size:9><color:gray>Disponibilizado nos termos da licença MIT. Permissão livre concedida.</color></size> | |
+endlegend
+
 autonumber "<b>[00]"
 
-header "Caso de Uso: Devolução de Produtos (RMA) com Controle de Concorrência Otimista"
-title "Diagrama de Sequência Pedagógico para Estudantes de Computação"
+header "Caso de Uso: Devolução de Produtos (RMA) com Concorrência Otimista & Mensageria Assíncrona"
+title "Diagrama de Sequência Pedagógico para Engenharia de Software"
 
 box "Camada 1: Apresentação e Infraestrutura (HTTP / Visão / Mensageria)" #E0F7FA
     actor "Administrador" as Ator
-    participant "Slim Middleware\n(Interceptador/Filtro)" as Middleware
-    participant "Slim Controller (Action)\n(Controlador de Ação Única)" as Action
-    participant "Fila / Mensageria (RabbitMQ/Redis)\n(Processamento Assíncrono)" as Queue
-    participant "Twig Template Engine\n(Motor de Renderização HTML)" as Twig
+    participant "Slim Middleware\n(Interceptador HTTP)" as Middleware
+    participant "Slim Controller (Action)\n(Single Action Controller)" as Action
+    participant "Fila / Mensageria (RabbitMQ)\n(Broker de Mensagens)" as Queue
+    participant "Worker CLI Consumer\n(Consumidor Assíncrono)" as Worker
+    participant "Twig Template Engine\n(Motor de Renderização)" as Twig
 end box
 
-box "Camada 2: Domínio e Aplicação (Regras de Negócio)" #FFF9C4
-    participant "OrderReturn Entity\n(Entidade de Domínio Versionada)" as Entity
-    participant "OrderReturnRepository\n(Abstração da Coleção em Memória)" as Repo
+box "Camada 2: Domínio e Aplicação (Regras de Negócio & Eventos)" #FFF9C4
+    participant "OrderReturn Entity\n(Entidade Versionada)" as Entity
+    participant "EventDispatcher & Events\n(Barramento de Eventos)" as Events
+    participant "OrderReturnRepository\n(Abstração da Coleção)" as Repo
 end box
 
 box "Camada 3: Persistência de Dados (Mapeamento / Banco de Dados)" #FFEBEE
-    participant "Unit Of Work\n(Unidade de Trabalho/Transação)" as UoW
-    participant "OrderReturnMapper\n(Mapeador de Dados - Data Mapper)" as Mapper
+    participant "Unit Of Work\n(Gerenciador de Transação)" as UoW
+    participant "OrderReturnMapper\n(Mapeador Data Mapper)" as Mapper
     participant "Query Builder\n(Construtor Fluido de SQL)" as QB
     participant "DataAccessObject (DAO)\n(Driver de Acesso a Dados)" as DAO
     database "Banco de Dados (MySQL)\n(Persistência Física)" as DB
 end box
 
-' === PASSO 1: O INÍCIO - LEITURA DOS DADOS ===
-note over Ator, Middleware: **[Fase de Leitura - HTTP GET]**\nO usuário entra na tela de RMA para analisar uma devolução aberta.
+' ═════════════════════════════════════════════════════════════════════════════
+' PASSO 1: LEITURA DOS DADOS (HTTP GET)
+' ═════════════════════════════════════════════════════════════════════════════
+note over Ator, Middleware: **[Fase 1: Leitura de Dados - HTTP GET]**\nO usuário entra na tela de RMA para analisar uma devolução aberta.
 
 Ator -> Middleware : Requisição HTTP GET /LPDHED2dC7Gjrg2b/devolucoes/{id}
 activate Middleware
     Middleware -> Action : __invoke(Request)
     activate Action
         
-        note over Action, Repo: **Padrão Repository:** O controlador não fala com o Banco de Dados.\nEle solicita um objeto do domínio ao Repositório.
+        note over Action, Repo: **Padrão Repository:** O controlador solicita a entidade de domínio ao repositório.
         Action -> Repo : find(id)
         activate Repo
             
             Repo -> QB : select('*')->from('product_return')->where('id = ?', id)
             activate QB
-                QB --> Repo : SQL Estruturado + Parâmetros
+                QB --> Repo : SQL Estruturado + Bindings
             deactivate QB
             
             Repo -> DAO : query(SQL)
@@ -47,62 +73,62 @@ activate Middleware
                 DAO -> DB : SELECT * FROM agsc_product_return WHERE id = ?
                 activate DB
                 
-                note right of DB: **Importante:** A tabela contém a coluna `version`.\nO valor atual no banco é 1 (versão = 1).
+                note right of DB: **Versão de Controle:** A tabela armazena a coluna `version`.\nValor atual no banco de dados: 1 (version = 1).
                 DB --> DAO : Dados Brutos (Array) + version: 1
                 deactivate DB
                 DAO --> Repo : Array Associativo
             deactivate DAO
             
-            note over Repo, Mapper: **Padrão Data Mapper:** Converte dados tabulares (banco)\nem objetos ricos de domínio (Orientados a Objetos).
-            Repo -> Mapper : hydrate(OrderReturn, RawData)
+            note over Repo, Mapper: **Padrão Data Mapper:** Converte o registro tabular em objeto de domínio rico.
+            Repo -> Mapper : mapToEntity(RawData)
             activate Mapper
                 create Entity
-                Mapper -> Entity : new OrderReturn(version: 1)
+                Mapper -> Entity : new OrderReturn(id: 102, version: 1)
                 Mapper --> Repo : Objeto OrderReturn (Estado em Memória)
             deactivate Mapper
             Repo --> Action : Objeto OrderReturn
         deactivate Repo
         
-        Action -> Twig : render('show.html.twig', OrderReturn)
+        Action -> Twig : getTemplate('show.html.twig', OrderReturn)
         activate Twig
-            note over Twig: Twig lê as propriedades e insere no HTML,\nincluindo um campo oculto com a versão original (1).
+            note over Twig: O Twig injeta as propriedades no HTML,\nincluindo a versão atual (1) em um campo oculto.
             Twig --> Action : HTML Final Renderizado
         deactivate Twig
-        Action --> Middleware : HTTP Response (HTML)
+        Action --> Middleware : HTTP Response (HTML 200 OK)
     deactivate Action
-    Middleware --> Ator : Exibe página de detalhes no navegador
+    Middleware --> Ator : Renderiza formulário de edição no navegador
 deactivate Middleware
 
-' === PASSO 2: A TENTATIVA DE ESCRITA E O CONFLITO ===
-note over Ator, Middleware: **[Fase de Escrita - HTTP POST AJAX]**\nO administrador decide alterar o status da devolução.\nSe outro administrador salvou antes dele, a versão no banco terá mudado (ex: para 2).
+' ═════════════════════════════════════════════════════════════════════════════
+' PASSO 2: ESCRITA BEM-SUCEDIDA & DISPARO DE MENSAGERIA ASSÍNCRONA
+' ═════════════════════════════════════════════════════════════════════════════
+note over Ator, Middleware: **[Fase 2: Escrita Bem-Sucedida - Bloqueio Otimista OK & Publicação na Fila]**\nO administrador aprova a devolução (status = 5). Nenhuma alteração concorrente ocorreu.
 
-Ator -> Middleware : HTTP POST /LPDHED2dC7Gjrg2b/devolucoes/{id}/status (Payload JSON: {status_id: 5, version: 1})
+Ator -> Middleware : HTTP POST /LPDHED2dC7Gjrg2b/devolucoes/{id}/status (JSON: {status_id: 5, version: 1})
 activate Middleware
     Middleware -> Action : __invoke(Request)
     activate Action
         
-        note over Action: O controlador recebe a versão original (1) que estava na tela do usuário.\nEle tenta atualizar o objeto no domínio.
         Action -> Repo : find(id)
         activate Repo
-            Repo --> Action : Objeto OrderReturn (obtido do Identity Map/Banco)
+            Repo --> Action : Objeto OrderReturn (version = 1)
         deactivate Repo
 
-        note over Action: Injeta a versão que veio da tela do usuário na entidade\npara forçar a verificação de concorrência.
-        Action -> Entity : setVersion(1)
+        Action -> Entity : setStatusId(5)
         
-        ' TRANSACTION BOUNDARY
-        note over Action, UoW: **Unidade de Trabalho (Unit of Work):** Garante atomicidade.\nOu tudo é persistido com sucesso ou nada é salvo (Rollback).
+        ' TRANSMISSÃO DE TRANSAÇÃO E BLOQUEIO OTIMISTA
+        note over Action, UoW: **Unit of Work (Transação ACID):** Inicia a transação física no PDO.
         Action -> UoW : transaction(callback)
         activate UoW
-            UoW -> DB : BEGIN TRANSACTION (Inicia Transação MySQL)
+            UoW -> DB : BEGIN TRANSACTION
             
             UoW -> Repo : save(OrderReturn)
             activate Repo
-                Repo -> Mapper : save(OrderReturn)
+                Repo -> Mapper : update(OrderReturn)
                 activate Mapper
                     
-                    note over Mapper, QB: **Bloqueio Otimista (Optimistic Locking):**\nO UPDATE incrementa a versão e filtra pelo ID e versão original no WHERE.\nSe ninguém alterou no meio do caminho, a linha é modificada.
-                    Mapper -> QB : update('product_return')->set('version=version+1')->where('id = ? AND version = ?')
+                    note over Mapper, QB: **Bloqueio Otimista (Optimistic Lock):**\nExecuta o UPDATE incrementando `version` onde `version = 1`.\nSe a versão não mudou, altera 1 linha com sucesso.
+                    Mapper -> QB : update('product_return')->set('status_id=5, version=version+1')->where('id=102 AND version=1')
                     activate QB
                         QB --> Mapper : SQL UPDATE + Bindings (id: 102, version: 1)
                     deactivate QB
@@ -111,44 +137,91 @@ activate Middleware
                     activate DAO
                         DAO -> DB : UPDATE agsc_product_return SET status_id=5, version=version+1 WHERE id=102 AND version=1
                         activate DB
-                        note right of DB: **Colisão!** Outro usuário já salvou antes, e o banco está na versão 2.\nO WHERE version = 1 não encontra nenhuma linha.\n**Linhas Afetadas: 0**
-                        DB --> DAO : Sucesso Técnico (Rows Affected: 0)
+                        DB --> DAO : Sucesso (Rows Affected: 1, Nova Versão = 2)
                         deactivate DB
-                        
-                        note over DAO: O DAO detecta que zero linhas foram afetadas.\nIsso indica que a versão na tela do usuário está obsoleta.
-                        DAO --> Mapper : affected_rows = 0
+                        DAO --> Mapper : affected_rows = 1
                     deactivate DAO
-                    
-                    create ConcurrencyException
-                    Mapper -> ConcurrencyException : throw new ConcurrencyException()
-                    Mapper --> UoW : Falha (Exceção Propagada)
+                    Mapper --> Repo : Sucesso
                 deactivate Mapper
-                Repo --> UoW : Falha (Exceção Propagada)
+                Repo --> UoW : Sucesso
             deactivate Repo
             
-            UoW -> DB : ROLLBACK (Descarta todas as alterações pendentes da transação)
+            UoW -> DB : COMMIT TRANSACTION (Persiste no disco do MySQL)
+            UoW --> Action : Transação Concluída com Sucesso
+        deactivate UoW
+        
+        ' DISPARO DE EVENTO DE DOMÍNIO E PUBLICAÇÃO NA FILA (RABBITMQ)
+        note over Action, Events: **Barramento de Eventos de Domínio:**\nDesacopla a escrita síncrona do banco dos efeitos colaterais assíncronos.
+        Action -> Events : dispatch(new ReturnStatusUpdatedEvent(orderReturnId: 102, statusId: 5))
+        activate Events
+            Events -> Queue : publish('rma.status_updated', JSON Payload)
+            activate Queue
+                Queue --> Events : Mensagem Enfileirada (Ack)
+            deactivate Queue
+            Events --> Action : Evento Processado
+        deactivate Events
+        
+        Action --> Middleware : HTTP Response (200 OK {success: true, version: 2})
+    deactivate Action
+    Middleware --> Ator : Exibe notificação "Status atualizado com sucesso!"
+deactivate Middleware
+
+' PROCESSAMENTO ASSÍNCRONO EM BACKGROUND PELO WORKER
+note over Queue, Worker: **[Processamento Assíncrono em Background]**\nO Worker CLI consome mensagens da fila sem bloquear o usuário.
+Queue -> Worker : Consome mensagem (Payload: {return_id: 102, status: 5})
+activate Worker
+    note over Worker: Executa tarefas secundárias:\n• Envia e-mail de notificação ao cliente\n• Dispara webhook de sincronização com ERP\n• Atualiza registro financeiro
+    Worker --> Queue : ACK (Mensagem concluída)
+deactivate Worker
+
+' ═════════════════════════════════════════════════════════════════════════════
+' PASSO 3: CONFLITO DE CONCORRÊNCIA (CONCURRENCY CONFLICT)
+' ═════════════════════════════════════════════════════════════════════════════
+note over Ator, Middleware: **[Fase 3: Detecção de Conflito de Concorrência - HTTP 409 Conflict]**\nOutro operador tenta salvar usando a tela antiga (com versão obsoleta = 1, quando a versão real é 2).
+
+Ator -> Middleware : HTTP POST /LPDHED2dC7Gjrg2b/devolucoes/{id}/status (JSON: {status_id: 3, version: 1})
+activate Middleware
+    Middleware -> Action : __invoke(Request)
+    activate Action
+        
+        Action -> UoW : transaction(callback)
+        activate UoW
+            UoW -> DB : BEGIN TRANSACTION
+            UoW -> Repo : save(OrderReturn)
+            activate Repo
+                Repo -> Mapper : update(OrderReturn)
+                activate Mapper
+                    Mapper -> DAO : execute("UPDATE ... WHERE id=102 AND version=1")
+                    activate DAO
+                        DAO -> DB : UPDATE agsc_product_return SET status_id=3, version=version+1 WHERE id=102 AND version=1
+                        activate DB
+                        note right of DB: **Colisão de Versão!** O banco já está na versão 2.\nO WHERE version = 1 não encontra nenhuma linha.\n**Linhas Afetadas: 0**
+                        DB --> DAO : Affected Rows: 0
+                        deactivate DB
+                        
+                        note over DAO: O DAO detecta affected_rows == 0 e dispara a exceção de concorrência.
+                        create ConcurrencyException
+                        DAO -> ConcurrencyException : throw new ConcurrencyException("Dados obsoletos")
+                        DAO --> Mapper : Propaga ConcurrencyException
+                    deactivate DAO
+                    Mapper --> Repo : Propaga Exceção
+                deactivate Mapper
+                Repo --> UoW : Propaga Exceção
+            deactivate Repo
+            
+            UoW -> DB : ROLLBACK (Aborta todas as alterações)
             UoW --> Action : Lança ConcurrencyException
         deactivate UoW
         
-        ' TRATAMENTO DO ERRO
-        note over Action: O Controlador captura a exceção de Concorrência.\nEle limpa o cache (Identity Map) e lê os dados frescos atuais do banco.
-        
-        Action -> Repo : find(id) (Sem cache)
+        note over Action: O Controlador captura ConcurrencyException,\nrecupera os dados mais recentes do banco e responde ao cliente.
+        Action -> Repo : find(id)
         activate Repo
-            Repo --> Action : Objeto OrderReturn (Contendo dados novos e versão = 2)
+            Repo --> Action : Objeto OrderReturn (Versão Atual = 2)
         deactivate Repo
         
-        alt Requisição é JSON / AJAX (Detector de Conflitos)
-            note over Action: **Resposta HTTP 409 Conflict:**\nCódigo HTTP específico para conflito de estado de recursos.\nEnvia os dados atuais para o frontend se sincronizar.
-            Action --> Middleware : HTTP 409 Conflict {error: "DATA_STALE", current_data: {version: 2, status: "Aprovado"}}
-            deactivate Action
-            
-            Middleware --> Ator : Frontend (JS) intercepta HTTP 409, exibe o Modal de Conflito,\ne atualiza a tela do usuário de forma reativa.
-        else Fluxo Web Tradicional (Fallback)
-            activate Action
-            Action --> Middleware : HTTP 302 Redirect to /show?error=concurrency_conflict
-            deactivate Action
-            Middleware --> Ator : Recarrega a tela com banner explicativo do erro.
-        end
+        Action --> Middleware : HTTP 409 Conflict {error: "CONCURRENCY_CONFLICT", current_version: 2}
+    deactivate Action
+    Middleware --> Ator : Frontend exibe Modal: "Os dados foram alterados por outro usuário. Recarregando..."
+deactivate Middleware
 
 @enduml

@@ -288,6 +288,119 @@ class CategoryRepository extends AbstractRepository implements BaseRepositoryInt
         return "/{$langCode}/categoria/" . $row['id'];
     }
 
+    /**
+     * Retorna a lista de categorias para o seletor no painel admin.
+     */
+    public function getCategoriesForSelect(?int $languageId = null): array
+    {
+        $langId = $languageId ?? $this->language_id;
+        /** @var CategoryMapper $mapper */
+        $mapper = $this->mapperFactory->get(CategoryMapper::class);
+        return $mapper->getAdminCategoriesForSelect($langId);
+    }
+
+    /**
+     * Cria uma nova categoria através do CategoryMapper e invalida os caches correspondentes.
+     */
+    public function createCategory(array $data, ?int $storeId = null, ?int $languageId = null): int
+    {
+        $sId = $storeId ?? $this->store_id;
+        $lId = $languageId ?? $this->language_id;
+
+        /** @var CategoryMapper $mapper */
+        $mapper = $this->mapperFactory->get(CategoryMapper::class);
+        $categoryId = $mapper->createCategory($data, $sId, $lId);
+
+        $this->clearCategoryCaches($categoryId, $sId, $lId);
+
+        return $categoryId;
+    }
+
+    /**
+     * Limpa os caches de categorias.
+     */
+    public function clearCategoryCaches(int $categoryId, ?int $storeId = null, ?int $languageId = null): void
+    {
+        $sId = $storeId ?? $this->store_id;
+        $lId = $languageId ?? $this->language_id;
+
+        if ($this->cache) {
+            $this->cache->delete("category_menu_html.s{$sId}.l{$lId}");
+            $this->cache->delete("category_menu_tree.s{$sId}.l{$lId}");
+            $this->cache->delete("category.{$categoryId}.{$lId}.{$sId}");
+        }
+    }
+
+    /**
+     * Busca a categoria para edição no admin.
+     */
+    public function getCategoryForEdit(int $categoryId, ?int $languageId = null, ?int $storeId = null): ?array
+    {
+        $sId = $storeId ?? $this->store_id;
+        $lId = $languageId ?? $this->language_id;
+        /** @var CategoryMapper $mapper */
+        $mapper = $this->mapperFactory->get(CategoryMapper::class);
+        return $mapper->getAdminCategoryForEdit($categoryId, $lId, $sId);
+    }
+
+    /**
+     * Retorna a lista de categorias pai para a edição de categoria.
+     */
+    public function getParentCategoriesForSelect(int $categoryId, ?int $languageId = null): array
+    {
+        $lId = $languageId ?? $this->language_id;
+        /** @var CategoryMapper $mapper */
+        $mapper = $this->mapperFactory->get(CategoryMapper::class);
+        return $mapper->getAdminParentCategories($categoryId, $lId);
+    }
+
+    /**
+     * Atualiza uma categoria e limpa o cache.
+     */
+    public function updateCategory(int $categoryId, array $data, ?int $storeId = null, ?int $languageId = null): bool
+    {
+        $sId = $storeId ?? $this->store_id;
+        $lId = $languageId ?? $this->language_id;
+        /** @var CategoryMapper $mapper */
+        $mapper = $this->mapperFactory->get(CategoryMapper::class);
+
+        $success = $mapper->updateCategory($categoryId, $data, $sId, $lId);
+        if ($success) {
+            $this->clearCategoryCaches($categoryId, $sId, $lId);
+        }
+
+        return $success;
+    }
+
+    /**
+     * Exclui uma categoria e limpa o cache.
+     */
+    public function deleteCategory(int $categoryId, ?int $storeId = null, ?int $languageId = null): bool
+    {
+        $sId = $storeId ?? $this->store_id;
+        $lId = $languageId ?? $this->language_id;
+        /** @var CategoryMapper $mapper */
+        $mapper = $this->mapperFactory->get(CategoryMapper::class);
+
+        $success = $mapper->deleteCategory($categoryId);
+        if ($success) {
+            $this->clearCategoryCaches($categoryId, $sId, $lId);
+        }
+
+        return $success;
+    }
+
+    /**
+     * Retorna a lista paginada e filtrada de categorias para a tabela da listagem admin.
+     */
+    public function getCategoriesPaginated(array $filters, int $page = 1, int $limit = 15, ?int $languageId = null): array
+    {
+        $lId = $languageId ?? $this->language_id;
+        /** @var CategoryMapper $mapper */
+        $mapper = $this->mapperFactory->get(CategoryMapper::class);
+        return $mapper->getAdminCategoriesPaginated($filters, $page, $limit, $lId);
+    }
+
     // Implementações obrigatórias da BaseRepositoryInterface
     public function find(int $id): ?InterfaceEntity { return null; }
     public function findAll(): array { return []; }

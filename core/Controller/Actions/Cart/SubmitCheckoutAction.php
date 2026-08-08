@@ -106,7 +106,7 @@ class SubmitCheckoutAction implements ActionInterface
             $zone = $zoneRepository->findOneBy(['isoCode' => $zoneCode]);
             if ($zone) {
                 $paymentZoneId = $zone->getId();
-                $paymentCountryId = $zone->getCountryId();
+                $paymentCountryId = method_exists($zone, 'getCountryId') ? $zone->getCountryId() : (int)($zone['country_id'] ?? $zone['countryId'] ?? $paymentCountryId);
             }
         }
 
@@ -141,7 +141,7 @@ class SubmitCheckoutAction implements ActionInterface
             $zone = $zoneRepository->findOneBy(['isoCode' => $zoneCode]);
             if ($zone) {
                 $shippingZoneId = $zone->getId();
-                $shippingCountryId = $zone->getCountryId();
+                $shippingCountryId = method_exists($zone, 'getCountryId') ? $zone->getCountryId() : (int)($zone['country_id'] ?? $zone['countryId'] ?? $shippingCountryId);
             }
         }
 

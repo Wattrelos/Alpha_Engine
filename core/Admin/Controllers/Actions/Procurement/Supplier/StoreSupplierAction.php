@@ -68,9 +68,9 @@ class StoreSupplierAction extends BaseController implements \Alpha\Controller\Ac
         if (!empty($errors)) {
             $countries = $mapperFactory->get(GeoCountryMapper::class)->getCountries();
             
-            $conn = \Alpha\Model\DataAccessObject\ConnectionDB::getInstance()->getConnection();
-            $stmtManufacturers = $conn->query("SELECT id, name FROM `" . DB_PREFIX . "manufacturer` ORDER BY name ASC");
-            $manufacturers = $stmtManufacturers->fetchAll(\PDO::FETCH_ASSOC);
+            /** @var \Alpha\Model\Domain\Repositories\ManufacturerRepository $manufacturerRepo */
+            $manufacturerRepo = $this->getRepository(\Alpha\Model\Domain\Repositories\ManufacturerRepository::class);
+            $manufacturers = $manufacturerRepo->getManufacturers();
 
             $html = $this->getTemplate('admin/catalog/supplier/create.html.twig', [
                 'title'         => 'Adicionar Fornecedor | Painel Administrativo',
@@ -127,9 +127,9 @@ class StoreSupplierAction extends BaseController implements \Alpha\Controller\Ac
         } catch (\Throwable $e) {
             $countries = $mapperFactory->get(GeoCountryMapper::class)->getCountries();
             
-            $conn = \Alpha\Model\DataAccessObject\ConnectionDB::getInstance()->getConnection();
-            $stmtManufacturers = $conn->query("SELECT id, name FROM `" . DB_PREFIX . "manufacturer` ORDER BY name ASC");
-            $manufacturers = $stmtManufacturers->fetchAll(\PDO::FETCH_ASSOC);
+            /** @var \Alpha\Model\Domain\Repositories\ManufacturerRepository $manufacturerRepo */
+            $manufacturerRepo = $this->getRepository(\Alpha\Model\Domain\Repositories\ManufacturerRepository::class);
+            $manufacturers = $manufacturerRepo->getManufacturers();
 
             $html = $this->getTemplate('admin/catalog/supplier/create.html.twig', [
                 'title'         => 'Adicionar Fornecedor | Painel Administrativo',
