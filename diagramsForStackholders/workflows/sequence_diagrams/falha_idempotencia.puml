@@ -12,34 +12,34 @@ skinparam legend {
 
 ' --- ETIQUETA DE IDENTIFICAÇÃO DO BLUEPRINT ---
 legend top left
-  |= <size:14>**Blueprint: Diagrama de Sequência - Idempotência & Mensageria**</size> |= <size:14>**Padrões & Mecanismos Arquiteturais**</size> |
-  | **Tipo:** Artefato de Software / Comportamental (UML 2.5 Sequence) | **Idempotência Distribuição:** Lock atômico via Redis `SETNX` |
-  | **Versão:** v1.0.4 • **Data:** 05/08/2026 | **Prevenção de Duplicidade:** Proteção de Checkout (Double-Click) |
-  | **Autor:** Josias da Conceição Sobrinho © 2026 | **Persistência ACID:** Transação isolada via `UnitOfWork` |
+  |= <size:14>**Blueprint: Diagrama de Sequência - Idempotência, Cache & Mensageria**</size> |= <size:14>**Padrões & Mecanismos Arquiteturais**</size> |
+  | **Tipo:** Artefato de Software / Comportamental (UML 2.5 Sequence) | **Idempotência Distribuída:** Lock atômico via Redis `SETNX` (300s TTL) |
+  | **Versão:** v1.1.0 • **Data:** 08/08/2026 | **Resiliência Arquitetural:** Fallback automático para `$_SESSION` PHP |
+  | **Autor:** Josias da Conceição Sobrinho © 2026 | **Persistência ACID & Cache:** Transação `UnitOfWork` + `CacheStrategy` |
   | **Licença:** MIT License (Open Source) | **Mensageria Assíncrona:** Evento `OrderCreatedEvent` + RabbitMQ |
-  | **Status:** <color:green>**Em desenvolvimento (95%). Sujeito a alterações**</color> | **Resposta Resiliente:** Ignora falhas de clique duplo no JS |
+  | **Status:** <color:green>**Implementado & Integrado (100%)**</color> | **UX Resiliente:** Descarte silencioso no Frontend JS |
   | <size:9><color:gray>Disponibilizado nos termos da licença MIT. Permissão livre concedida.</color></size> | |
 endlegend
 
 autonumber "<b>[00]"
 
-header "Material Didático: Controle de Concorrência, Idempotência & Prevenção de Duplicidade"
-title "Fluxo de Idempotência com Redis SETNX, Unit of Work e Mensageria (RabbitMQ)"
+header "Material Didático: Controle de Concorrência, Idempotência, Cache Redis & Prevenção de Duplicidade"
+title "Fluxo Didático de Idempotência com Redis SETNX, Fallback de Sessão, Unit of Work e Mensageria (RabbitMQ)"
 
 box "Frontend / Web" #E0F7FA
     actor "Cliente (Clique Duplo)" as Cliente
     participant "Frontend App (JS)" as Front
 end box
 
-box "Backend / Controle de Concorrência" #FFF9C4
-    participant "Slim Action (Checkout)" as Action
+box "Backend / Controle de Concorrência & Cache" #FFF9C4
+    participant "Slim Action (SubmitCheckout)" as Action
     participant "IdempotencyService\n(Serviço de Trava)" as Domain
-    database "Redis Cache\n(Lock Distribúdo)" as Cache
+    database "Redis Cache\n(Lock Distribuído & Sessões)" as Cache
     participant "EventDispatcher & Events\n(Eventos de Domínio)" as Events
 end box
 
 box "Persistência Transacional & Fila" #FFEBEE
-    participant "UnitOfWork & Repositories\n(Transação ACID)" as UoW
+    participant "UnitOfWork & Repositories\n(Transação ACID & CacheStrategy)" as UoW
     database "MySQL Database\n(Persistência Física)" as DB
     participant "RabbitMQ Fila\n(Broker de Mensagens)" as Queue
     participant "Worker CLI Consumer\n(Processamento Assíncrono)" as Worker
@@ -50,10 +50,11 @@ note over Cliente, Worker #F1F8E9
   <b>O que é Idempotência e por que é vital no E-commerce?</b>
   Idempotência garante que uma requisição executada repetidamente produza o mesmo resultado final sem duplicar efeitos colaterais.
   <b>O Problema do Clique Duplo (Double-Click):</b> Impaciente, o usuário clica duas vezes no botão "Finalizar Compra".
-  <b>A Solução Arquitetural:</b>
-  1. O Frontend gera um token único (UUID) enviado no cabeçalho `X-Idempotency-Key`.
-  2. O Backend obtém uma trava atômica no <b>Redis (SETNX)</b> antes de abrir transação.
-  3. A segunda requisição bate no Redis, detecta o Lock e é abortada <b>sem tocar no banco MySQL ou enfileirar no RabbitMQ</b>.
+  <b>A Solução Arquitetural Implementada:</b>
+  1. O Frontend gera um token único (UUID) no cabeçalho `X-Idempotency-Key`.
+  2. O Backend valida a trava atômica no <b>Redis Cache (SETNX)</b> antes de abrir qualquer transação no banco.
+  3. <b>Mecanismo de Resiliência:</b> Se o Redis estiver offline, o sistema faz fallback automático para a sessão PHP (`$_SESSION['idempotency_keys']`).
+  4. A segunda requisição rápida detecta o Lock ativo e é rejeitada com <b>HTTP 422/429 sem tocar no MySQL ou RabbitMQ</b>.
 end note
 
 ' ═════════════════════════════════════════════════════════════════════════════
@@ -67,24 +68,24 @@ activate Front
     Front -> Action : HTTP POST /{lang}/checkout [Header X-Idempotency-Key: 9b1deb4d]
     activate Action
         
-        note over Action, Domain: **Verificação de Trava Atômica:**\nVerifica no Redis se a chave de idempotência já está bloqueada.
-        Action -> Domain : acquireLock("9b1deb4d")
+        note over Action, Domain: **Verificação de Trava Atômica no Redis (com Fallback):**\nTenta adquirir o lock atômico no Redis por 300 segundos.
+        Action -> Domain : acquireLock("9b1deb4d", ttl = 300)
         activate Domain
-            Domain -> Cache : SETNX("idempotency:9b1deb4d", "PROCESSING", expire: 300)
+            Domain -> Cache : SET "idempotency:9b1deb4d" "processing" NX EX 300
             activate Cache
-                Cache --> Domain : 1 (OK - Lock Adquirido com Sucesso)
+                Cache --> Domain : "OK" (Lock Adquirido com Sucesso)
             deactivate Cache
             Domain --> Action : Lock Concedido (Segue o fluxo)
         deactivate Domain
         
-        ' ESCRITA NO BANCO VIA UNIT OF WORK
-        note over Action, UoW: **Transação ACID (Unit of Work):**\nO backend inicia a gravação transacional do pedido no MySQL.
+        ' ESCRITA NO BANCO VIA UNIT OF WORK E CACHE STRATEGY
+        note over Action, UoW: **Transação ACID & Cache Invalidation:**\nO backend inicia a gravação do pedido no MySQL via UnitOfWork.
         Action -> UoW : transaction(callback)
         activate UoW
             UoW -> DB : BEGIN TRANSACTION
             UoW -> DB : INSERT INTO tbkk_order (id, total, status_id) VALUES (...)
             activate DB
-            
+
 ' ═════════════════════════════════════════════════════════════════════════════
 ' PASSO 2: SEGUNDA REQUISIÇÃO SIMULTÂNEA (CLIQUE DUPLO BLOQUEADO)
 ' ═════════════════════════════════════════════════════════════════════════════
@@ -93,12 +94,12 @@ note over Cliente, Front #FFEBEE: **[Passo 2: O Segundo Clique (Double-Click)]**
 Cliente -> Front : Clique 2 (Segundo clique rápido)
     Front -> Action : HTTP POST /{lang}/checkout [Mesmo Header X-Idempotency-Key: 9b1deb4d]
     activate Action
-        Action -> Domain : acquireLock("9b1deb4d")
+        Action -> Domain : acquireLock("9b1deb4d", ttl = 300)
         activate Domain
-            Domain -> Cache : SETNX("idempotency:9b1deb4d", "PROCESSING")
+            Domain -> Cache : SET "idempotency:9b1deb4d" "processing" NX EX 300
             activate Cache
-                note right of Cache: **Chave já Existe!** O Redis nega o Lock.\nRetorna 0 para a segunda chamada.
-                Cache --> Domain : 0 (ERR - Locked)
+                note right of Cache: **Chave já Existe!** O Redis nega o Lock.\n(Se Redis offline -> detecta em $_SESSION['idempotency_keys']).
+                Cache --> Domain : NULL / false (ERR - Locked)
             deactivate Cache
             
             create IdempotencyException
@@ -107,7 +108,7 @@ Cliente -> Front : Clique 2 (Segundo clique rápido)
         deactivate Domain
         
         note over Action, Front #FFEBEE: **Bloqueio Imediato sem Efeitos Colaterais:**\nNenhum SQL é executado no MySQL e NENHUMA mensagem é enviada ao RabbitMQ.
-        Action --> Front : HTTP 429 Too Many Requests {error: "DUPLICATE_REQUEST", message: "Processando..."}
+        Action --> Front : HTTP 422 Unprocessable Entity / 429 Too Many Requests\n{error: "DUPLICATE_REQUEST", message: "Processando..."}
     deactivate Action
 
 ' ═════════════════════════════════════════════════════════════════════════════
@@ -116,6 +117,13 @@ Cliente -> Front : Clique 2 (Segundo clique rápido)
             DB --> UoW : Registros Inseridos
             deactivate DB
             UoW -> DB : COMMIT TRANSACTION
+            
+            note over UoW, Cache: **Atualização / Invalidação de Cache:**\nLimpa caches obsoletos de carrinho e pedidos via CacheStrategy.
+            UoW -> Cache : Invalida cache de carrinho do usuário
+            activate Cache
+                Cache --> UoW : OK
+            deactivate Cache
+            
             UoW --> Action : Transação Finalizada (Pedido #1050 Criado)
         deactivate UoW
         
@@ -142,10 +150,11 @@ Cliente -> Front : Clique 2 (Segundo clique rápido)
     deactivate Worker
 
     ' RESOLUÇÃO NO FRONTEND
-    note over Front #E8F5E9: **Resolução Inteligente no Cliente (JS):**\n1. O Frontend intercepta o HTTP 429 da requisição duplicada e a descarta em silêncio.\n2. O Frontend recebe o HTTP 201 Created da requisição original.\n3. O usuário é redirecionado para a tela de Sucesso com o Pedido #1050.
-    Front -> Front : Descarta resposta HTTP 429 da duplicada
+    note over Front #E8F5E9: **Resolução Inteligente no Cliente (JS):**\n1. O Frontend intercepta o HTTP 422/429 da requisição duplicada e a descarta em silêncio.\n2. O Frontend recebe o HTTP 201 Created da requisição original.\n3. O usuário é redirecionado para a tela de Sucesso com o Pedido #1050.
+    Front -> Front : Descarta resposta HTTP 422/429 da requisição duplicada
     Front -> Front : Processa resposta HTTP 201 original
     Front -> Cliente : Redireciona para /checkout/sucesso?order_id=1050
 deactivate Front
 
 @enduml
+

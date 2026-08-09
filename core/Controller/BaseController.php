@@ -41,9 +41,13 @@ abstract class BaseController
         // Inicia o renderizador de view blindado contra WSOD
         $this->viewRenderer = new ViewRenderer($container);
 
-        // Garante que o LayoutRepository esteja disponível no container
+        // Garante que o LayoutRepository esteja disponível no container se o container suportar binding dinâmico
         if (!$container->has('layout')) {
-            $container->bind('layout', $this->getRepository(\Alpha\Model\Domain\Repositories\LayoutRepository::class));
+            if (method_exists($container, 'bind')) {
+                $container->bind('layout', $this->getRepository(\Alpha\Model\Domain\Repositories\LayoutRepository::class));
+            } elseif (method_exists($container, 'set')) {
+                $container->set('layout', $this->getRepository(\Alpha\Model\Domain\Repositories\LayoutRepository::class));
+            }
         }
     }
 
@@ -208,7 +212,9 @@ abstract class BaseController
 
         return $this->remember($cacheKey, function () use ($route, $position) {
             /** @var \Alpha\Model\Domain\Repositories\LayoutRepository $layoutRepo */
-            $layoutRepo    = $this->container->has('layout') ? $this->container->get('layout') : null;
+            $layoutRepo    = $this->container->has('layout') 
+                ? $this->container->get('layout') 
+                : $this->getRepository(\Alpha\Model\Domain\Repositories\LayoutRepository::class);
             $layoutModules = $layoutRepo ? $layoutRepo->getModulesForRoute($route) : [];
             $modules       = $layoutModules[$position] ?? [];
 

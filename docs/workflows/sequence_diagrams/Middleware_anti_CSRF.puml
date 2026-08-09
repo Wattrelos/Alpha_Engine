@@ -1,0 +1,129 @@
+@startuml "Middleware Anti-CSRF Flow"
+autonumber "<b>00:"
+
+header "Alpha Engine Security Workflow: Proteção Anti-CSRF (Cross-Site Request Forgery)"
+title "Fluxo de Proteção Anti-CSRF com CsrfGuardMiddleware, Twig & Slim Guard"
+
+box "Frontend / Cliente" #E0F2FE
+    actor "Usuário / Atacante" as User
+    participant "Navegador / Frontend App\n(HTML Form ou JS AJAX)" as Front
+end box
+
+box "Segurança & Middleware Layer" #FFF9C4
+    participant "CsrfGuardMiddleware" as Middleware
+    participant "Slim\\Csrf\\Guard" as Guard
+    participant "Twig Environment" as Twig
+    database "PHP Session\n($_SESSION['csrf'])" as Session
+end box
+
+box "Aplicação & Persistência" #F3F4F6
+    participant "Slim Action\n(Controller)" as Action
+    database "MySQL Database" as DB
+end box
+
+' =============================================================================
+' FLUXO 1: CARREGAMENTO DE PÁGINA (GET) - GERAÇÃO E INJEÇÃO DO TOKEN
+' =============================================================================
+== 1. Geração de Tokens Anti-CSRF (Requisição GET) ==
+
+User -> Front : Acessa formulário (ex: GET /checkout ou GET /devolucoes/102)
+activate Front
+    Front -> Middleware : HTTP GET /devolucoes/102
+    activate Middleware
+        Middleware -> Session : Garante session_start() e valida $_SESSION['csrf']
+        activate Session
+            Session --> Middleware : Session Ativa
+        deactivate Session
+        
+        Middleware -> Guard : Inicializa Slim\\Csrf\\Guard com modo persistente
+        activate Guard
+            Guard -> Guard : Gera tokenName, tokenValue & pares de chaves
+            Guard --> Middleware : Attributes (csrf_name, csrf_value)
+        deactivate Guard
+        
+        Middleware -> Twig : addGlobal('csrf', ['name', 'value', 'keys'])
+        activate Twig
+            Twig --> Middleware : Injetado nas variáveis globais do Twig
+        deactivate Twig
+        
+        Middleware -> Action : Executa Handler
+        activate Action
+            Action -> Twig : render('page.twig')
+            activate Twig
+                Twig --> Action : HTML renderizado com inputs ocultos & meta-tags CSRF
+            deactivate Twig
+            Action --> Middleware : Response HTTP 200 OK (com formulário + CSRF tokens)
+        deactivate Action
+        
+        Middleware --> Front : HTTP 200 OK (HTML / Meta-tags CSRF prontas)
+    deactivate Middleware
+    Front -> Front : Renderiza formulário com <input type="hidden"> e <meta name="csrf-*">
+deactivate Front
+
+' =============================================================================
+' FLUXO 2: SUBMISSÃO VÁLIDA (POST COM TOKEN CORRETO)
+' =============================================================================
+== 2. Submissão Válida (Token CSRF Válido) ==
+
+User -> Front : Submete formulário (Clique em "Salvar")
+activate Front
+    Front -> Middleware : HTTP POST /devolucoes/102/status\n[Payload contendo csrf_name & csrf_value]
+    activate Middleware
+        Middleware -> Guard : process(Request, Handler)
+        activate Guard
+            Guard -> Session : Compara tokens do POST com $_SESSION['csrf']
+            activate Session
+                Session --> Guard : Token Válido!
+            deactivate Session
+            
+            Guard -> Action : Delega para o Next Handler (Slim Action)
+            activate Action
+                Action -> DB : Executa operações de persistência
+                activate DB
+                    DB --> Action : Sucesso na gravação
+                deactivate DB
+                Action --> Guard : Response HTTP 200/302 Success
+            deactivate Action
+            
+            Guard --> Middleware : Response OK
+        deactivate Guard
+        Middleware --> Front : HTTP 200 OK / 302 Redirect
+    deactivate Middleware
+deactivate Front
+
+' =============================================================================
+' FLUXO 3: SUBMISSÃO INVÁLIDA OU ATAQUE CSRF (REJEIÇÃO 400)
+' =============================================================================
+== 3. Submissão Rejeitada (Ataque CSRF ou Sessão Expirada) ==
+
+User -> Front : Submissão sem token válido (ou tentativa de CSRF por site malicioso)
+activate Front
+    Front -> Middleware : HTTP POST /devolucoes/102/status\n[Token ausente, adulterado ou de outra sessão]
+    activate Middleware
+        Middleware -> Guard : process(Request, Handler)
+        activate Guard
+            Guard -> Session : Valida tokens com $_SESSION['csrf']
+            activate Session
+                Session --> Guard : Token Inválido / Inexistente!
+            deactivate Session
+            
+            ' DISPARO DO FAILURE HANDLER CUSTOMIZADO
+            Guard -> Middleware : Executa Custom FailureHandler
+            activate Middleware
+                
+                alt Requisição AJAX / JSON (Header X-Requested-With ou Accept: application/json)
+                    Middleware --> Front : HTTP 400 Bad Request {\n  "error": {\n    "warning": "Sua sessão expirou ou o token de segurança é inválido. Por favor, recarregue a página."\n  }\n}
+                else Formulário HTML Tradicional
+                    Middleware --> Front : HTTP 400 Bad Request\n(Página HTML estilizada "400 - Requisição Rejeitada (CSRF)")
+                end
+                
+            deactivate Middleware
+        deactivate Guard
+        
+        note over Middleware, Action #FFCDD2 : **Proteção Total da Aplicação:**\nA requisição é abortada **ANTES** de alcançar o Slim Action, Controller ou MySQL!\nNenhum efeito colateral é produzido no banco de dados.
+    deactivate Middleware
+    
+    Front -> User : Exibe mensagem de erro de segurança / Solicita recarregar página
+deactivate Front
+
+@enduml

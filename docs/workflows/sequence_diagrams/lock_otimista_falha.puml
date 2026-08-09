@@ -1,53 +1,101 @@
 @startuml "Optimistic Lock Failure Flow"
 autonumber "<b>00:"
 
-box "Frontend / Client"
+header "Alpha Engine Workflow: Concurrency Control & Optimistic Locking Failure"
+title "Optimistic Lock Failure Flow with Redis Session & Cache Invalidation"
+
+box "Frontend / Client" #E0F2FE
     actor "Admin B (Tela Desatualizada)" as Admin
-    participant "Frontend App (JS)" as Front
+    participant "Frontend App (JS AJAX)" as Front
 end box
 
-box "Backend / Infrastructure"
-    participant "Slim Action" as Action
-    participant "Unit Of Work" as UoW
-    participant "Data Mapper" as Mapper
-    database "Database" as DB
+box "Security & Middleware Layer" #FFF9C4
+    participant "AdminSessionMiddleware" as Middleware
+    database "Redis Cache\n(Session & Cache)" as Redis
+end box
+
+box "Application & Domain Layer" #F3F4F6
+    participant "UpdateReturnStatusAction\n(Slim Action)" as Action
+    participant "OrderReturnRepository" as Repo
+    participant "UnitOfWork" as UoW
+    participant "OrderReturnMapper" as Mapper
+    database "MySQL Database" as DB
 end box
 
 Admin -> Front : Clica em "Recusar Devolução"
 activate Front
     ' Envia a requisição contendo os dados e a versão antiga (versão 1)
-    Front -> Action : HTTP POST /LPDHED2dC7Gjrg2b/devolucoes/102/status {version: 1}
-    activate Action
+    Front -> Middleware : HTTP POST /LPDHED2dC7Gjrg2b/devolucoes/102/status {version: 1, return_status_id: 5}
+    activate Middleware
         
-        Action -> UoW : commit()
-        activate UoW
-            UoW -> DB : BEGIN TRANSACTION
-            UoW -> Mapper : mapToDatabase(ProductReturn)
-            activate Mapper
-                
-                ' O banco tenta atualizar onde version = 1, mas o Admin A já mudou para 2
-                Mapper -> DB : UPDATE oc_product_return SET return_status_id=5, version=3 WHERE id=102 AND version=1
-                activate DB
-                    DB --> Mapper : Rows Affected: 0 (Falha)
-                deactivate DB
-                
-                ' Mapper detecta 0 linhas afetadas e lança uma exceção de concorrência
-                Mapper --> UoW : Throws ConcurrencyException
-            deactivate Mapper
+        ' Validação da Sessão do Administrador no Redis
+        Middleware -> Redis : GET "sessao:admin:{sessionId}"
+        activate Redis
+            Redis --> Middleware : Session Active Data (TTL 7200s extended)
+        deactivate Redis
+        
+        Middleware -> Action : __invoke(Request, Response, args)
+        activate Action
             
-            UoW -> DB : ROLLBACK TRANSACTION
-            UoW --> Action : Throws ConcurrencyException
-        deactivate UoW
-        
-        ' Backend captura o erro e responde com HTTP 409 Conflict + Dados atuais
-        Action --> Front : HTTP 409 Conflict { error: "DATA_STALE", current_data: { status_name: "Aprovado", version: 2 } }
-    deactivate Action
+            Action -> Repo : find(102)
+            activate Repo
+                Repo -> DB : SELECT * FROM agsc_product_return WHERE id = 102
+                activate DB
+                    DB --> Repo : OrderReturn entity (version = 1 in memory)
+                deactivate DB
+                Repo --> Action : OrderReturn
+            deactivate Repo
 
-    ' TRATAMENTO NO FRONTEND
-    Front -> Front : Detecta HTTP 409
-    Front -> Admin : Exibe Modal: "Dados desatualizados. Outro usuário já modificou este registro."
-    
-    ' Frontend atualiza a tela automaticamente com os dados novos trazidos no payload do erro
-    Front -> Front : Atualiza Estado Local (Status: Aprovado, Versão: 2)
+            Action -> Action : setVersion(1) & setReturnStatusId(5)
+            
+            Action -> UoW : transaction(callback)
+            activate UoW
+                UoW -> DB : BEGIN TRANSACTION
+                UoW -> Mapper : save(OrderReturn)
+                activate Mapper
+                    
+                    ' O banco tenta atualizar onde version = 1, mas outro admin (Admin A) já alterou para version = 2
+                    Mapper -> DB : UPDATE agsc_product_return SET return_status_id=5, version=2, date_modified=NOW() WHERE id=102 AND version=1
+                    activate DB
+                        DB --> Mapper : Rows Affected: 0 (Nenhum registro modificado)
+                    deactivate DB
+                    
+                    ' DataMapper detecta 0 linhas afetadas e lança ConcurrencyException
+                    Mapper --> UoW : throw new ConcurrencyException("Registro alterado por outro usuário")
+                deactivate Mapper
+                
+                UoW -> DB : ROLLBACK TRANSACTION
+                UoW --> Action : Propaga ConcurrencyException
+            deactivate UoW
+            
+            ' TRATAMENTO DE ERRO DE CONCORRÊNCIA E INVALIDAÇÃO DE CACHE
+            note over Action, Redis : **Tratamento de Exceção & Invalidação de Cache:**\n1. Clears DAO Identity Map\n2. Invalidates stale Redis / Repository Cache\n3. Queries fresh data directly from MySQL DB
+            
+            Action -> Action : DataAccessObject::clearIdentityMap()
+            Action -> Redis : DEL "cache:product_return:102" / CacheStrategy::delete()
+            activate Redis
+                Redis --> Action : OK (Cache Invalidated)
+            deactivate Redis
+
+            Action -> Repo : find(102) [Fresh Query]
+            activate Repo
+                Repo -> DB : SELECT * FROM agsc_product_return WHERE id = 102
+                activate DB
+                    DB --> Repo : Fresh OrderReturn entity (version = 2, status_id = 2 "Aprovado")
+                deactivate DB
+                Repo --> Action : Fresh OrderReturn
+            deactivate Repo
+            
+            ' Resposta de erro 409 Conflict com payload atualizado
+            Action --> Middleware : HTTP 409 Conflict {\n  error: "DATA_STALE",\n  current_data: {\n    version: 2,\n    status_name: "Aprovado",\n    return_status_id: 2,\n    date_modified: "08/08/2026 18:30"\n  }\n}
+        deactivate Action
+        
+        Middleware --> Front : HTTP 409 Conflict (Payload JSON)
+    deactivate Middleware
+
+    ' TRATAMENTO REATIVO NO FRONTEND
+    Front -> Front : Intercepta HTTP 409 Conflict
+    Front -> Admin : Exibe Modal: "Dados Desatualizados. Outro usuário modificou este registro."
+    Front -> Front : Sincroniza Estado Local (Status: Aprovado, Versão oculta atualizada para 2)
 deactivate Front
 @enduml

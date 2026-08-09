@@ -1,0 +1,215 @@
+' ═════════════════════════════════════════════════════════════════════════════
+' Diagrama de Classes de Domínio e Persistência focado no Agregado de Domínio Order / Grafo de Persistência
+' descreve a estrutura estática do sistema, exibindo:
+' - As Classes: Entidades (Order, OrderProduct, OrderHistory), Mapeadores (OrderMapper), Repositórios (OrderRepository), DTOs (OrderDataDTO) e Utilitários de Transação (UnitOfWork).
+' - Os Atributos e Métodos: Tipos de dados, qualificadores de acesso (+, -, #) e comportamentos.
+' - Os Relacionamentos UML:
+'  - Composição (*--): O Pedido possui itens (OrderProduct) e histórico (OrderHistory) que não existem sem o pedido.
+'  - Agregação (o--): O Pedido referencia um Cliente (Customer) ou Devolução (OrderReturn).
+'  - Dependência (..>): O OrderRepository consome OrderDataDTO para gravação.
+'  - Herança (--|>): Entidades estendem BaseEntity e OrderMapper estende BaseMapper.
+'  - Realização de Interface (..|>): OrderEmailObserver implementa OrderObserverInterface.
+' ═════════════════════════════════════════════════════════════════════════════
+
+@startuml GrafoPersistenciaPedido
+skinparam backgroundColor #FFFFFF
+skinparam shadowing false
+skinparam classAttributeIconSize 0
+skinparam packageStyle rectangle
+
+header Alpha Engine — Arquitetura de Persistência do Pedido
+title Grafo de Persistência e Entidades do Agregado Pedido (Order Aggregate)
+
+' ═════════════════════════════════════════════════════════════════════════════
+' CAMADA DE CONTROLE E DTO
+' ═════════════════════════════════════════════════════════════════════════════
+package "Camada de Aplicação & DTO" #e1f5fe {
+    class OrderDataDTO <<DTO - Data Transfer Object>> {
+        - storeId: int
+        - customerId: int
+        - firstname: string
+        - lastname: string
+        - email: string
+        - total: float
+        - products: array
+        - totals: array
+        + get(key: string, default: mixed): mixed
+        + toArray(): array
+    }
+}
+
+' ═════════════════════════════════════════════════════════════════════════════
+' CAMADA DE DOMÍNIO E AGREGADO DO PEDIDO (DDD)
+' ═════════════════════════════════════════════════════════════════════════════
+package "Camada de Domínio (Order Aggregate Root)" #e8f5e9 {
+    abstract class BaseEntity {
+        # id: ?int
+        + getId(): ?int
+        + setId(id: int): void
+    }
+
+    class Order <<Aggregate Root>> {
+        - storeId: int
+        - customerId: int
+        - firstname: string
+        - lastname: string
+        - email: string
+        - total: float
+        - orderStatusId: int
+        - paymentMethod: string
+        - shippingMethod: string
+        - dateAdded: string
+        + getCustomerId(): int
+        + getTotal(): float
+        + getOrderStatusId(): int
+        + setOrderStatusId(statusId: int): void
+    }
+
+    class OrderProduct <<Entity>> {
+        - orderId: int
+        - productId: int
+        - name: string
+        - model: string
+        - quantity: int
+        - price: float
+        - total: float
+        + getProductId(): int
+        + getQuantity(): int
+        + getPrice(): float
+    }
+
+    class OrderOption <<Entity>> {
+        - orderId: int
+        - orderProductId: int
+        - productOptionId: int
+        - productOptionValueId: int
+        - name: string
+        - value: string
+        + getName(): string
+        + getValue(): string
+    }
+
+    class OrderHistory <<Entity / Audit Log>> {
+        - orderId: int
+        - orderStatusId: int
+        - notify: bool
+        - comment: string
+        - dateAdded: string
+        + getComment(): string
+    }
+
+    class OrderTotal <<Entity / Calculation>> {
+        - orderId: int
+        - code: string
+        - title: string
+        - value: float
+        - sortOrder: int
+        + getCode(): string
+        + getValue(): float
+    }
+
+    class OrderReturn <<Entity>> {
+        - orderId: int
+        - customerId: int
+        - product: string
+        - model: string
+        - returnStatusId: int
+        + getReturnStatusId(): int
+    }
+}
+
+' ═════════════════════════════════════════════════════════════════════════════
+' CAMADA DE REPOSITÓRIO E OBSERVERS
+' ═════════════════════════════════════════════════════════════════════════════
+package "Camada de Repositório & Eventos (DDD / GoF)" #f3e5f5 {
+    interface BaseRepositoryInterface {
+        + find(id: int): ?InterfaceEntity
+        + findAll(): array
+    }
+
+    class OrderRepository <<Domain Repository>> {
+        - unitOfWork: UnitOfWork
+        - mapperClass: string
+        + save(dto: OrderDataDTO): int
+        + confirm(orderId: int, orderStatusId: int, comment: string, notify: bool): void
+        + getOrder(orderId: int): array
+        + getHistories(orderId: int): array
+    }
+
+    interface OrderObserverInterface <<Observer Pattern>> {
+        + onOrderCreated(orderId: int): void
+        + onOrderStatusUpdated(orderId: int, statusId: int): void
+    }
+
+    class OrderEmailObserver <<Concrete Observer>> {
+        - mailer: MailerService
+        + onOrderCreated(orderId: int): void
+        + onOrderStatusUpdated(orderId: int, statusId: int): void
+    }
+}
+
+' ═════════════════════════════════════════════════════════════════════════════
+' CAMADA DE INFRAESTRUTURA DE PERSISTÊNCIA & TRANSAÇÃO (ACID)
+' ═════════════════════════════════════════════════════════════════════════════
+package "Infraestrutura de Persistência (Data Mapper & DAO)" #fff3e0 {
+    abstract class BaseMapper {
+        # dao: DataAccessObject
+        # tableName: string
+        + save(entity: InterfaceEntity): ?int
+    }
+
+    class OrderMapper <<Data Mapper Pattern>> {
+        # tableName: string = "order"
+        + insert(dto: OrderDataDTO): int
+        + addHistory(orderId: int, statusId: int, comment: string, notify: bool): void
+        + getOrderArray(orderId: int): array
+    }
+
+    class UnitOfWork <<Transaction Handler / ACID>> {
+        - db: ConnectionDB
+        + transaction(callback: callable): mixed
+        + commit(): void
+        + rollback(): void
+    }
+
+    class DataAccessObject <<DAO>> {
+        + executeQuery(query: QueryBuilder): array
+        + executeUpdate(sql: string, params: array): bool
+    }
+}
+
+' ═════════════════════════════════════════════════════════════════════════════
+' RELACIONAMENTOS DO GRAFO
+' ═════════════════════════════════════════════════════════════════════════════
+
+' Herança
+Order --|> BaseEntity
+OrderProduct --|> BaseEntity
+OrderOption --|> BaseEntity
+OrderHistory --|> BaseEntity
+OrderTotal --|> BaseEntity
+OrderReturn --|> BaseEntity
+OrderMapper --|> BaseMapper
+OrderRepository ..|> BaseRepositoryInterface
+OrderEmailObserver ..|> OrderObserverInterface
+
+' Composição do Agregado Pedido (Order)
+Order "1" *-- "1..*" OrderProduct : "composto por (itens)"
+OrderProduct "1" *-- "0..*" OrderOption : "possui (variantes)"
+Order "1" *-- "1..*" OrderTotal : "calculado por (totais/frete)"
+Order "1" *-- "0..*" OrderHistory : "auditado por (histórico)"
+Order "1" o-- "0..*" OrderReturn : "origina (devoluções)"
+
+' Fluxo de Persistência e Transação
+OrderRepository ..> OrderDataDTO : "recebe no checkout"
+OrderRepository --> OrderMapper : "delega SQL/hidratação"
+OrderRepository --> UnitOfWork : "garante atomicidade (ACID)"
+OrderRepository --> OrderObserverInterface : "dispara eventos pós-gravação"
+OrderMapper --> DataAccessObject : "executa via DAO"
+
+@enduml
+
+'Principais Destaques da Arquitetura Mapeada:
+'Agregado Pedido (Order Aggregate Root): Representa a raiz de consistência do domínio. Itens (OrderProduct) e histórico (OrderHistory) têm ciclo de vida dependente do pedido (Composição *--).
+'Transação ACID via UnitOfWork: O OrderRepository garante que a gravação do pedido, baixa de estoque e inclusão no histórico ocorram de forma atômica.
+'Isolamento via Data Mapper: OrderMapper converte consultas relacionais do MySQL em instâncias/estruturas sem acoplar regras de banco às regras de negócio.
