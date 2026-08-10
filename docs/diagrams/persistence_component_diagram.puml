@@ -1,0 +1,112 @@
+@startuml "Persistence Layer & Custom ORM Component Diagram"
+
+<style>
+componentDiagram {
+    BackgroundColor #FFFFFF
+    BorderColor #334155
+    LineColor #475569
+    FontName "Inter", "Segoe UI", sans-serif
+    FontSize 12
+    
+    component {
+        BorderThickness 1.5
+        FontColor #1E293B
+        BackgroundColor #F8FAFC
+    }
+    package {
+        BackgroundColor #FFFFFF
+        BorderColor #94A3B8
+        FontColor #0F172A
+        FontStyle bold
+    }
+    database {
+        BackgroundColor #FEF3C7
+        BorderColor #D97706
+    }
+}
+</style>
+
+header Alpha Engine Infrastructure Architecture: Data Persistence Subsystem
+title Diagrama de Componentes da Camada de Persistência & ORM Customizado
+
+package "1. Camada de Fabrição & Repositórios (Domain Contracts)" #E0F2FE {
+    [RepositoryFactory] as RepoFactory <<Singleton / Factory>> #BAE6FD
+    [AbstractRepository] as BaseRepo <<Abstract Class>> #7DD3FC
+    [ProductRepository] as ProductRepo <<Repository>> #38BDF8
+    [OrderRepository] as OrderRepo <<Repository>> #38BDF8
+    [CartRepository] as CartRepo <<Repository>> #38BDF8
+}
+
+package "2. Mapeamento Objeto-Relacional & Data Mappers" #FFF9C4 {
+    [MapperFactory] as MapperFactory <<Singleton / Factory>> #FEF08A
+    [BaseMapper] as BaseMapper <<Abstract Class>> #FDE047
+    [ProductMapper] as ProductMapper <<Data Mapper>> #FACC15
+    [OrderMapper] as OrderMapper <<Data Mapper>> #FACC15
+    [CartMapper] as CartMapper <<Data Mapper>> #FACC15
+    [OrderEmailObserver] as EmailObserver <<Observer>> #FDE047
+}
+
+package "3. Core ORM, Hydration & Virtual Proxy" #DCFCE7 {
+    [DataAccessObject (DAO)] as DAO <<Data Access Object>> #86EFAC
+    [ProxyFactory] as ProxyFactory <<Proxy Generator>> #4ADE80
+    [EntityHydrator] as Hydrator <<Hydrator>> #4ADE80
+    [IdentityMap] as IdentityMap <<RAM Cache Map>> #22C55E
+    [QueryBuilder] as QB <<SQL Builder>> #16A34A
+}
+
+package "4. Gerenciamento de Transações & Cache Strategy" #FEE2E2 {
+    [UnitOfWork (UoW)] as UoW <<Transaction Manager>> #FCA5A5
+    [CacheStrategyInterface] as CacheInterface <<Interface>> #F87171
+    [FilesystemCacheStrategy] as FilesystemCache <<Cache Implementor>> #EF4444
+}
+
+package "5. Driver de Conexão & Armazenamento" #F3E8FF {
+    [ConnectionDB] as PDOConn <<PDO Singleton>> #D8B4FE
+    database "MySQL 8.0 Database" as MySQL #FEF3C7
+    database "FileSystem Cache\n(storage/cache/)" as StorageDisk #E2E8F0
+}
+
+' --- Relacionamentos e Conexões entre Componentes ---
+
+' Repositories
+RepoFactory --> ProductRepo : Resolve
+RepoFactory --> OrderRepo : Resolve
+RepoFactory --> CartRepo : Resolve
+
+ProductRepo --|> BaseRepo
+OrderRepo --|> BaseRepo
+CartRepo --|> BaseRepo
+
+BaseRepo --> MapperFactory : Solicita Mapper
+BaseRepo --> FilesystemCache : Consulta / Grava Cache
+
+' Mappers
+MapperFactory --> ProductMapper : Resolve
+MapperFactory --> OrderMapper : Resolve
+MapperFactory --> CartMapper : Resolve
+
+ProductMapper --|> BaseMapper
+OrderMapper --|> BaseMapper
+CartMapper --|> BaseMapper
+
+BaseMapper --> DAO : Envia chamadas de gravação/leitura
+OrderMapper --> EmailObserver : Dispara hooks pós-commit
+
+' Core ORM & DAO
+DAO --> QB : Monta queries SQL parametrizadas
+DAO --> IdentityMap : Previne N+1 Queries (RAM Cache)
+DAO --> ProxyFactory : Gera proxies para relacionamentos ManyToOne
+DAO --> Hydrator : Hidrata atributos das Entidades Ricas
+ProxyFactory --> StorageDisk : Grava classes Proxy compiladas (*.php)
+
+' Unit of Work & Transactions
+OrderRepo --> UoW : Registra alterações (registerNew / registerDirty)
+UoW --> DAO : Coordena transação ACID (start / commit / rollback)
+
+' Persistence Driver
+DAO --> PDOConn : Executa PDO Statements
+QB --> PDOConn : Retorna SQL seguro
+PDOConn --> MySQL : Leitura e Gravação no Banco de Dados
+FilesystemCache --> StorageDisk : Grava arquivos de cache serializados
+
+@enduml

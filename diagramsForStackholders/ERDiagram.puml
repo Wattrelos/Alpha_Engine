@@ -1,4 +1,4 @@
-@startuml EER_Diagram
+@startuml ER_Diagram
 ' Fundo branco em toda a folha
 skinparam backgroundColor #FFFFFF
 skinparam shadowing false
@@ -32,8 +32,8 @@ skinparam class {
     ArrowColor #555555
 }
 
-header Alpha Engine Domain Model
-title Enhanced Entity-Relationship (EER) Diagram for AI Agents
+header AgSonhos E-commerce Engine Domain Model
+title Enhanced Entity-Relationship (EER) Diagram
 
 package "Catalog Module" #FFF2CC {
     entity Product #FFF9E6 {

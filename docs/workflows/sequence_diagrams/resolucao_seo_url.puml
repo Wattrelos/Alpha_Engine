@@ -1,0 +1,85 @@
+@startuml "Resolução Dinâmica de SEO URLs & Cache"
+autonumber "<b>00:"
+
+header "Alpha Engine Architecture: Resolução de Rotas Amigáveis (SEO URLs) com Caching"
+title "Fluxo de Resolução Dinâmica de SEO URLs com SeoUrlRepository & FilesystemCacheStrategy"
+
+box "Cliente & Pipeline Middleware Slim 4" #E0F2FE
+    actor "Navegador / Usuário" as User
+    participant "Slim 4 Router" as Router
+    participant "LegacyRouteRedirectMiddleware" as Middleware
+end box
+
+box "Módulo SEO & Camada de Cache (Alpha Engine)" #FFF9C4
+    participant "SeoUrlRepository" as SeoRepo
+    participant "FilesystemCacheStrategy\n(storage/cache/)" as DiskCache
+end box
+
+box "Persistência SQL & Handler de Destino" #DCFCE7
+    database "MySQL Database\n(tbkk_seo_url)" as DB
+    participant "Slim Action Target\n(ex: ShowProductAction)" as TargetAction
+end box
+
+' =============================================================================
+' ETAPA 1: CAPTURA DA REQUISIÇÃO E VERIFICAÇÃO DE CACHE
+' =============================================================================
+== 1. Intercepção da URL Amigável e Consulta de Cache ==
+
+User -> Router : HTTP GET /smartphones/iphone-15-pro
+activate Router
+    Router -> Middleware : process(Request, Handler)
+    activate Middleware
+        Middleware -> Middleware : Extrai keyword da URI = "smartphones/iphone-15-pro"
+        
+        Middleware -> SeoRepo : getSeoUrlByKeyword("smartphones/iphone-15-pro", storeId = 1, languageId = 1)
+        activate SeoRepo
+            
+            SeoRepo -> DiskCache : get("seo_url.smartphones_iphone_15_pro")
+            activate DiskCache
+                alt Cache HIT (Rota encontrada em arquivo)
+                    DiskCache --> SeoRepo : Cached Object [key: "product_id", value: "42"]
+                else Cache MISS (Primeiro acesso à URL)
+                    DiskCache --> SeoRepo : null
+                    
+                    SeoRepo -> DB : SELECT query FROM tbkk_seo_url WHERE keyword = 'smartphones/iphone-15-pro' AND store_id = 1
+                    activate DB
+                        DB --> SeoRepo : ResultRow [query: "product_id=42"]
+                    deactivate DB
+                    
+                    SeoRepo -> DiskCache : set("seo_url.smartphones_iphone_15_pro", Object, TTL = 86400s)
+                    activate DiskCache
+                        DiskCache --> SeoRepo : Sucesso ao gravar cache em disco
+                    deactivate DiskCache
+                end
+            deactivate DiskCache
+            
+            SeoRepo --> Middleware : SeoUrlDTO [key: "product_id", value: 42, target: "product/product"]
+        deactivate SeoRepo
+        
+        ' =============================================================================
+        ' ETAPA 2: REESCRITA INTERNA DOS PARÂMETROS E DESPACHO PARA ACTION
+        ' =============================================================================
+        == 2. Mapeamento Interno de Parâmetros e Execução da Action ==
+        
+        note over Middleware, TargetAction #FFFBEB : **Reescrita Transparente:**\nO Middleware injeta 'product_id = 42' nos atributos da requisição Slim\nsem realizar redirecionamento 301/302 visível ao cliente.
+
+        Middleware -> Middleware : $request = $request->withAttribute('product_id', '42')
+        
+        Middleware -> TargetAction : __invoke(Request, Response)
+        activate TargetAction
+            TargetAction -> TargetAction : Obtém 'product_id' (42) dos atributos da requisição
+            TargetAction -> DB : SELECT * FROM tbkk_product WHERE product_id = 42
+            activate DB
+                DB --> TargetAction : Dados do Produto
+            deactivate DB
+            
+            TargetAction --> Middleware : Response HTTP 200 OK (HTML do Produto Renderizado)
+        deactivate TargetAction
+        
+        Middleware --> Router : Response Final
+    deactivate Middleware
+    
+    Router --> User : HTTP 200 OK (Exibe página do iPhone 15 Pro na URL amigável)
+deactivate Router
+
+@enduml

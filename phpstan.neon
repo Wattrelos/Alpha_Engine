@@ -1,0 +1,11 @@
+includes:
+    - phpstan-baseline.neon
+
+parameters:
+    level: 5
+    paths:
+        - core
+        - Config
+        - Containers
+        - config.php
+    tmpDir: .phpunit.cache/phpstan

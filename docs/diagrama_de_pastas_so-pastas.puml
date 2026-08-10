@@ -1,5 +1,6 @@
 @startfiles
 .
+├── .reports/                               # 📂 Relatórios de análise estática e de performance
 ├── Config/                                 # 📂 Configurações da Aplicação
 │   └── Routes.php                          # 📁 Rotas PSR-15 centralizadas (Slim Framework)
 ├── Containers/                             # 📂 Infraestrutura de Injeção de Dependências (DI)

@@ -1,0 +1,97 @@
+@startuml "Webhook de Pagamento com GoF Adapter & Observers"
+autonumber "<b>00:"
+
+header "Alpha Engine Integration & Payment Subsystem: Notificação Assíncrona de Webhook"
+title "Fluxo de Processamento Assíncrono de Webhook de Pagamento com PaymentGatewayFactory, Adapters e Observers"
+
+box "Provedor Externo & HTTP Endpoint" #E0F2FE
+    participant "Gateway Externo\n(Mercado Pago / PIX API)" as ExternalGateway
+    participant "Slim 4 Route Handler\n(PaymentWebhookAction)" as WebhookAction
+end box
+
+box "Camada de Negócio & Padrões GoF (Factory + Adapter)" #FFF9C4
+    participant "PaymentGatewayFactory" as Factory
+    participant "MercadoPagoAdapter /\nPixGateway\n(PaymentGatewayInterface)" as Adapter
+    participant "OrderRepository" as OrderRepo
+end box
+
+box "Subssistema de Observers & Persistência" #DCFCE7
+    participant "OrderEmailObserver /\nStockObserver\n(OrderObserverInterface)" as Observers
+    database "MySQL Database\n(tbkk_order & tbkk_order_history)" as DB
+end box
+
+' =============================================================================
+' ETAPA 1: RECEBIMENTO DO WEBHOOK E RESOLUÇÃO DO ADAPTER VIA FACTORY
+' =============================================================================
+== 1. Recebimento da Notificação Assíncrona e Resolução Dinâmica do Gateway ==
+
+ExternalGateway -> WebhookAction : HTTP POST /payment/webhook/mercadopago\n[Header Signature + Payload JSON {id, status, order_id}]
+activate ExternalGateway
+    activate WebhookAction
+        WebhookAction -> WebhookAction : Valida assinatura de segurança (X-Signature)
+        
+        WebhookAction -> Factory : make('mercadopago')
+        activate Factory
+            Factory -> Factory : Resolve 'MercadoPagoAdapter' via Container PSR-11
+            Factory --> WebhookAction : Retorna PaymentGatewayInterface (MercadoPagoAdapter)
+        deactivate Factory
+        
+        ' =============================================================================
+        ' ETAPA 2: TRADUÇÃO DO PAYLOAD EXTERNO PELO ADAPTER (PATTERNS: ADAPTER)
+        ' =============================================================================
+        == 2. Tradução do Payload Externo para Contrato Interno (Adapter) ==
+        
+        WebhookAction -> Adapter : processWebhook(requestPayload)
+        activate Adapter
+            Adapter -> ExternalGateway : GET /v1/payments/{payment_id} (Verificação de Autenticidade)
+            activate ExternalGateway
+                ExternalGateway --> Adapter : Payment Status: "approved", PaidAmount: R$ 250.00
+            deactivate ExternalGateway
+            
+            Adapter -> Adapter : Normaliza resposta para PaymentResult(status: PAID, transactionId: "MP-98765")
+            Adapter --> WebhookAction : Retorna PaymentResult
+        deactivate Adapter
+        
+        ' =============================================================================
+        ' ETAPA 3: ATUALIZAÇÃO DO STATUS DO PEDIDO E DISPARO DE OBSERVERS
+        ' =============================================================================
+        == 3. Transição de Estado da Ordem & Execução de Observers Pós-Persistência ==
+        
+        alt PaymentResult == PAID (Pagamento Confirmado)
+            WebhookAction -> OrderRepo : updateOrderStatus(orderId, STATUS_PAYMENT_CONFIRMED)
+            activate OrderRepo
+                OrderRepo -> DB : START TRANSACTION;\nUPDATE tbkk_order SET order_status_id = 2;\nINSERT INTO tbkk_order_history...;\nCOMMIT;
+                activate DB
+                    DB --> OrderRepo : Transação Confirmada
+                deactivate DB
+                
+                note over OrderRepo, Observers #FFFBEB : **Desacoplamento via Eventos (Observer Pattern):**\nO OrderRepository notifica todos os observadores cadastrados sem acoplamento direto.
+                
+                OrderRepo -> Observers : notify(OrderAggregate)
+                activate Observers
+                    Observers -> Observers : 1. OrderEmailObserver: Envia e-mail de confirmação ao cliente\n2. StockDeductionObserver: Confirma reserva de estoque no MySQL
+                    Observers --> OrderRepo : Processamento concluído
+                deactivate Observers
+                
+                OrderRepo --> WebhookAction : Status Atualizado com Sucesso
+            deactivate OrderRepo
+            
+            WebhookAction --> ExternalGateway : HTTP 200 OK {"status": "success", "message": "Notification processed"}
+            
+        else PaymentResult == REJECTED / CANCELLED (Pagamento Recusado)
+            WebhookAction -> OrderRepo : updateOrderStatus(orderId, STATUS_CANCELED)
+            activate OrderRepo
+                OrderRepo -> DB : UPDATE tbkk_order SET order_status_id = 7 (Canceled);
+                activate DB
+                    DB --> OrderRepo : Atualizado
+                deactivate DB
+                OrderRepo --> WebhookAction : Pedido Cancelado
+            deactivate OrderRepo
+            
+            WebhookAction --> ExternalGateway : HTTP 200 OK {"status": "processed", "result": "cancelled"}
+        end
+        
+    deactivate WebhookAction
+deactivate ExternalGateway
+
+@enduml

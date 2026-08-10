@@ -12,7 +12,7 @@ use Alpha\Mappers\EntityMappers\BannerMapper;
  */
 class BannerRepository extends AbstractRepository
 {
-    private array $cache = [];
+    private array $identityMap = [];
 
     protected function getMapper(): BannerMapper
     {
@@ -21,10 +21,10 @@ class BannerRepository extends AbstractRepository
 
     public function getBanner(int $bannerId): array
     {
-        if (!array_key_exists($bannerId, $this->cache)) {
-            $this->cache[$bannerId] = $this->getMapper()->getBanner($bannerId, $this->language_id);
+        if (!array_key_exists($bannerId, $this->identityMap)) {
+            $this->identityMap[$bannerId] = $this->getMapper()->getBanner($bannerId, $this->language_id);
         }
 
-        return $this->cache[$bannerId];
+        return $this->identityMap[$bannerId];
     }
 }

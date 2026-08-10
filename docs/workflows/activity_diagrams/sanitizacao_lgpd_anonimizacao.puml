@@ -1,0 +1,64 @@
+@startuml "Governança de Dados e Sanitização LGPD"
+skinparam backgroundColor #FFFFFF
+skinparam shadowing false
+skinparam activity {
+    StartColor #2563EB
+    EndColor #DC2626
+    BackgroundColor #F8FAFC
+    BorderColor #475569
+    FontName Inter, Arial, sans-serif
+}
+
+header Alpha Engine Compliance & Security: Governança de Dados (LGPD)
+title Workflow de Exclusão de Conta, Anonimização e Sanitização de Dados (Art. 18 LGPD)
+
+|#E0F2FE|Titular dos Dados / DPO|
+start
+:Solicita exclusão de dados pessoais e direito ao esquecimento (/account/lgpd/forget);
+
+|#FFF9C4|Engine de Governança & Compliance|
+:Valida identidade do solicitante e token de segurança de 2 fatores (2FA);
+
+if (Identidade Confirmada?) then (sim)
+    |#DCFCE7|Persistência & Análise Legal|
+    :Verifica existência de pedidos vinculados ao customer_id nos últimos 5 anos;
+    
+    note right #FFFBEB
+        **Exceção de Retenção Legal (Art. 16, I da LGPD):**
+        Dados fiscais e históricos de compras devem ser mantidos 
+        por 5 anos por obrigação do Código Tributário Nacional (CTN).
+    end note
+    
+    if (Possui obrigações de guarda fiscal ativa?) then (sim - retenção obrigatória)
+        |Engine de Governança & Compliance|
+        :Mantém registros fiscais estritamente necessários na tabela tbkk_order;
+        :Invoca LgpdSanitizer::sanitizeCustomerRecord();
+    else (não - sem histórico fiscal recente)
+        |Engine de Governança & Compliance|
+        :Invoca LgpdSanitizer::anonymizeCompletely();
+    endif
+    
+    |Engine de Governança & Compliance|
+    partition "Processo de Sanitização (LgpdSanitizer)" {
+        :Mascara Nome e Sobrenome ("João Silva" -> "J*** S****");
+        :Mascara CPF ("123.456.789-00" -> "***.456.789-**");
+        :Mascara E-mail ("usuario@dominio.com" -> "u***@anon.lgpd");
+        :Limpa números de telefone e dados de navegação/IPs;
+        :Remove cartões de crédito e tokens de pagamento salvos;
+        :Invalida e remove todas as sessões ativas no Redis (sessao:cliente:*);
+    }
+    
+    |#DCFCE7|Persistência & Análise Legal|
+    :UPDATE tbkk_customer SET status = 0, password = 'ANONYMIZED_HASH' WHERE customer_id = X;
+    :INSERT INTO tbkk_lgpd_audit_log (protocol, action, timestamp, hash_confirmation);
+    
+    |Titular dos Dados / DPO|
+    :Exibe tela/e-mail de confirmação com o Protocolo de Sanitização LGPD;
+    stop
+else (não - falha de validação)
+    |Titular dos Dados / DPO|
+    :Notifica falha de verificação de segurança;
+    stop
+endif
+
+@enduml

@@ -1,0 +1,103 @@
+@startuml "Fusão do Carrinho de Compras no Login"
+autonumber "<b>00:"
+
+header "Alpha Engine E-commerce Domain Architecture: Gestão de Carrinho & Autenticação de Cliente"
+title "Fluxo de Mesclagem / Fusão do Carrinho de Compras do Visitante Anônimo para a Conta Autenticada"
+
+box "Cliente & Interface HTTP" #E0F2FE
+    actor "Cliente (Visitante)" as User
+    participant "Navegador / Frontend" as Front
+    participant "LoginAction\n(Slim Action)" as Action
+end box
+
+box "Serviços de Autenticação & Repositórios de Domínio" #FFF9C4
+    participant "CustomerAuthService" as AuthService
+    participant "CartRepository" as CartRepo
+    participant "CartMapper" as CartMapper
+end box
+
+box "Persistência de Dados" #DCFCE7
+    database "MySQL Database\n(tbkk_cart)" as DB
+    database "PHP / Redis Session" as Session
+end box
+
+' =============================================================================
+' ETAPA 1: ESTADO INICIAL DO VISITANTE E SUBMISSÃO DE LOGIN
+' =============================================================================
+== 1. Autenticação do Cliente com Carrinho Anônimo Ativo ==
+
+User -> Front : Preenche credenciais e clica em "Entrar" (POST /account/login)
+activate Front
+    note over Front, Session #E0F2FE : **Estado Antes do Login:**\nO cliente possui itens gravados sob o **session_id** anônimo em `tbkk_cart`.\nEx: Item A (Qtd: 2) associado a session_id = "abc123xyz" (customer_id = 0).
+
+    Front -> Action : HTTP POST /account/login\n[email, password]
+    activate Action
+        Action -> AuthService : authenticate(email, password)
+        activate AuthService
+            AuthService -> DB : SELECT * FROM tbkk_customer WHERE email = ...
+            activate DB
+                DB --> AuthService : Customer Object (customer_id = 85)
+            deactivate DB
+            
+            AuthService -> Session : Cria sessão de autenticação para customer_id = 85
+            activate Session
+                Session --> AuthService : Sessão Registrada
+            deactivate Session
+            
+            AuthService --> Action : AuthResult (Success, customer_id = 85)
+        deactivate AuthService
+        
+        ' =============================================================================
+        ' ETAPA 2: INVOCAÇÃO DA MESCLAGEM DE CARRINHO (MERGE)
+        ' =============================================================================
+        == 2. Orquestração da Fusão de Itens no CartRepository ==
+        
+        Action -> CartRepo : mergeCartOnLogin(customerId = 85, sessionId = "abc123xyz", storeId = 1)
+        activate CartRepo
+            CartRepo -> CartMapper : mergeCartOnLogin(customerId = 85, sessionId = "abc123xyz", storeId = 1)
+            activate CartMapper
+                
+                ' Busca itens anônimos e itens do cliente autenticado
+                CartMapper -> DB : SELECT * FROM tbkk_cart WHERE session_id = 'abc123xyz' AND store_id = 1
+                activate DB
+                    DB --> CartMapper : ItensAnônimos [Product 10 (Qtd: 2), Product 15 (Qtd: 1)]
+                deactivate DB
+                
+                CartMapper -> DB : SELECT * FROM tbkk_cart WHERE customer_id = 85 AND store_id = 1
+                activate DB
+                    DB --> CartMapper : ItensExistentesCliente [Product 10 (Qtd: 1)]
+                deactivate DB
+                
+                ' Lógica de Resolução de Conflitos de Quantidade
+                note over CartMapper, DB #FFFBEB : **Resolução de Conflitos e Consolidação:**\n- Product 10 existe em ambas as pontas: Soma quantidades (1 + 2 = 3).\n- Product 15 existe apenas na sessão: Reatribui customer_id = 85.
+                
+                CartMapper -> DB : UPDATE tbkk_cart SET quantity = 3 WHERE cart_id = ... (Product 10)
+                activate DB
+                    DB --> CartMapper : Sucesso no Update
+                deactivate DB
+                
+                CartMapper -> DB : UPDATE tbkk_cart SET customer_id = 85, session_id = '' WHERE cart_id = ... (Product 15)
+                activate DB
+                    DB --> CartMapper : Sucesso no Update
+                deactivate DB
+                
+                CartMapper -> DB : DELETE FROM tbkk_cart WHERE session_id = 'abc123xyz' AND customer_id = 0
+                activate DB
+                    DB --> CartMapper : Limpeza de registros órfãos concluída
+                deactivate DB
+                
+                CartMapper --> CartRepo : Fusão concluída com sucesso
+            deactivate CartMapper
+            
+            ' Recálculo do Total de Itens para Header / Twig
+            CartRepo -> CartRepo : countProducts()
+            CartRepo --> Action : Total de Itens Atualizado (Ex: 4 itens)
+        deactivate CartRepo
+        
+        Action --> Front : HTTP 302 Redirect /account/dashboard\n[Set-Cookie: session_id com nova chave autenticada]
+    deactivate Action
+    
+    Front -> Front : Renderiza Cabeçalho da Loja com 'cart_count = 4' e Usuário Logado
+deactivate Front
+
+@enduml

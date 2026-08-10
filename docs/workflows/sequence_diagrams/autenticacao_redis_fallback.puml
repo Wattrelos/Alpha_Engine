@@ -1,0 +1,134 @@
+@startuml "Autenticacao Dual com Redis & Fallback PHP Session"
+autonumber "<b>00:"
+
+header "Alpha Engine Security & Infrastructure Workflow: Gestão de Sessões Dual com Redis e Fallback"
+title "Fluxo de Autenticação (Admin / Cliente) com Cache Redis (Predis) e Fallback Gracioso para $_SESSION"
+
+box "Cliente & Camada HTTP" #E0F2FE
+    actor "Usuário / Admin / Cliente" as User
+    participant "Navegador / HTTP Client" as Front
+    participant "SessionMiddleware / \nAdminSessionMiddleware" as Middleware
+end box
+
+box "Serviço de Autenticação & Regra de Negócio" #FFF9C4
+    participant "CustomerAuthService / \nAdminAuthService" as AuthService
+    participant "AbstractAuthService" as BaseAuth
+end box
+
+box "Infraestrutura de Sessão & Armazenamento" #DCFCE7
+    participant "Predis\\Client\n(Redis 6379)" as Redis
+    database "PHP Session\n($_SESSION local)" as PHPSession
+    database "MySQL Database\n(tbkk_customer / tbkk_user)" as DB
+end box
+
+' =============================================================================
+' SCENARIO 1: AUTENTICAÇÃO COM REDIS ATIVO (CAMINHO PRINCIPAL)
+' =============================================================================
+== 1. Conexão e Autenticação via Redis (Modo Primário) ==
+
+User -> Front : Submete formulário de Login (POST /account/login ou POST /admin/login)
+activate Front
+    Front -> Middleware : HTTP POST /login\n[email, password]
+    activate Middleware
+        Middleware -> AuthService : authenticate(email, password)
+        activate AuthService
+            AuthService -> DB : verifyCredentials(email, password)
+            activate DB
+                DB --> AuthService : Credenciais Válidas (User DTO)
+            deactivate DB
+
+            AuthService -> BaseAuth : createSession(userData)
+            activate BaseAuth
+                BaseAuth -> Redis : new Predis\\Client()->connect()
+                activate Redis
+                    Redis --> BaseAuth : Conexão Estabelecida! ($useRedis = true)
+                deactivate Redis
+                
+                BaseAuth -> BaseAuth : Gera sessionId = bin2hex(random_bytes(32))
+                BaseAuth -> Redis : SET "sessao:cliente:{sessionId}" json_encode(userData)\nEXPIRE 7200s (2h)
+                activate Redis
+                    Redis --> BaseAuth : OK
+                deactivate Redis
+                
+                BaseAuth --> AuthService : Retorna sessionId
+            deactivate BaseAuth
+            
+            AuthService --> Middleware : AuthResult (Success, sessionId)
+        deactivate AuthService
+        
+        Middleware -> Front : Set-Cookie: session_id={sessionId}; Path=/; HttpOnly; Secure\nRedirect 302 /account/dashboard
+    deactivate Middleware
+deactivate Front
+
+' =============================================================================
+' SCENARIO 2: FALHA NO REDIS E DEGRADAÇÃO GRACIOSA (FALLBACK PARA $_SESSION)
+' =============================================================================
+== 2. Detecção de Inacessibilidade do Redis & Fallback Gracioso ==
+
+User -> Front : Tentativa de Login em ambiente onde o Redis está Offline / Inacessível
+activate Front
+    Front -> Middleware : HTTP POST /login\n[email, password]
+    activate Middleware
+        Middleware -> AuthService : authenticate(email, password)
+        activate AuthService
+            AuthService -> DB : verifyCredentials(email, password)
+            activate DB
+                DB --> AuthService : Credenciais Válidas
+            deactivate DB
+
+            AuthService -> BaseAuth : createSession(userData)
+            activate BaseAuth
+                BaseAuth -> Redis : new Predis\\Client()->connect()
+                activate Redis
+                    Redis --x BaseAuth : Connection Refused / Timeout Exception!
+                deactivate Redis
+                
+                note over BaseAuth, PHPSession #FEE2E2 : **Mecanismo de Resiliência:**\nCaptura a exceção de conexão e define **$useRedis = false**.\nAlterna automaticamente e sem erros para a sessão nativa do PHP.
+                
+                BaseAuth -> PHPSession : session_start()\n$_SESSION['logged_user'] = json_encode(userData)\n$_SESSION['expire'] = time() + 7200
+                activate PHPSession
+                    PHPSession --> BaseAuth : Sessão PHP Inicializada
+                deactivate PHPSession
+                
+                BaseAuth --> AuthService : Retorna PHP session_id()
+            deactivate BaseAuth
+            
+            AuthService --> Middleware : AuthResult (Success, sessionId)
+        deactivate AuthService
+        
+        Middleware -> Front : Set-Cookie: PHPSESSID={sessionId}\nRedirect 302 /account/dashboard
+    deactivate Middleware
+deactivate Front
+
+' =============================================================================
+' SCENARIO 3: VALIDAÇÃO DE SESSÃO NAS REQUISIÇÕES SUBSEQUENTES
+' =============================================================================
+== 3. Intercepção e Validação de Sessão por Middleware ==
+
+User -> Front : Acessa rota protegida (ex: GET /account/orders ou GET /admin/dashboard)
+activate Front
+    Front -> Middleware : HTTP GET /account/orders\n[Cookie: session_id ou PHPSESSID]
+    activate Middleware
+        alt $useRedis == true
+            Middleware -> Redis : GET "sessao:cliente:{sessionId}"
+            activate Redis
+                alt Chave Existente no Redis
+                    Redis --> Middleware : json_data (User DTO)
+                    Middleware -> Middleware : Injecta 'logged_user' nas variáveis globais do Twig
+                else Sessão Expirada / Removida
+                    Redis --> Middleware : null
+                    Middleware --> Front : HTTP 302 Redirect /account/login (Mensagem: Sessão Expirada)
+                end
+            deactivate Redis
+        else Fallback Ativo ($useRedis == false)
+            Middleware -> PHPSession : session_start() & Read $_SESSION['logged_user']
+            activate PHPSession
+                PHPSession --> Middleware : $_SESSION Data
+            deactivate PHPSession
+        end
+        
+        Middleware -> Front : HTTP 200 OK (Renderiza View Solicitada)
+    deactivate Middleware
+deactivate Front
+
+@enduml

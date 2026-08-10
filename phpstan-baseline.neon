@@ -1,0 +1,2017 @@
+parameters:
+	ignoreErrors:
+		-
+			message: '#^Constant DIR_ROOT not found\.$#'
+			identifier: constant.notFound
+			count: 1
+			path: Containers/AppBootstrap.php
+
+		-
+			message: '#^Call to an undefined method ReflectionType\:\:getName\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: Containers/AppContainer.php
+
+		-
+			message: '#^Constant DIR_ROOT not found\.$#'
+			identifier: constant.notFound
+			count: 1
+			path: core/Admin/Controllers/Actions/Catalog/Category/CreateCategoryAction.php
+
+		-
+			message: '#^Constant DIR_ROOT not found\.$#'
+			identifier: constant.notFound
+			count: 1
+			path: core/Admin/Controllers/Actions/Catalog/Category/UpdateCategoryAction.php
+
+		-
+			message: '#^Constant DIR_ROOT not found\.$#'
+			identifier: constant.notFound
+			count: 1
+			path: core/Admin/Controllers/Actions/Catalog/Manufacturer/StoreManufacturerAction.php
+
+		-
+			message: '#^Constant DIR_ROOT not found\.$#'
+			identifier: constant.notFound
+			count: 1
+			path: core/Admin/Controllers/Actions/Catalog/Manufacturer/UpdateManufacturerAction.php
+
+		-
+			message: '#^Constant DIR_ROOT not found\.$#'
+			identifier: constant.notFound
+			count: 1
+			path: core/Admin/Controllers/Actions/Catalog/Product/CreateProductAction.php
+
+		-
+			message: '#^Constant DIR_ROOT not found\.$#'
+			identifier: constant.notFound
+			count: 2
+			path: core/Admin/Controllers/Actions/Catalog/Product/UpdateProductAction.php
+
+		-
+			message: '#^Call to an undefined method Alpha\\Model\\Domain\\Entities\\Geo\\Zone\:\:getCode\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: core/Admin/Controllers/Actions/Customer/Address/CreateAddressAction.php
+
+		-
+			message: '#^Call to function method_exists\(\) with Alpha\\Model\\Domain\\Entities\\Geo\\Zone and ''getIsoCode'' will always evaluate to true\.$#'
+			identifier: function.alreadyNarrowedType
+			count: 1
+			path: core/Admin/Controllers/Actions/Customer/Address/CreateAddressAction.php
+
+		-
+			message: '#^Call to an undefined method Alpha\\Model\\Domain\\Entities\\Geo\\Zone\:\:getCode\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: core/Admin/Controllers/Actions/Customer/Address/EditAddressAction.php
+
+		-
+			message: '#^Call to function method_exists\(\) with Alpha\\Model\\Domain\\Entities\\Geo\\Zone and ''getIsoCode'' will always evaluate to true\.$#'
+			identifier: function.alreadyNarrowedType
+			count: 1
+			path: core/Admin/Controllers/Actions/Customer/Address/EditAddressAction.php
+
+		-
+			message: '#^Call to an undefined method Alpha\\Model\\Domain\\InterfaceEntity\:\:getAddresses\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: core/Admin/Controllers/Actions/Procurement/Supplier/EditSupplierAction.php
+
+		-
+			message: '#^Call to an undefined method Alpha\\Model\\Domain\\InterfaceEntity\:\:getAddresses\(\)\.$#'
+			identifier: method.notFound
+			count: 3
+			path: core/Admin/Controllers/Actions/Procurement/Supplier/UpdateSupplierAction.php
+
+		-
+			message: '#^Call to an undefined method Alpha\\Model\\Domain\\InterfaceEntity\:\:setAddresses\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: core/Admin/Controllers/Actions/Procurement/Supplier/UpdateSupplierAction.php
+
+		-
+			message: '#^Call to an undefined method Alpha\\Model\\Domain\\InterfaceEntity\:\:setCompanyName\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: core/Admin/Controllers/Actions/Procurement/Supplier/UpdateSupplierAction.php
+
+		-
+			message: '#^Call to an undefined method Alpha\\Model\\Domain\\InterfaceEntity\:\:setContacts\(\)\.$#'
+			identifier: method.notFound
+			count: 3
+			path: core/Admin/Controllers/Actions/Procurement/Supplier/UpdateSupplierAction.php
+
+		-
+			message: '#^Call to an undefined method Alpha\\Model\\Domain\\InterfaceEntity\:\:setEmail\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: core/Admin/Controllers/Actions/Procurement/Supplier/UpdateSupplierAction.php
+
+		-
+			message: '#^Call to an undefined method Alpha\\Model\\Domain\\InterfaceEntity\:\:setIsActive\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: core/Admin/Controllers/Actions/Procurement/Supplier/UpdateSupplierAction.php
+
+		-
+			message: '#^Call to an undefined method Alpha\\Model\\Domain\\InterfaceEntity\:\:setMunicipalRegistration\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: core/Admin/Controllers/Actions/Procurement/Supplier/UpdateSupplierAction.php
+
+		-
+			message: '#^Call to an undefined method Alpha\\Model\\Domain\\InterfaceEntity\:\:setPhone\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: core/Admin/Controllers/Actions/Procurement/Supplier/UpdateSupplierAction.php
+
+		-
+			message: '#^Call to an undefined method Alpha\\Model\\Domain\\InterfaceEntity\:\:setStateRegistration\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: core/Admin/Controllers/Actions/Procurement/Supplier/UpdateSupplierAction.php
+
+		-
+			message: '#^Call to an undefined method Alpha\\Model\\Domain\\InterfaceEntity\:\:setTaxId\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: core/Admin/Controllers/Actions/Procurement/Supplier/UpdateSupplierAction.php
+
+		-
+			message: '#^Call to an undefined method Alpha\\Model\\Domain\\InterfaceEntity\:\:setTradeName\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: core/Admin/Controllers/Actions/Procurement/Supplier/UpdateSupplierAction.php
+
+		-
+			message: '#^Call to an undefined method Alpha\\Model\\Domain\\InterfaceEntity\:\:setUpdatedAt\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: core/Admin/Controllers/Actions/Procurement/Supplier/UpdateSupplierAction.php
+
+		-
+			message: '#^Call to an undefined method Alpha\\Model\\Domain\\InterfaceEntity\:\:setWebsite\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: core/Admin/Controllers/Actions/Procurement/Supplier/UpdateSupplierAction.php
+
+		-
+			message: '#^Parameter \#1 \$supplier of method Alpha\\Model\\Domain\\Repositories\\SupplierRepository\:\:save\(\) expects Alpha\\Model\\Domain\\Entities\\Supplier\\Supplier, Alpha\\Model\\Domain\\InterfaceEntity given\.$#'
+			identifier: argument.type
+			count: 1
+			path: core/Admin/Controllers/Actions/Procurement/Supplier/UpdateSupplierAction.php
+
+		-
+			message: '#^Parameter \#2 \$data of method Slim\\Interfaces\\RouteParserInterface\:\:urlFor\(\) expects array\<string, string\>, array\<string, int\> given\.$#'
+			identifier: argument.type
+			count: 1
+			path: core/Admin/Controllers/Actions/Sales/Order/UpdateOrderStatusAction.php
+
+		-
+			message: '#^Parameter \#2 \$data of method Slim\\Interfaces\\RouteParserInterface\:\:urlFor\(\) expects array\<string, string\>, array\<string, int\> given\.$#'
+			identifier: argument.type
+			count: 2
+			path: core/Admin/Controllers/Actions/Sales/Return/UpdateReturnStatusAction.php
+
+		-
+			message: '#^Call to an undefined method Alpha\\Model\\Domain\\Entities\\Geo\\Zone\:\:getCode\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: core/Admin/Controllers/Actions/Setting/StoreSetting/UpdateStoreSettingAction.php
+
+		-
+			message: '#^Call to function method_exists\(\) with Alpha\\Model\\Domain\\Entities\\Geo\\Zone and ''getIsoCode'' will always evaluate to true\.$#'
+			identifier: function.alreadyNarrowedType
+			count: 1
+			path: core/Admin/Controllers/Actions/Setting/StoreSetting/UpdateStoreSettingAction.php
+
+		-
+			message: '#^Class Alpha\\Model\\Domain\\Repositories\\CountryRepository not found\.$#'
+			identifier: class.notFound
+			count: 1
+			path: core/Admin/Controllers/Actions/Setting/StoreSetting/UpdateStoreSettingAction.php
+
+		-
+			message: '#^Call to an undefined method Alpha\\Model\\Domain\\InterfaceEntity\:\:getCode\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: core/Auth/Middleware/AdminLanguageMiddleware.php
+
+		-
+			message: '#^Call to an undefined method Alpha\\Model\\Domain\\InterfaceEntity\:\:getName\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: core/Auth/Middleware/AdminLanguageMiddleware.php
+
+		-
+			message: '#^Method Alpha\\Auth\\Middleware\\AdminSessionMiddleware\:\:__invoke\(\) should return Slim\\Psr7\\Response but returns Psr\\Http\\Message\\ResponseInterface\.$#'
+			identifier: return.type
+			count: 1
+			path: core/Auth/Middleware/AdminSessionMiddleware.php
+
+		-
+			message: '#^Method Alpha\\Auth\\Middleware\\SessionMiddleware\:\:__invoke\(\) should return Slim\\Psr7\\Response but returns Psr\\Http\\Message\\ResponseInterface\.$#'
+			identifier: return.type
+			count: 1
+			path: core/Auth/Middleware/SessionMiddleware.php
+
+		-
+			message: '#^Method Alpha\\Auth\\Middleware\\SignatureMiddleware\:\:__invoke\(\) should return Slim\\Psr7\\Response but returns Psr\\Http\\Message\\ResponseInterface\.$#'
+			identifier: return.type
+			count: 1
+			path: core/Auth/Middleware/SignatureMiddleware.php
+
+		-
+			message: '#^Offset 0 on non\-empty\-list\<string\> on left side of \?\? always exists and is not nullable\.$#'
+			identifier: nullCoalesce.offset
+			count: 1
+			path: core/Auth/Services/CustomerAuthService.php
+
+		-
+			message: '#^Offset ''heading_title'' on array\{heading_title\: ''Carrinho de Compras'', products\: array, totals\: array\} on left side of \?\? always exists and is not nullable\.$#'
+			identifier: nullCoalesce.offset
+			count: 1
+			path: core/Controller/Actions/Cart/CartAction.php
+
+		-
+			message: '#^Offset ''heading_title'' on non\-empty\-array on left side of \?\? always exists and is not nullable\.$#'
+			identifier: nullCoalesce.offset
+			count: 2
+			path: core/Controller/Actions/Cart/Checkout.php
+
+		-
+			message: '#^Offset ''text_home'' on non\-empty\-array on left side of \?\? always exists and is not nullable\.$#'
+			identifier: nullCoalesce.offset
+			count: 1
+			path: core/Controller/Actions/Cart/Checkout.php
+
+		-
+			message: '#^Cannot call method getNestedData\(\) on class\-string\|object\.$#'
+			identifier: method.nonObject
+			count: 1
+			path: core/Controller/Actions/Cart/ShowCartAction.php
+
+		-
+			message: '#^Parameter \#2 \$value of method Alpha\\Model\\Domain\\Repositories\\SeoUrlRepository\:\:getKeywordByQuery\(\) expects string, int given\.$#'
+			identifier: argument.type
+			count: 1
+			path: core/Controller/Actions/Cart/ShowCartAction.php
+
+		-
+			message: '#^Call to function method_exists\(\) with Alpha\\Model\\Domain\\Entities\\Geo\\Country and ''getName'' will always evaluate to true\.$#'
+			identifier: function.alreadyNarrowedType
+			count: 1
+			path: core/Controller/Actions/Cart/SubmitCheckoutAction.php
+
+		-
+			message: '#^Call to function method_exists\(\) with Alpha\\Model\\Domain\\Entities\\Geo\\Zone and ''getCountryId'' will always evaluate to true\.$#'
+			identifier: function.alreadyNarrowedType
+			count: 2
+			path: core/Controller/Actions/Cart/SubmitCheckoutAction.php
+
+		-
+			message: '#^Offset ''thumb'' on non\-empty\-array on left side of \?\? always exists and is not nullable\.$#'
+			identifier: nullCoalesce.offset
+			count: 1
+			path: core/Controller/Actions/Category/ShowCategoryAction.php
+
+		-
+			message: '#^Parameter \#2 \$value of method Alpha\\Model\\Domain\\Repositories\\SeoUrlRepository\:\:getKeywordByQuery\(\) expects string, int given\.$#'
+			identifier: argument.type
+			count: 2
+			path: core/Controller/Actions/Category/ShowCategoryAction.php
+
+		-
+			message: '#^Parameter \#2 \$value of method Alpha\\Model\\Domain\\Repositories\\SeoUrlRepository\:\:getKeywordByQuery\(\) expects string, int\<1, max\> given\.$#'
+			identifier: argument.type
+			count: 1
+			path: core/Controller/Actions/Category/ShowCategoryAction.php
+
+		-
+			message: '#^Call to an undefined method Alpha\\Model\\Domain\\InterfaceEntity\:\:getIsoCode\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: core/Controller/Actions/Customer/Addresses/EditAddressAction.php
+
+		-
+			message: '#^Array has 2 duplicate keys with value ''affiliate'' \(''affiliate'', ''affiliate''\)\.$#'
+			identifier: array.duplicateKey
+			count: 1
+			path: core/Controller/Actions/Customer/Auth/AccountAction.php
+
+		-
+			message: '#^Array has 2 duplicate keys with value ''reward'' \(''reward'', ''reward''\)\.$#'
+			identifier: array.duplicateKey
+			count: 1
+			path: core/Controller/Actions/Customer/Auth/AccountAction.php
+
+		-
+			message: '#^Property Alpha\\Controller\\Actions\\Customer\\Auth\\RequestPasswordResetAction\:\:\$container is never read, only written\.$#'
+			identifier: property.onlyWritten
+			count: 1
+			path: core/Controller/Actions/Customer/Auth/RequestPasswordResetAction.php
+
+		-
+			message: '#^Property Alpha\\Controller\\Actions\\Customer\\OrdersAction\:\:\$settingRepository is never read, only written\.$#'
+			identifier: property.onlyWritten
+			count: 1
+			path: core/Controller/Actions/Customer/OrdersAction.php
+
+		-
+			message: '#^Parameter \#2 \$value of method Alpha\\Model\\Domain\\Repositories\\SeoUrlRepository\:\:getKeywordByQuery\(\) expects string, int\<1, max\> given\.$#'
+			identifier: argument.type
+			count: 2
+			path: core/Controller/Actions/Information/ShowSitemapAction.php
+
+		-
+			message: '#^Parameter \#2 \$value of method Alpha\\Model\\Domain\\Repositories\\SeoUrlRepository\:\:getKeywordByQuery\(\) expects string, int given\.$#'
+			identifier: argument.type
+			count: 1
+			path: core/Controller/Actions/Product/SearchAction.php
+
+		-
+			message: '#^Parameter \#2 \$value of method Alpha\\Model\\Domain\\Repositories\\SeoUrlRepository\:\:getKeywordByQuery\(\) expects string, int\<1, max\> given\.$#'
+			identifier: argument.type
+			count: 1
+			path: core/Controller/Actions/Product/SearchAction.php
+
+		-
+			message: '#^Offset ''popup'' on non\-empty\-array on left side of \?\? always exists and is not nullable\.$#'
+			identifier: nullCoalesce.offset
+			count: 1
+			path: core/Controller/Actions/Product/ShowProductAction.php
+
+		-
+			message: '#^Offset ''thumb'' on non\-empty\-array on left side of \?\? always exists and is not nullable\.$#'
+			identifier: nullCoalesce.offset
+			count: 1
+			path: core/Controller/Actions/Product/ShowProductAction.php
+
+		-
+			message: '#^Parameter \#2 \$value of method Alpha\\Model\\Domain\\Repositories\\SeoUrlRepository\:\:getKeywordByQuery\(\) expects string, int\<1, max\> given\.$#'
+			identifier: argument.type
+			count: 1
+			path: core/Controller/Actions/Product/ShowProductAction.php
+
+		-
+			message: '#^Binary operation "\+" between ''adm_'' and string results in an error\.$#'
+			identifier: binaryOp.invalid
+			count: 1
+			path: core/Controller/Actions/Setup/ProcessInstallationAction.php
+
+		-
+			message: '#^Instantiated class Alpha\\Auth\\Services\\AuthService not found\.$#'
+			identifier: class.notFound
+			count: 1
+			path: core/Controller/Auth/LoginController.php
+
+		-
+			message: '#^Instantiated class Alpha\\Auth\\Services\\AuthService not found\.$#'
+			identifier: class.notFound
+			count: 1
+			path: core/Controller/Auth/LogoutController.php
+
+		-
+			message: '#^Constant DIR_ROOT not found\.$#'
+			identifier: constant.notFound
+			count: 1
+			path: core/Controller/BaseController.php
+
+		-
+			message: '#^Ternary operator condition is always true\.$#'
+			identifier: ternary.alwaysTrue
+			count: 1
+			path: core/Controller/BaseController.php
+
+		-
+			message: '#^Parameter \$appContainer of method Alpha\\Controller\\MainRouterController\:\:__construct\(\) has invalid type Alpha\\Containers\\AppContainer\.$#'
+			identifier: class.notFound
+			count: 1
+			path: core/Controller/MainRouterController.php
+
+		-
+			message: '#^Constructor of class Alpha\\Mappers\\BaseMapper has an unused parameter \$registry\.$#'
+			identifier: constructor.unusedParameter
+			count: 1
+			path: core/Mappers/BaseMapper.php
+
+		-
+			message: '#^Access to an undefined property Alpha\\Mappers\\EntityMappers\\ExtensionMapper\:\:\$db\.$#'
+			identifier: property.notFound
+			count: 1
+			path: core/Mappers/EntityMappers/ExtensionMapper.php
+
+		-
+			message: '#^Instanceof between PDO and PDO will always evaluate to true\.$#'
+			identifier: instanceof.alwaysTrue
+			count: 2
+			path: core/Mappers/EntityMappers/GdprMapper.php
+
+		-
+			message: '#^Method Alpha\\Mappers\\EntityMappers\\LanguageMapper\:\:getLanguage\(\) should return Alpha\\Model\\Domain\\Entities\\Language\|null but returns Alpha\\Model\\Domain\\InterfaceEntity\|null\.$#'
+			identifier: return.type
+			count: 1
+			path: core/Mappers/EntityMappers/LanguageMapper.php
+
+		-
+			message: '#^Call to function method_exists\(\) with Alpha\\Model\\Domain\\Entities\\LengthClass and ''addDescription'' will always evaluate to true\.$#'
+			identifier: function.alreadyNarrowedType
+			count: 1
+			path: core/Mappers/EntityMappers/LengthClassMapper.php
+
+		-
+			message: '#^Parameter \#1 \$order of method Alpha\\Mappers\\EntityMappers\\OrderMapper\:\:notify\(\) expects Alpha\\Model\\Domain\\Entities\\Order, Alpha\\Model\\Domain\\InterfaceEntity given\.$#'
+			identifier: argument.type
+			count: 1
+			path: core/Mappers/EntityMappers/OrderMapper.php
+
+		-
+			message: '#^Method Alpha\\Mappers\\EntityMappers\\OrderStatusMapper\:\:getOrderStatus\(\) should return Alpha\\Model\\Domain\\Entities\\OrderStatus\|null but returns Alpha\\Model\\Domain\\InterfaceEntity\|null\.$#'
+			identifier: return.type
+			count: 1
+			path: core/Mappers/EntityMappers/OrderStatusMapper.php
+
+		-
+			message: '#^Access to an undefined property Alpha\\Mappers\\EntityMappers\\PaymentMapper\:\:\$container\.$#'
+			identifier: property.notFound
+			count: 5
+			path: core/Mappers/EntityMappers/PaymentMapper.php
+
+		-
+			message: '#^Anonymous function has an unused use \$languageId\.$#'
+			identifier: closure.unusedUse
+			count: 1
+			path: core/Mappers/EntityMappers/ProductMapper.php
+
+		-
+			message: '#^Access to an undefined property Alpha\\Mappers\\EntityMappers\\ShippingMapper\:\:\$container\.$#'
+			identifier: property.notFound
+			count: 5
+			path: core/Mappers/EntityMappers/ShippingMapper.php
+
+		-
+			message: '#^Property Alpha\\Mappers\\EntityMappers\\ShippingMapper\:\:\$lengthClassRepository is never read, only written\.$#'
+			identifier: property.onlyWritten
+			count: 1
+			path: core/Mappers/EntityMappers/ShippingMapper.php
+
+		-
+			message: '#^Property Alpha\\Mappers\\EntityMappers\\ShippingMapper\:\:\$weightClassRepository is never read, only written\.$#'
+			identifier: property.onlyWritten
+			count: 1
+			path: core/Mappers/EntityMappers/ShippingMapper.php
+
+		-
+			message: '#^Access to an undefined property Alpha\\Mappers\\EntityMappers\\StockStatusMapper\:\:\$container\.$#'
+			identifier: property.notFound
+			count: 1
+			path: core/Mappers/EntityMappers/StockStatusMapper.php
+
+		-
+			message: '#^Access to an undefined property Alpha\\Mappers\\EntityMappers\\StoreMapper\:\:\$cache\.$#'
+			identifier: property.notFound
+			count: 1
+			path: core/Mappers/EntityMappers/StoreMapper.php
+
+		-
+			message: '#^Access to an undefined property Alpha\\Mappers\\EntityMappers\\SubscriptionMapper\:\:\$container\.$#'
+			identifier: property.notFound
+			count: 1
+			path: core/Mappers/EntityMappers/SubscriptionMapper.php
+
+		-
+			message: '#^Call to an undefined method Alpha\\Model\\Domain\\Entities\\TaxRate\:\:setGeoZone\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: core/Mappers/EntityMappers/TaxRuleMapper.php
+
+		-
+			message: '#^Access to an undefined property Alpha\\Mappers\\EntityMappers\\ThemeMapper\:\:\$container\.$#'
+			identifier: property.notFound
+			count: 2
+			path: core/Mappers/EntityMappers/ThemeMapper.php
+
+		-
+			message: '#^Access to an undefined property Alpha\\Mappers\\EntityMappers\\TotalMapper\:\:\$container\.$#'
+			identifier: property.notFound
+			count: 5
+			path: core/Mappers/EntityMappers/TotalMapper.php
+
+		-
+			message: '#^Call to an undefined method Alpha\\Model\\Domain\\InterfaceEntity\:\:getStatus\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: core/Mappers/EntityMappers/ZoneMapper.php
+
+		-
+			message: '#^Class Alpha\\Model\\Domain\\Entities\\Zone not found\.$#'
+			identifier: class.notFound
+			count: 1
+			path: core/Mappers/EntityMappers/ZoneMapper.php
+
+		-
+			message: '#^Method Alpha\\Mappers\\EntityMappers\\ZoneMapper\:\:getZone\(\) has invalid return type Alpha\\Model\\Domain\\Entities\\Zone\.$#'
+			identifier: class.notFound
+			count: 2
+			path: core/Mappers/EntityMappers/ZoneMapper.php
+
+		-
+			message: '#^Method Alpha\\Mappers\\EntityMappers\\ZoneMapper\:\:getZone\(\) should return Alpha\\Model\\Domain\\Entities\\Zone\|null but returns Alpha\\Model\\Domain\\InterfaceEntity\|null\.$#'
+			identifier: return.type
+			count: 1
+			path: core/Mappers/EntityMappers/ZoneMapper.php
+
+		-
+			message: '#^Method Alpha\\Mappers\\EntityMappers\\ZoneMapper\:\:getZonesByCountryId\(\) has invalid return type Alpha\\Model\\Domain\\Entities\\Zone\.$#'
+			identifier: class.notFound
+			count: 1
+			path: core/Mappers/EntityMappers/ZoneMapper.php
+
+		-
+			message: '#^Property Alpha\\Mappers\\Observers\\OrderEmailObserver\:\:\$mailer is never read, only written\.$#'
+			identifier: property.onlyWritten
+			count: 1
+			path: core/Mappers/Observers/OrderEmailObserver.php
+
+		-
+			message: '#^Expression on left side of \?\? is not nullable\.$#'
+			identifier: nullCoalesce.expr
+			count: 4
+			path: core/Model/DataAccessObject/DataAccessObject.php
+
+		-
+			message: '#^Left side of && is always true\.$#'
+			identifier: booleanAnd.leftAlwaysTrue
+			count: 2
+			path: core/Model/DataAccessObject/DataAccessObject.php
+
+		-
+			message: '#^Method Alpha\\Model\\DataAccessObject\\DataAccessObject\:\:logDebugQuery\(\) returns void but does not have any side effects\.$#'
+			identifier: void.pure
+			count: 1
+			path: core/Model/DataAccessObject/DataAccessObject.php
+
+		-
+			message: '#^Parameter \#1 \$source of class Illuminate\\Support\\LazyCollection constructor expects \(Closure\(\)\: Generator\<TKey, TValue, mixed, void\>\)\|Illuminate\\Contracts\\Support\\Arrayable\<TKey of \(int\|string\) \(class Illuminate\\Support\\LazyCollection, parameter\), TValue \(class Illuminate\\Support\\LazyCollection, parameter\)\>\|iterable\<TKey of \(int\|string\) \(class Illuminate\\Support\\LazyCollection, parameter\), TValue \(class Illuminate\\Support\\LazyCollection, parameter\)\>\|null, Closure\(\)\: array given\.$#'
+			identifier: argument.type
+			count: 2
+			path: core/Model/DataAccessObject/DataAccessObject.php
+
+		-
+			message: '#^Right side of && is always true\.$#'
+			identifier: booleanAnd.rightAlwaysTrue
+			count: 1
+			path: core/Model/DataAccessObject/DataAccessObject.php
+
+		-
+			message: '#^Strict comparison using \!\=\= between int and null will always evaluate to true\.$#'
+			identifier: notIdentical.alwaysTrue
+			count: 2
+			path: core/Model/DataAccessObject/DataAccessObject.php
+
+		-
+			message: '#^Strict comparison using \=\=\= between int and null will always evaluate to false\.$#'
+			identifier: identical.alwaysFalse
+			count: 4
+			path: core/Model/DataAccessObject/DataAccessObject.php
+
+		-
+			message: '#^Unreachable statement \- code above always terminates\.$#'
+			identifier: deadCode.unreachable
+			count: 1
+			path: core/Model/DataAccessObject/DataAccessObject.php
+
+		-
+			message: '#^Instanceof between PDO and PDO will always evaluate to true\.$#'
+			identifier: instanceof.alwaysTrue
+			count: 1
+			path: core/Model/DataAccessObject/UnitOfWork.php
+
+		-
+			message: '#^If condition is always true\.$#'
+			identifier: if.alwaysTrue
+			count: 1
+			path: core/Model/DataTransferObject/ContactFormDTO.php
+
+		-
+			message: '#^Method Alpha\\Model\\Domain\\Entities\\Api\:\:getStatus\(\) should return bool but returns \$this\(Alpha\\Model\\Domain\\Entities\\Api\)\.$#'
+			identifier: return.type
+			count: 1
+			path: core/Model/Domain/Entities/Api.php
+
+		-
+			message: '#^Property Alpha\\Model\\Domain\\Entities\\Api\:\:\$status is never read, only written\.$#'
+			identifier: property.onlyWritten
+			count: 1
+			path: core/Model/Domain/Entities/Api.php
+
+		-
+			message: '#^Class Alpha\\Model\\Domain\\Entities\\CategoryDescription not found\.$#'
+			identifier: class.notFound
+			count: 1
+			path: core/Model/Domain/Entities/Category.php
+
+		-
+			message: '#^Class Alpha\\Model\\Domain\\Entities\\CategoryFilter not found\.$#'
+			identifier: class.notFound
+			count: 1
+			path: core/Model/Domain/Entities/Category.php
+
+		-
+			message: '#^Class Alpha\\Model\\Domain\\Entities\\CategoryToStore not found\.$#'
+			identifier: class.notFound
+			count: 1
+			path: core/Model/Domain/Entities/Category.php
+
+		-
+			message: '#^Property Alpha\\Model\\Domain\\Entities\\Category\:\:\$categoryToStores has unknown class Alpha\\Model\\Domain\\Entities\\CategoryToStore as its type\.$#'
+			identifier: class.notFound
+			count: 1
+			path: core/Model/Domain/Entities/Category.php
+
+		-
+			message: '#^Property Alpha\\Model\\Domain\\Entities\\Category\:\:\$descriptions has unknown class Alpha\\Model\\Domain\\Entities\\CategoryDescription as its type\.$#'
+			identifier: class.notFound
+			count: 1
+			path: core/Model/Domain/Entities/Category.php
+
+		-
+			message: '#^Property Alpha\\Model\\Domain\\Entities\\Category\:\:\$filters has unknown class Alpha\\Model\\Domain\\Entities\\CategoryFilter as its type\.$#'
+			identifier: class.notFound
+			count: 1
+			path: core/Model/Domain/Entities/Category.php
+
+		-
+			message: '#^Unknown parameter \$mappedBy in call to Alpha\\Model\\Domain\\Attributes\\OneToMany constructor\.$#'
+			identifier: argument.unknown
+			count: 3
+			path: core/Model/Domain/Entities/Category.php
+
+		-
+			message: '#^Class Alpha\\Model\\Domain\\Entities\\CouponCategory not found\.$#'
+			identifier: class.notFound
+			count: 1
+			path: core/Model/Domain/Entities/Coupon.php
+
+		-
+			message: '#^Class Alpha\\Model\\Domain\\Entities\\CouponHistory not found\.$#'
+			identifier: class.notFound
+			count: 1
+			path: core/Model/Domain/Entities/Coupon.php
+
+		-
+			message: '#^Class Alpha\\Model\\Domain\\Entities\\CouponProduct not found\.$#'
+			identifier: class.notFound
+			count: 1
+			path: core/Model/Domain/Entities/Coupon.php
+
+		-
+			message: '#^Property Alpha\\Model\\Domain\\Entities\\Coupon\:\:\$couponCategories has unknown class Alpha\\Model\\Domain\\Entities\\CouponCategory as its type\.$#'
+			identifier: class.notFound
+			count: 1
+			path: core/Model/Domain/Entities/Coupon.php
+
+		-
+			message: '#^Property Alpha\\Model\\Domain\\Entities\\Coupon\:\:\$couponHistories has unknown class Alpha\\Model\\Domain\\Entities\\CouponHistory as its type\.$#'
+			identifier: class.notFound
+			count: 1
+			path: core/Model/Domain/Entities/Coupon.php
+
+		-
+			message: '#^Property Alpha\\Model\\Domain\\Entities\\Coupon\:\:\$couponProducts has unknown class Alpha\\Model\\Domain\\Entities\\CouponProduct as its type\.$#'
+			identifier: class.notFound
+			count: 1
+			path: core/Model/Domain/Entities/Coupon.php
+
+		-
+			message: '#^Unknown parameter \$mappedBy in call to Alpha\\Model\\Domain\\Attributes\\OneToMany constructor\.$#'
+			identifier: argument.unknown
+			count: 3
+			path: core/Model/Domain/Entities/Coupon.php
+
+		-
+			message: '#^Property Alpha\\Model\\Domain\\Entities\\Customer\\Customer\:\:\$language \(Alpha\\Model\\Domain\\Entities\\Language\|null\) is never assigned Alpha\\Model\\Domain\\Entities\\Language so it can be removed from the property type\.$#'
+			identifier: property.unusedType
+			count: 1
+			path: core/Model/Domain/Entities/Customer/Customer.php
+
+		-
+			message: '#^Property Alpha\\Model\\Domain\\Entities\\Customer\\Customer\:\:\$language is never read, only written\.$#'
+			identifier: property.onlyWritten
+			count: 1
+			path: core/Model/Domain/Entities/Customer/Customer.php
+
+		-
+			message: '#^Property Alpha\\Model\\Domain\\Entities\\Customer\\Customer\:\:\$store \(Alpha\\Model\\Domain\\Entities\\Store\|null\) is never assigned Alpha\\Model\\Domain\\Entities\\Store so it can be removed from the property type\.$#'
+			identifier: property.unusedType
+			count: 1
+			path: core/Model/Domain/Entities/Customer/Customer.php
+
+		-
+			message: '#^Property Alpha\\Model\\Domain\\Entities\\Customer\\Customer\:\:\$store is never read, only written\.$#'
+			identifier: property.onlyWritten
+			count: 1
+			path: core/Model/Domain/Entities/Customer/Customer.php
+
+		-
+			message: '#^Class Alpha\\Model\\Domain\\Entities\\Customer\\CustomerGroupDescription not found\.$#'
+			identifier: class.notFound
+			count: 1
+			path: core/Model/Domain/Entities/Customer/CustomerGroup.php
+
+		-
+			message: '#^Class Alpha\\Model\\Domain\\Entities\\ZoneToGeoZone not found\.$#'
+			identifier: class.notFound
+			count: 1
+			path: core/Model/Domain/Entities/GeoZone.php
+
+		-
+			message: '#^Method Alpha\\Model\\Domain\\Entities\\GeoZone\:\:getZones\(\) has invalid return type Alpha\\Model\\Domain\\Entities\\ZoneToGeoZone\.$#'
+			identifier: class.notFound
+			count: 1
+			path: core/Model/Domain/Entities/GeoZone.php
+
+		-
+			message: '#^Class Alpha\\Model\\Domain\\Entities\\InformationDescription not found\.$#'
+			identifier: class.notFound
+			count: 1
+			path: core/Model/Domain/Entities/Information.php
+
+		-
+			message: '#^Class Alpha\\Model\\Domain\\Entities\\InformationToLayout not found\.$#'
+			identifier: class.notFound
+			count: 1
+			path: core/Model/Domain/Entities/Information.php
+
+		-
+			message: '#^Class Alpha\\Model\\Domain\\Entities\\InformationToStore not found\.$#'
+			identifier: class.notFound
+			count: 1
+			path: core/Model/Domain/Entities/Information.php
+
+		-
+			message: '#^Property Alpha\\Model\\Domain\\Entities\\Information\:\:\$descriptions has unknown class Alpha\\Model\\Domain\\Entities\\InformationDescription as its type\.$#'
+			identifier: class.notFound
+			count: 1
+			path: core/Model/Domain/Entities/Information.php
+
+		-
+			message: '#^Property Alpha\\Model\\Domain\\Entities\\Information\:\:\$informationToLayouts has unknown class Alpha\\Model\\Domain\\Entities\\InformationToLayout as its type\.$#'
+			identifier: class.notFound
+			count: 1
+			path: core/Model/Domain/Entities/Information.php
+
+		-
+			message: '#^Property Alpha\\Model\\Domain\\Entities\\Information\:\:\$informationToStores has unknown class Alpha\\Model\\Domain\\Entities\\InformationToStore as its type\.$#'
+			identifier: class.notFound
+			count: 1
+			path: core/Model/Domain/Entities/Information.php
+
+		-
+			message: '#^Unknown parameter \$mappedBy in call to Alpha\\Model\\Domain\\Attributes\\OneToMany constructor\.$#'
+			identifier: argument.unknown
+			count: 2
+			path: core/Model/Domain/Entities/Information.php
+
+		-
+			message: '#^Class Alpha\\Model\\Domain\\Entities\\LayoutRoute not found\.$#'
+			identifier: class.notFound
+			count: 1
+			path: core/Model/Domain/Entities/Layout.php
+
+		-
+			message: '#^Method Alpha\\Model\\Domain\\Entities\\Layout\:\:getRoutes\(\) has invalid return type Alpha\\Model\\Domain\\Entities\\LayoutRoute\.$#'
+			identifier: class.notFound
+			count: 1
+			path: core/Model/Domain/Entities/Layout.php
+
+		-
+			message: '#^Parameter \$routes of method Alpha\\Model\\Domain\\Entities\\Layout\:\:setRoutes\(\) has invalid type Alpha\\Model\\Domain\\Entities\\LayoutRoute\.$#'
+			identifier: class.notFound
+			count: 1
+			path: core/Model/Domain/Entities/Layout.php
+
+		-
+			message: '#^Property Alpha\\Model\\Domain\\Entities\\Layout\:\:\$routes has unknown class Alpha\\Model\\Domain\\Entities\\LayoutRoute as its type\.$#'
+			identifier: class.notFound
+			count: 1
+			path: core/Model/Domain/Entities/Layout.php
+
+		-
+			message: '#^Unknown parameter \$mappedBy in call to Alpha\\Model\\Domain\\Attributes\\OneToMany constructor\.$#'
+			identifier: argument.unknown
+			count: 2
+			path: core/Model/Domain/Entities/Layout.php
+
+		-
+			message: '#^Class Alpha\\Model\\Domain\\Entities\\ManufacturerToStore not found\.$#'
+			identifier: class.notFound
+			count: 1
+			path: core/Model/Domain/Entities/Manufacturer.php
+
+		-
+			message: '#^Property Alpha\\Model\\Domain\\Entities\\Manufacturer\:\:\$manufacturerToStores has unknown class Alpha\\Model\\Domain\\Entities\\ManufacturerToStore as its type\.$#'
+			identifier: class.notFound
+			count: 1
+			path: core/Model/Domain/Entities/Manufacturer.php
+
+		-
+			message: '#^Unknown parameter \$mappedBy in call to Alpha\\Model\\Domain\\Attributes\\OneToMany constructor\.$#'
+			identifier: argument.unknown
+			count: 1
+			path: core/Model/Domain/Entities/Manufacturer.php
+
+		-
+			message: '#^Class Alpha\\Model\\Domain\\Entities\\OptionDescription not found\.$#'
+			identifier: class.notFound
+			count: 1
+			path: core/Model/Domain/Entities/Option.php
+
+		-
+			message: '#^Class Alpha\\Model\\Domain\\Entities\\OptionValue not found\.$#'
+			identifier: class.notFound
+			count: 1
+			path: core/Model/Domain/Entities/Option.php
+
+		-
+			message: '#^Property Alpha\\Model\\Domain\\Entities\\Option\:\:\$descriptions has unknown class Alpha\\Model\\Domain\\Entities\\OptionDescription as its type\.$#'
+			identifier: class.notFound
+			count: 1
+			path: core/Model/Domain/Entities/Option.php
+
+		-
+			message: '#^Property Alpha\\Model\\Domain\\Entities\\Option\:\:\$values has unknown class Alpha\\Model\\Domain\\Entities\\OptionValue as its type\.$#'
+			identifier: class.notFound
+			count: 1
+			path: core/Model/Domain/Entities/Option.php
+
+		-
+			message: '#^Unknown parameter \$mappedBy in call to Alpha\\Model\\Domain\\Attributes\\OneToMany constructor\.$#'
+			identifier: argument.unknown
+			count: 2
+			path: core/Model/Domain/Entities/Option.php
+
+		-
+			message: '#^Property Alpha\\Model\\Domain\\Entities\\Order\:\:\$histories is never read, only written\.$#'
+			identifier: property.onlyWritten
+			count: 1
+			path: core/Model/Domain/Entities/Order.php
+
+		-
+			message: '#^Unknown parameter \$mappedBy in call to Alpha\\Model\\Domain\\Attributes\\OneToMany constructor\.$#'
+			identifier: argument.unknown
+			count: 3
+			path: core/Model/Domain/Entities/Order.php
+
+		-
+			message: '#^Attribute class Alpha\\Model\\Domain\\Entities\\ManyToOne does not exist\.$#'
+			identifier: attribute.notFound
+			count: 2
+			path: core/Model/Domain/Entities/OrderOption.php
+
+		-
+			message: '#^Unknown parameter \$mappedBy in call to Alpha\\Model\\Domain\\Attributes\\OneToMany constructor\.$#'
+			identifier: argument.unknown
+			count: 1
+			path: core/Model/Domain/Entities/OrderProduct.php
+
+		-
+			message: '#^Property Alpha\\Model\\Domain\\Entities\\OrderReturn\:\:\$customer \(Alpha\\Model\\Domain\\Entities\\Customer\\Customer\|null\) is never assigned Alpha\\Model\\Domain\\Entities\\Customer\\Customer so it can be removed from the property type\.$#'
+			identifier: property.unusedType
+			count: 1
+			path: core/Model/Domain/Entities/OrderReturn.php
+
+		-
+			message: '#^Property Alpha\\Model\\Domain\\Entities\\OrderReturn\:\:\$order \(Alpha\\Model\\Domain\\Entities\\Order\|null\) is never assigned Alpha\\Model\\Domain\\Entities\\Order so it can be removed from the property type\.$#'
+			identifier: property.unusedType
+			count: 1
+			path: core/Model/Domain/Entities/OrderReturn.php
+
+		-
+			message: '#^Property Alpha\\Model\\Domain\\Entities\\OrderReturn\:\:\$relatedProduct \(Alpha\\Model\\Domain\\Entities\\Product\|null\) is never assigned Alpha\\Model\\Domain\\Entities\\Product so it can be removed from the property type\.$#'
+			identifier: property.unusedType
+			count: 1
+			path: core/Model/Domain/Entities/OrderReturn.php
+
+		-
+			message: '#^Attribute class Alpha\\Model\\Domain\\Entities\\ManyToOne does not exist\.$#'
+			identifier: attribute.notFound
+			count: 1
+			path: core/Model/Domain/Entities/OrderStatus.php
+
+		-
+			message: '#^Class Alpha\\Model\\Domain\\Entities\\ProductAttribute not found\.$#'
+			identifier: class.notFound
+			count: 1
+			path: core/Model/Domain/Entities/Product.php
+
+		-
+			message: '#^Class Alpha\\Model\\Domain\\Entities\\ProductDescription not found\.$#'
+			identifier: class.notFound
+			count: 1
+			path: core/Model/Domain/Entities/Product.php
+
+		-
+			message: '#^Method Alpha\\Model\\Domain\\Entities\\Product\:\:getAttributes\(\) has invalid return type Alpha\\Model\\Domain\\Entities\\ProductAttribute\.$#'
+			identifier: class.notFound
+			count: 1
+			path: core/Model/Domain/Entities/Product.php
+
+		-
+			message: '#^Method Alpha\\Model\\Domain\\Entities\\Product\:\:getDescriptions\(\) has invalid return type Alpha\\Model\\Domain\\Entities\\ProductDescription\.$#'
+			identifier: class.notFound
+			count: 1
+			path: core/Model/Domain/Entities/Product.php
+
+		-
+			message: '#^Property Alpha\\Model\\Domain\\Entities\\Product\:\:\$attributes has unknown class Alpha\\Model\\Domain\\Entities\\ProductAttribute as its type\.$#'
+			identifier: class.notFound
+			count: 1
+			path: core/Model/Domain/Entities/Product.php
+
+		-
+			message: '#^Property Alpha\\Model\\Domain\\Entities\\Product\:\:\$descriptions has unknown class Alpha\\Model\\Domain\\Entities\\ProductDescription as its type\.$#'
+			identifier: class.notFound
+			count: 1
+			path: core/Model/Domain/Entities/Product.php
+
+		-
+			message: '#^Class Alpha\\Model\\Domain\\Entities\\OptionValue not found\.$#'
+			identifier: class.notFound
+			count: 1
+			path: core/Model/Domain/Entities/ProductOptionValue.php
+
+		-
+			message: '#^Method Alpha\\Model\\Domain\\Entities\\ProductOptionValue\:\:getOptionValue\(\) has invalid return type Alpha\\Model\\Domain\\Entities\\OptionValue\.$#'
+			identifier: class.notFound
+			count: 1
+			path: core/Model/Domain/Entities/ProductOptionValue.php
+
+		-
+			message: '#^Parameter \$optionValue of method Alpha\\Model\\Domain\\Entities\\ProductOptionValue\:\:setOptionValue\(\) has invalid type Alpha\\Model\\Domain\\Entities\\OptionValue\.$#'
+			identifier: class.notFound
+			count: 1
+			path: core/Model/Domain/Entities/ProductOptionValue.php
+
+		-
+			message: '#^Property Alpha\\Model\\Domain\\Entities\\ProductOptionValue\:\:\$optionValue has unknown class Alpha\\Model\\Domain\\Entities\\OptionValue as its type\.$#'
+			identifier: class.notFound
+			count: 1
+			path: core/Model/Domain/Entities/ProductOptionValue.php
+
+		-
+			message: '#^Call to method getId\(\) on an unknown class Alpha\\Model\\Domain\\Entities\\SubscriptionPlan\.$#'
+			identifier: class.notFound
+			count: 1
+			path: core/Model/Domain/Entities/Subscription.php
+
+		-
+			message: '#^Call to method setId\(\) on an unknown class Alpha\\Model\\Domain\\Entities\\SubscriptionPlan\.$#'
+			identifier: class.notFound
+			count: 1
+			path: core/Model/Domain/Entities/Subscription.php
+
+		-
+			message: '#^Class Alpha\\Model\\Domain\\Entities\\SubscriptionPlan not found\.$#'
+			identifier: class.notFound
+			count: 1
+			path: core/Model/Domain/Entities/Subscription.php
+
+		-
+			message: '#^Instantiated class Alpha\\Model\\Domain\\Entities\\SubscriptionPlan not found\.$#'
+			identifier: class.notFound
+			count: 1
+			path: core/Model/Domain/Entities/Subscription.php
+
+		-
+			message: '#^Method Alpha\\Model\\Domain\\Entities\\Subscription\:\:getSubscriptionPlan\(\) has invalid return type Alpha\\Model\\Domain\\Entities\\SubscriptionPlan\.$#'
+			identifier: class.notFound
+			count: 1
+			path: core/Model/Domain/Entities/Subscription.php
+
+		-
+			message: '#^Parameter \$plan of method Alpha\\Model\\Domain\\Entities\\Subscription\:\:setSubscriptionPlan\(\) has invalid type Alpha\\Model\\Domain\\Entities\\SubscriptionPlan\.$#'
+			identifier: class.notFound
+			count: 1
+			path: core/Model/Domain/Entities/Subscription.php
+
+		-
+			message: '#^Property Alpha\\Model\\Domain\\Entities\\Subscription\:\:\$subscriptionPlan has unknown class Alpha\\Model\\Domain\\Entities\\SubscriptionPlan as its type\.$#'
+			identifier: class.notFound
+			count: 1
+			path: core/Model/Domain/Entities/Subscription.php
+
+		-
+			message: '#^Property Alpha\\Model\\Domain\\Entities\\Supplier\\Contact\:\:\$brands is never written, only read\.$#'
+			identifier: property.onlyRead
+			count: 1
+			path: core/Model/Domain/Entities/Supplier/Contact.php
+
+		-
+			message: '#^Property Alpha\\Model\\Domain\\Entities\\Supplier\\Contact\:\:\$createdAt is never written, only read\.$#'
+			identifier: property.onlyRead
+			count: 1
+			path: core/Model/Domain/Entities/Supplier/Contact.php
+
+		-
+			message: '#^Property Alpha\\Model\\Domain\\Entities\\Supplier\\Contact\:\:\$updatedAt is never written, only read\.$#'
+			identifier: property.onlyRead
+			count: 1
+			path: core/Model/Domain/Entities/Supplier/Contact.php
+
+		-
+			message: '#^Unknown parameter \$foreignKey in call to Alpha\\Model\\Domain\\Attributes\\ManyToMany constructor\.$#'
+			identifier: argument.unknown
+			count: 1
+			path: core/Model/Domain/Entities/Supplier/Contact.php
+
+		-
+			message: '#^Unknown parameter \$pivotOwn in call to Alpha\\Model\\Domain\\Attributes\\ManyToMany constructor\.$#'
+			identifier: argument.unknown
+			count: 1
+			path: core/Model/Domain/Entities/Supplier/Contact.php
+
+		-
+			message: '#^Unknown parameter \$pivotTable in call to Alpha\\Model\\Domain\\Attributes\\ManyToMany constructor\.$#'
+			identifier: argument.unknown
+			count: 1
+			path: core/Model/Domain/Entities/Supplier/Contact.php
+
+		-
+			message: '#^Unknown parameter \$pivotTarget in call to Alpha\\Model\\Domain\\Attributes\\ManyToMany constructor\.$#'
+			identifier: argument.unknown
+			count: 1
+			path: core/Model/Domain/Entities/Supplier/Contact.php
+
+		-
+			message: '#^Call to method getId\(\) on an unknown class Alpha\\Model\\Domain\\Entities\\Zone\.$#'
+			identifier: class.notFound
+			count: 1
+			path: core/Model/Domain/Entities/TaxRate.php
+
+		-
+			message: '#^Call to method setId\(\) on an unknown class Alpha\\Model\\Domain\\Entities\\Zone\.$#'
+			identifier: class.notFound
+			count: 1
+			path: core/Model/Domain/Entities/TaxRate.php
+
+		-
+			message: '#^Class Alpha\\Model\\Domain\\Entities\\Zone not found\.$#'
+			identifier: class.notFound
+			count: 1
+			path: core/Model/Domain/Entities/TaxRate.php
+
+		-
+			message: '#^Instantiated class Alpha\\Model\\Domain\\Entities\\Zone not found\.$#'
+			identifier: class.notFound
+			count: 1
+			path: core/Model/Domain/Entities/TaxRate.php
+
+		-
+			message: '#^Method Alpha\\Model\\Domain\\Entities\\TaxRate\:\:getZone\(\) has invalid return type Alpha\\Model\\Domain\\Entities\\Zone\.$#'
+			identifier: class.notFound
+			count: 1
+			path: core/Model/Domain/Entities/TaxRate.php
+
+		-
+			message: '#^Parameter \$zone of method Alpha\\Model\\Domain\\Entities\\TaxRate\:\:setZone\(\) has invalid type Alpha\\Model\\Domain\\Entities\\Zone\.$#'
+			identifier: class.notFound
+			count: 1
+			path: core/Model/Domain/Entities/TaxRate.php
+
+		-
+			message: '#^Property Alpha\\Model\\Domain\\Entities\\TaxRate\:\:\$zone has unknown class Alpha\\Model\\Domain\\Entities\\Zone as its type\.$#'
+			identifier: class.notFound
+			count: 1
+			path: core/Model/Domain/Entities/TaxRate.php
+
+		-
+			message: '#^Class Alpha\\Model\\Domain\\Entities\\TaxClass not found\.$#'
+			identifier: class.notFound
+			count: 1
+			path: core/Model/Domain/Entities/TaxRule.php
+
+		-
+			message: '#^Method Alpha\\Model\\Domain\\Entities\\TaxRule\:\:getTaxClass\(\) has invalid return type Alpha\\Model\\Domain\\Entities\\TaxClass\.$#'
+			identifier: class.notFound
+			count: 1
+			path: core/Model/Domain/Entities/TaxRule.php
+
+		-
+			message: '#^Parameter \$taxClass of method Alpha\\Model\\Domain\\Entities\\TaxRule\:\:setTaxClass\(\) has invalid type Alpha\\Model\\Domain\\Entities\\TaxClass\.$#'
+			identifier: class.notFound
+			count: 1
+			path: core/Model/Domain/Entities/TaxRule.php
+
+		-
+			message: '#^Property Alpha\\Model\\Domain\\Entities\\TaxRule\:\:\$taxClass has unknown class Alpha\\Model\\Domain\\Entities\\TaxClass as its type\.$#'
+			identifier: class.notFound
+			count: 1
+			path: core/Model/Domain/Entities/TaxRule.php
+
+		-
+			message: '#^Attribute class Alpha\\Model\\Domain\\Entities\\OneToMany does not exist\.$#'
+			identifier: attribute.notFound
+			count: 1
+			path: core/Model/Domain/Entities/WeightClass.php
+
+		-
+			message: '#^Attribute class Alpha\\Model\\Domain\\Entities\\ManyToOne does not exist\.$#'
+			identifier: attribute.notFound
+			count: 1
+			path: core/Model/Domain/Entities/WeightClassDescription.php
+
+		-
+			message: '#^Property Alpha\\Model\\Domain\\Observers\\OrderEmailObserver\:\:\$mailer is never read, only written\.$#'
+			identifier: property.onlyWritten
+			count: 1
+			path: core/Model/Domain/Observers/OrderEmailObserver.php
+
+		-
+			message: '#^Call to an undefined method Alpha\\Model\\Domain\\InterfaceEntity\:\:getAddressFormat\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: core/Model/Domain/Repositories/AddressFormatRepository.php
+
+		-
+			message: '#^Call to an undefined method Alpha\\Model\\Domain\\InterfaceEntity\:\:getName\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: core/Model/Domain/Repositories/AddressFormatRepository.php
+
+		-
+			message: '#^Call to method findAll\(\) on an unknown class Alpha\\Mappers\\EntityMappers\\AddressFormatMapper\.$#'
+			identifier: class.notFound
+			count: 1
+			path: core/Model/Domain/Repositories/AddressFormatRepository.php
+
+		-
+			message: '#^Call to method findById\(\) on an unknown class Alpha\\Mappers\\EntityMappers\\AddressFormatMapper\.$#'
+			identifier: class.notFound
+			count: 1
+			path: core/Model/Domain/Repositories/AddressFormatRepository.php
+
+		-
+			message: '#^Call to method findOneBy\(\) on an unknown class Alpha\\Mappers\\EntityMappers\\AddressFormatMapper\.$#'
+			identifier: class.notFound
+			count: 1
+			path: core/Model/Domain/Repositories/AddressFormatRepository.php
+
+		-
+			message: '#^Call to method search\(\) on an unknown class Alpha\\Mappers\\EntityMappers\\AddressFormatMapper\.$#'
+			identifier: class.notFound
+			count: 1
+			path: core/Model/Domain/Repositories/AddressFormatRepository.php
+
+		-
+			message: '#^Class Alpha\\Mappers\\EntityMappers\\AddressFormatMapper not found\.$#'
+			identifier: class.notFound
+			count: 1
+			path: core/Model/Domain/Repositories/AddressFormatRepository.php
+
+		-
+			message: '#^Method Alpha\\Model\\Domain\\Repositories\\AddressFormatRepository\:\:getMapper\(\) has invalid return type Alpha\\Mappers\\EntityMappers\\AddressFormatMapper\.$#'
+			identifier: class.notFound
+			count: 1
+			path: core/Model/Domain/Repositories/AddressFormatRepository.php
+
+		-
+			message: '#^Access to an undefined property Alpha\\Model\\Domain\\Repositories\\ApiHistoryRepository\:\:\$mapper\.$#'
+			identifier: property.notFound
+			count: 1
+			path: core/Model/Domain/Repositories/ApiHistoryRepository.php
+
+		-
+			message: '#^Access to an undefined property Alpha\\Model\\Domain\\Repositories\\ApiIpRepository\:\:\$mapper\.$#'
+			identifier: property.notFound
+			count: 1
+			path: core/Model/Domain/Repositories/ApiIpRepository.php
+
+		-
+			message: '#^Access to an undefined property Alpha\\Model\\Domain\\Repositories\\ArticleRepository\:\:\$customer\.$#'
+			identifier: property.notFound
+			count: 6
+			path: core/Model/Domain/Repositories/ArticleRepository.php
+
+		-
+			message: '#^Access to an undefined property Alpha\\Model\\Domain\\Repositories\\ArticleRepository\:\:\$language_id\.$#'
+			identifier: property.notFound
+			count: 3
+			path: core/Model/Domain/Repositories/ArticleRepository.php
+
+		-
+			message: '#^Access to an undefined property Alpha\\Model\\Domain\\Repositories\\ArticleRepository\:\:\$store_id\.$#'
+			identifier: property.notFound
+			count: 5
+			path: core/Model/Domain/Repositories/ArticleRepository.php
+
+		-
+			message: '#^Call to an undefined method Alpha\\Mappers\\EntityMappers\\ArticleMapper\:\:addComment\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: core/Model/Domain/Repositories/ArticleRepository.php
+
+		-
+			message: '#^Call to an undefined method Alpha\\Mappers\\EntityMappers\\ArticleMapper\:\:addRating\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: core/Model/Domain/Repositories/ArticleRepository.php
+
+		-
+			message: '#^Call to an undefined method Alpha\\Mappers\\EntityMappers\\ArticleMapper\:\:deleteRating\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: core/Model/Domain/Repositories/ArticleRepository.php
+
+		-
+			message: '#^Call to an undefined method Alpha\\Mappers\\EntityMappers\\ArticleMapper\:\:editCommentRating\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: core/Model/Domain/Repositories/ArticleRepository.php
+
+		-
+			message: '#^Call to an undefined method Alpha\\Mappers\\EntityMappers\\ArticleMapper\:\:getComment\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: core/Model/Domain/Repositories/ArticleRepository.php
+
+		-
+			message: '#^Call to an undefined method Alpha\\Mappers\\EntityMappers\\ArticleMapper\:\:getComments\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: core/Model/Domain/Repositories/ArticleRepository.php
+
+		-
+			message: '#^Call to an undefined method Alpha\\Mappers\\EntityMappers\\ArticleMapper\:\:getLayoutId\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: core/Model/Domain/Repositories/ArticleRepository.php
+
+		-
+			message: '#^Call to an undefined method Alpha\\Mappers\\EntityMappers\\ArticleMapper\:\:getRatings\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: core/Model/Domain/Repositories/ArticleRepository.php
+
+		-
+			message: '#^Call to an undefined method Alpha\\Mappers\\EntityMappers\\ArticleMapper\:\:getTotalComments\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: core/Model/Domain/Repositories/ArticleRepository.php
+
+		-
+			message: '#^Function oc_get_ip not found\.$#'
+			identifier: function.notFound
+			count: 2
+			path: core/Model/Domain/Repositories/ArticleRepository.php
+
+		-
+			message: '#^Access to an undefined property Alpha\\Model\\Domain\\Repositories\\AttributeRepository\:\:\$mapper\.$#'
+			identifier: property.notFound
+			count: 1
+			path: core/Model/Domain/Repositories/AttributeRepository.php
+
+		-
+			message: '#^Access to an undefined property Alpha\\Model\\Domain\\Repositories\\BannerRepository\:\:\$language_id\.$#'
+			identifier: property.notFound
+			count: 1
+			path: core/Model/Domain/Repositories/BannerRepository.php
+
+		-
+			message: '#^Call to function property_exists\(\) with \$this\(Alpha\\Model\\Domain\\Repositories\\CartRepository\) and ''container'' will always evaluate to true\.$#'
+			identifier: function.alreadyNarrowedType
+			count: 8
+			path: core/Model/Domain/Repositories/CartRepository.php
+
+		-
+			message: '#^If condition is always true\.$#'
+			identifier: if.alwaysTrue
+			count: 1
+			path: core/Model/Domain/Repositories/CartRepository.php
+
+		-
+			message: '#^Access to an undefined property Alpha\\Model\\Domain\\Repositories\\CategoryRepository\:\:\$config\.$#'
+			identifier: property.notFound
+			count: 2
+			path: core/Model/Domain/Repositories/CategoryRepository.php
+
+		-
+			message: '#^Access to an undefined property Alpha\\Model\\Domain\\Repositories\\CategoryRepository\:\:\$language_id\.$#'
+			identifier: property.notFound
+			count: 20
+			path: core/Model/Domain/Repositories/CategoryRepository.php
+
+		-
+			message: '#^Access to an undefined property Alpha\\Model\\Domain\\Repositories\\CategoryRepository\:\:\$store_id\.$#'
+			identifier: property.notFound
+			count: 17
+			path: core/Model/Domain/Repositories/CategoryRepository.php
+
+		-
+			message: '#^Access to an undefined property Alpha\\Model\\Domain\\Repositories\\ConfigurationRepository\:\:\$config\.$#'
+			identifier: property.notFound
+			count: 1
+			path: core/Model/Domain/Repositories/ConfigurationRepository.php
+
+		-
+			message: '#^Empty array passed to foreach\.$#'
+			identifier: foreach.emptyArray
+			count: 1
+			path: core/Model/Domain/Repositories/ConfigurationRepository.php
+
+		-
+			message: '#^Access to an undefined property Alpha\\Model\\Domain\\Repositories\\CookieRepository\:\:\$config\.$#'
+			identifier: property.notFound
+			count: 9
+			path: core/Model/Domain/Repositories/CookieRepository.php
+
+		-
+			message: '#^Access to an undefined property Alpha\\Model\\Domain\\Repositories\\CookieRepository\:\:\$language\.$#'
+			identifier: property.notFound
+			count: 1
+			path: core/Model/Domain/Repositories/CookieRepository.php
+
+		-
+			message: '#^Access to an undefined property Alpha\\Model\\Domain\\Repositories\\CookieRepository\:\:\$url\.$#'
+			identifier: property.notFound
+			count: 3
+			path: core/Model/Domain/Repositories/CookieRepository.php
+
+		-
+			message: '#^Access to an undefined property Alpha\\Model\\Domain\\Repositories\\CouponRepository\:\:\$dao\.$#'
+			identifier: property.notFound
+			count: 2
+			path: core/Model/Domain/Repositories/CouponRepository.php
+
+		-
+			message: '#^Call to method findAll\(\) on an unknown class Alpha\\Mappers\\CouponMapper\.$#'
+			identifier: class.notFound
+			count: 1
+			path: core/Model/Domain/Repositories/CouponRepository.php
+
+		-
+			message: '#^Call to method findBy\(\) on an unknown class Alpha\\Mappers\\CouponMapper\.$#'
+			identifier: class.notFound
+			count: 1
+			path: core/Model/Domain/Repositories/CouponRepository.php
+
+		-
+			message: '#^Call to method findById\(\) on an unknown class Alpha\\Mappers\\CouponMapper\.$#'
+			identifier: class.notFound
+			count: 1
+			path: core/Model/Domain/Repositories/CouponRepository.php
+
+		-
+			message: '#^Call to method findOneBy\(\) on an unknown class Alpha\\Mappers\\CouponMapper\.$#'
+			identifier: class.notFound
+			count: 2
+			path: core/Model/Domain/Repositories/CouponRepository.php
+
+		-
+			message: '#^Class Alpha\\Mappers\\CouponMapper not found\.$#'
+			identifier: class.notFound
+			count: 1
+			path: core/Model/Domain/Repositories/CouponRepository.php
+
+		-
+			message: '#^Method Alpha\\Model\\Domain\\Repositories\\CouponRepository\:\:getMapper\(\) has invalid return type Alpha\\Mappers\\CouponMapper\.$#'
+			identifier: class.notFound
+			count: 1
+			path: core/Model/Domain/Repositories/CouponRepository.php
+
+		-
+			message: '#^Method Alpha\\Model\\Domain\\Repositories\\CustomerAddressesRepository\:\:find\(\) should return Alpha\\Model\\Domain\\Entities\\Customer\\CustomerAddresses\|null but returns Alpha\\Model\\Domain\\InterfaceEntity\|null\.$#'
+			identifier: return.type
+			count: 1
+			path: core/Model/Domain/Repositories/CustomerAddressesRepository.php
+
+		-
+			message: '#^Parameter \#1 \$country of method Alpha\\Model\\Domain\\Entities\\Customer\\CustomerAddresses\:\:setCountry\(\) expects Alpha\\Model\\Domain\\Entities\\Geo\\Country\|null, Alpha\\Model\\Domain\\InterfaceEntity\|null given\.$#'
+			identifier: argument.type
+			count: 1
+			path: core/Model/Domain/Repositories/CustomerAddressesRepository.php
+
+		-
+			message: '#^Parameter \#1 \$zone of method Alpha\\Model\\Domain\\Entities\\Customer\\CustomerAddresses\:\:setZone\(\) expects Alpha\\Model\\Domain\\Entities\\Geo\\Zone\|null, Alpha\\Model\\Domain\\InterfaceEntity\|null given\.$#'
+			identifier: argument.type
+			count: 1
+			path: core/Model/Domain/Repositories/CustomerAddressesRepository.php
+
+		-
+			message: '#^Parameter \#1 \$zone of method Alpha\\Model\\Domain\\Entities\\Geo\\City\:\:setZone\(\) expects Alpha\\Model\\Domain\\Entities\\Geo\\Zone\|null, Alpha\\Model\\Domain\\InterfaceEntity\|null given\.$#'
+			identifier: argument.type
+			count: 1
+			path: core/Model/Domain/Repositories/CustomerAddressesRepository.php
+
+		-
+			message: '#^Access to an undefined property Alpha\\Model\\Domain\\Repositories\\CustomerAffiliateRepository\:\:\$config\.$#'
+			identifier: property.notFound
+			count: 2
+			path: core/Model/Domain/Repositories/CustomerAffiliateRepository.php
+
+		-
+			message: '#^Function oc_token not found\.$#'
+			identifier: function.notFound
+			count: 1
+			path: core/Model/Domain/Repositories/CustomerAffiliateRepository.php
+
+		-
+			message: '#^Method Alpha\\Model\\Domain\\Repositories\\CustomerAffiliateRepository\:\:findByTracking\(\) should return Alpha\\Model\\Domain\\Entities\\Customer\\CustomerAffiliate\|null but returns Alpha\\Model\\Domain\\InterfaceEntity\|null\.$#'
+			identifier: return.type
+			count: 1
+			path: core/Model/Domain/Repositories/CustomerAffiliateRepository.php
+
+		-
+			message: '#^Access to an undefined property Alpha\\Model\\Domain\\Repositories\\CustomerAuthorizeRepository\:\:\$mapper\.$#'
+			identifier: property.notFound
+			count: 2
+			path: core/Model/Domain/Repositories/CustomerAuthorizeRepository.php
+
+		-
+			message: '#^Access to an undefined property Alpha\\Model\\Domain\\Repositories\\CustomerRepository\:\:\$config\.$#'
+			identifier: property.notFound
+			count: 1
+			path: core/Model/Domain/Repositories/CustomerRepository.php
+
+		-
+			message: '#^Access to an undefined property Alpha\\Model\\Domain\\Repositories\\CustomerRepository\:\:\$store_id\.$#'
+			identifier: property.notFound
+			count: 2
+			path: core/Model/Domain/Repositories/CustomerRepository.php
+
+		-
+			message: '#^Call to an undefined method Alpha\\Model\\Domain\\InterfaceEntity\:\:getStoreId\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: core/Model/Domain/Repositories/CustomerRepository.php
+
+		-
+			message: '#^Method Alpha\\Model\\Domain\\Repositories\\CustomerRepository\:\:find\(\) should return Alpha\\Model\\Domain\\Entities\\Customer\\Customer\|null but returns Alpha\\Model\\Domain\\InterfaceEntity\.$#'
+			identifier: return.type
+			count: 1
+			path: core/Model/Domain/Repositories/CustomerRepository.php
+
+		-
+			message: '#^Access to an undefined property Alpha\\Model\\Domain\\Repositories\\CustomerRewardRepository\:\:\$db\.$#'
+			identifier: property.notFound
+			count: 2
+			path: core/Model/Domain/Repositories/CustomerRewardRepository.php
+
+		-
+			message: '#^Access to an undefined property Alpha\\Model\\Domain\\Repositories\\CustomerRewardRepository\:\:\$mapper\.$#'
+			identifier: property.notFound
+			count: 5
+			path: core/Model/Domain/Repositories/CustomerRewardRepository.php
+
+		-
+			message: '#^Access to an undefined property Alpha\\Model\\Domain\\Repositories\\CustomerTokenRepository\:\:\$mapper\.$#'
+			identifier: property.notFound
+			count: 3
+			path: core/Model/Domain/Repositories/CustomerTokenRepository.php
+
+		-
+			message: '#^Access to an undefined property Alpha\\Model\\Domain\\Repositories\\FooterRepository\:\:\$config\.$#'
+			identifier: property.notFound
+			count: 3
+			path: core/Model/Domain/Repositories/FooterRepository.php
+
+		-
+			message: '#^Access to an undefined property Alpha\\Model\\Domain\\Repositories\\FooterRepository\:\:\$document\.$#'
+			identifier: property.notFound
+			count: 1
+			path: core/Model/Domain/Repositories/FooterRepository.php
+
+		-
+			message: '#^Access to an undefined property Alpha\\Model\\Domain\\Repositories\\FooterRepository\:\:\$language_id\.$#'
+			identifier: property.notFound
+			count: 1
+			path: core/Model/Domain/Repositories/FooterRepository.php
+
+		-
+			message: '#^Access to an undefined property Alpha\\Model\\Domain\\Repositories\\FooterRepository\:\:\$store_id\.$#'
+			identifier: property.notFound
+			count: 1
+			path: core/Model/Domain/Repositories/FooterRepository.php
+
+		-
+			message: '#^Access to an undefined property Alpha\\Model\\Domain\\Repositories\\FooterRepository\:\:\$url\.$#'
+			identifier: property.notFound
+			count: 12
+			path: core/Model/Domain/Repositories/FooterRepository.php
+
+		-
+			message: '#^Call to an undefined method Alpha\\Mappers\\EntityMappers\\GeoZoneMapper\:\:checkAddressInZone\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: core/Model/Domain/Repositories/GeoZoneRepository.php
+
+		-
+			message: '#^Access to an undefined property Alpha\\Model\\Domain\\Repositories\\HeaderRepository\:\:\$config\.$#'
+			identifier: property.notFound
+			count: 7
+			path: core/Model/Domain/Repositories/HeaderRepository.php
+
+		-
+			message: '#^Access to an undefined property Alpha\\Model\\Domain\\Repositories\\HomeRepository\:\:\$config\.$#'
+			identifier: property.notFound
+			count: 1
+			path: core/Model/Domain/Repositories/HomeRepository.php
+
+		-
+			message: '#^Access to an undefined property Alpha\\Model\\Domain\\Repositories\\HomeRepository\:\:\$document\.$#'
+			identifier: property.notFound
+			count: 6
+			path: core/Model/Domain/Repositories/HomeRepository.php
+
+		-
+			message: '#^Access to an undefined property Alpha\\Model\\Domain\\Repositories\\HomeRepository\:\:\$store_id\.$#'
+			identifier: property.notFound
+			count: 1
+			path: core/Model/Domain/Repositories/HomeRepository.php
+
+		-
+			message: '#^Access to an undefined property Alpha\\Model\\Domain\\Repositories\\InformationRepository\:\:\$language_id\.$#'
+			identifier: property.notFound
+			count: 3
+			path: core/Model/Domain/Repositories/InformationRepository.php
+
+		-
+			message: '#^Access to an undefined property Alpha\\Model\\Domain\\Repositories\\InformationRepository\:\:\$store_id\.$#'
+			identifier: property.notFound
+			count: 3
+			path: core/Model/Domain/Repositories/InformationRepository.php
+
+		-
+			message: '#^Call to an undefined method Alpha\\Mappers\\EntityMappers\\LanguageMapper\:\:findBy\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: core/Model/Domain/Repositories/LanguageRepository.php
+
+		-
+			message: '#^Method Alpha\\Model\\Domain\\Repositories\\LanguageRepository\:\:find\(\) should return Alpha\\Model\\Domain\\Entities\\Language\|null but returns Alpha\\Model\\Domain\\InterfaceEntity\|null\.$#'
+			identifier: return.type
+			count: 1
+			path: core/Model/Domain/Repositories/LanguageRepository.php
+
+		-
+			message: '#^Access to an undefined property Alpha\\Model\\Domain\\Repositories\\LayoutRepository\:\:\$config\.$#'
+			identifier: property.notFound
+			count: 1
+			path: core/Model/Domain/Repositories/LayoutRepository.php
+
+		-
+			message: '#^Parameter \#1 \$array \(list\) of array_values is already a list, call has no effect\.$#'
+			identifier: arrayValues.list
+			count: 1
+			path: core/Model/Domain/Repositories/LayoutRepository.php
+
+		-
+			message: '#^Access to an undefined property Alpha\\Model\\Domain\\Repositories\\LengthClassRepository\:\:\$language_id\.$#'
+			identifier: property.notFound
+			count: 2
+			path: core/Model/Domain/Repositories/LengthClassRepository.php
+
+		-
+			message: '#^Call to an undefined method Alpha\\Model\\Domain\\InterfaceEntity\:\:getValue\(\)\.$#'
+			identifier: method.notFound
+			count: 3
+			path: core/Model/Domain/Repositories/LengthClassRepository.php
+
+		-
+			message: '#^Access to an undefined property Alpha\\Model\\Domain\\Repositories\\MaintenanceRepository\:\:\$config\.$#'
+			identifier: property.notFound
+			count: 1
+			path: core/Model/Domain/Repositories/MaintenanceRepository.php
+
+		-
+			message: '#^Access to an undefined property Alpha\\Model\\Domain\\Repositories\\MaintenanceRepository\:\:\$language\.$#'
+			identifier: property.notFound
+			count: 3
+			path: core/Model/Domain/Repositories/MaintenanceRepository.php
+
+		-
+			message: '#^Access to an undefined property Alpha\\Model\\Domain\\Repositories\\MaintenanceRepository\:\:\$url\.$#'
+			identifier: property.notFound
+			count: 1
+			path: core/Model/Domain/Repositories/MaintenanceRepository.php
+
+		-
+			message: '#^Access to an undefined property Alpha\\Model\\Domain\\Repositories\\ManufacturerRepository\:\:\$language_id\.$#'
+			identifier: property.notFound
+			count: 5
+			path: core/Model/Domain/Repositories/ManufacturerRepository.php
+
+		-
+			message: '#^Access to an undefined property Alpha\\Model\\Domain\\Repositories\\ManufacturerRepository\:\:\$store_id\.$#'
+			identifier: property.notFound
+			count: 10
+			path: core/Model/Domain/Repositories/ManufacturerRepository.php
+
+		-
+			message: '#^Call to function method_exists\(\) with Alpha\\Mappers\\EntityMappers\\ManufacturerMapper and ''getManufacturer'' will always evaluate to true\.$#'
+			identifier: function.alreadyNarrowedType
+			count: 1
+			path: core/Model/Domain/Repositories/ManufacturerRepository.php
+
+		-
+			message: '#^Access to an undefined property Alpha\\Model\\Domain\\Repositories\\OrderRepository\:\:\$language_id\.$#'
+			identifier: property.notFound
+			count: 3
+			path: core/Model/Domain/Repositories/OrderRepository.php
+
+		-
+			message: '#^Access to an undefined property Alpha\\Model\\Domain\\Repositories\\OrderRepository\:\:\$store_id\.$#'
+			identifier: property.notFound
+			count: 3
+			path: core/Model/Domain/Repositories/OrderRepository.php
+
+		-
+			message: '#^Call to function method_exists\(\) with Alpha\\Mappers\\EntityMappers\\OrderMapper and ''findAll'' will always evaluate to true\.$#'
+			identifier: function.alreadyNarrowedType
+			count: 1
+			path: core/Model/Domain/Repositories/OrderRepository.php
+
+		-
+			message: '#^Call to function method_exists\(\) with Alpha\\Mappers\\EntityMappers\\OrderMapper and ''findById'' will always evaluate to true\.$#'
+			identifier: function.alreadyNarrowedType
+			count: 1
+			path: core/Model/Domain/Repositories/OrderRepository.php
+
+		-
+			message: '#^Call to function method_exists\(\) with Alpha\\Mappers\\EntityMappers\\OrderMapper and ''search'' will always evaluate to true\.$#'
+			identifier: function.alreadyNarrowedType
+			count: 2
+			path: core/Model/Domain/Repositories/OrderRepository.php
+
+		-
+			message: '#^Access to an undefined property Alpha\\Model\\Domain\\Repositories\\OrderReturnRepository\:\:\$config\.$#'
+			identifier: property.notFound
+			count: 4
+			path: core/Model/Domain/Repositories/OrderReturnRepository.php
+
+		-
+			message: '#^Access to an undefined property Alpha\\Model\\Domain\\Repositories\\OrderReturnRepository\:\:\$customer\.$#'
+			identifier: property.notFound
+			count: 4
+			path: core/Model/Domain/Repositories/OrderReturnRepository.php
+
+		-
+			message: '#^Access to an undefined property Alpha\\Model\\Domain\\Repositories\\OrderReturnRepository\:\:\$language_id\.$#'
+			identifier: property.notFound
+			count: 3
+			path: core/Model/Domain/Repositories/OrderReturnRepository.php
+
+		-
+			message: '#^Access to an undefined property Alpha\\Model\\Domain\\Repositories\\OrderStatusRepository\:\:\$language_id\.$#'
+			identifier: property.notFound
+			count: 7
+			path: core/Model/Domain/Repositories/OrderStatusRepository.php
+
+		-
+			message: '#^Parameter \#2 \$replace of function str_replace expects array\<string\>\|string, float given\.$#'
+			identifier: argument.type
+			count: 1
+			path: core/Model/Domain/Repositories/PaginationRepository.php
+
+		-
+			message: '#^Parameter \#2 \$replace of function str_replace expects array\<string\>\|string, float\|int\<1, max\> given\.$#'
+			identifier: argument.type
+			count: 1
+			path: core/Model/Domain/Repositories/PaginationRepository.php
+
+		-
+			message: '#^Parameter \#2 \$replace of function str_replace expects array\<string\>\|string, int given\.$#'
+			identifier: argument.type
+			count: 1
+			path: core/Model/Domain/Repositories/PaginationRepository.php
+
+		-
+			message: '#^Parameter \#2 \$replace of function str_replace expects array\<string\>\|string, int\<2, max\> given\.$#'
+			identifier: argument.type
+			count: 1
+			path: core/Model/Domain/Repositories/PaginationRepository.php
+
+		-
+			message: '#^Method Alpha\\Model\\Domain\\Repositories\\ProductOptionRepository\:\:findById\(\) should return Alpha\\Model\\Domain\\Entities\\ProductOption\|null but returns Alpha\\Model\\Domain\\InterfaceEntity\|null\.$#'
+			identifier: return.type
+			count: 1
+			path: core/Model/Domain/Repositories/ProductOptionRepository.php
+
+		-
+			message: '#^Method Alpha\\Model\\Domain\\Repositories\\ProductOptionValueRepository\:\:findById\(\) should return Alpha\\Model\\Domain\\Entities\\ProductOptionValue\|null but returns Alpha\\Model\\Domain\\InterfaceEntity\|null\.$#'
+			identifier: return.type
+			count: 1
+			path: core/Model/Domain/Repositories/ProductOptionValueRepository.php
+
+		-
+			message: '#^Access to an undefined property Alpha\\Model\\Domain\\Repositories\\ProductRepository\:\:\$customer\.$#'
+			identifier: property.notFound
+			count: 2
+			path: core/Model/Domain/Repositories/ProductRepository.php
+
+		-
+			message: '#^Access to an undefined property Alpha\\Model\\Domain\\Repositories\\ProductRepository\:\:\$language_id\.$#'
+			identifier: property.notFound
+			count: 25
+			path: core/Model/Domain/Repositories/ProductRepository.php
+
+		-
+			message: '#^Access to an undefined property Alpha\\Model\\Domain\\Repositories\\ProductRepository\:\:\$store_id\.$#'
+			identifier: property.notFound
+			count: 15
+			path: core/Model/Domain/Repositories/ProductRepository.php
+
+		-
+			message: '#^Call to function method_exists\(\) with Alpha\\Mappers\\EntityMappers\\ProductMapper and ''addReport'' will always evaluate to true\.$#'
+			identifier: function.alreadyNarrowedType
+			count: 1
+			path: core/Model/Domain/Repositories/ProductRepository.php
+
+		-
+			message: '#^Call to function method_exists\(\) with Alpha\\Mappers\\EntityMappers\\ProductMapper and ''getSubscriptions'' will always evaluate to true\.$#'
+			identifier: function.alreadyNarrowedType
+			count: 1
+			path: core/Model/Domain/Repositories/ProductRepository.php
+
+		-
+			message: '#^Variable \$seoUrl in PHPDoc tag @var does not match assigned variable \$keyword\.$#'
+			identifier: varTag.differentVariable
+			count: 1
+			path: core/Model/Domain/Repositories/SeoUrlRepository.php
+
+		-
+			message: '#^Access to an undefined property Alpha\\Model\\Domain\\Repositories\\SessionRepository\:\:\$config\.$#'
+			identifier: property.notFound
+			count: 2
+			path: core/Model/Domain/Repositories/SessionRepository.php
+
+		-
+			message: '#^Access to an undefined property Alpha\\Model\\Domain\\Repositories\\SitemapRepository\:\:\$config\.$#'
+			identifier: property.notFound
+			count: 4
+			path: core/Model/Domain/Repositories/SitemapRepository.php
+
+		-
+			message: '#^Access to an undefined property Alpha\\Model\\Domain\\Repositories\\SitemapRepository\:\:\$url\.$#'
+			identifier: property.notFound
+			count: 14
+			path: core/Model/Domain/Repositories/SitemapRepository.php
+
+		-
+			message: '#^Access to an undefined property Alpha\\Model\\Domain\\Repositories\\SubscriptionRepository\:\:\$customer\.$#'
+			identifier: property.notFound
+			count: 3
+			path: core/Model/Domain/Repositories/SubscriptionRepository.php
+
+		-
+			message: '#^Access to an undefined property Alpha\\Model\\Domain\\Repositories\\SubscriptionRepository\:\:\$db\.$#'
+			identifier: property.notFound
+			count: 11
+			path: core/Model/Domain/Repositories/SubscriptionRepository.php
+
+		-
+			message: '#^Access to an undefined property Alpha\\Model\\Domain\\Repositories\\SubscriptionStatusRepository\:\:\$language_id\.$#'
+			identifier: property.notFound
+			count: 3
+			path: core/Model/Domain/Repositories/SubscriptionStatusRepository.php
+
+		-
+			message: '#^Call to method getSubscriptionStatus\(\) on an unknown class Alpha\\Mappers\\EntityMappers\\SubscriptionStatusMapper\.$#'
+			identifier: class.notFound
+			count: 1
+			path: core/Model/Domain/Repositories/SubscriptionStatusRepository.php
+
+		-
+			message: '#^Call to method getSubscriptionStatuses\(\) on an unknown class Alpha\\Mappers\\EntityMappers\\SubscriptionStatusMapper\.$#'
+			identifier: class.notFound
+			count: 1
+			path: core/Model/Domain/Repositories/SubscriptionStatusRepository.php
+
+		-
+			message: '#^Class Alpha\\Mappers\\EntityMappers\\SubscriptionStatusMapper not found\.$#'
+			identifier: class.notFound
+			count: 1
+			path: core/Model/Domain/Repositories/SubscriptionStatusRepository.php
+
+		-
+			message: '#^Method Alpha\\Model\\Domain\\Repositories\\SubscriptionStatusRepository\:\:getMapper\(\) has invalid return type Alpha\\Mappers\\EntityMappers\\SubscriptionStatusMapper\.$#'
+			identifier: class.notFound
+			count: 1
+			path: core/Model/Domain/Repositories/SubscriptionStatusRepository.php
+
+		-
+			message: '#^Access to an undefined property Alpha\\Model\\Domain\\Repositories\\TranslationRepository\:\:\$language_id\.$#'
+			identifier: property.notFound
+			count: 2
+			path: core/Model/Domain/Repositories/TranslationRepository.php
+
+		-
+			message: '#^Access to an undefined property Alpha\\Model\\Domain\\Repositories\\TranslationRepository\:\:\$store_id\.$#'
+			identifier: property.notFound
+			count: 2
+			path: core/Model/Domain/Repositories/TranslationRepository.php
+
+		-
+			message: '#^Call to an undefined method Alpha\\Mappers\\EntityMappers\\UserGroupMapper\:\:findBy\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: core/Model/Domain/Repositories/UserGroupRepository.php
+
+		-
+			message: '#^Call to an undefined method Alpha\\Mappers\\EntityMappers\\UserGroupMapper\:\:findOneBy\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: core/Model/Domain/Repositories/UserGroupRepository.php
+
+		-
+			message: '#^Access to an undefined property Alpha\\Model\\Domain\\Repositories\\UserTokenRepository\:\:\$mapper\.$#'
+			identifier: property.notFound
+			count: 3
+			path: core/Model/Domain/Repositories/UserTokenRepository.php
+
+		-
+			message: '#^Access to an undefined property Alpha\\Model\\Domain\\Repositories\\VoucherRepository\:\:\$dao\.$#'
+			identifier: property.notFound
+			count: 1
+			path: core/Model/Domain/Repositories/VoucherRepository.php
+
+		-
+			message: '#^Call to an undefined method Alpha\\Model\\Domain\\InterfaceEntity\:\:getAmount\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: core/Model/Domain/Repositories/VoucherRepository.php
+
+		-
+			message: '#^Call to method findAll\(\) on an unknown class Alpha\\Mappers\\VoucherMapper\.$#'
+			identifier: class.notFound
+			count: 1
+			path: core/Model/Domain/Repositories/VoucherRepository.php
+
+		-
+			message: '#^Call to method findBy\(\) on an unknown class Alpha\\Mappers\\VoucherMapper\.$#'
+			identifier: class.notFound
+			count: 1
+			path: core/Model/Domain/Repositories/VoucherRepository.php
+
+		-
+			message: '#^Call to method findById\(\) on an unknown class Alpha\\Mappers\\VoucherMapper\.$#'
+			identifier: class.notFound
+			count: 1
+			path: core/Model/Domain/Repositories/VoucherRepository.php
+
+		-
+			message: '#^Call to method findOneBy\(\) on an unknown class Alpha\\Mappers\\VoucherMapper\.$#'
+			identifier: class.notFound
+			count: 2
+			path: core/Model/Domain/Repositories/VoucherRepository.php
+
+		-
+			message: '#^Call to method getId\(\) on an unknown class Alpha\\Model\\Domain\\Entities\\Voucher\.$#'
+			identifier: class.notFound
+			count: 1
+			path: core/Model/Domain/Repositories/VoucherRepository.php
+
+		-
+			message: '#^Call to method getStatus\(\) on an unknown class Alpha\\Model\\Domain\\Entities\\Voucher\.$#'
+			identifier: class.notFound
+			count: 1
+			path: core/Model/Domain/Repositories/VoucherRepository.php
+
+		-
+			message: '#^Class Alpha\\Mappers\\VoucherMapper not found\.$#'
+			identifier: class.notFound
+			count: 1
+			path: core/Model/Domain/Repositories/VoucherRepository.php
+
+		-
+			message: '#^Method Alpha\\Model\\Domain\\Repositories\\VoucherRepository\:\:findByCode\(\) has invalid return type Alpha\\Model\\Domain\\Entities\\Voucher\.$#'
+			identifier: class.notFound
+			count: 1
+			path: core/Model/Domain/Repositories/VoucherRepository.php
+
+		-
+			message: '#^Method Alpha\\Model\\Domain\\Repositories\\VoucherRepository\:\:getMapper\(\) has invalid return type Alpha\\Mappers\\VoucherMapper\.$#'
+			identifier: class.notFound
+			count: 1
+			path: core/Model/Domain/Repositories/VoucherRepository.php
+
+		-
+			message: '#^Parameter \$voucher of method Alpha\\Model\\Domain\\Repositories\\VoucherRepository\:\:isValid\(\) has invalid type Alpha\\Model\\Domain\\Entities\\Voucher\.$#'
+			identifier: class.notFound
+			count: 1
+			path: core/Model/Domain/Repositories/VoucherRepository.php
+
+		-
+			message: '#^Access to an undefined property Alpha\\Model\\Domain\\Repositories\\WeightClassRepository\:\:\$language_id\.$#'
+			identifier: property.notFound
+			count: 4
+			path: core/Model/Domain/Repositories/WeightClassRepository.php
+
+		-
+			message: '#^Call to an undefined method Alpha\\Mappers\\EntityMappers\\WeightClassMapper\:\:findBy\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: core/Model/Domain/Repositories/WeightClassRepository.php
+
+		-
+			message: '#^Access to an undefined property Alpha\\Model\\Domain\\Repositories\\WishlistRepository\:\:\$alpha_repository_factory\.$#'
+			identifier: property.notFound
+			count: 1
+			path: core/Model/Domain/Repositories/WishlistRepository.php
+
+		-
+			message: '#^Access to an undefined property Alpha\\Model\\Domain\\Repositories\\WishlistRepository\:\:\$store_id\.$#'
+			identifier: property.notFound
+			count: 5
+			path: core/Model/Domain/Repositories/WishlistRepository.php
+
+		-
+			message: '#^Offset string on array\{\} in isset\(\) does not exist\.$#'
+			identifier: isset.offset
+			count: 1
+			path: core/Services/Payments/PaymentGatewayFactory.php
+
+		-
+			message: '#^Property Alpha\\Services\\Payments\\PaymentGatewayFactory\:\:\$container is never read, only written\.$#'
+			identifier: property.onlyWritten
+			count: 1
+			path: core/Services/Payments/PaymentGatewayFactory.php
+
+		-
+			message: '#^Unreachable statement \- code above always terminates\.$#'
+			identifier: deadCode.unreachable
+			count: 1
+			path: core/Services/Payments/PaymentGatewayFactory.php
+
+		-
+			message: '#^Property Alpha\\Services\\Shipping\\FlatRateShippingService\:\:\$lengthClassRepository is never read, only written\.$#'
+			identifier: property.onlyWritten
+			count: 1
+			path: core/Services/Shipping/FlatRateShippingService.php
+
+		-
+			message: '#^Offset 0 on non\-empty\-list\<string\> in isset\(\) always exists and is not nullable\.$#'
+			identifier: isset.offset
+			count: 1
+			path: core/Services/Shipping/WeightBasedShippingService.php
+
+		-
+			message: '#^Property Alpha\\Support\\Currency\:\:\$language is never read, only written\.$#'
+			identifier: property.onlyWritten
+			count: 1
+			path: core/Support/Currency.php
+
+		-
+			message: '#^Offset 0 on non\-empty\-list\<string\> on left side of \?\? always exists and is not nullable\.$#'
+			identifier: nullCoalesce.offset
+			count: 1
+			path: core/Support/Customer.php
+
+		-
+			message: '#^Call to an undefined method ReflectionType\:\:getName\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: core/Support/EntityHydrator.php
+
+		-
+			message: '#^Result of && is always false\.$#'
+			identifier: booleanAnd.alwaysFalse
+			count: 1
+			path: core/Support/EnvironmentManager.php
+
+		-
+			message: '#^Strict comparison using \=\=\= between mixed and null will always evaluate to false\.$#'
+			identifier: identical.alwaysFalse
+			count: 1
+			path: core/Support/EnvironmentManager.php
+
+		-
+			message: '#^Offset 0 on non\-empty\-list\<string\> on left side of \?\? always exists and is not nullable\.$#'
+			identifier: nullCoalesce.offset
+			count: 1
+			path: core/Support/EvolutionGenerator.php
+
+		-
+			message: '#^Property Alpha\\Support\\Tax\:\:\$container is never read, only written\.$#'
+			identifier: property.onlyWritten
+			count: 1
+			path: core/Support/Tax.php
+
+		-
+			message: '#^Call to an undefined method Alpha\\Model\\Domain\\InterfaceEntity\:\:getDescriptions\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: core/Support/Weight.php
+
+		-
+			message: '#^Call to an undefined method Alpha\\Model\\Domain\\InterfaceEntity\:\:getValue\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: core/Support/Weight.php
+
+		-
+			message: '#^Property Alpha\\Support\\Weight\:\:\$container is never read, only written\.$#'
+			identifier: property.onlyWritten
+			count: 1
+			path: core/Support/Weight.php

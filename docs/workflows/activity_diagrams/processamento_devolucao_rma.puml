@@ -1,0 +1,72 @@
+@startuml "Ciclo de Vida da Devolução (RMA)"
+skinparam backgroundColor #FFFFFF
+skinparam shadowing false
+skinparam activity {
+    StartColor #2563EB
+    EndColor #DC2626
+    BackgroundColor #F8FAFC
+    BorderColor #475569
+    FontName Inter, Arial, sans-serif
+}
+
+header Alpha Engine Reverse Logistics: Workflow de Devoluções (RMA)
+title Processamento e Ciclo de Vida da Solidação de Devolução (RMA)
+
+|#E0F2FE|Cliente|
+start
+:Acessa detalhes do pedido (/account/order/return);
+:Preenche motivo e envia solicitação com fotos;
+
+|#FFF9C4|Painel Admin / Atendimento|
+:Recebe notificação de nova solicitação de RMA;
+:Analisa justificativa e imagens do produto;
+
+if (Solicitação cumpre a política de trocas/CDC?) then (não)
+    :Registra justificativa de indeferimento;
+    |Cliente|
+    :Recebe e-mail de solicitação recusada;
+    stop
+else (sim - aprovado)
+    |Painel Admin / Atendimento|
+    :Gera código de postagem reversa (Correios/Logística);
+    
+    |Cliente|
+    :Recebe e-mail com código de postagem e orientações;
+    :Embala o produto e realiza postagem na agência;
+    
+    |#DCFCE7|Estoque / Triagem Logística|
+    :Recebe pacote devolvido no Centro de Distribuição;
+    :Realiza inspeção física de qualidade e conferência;
+    
+    if (Produto em estado adequado e com acessórios?) then (não - avariado)
+        :Registra laudo de recusa por avaria do usuário;
+        :Devolve o item ao endereço do cliente;
+        |Cliente|
+        :Recebe notificação de recusa com laudo anexado;
+        stop
+    else (sim - aprovado na triagem)
+        |Estoque / Triagem Logística|
+        :Aprova recebimento no sistema de estoque;
+        :Executa retorno do item ao estoque disponível (Estorno de Estoque);
+        
+        |Painel Admin / Atendimento|
+        :Seleciona tipo de ressarcimento acordado;
+        
+        if (Modalidade de Reembolso?) is (Estorno Financeiro) then
+            |#FEE2E2|Engine / Gateway de Pagamento|
+            :Executa estorno via PaymentGatewayInterface (PIX / Cartão);
+        else (Vale-Compras / Cupom)
+            |Painel Admin / Atendimento|
+            :Gera Cupom de Crédito no valor total da devolução;
+        endif
+        
+        |Painel Admin / Atendimento|
+        :Atualiza status do RMA para "FINALIZADO / REEMBOLSADO";
+        
+        |Cliente|
+        :Recebe confirmação de estorno / cupom de crédito;
+        stop
+    endif
+endif
+
+@enduml

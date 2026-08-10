@@ -74,6 +74,8 @@ A abordagem correta — e adotada — é **manter ao menos um registro válido e
 5. ✅ **Saneamento de `store_id = 0` residual**: Corrigida a carga do bootstrap em [`AppBootstrap.php`](file:///var/www/html/agsonhos/Containers/AppBootstrap.php), menu institucional em [`index.php`](file:///var/www/html/agsonhos/public_html/index.php) e resolvedor de SEO em [`ShowInformationAction.php`](file:///var/www/html/agsonhos/core/Controller/Actions/Information/ShowInformationAction.php) para referenciar a loja principal real `store_id = 1`.
 
 ---
+- Agora, quando o cliente instala o software, terá que cadastrar, ao menos, uma loja (store_id=1 ou outra, mas pelo menos 1).
+- Isso também vale para idiomas, formas de pagamento, moedas, etc.
 
 ## 3. Travamento de Conexões e Sessões Obesas
 **Módulo Afetado:** Driver de Sessão do Banco de Dados.

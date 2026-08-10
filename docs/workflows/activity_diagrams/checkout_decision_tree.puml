@@ -1,0 +1,103 @@
+@startuml "Árvore de Decisão do Checkout"
+skinparam backgroundColor #FFFFFF
+skinparam shadowing false
+skinparam activity {
+    StartColor #2563EB
+    EndColor #DC2626
+    BackgroundColor #F8FAFC
+    BorderColor #475569
+    FontName Inter, Arial, sans-serif
+}
+
+header Alpha Engine E-Commerce Architecture: Workflow de Atividades
+title Árvore de Decisão e Workflow do Checkout E-Commerce
+
+|#E0F2FE|Cliente / Frontend|
+start
+:Acessa a página de Checkout (/checkout);
+
+|#FFF9C4|Engine Backend (Alpha Engine)|
+:Valida sessão e estado do carrinho;
+if (Carrinho possui produtos e estoque?) then (sim)
+    :Carrega endereços cadastrados do cliente;
+else (não / carrinho vazio)
+    :Redireciona para /cart com mensagem de erro;
+    stop
+endif
+
+|Cliente / Frontend|
+:Seleciona Endereço de Entrega;
+:Solicita Cotação de Frete;
+
+|Engine Backend (Alpha Engine)|
+:Executa ShippingStrategyManager;
+:Retorna opções de frete (Fixo, Peso, Grátis);
+
+|Cliente / Frontend|
+:Escolha o Método de Frete;
+if (Possui Cupom de Desconto?) then (sim)
+    :Informa código do Cupom;
+    |Engine Backend (Alpha Engine)|
+    :Valida Cupom (Validade, Uso Máximo, Valor Mínimo);
+    if (Cupom Válido?) then (sim)
+        :Aplica desconto ao total da ordem;
+    else (inválido)
+        :Exibe alerta de cupom inválido / expirado;
+    endif
+else (não)
+endif
+
+|Cliente / Frontend|
+:Seleciona Forma de Pagamento;
+
+if (Forma de Pagamento Selecionada?) is (PIX) then
+    |Engine Backend (Alpha Engine)|
+    :Gera Payload e QR Code PIX (PixGateway);
+    |Cliente / Frontend|
+    :Exibe QR Code e Chave Copia e Cola;
+    |#DCFCE7|Gateway / Provedor de Pagamento|
+    :Aguardando confirmação do BACEN / Banco;
+    if (Pagamento Confirmado no Prazo?) then (sim)
+        :Envia Webhook HTTP 200 (PAID);
+    else (expirado / timeout)
+        :Notifica expiração do QR Code;
+        |Engine Backend (Alpha Engine)|
+        :Cancela ordem por falta de pagamento;
+        stop
+    endif
+elseif (Cartão de Crédito) then
+    |Cliente / Frontend|
+    :Preenche dados do Cartão e Parcelamento;
+    |Engine Backend (Alpha Engine)|
+    :Envia payload criptografado ao Gateway (MercadoPagoAdapter);
+    |Gateway / Provedor de Pagamento|
+    :Processa análise de risco (Antifraude) & Emissor;
+    if (Transação Aprovada?) then (sim)
+        :Retorna Status APPOVED;
+    else (recusada / suspeita)
+        :Retorna Status REJECTED;
+        |Cliente / Frontend|
+        :Exibe mensagem "Cartão Recusado";
+        :Oferece opção de trocar meio de pagamento;
+        stop
+    endif
+else (Boleto Bancário)
+    |Engine Backend (Alpha Engine)|
+    :Emite linha digitável do Boleto;
+    |Cliente / Frontend|
+    :Disponibiliza link para impressão do Boleto;
+    |Engine Backend (Alpha Engine)|
+    :Reserva estoque aguardando compensação bancária (até 3 dias);
+    stop
+endif
+
+|Engine Backend (Alpha Engine)|
+:Atualiza status do pedido para "PAGO / EM PROCESSAMENTO";
+:Executa OrderObserverInterface (OrderEmailObserver + StockDeductionObserver);
+:Limpa carrinho do cliente;
+
+|Cliente / Frontend|
+:Exibe Tela de Sucesso (/checkout/success) com número do pedido;
+stop
+
+@enduml

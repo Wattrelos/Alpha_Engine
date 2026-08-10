@@ -1,0 +1,65 @@
+@startuml "Reserva e Baixa de Estoque Concorrente"
+skinparam backgroundColor #FFFFFF
+skinparam shadowing false
+skinparam activity {
+    StartColor #2563EB
+    EndColor #DC2626
+    BackgroundColor #F8FAFC
+    BorderColor #475569
+    FontName Inter, Arial, sans-serif
+}
+
+header Alpha Engine High-Concurrency Architecture: Control de Concorrência
+title Workflow de Reserva e Decremento de Estoque com Bloqueio Otimista (Optimistic Locking)
+
+|#E0F2FE|Cliente / Checkout|
+start
+:Submete confirmação de compra de produto N;
+
+|#FFF9C4|ProductRepository / StockService|
+:Inicializa tentativa de reserva (tentativa = 1, max_tentativas = 3);
+
+repeat
+    :Lê registro atual do produto no MySQL;\nSELECT product_id, quantity, version FROM tbkk_product;
+    
+    if (quantity >= quantidade_solicitada?) then (sim)
+        note right #E0F2FE
+            **Estratégia de Bloqueio Otimista:**
+            Usa a coluna 'version' como trava sem bloquear 
+            as linhas da tabela para leitura (*non-blocking SELECT*).
+        end note
+        
+        :Tenta decrementar estoque e incrementar versão;\nUPDATE tbkk_product SET quantity = quantity - N, version = version + 1\nWHERE product_id = X AND version = v_atual;
+        
+        if (Linhas Afetadas == 1?) then (sucesso - lock obtido)
+            |#DCFCE7|Camada de Persistência (MySQL)|
+            :Confirma alteração no banco de dados (COMMIT);
+            
+            |ProductRepository / StockService|
+            :Cria registro de reserva em tbkk_product_reservation com TTL;
+            :Dispara StockObserver (Auditoria de Estoque);
+            
+            |Cliente / Checkout|
+            :Reserva efetuada com sucesso;
+            stop
+        else (colisão de concorrência - 0 linhas afetadas)
+            |ProductRepository / StockService|
+            :Incrementa contador de tentativas (tentativa++);
+            if (tentativa <= max_tentativas?) then (sim)
+                :Aplica Exponential Backoff (espera N ms);
+            else (não - limite excedido)
+                |Cliente / Checkout|
+                :Exibe erro "Produto disputado por múltiplos compradores. Tente novamente.";
+                stop
+            endif
+        endif
+    else (estoque insuficiente)
+        |Cliente / Checkout|
+        :Exibe mensagem "Estoque indisponível para a quantidade solicitada";
+        stop
+    endif
+repeat while (tentativa <= max_tentativas)
+
+stop
+
+@enduml

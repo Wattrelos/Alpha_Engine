@@ -19,7 +19,7 @@ class CouponRepository extends AbstractRepository implements BaseRepositoryInter
         return $this->mapperFactory->get(CouponMapper::class);
     }
 
-    public function find(int $id): ?Coupon
+    public function find(int $id): ?\Alpha\Model\Domain\InterfaceEntity
     {
         return $this->getMapper()->findById($id);
     }
@@ -27,6 +27,16 @@ class CouponRepository extends AbstractRepository implements BaseRepositoryInter
     public function findAll(): array
     {
         return $this->getMapper()->findAll();
+    }
+
+    public function findBy(array $criteria, ?array $orderBy = null, ?int $limit = null, ?int $offset = null): array
+    {
+        return $this->getMapper()->findBy($criteria, $orderBy, $limit, $offset);
+    }
+
+    public function findOneBy(array $criteria): ?\Alpha\Model\Domain\InterfaceEntity
+    {
+        return $this->getMapper()->findOneBy($criteria);
     }
 
     /**

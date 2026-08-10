@@ -1,0 +1,89 @@
+@startuml "Cálculo de Frete com GoF Strategy"
+autonumber "<b>00:"
+
+header "Alpha Engine Architecture: Módulo de Cálculo de Frete Multi-Estratégia (GoF Strategy Pattern)"
+title "Fluxo de Cálculo e Cotação de Frete com Estratégias Intercambiáveis"
+
+box "Cliente & Action Slim 4" #E0F2FE
+    actor "Cliente / UI Checkout" as User
+    participant "QuoteShippingAction" as Action
+end box
+
+box "Gerenciador & Estratégias de Frete (GoF Strategy)" #FFF9C4
+    participant "ShippingStrategyManager" as Manager
+    participant "FlatRateShippingService" as FlatRate
+    participant "WeightBasedShippingService" as WeightBased
+    participant "FreeShippingService" as FreeShipping
+end box
+
+box "Dados do Carrinho & Persistência" #DCFCE7
+    participant "CartRepository" as CartRepo
+    database "MySQL Database\n(tbkk_weight_class & config)" as DB
+end box
+
+' =============================================================================
+' ETAPA 1: RECEBIMENTO DO CEP DE DESTINO E LEITURA DO CARRINHO
+' =============================================================================
+== 1. Cotação de Frete e Obtenção do Carrinho de Compras ==
+
+User -> Action : HTTP POST /cart/shipping-quote\n[postcode: "01310-100", country_id: 30]
+activate Action
+    Action -> CartRepo : getCartAggregate(sessionId, customerId)
+    activate CartRepo
+        CartRepo -> DB : SELECT * FROM tbkk_cart ...
+        activate DB
+            DB --> CartRepo : CartAggregate [Total: R$ 350.00, TotalWeight: 2.5 kg]
+        deactivate DB
+        CartRepo --> Action : CartAggregate Object
+    deactivate CartRepo
+
+    ' =============================================================================
+    ' ETAPA 2: ITERAÇÃO POLIMÓRFICA SOBRE AS ESTRATÉGIAS DE FRETE
+    ' =============================================================================
+    == 2. Execução Polimórfica das Estratégias (Strategy Pattern) ==
+    
+    Action -> Manager : calculateQuotes(cartAggregate, destinationAddress)
+    activate Manager
+        
+        ' Estratégia 1: Frete Fixo
+        note over Manager, FlatRate #FFFBEB : **Estratégia 1 (FlatRate):** Custo fixo configurado por loja.
+        Manager -> FlatRate : getQuote(destinationAddress, cartAggregate)
+        activate FlatRate
+            FlatRate --> Manager : ShippingQuote [code: "flat.flat", title: "Frete Fixo (Entrega Padrão)", cost: R$ 20.00]
+        deactivate FlatRate
+        
+        ' Estratégia 2: Frete Baseado em Peso
+        note over Manager, WeightBased #FFFBEB : **Estratégia 2 (WeightBased):** Calcula custo baseado no peso total (2.5 kg).
+        Manager -> WeightBased : getQuote(destinationAddress, cartAggregate)
+        activate WeightBased
+            WeightBased -> DB : SELECT rate FROM tbkk_weight_class WHERE weight >= 2.5
+            activate DB
+                DB --> WeightBased : Rate Row [cost: R$ 32.50]
+            deactivate DB
+            WeightBased --> Manager : ShippingQuote [code: "weight.weight", title: "Transportadora Expressa", cost: R$ 32.50]
+        deactivate WeightBased
+        
+        ' Estratégia 3: Frete Grátis
+        note over Manager, FreeShipping #FFFBEB : **Estratégia 3 (FreeShipping):** Valida se valor total (R$ 350) >= Mínimo (R$ 300).
+        Manager -> FreeShipping : getQuote(destinationAddress, cartAggregate)
+        activate FreeShipping
+            alt Total (R$ 350.00) >= Valor Mínimo Configurado (R$ 300.00)
+                FreeShipping --> Manager : ShippingQuote [code: "free.free", title: "Frete Grátis", cost: R$ 0.00]
+            else Total < Valor Mínimo
+                FreeShipping --> Manager : null (Estratégia Não Elegível)
+            end
+        deactivate FreeShipping
+        
+        ' =============================================================================
+        ' ETAPA 3: AGREGAÇÃO E ORDENAÇÃO DAS OPÇÕES DE FRETE
+        ' =============================================================================
+        == 3. Consolidação e Retorno das Cotações Válidas ==
+        
+        Manager -> Manager : Ordena cotações por menor custo (FreeShipping -> FlatRate -> WeightBased)
+        Manager --> Action : Array<ShippingQuote> [FreeShipping (R$ 0), FlatRate (R$ 20), WeightBased (R$ 32.50)]
+    deactivate Manager
+    
+    Action --> User : HTTP 200 OK JSON {\n  "status": "success",\n  "shipping_methods": [\n    {"code": "free.free", "title": "Frete Grátis", "cost": 0.00},\n    {"code": "flat.flat", "title": "Frete Fixo", "cost": 20.00},\n    {"code": "weight.weight", "title": "Expressa", "cost": 32.50}\n  ]\n}
+deactivate Action
+
+@enduml

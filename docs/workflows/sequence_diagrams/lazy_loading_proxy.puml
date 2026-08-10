@@ -1,0 +1,101 @@
+@startuml "Lazy Loading via ProxyFactory no DAO"
+autonumber "<b>00:"
+
+header "Alpha Engine ORM & Persistence Architecture: Virtual Proxy & Lazy Loading"
+title "Fluxo de Hidratação Diferida (Lazy Loading) de Entidades com ProxyFactory & DataAccessObject"
+
+box "Camada de Aplicação & Visão" #E0F2FE
+    participant "Slim Action / Controller\nou Template Twig" as App
+end box
+
+box "Camada de Persistência & ORM (Alpha Engine)" #FFF9C4
+    participant "DataAccessObject\n(DAO)" as DAO
+    participant "ProxyFactory" as Factory
+    participant "EntityAlphaProxy\n(ex: CategoryAlphaProxy)" as Proxy
+end box
+
+box "Banco de Dados & Cache de Disco" #DCFCE7
+    database "FileSystem Cache\n(storage/cache/alpha_proxies/)" as DiskCache
+    database "MySQL Database" as DB
+end box
+
+' =============================================================================
+' ETAPA 1: CONSULTA INICIAL DA ENTIDADE PRINCIPAL E CRIAÇÃO DO PROXY FANTASMA
+' =============================================================================
+== 1. Busca da Entidade Principal e Geração do Proxy "Fantasma" ==
+
+App -> DAO : fetch(Product::class, productId = 42)
+activate App
+    activate DAO
+        DAO -> DB : SELECT * FROM tbkk_product WHERE product_id = 42
+        activate DB
+            DB --> DAO : ResultRow [product_id=42, name="iPhone 15", category_id=10]
+        deactivate DB
+        
+        DAO -> DAO : Instancia ProductEntity(name="iPhone 15")
+        
+        ' Identificação de relacionamento ManyToOne sem JOIN imediato
+        note over DAO, Factory #FFFBEB : **Otimização N+1 Queries:**\nO DAO identifica a relação #[ManyToOne] com Category.\nEm vez de executar SELECT em tbkk_category, cria um Proxy leve.
+
+        DAO -> Factory : createProxy(Category::class, id=10, loaderClosure)
+        activate Factory
+            Factory -> DiskCache : File exists CategoryAlphaProxy.php?
+            activate DiskCache
+                alt Classe Proxy já compilada em disco
+                    DiskCache --> Factory : File Exists (Require File)
+                else Classe Inexistente / Primeira Execução
+                    Factory -> Factory : ReflectionClass(Category::class) & Gera código PHP estendendo Category
+                    Factory -> DiskCache : Salva 'CategoryAlphaProxy.php' em storage/cache/alpha_proxies/
+                    DiskCache --> Factory : Sucesso no salvamento
+                end
+            deactivate DiskCache
+            
+            Factory -> Proxy : new CategoryAlphaProxy()
+            activate Proxy
+                Proxy -> Proxy : _alphaInitProxy(id=10, loaderClosure)\n[_alphaIsLoaded = false]
+                Proxy --> Factory : Instância Proxy ("Fantasma") criada
+            deactivate Proxy
+            
+            Factory --> DAO : Retorna InterfaceEntity (CategoryProxy)
+        deactivate Factory
+        
+        DAO -> DAO : $product->setCategory($categoryProxy)
+        DAO --> App : Retorna ProductEntity (com CategoryProxy embutido)
+    deactivate DAO
+    
+    note over App, Proxy #D1FAE5 : **Estado Atual da Memória:**\nNenhuma consulta à tabela 'tbkk_category' foi realizada até aqui!\nO sistema gastou 0 I/O de banco adicional para carregar o produto.
+deactivate App
+
+' =============================================================================
+' ETAPA 2: INTERCEPTAÇÃO E GATILHO DO LAZY LOADING (PRIMEIRA INVOCAÇÃO)
+' =============================================================================
+== 2. Intercepção Transparente e Leitura On-Demand no Banco (Primeira Leitura) ==
+
+App -> Proxy : $product->getCategory()->getName()
+activate App
+    activate Proxy
+        Proxy -> Proxy : Intercepta chamada de método em CategoryAlphaProxy\nExecuta $this->_alphaTriggerLoad()
+        
+        alt _alphaIsLoaded == false (Primeiro Acesso ao Método)
+            note over Proxy, DB #FEF3C7 : **Disparo do Loader Closure:**\nO Proxy executa a Closure injetada pelo DAO para buscar os dados reais.
+            
+            Proxy -> DAO : Execute LoaderClosure(proxy, id=10)
+            activate DAO
+                DAO -> DB : SELECT * FROM tbkk_category WHERE category_id = 10
+                activate DB
+                    DB --> DAO : ResultRow [category_id=10, name="Smartphones", status=1]
+                deactivate DB
+                
+                DAO -> Proxy : Hidrata objeto pai: parent::setName("Smartphones")
+            deactivate DAO
+            
+            Proxy -> Proxy : Define _alphaIsLoaded = true
+        else _alphaIsLoaded == true (Acessos Posteriores)
+            note over Proxy #E0E7FF : O Proxy já está populado em memória.\nNão dispara novas consultas SQL.
+        end
+        
+        Proxy --> App : Retorna "Smartphones"
+    deactivate Proxy
+deactivate App
+
+@enduml

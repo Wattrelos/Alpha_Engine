@@ -1,0 +1,79 @@
+@startuml "Esteira de Segurança e Middlewares HTTP"
+skinparam backgroundColor #FFFFFF
+skinparam shadowing false
+skinparam activity {
+    StartColor #2563EB
+    EndColor #DC2626
+    BackgroundColor #F8FAFC
+    BorderColor #475569
+    FontName Inter, Arial, sans-serif
+}
+
+header Alpha Engine HTTP Pipeline: Esteira de Segurança & Middlewares
+title Pipeline de Execução de Middlewares HTTP do Slim 4
+
+|#E0F2FE|Requisição de Entrada|
+start
+:Requisição HTTP chega à Aplicação Slim 4;
+
+|#FFF9C4|CorsMiddleware|
+:Valida Origem e Método HTTP;
+if (É requisição Preflight OPTIONS?) then (sim)
+    :Retorna HTTP 204 No Content com Headers CORS;
+    stop
+else (não)
+endif
+
+|RateLimitMiddleware|
+:Verifica contagem de requisições por IP/Cliente no Redis;
+if (Taxa Limite Excedida?) then (sim)
+    :Retorna HTTP 429 Too Many Requests;
+    stop
+else (dentro do limite)
+endif
+
+|CsrfGuardMiddleware|
+if (É método de mutação? POST / PUT / DELETE) then (sim)
+    :Valida Token Anti-CSRF enviado contra a Sessão;
+    if (Token CSRF Válido?) then (sim)
+    else (inválido / expirado)
+        :Retorna HTTP 400 Bad Request (CSRF Token Mismatch);
+        stop
+    endif
+else (GET / HEAD)
+endif
+
+|#DCFCE7|SessionMiddleware / AdminSessionMiddleware|
+:Valida sessão do cliente (Redis com Fallback local PHP);
+if (Rota Requer Autenticação?) then (sim)
+    if (Usuário Autenticado?) then (sim)
+        if (É Rota Admin com controle RBAC?) then (sim)
+            :Verifica permissões do usuário administrativo;
+            if (Possui permissão para a Ação?) then (sim)
+            else (não autorizado)
+                :Retorna HTTP 403 Forbidden (Acesso Negado);
+                stop
+            endif
+        else (não)
+        endif
+    else (não autenticado)
+        :Retorna HTTP 401 Unauthorized / Redireciona /login;
+        stop
+    endif
+else (rota pública)
+endif
+
+|LanguageMiddleware|
+:Detecta idioma da requisição;
+:Injeta 'lang', 'logged', 'cart_count' e traduções globais no Twig;
+
+|#FEF3C7|Slim Action / Controller Target|
+:Executa Action::handler(Request, Response);
+:Processa lógica de negócio e consultas ao repositório;
+:Renderiza Template Twig ou Resposta JSON;
+
+|Requisição de Saída|
+:Envia Resposta HTTP 200 OK ao Navegador do Cliente;
+stop
+
+@enduml
