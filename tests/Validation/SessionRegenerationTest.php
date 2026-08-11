@@ -7,7 +7,10 @@ namespace Tests\Validation;
 use PHPUnit\Framework\TestCase;
 use Alpha\Auth\Services\AdminAuthService;
 use Alpha\Auth\Services\CustomerAuthService;
+use PHPUnit\Framework\Attributes\CoversClass;
 
+#[CoversClass(AdminAuthService::class)]
+#[CoversClass(CustomerAuthService::class)]
 class SessionRegenerationTest extends TestCase
 {
     /**

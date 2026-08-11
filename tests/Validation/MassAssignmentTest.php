@@ -7,7 +7,10 @@ namespace Tests\Validation;
 use PHPUnit\Framework\TestCase;
 use Alpha\Model\Domain\Entities\User;
 use Alpha\Model\Domain\Entities\Customer\Customer;
+use PHPUnit\Framework\Attributes\CoversClass;
 
+#[CoversClass(User::class)]
+#[CoversClass(Customer::class)]
 class MassAssignmentTest extends TestCase
 {
     /**

@@ -156,10 +156,34 @@ class UpdateStoreSettingAction extends BaseController implements \Alpha\Controll
 
             try {
                 $settingRepo->editSetting('config', $newSettings, 1);
-                $_SESSION['success'] = 'Configurações da loja atualizadas com sucesso!';
+
+                // Save institutional information pages
+                /** @var \Alpha\Model\Domain\Repositories\InformationRepository $infoRepo */
+                $infoRepo = $this->getRepository(\Alpha\Model\Domain\Repositories\InformationRepository::class);
+
+                if (!empty($formData['information_pages']) && is_array($formData['information_pages'])) {
+                    foreach ($formData['information_pages'] as $infoId => $infoData) {
+                        $infoId = (int)$infoId;
+                        if ($infoId > 0 && !empty($infoData['title'])) {
+                            $infoRepo->saveInformationPage($infoId, $infoData);
+                        }
+                    }
+                }
+
+                // Process new institutional page creation
+                if (!empty($formData['new_information']) && is_array($formData['new_information'])) {
+                    $newTitle = trim($formData['new_information']['title'] ?? '');
+                    if (!empty($newTitle)) {
+                        $infoRepo->createInformationPage($formData['new_information']);
+                    }
+                }
+
+                $_SESSION['success'] = 'Configurações da loja e páginas institucionais atualizadas com sucesso!';
                 
+                $tabRedirect = !empty($formData['active_tab']) ? '?tab=' . urlencode($formData['active_tab']) : '?tab=information';
+
                 return $response
-                    ->withHeader('Location', (defined('ADMIN_PATH') ? ADMIN_PATH : '/LPDHED2dC7Gjrg2b') . '/configuracoes')
+                    ->withHeader('Location', (defined('ADMIN_PATH') ? ADMIN_PATH : '/LPDHED2dC7Gjrg2b') . '/configuracoes' . $tabRedirect)
                     ->withStatus(302);
             } catch (\Throwable $e) {
                 $errors['warning'] = 'Erro ao persistir configurações no banco: ' . $e->getMessage();
@@ -193,6 +217,14 @@ class UpdateStoreSettingAction extends BaseController implements \Alpha\Controll
             ], $zoneMapper->getZonesByCountryId(30));
         } catch (\Throwable $ex) {}
 
+        // Load information pages for re-rendering on error
+        $informationPages = [];
+        try {
+            /** @var \Alpha\Model\Domain\Repositories\InformationRepository $infoRepo */
+            $infoRepo = $this->getRepository(\Alpha\Model\Domain\Repositories\InformationRepository::class);
+            $informationPages = $infoRepo->getAllInformationsAdmin();
+        } catch (\Throwable $ex) {}
+
         // Set warnings
         $errors['warning'] = $errors['warning'] ?? 'Por favor, verifique os erros informados no formulário.';
 
@@ -210,14 +242,15 @@ class UpdateStoreSettingAction extends BaseController implements \Alpha\Controll
                 'config_logo'      => $configLogo,
                 'config_icon'      => $configIcon
             ],
-            'meta_title'       => $metaTitle,
-            'meta_description' => $metaDescription,
-            'meta_keyword'     => $metaKeyword,
-            'logo_url'         => $logoUrl,
-            'icon_url'         => $iconUrl,
-            'countries'        => $countries,
-            'zones'            => $zones,
-            'errors'           => $errors
+            'meta_title'        => $metaTitle,
+            'meta_description'  => $metaDescription,
+            'meta_keyword'      => $metaKeyword,
+            'logo_url'          => $logoUrl,
+            'icon_url'          => $iconUrl,
+            'countries'         => $countries,
+            'zones'             => $zones,
+            'information_pages' => $informationPages,
+            'errors'            => $errors
         ]);
 
         $response->getBody()->write($html);

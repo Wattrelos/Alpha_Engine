@@ -98,6 +98,56 @@ class InformationRepository extends AbstractRepository implements BaseRepository
     }
 
     /**
+     * Retorna todas as páginas institucionais (ativas e inativas) para gestão no painel de controle.
+     */
+    public function getAllInformationsAdmin(): array
+    {
+        /** @var InformationMapper $mapper */
+        $mapper = $this->getMapper();
+        return $mapper->getAllInformationsAdmin($this->language_id, $this->store_id);
+    }
+
+    /**
+     * Busca os dados de uma página específica no painel admin (independente do status).
+     */
+    public function getInformationForAdmin(int $informationId): array
+    {
+        /** @var InformationMapper $mapper */
+        $mapper = $this->getMapper();
+        return $mapper->getInformationForAdmin($informationId, $this->language_id, $this->store_id);
+    }
+
+    /**
+     * Atualiza uma página institucional no banco de dados.
+     */
+    public function saveInformationPage(int $informationId, array $data): bool
+    {
+        /** @var InformationMapper $mapper */
+        $mapper = $this->getMapper();
+        return $mapper->updateInformation($informationId, $data, $this->language_id, $this->store_id);
+    }
+
+    /**
+     * Cria uma nova página institucional no banco de dados.
+     */
+    public function createInformationPage(array $data): int
+    {
+        /** @var InformationMapper $mapper */
+        $mapper = $this->getMapper();
+        return $mapper->createInformation($data, $this->language_id, $this->store_id);
+    }
+
+    /**
+     * Exclui uma página institucional personalizada.
+     */
+    public function deleteInformationPage(int $informationId): bool
+    {
+        /** @var InformationMapper $mapper */
+        $mapper = $this->getMapper();
+        return $mapper->deleteInformation($informationId);
+    }
+
+    /**
      * Retorna as configurações de contato formatadas e cacheadas no formato camelCase (i18next).
      */
     public function getContactSettings(): array

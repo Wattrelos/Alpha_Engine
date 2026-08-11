@@ -105,6 +105,7 @@ return function (\Slim\App $app) {
             // Configurações da Loja
             $group->get('/configuracoes', \Alpha\Admin\Controllers\Actions\Setting\StoreSetting\EditStoreSettingAction::class)->setName('admin.setting.edit');
             $group->post('/configuracoes', \Alpha\Admin\Controllers\Actions\Setting\StoreSetting\UpdateStoreSettingAction::class)->setName('admin.setting.update');
+            $group->get('/configuracoes/informacoes/{id:[0-9]+}/excluir', \Alpha\Admin\Controllers\Actions\Setting\StoreSetting\DeleteInformationAction::class)->setName('admin.setting.information.delete');
 
             // Gestão de Pedidos (Vendas)
             $group->get('/pedidos', \Alpha\Admin\Controllers\Actions\Sales\Order\ListOrdersAction::class)->setName('admin.orders.index');

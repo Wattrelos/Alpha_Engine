@@ -6,7 +6,9 @@ namespace Tests\Validation;
 
 use PHPUnit\Framework\TestCase;
 use Alpha\Support\UploadSecurityHelper;
+use PHPUnit\Framework\Attributes\CoversClass;
 
+#[CoversClass(UploadSecurityHelper::class)]
 class MimeTypeUploadTest extends TestCase
 {
     private string $tempDir;

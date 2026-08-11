@@ -41,21 +41,26 @@ class EditStoreSettingAction extends BaseController implements \Alpha\Controller
             $iconUrl = HTTP_SERVER . (str_starts_with($settings['config_icon'], 'image/') ? '' : 'image/') . $settings['config_icon'];
         }
 
+        /** @var \Alpha\Model\Domain\Repositories\InformationRepository $infoRepo */
+        $infoRepo = $this->getRepository(\Alpha\Model\Domain\Repositories\InformationRepository::class);
+        $informationPages = $infoRepo->getAllInformationsAdmin();
+
         // Session notifications
         $success = $_SESSION['success'] ?? '';
         $error = $_SESSION['error'] ?? '';
         unset($_SESSION['success'], $_SESSION['error']);
 
         $html = $this->getTemplate('admin/setting/store_setting/edit.html.twig', [
-            'title'            => 'Configurações da Loja | Painel Administrativo',
-            'settings'         => $settings,
-            'meta_title'       => $metaTitle,
-            'meta_description' => $metaDescription,
-            'meta_keyword'     => $metaKeyword,
-            'logo_url'         => $logoUrl,
-            'icon_url'         => $iconUrl,
-            'success'          => $success,
-            'error'            => $error
+            'title'             => 'Configurações da Loja | Painel Administrativo',
+            'settings'          => $settings,
+            'meta_title'        => $metaTitle,
+            'meta_description'  => $metaDescription,
+            'meta_keyword'      => $metaKeyword,
+            'logo_url'          => $logoUrl,
+            'icon_url'          => $iconUrl,
+            'information_pages' => $informationPages,
+            'success'           => $success,
+            'error'             => $error
         ]);
 
         $response->getBody()->write($html);

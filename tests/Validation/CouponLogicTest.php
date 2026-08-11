@@ -9,7 +9,10 @@ use Alpha\Mappers\MapperFactory;
 use Containers\AppContainer;
 use Alpha\Model\Domain\Repositories\CouponRepository;
 use Alpha\Model\Domain\Entities\Coupon;
+use PHPUnit\Framework\Attributes\CoversClass;
 
+#[CoversClass(CouponRepository::class)]
+#[CoversClass(Coupon::class)]
 class CouponLogicTest extends TestCase
 {
     private CouponRepository $couponRepo;

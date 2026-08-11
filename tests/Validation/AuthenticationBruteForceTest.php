@@ -10,7 +10,9 @@ use Slim\Psr7\Response;
 use Psr\Http\Server\RequestHandlerInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Alpha\Auth\Middleware\RateLimitMiddleware;
+use PHPUnit\Framework\Attributes\CoversClass;
 
+#[CoversClass(RateLimitMiddleware::class)]
 class AuthenticationBruteForceTest extends TestCase
 {
     private ServerRequestFactory $requestFactory;

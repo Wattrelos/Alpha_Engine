@@ -5,12 +5,15 @@ declare(strict_types=1);
 namespace Tests\Validation;
 
 use PHPUnit\Framework\TestCase;
+use PHPUnit\Framework\Attributes\CoversClass;
 use Slim\Psr7\Factory\ServerRequestFactory;
 use Slim\Psr7\Response;
 use Psr\Http\Server\RequestHandlerInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Alpha\Auth\Middleware\SignatureMiddleware;
 
+
+#[CoversClass(SignatureMiddleware::class)]
 class WebhookSignatureTest extends TestCase
 {
     private ServerRequestFactory $requestFactory;

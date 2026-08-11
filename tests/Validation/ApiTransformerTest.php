@@ -7,7 +7,10 @@ namespace Tests\Validation;
 use PHPUnit\Framework\TestCase;
 use Alpha\Support\LgpdSanitizer;
 use Alpha\Model\Domain\Entities\User;
+use PHPUnit\Framework\Attributes\CoversClass;
 
+#[CoversClass(LgpdSanitizer::class)]
+#[CoversClass(User::class)]
 class ApiTransformerTest extends TestCase
 {
     /**

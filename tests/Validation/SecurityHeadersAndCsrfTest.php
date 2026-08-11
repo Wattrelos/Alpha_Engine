@@ -11,7 +11,10 @@ use Psr\Http\Server\RequestHandlerInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Alpha\Auth\Middleware\SecurityHeadersMiddleware;
 use Alpha\Auth\Middleware\CsrfGuardMiddleware;
+use PHPUnit\Framework\Attributes\CoversClass;
 
+#[CoversClass(SecurityHeadersMiddleware::class)]
+#[CoversClass(CsrfGuardMiddleware::class)]
 class SecurityHeadersAndCsrfTest extends TestCase
 {
     private ServerRequestFactory $requestFactory;

@@ -11,7 +11,10 @@ use Psr\Http\Server\RequestHandlerInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Alpha\Auth\Middleware\AdminSessionMiddleware;
 use Alpha\Model\Domain\Entities\User;
+use PHPUnit\Framework\Attributes\CoversClass;
 
+#[CoversClass(AdminSessionMiddleware::class)]
+#[CoversClass(User::class)]
 class RbacAccessControlTest extends TestCase
 {
     private ServerRequestFactory $requestFactory;

@@ -13,7 +13,12 @@ use Alpha\Model\Domain\Repositories\CustomerRepository;
 use Alpha\Model\Domain\Repositories\OrderRepository;
 use Alpha\Model\Domain\Repositories\CartRepository;
 use Alpha\Model\Domain\Entities\Customer\Customer;
+use PHPUnit\Framework\Attributes\CoversClass;
 
+#[CoversClass(CustomerRepository::class)]
+#[CoversClass(OrderRepository::class)]
+#[CoversClass(CartRepository::class)]
+#[CoversClass(Customer::class)]
 class TenantIsolationTest extends TestCase
 {
     private MapperFactory $mapperFactory;
