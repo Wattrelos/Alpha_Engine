@@ -8,6 +8,7 @@ use Psr\Http\Message\ResponseInterface as Response;
 use Alpha\Model\Domain\Repositories\SettingRepository;
 use Alpha\Model\DataAccessObject\DataAccessObject;
 use Alpha\Model\DataAccessObject\QueryBuilder;
+use Alpha\Mappers\EntityMappers\GeoCountryMapper;
 
 class UpdateStoreSettingAction extends BaseController implements \Alpha\Controller\Actions\ActionInterface
 {
@@ -26,7 +27,7 @@ class UpdateStoreSettingAction extends BaseController implements \Alpha\Controll
         $configAddress = trim($formData['config_address'] ?? '');
         $configEmail = trim($formData['config_email'] ?? '');
         $configTelephone = trim($formData['config_telephone'] ?? '');
-        
+
         $metaTitle = trim($formData['meta_title'] ?? '');
         $metaDescription = trim($formData['meta_description'] ?? '');
         $metaKeyword = trim($formData['meta_keyword'] ?? '');
@@ -138,7 +139,7 @@ class UpdateStoreSettingAction extends BaseController implements \Alpha\Controll
 
             // Merge with existing settings keys to prevent loss of other config parameters
             $newSettings = $settings;
-            
+
             // Update targeted keys
             $newSettings['config_name'] = $configName;
             $newSettings['config_owner'] = $configOwner;
@@ -148,7 +149,7 @@ class UpdateStoreSettingAction extends BaseController implements \Alpha\Controll
             $newSettings['config_logo'] = $configLogo;
             $newSettings['config_icon'] = $configIcon;
             $newSettings['config_description'] = $configDescription;
-            
+
             // Socials
             $newSettings['config_facebook'] = trim($formData['config_facebook'] ?? '');
             $newSettings['config_instagram'] = trim($formData['config_instagram'] ?? '');
@@ -157,7 +158,9 @@ class UpdateStoreSettingAction extends BaseController implements \Alpha\Controll
             try {
                 $settingRepo->editSetting('config', $newSettings, 1);
 
-                // Save institutional information pages
+                $infoLangId = (int)($formData['info_language_id'] ?? 2);
+
+                // Save institutional information pages for the target language
                 /** @var \Alpha\Model\Domain\Repositories\InformationRepository $infoRepo */
                 $infoRepo = $this->getRepository(\Alpha\Model\Domain\Repositories\InformationRepository::class);
 
@@ -165,7 +168,7 @@ class UpdateStoreSettingAction extends BaseController implements \Alpha\Controll
                     foreach ($formData['information_pages'] as $infoId => $infoData) {
                         $infoId = (int)$infoId;
                         if ($infoId > 0 && !empty($infoData['title'])) {
-                            $infoRepo->saveInformationPage($infoId, $infoData);
+                            $infoRepo->saveInformationPage($infoId, $infoData, $infoLangId);
                         }
                     }
                 }
@@ -174,13 +177,13 @@ class UpdateStoreSettingAction extends BaseController implements \Alpha\Controll
                 if (!empty($formData['new_information']) && is_array($formData['new_information'])) {
                     $newTitle = trim($formData['new_information']['title'] ?? '');
                     if (!empty($newTitle)) {
-                        $infoRepo->createInformationPage($formData['new_information']);
+                        $infoRepo->createInformationPage($formData['new_information'], $infoLangId);
                     }
                 }
 
                 $_SESSION['success'] = 'Configurações da loja e páginas institucionais atualizadas com sucesso!';
-                
-                $tabRedirect = !empty($formData['active_tab']) ? '?tab=' . urlencode($formData['active_tab']) : '?tab=information';
+
+                $tabRedirect = !empty($formData['active_tab']) ? '?tab=' . urlencode($formData['active_tab']) . '&lang_id=' . $infoLangId : '?tab=information&lang_id=' . $infoLangId;
 
                 return $response
                     ->withHeader('Location', (defined('ADMIN_PATH') ? ADMIN_PATH : '/LPDHED2dC7Gjrg2b') . '/configuracoes' . $tabRedirect)
@@ -195,7 +198,7 @@ class UpdateStoreSettingAction extends BaseController implements \Alpha\Controll
         if (!empty($configLogo)) {
             $logoUrl = HTTP_SERVER . (str_starts_with($configLogo, 'image/') ? '' : 'image/') . $configLogo;
         }
-        
+
         $iconUrl = '';
         if (!empty($configIcon)) {
             $iconUrl = HTTP_SERVER . (str_starts_with($configIcon, 'image/') ? '' : 'image/') . $configIcon;
@@ -205,32 +208,49 @@ class UpdateStoreSettingAction extends BaseController implements \Alpha\Controll
         $countries = [];
         $zones = [];
         try {
-            $countryRepo = $this->getRepository(\Alpha\Model\Domain\Repositories\CountryRepository::class);
-            $countries = $countryRepo->getCountries();
+            /** @var GeoCountryMapper $countryMapper */
+            $countryMapper = $this->getMapper(GeoCountryMapper::class);
+            $countries = $countryMapper->getCountries();
 
             /** @var \Alpha\Mappers\EntityMappers\GeoZoneMapper $zoneMapper */
             $zoneMapper = $this->getMapper(\Alpha\Mappers\EntityMappers\GeoZoneMapper::class);
-            $zones = array_map(fn($z) => [
+            $zones = array_map(fn(\Alpha\Model\Domain\Entities\Geo\Zone $z) => [
                 'id'   => $z->getId(),
                 'name' => $z->getName(),
-                'code' => method_exists($z, 'getIsoCode') ? $z->getIsoCode() : ($z->getCode() ?? '')
+                'code' => $z->getIsoCode()
             ], $zoneMapper->getZonesByCountryId(30));
-        } catch (\Throwable $ex) {}
+        } catch (\Throwable $ex) {
+        }
 
-        // Load information pages for re-rendering on error
+        // Load active languages and information pages for re-rendering on error
         $informationPages = [];
+        $languages = [];
+        $infoLangId = (int)($formData['info_language_id'] ?? 2);
         try {
+            /** @var \Alpha\Model\Domain\Repositories\LanguageRepository $langRepo */
+            $langRepo = $this->getRepository(\Alpha\Model\Domain\Repositories\LanguageRepository::class);
+            $rawLanguages = $langRepo->findAll();
+            $languages = array_map(function($l) {
+                return [
+                    'id'    => $l->getId(),
+                    'name'  => method_exists($l, 'getName') ? $l->getName() : ($l->name ?? ''),
+                    'code'  => method_exists($l, 'getCode') ? $l->getCode() : ($l->code ?? ''),
+                    'image' => method_exists($l, 'getImage') ? $l->getImage() : ($l->image ?? '')
+                ];
+            }, $rawLanguages);
+
             /** @var \Alpha\Model\Domain\Repositories\InformationRepository $infoRepo */
             $infoRepo = $this->getRepository(\Alpha\Model\Domain\Repositories\InformationRepository::class);
-            $informationPages = $infoRepo->getAllInformationsAdmin();
-        } catch (\Throwable $ex) {}
+            $informationPages = $infoRepo->getAllInformationsAdmin($infoLangId);
+        } catch (\Throwable $ex) {
+        }
 
         // Set warnings
         $errors['warning'] = $errors['warning'] ?? 'Por favor, verifique os erros informados no formulário.';
 
         $html = $this->getTemplate('admin/setting/store_setting/edit.html.twig', [
-            'title'            => 'Configurações da Loja | Painel Administrativo',
-            'settings'         => [
+            'title'                     => 'Configurações da Loja | Painel Administrativo',
+            'settings'                  => [
                 'config_name'      => $configName,
                 'config_owner'     => $configOwner,
                 'config_address'   => $configAddress,
@@ -242,15 +262,17 @@ class UpdateStoreSettingAction extends BaseController implements \Alpha\Controll
                 'config_logo'      => $configLogo,
                 'config_icon'      => $configIcon
             ],
-            'meta_title'        => $metaTitle,
-            'meta_description'  => $metaDescription,
-            'meta_keyword'      => $metaKeyword,
-            'logo_url'          => $logoUrl,
-            'icon_url'          => $iconUrl,
-            'countries'         => $countries,
-            'zones'             => $zones,
-            'information_pages' => $informationPages,
-            'errors'            => $errors
+            'meta_title'                => $metaTitle,
+            'meta_description'          => $metaDescription,
+            'meta_keyword'              => $metaKeyword,
+            'logo_url'                  => $logoUrl,
+            'icon_url'                  => $iconUrl,
+            'countries'                 => $countries,
+            'zones'                     => $zones,
+            'information_pages'         => $informationPages,
+            'languages'                 => $languages,
+            'current_info_language_id'  => $infoLangId,
+            'errors'                    => $errors
         ]);
 
         $response->getBody()->write($html);

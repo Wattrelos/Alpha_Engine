@@ -37,7 +37,7 @@
 		{# Preços #}
 		<div class="egen-prod-card-price-block">
 			{% if prod.has_variants and prod.price_min_formatted %}
-				<span class="egen-prod-price-prefix" style="font-size: 0.78rem; color: #94a3b8; font-weight: 500; display: block; margin-bottom: 0.15rem; text-transform: uppercase; letter-spacing: 0.05em;">A partir de</span>
+				<span class="egen-prod-price-prefix prod-card-category-tag">A partir de</span>
 				<span class="egen-prod-price">{{ prod.price_min_formatted }}</span>
 			{% elseif prod.special_formatted %}
 				<span class="egen-prod-price-old">{{ prod.price_formatted }}</span>

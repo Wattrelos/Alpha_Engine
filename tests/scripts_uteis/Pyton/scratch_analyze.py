@@ -2,7 +2,7 @@ import os
 import re
 from collections import Counter
 # Verificaquantas vezes um estilo inline está sendo usado e em quantos arquivos
-views_dir = '/var/www/html/agsonhos/resources/views/admin'
+views_dir = '/var/www/html/agsonhos/resources/views'
 style_pattern = re.compile(r'style="([^"]*)"', re.IGNORECASE)
 
 styles = []

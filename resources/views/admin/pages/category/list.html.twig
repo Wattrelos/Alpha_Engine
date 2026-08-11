@@ -50,9 +50,9 @@
 		</form>
 	</div>
 
-	<div class="card" style="margin: 0; box-shadow: 0 1px 3px rgba(0,0,0,0.05); border-radius: var(--border-radius); background: #fff;">
+	<div class="card card-table">
 		<div class="overflow-x-auto">
-			<table class="table" style="margin: 0; width: 100%; border-collapse: collapse;">
+			<table class="table table-clean">
 				<thead>
 					<tr>
 						<th>{{ AdminLang.column_image }}</th>
@@ -69,9 +69,9 @@
 							<tr>
 								<td>
 									{% if category.image %}
-										<img src="/{{ category.image }}" alt="{{ category.name }}" style="border-radius: 4px; border: 1px solid var(--color-border); max-width: 40px; max-height: 40px; background: #fff;" />
+										<img src="/{{ category.image }}" alt="{{ category.name }}" class="table-image" />
 									{% else %}
-										<div style="width: 40px; height: 40px; border-radius: 4px; background: #f1f5f9; display: flex; align-items: center; justify-content: center; color: #94a3b8;">
+										<div class="table-image-placeholder">
 											<i class="fas fa-image"></i>
 										</div>
 									{% endif %}
@@ -100,8 +100,8 @@
 						{% endfor %}
 					{% else %}
 						<tr>
-							<td colspan="6" style="text-align: center; padding: 3rem; color: #64748b;">
-								<i class="fas fa-tags" style="font-size: 2.5rem; color: #cbd5e1; margin-bottom: 1rem; display: block;"></i>
+							<td colspan="6" class="table-empty-cell">
+								<i class="fas fa-tags table-empty-icon"></i>
 								{{ AdminLang.text_empty }}
 							</td>
 						</tr>
@@ -110,7 +110,7 @@
 			</table>
 		</div>
 		{% if total > limit %}
-			<div style="padding: 1.5rem; display: flex; justify-content: flex-end; border-top: 1px solid var(--color-border);">
+			<div class="table-pagination-bar">
 				{% include 'components/molecules/pagination.html.twig' %}
 			</div>
 		{% endif %}

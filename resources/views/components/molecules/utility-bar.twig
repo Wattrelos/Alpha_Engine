@@ -29,7 +29,7 @@
             <a href="/carrinho" class="egen-btn-cart">
                 <i class="fa-solid fa-cart-shopping" aria-hidden="true"></i>
                 <span>Carrinho</span>
-                <span class="egen-cart-badge" id="egen-cart-count" style="display: {{ cart_count > 0 ? 'inline-flex' : 'none' }};">{{ cart_count|default(0) }}</span>
+                <span class="egen-cart-badge {{ cart_count > 0 ? '' : 'd-none' }}" id="egen-cart-count">{{ cart_count|default(0) }}</span>
             </a>
 
         {% endif %}

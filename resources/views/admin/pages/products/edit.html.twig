@@ -154,12 +154,10 @@
 					<div class="form-group col-span-2 mb-8">
 						<label for="description" class="form-label-dark">{{ AdminLang.entry_description }}</label>
 						<textarea id="description" name="description" class="form-control form-control-lg" rows="8">{{ product.description }}</textarea>
-					</div>
-				</div>
 			</div>
 
 			<!-- ABA DE VARIAÇÕES -->
-			<div id="tab-variants" class="tab-content-panel" style="display: none;">
+			<div id="tab-variants" class="tab-content-panel d-none">
 				<h3 class="variants-section-title">{{ AdminLang.text_variants_title }}</h3>
 				<p class="variants-section-desc">{{ AdminLang.text_variants_help }}</p>
 				
@@ -194,7 +192,7 @@
 												<label class="btn btn-secondary btn-variant-upload">
 													<i class="fas fa-upload"></i>
 													<span>{{ AdminLang.button_change }}</span>
-													<input type="file" name="variant_image_{{ loop.index0 }}" accept="image/*" class="variant-image-input" style="display: none;" />
+													<input type="file" name="variant_image_{{ loop.index0 }}" accept="image/*" class="variant-image-input d-none" />
 												</label>
 												{% if variant.image %}
 													<label class="variant-remove-image-label">
@@ -289,10 +287,11 @@
 							<label class="btn btn-secondary btn-variant-upload">
 								<i class="fas fa-upload"></i>
 								<span>{{ AdminLang.button_upload }}</span>
-								<input type="file" name="variant_image_${rowIndex}" accept="image/*" class="variant-image-input" style="display: none;" />
+								<input type="file" name="variant_image_${rowIndex}" accept="image/*" class="variant-image-input d-none" />
 							</label>
 						</div>
 					</div>
+				</td>
 				</td>
 				<td>
 					<input type="hidden" name="variants[${rowIndex}][id]" value="0" />

@@ -42,13 +42,13 @@
 
 			{# Exibição de alertas de sucesso/erro vindos da sessão #}
 			{% if success %}
-				<div class="egen-alert egen-alert--success" style="margin-bottom: 2rem; animation: slideDown 0.3s ease-out;">
+				<div class="egen-alert egen-alert--success account-slide-card">
 					<i class="fa-solid fa-circle-check"></i>
 					{{ success }}
 				</div>
 			{% endif %}
 			{% if error_warning %}
-				<div class="egen-alert egen-alert--danger" style="margin-bottom: 2rem; animation: slideDown 0.3s ease-out;">
+				<div class="egen-alert egen-alert--danger account-slide-card">
 					<i class="fa-solid fa-circle-exclamation"></i>
 					{{ error_warning }}
 				</div>

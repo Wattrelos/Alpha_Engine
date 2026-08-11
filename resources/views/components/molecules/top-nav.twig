@@ -52,7 +52,7 @@
 			<a class="egen-top-nav__link" href="{{ shopping_cart|default(url('carrinho', {}, lang)) }}" title="{{ Common.header.shoppingCart|default('Carrinho') }}">
 				<i class="fa-solid fa-cart-shopping" aria-hidden="true"></i>
 				<span class="egen-top-nav__label">{{ Common.header.shoppingCart|default('Carrinho') }}</span>
-				<span class="egen-cart-badge" id="egen-cart-count-top" style="display: {{ cart_count > 0 ? 'inline-flex' : 'none' }};">{{ cart_count|default(0) }}</span>
+				<span class="egen-cart-badge {{ cart_count > 0 ? '' : 'd-none' }}" id="egen-cart-count-top">{{ cart_count|default(0) }}</span>
 			</a>
 		</li>
 		<li class="egen-top-nav__item">

@@ -97,14 +97,14 @@
                 <input type="hidden" name="product_id" id="purchase-product-id" value="{{ product.id }}">
 
                 {% if variants %}
-                    <div class="egen-product-options" style="margin-bottom: 2rem; border-top: 1px solid var(--egen-border-color); padding-top: 1.5rem;">
+                    <div class="egen-product-options prod-show-reviews-box">
                         <h4 class="egen-product-options__title">Escolha a Variação:</h4>
                         <div class="egen-product-options__inline-group" id="variants-selector-container">
                             {% for variant in variants %}
-                                <div class="egen-product-options__inline-item variant-selector-item" data-id="{{ variant.id }}" data-sku="{{ variant.sku }}" data-price="{{ variant.price_formatted }}" data-thumb="{{ variant.thumb }}" data-qty="{{ variant.quantity }}" style="cursor: pointer; border: 1px solid var(--egen-border-color); border-radius: 8px; padding: 0.6rem 1rem; transition: all 0.2s;">
-                                    <span style="font-size: 0.9rem; font-weight: 600; color: var(--egen-text-color);">{{ variant.name }}</span>
+                                <div class="egen-product-options__inline-item variant-selector-item prod-show-opt-label" data-id="{{ variant.id }}" data-sku="{{ variant.sku }}" data-price="{{ variant.price_formatted }}" data-thumb="{{ variant.thumb }}" data-qty="{{ variant.quantity }}">
+                                    <span class="prod-show-opt-text">{{ variant.name }}</span>
                                     {% if variant.price > 0 %}
-                                        <span class="egen-product-options__price-prefix" style="font-size: 0.85rem; font-weight: 600; margin-left: 0.5rem; color: var(--egen-primary-color);">({{ variant.price_formatted }})</span>
+                                        <span class="egen-product-options__price-prefix prod-show-opt-price">({{ variant.price_formatted }})</span>
                                     {% endif %}
                                 </div>
                             {% endfor %}
@@ -193,7 +193,7 @@
                     <input type="text" id="shipping-cep" value="{% if shipping_cep %}{{ shipping_cep|slice(0, 5) ~ '-' ~ shipping_cep|slice(5) }}{% endif %}" placeholder="00000-000" maxlength="9" class="egen-form-input egen-shipping-simulator__input" oninput="this.value = this.value.replace(/\D/g, '').replace(/^(\d{5})(\d)/, '$1-$2')">
                     <button type="button" id="btn-calculate-shipping" class="egen-btn-primary egen-shipping-simulator__btn">Calcular</button>
                 </div>
-                <div id="shipping-results" class="egen-shipping-simulator__results" style="display: none;">
+                <div id="shipping-results" class="egen-shipping-simulator__results d-none">
                     <div class="egen-shipping-simulator__result-item">
                         <div>
                             <span class="egen-shipping-simulator__result-title">Retirar na Loja</span>

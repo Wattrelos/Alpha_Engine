@@ -47,7 +47,7 @@
 	</div>
 
 	<!-- Conteúdo: Aba Dados Gerais -->
-	<div id="tab-content-general" class="tab-content" style="display: none;">
+	<div id="tab-content-general" class="tab-content d-none">
 		<div class="card card-large">
 			<form action="{{ admin_path }}/clientes/{{ customer.id }}/editar" method="POST">
 				{% if csrf %}
@@ -70,7 +70,7 @@
 	</div>
 
 	<!-- Conteúdo: Aba Endereços -->
-	<div id="tab-content-addresses" class="tab-content" style="display: none;">
+	<div id="tab-content-addresses" class="tab-content d-none">
 		<div class="card card-large">
 			<div class="section-header">
 				<h3 class="mb-0 text-dark">{{ AdminLang.title_addresses|default('Endereços Cadastrados') }}</h3>

@@ -62,7 +62,7 @@
 			{% endif %}
 
 			<!-- 1. Aba: Geral -->
-			<div id="tab-content-general" class="tab-content" style="display: none;">
+			<div id="tab-content-general" class="tab-content d-none">
 				<h3 class="section-title">{{ AdminLang.title_general|default('Informações da Loja') }}</h3>
 				
 				<div class="grid-2-cols grid-form-row">
@@ -99,7 +99,7 @@
 			</div>
 
 			<!-- 2. Aba: SEO -->
-			<div id="tab-content-seo" class="tab-content" style="display: none;">
+			<div id="tab-content-seo" class="tab-content d-none">
 				<h3 class="section-title">{{ AdminLang.title_seo|default('Metadados da Loja (SEO)') }}</h3>
 				
 				<div class="mb-6">
@@ -120,7 +120,7 @@
 			</div>
 
 			<!-- 3. Aba: Imagens -->
-			<div id="tab-content-images" class="tab-content" style="display: none;">
+			<div id="tab-content-images" class="tab-content d-none">
 				<h3 class="section-title">{{ AdminLang.title_images|default('Imagens e Logotipos') }}</h3>
 				
 				<div class="grid-images">
@@ -181,7 +181,7 @@
 			</div>
 
 			<!-- 4. Aba: Redes Sociais -->
-			<div id="tab-content-social" class="tab-content" style="display: none;">
+			<div id="tab-content-social" class="tab-content d-none">
 				<h3 class="section-title">{{ AdminLang.title_social|default('Redes Sociais') }}</h3>
 				
 				<div class="mb-6">
@@ -210,15 +210,27 @@
 			</div>
 
 			<!-- 5. Aba: Informações (Páginas Institucionais) -->
-			<div id="tab-content-information" class="tab-content" style="display: none;">
+			<div id="tab-content-information" class="tab-content d-none">
 				<div class="info-header-bar">
 					<div>
 						<h3 class="section-title mb-1"><i class="fas fa-book-open text-primary"></i> Páginas Institucionais da Loja</h3>
-						<p class="text-muted text-sm">Gerencie o conteúdo de Sobre Nós, Termos, Privacidade, Entregas ou crie novas páginas institucionais.</p>
+						<p class="text-muted text-sm mb-0">Gerencie o conteúdo de Sobre Nós, Termos, Privacidade, Entregas ou crie novas páginas institucionais.</p>
 					</div>
-					<button type="button" onclick="switchInfoSubTab('new')" class="btn btn-outline-primary btn-sm">
-						<i class="fas fa-plus-circle"></i> Nova Página Institutional
-					</button>
+					<div class="header-actions-group store-setting-header-flex">
+						<div class="lang-selector-box store-setting-badge-container">
+							<label for="info_language_select" class="form-label mb-0 text-xs text-muted"><i class="fas fa-globe text-primary"></i> Idioma do Conteúdo:</label>
+							<select id="info_language_select" name="info_language_id" class="form-control form-control-sm store-setting-small-btn" onchange="changeInformationLanguage(this.value)">
+								{% for l in languages %}
+									<option value="{{ l.id }}" {% if l.id == current_info_language_id %}selected{% endif %}>
+										{{ l.name }} ({{ l.code|upper }})
+									</option>
+								{% endfor %}
+							</select>
+						</div>
+						<button type="button" onclick="switchInfoSubTab('new')" class="btn btn-outline-primary btn-sm">
+							<i class="fas fa-plus-circle"></i> Nova Página Institutional
+						</button>
+					</div>
 				</div>
 
 				<!-- Sub-navegação em Pílulas (Sub-tabs) -->
@@ -240,7 +252,7 @@
 
 				<!-- Painéis das Páginas Institucionais -->
 				{% for page in information_pages %}
-					<div id="info-subtab-content-{{ page.id }}" class="info-subtab-content" style="{% if not loop.first %}display: none;{% endif %}">
+					<div id="info-subtab-content-{{ page.id }}" class="info-subtab-content {% if not loop.first %}d-none{% endif %}">
 						<div class="card card-inner mb-6">
 							<div class="info-card-header">
 								<h4 class="font-semibold text-lg">
@@ -339,7 +351,7 @@
 				{% endfor %}
 
 				<!-- Formulário para Criar Nova Página -->
-				<div id="info-subtab-content-new" class="info-subtab-content" style="display: none;">
+				<div id="info-subtab-content-new" class="info-subtab-content d-none">
 					<div class="card card-inner card-new-page mb-6">
 						<div class="info-card-header">
 							<h4 class="font-semibold text-lg text-primary">
@@ -440,7 +452,6 @@
 		</form>
 	</div>
 
-	<script>
 	<style>
 		/* Estilos da Aba de Informações e Editor Live Preview */
 		.info-header-bar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.25rem; background: rgba(255, 255, 255, 0.03); padding: 1rem 1.25rem; border-radius: 12px; border: 1px solid rgba(255, 255, 255, 0.08); }
@@ -517,6 +528,15 @@
 			window.history.pushState({}, '', url);
 		}
 
+		// Alternador de Idioma das Páginas Institucionais
+		function changeInformationLanguage(langId) {
+			const activeTab = document.getElementById('active_tab_field')?.value || 'information';
+			const url = new URL(window.location);
+			url.searchParams.set('tab', activeTab);
+			url.searchParams.set('lang_id', langId);
+			window.location.href = url.toString();
+		}
+
 		// Switcher de sub-abas das páginas institucionais
 		function switchInfoSubTab(subTabId) {
 			document.querySelectorAll('.info-subtab-content').forEach(el => el.style.display = 'none');
@@ -575,7 +595,7 @@
 
 			let text = textarea.value || '';
 			if (!text.trim()) {
-				previewBox.innerHTML = '<span class="text-muted italic" style="font-size: 0.85rem;">(Nenhum conteúdo digitado)</span>';
+				previewBox.innerHTML = '<span class="text-muted italic store-setting-font-sm">(Nenhum conteúdo digitado)</span>';
 				return;
 			}
 

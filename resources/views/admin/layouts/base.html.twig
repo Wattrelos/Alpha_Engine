@@ -113,17 +113,16 @@
 					<div class="topbar-left">
 						<span class="topbar-role">{{ AdminLang.topbar.role|default('Modo Administrador') }}</span>
 					</div>
-					<div
-						class="topbar-right" style="display: flex; align-items: center;">
+					<div class="topbar-right topbar-right-flex">
 						<!-- Language Switcher Dropdown -->
-						<div class="topbar-language-select" style="margin-right: 25px; display: flex; align-items: center;">
-							<form action="{{ admin_path }}/idioma" method="POST" id="form_lang_switch" style="margin: 0; display: flex; align-items: center;">
+						<div class="topbar-language-select topbar-lang-select-box">
+							<form action="{{ admin_path }}/idioma" method="POST" id="form_lang_switch" class="topbar-lang-form">
 								{% if csrf %}
 									<input type="hidden" name="{{ csrf.keys.name }}" value="{{ csrf.name }}">
 									<input type="hidden" name="{{ csrf.keys.value }}" value="{{ csrf.value }}">
 								{% endif %}
-								<i class="fas fa-globe" style="color: #64748b; font-size: 1rem; margin-right: 6px;"></i>
-								<select name="language_code" onchange="document.getElementById('form_lang_switch').submit();" style="padding: 0.35rem 0.5rem; font-size: 0.85rem; border-radius: 4px; border: 1px solid #cbd5e1; cursor: pointer; color: #334155; background-color: #fff; outline: none; transition: border-color 0.2s; font-family: inherit; font-weight: 500;">
+								<i class="fas fa-globe topbar-lang-icon"></i>
+								<select name="language_code" onchange="document.getElementById('form_lang_switch').submit();" class="topbar-lang-dropdown">
 									{% for l in languages %}
 										<option value="{{ l.code }}" {% if admin_lang_code == l.code %} selected {% endif %}>
 											{{ l.name }}

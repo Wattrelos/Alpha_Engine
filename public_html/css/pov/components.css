@@ -733,3 +733,50 @@
         display: none;
     }
 }
+
+/* ── POS Refactored Utility & Layout Classes ── */
+.pos-empty-grid-col {
+    grid-column: 1 / -1;
+}
+
+.pos-empty-state-padding {
+    padding: 4rem;
+}
+
+.pos-accent-text {
+    color: var(--accent);
+}
+
+.pos-text-muted-sm {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    display: block;
+}
+
+.pos-danger-alert {
+    display: none;
+    color: var(--danger);
+}
+
+.pos-max-w-600 {
+    max-width: 600px;
+    text-align: left;
+}
+
+.pos-text-danger {
+    color: var(--danger);
+}
+
+.pos-text-success {
+    color: var(--success);
+}
+
+.pos-cursor-default {
+    cursor: default;
+}
+
+.pos-text-success-lg {
+    color: var(--success);
+    font-size: 1.05rem;
+}
+

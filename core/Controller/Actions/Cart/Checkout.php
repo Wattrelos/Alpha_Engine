@@ -7,7 +7,6 @@ use Psr\Http\Message\ResponseInterface as Response;
 use Twig\Environment;
 use Alpha\Controller\Actions\ActionInterface;
 use Psr\Container\ContainerInterface;
-use Alpha\Model\Domain\Repositories\CountryRepository;
 use Slim\Routing\RouteContext;
 
 class Checkout implements ActionInterface

@@ -195,6 +195,7 @@
 └── tests/                                  # Testes
     ├── newTables/                          # 📂 Novas tabelas e migrações SQL
     ├── test_mensageria_rebbit/             # 📂 Testes de mensageria assíncrona (RabbitMQ)
+    ├── validation/                         # 📂 Validações
     └── scripts_uteis/                      # 📂 Scripts úteis
         ├── NovoEnderecamento/              # Novo Endereçamento
         ├── Pyton/                          # Python

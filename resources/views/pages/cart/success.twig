@@ -7,12 +7,12 @@
 
 {% block content %}
 	<div class="egen-cart-page">
-		<div class="egen-cart-container" style="text-align: center; padding: 4rem 2rem;">
-			<div class="egen-cart-empty__icon" style="color: var(--egen-primary-color); font-size: 4rem; margin-bottom: 1.5rem;">
+		<div class="egen-cart-container cart-success-box">
+			<div class="egen-cart-empty__icon cart-success-icon">
 				<i class="fa-solid fa-circle-check"></i>
 			</div>
-			<h1 class="egen-cart-title" style="margin-bottom: 1rem;">{{ Order.headingTitle|default('Pedido Realizado com Sucesso!') }}</h1>
-			<p style="color: var(--egen-text-muted); margin-bottom: 2rem;">{{ Order.textMessage|format(order_id)|raw }}</p>
+			<h1 class="egen-cart-title cart-success-title">{{ Order.headingTitle|default('Pedido Realizado com Sucesso!') }}</h1>
+			<p class="cart-success-desc">{{ Order.textMessage|format(order_id)|raw }}</p>
 			<a href="{{ continue_url|default('/') }}" class="egen-btn-primary">{{ Order.buttonContinue|default('Voltar para a Página Inicial') }}</a>
 		</div>
 	</div>

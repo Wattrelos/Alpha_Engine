@@ -20,21 +20,19 @@
 				<h1 class="egen-cat-hero-title">{{ Search.headingTitle }}</h1>
 
 				{# Formulário de busca interno na página #}
-				<div class="egen-search-form-container" style="margin-top: 1.5rem; max-width: 600px; width: 100%;">
-					<form action="{{ url_for('search', {'lang': lang}) }}" method="GET" class="egen-search-page-form" style="display: flex; gap: 0.5rem; width: 100%;">
+				<div class="egen-search-form-container search-form-wrap">
+					<form action="{{ url_for('search', {'lang': lang}) }}" method="GET" class="egen-search-page-form search-form-row">
 						<input 
 							type="text" 
 							name="busca" 
 							value="{{ term }}" 
 							placeholder="{{ Search.searchPlaceholder }}" 
-							class="egen-form-input" 
-							style="flex: 1; background: var(--egen-bg-input); border: 1px solid var(--egen-border-color); color: var(--egen-text-color); border-radius: var(--egen-radius-sm); padding: 0.75rem 1rem; outline: none; transition: var(--egen-transition);"
+							class="egen-form-input search-input-field" 
 							required
 						>
 						<button 
 							type="submit" 
-							class="egen-btn-primary" 
-							style="border-radius: var(--egen-radius-sm); padding: 0.75rem 1.5rem; font-weight: 600; cursor: pointer; border: none; background: var(--egen-primary-color); color: #fff; transition: var(--egen-transition);"
+							class="egen-btn-primary search-submit-btn" 
 						>
 							{{ Search.buttonSearch }}
 						</button>
@@ -43,7 +41,7 @@
 
 				{# Contagem de produtos #}
 				{% if search_data.products %}
-					<div class="egen-cat-hero-count" style="margin-top: 1rem;">
+					<div class="egen-cat-hero-count search-sub-title">
 						<span class="egen-count-badge">
 							{{ search_data.product_total }} {{ search_data.product_total != 1 ? Search.textProductPlural : Search.textProductSingular }} {{ search_data.product_total != 1 ? Search.textFoundPlural : Search.textFoundSingular }}
 						</span>
@@ -106,10 +104,10 @@
 
 			{% else %}
 				{# ── Estado vazio ── #}
-				<div class="egen-cat-empty" style="text-align: center; padding: 5rem 2rem;">
-					<div class="egen-cat-empty-icon" style="font-size: 3rem; margin-bottom: 1.5rem;">🔍</div>
-					<h2 class="egen-cat-empty-title" style="color: var(--egen-text-color); margin-bottom: 0.5rem;">{{ Search.textNoResults }}</h2>
-					<p class="egen-cat-empty-desc" style="color: var(--egen-text-muted);">{{ Search.textEmptyDesc|format(term) }}</p>
+				<div class="egen-cat-empty search-empty-box">
+					<div class="egen-cat-empty-icon search-empty-icon">🔍</div>
+					<h2 class="egen-cat-empty-title search-empty-h2">{{ Search.textNoResults }}</h2>
+					<p class="egen-cat-empty-desc search-empty-p">{{ Search.textEmptyDesc|format(term) }}</p>
 				</div>
 			{% endif %}
 

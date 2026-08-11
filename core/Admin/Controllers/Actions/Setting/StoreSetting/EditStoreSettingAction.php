@@ -41,9 +41,24 @@ class EditStoreSettingAction extends BaseController implements \Alpha\Controller
             $iconUrl = HTTP_SERVER . (str_starts_with($settings['config_icon'], 'image/') ? '' : 'image/') . $settings['config_icon'];
         }
 
+        /** @var \Alpha\Model\Domain\Repositories\LanguageRepository $langRepo */
+        $langRepo = $this->getRepository(\Alpha\Model\Domain\Repositories\LanguageRepository::class);
+        $rawLanguages = $langRepo->findAll();
+        $languages = array_map(function($l) {
+            return [
+                'id'    => $l->getId(),
+                'name'  => method_exists($l, 'getName') ? $l->getName() : ($l->name ?? ''),
+                'code'  => method_exists($l, 'getCode') ? $l->getCode() : ($l->code ?? ''),
+                'image' => method_exists($l, 'getImage') ? $l->getImage() : ($l->image ?? '')
+            ];
+        }, $rawLanguages);
+
+        $queryParams = $request->getQueryParams();
+        $currentInfoLangId = (int)($queryParams['lang_id'] ?? 2);
+
         /** @var \Alpha\Model\Domain\Repositories\InformationRepository $infoRepo */
         $infoRepo = $this->getRepository(\Alpha\Model\Domain\Repositories\InformationRepository::class);
-        $informationPages = $infoRepo->getAllInformationsAdmin();
+        $informationPages = $infoRepo->getAllInformationsAdmin($currentInfoLangId);
 
         // Session notifications
         $success = $_SESSION['success'] ?? '';
@@ -51,16 +66,18 @@ class EditStoreSettingAction extends BaseController implements \Alpha\Controller
         unset($_SESSION['success'], $_SESSION['error']);
 
         $html = $this->getTemplate('admin/setting/store_setting/edit.html.twig', [
-            'title'             => 'Configurações da Loja | Painel Administrativo',
-            'settings'          => $settings,
-            'meta_title'        => $metaTitle,
-            'meta_description'  => $metaDescription,
-            'meta_keyword'      => $metaKeyword,
-            'logo_url'          => $logoUrl,
-            'icon_url'          => $iconUrl,
-            'information_pages' => $informationPages,
-            'success'           => $success,
-            'error'             => $error
+            'title'                     => 'Configurações da Loja | Painel Administrativo',
+            'settings'                  => $settings,
+            'meta_title'                => $metaTitle,
+            'meta_description'          => $metaDescription,
+            'meta_keyword'              => $metaKeyword,
+            'logo_url'                  => $logoUrl,
+            'icon_url'                  => $iconUrl,
+            'information_pages'         => $informationPages,
+            'languages'                 => $languages,
+            'current_info_language_id'  => $currentInfoLangId,
+            'success'                   => $success,
+            'error'                     => $error
         ]);
 
         $response->getBody()->write($html);

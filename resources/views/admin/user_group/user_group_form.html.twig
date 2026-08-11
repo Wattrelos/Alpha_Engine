@@ -34,7 +34,7 @@
 						<div class="form-group">
 							<label for="name_{{ lang.id }}" class="form-label font-semibold d-flex align-items-center gap-2">
 								{% if lang.image %}
-									<img src="/image/flags/{{ lang.image }}" alt="{{ lang.name }}" style="width: 18px; height: 12px; object-fit: cover; border-radius: 2px;" onError="this.style.display='none'" />
+									<img src="/image/flags/{{ lang.image }}" alt="{{ lang.name }}" class="user-group-flag-icon" onError="this.classList.add('d-none')" />
 								{% endif %}
 								<span>Nome do Papel ({{ lang.name }}) *</span>
 							</label>

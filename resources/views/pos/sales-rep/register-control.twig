@@ -29,7 +29,7 @@
         <div class="products-grid-container">
             <div id="products_grid" class="products-grid">
                 <!-- Injetado via Javascript -->
-                <div class="empty-cart-state" style="grid-column: 1/-1; padding: 4rem;">
+                <div class="empty-cart-state pos-empty-grid-col pos-empty-state-padding">
                     <i class="fas fa-spinner fa-spin empty-cart-icon"></i>
                     <p>Carregando catálogo...</p>
                 </div>
@@ -41,16 +41,16 @@
     <div class="cart-panel">
         <div class="cart-header">
             <h2 class="cart-title">
-                <i class="fas fa-shopping-cart" style="color: var(--accent);"></i>
+                <i class="fas fa-shopping-cart pos-accent-text"></i>
                 Pré-Venda
             </h2>
             <div class="customer-selector">
                 <div class="customer-info-box">
                     <div>
-                        <span style="font-size: 0.75rem; color: var(--text-muted); display: block;">Cliente Identificado</span>
+                        <span class="pos-text-muted-sm">Cliente Identificado</span>
                         <span id="selected_customer_name" class="customer-name-selected unidentified">Consumidor Não Identificado</span>
                     </div>
-                    <button id="clear_customer_btn" class="customer-search-btn" style="display: none; color: var(--danger);">
+                    <button id="clear_customer_btn" class="customer-search-btn pos-danger-alert">
                         <i class="fas fa-times-circle"></i>
                     </button>
                 </div>
@@ -96,7 +96,7 @@
 
 <!-- Modal de Variações de Produto -->
 <div id="variants_modal" class="pos-modal">
-    <div class="modal-content" style="max-width: 600px; text-align: left;">
+    <div class="modal-content pos-max-w-600">
         <div class="variants-modal-header">
             <h3 class="variants-modal-title" id="variants_modal_title">Escolha a Variação</h3>
             <button id="variants_modal_close_btn" class="variants-modal-close">
@@ -163,7 +163,7 @@
                 .catch(err => {
                     console.error("Erro ao buscar produtos:", err);
                     productsGrid.innerHTML = `
-                        <div class="empty-cart-state" style="grid-column: 1/-1; color: var(--danger);">
+                        <div class="empty-cart-state pos-empty-grid-col pos-text-danger">
                             <i class="fas fa-exclamation-circle empty-cart-icon"></i>
                             <p>Falha ao conectar com o catálogo de produtos.</p>
                         </div>
@@ -175,7 +175,7 @@
         const renderProducts = () => {
             if (productsDatabase.length === 0) {
                 productsGrid.innerHTML = `
-                    <div class="empty-cart-state" style="grid-column: 1/-1;">
+                    <div class="empty-cart-state pos-empty-grid-col">
                         <i class="fas fa-box-open empty-cart-icon"></i>
                         <p>Nenhum produto encontrado no estoque.</p>
                     </div>
@@ -187,7 +187,7 @@
                 const hasVariants = p.variants && p.variants.length > 0;
                 const isOutOfStock = p.quantity <= 0;
                 const priceHtml = p.special_formatted 
-                    ? `<span class="product-price-old">${p.price_formatted}</span> <span class="product-price" style="color: var(--success);">${p.special_formatted}</span>`
+                    ? `<span class="product-price-old">${p.price_formatted}</span> <span class="product-price pos-text-success">${p.special_formatted}</span>`
                     : `<span class="product-price">${p.price_formatted}</span>`;
                 
                 return `
@@ -239,7 +239,7 @@
                     .then(data => {
                         if (data.length === 0) {
                             customerSearchResults.innerHTML = `
-                                <div class="customer-item" style="cursor: default;">
+                                <div class="customer-item pos-cursor-default">
                                     <span class="customer-item-name">Nenhum cliente encontrado</span>
                                 </div>
                             `;

@@ -1837,3 +1837,253 @@
 .col-w-60 {
     width: 60px !important;
 }
+
+/* ── Admin Dashboard & Page Headings ── */
+.dashboard-section-title {
+    margin: 0 0 0.5rem 0;
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: #1e293b;
+}
+
+.dashboard-section-title-clean {
+    margin: 0;
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: #1e293b;
+}
+
+.dashboard-section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+}
+
+.quick-shortcuts-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
+    gap: 1rem;
+}
+
+.shortcut-card {
+    margin: 0;
+    padding: 1rem;
+    text-decoration: none;
+    border: 1px solid #e2e8f0;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+    background: #ffffff;
+}
+
+.shortcut-card:hover {
+    border-color: var(--color-primary);
+    transform: translateY(-2px);
+}
+
+.shortcut-icon-box {
+    width: 42px;
+    height: 42px;
+    font-size: 1.1rem;
+}
+
+.shortcut-title {
+    margin: 0;
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: #0f172a;
+}
+
+.shortcut-subtitle {
+    font-size: 0.75rem;
+    color: #64748b;
+}
+
+.cell-order-id {
+    font-weight: 600;
+    color: var(--color-primary);
+}
+
+/* ── Base Layout & Topbar ── */
+.topbar-right-flex {
+    display: flex;
+    align-items: center;
+}
+
+.topbar-lang-select-box {
+    margin-right: 25px;
+    display: flex;
+    align-items: center;
+}
+
+.topbar-lang-form {
+    margin: 0;
+    display: flex;
+    align-items: center;
+}
+
+.topbar-lang-icon {
+    color: #64748b;
+    font-size: 1rem;
+    margin-right: 6px;
+}
+
+.topbar-lang-dropdown {
+    padding: 0.35rem 0.5rem;
+    font-size: 0.85rem;
+    border-radius: 4px;
+    border: 1px solid #cbd5e1;
+    cursor: pointer;
+    color: #334155;
+    background-color: #fff;
+    outline: none;
+    transition: border-color 0.2s;
+    font-family: inherit;
+    font-weight: 500;
+}
+
+.topbar-user-box {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.topbar-avatar-wrapper {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    overflow: hidden;
+    background: #e2e8f0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.topbar-avatar-img-fit {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.topbar-logout-btn {
+    margin-left: 5px;
+    color: #ef4444;
+    text-decoration: none;
+}
+
+/* ── Category Edit & Create ── */
+.grid-col-span-2 {
+    grid-column: span 2;
+    margin-bottom: 2rem;
+}
+
+.category-image-box {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    margin-bottom: 1.5rem;
+    background: #fff;
+    padding: 1rem;
+    border-radius: 8px;
+    border: 1px solid #e2e8f0;
+}
+
+.category-image-preview-sq {
+    width: 120px;
+    height: 120px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #f1f5f9;
+    border-radius: 6px;
+    overflow: hidden;
+    border: 1px solid #e2e8f0;
+}
+
+.category-image-fit {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+}
+
+.category-image-title {
+    font-weight: 600;
+    color: #334155;
+    margin-bottom: 0.25rem;
+}
+
+.category-image-filename {
+    font-family: monospace;
+    font-size: 0.85rem;
+    color: #64748b;
+    margin-bottom: 0.75rem;
+    word-break: break-all;
+}
+
+.category-image-delete-label {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    color: #ef4444;
+    font-weight: 600;
+    cursor: pointer;
+    font-size: 0.9rem;
+    user-select: none;
+}
+
+.category-image-delete-checkbox {
+    width: 16px;
+    height: 16px;
+    accent-color: #ef4444;
+}
+
+.category-parent-preview {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 1.25rem;
+    color: #64748b;
+    font-size: 0.9rem;
+}
+
+.category-parent-icon {
+    font-size: 2rem;
+    color: #cbd5e1;
+}
+
+/* ── Store Settings Edit ── */
+.store-setting-header-flex {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.store-setting-badge-container {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: rgba(255, 255, 255, 0.05);
+    padding: 4px 10px;
+    border-radius: 8px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.store-setting-small-btn {
+    padding: 2px 8px;
+    font-size: 0.8rem;
+    height: 28px;
+}
+
+.store-setting-font-sm {
+    font-size: 0.85rem;
+}
+
+/* ── User Group Form ── */
+.user-group-flag-icon {
+    width: 18px;
+    height: 12px;
+    object-fit: cover;
+    border-radius: 2px;
+}

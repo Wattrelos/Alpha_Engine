@@ -52,18 +52,18 @@
                     <div class="info-detail-item align-items-start">
                         {% if store.logo %}
                             <div class="detail-thumbnail me-3">
-                                <img src="{{ store.logo }}" alt="{{ store.name|default(store) }}" class="img-thumbnail" style="max-width: 120px; border-radius: 8px; border: 1px solid #e2e8f0; padding: 4px; background-color: #fff;">
+                                <img src="{{ store.logo }}" alt="{{ store.name|default(store) }}" class="img-thumbnail contact-map-img">
                             </div>
                         {% endif %}
                         <div>
                             <div class="d-flex align-items-center mb-1">
-                                <span class="detail-icon-inline me-2" style="color: var(--primary-color, #0d6efd);">
+                                <span class="detail-icon-inline me-2 contact-primary-text">
                                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                         <circle cx="12" cy="12" r="10"></circle>
                                         <path d="M12 8l4 4-4 4M8 12h8"></path>
                                     </svg>
                                 </span>
-                                <h3 class="m-0" style="font-size: 1.1rem; font-weight: 600;">{{ store.name|default(store) }}</h3>
+                                <h3 class="m-0 contact-title-sm">{{ store.name|default(store) }}</h3>
                             </div>
                             <p class="m-0 text-muted">Sua loja de materiais de construção e realização de sonhos.</p>
                         </div>
@@ -80,9 +80,9 @@
                         </div>
                         <div>
                             <h3>Endereço</h3>
-                            <address class="store-address" style="font-style: normal; margin-bottom: 8px;">{{ store.address|nl2br }}</address>
+                            <address class="store-address contact-addr-text">{{ store.address|nl2br }}</address>
                             {% if store.geocode %}
-                                <a href="https://maps.google.com/maps?q={{ store.geocode|url_encode }}&hl=pt-br&t=m&z=15" target="_blank" rel="noopener" class="btn btn-info btn-sm text-white" style="background-color: #0dcaf0; border-color: #0dcaf0; padding: 4px 12px; font-size: 0.85rem; border-radius: 4px; text-decoration: none; display: inline-flex; align-items: center; gap: 6px;"><i class="fa-solid fa-location-dot"></i> Visualizar mapa do Google</a>
+                                <a href="https://maps.google.com/maps?q={{ store.geocode|url_encode }}&hl=pt-br&t=m&z=15" target="_blank" rel="noopener" class="btn btn-info btn-sm text-white contact-badge-btn"><i class="fa-solid fa-location-dot"></i> Visualizar mapa do Google</a>
                             {% endif %}
                         </div>
                     </div>

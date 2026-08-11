@@ -290,6 +290,15 @@
         @keyframes spin {
             to { transform: rotate(360deg); }
         }
+
+        .installer-flex-gap-8 { display: flex; gap: 8px; }
+        .installer-ws-nowrap { white-space: nowrap; }
+        .installer-help-text { color: var(--text-secondary); font-size: 0.78rem; margin-top: 4px; }
+        .installer-success-box { text-align: center; padding: 20px 0; }
+        .installer-success-icon { font-size: 3rem; margin-bottom: 16px; }
+        .installer-success-title { font-size: 1.4rem; font-weight: 700; margin-bottom: 12px; color: var(--success-color); }
+        .installer-success-desc { color: var(--text-secondary); font-size: 0.95rem; margin-bottom: 24px; }
+        .installer-success-btn { text-decoration: none; padding: 12px 28px; font-size: 1rem; }
     </style>
 </head>
 <body>
@@ -369,7 +378,7 @@
                             <input type="text" id="db_prefix" name="db_prefix" value="{{ default_prefix }}" required>
                         </div>
                     </div>
-                    <button type="button" class="btn btn-secondary" id="btn-test-db" style="margin-bottom: 10px;">
+                    <button type="button" class="btn btn-secondary mb-3" id="btn-test-db">
                         🧪 Testar Conexão
                     </button>
                 </form>
@@ -419,13 +428,13 @@
                         </div>
                         <div class="form-group full-width">
                             <label for="admin_dir">Caminho/Pasta do Dashboard (Mascaramento de Segurança)</label>
-                            <div style="display: flex; gap: 8px;">
+                            <div class="installer-flex-gap-8">
                                 <input type="text" id="admin_dir" name="admin_dir" value="{{ default_admin_dir|default('LPDHED2dC7Gjrg2b') }}" placeholder="ex: painel_seguro" required>
-                                <button type="button" class="btn btn-secondary" id="btn-generate-admin-dir" style="white-space: nowrap;">
+                                <button type="button" class="btn btn-secondary installer-ws-nowrap" id="btn-generate-admin-dir">
                                     🎲 Gerar Aleatório
                                 </button>
                             </div>
-                            <small style="color: var(--text-secondary); font-size: 0.78rem; margin-top: 4px;">
+                            <small class="installer-help-text">
                                 Esta pasta será usada para acessar o painel administrativo (ex: <code>http://seudominio.com/<span id="admin-dir-preview">{{ default_admin_dir|default('LPDHED2dC7Gjrg2b') }}</span></code>).
                             </small>
                         </div>
@@ -440,15 +449,15 @@
 
             <!-- ETAPA 4: SUCESSO -->
             <div class="step-content" id="step-4">
-                <div style="text-align: center; padding: 20px 0;">
-                    <div style="font-size: 3rem; margin-bottom: 16px;">🎉</div>
-                    <h2 style="font-size: 1.4rem; font-weight: 700; margin-bottom: 12px; color: var(--success-color);">
+                <div class="installer-success-box">
+                    <div class="installer-success-icon">🎉</div>
+                    <h2 class="installer-success-title">
                         Instalação Concluída com Sucesso!
                     </h2>
-                    <p style="color: var(--text-secondary); font-size: 0.95rem; margin-bottom: 24px;">
+                    <p class="installer-success-desc">
                         O banco de dados foi provisionado, o Super Admin foi criado e o arquivo <code>.env</code> foi atualizado com a flag <code>APP_INSTALLED=true</code>.
                     </p>
-                    <a href="/{{ default_admin_dir|default('LPDHED2dC7Gjrg2b') }}" id="btn-goto-admin" class="btn btn-primary" style="text-decoration: none; padding: 12px 28px; font-size: 1rem;">
+                    <a href="/{{ default_admin_dir|default('LPDHED2dC7Gjrg2b') }}" id="btn-goto-admin" class="btn btn-primary installer-success-btn">
                         Acessar Painel Administrativo →
                     </a>
                 </div>
