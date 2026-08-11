@@ -50,8 +50,14 @@ abstract class AbstractAuthService implements AuthServiceInterface
             if (session_status() === PHP_SESSION_NONE) {
                 session_name($this->cookieName);
                 session_start();
+            } else {
+                session_regenerate_id(true);
             }
             $sessionId = session_id();
+            if (empty($sessionId)) {
+                $sessionId = bin2hex(random_bytes(32));
+                session_id($sessionId);
+            }
             $_SESSION[$this->sessionKey] = json_encode($userData);
             $_SESSION['expire'] = time() + $this->sessionLifetime;
             $_SESSION[$this->sessionKey . '_expire'] = time() + $this->sessionLifetime;

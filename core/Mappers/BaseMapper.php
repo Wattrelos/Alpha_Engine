@@ -41,7 +41,13 @@ abstract class BaseMapper implements MapperInterface
      */
     public function save(InterfaceEntity $entity): ?int
     {
-        return ($entity->getId() > 0) ? $this->dao->update($entity) : $this->dao->create($entity);
+        if ($entity->getId() > 0) {
+            $existing = $this->findById($entity->getId());
+            if ($existing !== null) {
+                return $this->dao->update($entity);
+            }
+        }
+        return $this->dao->create($entity);
     }
 
     /**

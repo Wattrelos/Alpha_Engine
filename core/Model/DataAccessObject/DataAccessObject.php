@@ -126,7 +126,7 @@ class DataAccessObject
     public function create(InterfaceEntity $entity): ?int
     {
         $hierarchy = $this->getEntityHierarchy(get_class($entity));
-        $lastId = null;
+        $lastId = ($entity->getId() !== null && $entity->getId() > 0) ? $entity->getId() : null;
         $managedTransaction = false;
 
         try {

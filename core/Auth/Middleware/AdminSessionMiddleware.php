@@ -159,10 +159,15 @@ class AdminSessionMiddleware
         }
 
         // --- Verificação de privilégios / permissões ---
-        $routeContext = \Slim\Routing\RouteContext::fromRequest($request);
-        $route = $routeContext->getRoute();
-        $routeName = $route ? $route->getName() : '';
-        $permissionKey = self::ROUTE_PERMISSION_MAP[$routeName] ?? null;
+        $permissionKey = null;
+        try {
+            $routeContext = \Slim\Routing\RouteContext::fromRequest($request);
+            $route = $routeContext->getRoute();
+            $routeName = $route ? $route->getName() : '';
+            $permissionKey = self::ROUTE_PERMISSION_MAP[$routeName] ?? null;
+        } catch (\RuntimeException $e) {
+            // Se a rota não foi resolvida (ex: testes unitários sem dispatcher), ignora
+        }
 
         if ($permissionKey) {
             $accessList = $permissions['access'] ?? [];

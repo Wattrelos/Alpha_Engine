@@ -50,7 +50,7 @@ class City extends BaseEntity
         $this->name = $name;
         return $this;
     }
-    public function isServed(): bool
+    public function getIsServed(): bool
     {
         return $this->isServed;
     }
