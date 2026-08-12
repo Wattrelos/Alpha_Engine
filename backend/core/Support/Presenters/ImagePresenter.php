@@ -21,7 +21,7 @@ class ImagePresenter
     public function __construct(string $baseUrl, string $imageDir = '')
     {
         $this->baseUrl  = rtrim($baseUrl, '/') . '/';
-        $this->imageDir = $imageDir ?: (defined('DIR_IMAGE') ? DIR_IMAGE : '');
+        $this->imageDir = rtrim($imageDir ?: (defined('DIR_IMAGE') ? DIR_IMAGE : ''), '/') . '/';
     }
 
     /**
@@ -37,6 +37,12 @@ class ImagePresenter
     public function resize(?string $filename, int $width, int $height, bool $fallback = true): string
     {
         $filename = $filename ? html_entity_decode($filename, ENT_QUOTES, 'UTF-8') : '';
+        $filename = ltrim($filename, '/');
+
+        // Se o caminho salvo no BD incluir o prefixo 'image/', normaliza removendo-o
+        if (str_starts_with($filename, 'image/')) {
+            $filename = substr($filename, 6);
+        }
 
         // Verifica existência e segurança do caminho
         if (!$this->isValidImage($filename)) {
