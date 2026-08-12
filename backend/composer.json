@@ -37,7 +37,9 @@
             "mkdir -p .reports",
             "phpstan analyse --error-format=json > .reports/phpstan-report.json || true"
         ],
-        "stan:baseline": "phpstan analyse --generate-baseline phpstan-baseline.neon"
+        "stan:baseline": "phpstan analyse --generate-baseline phpstan-baseline.neon",
+        "package": "php scripts/build-release.php",
+        "build-release": "php scripts/build-release.php"
     },
     "require-dev": {
         "phpstan/phpstan": "^2.2",

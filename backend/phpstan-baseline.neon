@@ -175,24 +175,6 @@ parameters:
 			path: core/Admin/Controllers/Actions/Sales/Return/UpdateReturnStatusAction.php
 
 		-
-			message: '#^Call to an undefined method Alpha\\Model\\Domain\\Entities\\Geo\\Zone\:\:getCode\(\)\.$#'
-			identifier: method.notFound
-			count: 1
-			path: core/Admin/Controllers/Actions/Setting/StoreSetting/UpdateStoreSettingAction.php
-
-		-
-			message: '#^Call to function method_exists\(\) with Alpha\\Model\\Domain\\Entities\\Geo\\Zone and ''getIsoCode'' will always evaluate to true\.$#'
-			identifier: function.alreadyNarrowedType
-			count: 1
-			path: core/Admin/Controllers/Actions/Setting/StoreSetting/UpdateStoreSettingAction.php
-
-		-
-			message: '#^Class Alpha\\Model\\Domain\\Repositories\\CountryRepository not found\.$#'
-			identifier: class.notFound
-			count: 1
-			path: core/Admin/Controllers/Actions/Setting/StoreSetting/UpdateStoreSettingAction.php
-
-		-
 			message: '#^Call to an undefined method Alpha\\Model\\Domain\\InterfaceEntity\:\:getCode\(\)\.$#'
 			identifier: method.notFound
 			count: 1
@@ -391,12 +373,6 @@ parameters:
 			path: core/Controller/MainRouterController.php
 
 		-
-			message: '#^Constructor of class Alpha\\Mappers\\BaseMapper has an unused parameter \$registry\.$#'
-			identifier: constructor.unusedParameter
-			count: 1
-			path: core/Mappers/BaseMapper.php
-
-		-
 			message: '#^Access to an undefined property Alpha\\Mappers\\EntityMappers\\ExtensionMapper\:\:\$db\.$#'
 			identifier: property.notFound
 			count: 1
@@ -467,12 +443,6 @@ parameters:
 			identifier: property.notFound
 			count: 1
 			path: core/Mappers/EntityMappers/StockStatusMapper.php
-
-		-
-			message: '#^Access to an undefined property Alpha\\Mappers\\EntityMappers\\StoreMapper\:\:\$cache\.$#'
-			identifier: property.notFound
-			count: 1
-			path: core/Mappers/EntityMappers/StoreMapper.php
 
 		-
 			message: '#^Access to an undefined property Alpha\\Mappers\\EntityMappers\\SubscriptionMapper\:\:\$container\.$#'
@@ -567,7 +537,7 @@ parameters:
 		-
 			message: '#^Strict comparison using \!\=\= between int and null will always evaluate to true\.$#'
 			identifier: notIdentical.alwaysTrue
-			count: 2
+			count: 3
 			path: core/Model/DataAccessObject/DataAccessObject.php
 
 		-
@@ -1533,13 +1503,13 @@ parameters:
 		-
 			message: '#^Access to an undefined property Alpha\\Model\\Domain\\Repositories\\InformationRepository\:\:\$language_id\.$#'
 			identifier: property.notFound
-			count: 3
+			count: 7
 			path: core/Model/Domain/Repositories/InformationRepository.php
 
 		-
 			message: '#^Access to an undefined property Alpha\\Model\\Domain\\Repositories\\InformationRepository\:\:\$store_id\.$#'
 			identifier: property.notFound
-			count: 3
+			count: 7
 			path: core/Model/Domain/Repositories/InformationRepository.php
 
 		-

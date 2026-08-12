@@ -14,10 +14,10 @@ class Language
     private string $localesDir;
     public function __construct(
         string $code = 'pt-br',
-        string $localesDir = '/var/www/html/agsonhos/Locales'
+        ?string $localesDir = null
     ) {
         $this->code = $code;
-        $this->localesDir = $localesDir;
+        $this->localesDir = $localesDir ?: (defined('DIR_ROOT') ? DIR_ROOT . 'Locales' : __DIR__ . '/../../Locales');
         $this->initializeSymfonyTranslator();
     }
 

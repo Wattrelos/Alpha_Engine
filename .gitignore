@@ -1,10 +1,72 @@
-# OpenCart Sensitive Files
-# config.php
-# admin/config.php
+# Environment & Secrets
+.env
+.env.local
+.env.*
+backend/.env
+backend/.env.local
+backend/.env.*
 
-# Storage and Caches
+# Build & Release Artifacts (ZIPs e Pacotes de Release)
+dist/
+backend/dist/
+backend/dist/agsonhos-release.zip
+*.zip
+*.tar.gz
+*.tgz
+*.rar
+
+# Storage, Cache e Logs
+storage/
+backend/storage/
+backend/storage/cache/*
+backend/storage/download/*
+backend/storage/logs/*
+backend/storage/session/*
+backend/storage/upload/*
+backend/storage/alpha_proxies/*
+backend/LogsPersonalizados/*
+
+# Manter arquivos .gitkeep nas pastas de storage
+!backend/storage/cache/.gitkeep
+!backend/storage/download/.gitkeep
+!backend/storage/logs/.gitkeep
+!backend/storage/session/.gitkeep
+!backend/storage/upload/.gitkeep
+
+# Dependências do Composer
+vendor/
+backend/vendor/
+composer.lock
+backend/composer.lock
+
+# Caches de Testes e Análise Estática
+.phpunit.cache/
+backend/.phpunit.cache/
+.reports/
+backend/.reports/
+.phpstan.cache
+backend/.phpstan.cache
+
+# Rascunhos e Documentação Temporária
+scratch/
+backend/scratch/
+readme_backup/
+.joplin_export/
+docs/joplin/*
+
+# Configurações do Agente e da IDE
+.agents/
+.aiexclude
+.gemini/
+.vscode/
+.idea/
+*.swp
+*.log
+.DS_Store
+Thumbs.db
+
+# Legado OpenCart
 system/storage/cache/*
-system/storage/cache*
 system/storage/download/*
 system/storage/logs/*
 system/storage/modification/*
@@ -12,50 +74,10 @@ system/storage/session/*
 system/storage/upload/*
 system/storage/vendor/*
 image/cache/*
-docs/joplin/*
-public_html/img/
-storage/ 
-
-#Pastas antigas do OpenCart
 system/
 helper/ 
 cache/
 
-readme_backup/
-.joplin_export/
-
-# Composer
-vendor/
-composer.lock
-
-# Root:
-.agents/
-.aiexclude
-.gemini/
-
-# Environment and IDEs
-.env
-.env.local
-.vscode/
-.idea/
-*.swp
-*.log
-.DS_Store
-Thumbs.db
-.reports/
-
-
-# Keep directories but ignore content
-!system/storage/cache/index.html
-!system/storage/download/index.html
-!system/storage/logs/index.html
-!image/cache/index.html
-
-# Diversos
-changelog/
-tests/ # Arquivos de testes
-# Ignora Imagens de produtos
+# Imagens Dinâmicas / Cache da Loja
 /public_html/image/product/*
-# Ignora Imagens em cache
 /public_html/image/cache/*
-BusinessKnowledgeBase/

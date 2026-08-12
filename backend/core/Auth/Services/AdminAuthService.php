@@ -71,7 +71,7 @@ class AdminAuthService extends AbstractAuthService
      */
     private function logAdminLogin(string $status, string $username, string $ip): void
     {
-        $logDir = defined('DIR_LOGS') ? DIR_LOGS : '/var/www/html/agsonhos/storage/logs/';
+        $logDir = defined('DIR_LOGS') ? DIR_LOGS : (defined('DIR_STORAGE') ? DIR_STORAGE . 'logs/' : __DIR__ . '/../../storage/logs/');
         if (!is_dir($logDir)) {
             @mkdir($logDir, 0777, true);
         }

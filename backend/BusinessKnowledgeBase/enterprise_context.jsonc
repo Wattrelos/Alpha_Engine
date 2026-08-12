@@ -1,0 +1,79 @@
+{
+  "empresa": {
+    "nome_fantasia": "AG Sonhos e Construções",
+    "razao_social": "[Razão Social da Empresa - A preencher antes da produção]",
+    "cnpj": "[CNPJ da Empresa - A preencher antes da produção. Ex: 00.000.000/0000-00]",
+    "inscricao_estadual": "[Inscrição Estadual da Empresa - A preencher antes da produção]",
+    "setor": "Comércio Varejista",
+    "ramo_atuacao": "Materiais de Construção, Acabamentos e Ferramentas",
+    "contato": {
+      "telefone": "(11) 4676 2302",
+      "email": "josiaswattrelos-suport@yahoo.com.br",
+      "endereco": "Rua Antônio Massa, 185",
+      "cidade": "Poá",
+      "estado": "SP",
+      "cep": "08570-170",
+      "geocode": "-23.55290319386898, -46.36700075786545",
+      "redes_sociais": {
+        "facebook": "https://www.facebook.com/p/AG-Sonhos-E-Constru%C3%A7%C3%B5es-100028153401680/",
+        "instagram": "https://www.instagram.com/agsonhos/",
+        "youtube": "https://youtube.com"
+      }
+    }
+  },
+  // Financeiro e Fiscal: Informações vitais para cálculo de margens, precificação e obrigações tributárias.
+  // IMPORTANTE: A falta desses dados pode induzir a IA/gerentes a erros graves de precificação de frete e produtos.
+  "financeiro_e_fiscal": {
+    "porte": "[Porte da Empresa (ME/EPP/Médio Porte) - A preencher. Ex: EPP]",
+    "regime_tributario": "[Regime Tributário - A preencher. Ex: Simples Nacional]",
+    "faturamento_anual_estimado": null, // [A preencher: faturamento anual estimado]
+    "custo_fixo_mensal": null, // [A preencher: custo fixo operacional para cálculo de margem real]
+    "ticket_medio": null, // [A preencher: valor do ticket médio de compra estimado]
+    
+    // Crucial para materiais de construção: Margem de lucro mínima desejada (Markup) por tipo de material
+    "markup_minimo_por_categoria": {
+      "commodities_bruto": 0.12, // Cimento, areia, tijolo, ferro possuem margem muito baixa
+      "acabamentos_revestimentos": 0.35, // Pisos, azulejos, louças possuem margens maiores
+      "ferramentas_e_ferragens": 0.25,
+      "tintas_e_acessorios": 0.20
+    },
+    
+    // Crucial para evitar multas fiscais no Brasil (e-commerce interestadual)
+    "regras_tributarias": {
+      "icms_substituicao_tributaria": "[A preencher: Como a empresa lida com ST. Os preços de custo já embutem ST? Yes/No]",
+      "difal_ativo": "[A preencher: A empresa faz vendas para fora de SP para não contribuintes e recolhe DIFAL? Yes/No]"
+    }
+  },
+  // Operacional e Logístico: Crucial para o e-commerce de materiais de construção devido ao peso e volume dos itens.
+  "operacional_e_logistica": {
+    "horario_funcionamento": {
+      "segunda_a_sexta": "07:00 as 18:00",
+      "sabados": "07:00 as 17:00",
+      "domingos": "08:00 as 13:00"
+    },
+    
+    // Crucial para materiais de construção (tijolo, areia, cimento pesam toneladas e inviabilizam Correios)
+    "politica_logistica_e_frete": {
+      "entrega_propria_ativa": "[A preencher: A empresa possui frota própria de caminhões/utilitários? Yes/No]",
+      "raio_maximo_entrega_propria_km": null, // [A preencher: Ex: 50km a partir da loja física]
+      "custo_frete_entrega_propria_por_km": null, // [A preencher: Ex: R$ 3.50 por km]
+      "peso_maximo_correios_kg": 30.0, // Limite regulamentar dos Correios
+      "cubagem_limite_transportadora_parceira": "[A preencher: Restrições de tamanho/peso para envio via transportadora tradicional]"
+    },
+    
+    // Controle de Estoque e Segurança Operacional
+    "gestao_estoque": {
+      "sincronizacao_erp_em_tempo_real": "[A preencher: O estoque do e-commerce sincroniza em tempo real com a loja física? Yes/No]",
+      "estoque_seguranca_default": 5, // Margem de segurança padrão para evitar que o site venda o que foi vendido fisicamente há minutos
+      "tempo_medio_separacao_horas": 24 // Tempo necessário para separar materiais pesados e carregar o veículo
+    },
+    
+    // Regras de Negócio de Trocas e Devoluções específicas de materiais de construção (RN010, RN011)
+    "politica_trocas_devolucoes": {
+      "prazo_direito_arrependimento_dias": 7, // Conforme CDC
+      "permite_troca_tinta_personalizada": false, // Tintas preparadas sob encomenda não possuem mercado de revenda
+      "permite_troca_fracionada_revestimentos": false, // Não aceitar devolução de sobras de pisos/azulejos fora da caixa lacrada
+      "exclusao_arrependimento_retirada_fisica": true // Conforme RN011, retirada na loja física não tem o direito de arrependimento de 7 dias
+    }
+  }
+}

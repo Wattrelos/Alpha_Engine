@@ -17,7 +17,7 @@ use Alpha\Support\EnvironmentManager;
 // ─────────────────────────────────────────────────────────
 // 0. VERIFICAÇÃO E AUTO-INSTALAÇÃO DE DEPENDÊNCIAS (COMPOSER)
 // ─────────────────────────────────────────────────────────
-$autoloadPath = __DIR__ . '/../vendor/autoload.php';
+$autoloadPath = __DIR__ . '/../backend/vendor/autoload.php';
 
 if (!file_exists($autoloadPath)) {
     if (function_exists('exec')) {
@@ -61,12 +61,12 @@ if (!file_exists($autoloadPath)) {
 
 require $autoloadPath;
 
-if (file_exists(__DIR__ . '/../.env')) {
-    $dotenv = Dotenv\Dotenv::createImmutable(__DIR__ . '/../');
+if (file_exists(__DIR__ . '/../backend/.env')) {
+    $dotenv = Dotenv\Dotenv::createImmutable(__DIR__ . '/../backend/');
     $dotenv->safeLoad();
 }
 
-$envManager = new EnvironmentManager(__DIR__ . '/../.env');
+$envManager = new EnvironmentManager(__DIR__ . '/../backend/.env');
 $isInstalled = $envManager->isInstalled();
 $requestUri = $_SERVER['REQUEST_URI'] ?? '';
 $isSetupRoute = (str_starts_with($requestUri, '/setup') || str_starts_with($requestUri, '/install'));
@@ -98,14 +98,14 @@ if (!$isInstalled) {
         exit;
     }
 
-    require_once __DIR__ . '/../config.php';
+    require_once __DIR__ . '/../backend/config.php';
 
     $setupContainer = new \Containers\AppContainer();
-    $twigCacheDir = __DIR__ . '/../storage/cache/twig_setup';
+    $twigCacheDir = __DIR__ . '/../backend/storage/cache/twig_setup';
     if (!is_dir($twigCacheDir)) {
         @mkdir($twigCacheDir, 0777, true);
     }
-    $twig = Twig::create(__DIR__ . '/../resources/views', [
+    $twig = Twig::create(__DIR__ . '/../backend/resources/views', [
         'cache'       => false,
         'auto_reload' => true,
         'debug'       => true,
@@ -132,7 +132,7 @@ if (!$isInstalled) {
     exit;
 }
 
-require_once __DIR__ . '/../config.php';
+require_once __DIR__ . '/../backend/config.php';
 
 // ─────────────────────────────────────────────────────────
 // 2. BOOTSTRAP DA ALPHA ENGINE (INSTALLED FLOW)
@@ -158,13 +158,13 @@ $isDev = ($appEnv === 'development') && $appDebug;
 // ─────────────────────────────────────────────────────────
 // 3. TWIG — Loader e Instanciação via Slim Twig wrapper
 // ─────────────────────────────────────────────────────────
-$twigCacheDir = __DIR__ . '/../storage/cache/twig_slim';
+$twigCacheDir = __DIR__ . '/../backend/storage/cache/twig_slim';
 if (!is_dir($twigCacheDir)) {
     @mkdir($twigCacheDir, 0777, true);
 }
 @chmod($twigCacheDir, 0777);
 
-$twig = Twig::create(__DIR__ . '/../resources/views', [
+$twig = Twig::create(__DIR__ . '/../backend/resources/views', [
     'cache'       => $twigCacheDir,
     'auto_reload' => $isDev,
     'debug'       => $isDev,
@@ -248,7 +248,7 @@ $app->add(new LegacyRouteRedirectMiddleware($seoUrlRepository));
 // ─────────────────────────────────────────────────────────
 // 6. CARREGA ROTAS CENTRALIZADAS DA ALPHA ENGINE
 // ─────────────────────────────────────────────────────────
-$routes = require __DIR__ . '/../Config/Routes.php';
+$routes = require __DIR__ . '/../backend/Config/Routes.php';
 $routes($app);
 
 // ─────────────────────────────────────────────────────────

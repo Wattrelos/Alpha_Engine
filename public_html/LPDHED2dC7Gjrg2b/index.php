@@ -7,10 +7,10 @@ use Slim\Views\Twig;
 use Slim\Views\TwigMiddleware;
 use Containers\AppBootstrap;
 
-require __DIR__ . '/../../vendor/autoload.php';
+require __DIR__ . '/../../backend/vendor/autoload.php';
 
-if (file_exists(__DIR__ . '/../../.env')) {
-    $dotenv = Dotenv\Dotenv::createImmutable(__DIR__ . '/../../');
+if (file_exists(__DIR__ . '/../../backend/.env')) {
+    $dotenv = Dotenv\Dotenv::createImmutable(__DIR__ . '/../../backend/');
     $dotenv->safeLoad();
 }
 
@@ -19,7 +19,7 @@ if (!defined('APPLICATION')) {
 }
 
 // 1. BANCO DE DADOS E DIRETÓRIOS
-require_once __DIR__ . '/../../config.php';
+require_once __DIR__ . '/../../backend/config.php';
 
 // 2. BOOTSTRAP DA ALPHA ENGINE
 $bootstrap = AppBootstrap::boot();
@@ -36,13 +36,13 @@ $appDebug = filter_var($_ENV['APP_DEBUG'] ?? false, FILTER_VALIDATE_BOOLEAN);
 $isDev = ($appEnv === 'development') && $appDebug;
 
 // 3. TWIG WRAPPER
-$twigCacheDir = __DIR__ . '/../../storage/cache/twig_slim';
+$twigCacheDir = __DIR__ . '/../../backend/storage/cache/twig_slim';
 if (!is_dir($twigCacheDir)) {
     @mkdir($twigCacheDir, 0777, true);
 }
 @chmod($twigCacheDir, 0777);
 
-$twig = Twig::create(__DIR__ . '/../../resources/views', [
+$twig = Twig::create(__DIR__ . '/../../backend/resources/views', [
     'cache'       => $twigCacheDir,
     'auto_reload' => $isDev,
     'debug'       => $isDev,
@@ -112,7 +112,7 @@ if (!$isDev) {
 }
 
 // 6. CARREGA ROTAS
-$routes = require __DIR__ . '/../../Config/Routes.php';
+$routes = require __DIR__ . '/../../backend/Config/Routes.php';
 $routes($app);
 
 $app->run();
