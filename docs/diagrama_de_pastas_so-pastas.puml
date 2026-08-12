@@ -104,6 +104,7 @@
 │       └── sequence_diagrams/              # Diagramas de sequência (.puml)
 ├── Locales/                                # 🌐 Arquivos de internacionalização
 │   ├── en-gb/                              # 🇬🇧 Inglês britânico (idioma secundário)
+│   ├── fr-fr/                              # 🇫🇷 Francês da frança
 │   └── pt-br/                              # 🇧🇷 Pt-br é o idioma padrão da aplicação
 ├── LogsPersonalizados/                     # 🗄️ Arquivos de logs personalizados
 ├── public_html/                            # 🌐 Webroot (Document Root exposto e servido para a Internet)

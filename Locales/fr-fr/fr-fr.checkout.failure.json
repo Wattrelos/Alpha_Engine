@@ -1,7 +1,0 @@
-{
-    "heading_title": "Paiement échoué!",
-    "text_basket": "Panier d'achat",
-    "text_checkout": "Paiement",
-    "text_failure": "Paiement échoué",
-    "text_message": "<p>Un problème est survenu lors du traitement de votre paiement et la commande n'a pas été finalisée.<\/p>\n\n<p>Les raisons possibles sont:<\/p>\n<ul>\n  <li>Fonds insuffisants<\/li>\n  <li>Échec de la vérification<\/li>\n<\/ul>\n\n<p>Veuillez essayer de commander à nouveau en utilisant un autre mode de paiement.<\/p>\n\n<p>Si le problème persiste, veuillez <a href=\"%s\">nous contacter<\/a> avec les détails de la commande que vous essayez de passer.<\/p>\n"
-}

@@ -1,7 +1,0 @@
-{
-    "text_title": "PayPal Express Checkout",
-    "text_canceled": "Success: You have succesfully caneled this payment!",
-    "button_cancel": "Cancel Recurring Payment",
-    "error_not_cancelled": "Error: %s",
-    "error_not_found": "Could not cancel recurring profile"
-}

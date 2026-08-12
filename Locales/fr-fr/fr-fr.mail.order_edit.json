@@ -1,9 +1,0 @@
-{
-    "text_subject": "%s - Mise à jour de la commande %s",
-    "text_order_id": "ID de la commande:",
-    "text_date_added": "Date d'ajout:",
-    "text_order_status": "Votre commande a été mise à jour avec le statut suivant:",
-    "text_comment": "Les commentaires pour votre commande sont:",
-    "text_link": "Pour consulter votre commande, cliquez sur le lien ci-dessous:",
-    "text_footer": "Veuillez répondre à cet e-mail si vous avez des questions."
-}

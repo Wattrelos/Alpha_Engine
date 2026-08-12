@@ -1,7 +1,0 @@
-{
-    "text_success": "Os pontos foram utilizados com sucesso.",
-    "error_permission": "Atenção: Você não tem permissão de acesso a API.",
-    "error_reward": "Atenção: Insira a quantidade de pontos que deseja utilizar.",
-    "error_points": "Atenção: Você não possui %s pontos.",
-    "error_maximum": "Atenção: O número máximo de pontos que pode ser utilizado é: %s."
-}

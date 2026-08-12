@@ -1,6 +1,0 @@
-{
-    "text_subject": "%s - Solicitação de nova senha",
-    "text_greeting": "Uma nova senha foi solicitada através da loja %s.",
-    "text_change": "Para redefinir sua senha, clique no link abaixo:",
-    "text_ip": "O IP utilizado para solicitar a nova senha foi: %s"
-}

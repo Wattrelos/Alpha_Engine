@@ -1,7 +1,0 @@
-{
-    "heading_title": "Falha no pagamento.",
-    "text_basket": "Carrinho de compras",
-    "text_checkout": "Finalizar pedido",
-    "text_failure": "Falha no pagamento",
-    "text_message": "<p>Houve um problema ao processar o seu pagamento, por isso, seu pedido não foi concluído.<\/p>\n<p>Possíveis causas:<\/p>\n<ul>\n  <li>Não a crédito suficiente.<\/li>\n  <li>Falha na verificação.<\/li>\n<\/ul>\n<p>Você pode tentar novamente utilizando outra forma de pagamento.<\/p>\n<p>Se o problema persistir, entre em <a href=\"%s\">contato<\/a> conosco e nos informe os detalhes do seu pedido.<\/p>"
-}

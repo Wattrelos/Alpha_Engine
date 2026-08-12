@@ -1,8 +1,0 @@
-{
-    "heading_title": "Utilizar cupom",
-    "text_coupon": "Cupom (%s)",
-    "text_success": "O cupom foi utilizado com sucesso!",
-    "entry_coupon": "Código do cupom",
-    "error_coupon": "Atenção: O cupom é inválido, expirou, atingiu o seu limite de uso ou já foi utilizado!",
-    "error_empty": "Atenção: Digite o código do cupom!"
-}

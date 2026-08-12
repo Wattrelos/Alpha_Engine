@@ -1,7 +1,0 @@
-{
-    "text_subject": "%s - Demande de réinitialisation de mot de passe",
-    "text_greeting": "Un nouveau mot de passe a été demandé pour le compte client %s.",
-    "text_change": "Pour réinitialiser votre mot de passe, cliquez sur le lien ci-dessous:",
-    "text_ip": "L'adresse IP utilisée pour effectuer cette demande était:",
-    "button_reset": "Réinitialiser le mot de passe"
-}

@@ -10,7 +10,7 @@ class SeoUrlMapper extends BaseMapper
     protected string $tableName = 'seo_url';
     protected string $entityClass = SeoUrl::class;
 
-    private array $cache = [];
+    private array $localCache = [];
 
     /**
      * Prime Cache: Carrega URLs amigáveis em lote para a memória (Prevenção de N+1 Queries).
@@ -24,10 +24,10 @@ class SeoUrlMapper extends BaseMapper
         $missingIds = [];
         foreach ($ids as $id) {
             $cacheKey = "{$key}_{$id}_{$storeId}_{$languageId}";
-            if (!isset($this->cache[$cacheKey])) {
+            if (!isset($this->localCache[$cacheKey])) {
                 $missingIds[] = $id;
                 // Preenche provisoriamente para evitar novas queries repetitivas caso a URL não exista
-                $this->cache[$cacheKey] = '';
+                $this->localCache[$cacheKey] = '';
             }
         }
 
@@ -35,7 +35,7 @@ class SeoUrlMapper extends BaseMapper
             $results = $this->getKeywordsByQueries($key, $missingIds, $storeId, $languageId);
             foreach ($results as $row) {
                 $cacheKey = "{$key}_{$row['value']}_{$storeId}_{$languageId}";
-                $this->cache[$cacheKey] = $row['keyword'];
+                $this->localCache[$cacheKey] = $row['keyword'];
             }
         }
     }
@@ -46,12 +46,12 @@ class SeoUrlMapper extends BaseMapper
     public function getKeywordByQuery(string $key, string $value, int $storeId, int $languageId): string
     {
         $cacheKey = "{$key}_{$value}_{$storeId}_{$languageId}";
-        if (isset($this->cache[$cacheKey])) {
-            return $this->cache[$cacheKey];
+        if (isset($this->localCache[$cacheKey])) {
+            return $this->localCache[$cacheKey];
         }
         
         $this->primeCache([$value], $key, $storeId, $languageId);
-        return $this->cache[$cacheKey] ?? '';
+        return $this->localCache[$cacheKey] ?? '';
     }
 
     public function getKeywordsByQueries(string $key, array $values, int $storeId, int $languageId): array

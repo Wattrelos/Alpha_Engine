@@ -5,6 +5,9 @@ use Alpha\Model\DataAccessObject\ConnectionDB;
 use Alpha\Model\DataAccessObject\DataAccessObject;
 use Alpha\Model\DataAccessObject\QueryBuilder;
 use Alpha\Model\Domain\InterfaceEntity;
+use Alpha\Support\Cache\CacheStrategyInterface;
+use Alpha\Support\Cache\FilesystemCacheStrategy;
+use Psr\Container\ContainerInterface;
 use ReflectionClass;
 
 /**
@@ -18,6 +21,7 @@ abstract class BaseMapper implements MapperInterface
     protected string $table = ''; // Bridge de compatibilidade para mappers antigos
     protected string $primaryKey = 'id';
     protected DataAccessObject $dao;
+    protected ?CacheStrategyInterface $cache = null;
 
     /**
      * @param mixed $registry O Registry, Container ou nulo.
@@ -25,6 +29,23 @@ abstract class BaseMapper implements MapperInterface
     public function __construct(mixed $registry = null)
     {
         $this->dao = new DataAccessObject();
+        if ($registry instanceof ContainerInterface && $registry->has(CacheStrategyInterface::class)) {
+            $this->cache = $registry->get(CacheStrategyInterface::class);
+        } elseif ($registry instanceof ContainerInterface && $registry->has('cache')) {
+            $this->cache = $registry->get('cache');
+        } else {
+            $this->cache = new FilesystemCacheStrategy();
+        }
+    }
+
+    public function setCache(CacheStrategyInterface $cache): void
+    {
+        $this->cache = $cache;
+    }
+
+    public function getCache(): ?CacheStrategyInterface
+    {
+        return $this->cache;
     }
 
     /**
