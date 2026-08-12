@@ -15,7 +15,7 @@ if (class_exists('Dotenv\Dotenv') && file_exists(DIR_ROOT . '.env')) {
 
 define('DIR_APPLICATION', DIR_ROOT . 'catalog/');
 define('DIR_EXTENSION',   DIR_ROOT . 'extension/');
-define('DIR_IMAGE',       (realpath(DIR_ROOT . '../public_html/image') ?: (DIR_ROOT . '../public_html/image')) . '/');
+define('DIR_IMAGE', (realpath(DIR_ROOT . '../public_html/image') ?: (DIR_ROOT . '../public_html/image')) . '/');
 define('DIR_SYSTEM',      DIR_ROOT . 'system/');
 define('DIR_STORAGE',     DIR_ROOT . 'storage/');
 

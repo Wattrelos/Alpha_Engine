@@ -101,9 +101,11 @@ class ImagePresenter
         if (!is_file($fullPath)) {
             return false;
         }
-        // Protecção path traversal
+        // Proteção path traversal com suporte a symlinks
         $real = str_replace('\\', '/', (string)realpath($fullPath));
-        return str_starts_with($real, $this->imageDir);
+        $realDir = str_replace('\\', '/', (string)(realpath($this->imageDir) ?: $this->imageDir));
+        $realDir = rtrim($realDir, '/') . '/';
+        return str_starts_with($real, $realDir);
     }
 
     /**

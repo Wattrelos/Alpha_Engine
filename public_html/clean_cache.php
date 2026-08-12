@@ -1,7 +1,8 @@
 <?php
 
-// Script de limpeza do cache Twig executado pelo processo do servidor web (www-data)
-$cacheDir = __DIR__ . '/../storage/cache/twig_slim';
+// Script de limpeza do cache Twig e de imagens executado pelo servidor web
+$cacheDir = __DIR__ . '/../backend/storage/cache/twig_slim';
+$imageCacheDir = __DIR__ . '/image/cache';
 
 function deleteFolder(string $dir): int {
     if (!is_dir($dir)) return 0;
@@ -26,11 +27,18 @@ if (!is_dir($cacheDir)) {
 }
 @chmod($cacheDir, 0777);
 
-$storeSettingsCache = __DIR__ . '/../storage/cache/store_settings_formatted.json';
+// Limpeza de cache de imagens redimensionadas
+$removedImages = deleteFolder($imageCacheDir);
+if (!is_dir($imageCacheDir)) {
+    @mkdir($imageCacheDir, 0777, true);
+}
+@chmod($imageCacheDir, 0777);
+
+$storeSettingsCache = __DIR__ . '/../backend/storage/cache/store_settings_formatted.json';
 if (file_exists($storeSettingsCache)) {
     @unlink($storeSettingsCache);
     $removed++;
 }
 
 header('Content-Type: text/plain; charset=utf-8');
-echo "SUCCESS: Cache do Twig e das configurações expurgado com sucesso! ({$removed} arquivos/diretórios removidos)\n";
+echo "SUCCESS: Cache do Twig, configurações e miniaturas de imagem expurgados com sucesso! ({$removed} arquivos de cache, {$removedImages} miniaturas removidas)\n";

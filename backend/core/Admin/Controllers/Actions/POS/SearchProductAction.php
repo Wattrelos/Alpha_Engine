@@ -68,7 +68,7 @@ class SearchProductAction extends BaseController implements ActionInterface
                         'price'           => $vPriceRaw,
                         'price_formatted' => $vPriceFormatted,
                         'quantity'        => (int)$variant['quantity'],
-                        'image'           => !empty($variant['image']) ? (strpos($variant['image'], 'image/') === 0 ? '/' . $variant['image'] : (strpos($variant['image'], '/image/') === 0 ? $variant['image'] : '/image/' . $variant['image'])) : '/image/no_image.png'
+                        'image'           => !empty($variant['image']) ? (strpos($variant['image'], 'image/') === 0 ? '/' . $variant['image'] : (strpos($variant['image'], '/image/') === 0 ? $variant['image'] : '/image/' . $variant['image'])) : '/image/no-image.png'
                     ];
                 }
             }
@@ -81,7 +81,7 @@ class SearchProductAction extends BaseController implements ActionInterface
                 'special'    => $special,
                 'price_formatted' => $priceFormatted,
                 'special_formatted' => $specialFormatted,
-                'image'      => !empty($p['image']) ? (strpos($p['image'], 'image/') === 0 ? '/' . $p['image'] : (strpos($p['image'], '/image/') === 0 ? $p['image'] : '/image/' . $p['image'])) : '/image/no_image.png',
+                'image'      => !empty($p['image']) ? (strpos($p['image'], 'image/') === 0 ? '/' . $p['image'] : (strpos($p['image'], '/image/') === 0 ? $p['image'] : '/image/' . $p['image'])) : '/image/no-image.png',
                 'thumb'      => $imagePresenter->resize($p['image'] ?? '', 80, 80),
                 'quantity'   => (int)($p['quantity'] ?? 0),
                 'variants'   => $variants,

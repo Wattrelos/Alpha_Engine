@@ -193,7 +193,7 @@
                 return `
                     <div class="product-card" onclick="triggerAdd(${p.product_id}, ${isOutOfStock})">
                         <div class="product-image-container">
-                            <img src="${p.image}" class="product-image" alt="${p.name}" onerror="this.src='/image/no_image.png'">
+                            <img src="${p.image}" class="product-image" alt="${p.name}" onerror="this.src='/image/no-image.png'">
                             <span class="product-badge">${p.quantity} unid</span>
                         </div>
                         <div class="product-info">
@@ -334,7 +334,7 @@
                 return `
                     <div class="variant-item-card">
                         <div class="variant-info-wrapper">
-                            <img src="${v.image}" class="variant-image-thumb" onerror="this.src='/image/no_image.png'">
+                            <img src="${v.image}" class="variant-image-thumb" onerror="this.src='/image/no-image.png'">
                             <div class="variant-meta-wrapper">
                                 <span class="variant-name-text">${v.name}</span>
                                 <span class="variant-sku-text">Ref/SKU: ${v.sku || 'N/A'}</span>
@@ -428,7 +428,7 @@
                 
                 return `
                     <div class="cart-item">
-                        <img src="${item.image}" class="cart-item-image" alt="${item.name}" onerror="this.src='/image/no_image.png'">
+                        <img src="${item.image}" class="cart-item-image" alt="${item.name}" onerror="this.src='/image/no-image.png'">
                         <div class="cart-item-details">
                             <h4 class="cart-item-name" title="${item.name}">${item.name}</h4>
                             <div class="cart-item-price">${formatMoney(item.price)}</div>
