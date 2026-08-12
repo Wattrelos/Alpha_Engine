@@ -83,6 +83,10 @@
 
 						<div class="egen-wishlist-card__actions">
 							<form action="/{{ lang }}/carrinho/adicionar" method="POST" class="egen-wishlist-card__buy-form">
+								{% if csrf %}
+									<input type="hidden" name="{{ csrf.keys.name }}" value="{{ csrf.name }}">
+									<input type="hidden" name="{{ csrf.keys.value }}" value="{{ csrf.value }}">
+								{% endif %}
 								<input type="hidden" name="product_id" value="{{ item.product_id }}">
 								<input type="hidden" name="quantity" value="{{ item.minimum|default(1) }}">
 								<button type="submit" class="egen-btn egen-btn-primary">

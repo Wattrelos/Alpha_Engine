@@ -205,6 +205,16 @@ function initCartSystem() {
                     showCartAlert('Produto adicionado ao carrinho com sucesso!', 'success');
                 } else {
                     // Usuário logado, mas veio de um form de listagem (permanece na página)
+                    const metaNameKey = document.querySelector('meta[name="csrf-key-name"]')?.content || 'csrf_name';
+                    const metaValueKey = document.querySelector('meta[name="csrf-key-value"]')?.content || 'csrf_value';
+                    const metaName = document.querySelector('meta[name="csrf-name"]')?.content;
+                    const metaValue = document.querySelector('meta[name="csrf-value"]')?.content;
+
+                    if (metaName && metaValue && !formData.has(metaNameKey)) {
+                        formData.append(metaNameKey, metaName);
+                        formData.append(metaValueKey, metaValue);
+                    }
+
                     fetch(action, {
                         method: 'POST',
                         body: formData,
@@ -251,15 +261,26 @@ function initCartSystem() {
             const pathParts = window.location.pathname.split('/');
             const currentLang = (pathParts[1] && ['pt-br', 'en', 'es'].includes(pathParts[1])) ? pathParts[1] : 'pt-br';
 
+            const metaNameKey = document.querySelector('meta[name="csrf-key-name"]')?.content || 'csrf_name';
+            const metaValueKey = document.querySelector('meta[name="csrf-key-value"]')?.content || 'csrf_value';
+            const metaName = document.querySelector('meta[name="csrf-name"]')?.content;
+            const metaValue = document.querySelector('meta[name="csrf-value"]')?.content;
+
+            const wishlistBody = new URLSearchParams({
+                'product_id': productId
+            });
+            if (metaName && metaValue) {
+                wishlistBody.append(metaNameKey, metaName);
+                wishlistBody.append(metaValueKey, metaValue);
+            }
+
             fetch(`/${currentLang}/account/wishlist/add`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/x-www-form-urlencoded',
                     'X-Requested-With': 'XMLHttpRequest'
                 },
-                body: new URLSearchParams({
-                    'product_id': productId
-                })
+                body: wishlistBody
             })
             .then(res => {
                 if (res.status === 401) {

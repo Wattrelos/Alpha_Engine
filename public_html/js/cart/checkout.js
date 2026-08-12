@@ -132,17 +132,28 @@ document.addEventListener('DOMContentLoaded', () => {
             loginButton.disabled = true;
             loginButton.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Entrando...';
 
+            const metaNameKey = document.querySelector('meta[name="csrf-key-name"]')?.content || 'csrf_name';
+            const metaValueKey = document.querySelector('meta[name="csrf-key-value"]')?.content || 'csrf_value';
+            const metaName = document.querySelector('meta[name="csrf-name"]')?.content;
+            const metaValue = document.querySelector('meta[name="csrf-value"]')?.content;
+
+            const loginBody = new URLSearchParams({
+                email: email,
+                password: password,
+                redirect: `/${lang}/checkout`
+            });
+            if (metaName && metaValue) {
+                loginBody.append(metaNameKey, metaName);
+                loginBody.append(metaValueKey, metaValue);
+            }
+
             fetch(`/${lang}/login`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/x-www-form-urlencoded',
                     'X-Requested-With': 'XMLHttpRequest'
                 },
-                body: new URLSearchParams({
-                    email: email,
-                    password: password,
-                    redirect: `/${lang}/checkout`
-                })
+                body: loginBody
             })
                 .then(res => res.json())
                 .then(data => {

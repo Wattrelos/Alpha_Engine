@@ -52,6 +52,10 @@
 
 		{# Ação #}
 		<form action="{{ prod.cart_add|default('/' ~ lang ~ '/carrinho/adicionar') }}" method="POST" class="egen-prod-card-form">
+			{% if csrf %}
+				<input type="hidden" name="{{ csrf.keys.name }}" value="{{ csrf.name }}">
+				<input type="hidden" name="{{ csrf.keys.value }}" value="{{ csrf.value }}">
+			{% endif %}
 			<input type="hidden" name="product_id" value="{{ prod.product_id }}">
 			<input type="hidden" name="quantity" value="{{ prod.minimum|default(1) }}">
 			<a href="{{ product_url }}" class="egen-prod-btn-details">Ver detalhes</a>

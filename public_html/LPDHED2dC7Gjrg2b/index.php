@@ -73,6 +73,7 @@ use Alpha\Auth\Middleware\SecurityHeadersMiddleware;
 
 $app->add(TwigMiddleware::create($app, $twig));
 $app->add(new CsrfGuardMiddleware($twigEnv));
+$app->addBodyParsingMiddleware();
 $app->add(new SecurityHeadersMiddleware());
 $app->addRoutingMiddleware();
 

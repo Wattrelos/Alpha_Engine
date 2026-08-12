@@ -41,6 +41,16 @@ document.addEventListener('DOMContentLoaded', () => {
                 dadosPedido[key] = value;
             });
 
+            const metaNameKey = document.querySelector('meta[name="csrf-key-name"]')?.content || 'csrf_name';
+            const metaValueKey = document.querySelector('meta[name="csrf-key-value"]')?.content || 'csrf_value';
+            const metaName = document.querySelector('meta[name="csrf-name"]')?.content;
+            const metaValue = document.querySelector('meta[name="csrf-value"]')?.content;
+
+            if (metaName && metaValue && !dadosPedido[metaNameKey]) {
+                dadosPedido[metaNameKey] = metaName;
+                dadosPedido[metaValueKey] = metaValue;
+            }
+
             const actionUrl = form.getAttribute('action') || window.location.pathname;
             await finalizarCompra(actionUrl, dadosPedido);
         });
@@ -57,13 +67,24 @@ async function finalizarCompra(actionUrl, dadosPedido) {
         // O token deve ser gerado UMA VEZ por tentativa de compra
         const idempotencyKey = gerarUUID();
 
+        const metaNameKey = document.querySelector('meta[name="csrf-key-name"]')?.content || 'csrf_name';
+        const metaValueKey = document.querySelector('meta[name="csrf-key-value"]')?.content || 'csrf_value';
+        const metaName = document.querySelector('meta[name="csrf-name"]')?.content;
+        const metaValue = document.querySelector('meta[name="csrf-value"]')?.content;
+
+        const headers = {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json',
+            'X-Idempotency-Key': idempotencyKey
+        };
+        if (metaName && metaValue) {
+            headers['X-CSRF-Name'] = metaName;
+            headers['X-CSRF-Value'] = metaValue;
+        }
+
         const response = await fetch(actionUrl, {
             method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'Accept': 'application/json',
-                'X-Idempotency-Key': idempotencyKey
-            },
+            headers: headers,
             body: JSON.stringify(dadosPedido)
         });
 
@@ -82,7 +103,10 @@ async function finalizarCompra(actionUrl, dadosPedido) {
             redirecionarParaSucesso(pedido.id);
         } else {
             const errData = await response.json().catch(() => ({}));
-            throw new Error(errData.message || "Erro no processamento do pedido.");
+            const mensagemErro = errData.message 
+                || (typeof errData.error === 'string' ? errData.error : errData.error?.warning) 
+                || "Erro no processamento do pedido.";
+            throw new Error(mensagemErro);
         }
 
     } catch (error) {

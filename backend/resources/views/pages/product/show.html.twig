@@ -94,6 +94,10 @@
 
             <!-- Formulário de Compra/Opções -->
             <form action="/{{ lang }}/carrinho/adicionar" method="POST" id="form-product-purchase" class="egen-product-purchase-form">
+                {% if csrf %}
+                    <input type="hidden" name="{{ csrf.keys.name }}" value="{{ csrf.name }}">
+                    <input type="hidden" name="{{ csrf.keys.value }}" value="{{ csrf.value }}">
+                {% endif %}
                 <input type="hidden" name="product_id" id="purchase-product-id" value="{{ product.id }}">
 
                 {% if variants %}

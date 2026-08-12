@@ -234,6 +234,9 @@ $app->add(new LanguageMiddleware($languageRepository, $twigEnv, $registry));
 // Adiciona a Proteção Anti-CSRF
 $app->add(new CsrfGuardMiddleware($twigEnv));
 
+// Adiciona o Middleware de Parsing do Corpo da Requisição (JSON, Form Data, XML)
+$app->addBodyParsingMiddleware();
+
 // Adiciona os Cabeçalhos de Segurança HTTP (Security Headers)
 $app->add(new \Alpha\Auth\Middleware\SecurityHeadersMiddleware());
 

@@ -104,6 +104,39 @@ class CsrfGuardMiddleware implements MiddlewareInterface
     {
         $guard = $this->getGuard();
 
+        // Fallback: se for requisição JSON e o parsedBody estiver vazio, faz a conversão do corpo da requisição
+        $contentType = strtolower($request->getHeaderLine('Content-Type'));
+        $parsedBody = $request->getParsedBody();
+
+        if (empty($parsedBody) && str_contains($contentType, 'application/json')) {
+            $rawBody = (string)$request->getBody();
+            if (!empty($rawBody)) {
+                $decoded = json_decode($rawBody, true);
+                if (is_array($decoded)) {
+                    $parsedBody = $decoded;
+                    $request = $request->withParsedBody($parsedBody);
+                }
+            }
+        }
+
+        // Fallback para cabeçalhos HTTP customizados de CSRF (X-CSRF-Name / X-CSRF-Value)
+        $nameHeader = $request->getHeaderLine('X-CSRF-Name');
+        $valueHeader = $request->getHeaderLine('X-CSRF-Value');
+        if (!empty($nameHeader) && !empty($valueHeader)) {
+            if (!is_array($parsedBody)) {
+                $parsedBody = [];
+            }
+            $nameKey = $guard->getTokenNameKey();
+            $valueKey = $guard->getTokenValueKey();
+            if (empty($parsedBody[$nameKey])) {
+                $parsedBody[$nameKey] = $nameHeader;
+            }
+            if (empty($parsedBody[$valueKey])) {
+                $parsedBody[$valueKey] = $valueHeader;
+            }
+            $request = $request->withParsedBody($parsedBody);
+        }
+
         // Wrapper local para capturar atributos gerados pelo Guard e injetar no Twig
         $wrappedHandler = new class($handler, $guard, $this->twig) implements Handler {
             private Handler $nextHandler;
