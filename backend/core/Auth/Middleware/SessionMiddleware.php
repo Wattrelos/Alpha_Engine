@@ -14,17 +14,23 @@ class SessionMiddleware
 
     public function __construct()
     {
-        try {
-            // Conecta ao Redis de forma performática usando as variáveis do .env
-            $this->redis = new RedisClient([
-                'host' => $_ENV['REDIS_HOST'] ?? '127.0.0.1',
-                'port' => $_ENV['REDIS_PORT'] ?? 6379,
-                'password' => ($_ENV['REDIS_PASSWORD'] ?? '') ?: null,
-                'timeout' => 1.0 // Timeout baixo para falhar rápido localmente
-            ]);
-            $this->redis->connect();
-            $this->useRedis = true;
-        } catch (\Exception $e) {
+        $redisHost = $_ENV['REDIS_HOST'] ?? '';
+        $redisEnabled = filter_var($_ENV['REDIS_ENABLED'] ?? true, FILTER_VALIDATE_BOOLEAN);
+
+        if ($redisEnabled && !empty($redisHost)) {
+            try {
+                $this->redis = new RedisClient([
+                    'host' => $redisHost,
+                    'port' => $_ENV['REDIS_PORT'] ?? 6379,
+                    'password' => ($_ENV['REDIS_PASSWORD'] ?? '') ?: null,
+                    'timeout' => 1.0
+                ]);
+                $this->redis->connect();
+                $this->useRedis = true;
+            } catch (\Exception $e) {
+                $this->useRedis = false;
+            }
+        } else {
             $this->useRedis = false;
         }
     }

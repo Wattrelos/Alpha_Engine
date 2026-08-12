@@ -121,29 +121,36 @@ class LanguageMiddleware
             return false;
         }
 
-        try {
-            $redis = new \Predis\Client([
-                'host' => $_ENV['REDIS_HOST'] ?? '127.0.0.1',
-                'port' => $_ENV['REDIS_PORT'] ?? 6379,
-                'password' => ($_ENV['REDIS_PASSWORD'] ?? '') ?: null,
-                'timeout' => 0.5
-            ]);
-            $redis->connect();
-            $sessionData = $redis->get("sessao:" . $sessionId);
-            if ($sessionData) {
-                return true;
+        $redisHost = $_ENV['REDIS_HOST'] ?? '';
+        $redisEnabled = filter_var($_ENV['REDIS_ENABLED'] ?? true, FILTER_VALIDATE_BOOLEAN);
+
+        if ($redisEnabled && !empty($redisHost)) {
+            try {
+                $redis = new \Predis\Client([
+                    'host' => $redisHost,
+                    'port' => $_ENV['REDIS_PORT'] ?? 6379,
+                    'password' => ($_ENV['REDIS_PASSWORD'] ?? '') ?: null,
+                    'timeout' => 0.5
+                ]);
+                $redis->connect();
+                $sessionData = $redis->get("sessao:" . $sessionId);
+                if ($sessionData) {
+                    return true;
+                }
+            } catch (\Exception $e) {
+                // Ignora falha de conexão e cai no fallback local abaixo
             }
-        } catch (\Exception $e) {
-            // Fallback para sessão local PHP
-            if (session_status() === PHP_SESSION_NONE) {
-                session_name('session_id');
-                session_id($sessionId);
-                @session_start();
-            }
-            $expire = $_SESSION['expire'] ?? $_SESSION['logged_user_expire'] ?? 0;
-            if ($expire > time() && !empty($_SESSION['logged_user'])) {
-                return true;
-            }
+        }
+
+        // Fallback para sessão local PHP
+        if (session_status() === PHP_SESSION_NONE) {
+            session_name('session_id');
+            session_id($sessionId);
+            @session_start();
+        }
+        $expire = $_SESSION['expire'] ?? $_SESSION['logged_user_expire'] ?? 0;
+        if ($expire > time() && !empty($_SESSION['logged_user'])) {
+            return true;
         }
 
         return false;
