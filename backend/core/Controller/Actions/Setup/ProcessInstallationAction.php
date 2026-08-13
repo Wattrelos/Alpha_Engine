@@ -47,7 +47,7 @@ class ProcessInstallationAction
         $adminDir = trim($params['admin_dir'] ?? '');
         $adminDir = preg_replace('/[^a-zA-Z0-9_-]/', '', $adminDir);
         if (empty($adminDir)) {
-            $adminDir = 'adm_' + EnvironmentManager::generateRandomKey(12);
+            $adminDir = 'adm_' . EnvironmentManager::generateRandomKey(12);
         }
 
         $storeName = trim($params['store_name'] ?? 'My Store');
@@ -137,32 +137,112 @@ class ProcessInstallationAction
             ]);
 
             // 6. Gerenciamento do Diretório Físico do Dashboard em public_html/
-            $publicHtmlDir = realpath(__DIR__ . '/../../../../public_html') ?: (__DIR__ . '/../../../../public_html');
+            $publicHtmlDir = realpath(__DIR__ . '/../../../../../public_html') ?: (dirname(__DIR__, 5) . '/public_html');
             $targetAdminDir = $publicHtmlDir . '/' . $adminDir;
 
+            // Busca por diretório administrativo pré-existente (ex: LPDHED2dC7Gjrg2b ou um admin antigo)
             $existingAdminDir = null;
             if (is_dir($publicHtmlDir)) {
                 $items = scandir($publicHtmlDir);
-                foreach ($items as $item) {
-                    if ($item === '.' || $item === '..' || $item === $adminDir) continue;
-                    $itemPath = $publicHtmlDir . '/' . $item;
-                    if (is_dir($itemPath) && file_exists($itemPath . '/index.php')) {
-                        $content = file_get_contents($itemPath . '/index.php');
-                        if (str_contains($content, 'APPLICATION') || str_contains($content, 'AppBootstrap')) {
-                            $existingAdminDir = $itemPath;
-                            break;
+                if ($items !== false) {
+                    foreach ($items as $item) {
+                        if ($item === '.' || $item === '..' || $item === $adminDir) continue;
+                        $itemPath = $publicHtmlDir . '/' . $item;
+                        if (is_dir($itemPath) && file_exists($itemPath . '/index.php')) {
+                            $content = file_get_contents($itemPath . '/index.php');
+                            if ($content !== false && (str_contains($content, 'APPLICATION') || str_contains($content, 'AppBootstrap'))) {
+                                $existingAdminDir = $itemPath;
+                                break;
+                            }
                         }
                     }
                 }
             }
 
-            if ($existingAdminDir && $existingAdminDir !== $targetAdminDir && !is_dir($targetAdminDir)) {
-                @rename($existingAdminDir, $targetAdminDir);
-            } elseif (!is_dir($targetAdminDir)) {
-                @mkdir($targetAdminDir, 0755, true);
-                if (!file_exists($targetAdminDir . '/.htaccess')) {
-                    file_put_contents($targetAdminDir . '/.htaccess', "RewriteEngine On\nOptions -Indexes\nRewriteCond %{REQUEST_FILENAME} !-f\nRewriteCond %{REQUEST_FILENAME} !-d\nRewriteRule ^ index.php [QSA,L]\n");
+            // Se encontrou pasta admin anterior (ex: LPDHED2dC7Gjrg2b) e a nova pasta for diferente
+            if ($existingAdminDir && $existingAdminDir !== $targetAdminDir) {
+                if (!is_dir($targetAdminDir)) {
+                    @rename($existingAdminDir, $targetAdminDir);
+                } else {
+                    // Mover arquivos para o diretório alvo
+                    if (file_exists($existingAdminDir . '/index.php') && !file_exists($targetAdminDir . '/index.php')) {
+                        @rename($existingAdminDir . '/index.php', $targetAdminDir . '/index.php');
+                    }
+                    if (file_exists($existingAdminDir . '/.htaccess') && !file_exists($targetAdminDir . '/.htaccess')) {
+                        @rename($existingAdminDir . '/.htaccess', $targetAdminDir . '/.htaccess');
+                    }
+                    // Remove o diretório antigo para não expor a pasta modelo
+                    @rmdir($existingAdminDir);
                 }
+            }
+
+            // Cria o diretório de destino caso não exista
+            if (!is_dir($targetAdminDir)) {
+                @mkdir($targetAdminDir, 0755, true);
+            }
+
+            // Garante o arquivo .htaccess
+            if (!file_exists($targetAdminDir . '/.htaccess')) {
+                file_put_contents($targetAdminDir . '/.htaccess', "RewriteEngine On\nOptions -Indexes\nRewriteCond %{REQUEST_FILENAME} !-f\nRewriteCond %{REQUEST_FILENAME} !-d\nRewriteRule ^ index.php [QSA,L]\n");
+            }
+
+            // Garante o arquivo index.php no diretório do dashboard
+            if (!file_exists($targetAdminDir . '/index.php')) {
+                $indexTemplate = "<?php\n\n" .
+                    "use Slim\Factory\AppFactory;\n" .
+                    "use Slim\Views\Twig;\n" .
+                    "use Slim\Views\TwigMiddleware;\n" .
+                    "use Containers\AppBootstrap;\n\n" .
+                    "require __DIR__ . '/../../backend/vendor/autoload.php';\n\n" .
+                    "if (file_exists(__DIR__ . '/../../backend/.env')) {\n" .
+                    "    \$dotenv = Dotenv\Dotenv::createImmutable(__DIR__ . '/../../backend/');\n" .
+                    "    \$dotenv->safeLoad();\n" .
+                    "}\n\n" .
+                    "if (!defined('APPLICATION')) {\n" .
+                    "    define('APPLICATION', 'admin');\n" .
+                    "}\n\n" .
+                    "require_once __DIR__ . '/../../backend/config.php';\n\n" .
+                    "\$bootstrap = AppBootstrap::boot();\n" .
+                    "\$container = \$bootstrap->getContainer();\n" .
+                    "\$configSettings = \$bootstrap->getConfigSettings();\n" .
+                    "\$language = \$bootstrap->getLanguage();\n" .
+                    "\$seoUrlRepository = \$bootstrap->getSeoUrlRepository();\n\n" .
+                    "\$appEnv = \$_ENV['APP_ENV'] ?? 'production';\n" .
+                    "\$appDebug = filter_var(\$_ENV['APP_DEBUG'] ?? false, FILTER_VALIDATE_BOOLEAN);\n" .
+                    "\$isDev = (\$appEnv === 'development') && \$appDebug;\n\n" .
+                    "\$twigCacheDir = __DIR__ . '/../../backend/storage/cache/twig_slim';\n" .
+                    "if (!is_dir(\$twigCacheDir)) {\n" .
+                    "    @mkdir(\$twigCacheDir, 0777, true);\n" .
+                    "}\n" .
+                    "@chmod(\$twigCacheDir, 0777);\n\n" .
+                    "\$twig = Twig::create(__DIR__ . '/../../backend/resources/views', [\n" .
+                    "    'cache'       => \$twigCacheDir,\n" .
+                    "    'auto_reload' => \$isDev,\n" .
+                    "    'debug'       => \$isDev,\n" .
+                    "]);\n" .
+                    "\$twigEnv = \$twig->getEnvironment();\n" .
+                    "\$twigEnv->addExtension(new \Alpha\Support\Twig\UrlExtension(\$seoUrlRepository));\n\n" .
+                    "\$twigEnv->addGlobal('settings',   \$configSettings);\n" .
+                    "\$twigEnv->addGlobal('name',       \$configSettings['config_name'] ?? 'AG Sonhos e Construções');\n" .
+                    "\$twigEnv->addGlobal('lang',       \$language ? \$language->getCode() : 'pt-br');\n" .
+                    "\$twigEnv->addGlobal('admin_dir',  defined('ADMIN_DIR') ? ADMIN_DIR : basename(__DIR__));\n" .
+                    "\$twigEnv->addGlobal('admin_path', defined('ADMIN_PATH') ? ADMIN_PATH : '/' . basename(__DIR__));\n\n" .
+                    "\$container->bind(\\Twig\\Environment::class, \$twigEnv);\n" .
+                    "\$container->bind(Twig::class, \$twig);\n\n" .
+                    "AppFactory::setContainer(\$container);\n" .
+                    "\$app = AppFactory::create();\n\n" .
+                    "\$app->setBasePath('/' . (defined('ADMIN_DIR') ? ADMIN_DIR : basename(__DIR__)));\n\n" .
+                    "use Alpha\Auth\Middleware\CsrfGuardMiddleware;\n" .
+                    "use Alpha\Auth\Middleware\SecurityHeadersMiddleware;\n\n" .
+                    "\$app->add(TwigMiddleware::create(\$app, \$twig));\n" .
+                    "\$app->add(new CsrfGuardMiddleware(\$twigEnv));\n" .
+                    "\$app->addBodyParsingMiddleware();\n" .
+                    "\$app->add(new SecurityHeadersMiddleware());\n" .
+                    "\$app->addRoutingMiddleware();\n\n" .
+                    "\$routes = require __DIR__ . '/../../backend/Config/Routes.php';\n" .
+                    "\$routes(\$app);\n\n" .
+                    "\$app->run();\n";
+                file_put_contents($targetAdminDir . '/index.php', $indexTemplate);
             }
 
             // 7. Atualização Atômica do Arquivo .env
