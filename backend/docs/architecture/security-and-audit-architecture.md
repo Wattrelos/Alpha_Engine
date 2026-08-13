@@ -115,12 +115,18 @@ Garantia de integridade, conformidade legal e auditoria auditável:
   * `storage/.htaccess`: Negação total de acesso direto via web (`Require all denied`).
   * `public_html/image/.htaccess`: Desativação da listagem de diretórios (`Options -Indexes`) e bloqueio de execução de scripts PHP/CGI/PHAR via diretiva `<FilesMatch>`.
   * `UploadSecurityHelper`: Validação do MIME-type real através de Magic Bytes com `finfo_file()`, higienização contra *Path Traversal* (`../`), bloqueio de dupla extensão (ex: `.php.jpg`) e geração de nomes aleatórios UUID para arquivos gravados.
+* **Estratégia de Auditoria Multinível & Resiliência (`AuditLoggerService`):**
+  * O serviço `Alpha\Services\Audit\AuditLoggerService` gerencia a gravação de auditoria com suporte a hospedagem compartilhada (ex: **Hostinger Premium Web Hosting**):
+    * **Nível 1 (Mensageria Asíncrona):** Publicação no RabbitMQ se ativado via `RABBITMQ_ENABLED=true`.
+    * **Nível 2 (Fallback Hostinger / MySQL):** Na ausência de mensageria, faz a inserção direta na tabela `tbkk_audit_logs` do MySQL com criação automática da tabela (*Auto-Healing*).
+    * **Nível 3 (Fallback Emergencial):** Registra no arquivo local `storage/logs/audit.log` se a conexão com o banco de dados falhar.
+  * Todos os eventos gravados passam obrigatoriamente pela sanitização do `LgpdSanitizer` antes da persistência no banco de dados ou arquivo.
 * **Mensageria e Filas Assíncronas (`QueueService` / RabbitMQ):**
   * Integração com RabbitMQ via `php-amqplib` para publicação de eventos do sistema (ex: `OrderCreatedEvent`).
-  * Filas declaradas como **duráveis** e mensagens com modo de entrega **persistente** (`DELIVERY_MODE_PERSISTENT`), garantindo a preservação dos dados auditáveis mesmo em reinicializações do broker.
-  * Processamento em segundo plano por workers PHP desacoplados, garantindo tempo de resposta ultrarrápido para o cliente final.
+  * Filas declaradas como **duráveis** e mensagens com modo de entrega **persistente** (`DELIVERY_MODE_PERSISTENT`). Caso o servidor RabbitMQ esteja inacessível, repassa graciosamente a execução para a camada de fallback MySQL do `AuditLoggerService`.
 
 ---
+
 
 ## 4. Camada de Inteligência Comportamental, Métricas e Failsafes
 

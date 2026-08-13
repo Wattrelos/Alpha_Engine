@@ -13,6 +13,8 @@ use Alpha\Auth\Middleware\CsrfGuardMiddleware;
 use Alpha\Auth\Middleware\SecurityHeadersMiddleware;
 use Alpha\Auth\Middleware\InstallationCheckMiddleware;
 use Alpha\Support\EnvironmentManager;
+use Alpha\Support\LgpdSanitizer;
+
 
 // ─────────────────────────────────────────────────────────
 // 0. VERIFICAÇÃO E AUTO-INSTALAÇÃO DE DEPENDÊNCIAS (COMPOSER)
@@ -274,8 +276,11 @@ $errorMiddleware->setErrorHandler(
 if (!$isDev) {
     $errorMiddleware->setDefaultErrorHandler(
         function ($request, Throwable $exception, bool $displayErrorDetails, bool $logErrors, bool $logErrorDetails) use ($twigEnv) {
-            error_log("ALPHA 500 ERROR: " . $exception->getMessage() . "\n" . $exception->getTraceAsString());
+            $rawLog = "ALPHA 500 ERROR: " . $exception->getMessage() . "\n" . $exception->getTraceAsString();
+            $sanitizedLog = LgpdSanitizer::sanitizeLogMessage($rawLog);
+            error_log($sanitizedLog);
             $response = new \Slim\Psr7\Response();
+
 
             $isXmlHttpRequest = strtolower($request->getHeaderLine('X-Requested-With')) === 'xmlhttprequest';
             $acceptsJson = str_contains(strtolower($request->getHeaderLine('Accept')), 'application/json');

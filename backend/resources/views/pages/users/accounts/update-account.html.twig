@@ -45,6 +45,10 @@
 
 		<div class="egen-account-card">
 			<form id="form-edit-account" action="{{ action }}" method="post" class="egen-form">
+				{% if csrf %}
+					<input type="hidden" name="{{ csrf.keys.name }}" value="{{ csrf.name }}">
+					<input type="hidden" name="{{ csrf.keys.value }}" value="{{ csrf.value }}">
+				{% endif %}
 				<fieldset class="egen-fieldset">
 					<legend class="egen-legend">{{ text_your_details|default('Seus Dados Pessoais') }}</legend>
 

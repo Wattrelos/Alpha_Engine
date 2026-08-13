@@ -33,6 +33,10 @@
     {# ── Main content ── #}
     <div class="return-wrapper">
         <form action="{{ action }}" method="post" class="return-form">
+            {% if csrf %}
+                <input type="hidden" name="{{ csrf.keys.name }}" value="{{ csrf.name }}">
+                <input type="hidden" name="{{ csrf.keys.value }}" value="{{ csrf.value }}">
+            {% endif %}
             
             {# ── Section 1: Customer Details ── #}
             <div class="form-card">

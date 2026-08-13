@@ -52,8 +52,10 @@ class QueueService
             $channel->close();
             $connection->close();
         } catch (\Throwable $e) {
-            // Em caso de falha crítica na mensageria, loga o erro sem interromper a execução do PHP.
+            // Em caso de falha de conexão/publicação no RabbitMQ, repassa a exceção para acionar o Fallback em BD.
             error_log("RabbitMQ Publish Error: " . $e->getMessage());
+            throw new \RuntimeException("RabbitMQ indisponível: " . $e->getMessage(), 0, $e);
         }
     }
 }
+

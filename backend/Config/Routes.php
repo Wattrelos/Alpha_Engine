@@ -197,7 +197,16 @@ return function (\Slim\App $app) {
         $api->get('/geo/paises/{country_id:[0-9]+}/estados', \Alpha\Controller\Actions\Location\GetGeoZonesAction::class);
         $api->get('/geo/estados/{zone_id:[0-9]+}/cidades', \Alpha\Controller\Actions\Location\GetGeoCitiesAction::class);
         $api->post('/carrinho/salvar-cep', \Alpha\Controller\Actions\Cart\SaveShippingCepAction::class);
+
+        // Webhooks protegidos por validação HMAC SHA-256
+        $api->group('/webhook', function (RouteCollectorProxy $webhook) {
+            $webhook->post('/{provider}', function ($request, $response) {
+                $response->getBody()->write(json_encode(['status' => 'webhook_processed']));
+                return $response->withHeader('Content-Type', 'application/json');
+            });
+        })->add(new \Alpha\Auth\Middleware\SignatureMiddleware());
     })->add($apiRateLimiter);
+
 
     // ─────────────────────────────────────────────────────────
     // 3. GRUPO DE ROTAS INTERNACIONALIZADAS

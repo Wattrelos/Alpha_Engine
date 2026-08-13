@@ -49,6 +49,10 @@
             {# ── Lista de produtos ── #}
             <div class="cart-main">
                 <form action="{{ edit }}" method="post" enctype="multipart/form-data" id="cart-form">
+                    {% if csrf %}
+                        <input type="hidden" name="{{ csrf.keys.name }}" value="{{ csrf.name }}">
+                        <input type="hidden" name="{{ csrf.keys.value }}" value="{{ csrf.value }}">
+                    {% endif %}
                     <div class="cart-items-list">
                         {% for product in products %}
                         <div class="cart-item {% if not product.stock %}cart-item--out-of-stock{% endif %}" id="cart-item-{{ product.cart_id }}">

@@ -46,6 +46,10 @@
 		{% endif %}
 
 		<form action="{{ action }}" method="post" class="addr-form-card" id="address-create-form" novalidate>
+			{% if csrf %}
+				<input type="hidden" name="{{ csrf.keys.name }}" value="{{ csrf.name }}">
+				<input type="hidden" name="{{ csrf.keys.value }}" value="{{ csrf.value }}">
+			{% endif %}
 
 			{# ── Seção: Endereço ── #}
 			<div class="addr-form-section">

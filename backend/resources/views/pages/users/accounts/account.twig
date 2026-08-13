@@ -206,6 +206,10 @@
 				</div>
 				<div class="account-cards">
 					<form id="form-newsletter" action="{{ newsletter_action_url|default('#') }}" method="post">
+						{% if csrf %}
+							<input type="hidden" name="{{ csrf.keys.name }}" value="{{ csrf.name }}">
+							<input type="hidden" name="{{ csrf.keys.value }}" value="{{ csrf.value }}">
+						{% endif %}
 						<div class="account-card account-card--toggle">
 							<div class="card-icon">
 								<svg width="20" height="20" viewbox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -300,8 +304,18 @@ const form = toggle.closest('form');
 
 toggle.addEventListener('change', function () {
 const isChecked = this.checked;
-const formData = new FormData();
-formData.append('newsletter', isChecked ? '1' : '0');
+const formData = new FormData(form);
+if (!formData.has('newsletter')) {
+	formData.append('newsletter', isChecked ? '1' : '0');
+}
+const metaNameKey = document.querySelector('meta[name="csrf-key-name"]')?.content || 'csrf_name';
+const metaValueKey = document.querySelector('meta[name="csrf-key-value"]')?.content || 'csrf_value';
+const metaName = document.querySelector('meta[name="csrf-name"]')?.content;
+const metaValue = document.querySelector('meta[name="csrf-value"]')?.content;
+if (metaName && metaValue && !formData.has(metaNameKey)) {
+	formData.append(metaNameKey, metaName);
+	formData.append(metaValueKey, metaValue);
+}
 
 const originalHint = hint.textContent;
 hint.textContent = isChecked ? 'Você recebe nossas ofertas e novidades' : 'Receba ofertas e novidades por e-mail';

@@ -156,6 +156,10 @@
                     {% endif %}
 
                     <form action="{{ action }}" method="POST" class="egen-contact-form" novalidate>
+                        {% if csrf %}
+                            <input type="hidden" name="{{ csrf.keys.name }}" value="{{ csrf.name }}">
+                            <input type="hidden" name="{{ csrf.keys.value }}" value="{{ csrf.value }}">
+                        {% endif %}
                         
                         {# Name Input #}
                         <div class="form-group {% if errors.name %}has-error{% endif %}">
