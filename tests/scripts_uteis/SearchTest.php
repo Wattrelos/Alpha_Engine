@@ -1,7 +1,7 @@
 <?php
-require_once __DIR__ . '/../../vendor/autoload.php';
+require_once __DIR__ . '/../../backend/vendor/autoload.php';
 define('APPLICATION', 'admin');
-require_once __DIR__ . '/../../config.php';
+require_once __DIR__ . '/../../backend/config.php';
 
 use Containers\AppBootstrap;
 use Slim\Factory\AppFactory;
@@ -12,7 +12,7 @@ use Alpha\Model\DataAccessObject\ConnectionDB;
 $bootstrap = AppBootstrap::boot();
 $container = $bootstrap->getContainer();
 
-$twig = Twig::create(__DIR__ . '/../../resources/views', [
+$twig = Twig::create(__DIR__ . '/../../backend/resources/views', [
     'cache'       => false,
     'auto_reload' => true,
     'debug'       => true,

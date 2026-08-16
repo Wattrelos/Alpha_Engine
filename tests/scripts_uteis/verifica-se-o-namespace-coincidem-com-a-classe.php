@@ -4,7 +4,7 @@
 // Exemplo: se suas classes começam com "App\" e estão na pasta "src/"
 $config = [
     'root_namespace' => 'Alpha\\',
-    'root_dir'       => dirname(__DIR__, 2) . '/core/'
+    'root_dir'       => dirname(__DIR__, 2) . '/backend/core/'
 ];
 
 $errors = [];

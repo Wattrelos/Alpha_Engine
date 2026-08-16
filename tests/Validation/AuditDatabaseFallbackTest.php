@@ -19,7 +19,7 @@ class AuditDatabaseFallbackTest extends TestCase
         if (!defined('APPLICATION')) {
             define('APPLICATION', 'admin');
         }
-        $configPath = __DIR__ . '/../../config.php';
+        $configPath = __DIR__ . '/../../backend/config.php';
         if (file_exists($configPath)) {
             require_once $configPath;
         }

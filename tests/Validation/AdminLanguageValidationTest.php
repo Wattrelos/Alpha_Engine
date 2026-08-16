@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Validation;
 
-require_once __DIR__ . '/../../config.php';
+require_once __DIR__ . '/../../backend/config.php';
 
 use PHPUnit\Framework\TestCase;
 use Containers\AppBootstrap;
@@ -30,7 +30,7 @@ class AdminLanguageValidationTest extends TestCase
         $bootstrap = AppBootstrap::boot();
         $this->container = $bootstrap->getContainer();
 
-        $twig = Twig::create(__DIR__ . '/../../resources/views', [
+        $twig = Twig::create(__DIR__ . '/../../backend/resources/views', [
             'cache'       => false,
             'auto_reload' => true,
             'debug'       => true,

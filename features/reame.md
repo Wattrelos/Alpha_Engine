@@ -3,7 +3,7 @@
 ## 📌 Contexto Acadêmico
 Esta suíte de testes BDD (Behavior-Driven Development) utilizando a sintaxe **Gherkin** e a ferramenta **Behat** foi projetada para atender integralmente aos requisitos da disciplina de **Testes de Software**.
 
-Ela integra-se diretamente com a aplicação **Alpha Engine**, reaproveitando e estendendo a robusta biblioteca de testes unitários e de integração desenvolvidos em PHPUnit (`backend/tests/Validation/`).
+Ela integra-se diretamente com a aplicação **Alpha Engine**, reaproveitando e estendendo a robusta biblioteca de testes unitários e de integração desenvolvidos em PHPUnit (`tests/Validation/`).
 
 ---
 

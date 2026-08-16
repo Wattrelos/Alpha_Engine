@@ -1,8 +1,8 @@
 <?php
-require __DIR__ . '/../vendor/autoload.php';
+require __DIR__ . '/../../backend/vendor/autoload.php';
 
 define('APPLICATION', 'catalog');
-require_once __DIR__ . '/../config.php';
+require_once __DIR__ . '/../../backend/config.php';
 
 use Containers\AppBootstrap;
 use Alpha\Events\EventDispatcher;

@@ -1,5 +1,5 @@
 <?php
-require __DIR__ . '/../vendor/autoload.php';
+require __DIR__ . '/../../backend/vendor/autoload.php';
 
 use ScssPhp\ScssPhp\Compiler;
 use ScssPhp\ScssPhp\OutputStyle;
@@ -8,11 +8,11 @@ $compiler = new Compiler();
 $compiler->setOutputStyle(OutputStyle::EXPANDED);
 
 // Caminhos para resolução de imports
-$compiler->addImportPath(__DIR__ . '/../public_html/css');
-$compiler->addImportPath(__DIR__ . '/../public_html/css/custom');
-$compiler->addImportPath(__DIR__ . '/../public_html/css/base');
+$compiler->addImportPath(__DIR__ . '/../../public_html/css');
+$compiler->addImportPath(__DIR__ . '/../../public_html/css/custom');
+$compiler->addImportPath(__DIR__ . '/../../public_html/css/base');
 
-$customDir = __DIR__ . '/../public_html/css/custom';
+$customDir = __DIR__ . '/../../public_html/css/custom';
 
 try {
     // Procura todos os arquivos .scss no diretório custom/

@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Validation;
 
-require_once __DIR__ . '/../../config.php';
+require_once __DIR__ . '/../../backend/config.php';
 
 use PHPUnit\Framework\TestCase;
 use Alpha\Mappers\MapperFactory;

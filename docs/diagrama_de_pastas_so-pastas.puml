@@ -175,21 +175,18 @@
 │   │                   ├── location/             # 🖥️ Localização
 │   │                   ├── main/                 # 🖥️ Main
 │   │                   └── product/              # 🖥️ Produtos
-│   ├── scripts/                                # 📂 Scripts
-│   └── tests/                                  # Testes
-│       ├── newTables/                          # 📂 Novas tabelas e migrações SQL
-│       ├── test_mensageria_rebbit/             # 📂 Testes de mensageria assíncrona (RabbitMQ)
-│       ├── validation/                         # 📂 Validações
-│       └── scripts_uteis/                      # 📂 Scripts úteis
-│           ├── NovoEnderecamento/              # 📂 Novo Endereçamento
-│           ├── Pyton/                          # 📂 Python
-│           └── php-bd/                         # 📂 PHP BD
-└── public_html/                            # 🌐 Webroot (Document Root exposto e servido para a Internet)
-    ├── cache/                              # 🗂️ Cache
-    ├── css/                                # 🎨 Folhas de estilo (Estilos centralizados)    
-    ├── fonts/                              # 🔤 Tipografia e Ícones Locais
-    ├── image/                              # 🖼️ Imagens    
-    └── js/                                 # ⚡ Scripts Vanilla JS e integrações de formulário (AJAX)
-    └── LPDHED2dC7Gjrg2b/                   # 🛡️ Root público do painel administrativa (ofuscado p/ segurança)
+│   └── scripts/                                # 📂 Scripts
+├── tests/                                      # 🧪 Testes Unitários, de Integração e Scripts de Validação
+│   ├── test_mensageria_rebbit/                 # 📂 Testes de mensageria assíncrona (RabbitMQ)
+│   ├── Validation/                             # 📂 Validações PHPUnit
+│   └── scripts_uteis/                          # 📂 Scripts úteis
+│       └── Pyton/                              # 📂 Python
+└── public_html/                                # 🌐 Webroot (Document Root exposto e servido para a Internet)
+    ├── cache/                                  # 🗂️ Cache
+    ├── css/                                    # 🎨 Folhas de estilo (Estilos centralizados)    
+    ├── fonts/                                  # 🔤 Tipografia e Ícones Locais
+    ├── image/                                  # 🖼️ Imagens    
+    └── js/                                     # ⚡ Scripts Vanilla JS e integrações de formulário (AJAX)
+    └── LPDHED2dC7Gjrg2b/                       # 🛡️ Root público do painel administrativa (ofuscado p/ segurança)
 
 @endfiles

@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Validation;
 
-require_once __DIR__ . '/../../config.php';
+require_once __DIR__ . '/../../backend/config.php';
 
 use PHPUnit\Framework\TestCase;
 use Alpha\Support\EnvironmentManager;
@@ -20,7 +20,7 @@ class TenantProvisioningValidationTest extends TestCase
 
     protected function setUp(): void
     {
-        $this->testEnvFile = __DIR__ . '/../../storage/cache/test_app_validation.env';
+        $this->testEnvFile = __DIR__ . '/../../backend/storage/cache/test_app_validation.env';
         if (file_exists($this->testEnvFile)) {
             @unlink($this->testEnvFile);
         }
