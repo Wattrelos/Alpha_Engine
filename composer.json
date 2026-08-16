@@ -5,5 +5,16 @@
         "friends-of-behat/mink-extension": "^2.7",
         "behat/mink-browserkit-driver": "^2.3",
         "symfony/http-client": "^8.1"
+    },
+    "scripts": {
+        "test:behat": "./vendor/bin/behat --no-snippets",
+        "test:behat:pretty": "./vendor/bin/behat --format=pretty",
+        "test:behat:architecture": "./vendor/bin/behat features/architecture/ --no-snippets",
+        "test:behat:security": "./vendor/bin/behat features/security/ --no-snippets",
+        "test:behat:use_cases": "./vendor/bin/behat features/use_cases/ --no-snippets",
+        "test:behat:frontend": "./vendor/bin/behat features/frontend/ --no-snippets",
+        "test:behat:cart": "./vendor/bin/behat features/cart/ --no-snippets",
+        "test:behat:checkout": "./vendor/bin/behat features/checkout/ --no-snippets",
+        "test:phpunit": "cd backend && ./vendor/bin/phpunit"
     }
 }

@@ -20,7 +20,6 @@ class FeatureContext implements Context
 
     /**
      * @Given que o sistema :arg1 está ativo e operacional
-     * @Given que a aplicação Alpha Engine e os middlewares de segurança estão ativos
      * @Given que os serviços Redis, MySQL e RabbitMQ estão ativos e integrados à aplicação
      * @Given /^que a aplicação "([^"]*)" foi inicializada via "([^"]*)"$/u
      * @Given /^o contêiner de dependências "([^"]*)" e o motor de visões "([^"]*)" foram configurados$/u
@@ -54,8 +53,8 @@ class FeatureContext implements Context
      * @Then /^a "([^"]*)" deve solicitar os dados do catálogo ao "([^"]*)"$/u
      * @Then /^a página deve ser renderizada utilizando o "([^"]*)" a partir de "([^"]*)"$/u
      * @Then /^o middleware deve consultar o token de sessão no "([^"]*)"$/u
-     * @Then /^e se a sessão for válida, a requisição é liberada para a "([^"]*)" correspondente$/u
-     * @Then /^e se a sessão for inválida, a requisição deve ser redirecionada para a tela de login com erro ([0-9\/]+)$/u
+     * @Then /^(e )?se a sessão for válida, a requisição é liberada para a "([^"]*)" correspondente$/u
+     * @Then /^(e )?se a sessão for inválida, a requisição deve ser redirecionada para a tela de login com erro "?([0-9\/]+)"?$/u
      * @Then /^o "([^"]*)" deve instruir o "([^"]*)" a executar "([^"]*)" no "([^"]*)"$/u
      * @Then /^as consultas geradas pelo "([^"]*)" devem ser validadas e atualizadas no "([^"]*)" em memória RAM$/u
      * @Then /^ao final do processo com sucesso, o "([^"]*)" deve executar o "([^"]*)" no MySQL$/u

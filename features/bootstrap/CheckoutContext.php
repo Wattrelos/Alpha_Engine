@@ -32,6 +32,7 @@ class CheckoutContext implements Context
     /**
      * @Given que a middleware de proteção CSRF está ativa no checkout
      * @Given que a sessão de usuário está inicializada
+     * @Given a sessão de usuário está inicializada
      */
     public function queAMiddlewareCsrfEstaAtiva()
     {
@@ -212,7 +213,8 @@ class CheckoutContext implements Context
     // =========================================================================
 
     /**
-     * @Given que o tempo de expiração (TTL) da chave de idempotência no Redis está configurado para :ttl segundos
+     * @Given /^que o tempo de expiração \(TTL\) da chave de idempotência no Redis está configurado para (\d+) segundos$/u
+     * @Given /^o tempo de expiração \(TTL\) da chave de idempotência no Redis está configurado para (\d+) segundos$/u
      */
     public function queOTtlDaChaveDeIdempotenciaEstaConfigurado(int $ttl)
     {

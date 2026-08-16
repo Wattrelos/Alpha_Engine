@@ -30,6 +30,29 @@ composer test:phpunit
 
 | Caso de Uso / Requisito | Arquivo Feature (Gherkin) | Contexto Behat | Validação / Teste Backend Reutilizado |
 | :--- | :--- | :--- | :--- |
+| **Módulo Arquitetura: Bootstrap & PSR-11** | [bootstrapping_injecao_psr11.feature](file:///var/www/html/agsonhos/features/architecture/bootstrapping_injecao_psr11.feature) | `FeatureContext` | `AppContainer (PSR-11)`, `Routes.php` & `TwigEnvironment` |
+| **Módulo Arquitetura: Middleware & Redis Session** | [middleware_pipeline_sessoes_redis.feature](file:///var/www/html/agsonhos/features/architecture/middleware_pipeline_sessoes_redis.feature) | `FeatureContext` | `AdminSessionMiddleware` / Autenticação Centralizada |
+| **Módulo Arquitetura: Unit of Work & ACID** | [unit_of_work_transacoes_acid.feature](file:///var/www/html/agsonhos/features/architecture/unit_of_work_transacoes_acid.feature) | `FeatureContext` | `UnitOfWork` / `BEGIN` e `COMMIT` Transacional MySQL 8 |
+| **Módulo Arquitetura: Identity Map & Cache** | [identity_map_cache_repositorios.feature](file:///var/www/html/agsonhos/features/architecture/identity_map_cache_repositorios.feature) | `FeatureContext` | Prevenção de N+1 Queries e Cache de Repositórios no Redis |
+| **Módulo Arquitetura: Domain Events & RabbitMQ** | [eventos_dominio_rabbitmq_workers.feature](file:///var/www/html/agsonhos/features/architecture/eventos_dominio_rabbitmq_workers.feature) | `FeatureContext` | `EventDispatcher`, Filas RabbitMQ e Worker Assíncrono |
+| **Módulo Arquitetura: Adaptadores Legados** | [compatibilidade_adaptadores_legados.feature](file:///var/www/html/agsonhos/features/architecture/compatibilidade_adaptadores_legados.feature) | `FeatureContext` | `AlphaContainer (Legacy Resolver)` / Retrocompatibilidade |
+| **Módulo Segurança: Cabeçalhos OWASP** | [cabecalhos_owasp.feature](file:///var/www/html/agsonhos/features/security/cabecalhos_owasp.feature) | `SecurityContext` | `SecurityHeadersMiddleware` / CSP, HSTS & Frames |
+| **Módulo Segurança: Rate Limiting Anti-Brute Force** | [rate_limiting_brute_force.feature](file:///var/www/html/agsonhos/features/security/rate_limiting_brute_force.feature) | `SecurityContext` | `AuthenticationBruteForceTest.php` / HTTP 429 & Retry-After |
+| **Módulo Segurança: Controle de Acesso RBAC** | [controle_acesso_rbac.feature](file:///var/www/html/agsonhos/features/security/controle_acesso_rbac.feature) | `SecurityContext` | `RbacAccessControlTest.php` / HTTP 403 Forbidden |
+| **Módulo Segurança: Proteção CSRF Checkout** | [protecao_csrf.feature](file:///var/www/html/agsonhos/features/security/protecao_csrf.feature) | `CheckoutContext` | `CheckoutCsrfIntegrationTest.php` / `CsrfGuardMiddleware` |
+| **Módulo Segurança: Prevenção SQLi & XSS** | [prevencao_sqli_xss.feature](file:///var/www/html/agsonhos/features/security/prevencao_sqli_xss.feature) | `SecurityContext` | `TwigEnvironment` Sanitization & PDO Prepared Statements |
+| **Módulo Segurança: Sessões e Cookies Seguros** | [gestao_sessoes_cookies.feature](file:///var/www/html/agsonhos/features/security/gestao_sessoes_cookies.feature) | `SecurityContext` | `SessionManager` / Anti-Fixation & HttpOnly |
+| **Módulo Segurança: Prevenção IDOR** | [prevencao_idor_acesso.feature](file:///var/www/html/agsonhos/features/security/prevencao_idor_acesso.feature) | `SecurityContext` | Validação de Ownership em Pedidos e Endereços |
+| **Módulo Casos de Uso: Catálogo & Busca (UC01, UC02)** | [uc01_uc02_catalogo_busca.feature](file:///var/www/html/agsonhos/features/use_cases/uc01_uc02_catalogo_busca.feature) | `CheckoutContext` | Navegação, Vitrines e Filtros Facetados |
+| **Módulo Casos de Uso: Carrinho & Variantes (UC03, UC04)** | [uc03_uc04_adicionar_carrinho_variantes.feature](file:///var/www/html/agsonhos/features/use_cases/uc03_uc04_adicionar_carrinho_variantes.feature) | `CheckoutContext` | Inclusão de SKU com Variações e Validação de Estoque |
+| **Módulo Casos de Uso: Login & Mesclagem (UC05, UC06)** | [uc05_uc06_login_mesclagem_carrinho.feature](file:///var/www/html/agsonhos/features/use_cases/uc05_uc06_login_mesclagem_carrinho.feature) | `CheckoutContext` | Autenticação e Sincronização de Carrinho Anônimo |
+| **Módulo Casos de Uso: Checkout & Guest (UC07, UC08, UC09)** | [uc07_uc08_uc09_checkout_cupons_guest.feature](file:///var/www/html/agsonhos/features/use_cases/uc07_uc08_uc09_checkout_cupons_guest.feature) | `CheckoutContext` | Cupons Promocionais e Compra Expressa Guest |
+| **Módulo Casos de Uso: Pagamentos & Gateway (UC12)** | [uc12_processamento_pagamentos_gateway.feature](file:///var/www/html/agsonhos/features/use_cases/uc12_processamento_pagamentos_gateway.feature) | `CheckoutContext` | Autorização Gateway, Emissão NF-e e Recusa |
+| **Módulo Casos de Uso: Pós-Venda (UC10, UC11)** | [uc10_uc11_pos_venda_pedidos_devolucoes.feature](file:///var/www/html/agsonhos/features/use_cases/uc10_uc11_pos_venda_pedidos_devolucoes.feature) | `CheckoutContext` | Rastreamento Last-mile e Devolução CDC 7 dias |
+| **Módulo Frontend: Catálogo & Menu** | [navegacao_catalogo.feature](file:///var/www/html/agsonhos/features/frontend/navegacao_catalogo.feature) | `FrontendContext` | `LayoutMapper` / Categorias, Banners e Vitrines |
+| **Módulo Frontend: Busca & Filtros** | [busca_filtros.feature](file:///var/www/html/agsonhos/features/frontend/busca_filtros.feature) | `FrontendContext` | `ProductRepository` / Busca Fulltext & Autocomplete |
+| **Módulo Frontend: Detalhes do Produto** | [detalhes_produto_pdp.feature](file:///var/www/html/agsonhos/features/frontend/detalhes_produto_pdp.feature) | `FrontendContext` | `ProductDetailAction` / Variantes, Zoom & Cross-selling |
+| **Módulo Frontend: Painel do Cliente** | [painel_cliente.feature](file:///var/www/html/agsonhos/features/frontend/painel_cliente.feature) | `FrontendContext` | `CustomerOrdersAction` / Rastreamento & Devoluções |
 | **Módulo Carrinho: Adição & Variantes** | [adicionar_produto.feature](file:///var/www/html/agsonhos/features/cart/adicionar_produto.feature) | `CartContext` | `AddCartAction` / Validação de estoque e variantes |
 | **Módulo Carrinho: Gestão de Itens** | [gerenciar_itens_carrinho.feature](file:///var/www/html/agsonhos/features/cart/gerenciar_itens_carrinho.feature) | `CartContext` | `EditCartAction` & `RemoveCartAction` |
 | **Módulo Carrinho: Cálculo de Frete** | [calculo_frete_carrinho.feature](file:///var/www/html/agsonhos/features/cart/calculo_frete_carrinho.feature) | `CartContext` | `SaveShippingCepAction` / Correios, Transportadora & BOPIS |
@@ -38,13 +61,6 @@ composer test:phpunit
 | **Módulo Checkout: Visitante (Guest)** | [checkout_visitante_guest.feature](file:///var/www/html/agsonhos/features/checkout/checkout_visitante_guest.feature) | `CheckoutContext` | `SubmitCheckoutAction` / Validação CPF e dados |
 | **Módulo Checkout: Pagamentos & UoW** | [processamento_pagamentos.feature](file:///var/www/html/agsonhos/features/checkout/processamento_pagamentos.feature) | `CheckoutContext` | `ProcessPaymentAction` / PIX, Boleto, Cartão & RabbitMQ |
 | **Módulo Checkout: Idempotência** | [idempotencia_checkout.feature](file:///var/www/html/agsonhos/features/checkout/idempotencia_checkout.feature) | `CheckoutContext` | `SubmitCheckoutAction` / Redis Lock anti-duplicidade |
-| **Proteção CSRF no Checkout** | [checkoutCsrfIntegration.feature](file:///var/www/html/agsonhos/features/checkoutCsrfIntegration.feature) | `CheckoutContext` | [CheckoutCsrfIntegrationTest.php](file:///var/www/html/agsonhos/backend/tests/Validation/CheckoutCsrfIntegrationTest.php) |
-| **Autenticação & Rate Limiting** | [autenticacaoSeguranca.feature](file:///var/www/html/agsonhos/features/autenticacaoSeguranca.feature) | `SecurityContext` | [AuthenticationBruteForceTest.php](file:///var/www/html/agsonhos/backend/tests/Validation/AuthenticationBruteForceTest.php) |
-| **Cabeçalhos OWASP & XSS** | [autenticacaoSeguranca.feature](file:///var/www/html/agsonhos/features/autenticacaoSeguranca.feature) | `SecurityContext` | [SecurityHeadersAndCsrfTest.php](file:///var/www/html/agsonhos/backend/tests/Validation/SecurityHeadersAndCsrfTest.php) |
-| **Controle de Acesso RBAC** | [autenticacaoSeguranca.feature](file:///var/www/html/agsonhos/features/autenticacaoSeguranca.feature) | `SecurityContext` | [RbacAccessControlTest.php](file:///var/www/html/agsonhos/backend/tests/Validation/RbacAccessControlTest.php) |
-| **Controle de Idempotência** | [indepotence_failure.feature](file:///var/www/html/agsonhos/features/indepotence_failure.feature) | `CheckoutContext` | `IdempotencyService` / Redis Lock |
-| **Jornada do Cliente (Carrinho/Checkout)** | [UseCaseDiagramCustomer.feature](file:///var/www/html/agsonhos/features/UseCaseDiagramCustomer.feature) | `CheckoutContext` | [CouponLogicTest.php](file:///var/www/html/agsonhos/backend/tests/Validation/CouponLogicTest.php) |
-| **Arquitetura & DDD** | [architectureDiagram.feature](file:///var/www/html/agsonhos/features/architectureDiagram.feature) | `FeatureContext` | Middlewares, AppContainer e UnitOfWork |
 
 ---
 
@@ -53,8 +69,41 @@ composer test:phpunit
 ```
 agsonhos/
 ├── behat.yml                            # Configuração global de suítes e contextos Behat
-├── composer.json                        # Scripts de automação ('test:behat', 'test:phpunit')
+├── composer.json                        # Scripts de automação ('test:behat', 'test:phpunit', etc.)
 ├── features/                            # Especificações executáveis escritas em Gherkin (.feature)
+│   ├── architecture/                    # BDD de Arquitetura DDD, UoW, Identity Map e RabbitMQ
+│   │   ├── README.md
+│   │   ├── bootstrapping_injecao_psr11.feature
+│   │   ├── middleware_pipeline_sessoes_redis.feature
+│   │   ├── unit_of_work_transacoes_acid.feature
+│   │   ├── identity_map_cache_repositorios.feature
+│   │   ├── eventos_dominio_rabbitmq_workers.feature
+│   │   └── compatibilidade_adaptadores_legados.feature
+│   ├── security/                        # BDD de Segurança, OWASP Headers, RBAC, CSRF, XSS e IDOR
+│   │   ├── README.md
+│   │   ├── cabecalhos_owasp.feature
+│   │   ├── rate_limiting_brute_force.feature
+│   │   ├── controle_acesso_rbac.feature
+│   │   ├── protecao_csrf.feature
+│   │   ├── prevencao_sqli_xss.feature
+│   │   ├── gestao_sessoes_cookies.feature
+│   │   └── prevencao_idor_acesso.feature
+│   ├── use_cases/                       # BDD da Jornada do Cliente (UC01 a UC12)
+│   │   ├── README.md
+│   │   ├── UseCaseDiagramCustomer.md
+│   │   ├── uc01_uc02_catalogo_busca.feature
+│   │   ├── uc03_uc04_adicionar_carrinho_variantes.feature
+│   │   ├── uc05_uc06_login_mesclagem_carrinho.feature
+│   │   ├── uc07_uc08_uc09_checkout_cupons_guest.feature
+│   │   ├── uc12_processamento_pagamentos_gateway.feature
+│   │   └── uc10_uc11_pos_venda_pedidos_devolucoes.feature
+│   ├── frontend/                        # BDD de Frontend, Catálogo, PDP e UX/UI
+│   │   ├── README.md
+│   │   ├── implementation.md
+│   │   ├── navegacao_catalogo.feature
+│   │   ├── busca_filtros.feature
+│   │   ├── detalhes_produto_pdp.feature
+│   │   └── painel_cliente.feature
 │   ├── cart/                            # BDD do Carrinho de Compras
 │   │   ├── adicionar_produto.feature
 │   │   ├── gerenciar_itens_carrinho.feature
@@ -65,15 +114,11 @@ agsonhos/
 │   │   ├── checkout_visitante_guest.feature
 │   │   ├── processamento_pagamentos.feature
 │   │   └── idempotencia_checkout.feature
-│   ├── autenticacaoSeguranca.feature
-│   ├── checkoutCsrfIntegration.feature
-│   ├── indepotence_failure.feature
-│   ├── UseCaseDiagramCustomer.feature
-│   ├── architectureDiagram.feature
 │   ├── reame.md                         # Esta documentação acadêmica
 │   └── bootstrap/                       # Implementação dos Step Definitions
 │       ├── FeatureContext.php           # Passos gerais de sistema e arquitetura
 │       ├── SecurityContext.php          # Passos de segurança, OWASP, rate limit e RBAC
+│       ├── FrontendContext.php          # Passos de layout, catálogo, busca, PDP e pós-venda
 │       ├── CartContext.php              # Passos de catálogo, carrinho, frete e mesclagem
 │       └── CheckoutContext.php          # Passos de checkout, CSRF, idempotência e pagamentos
 ```

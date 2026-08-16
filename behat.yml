@@ -5,6 +5,7 @@ default:
       contexts:
         - FeatureContext
         - SecurityContext
+        - FrontendContext
         - CartContext
         - CheckoutContext
   extensions:

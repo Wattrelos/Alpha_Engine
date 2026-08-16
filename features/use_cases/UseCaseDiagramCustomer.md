@@ -1,6 +1,6 @@
 # 📋 Documentação de Casos de Uso - Jornada do Cliente (Alpha Engine)
 
-> Documento gerado a partir da especificação do diagrama PlantUML: [`UseCaseDiagramCustomer.puml`](file:///var/www/html/agsonhos/backend/docs/business/use-cases/UseCaseDiagramCustomer.puml)
+> Documento gerado a partir da especificação do diagrama PlantUML: [`UseCaseDiagramCustomer.puml`](file:///var/www/html/agsonhos/docs/business/use-cases/UseCaseDiagramCustomer.puml)
 
 ---
 
