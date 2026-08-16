@@ -15,6 +15,7 @@
         "test:behat:frontend": "./vendor/bin/behat features/frontend/ --no-snippets",
         "test:behat:cart": "./vendor/bin/behat features/cart/ --no-snippets",
         "test:behat:checkout": "./vendor/bin/behat features/checkout/ --no-snippets",
+        "test:behat:api": "./vendor/bin/behat features/api/ --no-snippets",
         "test:phpunit": "cd backend && ./vendor/bin/phpunit"
     }
 }

@@ -61,6 +61,11 @@ composer test:phpunit
 | **Módulo Checkout: Visitante (Guest)** | [checkout_visitante_guest.feature](file:///var/www/html/agsonhos/features/checkout/checkout_visitante_guest.feature) | `CheckoutContext` | `SubmitCheckoutAction` / Validação CPF e dados |
 | **Módulo Checkout: Pagamentos & UoW** | [processamento_pagamentos.feature](file:///var/www/html/agsonhos/features/checkout/processamento_pagamentos.feature) | `CheckoutContext` | `ProcessPaymentAction` / PIX, Boleto, Cartão & RabbitMQ |
 | **Módulo Checkout: Idempotência** | [idempotencia_checkout.feature](file:///var/www/html/agsonhos/features/checkout/idempotencia_checkout.feature) | `CheckoutContext` | `SubmitCheckoutAction` / Redis Lock anti-duplicidade |
+| **Módulo API: Carrinho & Frete** | [carrinho_checkout_api.feature](file:///var/www/html/agsonhos/features/api/carrinho_checkout_api.feature) | `ApiContext` | `/api/carrinho/*` / Totais, CEP e Sincronização JSON |
+| **Módulo API: Geolocalização** | [localizacao_geozonas_api.feature](file:///var/www/html/agsonhos/features/api/localizacao_geozonas_api.feature) | `ApiContext` | `/api/geo/*` / Consulta em cascata de Países, UFs e Cidades |
+| **Módulo API: Webhooks & HMAC** | [webhooks_assinatura_hmac.feature](file:///var/www/html/agsonhos/features/api/webhooks_assinatura_hmac.feature) | `ApiContext` | `/api/webhook/*` / `SignatureMiddleware` HMAC SHA-256 |
+| **Módulo API: Busca & Estoque** | [catalogo_busca_autocomplete_api.feature](file:///var/www/html/agsonhos/features/api/catalogo_busca_autocomplete_api.feature) | `ApiContext` | `/api/busca/*` / Autocomplete em tempo real e estoque SKU |
+| **Módulo API: Rate Limit & RFC 7807** | [contratos_rest_rate_limit_api.feature](file:///var/www/html/agsonhos/features/api/contratos_rest_rate_limit_api.feature) | `ApiContext` | Limite 60 req/min e Problem Details RFC 7807 |
 
 ---
 
@@ -114,13 +119,21 @@ agsonhos/
 │   │   ├── checkout_visitante_guest.feature
 │   │   ├── processamento_pagamentos.feature
 │   │   └── idempotencia_checkout.feature
+│   ├── api/                             # BDD de Serviços RESTful, Webhooks e Rate Limiting
+│   │   ├── README.md
+│   │   ├── carrinho_checkout_api.feature
+│   │   ├── localizacao_geozonas_api.feature
+│   │   ├── webhooks_assinatura_hmac.feature
+│   │   ├── catalogo_busca_autocomplete_api.feature
+│   │   └── contratos_rest_rate_limit_api.feature
 │   ├── reame.md                         # Esta documentação acadêmica
 │   └── bootstrap/                       # Implementação dos Step Definitions
 │       ├── FeatureContext.php           # Passos gerais de sistema e arquitetura
 │       ├── SecurityContext.php          # Passos de segurança, OWASP, rate limit e RBAC
 │       ├── FrontendContext.php          # Passos de layout, catálogo, busca, PDP e pós-venda
 │       ├── CartContext.php              # Passos de catálogo, carrinho, frete e mesclagem
-│       └── CheckoutContext.php          # Passos de checkout, CSRF, idempotência e pagamentos
+│       ├── CheckoutContext.php          # Passos de checkout, CSRF, idempotência e pagamentos
+│       └── ApiContext.php               # Passos de APIs REST, Webhooks e Rate Limiting
 ```
 
 ---

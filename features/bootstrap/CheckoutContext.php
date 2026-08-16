@@ -145,6 +145,7 @@ class CheckoutContext implements Context
      */
     public function aRespostaJsonDeveConterIgualAVerdadeiro(string $key)
     {
+        $this->lastResponse->getBody()->rewind();
         $data = json_decode((string)$this->lastResponse->getBody(), true);
         Assert::assertTrue($data[$key] ?? false);
     }
@@ -154,6 +155,7 @@ class CheckoutContext implements Context
      */
     public function oNomeDoCompradorNaRespostaDeveSer(string $expected)
     {
+        $this->lastResponse->getBody()->rewind();
         $data = json_decode((string)$this->lastResponse->getBody(), true);
         Assert::assertEquals($expected, $data['payment_firstname'] ?? null);
     }
