@@ -5,6 +5,7 @@ default:
       contexts:
         - FeatureContext
         - SecurityContext
+        - CartContext
         - CheckoutContext
   extensions:
     Behat\MinkExtension:

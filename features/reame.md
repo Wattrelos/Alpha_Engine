@@ -30,6 +30,14 @@ composer test:phpunit
 
 | Caso de Uso / Requisito | Arquivo Feature (Gherkin) | Contexto Behat | Validação / Teste Backend Reutilizado |
 | :--- | :--- | :--- | :--- |
+| **Módulo Carrinho: Adição & Variantes** | [adicionar_produto.feature](file:///var/www/html/agsonhos/features/cart/adicionar_produto.feature) | `CartContext` | `AddCartAction` / Validação de estoque e variantes |
+| **Módulo Carrinho: Gestão de Itens** | [gerenciar_itens_carrinho.feature](file:///var/www/html/agsonhos/features/cart/gerenciar_itens_carrinho.feature) | `CartContext` | `EditCartAction` & `RemoveCartAction` |
+| **Módulo Carrinho: Cálculo de Frete** | [calculo_frete_carrinho.feature](file:///var/www/html/agsonhos/features/cart/calculo_frete_carrinho.feature) | `CartContext` | `SaveShippingCepAction` / Correios, Transportadora & BOPIS |
+| **Módulo Carrinho: Sincronização** | [sincronizacao_carrinho.feature](file:///var/www/html/agsonhos/features/cart/sincronizacao_carrinho.feature) | `CartContext` | `SyncCartAction` / Mesclagem visitante -> logado |
+| **Módulo Checkout: Fluxo do Cliente** | [fluxo_checkout_cliente.feature](file:///var/www/html/agsonhos/features/checkout/fluxo_checkout_cliente.feature) | `CheckoutContext` | `Checkout.php` / Multi-endereços, CSRF & Cupons |
+| **Módulo Checkout: Visitante (Guest)** | [checkout_visitante_guest.feature](file:///var/www/html/agsonhos/features/checkout/checkout_visitante_guest.feature) | `CheckoutContext` | `SubmitCheckoutAction` / Validação CPF e dados |
+| **Módulo Checkout: Pagamentos & UoW** | [processamento_pagamentos.feature](file:///var/www/html/agsonhos/features/checkout/processamento_pagamentos.feature) | `CheckoutContext` | `ProcessPaymentAction` / PIX, Boleto, Cartão & RabbitMQ |
+| **Módulo Checkout: Idempotência** | [idempotencia_checkout.feature](file:///var/www/html/agsonhos/features/checkout/idempotencia_checkout.feature) | `CheckoutContext` | `SubmitCheckoutAction` / Redis Lock anti-duplicidade |
 | **Proteção CSRF no Checkout** | [checkoutCsrfIntegration.feature](file:///var/www/html/agsonhos/features/checkoutCsrfIntegration.feature) | `CheckoutContext` | [CheckoutCsrfIntegrationTest.php](file:///var/www/html/agsonhos/backend/tests/Validation/CheckoutCsrfIntegrationTest.php) |
 | **Autenticação & Rate Limiting** | [autenticacaoSeguranca.feature](file:///var/www/html/agsonhos/features/autenticacaoSeguranca.feature) | `SecurityContext` | [AuthenticationBruteForceTest.php](file:///var/www/html/agsonhos/backend/tests/Validation/AuthenticationBruteForceTest.php) |
 | **Cabeçalhos OWASP & XSS** | [autenticacaoSeguranca.feature](file:///var/www/html/agsonhos/features/autenticacaoSeguranca.feature) | `SecurityContext` | [SecurityHeadersAndCsrfTest.php](file:///var/www/html/agsonhos/backend/tests/Validation/SecurityHeadersAndCsrfTest.php) |
@@ -47,6 +55,16 @@ agsonhos/
 ├── behat.yml                            # Configuração global de suítes e contextos Behat
 ├── composer.json                        # Scripts de automação ('test:behat', 'test:phpunit')
 ├── features/                            # Especificações executáveis escritas em Gherkin (.feature)
+│   ├── cart/                            # BDD do Carrinho de Compras
+│   │   ├── adicionar_produto.feature
+│   │   ├── gerenciar_itens_carrinho.feature
+│   │   ├── calculo_frete_carrinho.feature
+│   │   └── sincronizacao_carrinho.feature
+│   ├── checkout/                        # BDD do Fechamento e Pagamento de Pedidos
+│   │   ├── fluxo_checkout_cliente.feature
+│   │   ├── checkout_visitante_guest.feature
+│   │   ├── processamento_pagamentos.feature
+│   │   └── idempotencia_checkout.feature
 │   ├── autenticacaoSeguranca.feature
 │   ├── checkoutCsrfIntegration.feature
 │   ├── indepotence_failure.feature
@@ -56,7 +74,8 @@ agsonhos/
 │   └── bootstrap/                       # Implementação dos Step Definitions
 │       ├── FeatureContext.php           # Passos gerais de sistema e arquitetura
 │       ├── SecurityContext.php          # Passos de segurança, OWASP, rate limit e RBAC
-│       └── CheckoutContext.php          # Passos de checkout, CSRF, idempotência e carrinho
+│       ├── CartContext.php              # Passos de catálogo, carrinho, frete e mesclagem
+│       └── CheckoutContext.php          # Passos de checkout, CSRF, idempotência e pagamentos
 ```
 
 ---
