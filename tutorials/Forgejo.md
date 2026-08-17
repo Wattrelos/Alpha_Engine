@@ -1,5 +1,3 @@
-Aqui está o tutorial consolidado, direto e completo, unindo toda a pesquisa e decisões técnicas que tomamos: o uso do Forgejo nativo, a integração com o Apache2 (porta 8095), o banco MariaDB, as regras do UFW e a configuração do Token no Antigravity.
-Você pode copiar o bloco de código Markdown abaixo para salvar na sua documentação local.
 ------------------------------
 ## Guia Definitivo: Instalação e Configuração do Forgejo no Debian 13
 Este documento serve como guia de implantação para o servidor Git Forgejo rodando de forma nativa no Debian 13 (Trixie), aproveitando a infraestrutura existente de Apache2 e MariaDB, integrado ao ambiente de desenvolvimento Antigravity.
@@ -169,5 +167,3 @@ Quando o terminal solicitar as credenciais:
 * Password: Cole o Token de Acesso gerado no passo 8.1.
 
 ------------------------------
-Este guia está totalmente adaptado ao seu ambiente Debian 13! Deseja que eu elabore também um script simples em Bash para automatizar o backup agendado do banco de dados MariaDB e da pasta de repositórios do Forgejo?
-
