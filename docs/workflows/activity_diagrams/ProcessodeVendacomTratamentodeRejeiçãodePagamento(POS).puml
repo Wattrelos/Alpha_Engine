@@ -1,5 +1,5 @@
 @startuml
-title BPMN - Processo de Venda com Tratamento de Rejeição de Pagamento (POS)
+title Processo de Venda com Tratamento de Rejeição de Pagamento (POS)
 
 <style>
 document {
