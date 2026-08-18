@@ -4,7 +4,7 @@
 # ==============================================================================
 
 # Canal de Contato do Time de Segurança
-Contact: mailto:seguranca@agsonhos.com.br
+Contact: mailto:suport@agsonhos.com.br
 
 # Data de Expiração deste arquivo (Atualizar anualmente)
 Expires: 2027-12-31T23:59:59.000Z
@@ -16,7 +16,7 @@ Preferred-Languages: pt-br, pt, en
 Canonical: https://www.agsonhos.com.br/.well-known/security.txt
 
 # Política de Segurança e Divulgação Responsável
-Policy: https://www.agsonhos.com.br/pt-br/pagina/politica-de-privacidade
+Policy: https://www.agsonhos.com.br/pt-br/pagina/3
 
 # Agradecimentos e Hall da Fama para Pesquisadores de Segurança
 Acknowledgments: https://www.agsonhos.com.br/pt-br/pagina/seguranca

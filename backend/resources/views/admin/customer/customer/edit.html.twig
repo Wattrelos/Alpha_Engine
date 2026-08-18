@@ -127,7 +127,10 @@
 		// Switcher de abas Twig / JS amigável
 		function switchTab(tabName) {
 			// Esconde todas as abas
-			document.querySelectorAll('.tab-content').forEach(el => el.style.display = 'none');
+			document.querySelectorAll('.tab-content').forEach(el => {
+				el.classList.add('d-none');
+				el.style.display = 'none';
+			});
 			// Remove classe de ativação dos botões
 			document.querySelectorAll('.tab-button').forEach(el => {
 				el.classList.remove('active');
@@ -136,6 +139,7 @@
 			// Mostra a aba selecionada
 			const contentEl = document.getElementById('tab-content-' + tabName);
 			if (contentEl) {
+				contentEl.classList.remove('d-none');
 				contentEl.style.display = 'block';
 			}
 

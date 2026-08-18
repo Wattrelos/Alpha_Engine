@@ -505,11 +505,15 @@
 	<script>
 		// Switcher de abas principais
 		function switchTab(tabName) {
-			document.querySelectorAll('.tab-content').forEach(el => el.style.display = 'none');
+			document.querySelectorAll('.tab-content').forEach(el => {
+				el.classList.add('d-none');
+				el.style.display = 'none';
+			});
 			document.querySelectorAll('.tab-button').forEach(el => el.classList.remove('active'));
 
 			const contentEl = document.getElementById('tab-content-' + tabName);
 			if (contentEl) {
+				contentEl.classList.remove('d-none');
 				contentEl.style.display = 'block';
 			}
 
@@ -539,11 +543,15 @@
 
 		// Switcher de sub-abas das páginas institucionais
 		function switchInfoSubTab(subTabId) {
-			document.querySelectorAll('.info-subtab-content').forEach(el => el.style.display = 'none');
+			document.querySelectorAll('.info-subtab-content').forEach(el => {
+				el.classList.add('d-none');
+				el.style.display = 'none';
+			});
 			document.querySelectorAll('.info-subtab-btn').forEach(el => el.classList.remove('active'));
 
 			const contentEl = document.getElementById('info-subtab-content-' + subTabId);
 			if (contentEl) {
+				contentEl.classList.remove('d-none');
 				contentEl.style.display = 'block';
 			}
 

@@ -260,10 +260,17 @@
 				const targetTab = this.getAttribute('data-tab');
 				
 				tabBtns.forEach(b => b.classList.remove('active-tab'));
-				tabPanels.forEach(p => p.style.display = 'none');
+				tabPanels.forEach(p => {
+					p.classList.add('d-none');
+					p.style.display = 'none';
+				});
 				
 				this.classList.add('active-tab');
-				document.getElementById(targetTab).style.display = 'block';
+				const targetPanel = document.getElementById(targetTab);
+				if (targetPanel) {
+					targetPanel.classList.remove('d-none');
+					targetPanel.style.display = 'block';
+				}
 			});
 		});
 		
