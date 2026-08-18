@@ -1,0 +1,19 @@
+{
+  "name": "AG Sonhos — Colchões e Móveis",
+  "short_name": "AG Sonhos",
+  "description": "Loja online de colchões, camas box, móveis e materiais de construção.",
+  "start_url": "/pt-br",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#0c0f17",
+  "theme_color": "#1e293b",
+  "lang": "pt-BR",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "/favicon.ico",
+      "sizes": "64x64 32x32 24x24 16x16",
+      "type": "image/x-icon"
+    }
+  ]
+}

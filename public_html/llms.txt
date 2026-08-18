@@ -1,0 +1,22 @@
+# AG Sonhos E-commerce (Alpha Engine)
+
+> Plataforma de comércio eletrônico de alta performance e ponto de venda (PDV), especializada em colchões, camas box, móveis para quarto e materiais de construção no mercado brasileiro.
+
+## Sobre a Plataforma
+AG Sonhos opera com um motor de back-end moderno (Alpha Engine) desenvolvido em PHP 8.2+ e Slim Framework 4, com suporte nativo ao ecossistema fiscal e logístico brasileiro (cálculo de frete Correios/transportadoras, ICMS, NCM e CEP).
+
+## Navegação e Catálogo
+- [Página Inicial (PT-BR)](https://www.agsonhos.com.br/pt-br): Vitrine principal com destaques, promoções e novidades.
+- [Colchões](https://www.agsonhos.com.br/pt-br/categoria/colchoes): Linha completa de colchões ortopédicos, molas ensacadas e espuma D33/D45.
+- [Camas Box](https://www.agsonhos.com.br/pt-br/categoria/camas-box): Bases box convencionais e com baú bipartido.
+- [Móveis e Quarto](https://www.agsonhos.com.br/pt-br/categoria/moveis-e-quarto): Guarda-roupas, cabeceiras e mesas de cabeceira.
+- [Materiais de Construção](https://www.agsonhos.com.br/pt-br/categoria/materiais-de-construcao): Insumos estruturais, hidráulica, elétrica e acabamento.
+
+## Atendimento e Políticas Institucionais
+- [Contato e SAC](https://www.agsonhos.com.br/pt-br/contato): Formulário de atendimento direto e canais de suporte.
+- [Política de Trocas e Devoluções](https://www.agsonhos.com.br/pt-br/pagina/politica-de-trocas-e-devolucoes): Regras para devolução em até 7 dias (CDC) e acionamento de garantia.
+- [Política de Privacidade](https://www.agsonhos.com.br/pt-br/pagina/politica-de-privacidade): Termos de tratamento de dados de acordo com a LGPD.
+- [Mapa do Site](https://www.agsonhos.com.br/pt-br/mapa-do-site): Índice visual de todas as categorias e páginas do sistema.
+
+## Documentação Estendida
+- [Documentação Completa para LLMs](https://www.agsonhos.com.br/llms-full.txt): Contexto aprofundado sobre produtos, especificações técnicas e regras operacionais.

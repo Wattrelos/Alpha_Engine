@@ -1,0 +1,51 @@
+# ==============================================================================
+# Robots.txt — Alpha Engine / AG Sonhos E-commerce
+# ==============================================================================
+
+User-agent: *
+# Permissões de Rastreamento
+Allow: /
+Allow: /image/
+Allow: /img/
+Allow: /css/
+Allow: /js/
+Allow: /fonts/
+
+# Bloqueio de Áreas Administrativas, Instalação e Utilitários
+Disallow: /admin
+Disallow: /admin/
+Disallow: /setup
+Disallow: /setup/
+Disallow: /clean_cache.php
+Disallow: /index_unit_test.php
+
+# Bloqueio de Endpoints de API e Webhooks
+Disallow: /api/
+Disallow: /api/*
+
+# Bloqueio de Áreas Privadas do Cliente (Evitar indexação de dados pessoais e carrinho)
+Disallow: /account
+Disallow: /account/
+Disallow: /*/account
+Disallow: /*/account/
+Disallow: /carrinho
+Disallow: /*/carrinho
+Disallow: /checkout
+Disallow: /*/checkout
+Disallow: /login
+Disallow: /*/login
+Disallow: /cadastro
+Disallow: /*/cadastro
+Disallow: /logout
+Disallow: /*/logout
+Disallow: /recuperar-senha
+Disallow: /*/recuperar-senha
+Disallow: /resetar-senha
+Disallow: /*/resetar-senha
+
+# Bloqueio de Parâmetros de Busca Dinâmica Interna (Evita duplicação de conteúdo)
+Disallow: /busca?*
+Disallow: /*/busca?*
+
+# Referência aos Arquivos Canônicos e Metadados
+Sitemap: https://www.agsonhos.com.br/sitemap.xml

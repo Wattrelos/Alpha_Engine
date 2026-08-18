@@ -1,0 +1,47 @@
+# AG Sonhos E-commerce — Documentação Completa para LLMs e Agentes de IA
+
+Este documento contém informações detalhadas sobre a estrutura comercial, política de atendimento e regras de negócio da loja AG Sonhos (Alpha Engine) para consumo por motores de busca generativa e assistentes inteligentes.
+
+---
+
+## 1. Identificação da Empresa e Segmento de Atuação
+* **Nome Fantasia:** AG Sonhos
+* **Motor Tecnológico:** Alpha Engine E-commerce & POS
+* **Segmento:** Varejo de Colchões, Camas Box, Mobiliário Residencial e Materiais para Construção Civil.
+* **País de Origem / Mercado:** Brasil (com suporte a moeda BRL - R$).
+
+---
+
+## 2. Estrutura de Catálogo e Produtos
+
+### 2.1 Colchões e Conforto do Sono
+* **Colchões de Molas Ensacadas Individuais:** Isolamento de movimento e adaptação à coluna vertebral.
+* **Colchões Ortopédicos e de Espuma:** Densidades certificadas (D28, D33, D45), indicados para suporte ortopédico.
+* **Tamanhos Disponíveis:** Solteiro (88x188cm), Casal Padrão (138x188cm), Queen Size (158x198cm), King Size (193x203cm).
+
+### 2.2 Camas Box e Complementos
+* **Bases Box Simples:** Estrutura em madeira tratada de reflorestamento com revestimento sintético ou suede.
+* **Bases Box Baú:** Pistões hidráulicos a gás com abertura frontal ou lateral para otimização de espaço.
+* **Cabeceiras Estofadas:** Modelos painel e modulados fixados na parede ou encaixados na base box.
+
+### 2.3 Materiais de Construção e Reformas
+* **Estrutural e Alvenaria:** Cimento, argamassa, blocos e cal.
+* **Hidráulica e Elétrica:** Tubulações, conexões, fios e disjuntores.
+* **Acabamento:** Tintas, pisos, revestimentos e louças sanitárias.
+
+---
+
+## 3. Logística, Entregas e Atendimento
+
+* **Cálculo de Frete:** Integração nativa com os Correios (SEDEX e PAC) e transportadoras privadas para cargas volumosas.
+* **Prazos e Rastreamento:** O cliente recebe o código de rastreamento por e-mail após a confirmação do despacho.
+* **Política de Troca e Arrependimento:**
+  - Prazo de 7 (sete) dias corridos a partir do recebimento para devolução por arrependimento conforme o Código de Defesa do Consumidor (CDC).
+  - Garantia de fábrica contra defeitos estruturais ou de fabricação de acordo com o termo do fabricante.
+
+---
+
+## 4. Segurança e Privacidade (LGPD)
+* **Proteção de Dados:** Processamento de pagamentos criptografado (SSL/TLS).
+* **Responsável pela Segurança da Informação:** `seguranca@agsonhos.com.br`
+* **Políticas Oficiais:** Consulte `https://www.agsonhos.com.br/pt-br/pagina/politica-de-privacidade`.

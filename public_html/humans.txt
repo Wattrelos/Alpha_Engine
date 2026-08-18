@@ -1,0 +1,18 @@
+/* TEAM */
+  Arquiteto de Software & Líder de Desenvolvimento: Josias da Conceição Sobrinho
+  Engenheiro de Software & UI/UX: Gabriel Calidônio André
+  Colaborador / Testes: Wallace Francis Miranda
+  Localização: São Paulo, Brasil
+
+/* THANKS */
+  FATEC Ferraz de Vasconcelos (ADS)
+  Comunidade PHP-FIG (PSR-4, PSR-7, PSR-11, PSR-15)
+  Comunidade Slim Framework & Twig
+
+/* SITE */
+  Nome: AG Sonhos (Alpha Engine)
+  Linguagens: PHP 8.2+, JavaScript (ES6+), SCSS / CSS3, HTML5
+  Frameworks & Bibliotecas: Slim Framework 4, Twig Template Engine, PHP-DI
+  Banco de Dados & Cache: MySQL 8, Redis
+  Padrões de Projeto: Gang of Four (GoF), Single Action Controllers (ADR)
+  Data de Lançamento: 2026
