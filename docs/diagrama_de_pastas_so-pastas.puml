@@ -176,17 +176,33 @@
 │   │                   ├── main/                 # 🖥️ Main
 │   │                   └── product/              # 🖥️ Produtos
 │   └── scripts/                                # 📂 Scripts
-├── tests/                                      # 🧪 Testes Unitários, de Integração e Scripts de Validação
-│   ├── test_mensageria_rebbit/                 # 📂 Testes de mensageria assíncrona (RabbitMQ)
-│   ├── Validation/                             # 📂 Validações PHPUnit
-│   └── scripts_uteis/                          # 📂 Scripts úteis
-│       └── Pyton/                              # 📂 Python
-└── public_html/                                # 🌐 Webroot (Document Root exposto e servido para a Internet)
-    ├── cache/                                  # 🗂️ Cache
-    ├── css/                                    # 🎨 Folhas de estilo (Estilos centralizados)    
-    ├── fonts/                                  # 🔤 Tipografia e Ícones Locais
-    ├── image/                                  # 🖼️ Imagens    
-    └── js/                                     # ⚡ Scripts Vanilla JS e integrações de formulário (AJAX)
-    └── LPDHED2dC7Gjrg2b/                       # 🛡️ Root público do painel administrativa (ofuscado p/ segurança)
+│
+├── public_html/                                # 🌐 Webroot (Document Root exposto e servido para a Internet)
+│   ├── cache/                                  # 🗂️ Cache
+│   ├── css/                                    # 🎨 Folhas de estilo (Estilos centralizados)    
+│   ├── fonts/                                  # 🔤 Tipografia e Ícones Locais
+│   ├── image/                                  # 🖼️ Imagens    
+│   └── js/                                     # ⚡ Scripts Vanilla JS e integrações de formulário (AJAX)
+│   └── LPDHED2dC7Gjrg2b/                       # 🛡️ Root público do painel administrativa (ofuscado p/ segurança)
+│
+│   # Pastas de testes que não irão para produção   
+├── features/                                   # 📂 Funcionalidades testes de software
+│   ├── api/                                    # 🖥️ Testes de API
+│   ├── auth/                                   # 👤 Testes de Autenticação
+│   ├── architecture/                           # 📁 Testes de Arquitetura
+│   ├── bootstrap/                              # 📁 Testes de Bootstrap
+│   ├── cart/                                   # 📦 Testes de Carrinho
+│   ├── checkout/                               # 🛒 Testes de Checkout
+│   ├── frontend/                               # 🖥️ Testes de Frontend
+│   ├── backend/                                # 🖥️ Testes de Backend
+│   ├── security/                               # 🔐 Testes de Segurança
+│   └── use_cases/                              # 📦 Testes de casos de uso
+│
+└── tests/                                      # 🧪 Testes Unitários, de Integração e Scripts de Validação
+    ├── test_mensageria_rebbit/                 # 📂 Testes de mensageria assíncrona (RabbitMQ)
+    ├── Validation/                             # 📂 Validações PHPUnit
+    └── scripts_uteis/                          # 📂 Scripts úteis
+        └── Pyton/                              # 📂 Python
+
 
 @endfiles
