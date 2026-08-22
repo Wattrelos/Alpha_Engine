@@ -8,6 +8,10 @@
 
 ## 1. Protocolo de Integração & Fluxo de Execução
 
+-0. **Pré-requisitos e Diagnóstico de Ambiente**:
+   - Antes da instalação, o ambiente pode ser validado via terminal com `./scripts/check_requirements.sh`.
+   - A matriz completa de requisitos de sistema, extensões e permissões está documentada em [requirements.md](file:///var/www/html/agsonhos/docs/instalation/requirements.md).
+
 0. **Verificação de Autoload (`vendor/autoload.php`)**:
    - Antes do boot, o `index.php` verifica se a pasta `vendor/` existe. Caso esteja ausente (ex: novo clone por alunos/devs sem rodar o Composer), tenta disparar `exec('composer install')` automaticamente.
    - Caso o servidor web restrinja `exec()`, exibe uma tela amigável nativa em HTML puro orientando a execução de `composer install` no terminal.

@@ -31,7 +31,7 @@ end box
 
 box "3. Presentation" #FBEEE6
     participant "TwigEnvironment" as Twig
-    participant "Twig Templates" as Views
+    participant "Twig Templates" as Views 
 end box
 
 ' --- INÍCIO DO FLUXO ---
