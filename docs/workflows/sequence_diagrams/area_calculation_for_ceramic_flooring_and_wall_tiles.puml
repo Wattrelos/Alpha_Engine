@@ -1,0 +1,65 @@
+@startuml Area Calculation for Ceramic Flooring and Wall Tiles
+!theme plain
+skinparam responseMessageBelowArrow true
+skinparam sequenceMessageAlign center
+skinparam roundcorner 8
+skinparam BoxPadding 10
+
+actor "Cliente / Usuário" as User
+participant "Página do Produto\n(PDP / show.html.twig)" as PDP
+participant "Modal da Calculadora\n(materials-calculator.twig)" as Modal
+participant "Motor de Cálculo JS\n(materials-calculator.js)" as Engine
+participant "Controlador de Carrinho\n(AddCartAction.php)" as CartController
+participant "Repositório do Carrinho\n(CartRepository.php)" as CartRepo
+
+== Abertura da Calculadora na PDP ==
+User -> PDP: Clica em "Calcular quantidade de caixas" (fa-calculator)
+PDP -> Modal: Abre modal interativo de cálculo (Revestimento Parede / Piso)
+Modal --> User: Exibe campos de dimensões, vãos e rendimento (m²/caixa)
+
+== Entrada de Parâmetros e Cálculo em Tempo Real ==
+alt Cálculo de Revestimento de Parede (RF026, RF027, RF029, RF030)
+    User -> Modal: Seleciona tipo "Parede"
+    User -> Modal: Informa comprimento, largura e pé-direito (m)
+    opt Dedução de Vãos / Aberturas (RF027)
+        User -> Modal: Informa dimensões de portas (L x A x Qtd) e janelas (L x A x Qtd)
+    end
+    User -> Modal: Define margem de perda (padrão 10%) e rendimento por caixa (m²/cx)
+    Modal -> Engine: Dispara evento de cálculo (input real-time)
+    Engine -> Engine: Área Bruta = 2*(Comprimento*PéDireito) + 2*(Largura*PéDireito)
+    Engine -> Engine: Deduções = Soma(Área Portas) + Soma(Área Janelas)
+    Engine -> Engine: Área Líquida = Área Bruta - Deduções
+    Engine -> Engine: Área Total = Área Líquida * (1 + Margem Perda)
+    Engine -> Engine: Caixas = CEIL(Área Total / Rendimento Caixa)
+    Engine --> Modal: Atualiza resumo de m² e total de caixas em tempo real
+else Cálculo de Revestimento de Piso (RF028, RF029, RF030)
+    User -> Modal: Seleciona tipo "Piso"
+    User -> Modal: Informa comprimento e largura (m)
+    User -> Modal: Define margem de perda (padrão 10%) e rendimento por caixa (m²/cx)
+    Modal -> Engine: Dispara evento de cálculo (input real-time)
+    Engine -> Engine: Área Bruta = Comprimento * Largura
+    Engine -> Engine: Área Total = Área Bruta * (1 + Margem Perda)
+    Engine -> Engine: Caixas = CEIL(Área Total / Rendimento Caixa)
+    Engine --> Modal: Atualiza resumo de m² e total de caixas em tempo real
+end
+
+== Exibição de Disclaimer e Aplicação ao Pedido ==
+Modal --> User: Exibe resumo detalhado e Aviso Legal / Disclaimer (RF032)
+alt Opção 1: Aplicar Quantidade na PDP (RF031)
+    User -> Modal: Clica em "Aplicar Quantidade"
+    Modal -> PDP: Atualiza campo input-quantity com o número de caixas calculadas
+    Modal -> Modal: Fecha modal com feedback visual
+    User -> PDP: Clica em "Adicionar ao Carrinho"
+    PDP -> CartController: POST /carrinho/adicionar (product_id, quantity)
+    CartController -> CartRepo: add(product_id, quantity)
+    CartController --> PDP: Redireciona / Retorna status de sucesso
+else Opção 2: Adicionar Direto ao Carrinho
+    User -> Modal: Clica em "Adicionar e Ir para o Carrinho"
+    Modal -> PDP: Preenche input-quantity com caixas
+    Modal -> PDP: Submete formulário de compra (form-product-purchase)
+    PDP -> CartController: POST /carrinho/adicionar (product_id, quantity)
+    CartController -> CartRepo: add(product_id, quantity)
+    CartController --> PDP: Redireciona para página do carrinho
+end
+
+@enduml

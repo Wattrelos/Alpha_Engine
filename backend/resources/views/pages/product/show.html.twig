@@ -2,6 +2,10 @@
 
 {% block title %}{{ seo.title }}{% endblock %}
 
+{% block stylesheets %}
+    <link rel="stylesheet" href="/css/custom/materials-calculator.css">
+{% endblock %}
+
 {% block content %}
 <div class="egen-product-page">
     <!-- Breadcrumbs -->
@@ -186,6 +190,12 @@
                         </a>
                     </div>
                 </div>
+                <!-- Calculadora de Materiais (Pisos e Revestimentos) -->
+                <div class="egen-calculator-trigger-wrapper">
+                    <button type="button" id="btn-open-calculator" class="egen-btn-calculator">
+                        <i class="fa-solid fa-calculator"></i> Calcular Quantidade de Caixas (m²)
+                    </button>
+                </div>
             </form>
 
             <!-- Simulador de Frete -->
@@ -258,6 +268,9 @@
         </div>
     </div>
 </div>
+
+<!-- Modal da Calculadora de Materiais -->
+{% include 'components/molecules/materials-calculator.twig' %}
 
 <script>
 document.addEventListener('DOMContentLoaded', function() {
@@ -337,4 +350,5 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 </script>
 <script src="/js/custom/shipping-simulator.js"></script>
+<script src="/js/custom/materials-calculator.js"></script>
 {% endblock %}

@@ -1,0 +1,188 @@
+<!-- Modal da Calculadora de Materiais de Construção (Pisos e Revestimentos) -->
+<div id="calc-modal" class="calc-modal-backdrop" aria-hidden="true" role="dialog">
+    <div class="calc-modal-container">
+        <!-- Cabeçalho -->
+        <div class="calc-modal-header">
+            <h3 class="calc-modal-title">
+                <i class="fa-solid fa-calculator"></i> Calculadora de Pisos e Revestimentos
+            </h3>
+            <button type="button" id="calc-btn-close" class="calc-modal-close" aria-label="Fechar Calculadora">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+        </div>
+
+        <!-- Corpo do Modal -->
+        <div class="calc-modal-body">
+            <!-- Seletor de Tipo de Aplicação -->
+            <div class="calc-type-selector">
+                <button type="button" id="calc-tab-wall" class="calc-type-btn active">
+                    <i class="fa-solid fa-border-all"></i> Revestimento de Parede
+                </button>
+                <button type="button" id="calc-tab-floor" class="calc-type-btn">
+                    <i class="fa-solid fa-layer-group"></i> Piso / Pavimento
+                </button>
+            </div>
+
+            <!-- Dimensões do Ambiente -->
+            <div class="calc-section">
+                <h4 class="calc-section-title">
+                    <span><i class="fa-solid fa-ruler-combined text-primary me-2"></i> Dimensões do Cômodo</span>
+                </h4>
+                <div class="calc-grid-3">
+                    <div class="calc-form-group">
+                        <label for="calc-input-length" class="calc-label">Comprimento</label>
+                        <div class="calc-input-wrapper">
+                            <input type="number" id="calc-input-length" step="0.01" min="0" value="4.00" class="calc-input">
+                            <span class="calc-input-suffix">m</span>
+                        </div>
+                    </div>
+                    <div class="calc-form-group">
+                        <label for="calc-input-width" class="calc-label">Largura</label>
+                        <div class="calc-input-wrapper">
+                            <input type="number" id="calc-input-width" step="0.01" min="0" value="3.00" class="calc-input">
+                            <span class="calc-input-suffix">m</span>
+                        </div>
+                    </div>
+                    <div class="calc-form-group" id="calc-group-height">
+                        <label for="calc-input-height" class="calc-label">Pé-direito (Altura)</label>
+                        <div class="calc-input-wrapper">
+                            <input type="number" id="calc-input-height" step="0.01" min="0" value="2.80" class="calc-input">
+                            <span class="calc-input-suffix">m</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Vãos e Aberturas (Apenas Paredes) -->
+            <div class="calc-section" id="calc-section-openings">
+                <div class="calc-section-title">
+                    <span><i class="fa-solid fa-door-open text-primary me-2"></i> Dedução de Vãos e Aberturas</span>
+                    <button type="button" id="calc-btn-add-opening" class="calc-btn-add-opening">
+                        <i class="fa-solid fa-plus"></i> Adicionar Vão
+                    </button>
+                </div>
+                <div class="calc-openings-list" id="calc-openings-list">
+                    <div class="calc-opening-row">
+                        <select class="calc-input calc-opening-type" style="padding-right: 8px;">
+                            <option value="porta" selected>Porta</option>
+                            <option value="janela">Janela</option>
+                            <option value="outro">Outro Vão</option>
+                        </select>
+                        <div class="calc-input-wrapper">
+                            <input type="number" step="0.01" min="0" value="0.80" placeholder="Larg." class="calc-input calc-op-w">
+                            <span class="calc-input-suffix">m</span>
+                        </div>
+                        <div class="calc-input-wrapper">
+                            <input type="number" step="0.01" min="0" value="2.10" placeholder="Alt." class="calc-input calc-op-h">
+                            <span class="calc-input-suffix">m</span>
+                        </div>
+                        <div class="calc-input-wrapper">
+                            <input type="number" step="1" min="0" value="0" placeholder="Qtd" class="calc-input calc-op-qty">
+                            <span class="calc-input-suffix">un</span>
+                        </div>
+                        <button type="button" class="calc-btn-remove-row" title="Remover vão">
+                            <i class="fa-solid fa-trash-can"></i>
+                        </button>
+                    </div>
+                    <div class="calc-opening-row">
+                        <select class="calc-input calc-opening-type" style="padding-right: 8px;">
+                            <option value="janela" selected>Janela</option>
+                            <option value="porta">Porta</option>
+                            <option value="outro">Outro Vão</option>
+                        </select>
+                        <div class="calc-input-wrapper">
+                            <input type="number" step="0.01" min="0" value="1.20" placeholder="Larg." class="calc-input calc-op-w">
+                            <span class="calc-input-suffix">m</span>
+                        </div>
+                        <div class="calc-input-wrapper">
+                            <input type="number" step="0.01" min="0" value="1.00" placeholder="Alt." class="calc-input calc-op-h">
+                            <span class="calc-input-suffix">m</span>
+                        </div>
+                        <div class="calc-input-wrapper">
+                            <input type="number" step="1" min="0" value="0" placeholder="Qtd" class="calc-input calc-op-qty">
+                            <span class="calc-input-suffix">un</span>
+                        </div>
+                        <button type="button" class="calc-btn-remove-row" title="Remover vão">
+                            <i class="fa-solid fa-trash-can"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Dados Comerciais do Produto e Perda -->
+            <div class="calc-section">
+                <h4 class="calc-section-title">
+                    <span><i class="fa-solid fa-box text-primary me-2"></i> Rendimento e Margem de Perda</span>
+                </h4>
+                <div class="calc-grid-2">
+                    <div class="calc-form-group">
+                        <label for="calc-input-yield" class="calc-label">Rendimento por Caixa (m²/cx)</label>
+                        <div class="calc-input-wrapper">
+                            <input type="number" id="calc-input-yield" step="0.01" min="0.01" value="2.00" class="calc-input">
+                            <span class="calc-input-suffix">m²</span>
+                        </div>
+                    </div>
+                    <div class="calc-form-group">
+                        <label for="calc-input-waste" class="calc-label">Margem de Perda / Recortes (%)</label>
+                        <div class="calc-input-wrapper">
+                            <input type="number" id="calc-input-waste" step="1" min="0" max="100" value="10" class="calc-input">
+                            <span class="calc-input-suffix">%</span>
+                        </div>
+                        <div class="calc-loss-chips">
+                            <button type="button" class="calc-loss-chip active" data-percent="10">Padrão (10%)</button>
+                            <button type="button" class="calc-loss-chip" data-percent="15">Diagonal (15%)</button>
+                            <button type="button" class="calc-loss-chip" data-percent="20">Complexo (20%)</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Resumo e Resultado do Cálculo -->
+            <div class="calc-results-card">
+                <div class="calc-metrics-grid">
+                    <div class="calc-metric-item">
+                        <div class="calc-metric-label" id="calc-label-gross">Área Parede</div>
+                        <div class="calc-metric-value" id="calc-out-gross">0.00 m²</div>
+                    </div>
+                    <div class="calc-metric-item">
+                        <div class="calc-metric-label">Deduções</div>
+                        <div class="calc-metric-value text-danger" id="calc-out-deductions">0.00 m²</div>
+                    </div>
+                    <div class="calc-metric-item">
+                        <div class="calc-metric-label">Área Líquida</div>
+                        <div class="calc-metric-value" id="calc-out-net">0.00 m²</div>
+                    </div>
+                    <div class="calc-metric-item">
+                        <div class="calc-metric-label">Total c/ Perda</div>
+                        <div class="calc-metric-value text-warning" id="calc-out-total">0.00 m²</div>
+                    </div>
+                </div>
+
+                <div class="calc-hero-result">
+                    <div class="calc-hero-text">
+                        <span class="calc-hero-title">Quantidade Recomendada para Compra:</span>
+                        <span class="calc-hero-subtitle">Baseado no rendimento por caixa com arredondamento automático para cima.</span>
+                    </div>
+                    <div class="calc-hero-badge">
+                        <span class="calc-hero-number" id="calc-out-boxes">0</span>
+                        <span class="calc-hero-unit">Caixas</span>
+                    </div>
+                </div>
+
+                <!-- Alerta e Disclaimer Técnico (RF032) -->
+                <div class="calc-disclaimer-alert">
+                    <i class="fa-solid fa-triangle-exclamation"></i>
+                    <span><strong>Aviso Legal:</strong> A calculadora é apenas para estimativa. É indispensável validar a quantidade final de caixas e recortes com um profissional de sua confiança antes da instalação.</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Rodapé do Modal com Ações -->
+        <div class="calc-modal-footer">
+            <button type="button" id="calc-btn-cancel" class="calc-btn-cancel">Cancelar</button>
+            <button type="button" id="calc-btn-apply" class="calc-btn-apply">
+                <i class="fa-solid fa-check"></i> Aplicar Quantidade ao Pedido
+            </button>
+        </div>
+    </div>
+</div>
