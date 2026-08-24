@@ -10,25 +10,49 @@ namespace Alpha\Support;
  */
 class Customer
 {
+    private ?\stdClass $user = null;
+    private bool $checked = false;
+
+    public function setUser(\stdClass|array|null $user): void
+    {
+        if (is_array($user)) {
+            $this->user = (object)$user;
+        } elseif ($user instanceof \stdClass) {
+            $this->user = $user;
+        } else {
+            $this->user = null;
+        }
+        $this->checked = true;
+    }
+
+    public function clearUser(): void
+    {
+        $this->user = null;
+        $this->checked = false;
+    }
+
     /**
      * Parseia e retorna os dados do usuário logado como objeto stdClass.
      * Retorna null se não houver sessão válida.
      */
     private function getLoggedUser(): ?\stdClass
     {
+        if ($this->user !== null && !empty($this->user->id)) {
+            return $this->user;
+        }
+
+        if ($this->checked) {
+            return $this->user;
+        }
+
+        // 1. Verifica dados na sessão nativa do PHP se já iniciada
         if (!empty($_SESSION['logged_user'])) {
             $val = $_SESSION['logged_user'];
-            if (is_string($val)) {
-                $user = json_decode($val);
-            } elseif (is_array($val)) {
-                $user = (object)$val;
-            } elseif ($val instanceof \stdClass) {
-                $user = $val;
-            } else {
-                $user = null;
-            }
+            $user = is_string($val) ? json_decode($val) : (is_array($val) ? (object)$val : ($val instanceof \stdClass ? $val : null));
             if ($user instanceof \stdClass && !empty($user->id)) {
-                return $user;
+                $this->user = $user;
+                $this->checked = true;
+                return $this->user;
             }
         }
 
@@ -39,9 +63,88 @@ class Customer
             $user->name = trim(($_SESSION['customer_firstname'] ?? '') . ' ' . ($_SESSION['customer_lastname'] ?? ''));
             $user->email = (string)($_SESSION['customer_email'] ?? '');
             $user->telephone = (string)($_SESSION['customer_telephone'] ?? '');
-            return $user;
+            $this->user = $user;
+            $this->checked = true;
+            return $this->user;
         }
 
+        // 2. Se não estiver em $_SESSION, verifica via Redis usando o cookie session_id
+        $sessionId = $_COOKIE['session_id'] ?? '';
+        if (!empty($sessionId)) {
+            $redisHost = $_ENV['REDIS_HOST'] ?? '';
+            $redisEnabled = filter_var($_ENV['REDIS_ENABLED'] ?? true, FILTER_VALIDATE_BOOLEAN);
+
+            if ($redisEnabled && !empty($redisHost)) {
+                try {
+                    $redis = new \Predis\Client([
+                        'host' => $redisHost,
+                        'port' => $_ENV['REDIS_PORT'] ?? 6379,
+                        'password' => ($_ENV['REDIS_PASSWORD'] ?? '') ?: null,
+                        'timeout' => 0.5
+                    ]);
+                    $redis->connect();
+                    $sessionData = $redis->get("sessao:" . $sessionId);
+                    if ($sessionData) {
+                        $parsed = json_decode((string)$sessionData);
+                        if ($parsed instanceof \stdClass && !empty($parsed->id)) {
+                            $this->user = $parsed;
+                            $this->checked = true;
+
+                            // Sincroniza $_SESSION para compatibilidade máxima
+                            if (session_status() === PHP_SESSION_ACTIVE || (session_status() === PHP_SESSION_NONE && !headers_sent())) {
+                                if (session_status() === PHP_SESSION_NONE) {
+                                    session_name('session_id');
+                                    session_id($sessionId);
+                                    @session_start();
+                                }
+                                $_SESSION['logged_user'] = $sessionData;
+                                $_SESSION['customer_id'] = $parsed->id;
+                                $_SESSION['customer_group_id'] = $parsed->customer_group_id ?? 1;
+                                $_SESSION['customer_firstname'] = explode(' ', trim($parsed->name ?? ''))[0] ?? '';
+                                $_SESSION['customer_lastname'] = explode(' ', trim($parsed->name ?? ''), 2)[1] ?? '';
+                                $_SESSION['customer_email'] = $parsed->email ?? '';
+                                $_SESSION['customer_telephone'] = $parsed->telephone ?? '';
+                            }
+
+                            return $this->user;
+                        }
+                    }
+                } catch (\Throwable $e) {
+                    // Fallback para sessão local PHP
+                }
+            }
+
+            // Fallback: tenta iniciar sessão PHP local se não iniciada
+            if (session_status() === PHP_SESSION_NONE && !headers_sent()) {
+                session_name('session_id');
+                session_id($sessionId);
+                @session_start();
+            }
+
+            if (!empty($_SESSION['logged_user'])) {
+                $val = $_SESSION['logged_user'];
+                $user = is_string($val) ? json_decode($val) : (is_array($val) ? (object)$val : ($val instanceof \stdClass ? $val : null));
+                if ($user instanceof \stdClass && !empty($user->id)) {
+                    $this->user = $user;
+                    $this->checked = true;
+                    return $this->user;
+                }
+            }
+
+            if (!empty($_SESSION['customer_id'])) {
+                $user = new \stdClass();
+                $user->id = (int)$_SESSION['customer_id'];
+                $user->customer_group_id = (int)($_SESSION['customer_group_id'] ?? 1);
+                $user->name = trim(($_SESSION['customer_firstname'] ?? '') . ' ' . ($_SESSION['customer_lastname'] ?? ''));
+                $user->email = (string)($_SESSION['customer_email'] ?? '');
+                $user->telephone = (string)($_SESSION['customer_telephone'] ?? '');
+                $this->user = $user;
+                $this->checked = true;
+                return $this->user;
+            }
+        }
+
+        $this->checked = true;
         return null;
     }
 

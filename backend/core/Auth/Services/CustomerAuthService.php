@@ -71,9 +71,11 @@ class CustomerAuthService extends AbstractAuthService
         // Sincroniza chaves legadas flat em $_SESSION para máxima compatibilidade
         if (session_status() === PHP_SESSION_NONE && !headers_sent()) {
             session_name($this->cookieName);
+            session_id($sessionId);
             @session_start();
         }
         
+        $_SESSION['logged_user'] = json_encode($userData);
         $_SESSION['customer_id'] = $userData['id'];
         $_SESSION['customer_group_id'] = $userData['customer_group_id'] ?? 1;
         $_SESSION['customer_firstname'] = explode(' ', trim($userData['name']))[0] ?? '';
@@ -99,6 +101,7 @@ class CustomerAuthService extends AbstractAuthService
             @session_start();
         }
 
+        unset($_SESSION['logged_user']);
         unset($_SESSION['customer_id']);
         unset($_SESSION['customer_group_id']);
         unset($_SESSION['customer_firstname']);

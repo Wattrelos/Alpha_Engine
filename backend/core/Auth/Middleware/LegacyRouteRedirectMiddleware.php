@@ -52,6 +52,43 @@ class LegacyRouteRedirectMiddleware
                     $redirectUrl = "/{$lang}/logout";
                     break;
 
+                case 'account/account':
+                    $redirectUrl = "/{$lang}/account";
+                    break;
+
+                case 'account/edit':
+                    $redirectUrl = "/{$lang}/account/edit";
+                    break;
+
+                case 'account/password':
+                    $redirectUrl = "/{$lang}/account/resetar-senha";
+                    break;
+
+                case 'account/address':
+                    $redirectUrl = "/{$lang}/account/addresses";
+                    break;
+
+                case 'account/wishlist':
+                    $redirectUrl = "/{$lang}/account/wishlist";
+                    break;
+
+                case 'account/order':
+                case 'account/orders':
+                    $redirectUrl = "/{$lang}/account/orders";
+                    break;
+
+                case 'account/transaction':
+                    $redirectUrl = "/{$lang}/account/transaction";
+                    break;
+
+                case 'account/return':
+                    $redirectUrl = "/{$lang}/account/return";
+                    break;
+
+                case 'account/newsletter':
+                    $redirectUrl = "/{$lang}/account/newsletter";
+                    break;
+
                 case 'checkout/cart':
                     $redirectUrl = "/{$lang}/carrinho";
                     break;

@@ -135,6 +135,32 @@ class LanguageMiddleware
                 $redis->connect();
                 $sessionData = $redis->get("sessao:" . $sessionId);
                 if ($sessionData) {
+                    $user = json_decode((string)$sessionData);
+                    if ($user instanceof \stdClass && !empty($user->id)) {
+                        // Atualiza o Customer helper no container
+                        if ($this->container->has('customer')) {
+                            $customerHelper = $this->container->get('customer');
+                            if ($customerHelper instanceof \Alpha\Support\Customer) {
+                                $customerHelper->setUser($user);
+                            }
+                        }
+
+                        // Sincroniza $_SESSION para compatibilidade máxima
+                        if (session_status() === PHP_SESSION_ACTIVE || (session_status() === PHP_SESSION_NONE && !headers_sent())) {
+                            if (session_status() === PHP_SESSION_NONE) {
+                                session_name('session_id');
+                                session_id($sessionId);
+                                @session_start();
+                            }
+                            $_SESSION['logged_user'] = (string)$sessionData;
+                            $_SESSION['customer_id'] = $user->id;
+                            $_SESSION['customer_group_id'] = $user->customer_group_id ?? 1;
+                            $_SESSION['customer_firstname'] = explode(' ', trim($user->name ?? ''))[0] ?? '';
+                            $_SESSION['customer_lastname'] = explode(' ', trim($user->name ?? ''), 2)[1] ?? '';
+                            $_SESSION['customer_email'] = $user->email ?? '';
+                            $_SESSION['customer_telephone'] = $user->telephone ?? '';
+                        }
+                    }
                     return true;
                 }
             } catch (\Exception $e) {
@@ -143,13 +169,23 @@ class LanguageMiddleware
         }
 
         // Fallback para sessão local PHP
-        if (session_status() === PHP_SESSION_NONE) {
+        if (session_status() === PHP_SESSION_NONE && !headers_sent()) {
             session_name('session_id');
             session_id($sessionId);
             @session_start();
         }
         $expire = $_SESSION['expire'] ?? $_SESSION['logged_user_expire'] ?? 0;
         if ($expire > time() && !empty($_SESSION['logged_user'])) {
+            $val = $_SESSION['logged_user'];
+            $user = is_string($val) ? json_decode($val) : (is_array($val) ? (object)$val : ($val instanceof \stdClass ? $val : null));
+            if ($user instanceof \stdClass && !empty($user->id)) {
+                if ($this->container->has('customer')) {
+                    $customerHelper = $this->container->get('customer');
+                    if ($customerHelper instanceof \Alpha\Support\Customer) {
+                        $customerHelper->setUser($user);
+                    }
+                }
+            }
             return true;
         }
 

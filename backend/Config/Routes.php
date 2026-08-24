@@ -175,20 +175,29 @@ return function (\Slim\App $app) {
     $app->group('/account', function ($account) {
         $account->get('', RedirectToDefaultLanguageAction::class);
         $account->get('/orders', RedirectToDefaultLanguageAction::class);
+        $account->get('/order', RedirectToDefaultLanguageAction::class);
         $account->get('/order/history/{order_id}', RedirectToDefaultLanguageAction::class);
         $account->get('/addresses', RedirectToDefaultLanguageAction::class);
+        $account->get('/address', RedirectToDefaultLanguageAction::class);
         $account->get('/address/create', RedirectToDefaultLanguageAction::class);
         $account->get('/address/{address_id:[0-9]+}/edit', RedirectToDefaultLanguageAction::class);
         $account->get('/address/{address_id:[0-9]+}/delete', RedirectToDefaultLanguageAction::class);
         $account->get('/return', RedirectToDefaultLanguageAction::class);
         $account->get('/wishlist', RedirectToDefaultLanguageAction::class);
         $account->get('/edit', RedirectToDefaultLanguageAction::class);
+        $account->get('/password', RedirectToDefaultLanguageAction::class);
         $account->map(['GET', 'POST'], '/resetar-senha', RedirectToDefaultLanguageAction::class);
         $account->get('/transaction', RedirectToDefaultLanguageAction::class);
+        $account->get('/transactions', RedirectToDefaultLanguageAction::class);
     });
 
     // ─────────────────────────────────────────────────────────
-    // 2. APIs INTERNAS DA APLICAÇÃO
+    // 2. ROTA DE REDIMENSIONAMENTO E CACHE DINÂMICO DE IMAGENS
+    // ─────────────────────────────────────────────────────────
+    $app->get('/image/cache/{path:.+}', \Alpha\Controller\Actions\Common\ImageCacheAction::class);
+
+    // ─────────────────────────────────────────────────────────
+    // 3. APIs INTERNAS DA APLICAÇÃO
     // ─────────────────────────────────────────────────────────
     $app->group('/api', function (RouteCollectorProxy $api) {
         $api->post('/carrinho/dados', CalculateVisitorCartAction::class);
@@ -216,9 +225,12 @@ return function (\Slim\App $app) {
 
 
     // ─────────────────────────────────────────────────────────
-    // 3. GRUPO DE ROTAS INTERNACIONALIZADAS
+    // 4. GRUPO DE ROTAS INTERNACIONALIZADAS
     // ─────────────────────────────────────────────────────────
-    $app->group('/{lang:pt-br|en|es}', function (RouteCollectorProxy $group) use ($authRateLimiter) {
+    $app->group('/{lang:pt-br|en|es}', function (RouteCollectorProxy $group) use ($authRateLimiter, $app) {
+
+        // Cache dinâmico de imagens acessado com prefixo de idioma
+        $group->get('/image/cache/{path:.+}', \Alpha\Controller\Actions\Common\ImageCacheAction::class);
 
         // Página Inicial do Idioma
         $group->get('', HomeAction::class)->setName('home');
@@ -271,12 +283,30 @@ return function (\Slim\App $app) {
             $account->post('/address/{address_id:[0-9]+}/edit',  EditAddressAction::class);
             $account->get('/address/{address_id:[0-9]+}/delete', DeleteAddressAction::class)->setName('account.address.delete');
 
+            // ── Aliases de Compatibilidade ──────────────────────────────────
+            $account->get('/address', function ($request, $response) {
+                $lang = $request->getAttribute('lang', 'pt-br');
+                return $response->withHeader('Location', '/' . $lang . '/account/addresses')->withStatus(301);
+            });
+            $account->get('/password', function ($request, $response) {
+                $lang = $request->getAttribute('lang', 'pt-br');
+                return $response->withHeader('Location', '/' . $lang . '/account/resetar-senha')->withStatus(301);
+            });
+            $account->get('/order', function ($request, $response) {
+                $lang = $request->getAttribute('lang', 'pt-br');
+                return $response->withHeader('Location', '/' . $lang . '/account/orders')->withStatus(301);
+            });
+            $account->get('/transactions', function ($request, $response) {
+                $lang = $request->getAttribute('lang', 'pt-br');
+                return $response->withHeader('Location', '/' . $lang . '/account/transaction')->withStatus(301);
+            });
+
             // ── Cotações e Projetos do Cliente (RFQ / BoQ) ─────────────────────
             $account->get('/projetos', \Alpha\Controller\Actions\Quotation\Customer\ListCustomerProjectsAction::class)->setName('account.projects');
             $account->get('/projetos/{rfq_id:[0-9]+}/propostas', \Alpha\Controller\Actions\Quotation\Customer\ShowBidComparisonAction::class)->setName('account.projects.bids');
             $account->get('/projetos/{rfq_id:[0-9]+}/propostas/{bid_id:[0-9]+}/aceitar', \Alpha\Controller\Actions\Quotation\Customer\AcceptBidAction::class)->setName('account.projects.bids.accept');
             $account->map(['GET', 'POST'], '/projetos/{rfq_id:[0-9]+}/boq', \Alpha\Controller\Actions\Quotation\Customer\ApproveBoqAndAddToCartAction::class)->setName('account.projects.boq');
-        })->add(new SessionMiddleware());
+        })->add(new SessionMiddleware($group->getContainer()));
 
         // Criação de Projetos e Solicitação de Orçamento (RFQ)
         $group->map(['GET', 'POST'], '/projetos/novo', \Alpha\Controller\Actions\Quotation\Customer\CreateProjectRfqAction::class)->setName('projects.create');

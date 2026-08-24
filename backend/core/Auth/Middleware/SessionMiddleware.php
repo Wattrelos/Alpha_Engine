@@ -7,13 +7,17 @@ use Psr\Http\Server\RequestHandlerInterface as Handler;
 use Slim\Psr7\Response;
 use Predis\Client as RedisClient;
 
+use Psr\Container\ContainerInterface;
+
 class SessionMiddleware
 {
     private ?RedisClient $redis = null;
     private bool $useRedis = false;
+    private ?ContainerInterface $container = null;
 
-    public function __construct()
+    public function __construct(?ContainerInterface $container = null)
     {
+        $this->container = $container;
         $redisHost = $_ENV['REDIS_HOST'] ?? '';
         $redisEnabled = filter_var($_ENV['REDIS_ENABLED'] ?? true, FILTER_VALIDATE_BOOLEAN);
 
@@ -93,10 +97,38 @@ class SessionMiddleware
         }
 
         // Transforma os dados da sessão de volta em um array/objeto PHP
-        $user = json_decode((string)$sessionData);
+        $user = is_string($sessionData) ? json_decode($sessionData) : (object)$sessionData;
 
         // Injeta os dados do usuário na requisição para o Controller usar depois
         $request = $request->withAttribute('logged_user', $user);
+
+        // Sincroniza $_SESSION para retrocompatibilidade
+        if (session_status() === PHP_SESSION_ACTIVE || (session_status() === PHP_SESSION_NONE && !headers_sent())) {
+            if (session_status() === PHP_SESSION_NONE) {
+                session_name('session_id');
+                if (!empty($sessionId)) {
+                    @session_id($sessionId);
+                }
+                @session_start();
+            }
+            $_SESSION['logged_user'] = is_string($sessionData) ? $sessionData : json_encode($sessionData);
+            if ($user instanceof \stdClass && !empty($user->id)) {
+                $_SESSION['customer_id'] = $user->id;
+                $_SESSION['customer_group_id'] = $user->customer_group_id ?? 1;
+                $_SESSION['customer_firstname'] = explode(' ', trim($user->name ?? ''))[0] ?? '';
+                $_SESSION['customer_lastname'] = explode(' ', trim($user->name ?? ''), 2)[1] ?? '';
+                $_SESSION['customer_email'] = $user->email ?? '';
+                $_SESSION['customer_telephone'] = $user->telephone ?? '';
+            }
+        }
+
+        // Atualiza o Customer helper no container se disponível
+        if ($this->container && $this->container->has('customer')) {
+            $customerHelper = $this->container->get('customer');
+            if ($customerHelper instanceof \Alpha\Support\Customer) {
+                $customerHelper->setUser($user);
+            }
+        }
 
         // Passa a requisição adiante no pipeline do Router
         return $handler->handle($request);

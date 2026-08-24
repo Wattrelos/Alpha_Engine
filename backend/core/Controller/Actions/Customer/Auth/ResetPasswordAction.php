@@ -123,19 +123,29 @@ class ResetPasswordAction implements ActionInterface
             $language = $this->languageRepository->find(2);
         }
 
-        $breadcrumbs = [
-            ['text' => 'Início', 'href' => $routeParser->urlFor('home', ['lang' => $lang])],
-            ['text' => 'Login', 'href' => $routeParser->urlFor('login.form', ['lang' => $lang])],
-            ['text' => 'Redefinir Senha', 'href' => $routeParser->urlFor('account.resetar-senha', ['lang' => $lang])]
-        ];
+        if ($isLogged) {
+            $breadcrumbs = [
+                ['text' => 'Início', 'href' => $routeParser->urlFor('home', ['lang' => $lang])],
+                ['text' => 'Minha Conta', 'href' => $routeParser->urlFor('account.index', ['lang' => $lang])],
+                ['text' => 'Alterar Senha', 'href' => $routeParser->urlFor('account.resetar-senha.logged', ['lang' => $lang])]
+            ];
+            $actionUrl = $routeParser->urlFor('account.resetar-senha.logged', ['lang' => $lang]);
+        } else {
+            $breadcrumbs = [
+                ['text' => 'Início', 'href' => $routeParser->urlFor('home', ['lang' => $lang])],
+                ['text' => 'Login', 'href' => $routeParser->urlFor('login.form', ['lang' => $lang])],
+                ['text' => 'Redefinir Senha', 'href' => $routeParser->urlFor('account.resetar-senha', ['lang' => $lang])]
+            ];
+            $actionUrl = $routeParser->urlFor('account.resetar-senha', ['lang' => $lang]);
+        }
 
         $html = $this->twig->render('pages/auth/reset-password.html.twig', [
             'direction'   => 'ltr',
             'lang'        => $language ? $language->getCode() : 'pt-br',
-            'title'       => 'Redefinir Senha | AgSonhos',
-            'description' => 'Redefina a senha de sua conta.',
+            'title'       => ($isLogged ? 'Alterar Senha' : 'Redefinir Senha') . ' | AgSonhos',
+            'description' => $isLogged ? 'Altere a senha de sua conta.' : 'Redefina a senha de sua conta.',
             'breadcrumbs' => $breadcrumbs,
-            'action'      => $routeParser->urlFor('account.resetar-senha', ['lang' => $lang]),
+            'action'      => $actionUrl,
             'code'        => $code,
             'error'       => $error
         ]);
