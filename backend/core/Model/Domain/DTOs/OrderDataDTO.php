@@ -28,7 +28,13 @@ class OrderDataDTO implements \JsonSerializable {
      * Validação básica de integridade do DTO.
      */
     public function isValid(): bool {
-        return !empty($this->data['customer_id']) && 
+        // Valida identificação de cliente (logado com customer_id > 0 ou visitante com e-mail/nome)
+        $hasCustomer = (isset($this->data['customer_id']) && (int)$this->data['customer_id'] > 0)
+            || !empty($this->data['email'])
+            || !empty($this->data['payment_firstname'])
+            || !empty($this->data['firstname']);
+
+        return $hasCustomer && 
                !empty($this->data['products']) && 
                isset($this->data['total']) &&
                !empty($this->data['payment_code']);

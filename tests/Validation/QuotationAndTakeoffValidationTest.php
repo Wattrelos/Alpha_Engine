@@ -304,4 +304,43 @@ class QuotationAndTakeoffValidationTest extends TestCase
         $conn = \Alpha\Model\DataAccessObject\ConnectionDB::getInstance()->getConnection();
         $conn->prepare("DELETE FROM `agsc_cart` WHERE `customer_id` = 16694 AND `product_id` = 99999")->execute();
     }
+
+    /**
+     * Valida que OrderDataDTO é válido para checkout de visitante anônimo (customer_id = 0).
+     */
+    public function testGuestCheckoutOrderValidation(): void
+    {
+        $dto = new \Alpha\Model\Domain\DTOs\OrderDataDTO([
+            'customer_id'       => 0,
+            'firstname'         => 'Visitante',
+            'lastname'          => 'Silva',
+            'email'             => 'visitante@gmail.com',
+            'telephone'         => '11999998888',
+            'payment_firstname' => 'Visitante',
+            'payment_code'      => 'pix',
+            'total'             => 150.00,
+            'products'          => [
+                ['product_id' => 1, 'name' => 'Produto Teste', 'quantity' => 1, 'price' => 150.00, 'total' => 150.00]
+            ]
+        ]);
+
+        $this->assertTrue($dto->isValid(), 'OrderDataDTO deve ser válido para visitante com dados preenchidos');
+    }
+
+    /**
+     * Valida que OrderDataDTO é válido para cliente autenticado (customer_id > 0).
+     */
+    public function testLoggedCustomerOrderValidation(): void
+    {
+        $dto = new \Alpha\Model\Domain\DTOs\OrderDataDTO([
+            'customer_id'       => 16694,
+            'payment_code'      => 'cod',
+            'total'             => 250.00,
+            'products'          => [
+                ['product_id' => 2, 'name' => 'Tijolo Cerâmico', 'quantity' => 10, 'price' => 25.00, 'total' => 250.00]
+            ]
+        ]);
+
+        $this->assertTrue($dto->isValid(), 'OrderDataDTO deve ser válido para cliente autenticado');
+    }
 }

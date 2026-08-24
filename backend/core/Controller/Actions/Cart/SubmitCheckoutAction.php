@@ -320,6 +320,25 @@ class SubmitCheckoutAction implements ActionInterface
             $orderData['total']    = $cartRepository->getTotal();
             $orderData['comment']  = $_SESSION['comment'] ?? '';
 
+            if (empty($orderData['totals'])) {
+                $orderData['totals'] = [
+                    [
+                        'extension'  => 'opencart',
+                        'code'       => 'sub_total',
+                        'title'      => 'Sub-total',
+                        'value'      => $cartRepository->getSubTotal(),
+                        'sort_order' => 1
+                    ],
+                    [
+                        'extension'  => 'opencart',
+                        'code'       => 'total',
+                        'title'      => 'Total',
+                        'value'      => $cartRepository->getTotal(),
+                        'sort_order' => 9
+                    ]
+                ];
+            }
+
             $coupon_code = $_SESSION['coupon'] ?? '';
             $orderData['coupon_id'] = 0;
             $orderData['coupon_amount'] = 0.0;
