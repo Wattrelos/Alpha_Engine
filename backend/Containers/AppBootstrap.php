@@ -185,6 +185,8 @@ class AppBootstrap
                 if (session_status() === PHP_SESSION_NONE && !headers_sent()) {
                     if (defined('APPLICATION') && APPLICATION === 'admin') {
                         session_name('admin_session_id');
+                    } else {
+                        session_name('session_id');
                     }
                     @session_start();
                 }

@@ -1,0 +1,98 @@
+functional_requirements:
+  quotation_services_module:
+    - id: RF033
+      prio: H
+      name: Solicitação de orçamento de projeto e serviços (RFQ)
+      desc: SYS_PERMIT cliente cadastrar e publicar projeto/obra com descrição de escopo, localização/CEP, imagens, prazos desejados e especificações técnicas para solicitação formal de cotação (Request for Quotation).
+      trace: [RN003]
+
+    - id: RF034
+      prio: H
+      name: Distribuição e matching por raio geográfico
+      desc: SYS_EXEC identificação geográfica e notificação automática de prestadores de serviços credenciados que atendem no raio de cobertura (raio X km) da localização da obra.
+
+    - id: RF035
+      prio: M
+      name: Submissão e comparação de propostas (Bid Comparison)
+      desc: SYS_PERMIT prestadores de serviço enviarem propostas comerciais e orçamentos de mão de obra; SYS_PERMIT cliente comparar orçamentos lado a lado por valor, prazo, reputação e selecionar o profissional.
+
+    - id: RF036
+      prio: H
+      name: Levantamento técnico de materiais (Material Takeoff - MTO / BoQ)
+      desc: SYS_PERMIT profissional selecionado gerar lista técnica quantitativa de materiais (Bill of Quantities - BoQ) vinculada ao projeto, por seleção de itens do catálogo ou importação de planilha estruturada.
+      trace: [RN001, RN003]
+
+    - id: RF037
+      prio: H
+      name: Conversão de BoQ em cotação no e-commerce ("Add to Quote")
+      desc: SYS_EXEC conversão da lista de materiais (BoQ) em cotação integrada no e-commerce ou transferência direta para o carrinho de compras do cliente, aplicando regras de precificação progressiva e descontos por volume.
+      trace: [RN001, RN015, RN017]
+
+workflow_specification:
+  service_tendering_and_takeoff_flow:
+    step_1_project_submission:
+      actor: "Cliente"
+      action: "Cadastro do projeto e emissão de RFQ com especificações e endereço da obra"
+      output: "Projeto publicado em status 'Aguardando Propostas'"
+
+    step_2_geofencing_dispatch:
+      actor: "Sistema"
+      action: "Matching geoespacial com prestadores que atendem no raio configurado (ex: 25 km)"
+      output: "Notificação e disponibilização da oportunidade no painel do prestador"
+
+    step_3_bid_submission_comparison:
+      actor: "Prestadores e Cliente"
+      action: "Prestadores enviam propostas; Cliente visualiza painel comparativo (Bid Comparison)"
+      output: "Propostas consolidadas para análise"
+
+    step_4_provider_selection:
+      actor: "Cliente"
+      action: "Aceite da proposta e formalização da contratação do profissional"
+      output: "Projeto atribuído ao prestador de serviço"
+
+    step_5_material_takeoff_boq:
+      actor: "Prestador Selecionado"
+      action: "Execução do Material Takeoff (MTO) e geração da lista quantitativa de insumos (BoQ)"
+      output: "Bill of Quantities (BoQ) gerado e vinculado à obra"
+
+    step_6_cart_quote_conversion:
+      actor: "Cliente / Sistema"
+      action: "Aprovação da lista de materiais e envio para 'Cotação Direta' (Add to Quote) ou Carrinho"
+      output: "Itens precificados com descontos por volume e prontos para checkout"
+
+domain_taxonomy:
+  rfq:
+    term: "Request for Quotation (RFQ)"
+    pt_br: "Pedido / Solicitação de Orçamento"
+    definition: "Processo onde o cliente publica especificações de um projeto para receber propostas comerciais de prestadores e fornecedores."
+    ui_component: "Formulário / Botão 'Solicitar Orçamento de Projeto'"
+
+  boq:
+    term: "Bill of Quantities (BoQ)"
+    pt_br: "Lista Discriminada de Quantitativos de Materiais"
+    definition: "Relação detalhada de todos os insumos, materiais e quantidades necessárias para a execução da obra."
+    ui_component: "Tabela de Insumos da Obra / Importador de Planilha"
+
+  mto:
+    term: "Material Takeoff (MTO)"
+    pt_br: "Levantamento / Estimativa de Materiais"
+    definition: "Ato técnico do profissional de analisar o escopo e calcular exatamente quais e quantos materiais serão consumidos."
+    ui_component: "Ferramenta do Prestador: 'Gerador de Estimativa / Takeoff Tool'"
+
+  bid_comparison:
+    term: "Bid Comparison"
+    pt_br: "Comparação de Propostas e Orçamentos"
+    definition: "Painel analítico para comparar custos, prazos de execução e avaliações de diferentes prestadores."
+    ui_component: "Painel Comparativo de Propostas"
+
+  add_to_quote:
+    term: "Add to Quote"
+    pt_br: "Adicionar para Cotação"
+    definition: "Ação de converter múltiplos itens de uma lista em uma cotação comercial com condições especiais de negociação/volume."
+    ui_component: "Botão 'Adicionar para Cotação' integrado à PDP e ao BoQ"
+
+configuration_parameters:
+  default_service_radius_km: 25
+  max_proposals_per_project: 10
+  quote_validity_days: 15
+  pricing_tier_application: "volume_discount_or_wholesale"

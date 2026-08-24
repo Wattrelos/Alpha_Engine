@@ -198,6 +198,13 @@ return function (\Slim\App $app) {
         $api->get('/geo/estados/{zone_id:[0-9]+}/cidades', \Alpha\Controller\Actions\Location\GetGeoCitiesAction::class);
         $api->post('/carrinho/salvar-cep', \Alpha\Controller\Actions\Cart\SaveShippingCepAction::class);
 
+        // Cotações e Levantamentos de Materiais (RFQ/BoQ)
+        $api->group('/projetos', function (RouteCollectorProxy $p) {
+            $p->get('/meus-projetos', \Alpha\Controller\Actions\Quotation\Customer\GetCustomerProjectsJsonAction::class);
+            $p->post('/adicionar-item', \Alpha\Controller\Actions\Quotation\Customer\AddProductToQuoteAction::class);
+        });
+        $api->get('/produtos/buscar-takeoff', \Alpha\Controller\Actions\Quotation\Provider\SearchCatalogItemsAction::class);
+
         // Webhooks protegidos por validação HMAC SHA-256
         $api->group('/webhook', function (RouteCollectorProxy $webhook) {
             $webhook->post('/{provider}', function ($request, $response) {
@@ -263,7 +270,24 @@ return function (\Slim\App $app) {
             $account->get('/address/{address_id:[0-9]+}/edit',   EditAddressAction::class)->setName('account.address.edit');
             $account->post('/address/{address_id:[0-9]+}/edit',  EditAddressAction::class);
             $account->get('/address/{address_id:[0-9]+}/delete', DeleteAddressAction::class)->setName('account.address.delete');
+
+            // ── Cotações e Projetos do Cliente (RFQ / BoQ) ─────────────────────
+            $account->get('/projetos', \Alpha\Controller\Actions\Quotation\Customer\ListCustomerProjectsAction::class)->setName('account.projects');
+            $account->get('/projetos/{rfq_id:[0-9]+}/propostas', \Alpha\Controller\Actions\Quotation\Customer\ShowBidComparisonAction::class)->setName('account.projects.bids');
+            $account->get('/projetos/{rfq_id:[0-9]+}/propostas/{bid_id:[0-9]+}/aceitar', \Alpha\Controller\Actions\Quotation\Customer\AcceptBidAction::class)->setName('account.projects.bids.accept');
+            $account->map(['GET', 'POST'], '/projetos/{rfq_id:[0-9]+}/boq', \Alpha\Controller\Actions\Quotation\Customer\ApproveBoqAndAddToCartAction::class)->setName('account.projects.boq');
         })->add(new SessionMiddleware());
+
+        // Criação de Projetos e Solicitação de Orçamento (RFQ)
+        $group->map(['GET', 'POST'], '/projetos/novo', \Alpha\Controller\Actions\Quotation\Customer\CreateProjectRfqAction::class)->setName('projects.create');
+        $group->post('/api/projetos/adicionar-item', \Alpha\Controller\Actions\Quotation\Customer\AddProductToQuoteAction::class)->setName('api.projects.add_item');
+        $group->get('/api/projetos/meus-projetos', \Alpha\Controller\Actions\Quotation\Customer\GetCustomerProjectsJsonAction::class)->setName('api.projects.my_projects');
+
+        // Portal do Prestador de Serviços (Matching, Bids e Takeoff Tool)
+        $group->get('/prestador/oportunidades', \Alpha\Controller\Actions\Quotation\Provider\ListOpportunitiesAction::class)->setName('provider.opportunities');
+        $group->map(['GET', 'POST'], '/prestador/projetos/{rfq_id:[0-9]+}/proposta', \Alpha\Controller\Actions\Quotation\Provider\SubmitBidAction::class)->setName('provider.projects.bid');
+        $group->map(['GET', 'POST'], '/prestador/projetos/{rfq_id:[0-9]+}/takeoff', \Alpha\Controller\Actions\Quotation\Provider\MaterialTakeoffAction::class)->setName('provider.projects.takeoff');
+        $group->get('/api/produtos/buscar-takeoff', \Alpha\Controller\Actions\Quotation\Provider\SearchCatalogItemsAction::class)->setName('api.takeoff.search_products');
 
         // Detalhe do Produto, Categoria e Institucional (SEO)
         $group->get('/produto/{slug}',   ShowProductAction::class)->setName('product.detail');
@@ -299,3 +323,4 @@ return function (\Slim\App $app) {
     });
 
 };
+

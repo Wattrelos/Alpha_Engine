@@ -1,0 +1,113 @@
+{% extends 'layouts/base.html.twig' %}
+
+{% block title %}Lista de Materiais da Obra (BoQ) & Descontos | AgSonhos{% endblock %}
+
+{% block stylesheets %}
+    <link rel="stylesheet" href="/css/custom/quotation.css">
+{% endblock %}
+
+{% block content %}
+<div class="rfq-container">
+    <div class="rfq-hero">
+        <nav class="rfq-breadcrumb">
+            {% for breadcrumb in breadcrumbs %}
+                {% if not loop.last %}
+                    <a href="{{ breadcrumb.href }}">{{ breadcrumb.text }}</a>
+                    <span>›</span>
+                {% else %}
+                    <span>{{ breadcrumb.text }}</span>
+                {% endif %}
+            {% endfor %}
+        </nav>
+        <h1 class="rfq-hero-title">
+            <span>📦</span> Lista Técnica de Materiais (Bill of Quantities - BoQ)
+        </h1>
+        <p class="rfq-hero-desc">Projeto: <strong>{{ rfq.title }}</strong> - Revise a lista de insumos levantados pelo profissional, confira os descontos por volume e envie para o carrinho.</p>
+    </div>
+
+    {% if volume_discounts.total_savings > 0 %}
+        <div style="background:#ecfdf5; border:1px solid #10b981; border-radius:var(--rfq-radius); padding:1.25rem 1.5rem; margin-bottom:1.5rem; display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:1rem;">
+            <div style="display:flex; align-items:center; gap:0.75rem;">
+                <span style="font-size:2rem;">🎉</span>
+                <div>
+                    <strong style="color:#065f46; font-size:1.1rem; display:block;">Desconto Progressivo por Volume Aplicado (RN015)</strong>
+                    <span style="color:#047857; font-size:0.95rem;">Comprando a lista completa da obra, você economiza <strong>R$ {{ volume_discounts.total_savings|number_format(2, ',', '.') }}</strong> ({{ volume_discounts.discount_percentage }}% de desconto no atacado/lote).</span>
+                </div>
+            </div>
+            <div style="text-align:right;">
+                <span style="font-size:0.85rem; color:#065f46; text-decoration:line-through; display:block;">De: R$ {{ volume_discounts.original_subtotal|number_format(2, ',', '.') }}</span>
+                <span style="font-size:1.4rem; font-weight:700; color:#065f46;">Por: R$ {{ volume_discounts.discount_subtotal|default(volume_discounts.discounted_subtotal)|number_format(2, ',', '.') }}</span>
+            </div>
+        </div>
+    {% endif %}
+
+    <div class="rfq-card">
+        <div class="takeoff-table-container">
+            <table class="takeoff-table">
+                <thead>
+                    <tr>
+                        <th>Item / Material</th>
+                        <th>Unidade</th>
+                        <th>Quantidade</th>
+                        <th>Preço Unit. Catálogo</th>
+                        <th>Preço com Volume (RN015)</th>
+                        <th>Total</th>
+                        <th>Observações</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for item in volume_discounts.items_summary %}
+                        <tr>
+                            <td>
+                                <strong>{{ item.name }}</strong>
+                                {% if item.savings > 0 %}
+                                    <span style="font-size:0.75rem; background:#ecfdf5; color:#065f46; padding:2px 6px; border-radius:4px; margin-left:4px; font-weight:600;">
+                                        -{{ item.applied_tier }}
+                                    </span>
+                                {% endif %}
+                            </td>
+                            <td>{{ item.unit }}</td>
+                            <td><strong>{{ item.quantity }}</strong></td>
+                            <td>
+                                {% if item.savings > 0 %}
+                                    <span style="text-decoration:line-through; color:#94a3b8; font-size:0.85rem;">R$ {{ item.original_unit_price|number_format(2, ',', '.') }}</span>
+                                {% else %}
+                                    R$ {{ item.original_unit_price|number_format(2, ',', '.') }}
+                                {% endif %}
+                            </td>
+                            <td>
+                                <strong style="color:{{ item.savings > 0 ? '#059669' : '#1e293b' }};">
+                                    R$ {{ item.effective_unit_price|number_format(2, ',', '.') }}
+                                </strong>
+                            </td>
+                            <td>
+                                <strong>R$ {{ item.discounted_total|number_format(2, ',', '.') }}</strong>
+                                {% if item.savings > 0 %}
+                                    <small style="display:block; color:#059669;">(Econ. R$ {{ item.savings|number_format(2, ',', '.') }})</small>
+                                {% endif %}
+                            </td>
+                            <td><small style="color:#64748b;">{{ item.notes|default('-') }}</small></td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <div class="takeoff-summary-box">
+            <div>
+                <span style="font-size:0.9rem; color:#94a3b8; display:block;">Valor Total com Descontos por Volume:</span>
+                <span class="takeoff-total-amount">R$ {{ volume_discounts.discounted_subtotal|number_format(2, ',', '.') }}</span>
+                {% if volume_discounts.total_savings > 0 %}
+                    <small style="color:#86efac; display:block; margin-top:2px;">Economia total de R$ {{ volume_discounts.total_savings|number_format(2, ',', '.') }}</small>
+                {% endif %}
+            </div>
+
+            <form method="POST" action="/{{ lang }}/account/projetos/{{ rfq.id }}/boq">
+                <button type="submit" class="rfq-btn rfq-btn-primary" style="font-size:1.1rem; padding:0.9rem 2rem;">
+                    <span>🛒</span> Adicionar Lista para Cotação & Carrinho ("Add to Quote")
+                </button>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

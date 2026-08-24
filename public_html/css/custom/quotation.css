@@ -1,0 +1,440 @@
+/* ==============================================================================
+   Alpha Engine - Módulo de Cotação de Projetos e Prestadores (RFQ / BoQ)
+   Requisitos: RF033, RF034, RF035, RF036, RF037
+   ============================================================================== */
+
+:root {
+  --rfq-primary: #ff6b00;
+  --rfq-primary-hover: #e05e00;
+  --rfq-primary-light: #fff2e8;
+  --rfq-dark: #1e293b;
+  --rfq-gray-50: #f8fafc;
+  --rfq-gray-100: #f1f5f9;
+  --rfq-gray-200: #e2e8f0;
+  --rfq-gray-300: #cbd5e1;
+  --rfq-gray-600: #475569;
+  --rfq-gray-800: #1e293b;
+  --rfq-success: #10b981;
+  --rfq-success-bg: #ecfdf5;
+  --rfq-warning: #f59e0b;
+  --rfq-warning-bg: #fffbeb;
+  --rfq-radius: 12px;
+  --rfq-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  --rfq-shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+}
+
+.rfq-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem 1rem 4rem 1rem;
+}
+
+/* ── Hero Section ── */
+.rfq-hero {
+  background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+  color: #ffffff;
+  padding: 3rem 1.5rem;
+  border-radius: var(--rfq-radius);
+  margin-bottom: 2rem;
+  box-shadow: var(--rfq-shadow-lg);
+  position: relative;
+  overflow: hidden;
+}
+
+.rfq-hero::after {
+  content: '';
+  position: absolute;
+  top: -50%;
+  right: -10%;
+  width: 300px;
+  height: 300px;
+  background: radial-gradient(circle, rgba(255, 107, 0, 0.15) 0%, rgba(255, 107, 0, 0) 70%);
+  border-radius: 50%;
+}
+
+.rfq-hero-title {
+  font-size: 2rem;
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.rfq-hero-desc {
+  font-size: 1.05rem;
+  color: #94a3b8;
+  max-width: 700px;
+}
+
+/* ── Breadcrumb ── */
+.rfq-breadcrumb {
+  display: flex;
+  gap: 0.5rem;
+  font-size: 0.875rem;
+  color: #94a3b8;
+  margin-bottom: 1rem;
+}
+.rfq-breadcrumb a {
+  color: #cbd5e1;
+  text-decoration: none;
+}
+.rfq-breadcrumb a:hover {
+  color: var(--rfq-primary);
+}
+
+/* ── Cards & Panels ── */
+.rfq-card {
+  background: #ffffff;
+  border: 1px solid var(--rfq-gray-200);
+  border-radius: var(--rfq-radius);
+  padding: 1.75rem;
+  margin-bottom: 1.5rem;
+  box-shadow: var(--rfq-shadow);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.rfq-card:hover {
+  box-shadow: var(--rfq-shadow-lg);
+}
+
+.rfq-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 1rem;
+  border-bottom: 1px solid var(--rfq-gray-100);
+  padding-bottom: 0.75rem;
+}
+
+.rfq-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.25rem 0.75rem;
+  border-radius: 9999px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.rfq-badge--open { background: #dbeafe; color: #1e40af; }
+.rfq-badge--in_progress { background: var(--rfq-warning-bg); color: #92400e; }
+.rfq-badge--completed { background: var(--rfq-success-bg); color: #065f46; }
+.rfq-badge--submitted { background: #e0e7ff; color: #3730a3; }
+.rfq-badge--accepted { background: var(--rfq-success-bg); color: #065f46; }
+
+/* ── Forms ── */
+.rfq-form-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 1.25rem;
+  margin-bottom: 1.5rem;
+}
+
+.rfq-form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.rfq-form-group.full-width {
+  grid-column: 1 / -1;
+}
+
+.rfq-label {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--rfq-gray-800);
+}
+
+.rfq-input, .rfq-select, .rfq-textarea {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  border: 1px solid var(--rfq-gray-300);
+  border-radius: 8px;
+  font-size: 0.95rem;
+  transition: border-color 0.2s, box-shadow 0.2s;
+  background: #ffffff;
+}
+
+.rfq-input:focus, .rfq-select:focus, .rfq-textarea:focus {
+  outline: none;
+  border-color: var(--rfq-primary);
+  box-shadow: 0 0 0 3px rgba(255, 107, 0, 0.15);
+}
+
+/* ── Buttons ── */
+.rfq-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1.5rem;
+  border-radius: 8px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  text-decoration: none;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  border: none;
+}
+
+.rfq-btn-primary {
+  background: var(--rfq-primary);
+  color: #ffffff;
+}
+
+.rfq-btn-primary:hover {
+  background: var(--rfq-primary-hover);
+  color: #ffffff;
+}
+
+.rfq-btn-secondary {
+  background: var(--rfq-gray-100);
+  color: var(--rfq-gray-800);
+  border: 1px solid var(--rfq-gray-300);
+}
+
+.rfq-btn-secondary:hover {
+  background: var(--rfq-gray-200);
+}
+
+.rfq-btn-success {
+  background: var(--rfq-success);
+  color: #ffffff;
+}
+
+.rfq-btn-success:hover {
+  background: #059669;
+}
+
+/* ── PDP & Card "Adicionar ao Orçamento" Buttons ── */
+.egen-btn-quote {
+  background: #0f172a;
+  color: #ffffff;
+  border: 1px solid #334155;
+  padding: 0.85rem 1.25rem;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 0.95rem;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  transition: all 0.2s ease;
+}
+
+.egen-btn-quote:hover {
+  background: #1e293b;
+  border-color: var(--rfq-primary);
+  color: var(--rfq-primary);
+  transform: translateY(-1px);
+}
+
+.egen-prod-btn-quote {
+  background: #f1f5f9;
+  border: 1px solid #cbd5e1;
+  color: #475569;
+  border-radius: 6px;
+  width: 36px;
+  height: 36px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  margin-left: 4px;
+}
+
+.egen-prod-btn-quote:hover {
+  background: var(--rfq-primary-light);
+  border-color: var(--rfq-primary);
+  color: var(--rfq-primary);
+}
+
+/* ── Modal de Seleção de Projeto ── */
+.egen-quote-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(15, 23, 42, 0.6);
+  backdrop-filter: blur(4px);
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+}
+
+.egen-quote-modal {
+  background: #ffffff;
+  border-radius: var(--rfq-radius);
+  max-width: 520px;
+  width: 100%;
+  padding: 1.75rem;
+  box-shadow: var(--rfq-shadow-lg);
+  animation: modalFadeIn 0.25s ease-out;
+}
+
+@keyframes modalFadeIn {
+  from { opacity: 0; transform: scale(0.95); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+.egen-quote-modal-title {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--rfq-dark);
+  margin-bottom: 0.5rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.egen-quote-project-item {
+  padding: 0.85rem 1rem;
+  border: 1px solid var(--rfq-gray-200);
+  border-radius: 8px;
+  margin-bottom: 0.6rem;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.egen-quote-project-item:hover {
+  border-color: var(--rfq-primary);
+  background: var(--rfq-primary-light);
+}
+
+/* ── Bid Comparison Grid ── */
+.bid-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 1.5rem;
+  margin-top: 1.5rem;
+}
+
+.bid-card {
+  background: #ffffff;
+  border: 2px solid var(--rfq-gray-200);
+  border-radius: var(--rfq-radius);
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  position: relative;
+  box-shadow: var(--rfq-shadow);
+  transition: all 0.2s;
+}
+
+.bid-card.accepted {
+  border-color: var(--rfq-success);
+  background: #f0fdf4;
+}
+
+.bid-price {
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: var(--rfq-primary);
+  margin: 0.5rem 0;
+}
+
+.bid-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  font-size: 0.9rem;
+  color: var(--rfq-gray-600);
+  margin: 1rem 0;
+}
+
+/* ── Takeoff Tool Table ── */
+.takeoff-table-container {
+  overflow-x: auto;
+  border-radius: var(--rfq-radius);
+  border: 1px solid var(--rfq-gray-200);
+  margin-bottom: 1.5rem;
+}
+
+.takeoff-table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+}
+
+.takeoff-table th {
+  background: var(--rfq-gray-100);
+  padding: 0.9rem 1rem;
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--rfq-gray-800);
+  border-bottom: 1px solid var(--rfq-gray-300);
+}
+
+.takeoff-table td {
+  padding: 0.9rem 1rem;
+  border-bottom: 1px solid var(--rfq-gray-200);
+  font-size: 0.92rem;
+  vertical-align: middle;
+}
+
+.takeoff-summary-box {
+  background: linear-gradient(135deg, #1e293b, #0f172a);
+  color: #ffffff;
+  padding: 1.5rem;
+  border-radius: var(--rfq-radius);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin-top: 1.5rem;
+}
+
+.takeoff-total-amount {
+  font-size: 1.85rem;
+  font-weight: 700;
+  color: #38bdf8;
+}
+
+/* ── Autocomplete Search Dropdown ── */
+.sku-search-wrapper {
+  position: relative;
+}
+
+.sku-results-dropdown {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  background: #ffffff;
+  border: 1px solid var(--rfq-gray-300);
+  border-radius: 8px;
+  max-height: 250px;
+  overflow-y: auto;
+  z-index: 50;
+  box-shadow: var(--rfq-shadow-lg);
+  display: none;
+}
+
+.sku-item {
+  padding: 0.75rem 1rem;
+  cursor: pointer;
+  display: flex;
+  justify-content: space-between;
+  border-bottom: 1px solid var(--rfq-gray-100);
+}
+
+.sku-item:hover {
+  background: var(--rfq-primary-light);
+}
+
+/* ── Responsive ── */
+@media (max-width: 768px) {
+  .rfq-hero-title { font-size: 1.5rem; }
+  .takeoff-summary-box { flex-direction: column; align-items: flex-start; }
+}

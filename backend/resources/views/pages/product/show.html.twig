@@ -4,6 +4,7 @@
 
 {% block stylesheets %}
     <link rel="stylesheet" href="/css/custom/materials-calculator.css">
+    <link rel="stylesheet" href="/css/custom/quotation.css">
 {% endblock %}
 
 {% block content %}
@@ -185,6 +186,9 @@
                         <button type="submit" id="button-cart" class="egen-btn-primary egen-btn-buy">
                             <i class="fas fa-shopping-cart"></i> {{ Product.buy|default('Adicionar ao Carrinho') }}
                         </button>
+                        <button type="button" id="btn-add-to-quote-pdp" class="egen-btn-quote egen-add-to-quote-btn" data-product-id="{{ product.id }}" data-product-name="{{ product.name }}" title="Adicionar este produto a um orçamento de obra">
+                            <i class="fa-solid fa-clipboard-list"></i> Adicionar ao Orçamento
+                        </button>
                         <a href="javascript:history.back();" class="egen-btn-secondary">
                             <i class="fa-solid fa-arrow-left"></i> {{ Common.button.back|default('Voltar') }}
                         </a>
@@ -351,4 +355,5 @@ document.addEventListener('DOMContentLoaded', function() {
 </script>
 <script src="/js/custom/shipping-simulator.js"></script>
 <script src="/js/custom/materials-calculator.js"></script>
+<script src="/js/custom/quotation.js"></script>
 {% endblock %}

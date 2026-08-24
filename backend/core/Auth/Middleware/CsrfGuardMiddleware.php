@@ -39,6 +39,8 @@ class CsrfGuardMiddleware implements MiddlewareInterface
             if (session_status() === PHP_SESSION_NONE && !headers_sent()) {
                 if (defined('APPLICATION') && APPLICATION === 'admin') {
                     session_name('admin_session_id');
+                } else {
+                    session_name('session_id');
                 }
                 @session_start();
             }
@@ -102,9 +104,9 @@ class CsrfGuardMiddleware implements MiddlewareInterface
 
     public function process(Request $request, Handler $handler): Response
     {
-        // Endpoints RESTful e APIs internas (/api/*) operam sem validação CSRF de formulário web
+        // Endpoints RESTful e APIs internas (/api/* e /{lang}/api/*) operam sem validação CSRF de formulário web
         $path = $request->getUri()->getPath();
-        if (preg_match('#^/?api(/|$)#', $path)) {
+        if (preg_match('#^/?([a-zA-Z-]+/)?api(/|$)#', $path)) {
             return $handler->handle($request);
         }
 

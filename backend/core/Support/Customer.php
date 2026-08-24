@@ -6,7 +6,7 @@ namespace Alpha\Support;
  * Alpha Engine - Customer Support
  *
  * Proxy de acesso aos dados do cliente logado a partir dos dados de sessão.
- * Lê o JSON armazenado em $_SESSION['logged_user'] pelo AuthService.
+ * Lê o JSON armazenado em $_SESSION['logged_user'] pelo AuthService ou chaves legadas de sessão.
  */
 class Customer
 {
@@ -17,11 +17,31 @@ class Customer
     private function getLoggedUser(): ?\stdClass
     {
         if (!empty($_SESSION['logged_user'])) {
-            $user = json_decode($_SESSION['logged_user']);
-            if ($user instanceof \stdClass) {
+            $val = $_SESSION['logged_user'];
+            if (is_string($val)) {
+                $user = json_decode($val);
+            } elseif (is_array($val)) {
+                $user = (object)$val;
+            } elseif ($val instanceof \stdClass) {
+                $user = $val;
+            } else {
+                $user = null;
+            }
+            if ($user instanceof \stdClass && !empty($user->id)) {
                 return $user;
             }
         }
+
+        if (!empty($_SESSION['customer_id'])) {
+            $user = new \stdClass();
+            $user->id = (int)$_SESSION['customer_id'];
+            $user->customer_group_id = (int)($_SESSION['customer_group_id'] ?? 1);
+            $user->name = trim(($_SESSION['customer_firstname'] ?? '') . ' ' . ($_SESSION['customer_lastname'] ?? ''));
+            $user->email = (string)($_SESSION['customer_email'] ?? '');
+            $user->telephone = (string)($_SESSION['customer_telephone'] ?? '');
+            return $user;
+        }
+
         return null;
     }
 
@@ -33,7 +53,7 @@ class Customer
     public function getId(): int
     {
         // Compatibilidade com chave flat legacy
-        if (isset($_SESSION['customer_id'])) {
+        if (isset($_SESSION['customer_id']) && (int)$_SESSION['customer_id'] > 0) {
             return (int)$_SESSION['customer_id'];
         }
         $user = $this->getLoggedUser();
@@ -44,6 +64,11 @@ class Customer
     {
         $user = $this->getLoggedUser();
         return (int)($user->customer_group_id ?? $_SESSION['customer_group_id'] ?? 1);
+    }
+
+    public function getCustomerGroupId(): int
+    {
+        return $this->getGroupId();
     }
 
     public function getFirstName(): string

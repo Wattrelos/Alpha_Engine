@@ -1,0 +1,80 @@
+{% extends 'layouts/base.html.twig' %}
+
+{% block title %}Meus Projetos & Orçamentos (RFQ) | AgSonhos{% endblock %}
+
+{% block stylesheets %}
+    <link rel="stylesheet" href="/css/custom/quotation.css">
+{% endblock %}
+
+{% block content %}
+<div class="rfq-container">
+    <div class="rfq-hero">
+        <nav class="rfq-breadcrumb">
+            {% for breadcrumb in breadcrumbs %}
+                {% if not loop.last %}
+                    <a href="{{ breadcrumb.href }}">{{ breadcrumb.text }}</a>
+                    <span>›</span>
+                {% else %}
+                    <span>{{ breadcrumb.text }}</span>
+                {% endif %}
+            {% endfor %}
+        </nav>
+        <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:1rem;">
+            <div>
+                <h1 class="rfq-hero-title">
+                    <span>🏗️</span> Meus Projetos & Orçamentos
+                </h1>
+                <p class="rfq-hero-desc">Acompanhe suas solicitações de orçamento, compare propostas de prestadores e revise as listas de materiais.</p>
+            </div>
+            <a href="/{{ lang }}/projetos/novo" class="rfq-btn rfq-btn-primary">
+                <span>➕</span> Novo Pedido de Orçamento
+            </a>
+        </div>
+    </div>
+
+    {% if projects is empty %}
+        <div class="rfq-card" style="text-align:center; padding:3rem 1.5rem;">
+            <div style="font-size:3rem; margin-bottom:1rem;">📂</div>
+            <h3 style="font-size:1.3rem; margin-bottom:0.5rem;">Você ainda não possui projetos cadastrados</h3>
+            <p style="color:#64748b; margin-bottom:1.5rem;">Publique um pedido de cotação para encontrar profissionais qualificados na sua região.</p>
+            <a href="/{{ lang }}/projetos/novo" class="rfq-btn rfq-btn-primary">Solicitar Orçamento Agora</a>
+        </div>
+    {% else %}
+        {% for p in projects %}
+            <div class="rfq-card">
+                <div class="rfq-card-header">
+                    <div>
+                        <span class="rfq-badge rfq-badge--{{ p.status }}">{{ p.status }}</span>
+                        <h2 style="font-size:1.25rem; margin:0.5rem 0 0.25rem 0; color:#1e293b;">{{ p.title }}</h2>
+                        <span style="font-size:0.85rem; color:#64748b;">Categoria: <strong>{{ p.category }}</strong> | Local: <strong>{{ p.city }} - {{ p.state }}</strong> | Data: {{ p.date_added }}</span>
+                    </div>
+                    <div style="text-align:right;">
+                        <span style="font-size:0.9rem; color:#64748b; display:block;">Propostas Recebidas:</span>
+                        <strong style="font-size:1.4rem; color:#ff6b00;">{{ p.total_bids }}</strong>
+                    </div>
+                </div>
+
+                <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:1rem; margin-top:1rem;">
+                    <div>
+                        {% if p.has_boq %}
+                            <span style="font-size:0.9rem; color:#059669; font-weight:600;">
+                                📦 Lista de Materiais (BoQ) disponível: R$ {{ p.boq_total|number_format(2, ',', '.') }}
+                            </span>
+                        {% endif %}
+                    </div>
+                    <div style="display:flex; gap:0.75rem;">
+                        {% if p.has_boq %}
+                            <a href="{{ p.boq_url }}" class="rfq-btn rfq-btn-success">
+                                <span>📋</span> Ver Lista de Materiais (BoQ)
+                            </a>
+                        {% endif %}
+                        <a href="{{ p.bids_url }}" class="rfq-btn rfq-btn-secondary">
+                            <span>⚖️</span> Comparar Propostas ({{ p.total_bids }})
+                        </a>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+    {% endif %}
+</div>
+{% endblock %}
