@@ -220,20 +220,30 @@ class SecurityContext implements Context
         }
     }
 
+    private string $currentAdminRole = 'OPERADOR_ESTOQUE';
+
     /**
      * @Given que o usuário está autenticado com o papel :role
      */
     public function queOUsuarioEstaAutenticadoComOPapel(string $role)
     {
-        if (session_status() === PHP_SESSION_NONE) {
-            @session_start();
-        }
+        $this->currentAdminRole = $role;
         $loggedAdmin = (object)[
             'user_id'       => 5,
             'username'      => 'operador_comum',
             'user_group_id' => 2,
             'role'          => $role
         ];
+
+        $sessId = 'sess_admin_test';
+        try {
+            $redis = new \Predis\Client(['host' => '127.0.0.1', 'port' => 6379]);
+            $redis->setex('sessao:admin:' . $sessId, 7200, json_encode($loggedAdmin));
+        } catch (\Throwable $e) {}
+
+        if (session_status() === PHP_SESSION_NONE) {
+            @session_start();
+        }
         $_SESSION['logged_admin'] = json_encode($loggedAdmin);
         $_SESSION['logged_admin_expire'] = time() + 7200;
     }
@@ -248,8 +258,15 @@ class SecurityContext implements Context
         $loggedAdmin = (object)[
             'user_id'       => 5,
             'username'      => 'operador_comum',
-            'user_group_id' => 2
+            'user_group_id' => 2,
+            'role'          => $this->currentAdminRole
         ];
+
+        $sessId = 'sess_admin_test';
+        try {
+            $redis = new \Predis\Client(['host' => '127.0.0.1', 'port' => 6379]);
+            $redis->setex('sessao:admin:' . $sessId, 7200, json_encode($loggedAdmin));
+        } catch (\Throwable $e) {}
 
         if (session_status() === PHP_SESSION_NONE) {
             @session_start();
@@ -266,6 +283,7 @@ class SecurityContext implements Context
         $routingResults = new \Slim\Routing\RoutingResults($dispatcherStub, 'POST', $route, \Slim\Routing\RoutingResults::FOUND);
 
         $request = $this->requestFactory->createServerRequest('POST', $route)
+            ->withCookieParams(['admin_session_id' => $sessId])
             ->withAttribute('logged_admin', $loggedAdmin)
             ->withAttribute(\Slim\Routing\RouteContext::ROUTE, $routeStub)
             ->withAttribute(\Slim\Routing\RouteContext::ROUTE_PARSER, $routeParserStub)

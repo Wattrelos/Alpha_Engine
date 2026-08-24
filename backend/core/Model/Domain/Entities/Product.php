@@ -48,6 +48,8 @@ class Product extends BaseEntity
     private string $dateAdded = '';
     private string $dateModified = '';
     private ?int $masterId = null;
+    private string $ncm = '';
+    private string $cest = '';
 
     #[ManyToOne(targetEntity: Manufacturer::class, foreignKey: 'manufacturerId')]
     private ?Manufacturer $manufacturer = null;
@@ -171,6 +173,12 @@ class Product extends BaseEntity
 
     public function getMasterId(): ?int { return $this->masterId; }
     public function setMasterId(?int $id): self { $this->masterId = $id; return $this; }
+
+    public function getNcm(): string { return $this->ncm; }
+    public function setNcm(string $ncm): self { $this->ncm = $ncm; return $this; }
+
+    public function getCest(): string { return $this->cest; }
+    public function setCest(string $cest): self { $this->cest = $cest; return $this; }
 
     public function getManufacturer(): ?Manufacturer { return $this->manufacturer; }
     public function setManufacturer(?Manufacturer $m): self { $this->manufacturer = $m; return $this; }

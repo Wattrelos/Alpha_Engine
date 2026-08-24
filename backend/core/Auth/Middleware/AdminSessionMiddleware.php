@@ -105,29 +105,34 @@ class AdminSessionMiddleware
 
         $sessionData = null;
 
-        if ($this->useRedis && $this->redis) {
-            // Tenta buscar os dados do administrador guardados na RAM do Redis
-            $sessionData = $this->redis->get("sessao:admin:" . $sessionId);
+        // 1. Verifica se os dados de sessão já foram injetados como atributo na requisição (ex: testes ou autenticação prévia)
+        $existingAdmin = $request->getAttribute('logged_admin');
+        if ($existingAdmin !== null) {
+            $sessionData = is_string($existingAdmin) ? $existingAdmin : json_encode($existingAdmin);
+        } elseif (!empty($sessionId)) {
+            // 2. Se há sessionId fornecido via cookie:
+            if ($this->useRedis && $this->redis) {
+                // Tenta buscar os dados do administrador guardados na RAM do Redis
+                $sessionData = $this->redis->get("sessao:admin:" . $sessionId);
 
-            if ($sessionData) {
-                // Estende o tempo do administrador no Redis por mais 2 horas
-                $this->redis->expire("sessao:admin:" . $sessionId, 7200);
-            }
-        } else {
-            // Fallback para sessão local PHP
-            if (session_status() === PHP_SESSION_NONE) {
-                session_name('admin_session_id');
-                if (!empty($sessionId)) {
-                    session_id($sessionId);
-                }
-                session_start();
-            }
-
-            $expire = $_SESSION['logged_admin_expire'] ?? 0;
-            if ($expire > time()) {
-                $sessionData = $_SESSION['logged_admin'] ?? null;
                 if ($sessionData) {
-                    $_SESSION['logged_admin_expire'] = time() + 7200;
+                    // Estende o tempo do administrador no Redis por mais 2 horas
+                    $this->redis->expire("sessao:admin:" . $sessionId, 7200);
+                }
+            } else {
+                // Fallback para sessão local PHP
+                if (session_status() === PHP_SESSION_NONE) {
+                    session_name('admin_session_id');
+                    session_id($sessionId);
+                    @session_start();
+                }
+
+                $expire = $_SESSION['logged_admin_expire'] ?? 0;
+                if ($expire > time()) {
+                    $sessionData = $_SESSION['logged_admin'] ?? null;
+                    if ($sessionData) {
+                        $_SESSION['logged_admin_expire'] = time() + 7200;
+                    }
                 }
             }
         }
@@ -139,7 +144,7 @@ class AdminSessionMiddleware
         }
 
         // Injeta os dados do administrador na requisição para consumo posterior
-        $user = json_decode($sessionData);
+        $user = is_string($sessionData) ? json_decode($sessionData) : (object)$sessionData;
         $request = $request->withAttribute('logged_admin', $user);
 
         // --- Carrega permissões do papel (UserGroup) ---

@@ -74,12 +74,18 @@ class CreateProductAction extends BaseController implements \Alpha\Controller\Ac
         $manufacturers = $manufacturerRepo->getManufacturers();
         $stockStatuses = $productRepo->getStockStatuses($this->languageId);
         $categories = $categoryRepo->getCategoriesForSelect($this->languageId);
+        $weightClasses = $productRepo->getWeightClasses($this->languageId);
+        $lengthClasses = $productRepo->getLengthClasses($this->languageId);
+        $taxClasses = $productRepo->getTaxClasses();
 
         $html = $this->getTemplate('admin/pages/products/create.html.twig', [
             'title'          => 'Adicionar Produto | Painel Administrativo',
             'manufacturers'  => $manufacturers,
             'stock_statuses' => $stockStatuses,
-            'categories'     => $categories
+            'categories'     => $categories,
+            'weight_classes' => $weightClasses,
+            'length_classes' => $lengthClasses,
+            'tax_classes'    => $taxClasses
         ]);
 
         $response->getBody()->write($html);

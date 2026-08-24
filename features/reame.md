@@ -53,6 +53,7 @@ composer test:phpunit
 | **Módulo Frontend: Busca & Filtros** | [busca_filtros.feature](file:///var/www/html/agsonhos/features/frontend/busca_filtros.feature) | `FrontendContext` | `ProductRepository` / Busca Fulltext & Autocomplete |
 | **Módulo Frontend: Detalhes do Produto** | [detalhes_produto_pdp.feature](file:///var/www/html/agsonhos/features/frontend/detalhes_produto_pdp.feature) | `FrontendContext` | `ProductDetailAction` / Variantes, Zoom & Cross-selling |
 | **Módulo Frontend: Painel do Cliente** | [painel_cliente.feature](file:///var/www/html/agsonhos/features/frontend/painel_cliente.feature) | `FrontendContext` | `CustomerOrdersAction` / Rastreamento & Devoluções |
+| **Módulo Autenticação: Login & Sessão** | [login.feature](file:///var/www/html/agsonhos/features/auth/login.feature) | `AuthContext` | `CustomerAuthService`, `LoginAction` & `LogoutAction` |
 | **Módulo Carrinho: Adição & Variantes** | [adicionar_produto.feature](file:///var/www/html/agsonhos/features/cart/adicionar_produto.feature) | `CartContext` | `AddCartAction` / Validação de estoque e variantes |
 | **Módulo Carrinho: Gestão de Itens** | [gerenciar_itens_carrinho.feature](file:///var/www/html/agsonhos/features/cart/gerenciar_itens_carrinho.feature) | `CartContext` | `EditCartAction` & `RemoveCartAction` |
 | **Módulo Carrinho: Cálculo de Frete** | [calculo_frete_carrinho.feature](file:///var/www/html/agsonhos/features/cart/calculo_frete_carrinho.feature) | `CartContext` | `SaveShippingCepAction` / Correios, Transportadora & BOPIS |
@@ -84,6 +85,8 @@ agsonhos/
 │   │   ├── identity_map_cache_repositorios.feature
 │   │   ├── eventos_dominio_rabbitmq_workers.feature
 │   │   └── compatibilidade_adaptadores_legados.feature
+│   ├── auth/                            # BDD de Autenticação e Gestão de Sessões
+│   │   └── login.feature
 │   ├── security/                        # BDD de Segurança, OWASP Headers, RBAC, CSRF, XSS e IDOR
 │   │   ├── README.md
 │   │   ├── cabecalhos_owasp.feature
@@ -133,7 +136,8 @@ agsonhos/
 │       ├── FrontendContext.php          # Passos de layout, catálogo, busca, PDP e pós-venda
 │       ├── CartContext.php              # Passos de catálogo, carrinho, frete e mesclagem
 │       ├── CheckoutContext.php          # Passos de checkout, CSRF, idempotência e pagamentos
-│       └── ApiContext.php               # Passos de APIs REST, Webhooks e Rate Limiting
+│       ├── ApiContext.php               # Passos de APIs REST, Webhooks e Rate Limiting
+│       └── AuthContext.php              # Passos de autenticação, login e encerramento de sessão
 ```
 
 ---

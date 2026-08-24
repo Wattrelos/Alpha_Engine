@@ -14,11 +14,14 @@ use Twig\Environment;
 use Slim\Psr7\Factory\ServerRequestFactory;
 use Alpha\Model\DataAccessObject\ConnectionDB;
 use Alpha\Mappers\EntityMappers\ProductMapper;
+use Alpha\Model\Domain\Repositories\ProductRepository;
+use Alpha\Model\Domain\Repositories\RepositoryFactory;
 
 class ProductValidationTest extends TestCase
 {
     private $app;
     private $conn;
+    private $container;
 
     protected function setUp(): void
     {
@@ -27,7 +30,7 @@ class ProductValidationTest extends TestCase
         }
 
         $bootstrap = AppBootstrap::boot();
-        $container = $bootstrap->getContainer();
+        $this->container = $bootstrap->getContainer();
         $this->conn = ConnectionDB::getInstance()->getConnection();
 
         $twig = Twig::create(__DIR__ . '/../../backend/resources/views', [
@@ -35,12 +38,14 @@ class ProductValidationTest extends TestCase
             'auto_reload' => true,
             'debug'       => true,
         ]);
-        $container->bind(Environment::class, $twig->getEnvironment());
-        $container->bind(Twig::class, $twig);
+        $this->container->bind(Environment::class, $twig->getEnvironment());
+        $this->container->bind(Twig::class, $twig);
 
-        AppFactory::setContainer($container);
+        AppFactory::setContainer($this->container);
         $app = AppFactory::create();
         $app->map(['GET', 'POST'], '/produtos/criar', \Alpha\Admin\Controllers\Actions\Catalog\Product\CreateProductAction::class);
+        $app->get('/produtos/{id:[0-9]+}/editar', \Alpha\Admin\Controllers\Actions\Catalog\Product\EditProductAction::class);
+        $app->post('/produtos/{id:[0-9]+}/editar', \Alpha\Admin\Controllers\Actions\Catalog\Product\UpdateProductAction::class);
 
         $this->app = $app;
     }
@@ -55,6 +60,15 @@ class ProductValidationTest extends TestCase
         $body = (string)$response->getBody();
         $this->assertStringContainsString('name="name"', $body);
         $this->assertStringContainsString('name="model"', $body);
+        $this->assertStringContainsString('data-tab="tab-general"', $body);
+        $this->assertStringContainsString('data-tab="tab-data"', $body);
+        $this->assertStringContainsString('data-tab="tab-dimensions"', $body);
+        $this->assertStringContainsString('data-tab="tab-fiscal"', $body);
+        $this->assertStringContainsString('data-tab="tab-seo"', $body);
+        $this->assertStringContainsString('name="ncm"', $body);
+        $this->assertStringContainsString('name="cest"', $body);
+        $this->assertStringContainsString('name="weight"', $body);
+        $this->assertStringContainsString('name="length"', $body);
     }
 
     public function testCreateProductValidationFailure(): void
@@ -88,11 +102,29 @@ class ProductValidationTest extends TestCase
             ->withParsedBody([
                 'name' => $testProductName,
                 'model' => $testProductModel,
+                'sku' => 'SKU-ACTION-TEST',
                 'price' => $testProductPrice,
                 'quantity' => $testProductQuantity,
                 'status' => 1,
                 'description' => 'Detailed test description here.',
+                'tag' => 'tag1, tag2',
+                'meta_title' => 'Meta Title Action',
+                'meta_description' => 'Meta Description Action',
+                'meta_keyword' => 'kw1, kw2',
                 'ean' => '1234567890123',
+                'upc' => '123456789012',
+                'mpn' => 'MPN-ACTION-01',
+                'ncm' => '6907.21.00',
+                'cest' => '10.001.00',
+                'weight' => 12.5000,
+                'weight_class_id' => 1,
+                'length' => 30.00,
+                'width' => 20.00,
+                'height' => 15.00,
+                'length_class_id' => 1,
+                'shipping' => 1,
+                'minimum' => 2,
+                'subtract' => 1,
                 'stock_status_id' => 7,
                 'manufacturer_id' => 0,
                 'date_available' => date('Y-m-d'),
@@ -103,9 +135,9 @@ class ProductValidationTest extends TestCase
         $this->assertEquals(302, $response->getStatusCode());
 
         $stmt = $this->conn->prepare("
-            SELECT p.id, pd.name, p.model
+            SELECT p.*, pd.name, pd.tag, pd.meta_title, pd.meta_description, pd.meta_keyword
             FROM `" . DB_PREFIX . "product` p
-            LEFT JOIN `" . DB_PREFIX . "product_description` pd ON p.id = pd.product_id
+            LEFT JOIN `" . DB_PREFIX . "product_description` pd ON (p.id = pd.product_id AND pd.language_id = 2)
             WHERE p.model = ?
         ");
         $stmt->execute([$testProductModel]);
@@ -113,9 +145,75 @@ class ProductValidationTest extends TestCase
 
         $this->assertNotEmpty($insertedProduct, "Produto inserido deve ser encontrado no banco.");
         $this->assertEquals($testProductName, $insertedProduct['name']);
+        $this->assertEquals('SKU-ACTION-TEST', $insertedProduct['sku']);
+        $this->assertEquals('6907.21.00', $insertedProduct['ncm']);
+        $this->assertEquals('10.001.00', $insertedProduct['cest']);
+        $this->assertEquals('12.50000000', $insertedProduct['weight']);
+        $this->assertEquals('30.00000000', $insertedProduct['length']);
+        $this->assertEquals('20.00000000', $insertedProduct['width']);
+        $this->assertEquals('15.00000000', $insertedProduct['height']);
+        $this->assertEquals('Meta Title Action', $insertedProduct['meta_title']);
+        $this->assertEquals('tag1, tag2', $insertedProduct['tag']);
+
+        // Test Edit Form Render
+        $productId = (int)$insertedProduct['id'];
+        $editRequest = $serverRequestFactory->createServerRequest('GET', "/produtos/{$productId}/editar");
+        $editResponse = $this->app->handle($editRequest);
+        $this->assertEquals(200, $editResponse->getStatusCode());
+        $editBody = (string)$editResponse->getBody();
+        $this->assertStringContainsString('data-tab="tab-general"', $editBody);
+        $this->assertStringContainsString('data-tab="tab-data"', $editBody);
+        $this->assertStringContainsString('data-tab="tab-dimensions"', $editBody);
+        $this->assertStringContainsString('data-tab="tab-fiscal"', $editBody);
+        $this->assertStringContainsString('data-tab="tab-seo"', $editBody);
+        $this->assertStringContainsString('data-tab="tab-variants"', $editBody);
+        $this->assertStringContainsString('value="6907.21.00"', $editBody);
+
+        // Test Update Persistence
+        $updateRequest = $serverRequestFactory->createServerRequest('POST', "/produtos/{$productId}/editar")
+            ->withParsedBody([
+                'name' => $testProductName . ' Updated',
+                'model' => $testProductModel,
+                'sku' => 'SKU-ACTION-UPDATED',
+                'price' => 149.90,
+                'quantity' => 50,
+                'status' => 1,
+                'description' => 'Updated desc',
+                'tag' => 'updated_tag',
+                'meta_title' => 'Updated Meta Title',
+                'meta_description' => 'Updated Meta Desc',
+                'meta_keyword' => 'up_kw',
+                'ean' => '9876543210987',
+                'ncm' => '6907.22.00',
+                'cest' => '10.002.00',
+                'weight' => 25.0000,
+                'weight_class_id' => 1,
+                'length' => 45.00,
+                'width' => 35.00,
+                'height' => 25.00,
+                'length_class_id' => 1,
+                'shipping' => 1,
+                'minimum' => 1,
+                'subtract' => 1,
+                'stock_status_id' => 7,
+                'manufacturer_id' => 0,
+                'date_available' => date('Y-m-d'),
+                'product_category' => [$testCategoryId]
+            ]);
+        $updateResponse = $this->app->handle($updateRequest);
+        $this->assertEquals(302, $updateResponse->getStatusCode());
+
+        $stmt->execute([$testProductModel]);
+        $updatedProduct = $stmt->fetch(\PDO::FETCH_ASSOC);
+        $this->assertEquals($testProductName . ' Updated', $updatedProduct['name']);
+        $this->assertEquals('SKU-ACTION-UPDATED', $updatedProduct['sku']);
+        $this->assertEquals('6907.22.00', $updatedProduct['ncm']);
+        $this->assertEquals('10.002.00', $updatedProduct['cest']);
+        $this->assertEquals('25.00000000', $updatedProduct['weight']);
+        $this->assertEquals('45.00000000', $updatedProduct['length']);
+        $this->assertEquals('Updated Meta Title', $updatedProduct['meta_title']);
 
         // Cleanup
-        $productId = (int)$insertedProduct['id'];
         $this->conn->prepare("DELETE FROM `" . DB_PREFIX . "product_to_category` WHERE product_id = ?")->execute([$productId]);
         $this->conn->prepare("DELETE FROM `" . DB_PREFIX . "product_to_store` WHERE product_id = ?")->execute([$productId]);
         $this->conn->prepare("DELETE FROM `" . DB_PREFIX . "product_description` WHERE product_id = ?")->execute([$productId]);

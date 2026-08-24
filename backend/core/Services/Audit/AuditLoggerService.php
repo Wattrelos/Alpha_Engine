@@ -106,7 +106,7 @@ class AuditLoggerService
      */
     private function logToFile(array $data): bool
     {
-        $logDir = defined('DIR_STORAGE') ? DIR_STORAGE . 'logs/' : __DIR__ . '/../../storage/logs/';
+        $logDir = defined('DIR_STORAGE') ? DIR_STORAGE . 'logs/' : dirname(__DIR__, 3) . '/storage/logs/';
         if (!is_dir($logDir)) {
             @mkdir($logDir, 0777, true);
         }
@@ -122,7 +122,9 @@ class AuditLoggerService
             json_encode($data['payload'], JSON_UNESCAPED_UNICODE)
         );
 
-        return @file_put_contents($logFile, $entry, FILE_APPEND) !== false;
+        $result = @file_put_contents($logFile, $entry, FILE_APPEND) !== false;
+        @chmod($logFile, 0666);
+        return $result;
     }
 
     /**

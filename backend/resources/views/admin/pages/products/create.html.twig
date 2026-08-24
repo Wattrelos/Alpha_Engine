@@ -22,105 +22,312 @@
 				<input type="hidden" name="{{ csrf.keys.name }}" value="{{ csrf.name }}">
 				<input type="hidden" name="{{ csrf.keys.value }}" value="{{ csrf.value }}">
 			{% endif %}
-			<div class="form-grid grid-2-cols">
-				
-				<!-- Nome do Produto -->
-				<div class="form-group col-span-2 grid-form-row">
-					<label for="name" class="form-label-dark">{{ AdminLang.entry_name }} *</label>
-					<input type="text" id="name" name="name" class="form-control form-control-lg" placeholder="{{ AdminLang.placeholder_name_create }}" required />
-				</div>
 
-				<!-- Modelo -->
-				<div class="form-group mb-6">
-					<label for="model" class="form-label-dark">{{ AdminLang.entry_model }}</label>
-					<input type="text" id="model" name="model" class="form-control form-control-lg" placeholder="{{ AdminLang.placeholder_model }}" />
+			<div class="product-tabs-container">
+				<div class="product-tabs">
+					<button type="button" class="tab-btn product-tab-btn active-tab" data-tab="tab-general">
+						<i class="fas fa-tag"></i> {{ AdminLang.tab_general }}
+					</button>
+					<button type="button" class="tab-btn product-tab-btn" data-tab="tab-data">
+						<i class="fas fa-box"></i> {{ AdminLang.tab_data }}
+					</button>
+					<button type="button" class="tab-btn product-tab-btn" data-tab="tab-dimensions">
+						<i class="fas fa-ruler-combined"></i> {{ AdminLang.tab_dimensions }}
+					</button>
+					<button type="button" class="tab-btn product-tab-btn" data-tab="tab-fiscal">
+						<i class="fas fa-file-invoice"></i> {{ AdminLang.tab_fiscal }}
+					</button>
+					<button type="button" class="tab-btn product-tab-btn" data-tab="tab-seo">
+						<i class="fas fa-search"></i> {{ AdminLang.tab_seo }}
+					</button>
 				</div>
+			</div>
 
-				<!-- EAN / Código de Barras -->
-				<div class="form-group mb-6">
-					<label for="ean" class="form-label-dark">{{ AdminLang.entry_ean_title }}</label>
-					<input type="text" id="ean" name="ean" class="form-control form-control-lg" placeholder="{{ AdminLang.placeholder_ean_val }}" />
-				</div>
+			<!-- 1. ABA GERAL -->
+			<div id="tab-general" class="tab-content-panel">
+				<div class="form-grid grid-2-cols">
+					<!-- Nome do Produto -->
+					<div class="form-group col-span-2 grid-form-row">
+						<label for="name" class="form-label-dark">{{ AdminLang.entry_name }} *</label>
+						<input type="text" id="name" name="name" class="form-control form-control-lg" placeholder="{{ AdminLang.placeholder_name_create }}" required />
+					</div>
 
-				<!-- Preço -->
-				<div class="form-group mb-6">
-					<label for="price" class="form-label-dark">{{ AdminLang.entry_price_title }}</label>
-					<input type="number" id="price" name="price" class="form-control form-control-lg" step="0.01" value="0.00" />
-				</div>
-
-				<!-- Quantidade -->
-				<div class="form-group mb-6">
-					<label for="quantity" class="form-label-dark">{{ AdminLang.entry_quantity_title }}</label>
-					<input type="number" id="quantity" name="quantity" class="form-control form-control-lg" value="0" />
-				</div>
-
-				<!-- Fabricante (Manufacturer) -->
-				<div class="form-group mb-6">
-					<label for="manufacturer_id" class="form-label-dark">{{ AdminLang.entry_manufacturer_title }}</label>
-					<select id="manufacturer_id" name="manufacturer_id" class="form-control form-control-lg">
-						<option value="0">{{ AdminLang.text_none }}</option>
-						{% for m in manufacturers %}
-							<option value="{{ m.id }}">{{ m.name }}</option>
-						{% endfor %}
-					</select>
-				</div>
-
-				<!-- Status de Estoque (Stock Status) -->
-				<div class="form-group mb-6">
-					<label for="stock_status_id" class="form-label-dark">{{ AdminLang.entry_stock_status }}</label>
-					<select id="stock_status_id" name="stock_status_id" class="form-control form-control-lg">
-						{% for s in stock_statuses %}
-							<option value="{{ s.id }}" {% if s.id == 7 %}selected{% endif %}>{{ s.name }}</option>
-						{% endfor %}
-					</select>
-				</div>
-
-				<!-- Categorias -->
-				<div class="form-group mb-6 col-span-2">
-					<label class="form-label-dark">{{ AdminLang.entry_categories }}</label>
-					<div class="product-categories-box">
-						<div class="product-categories-grid">
-							{% for c in categories %}
-								<label class="product-category-item">
-									<input type="checkbox" name="product_category[]" value="{{ c.id }}" class="form-checkbox" />
-									<span>{{ c.name }}</span>
-								</label>
+					<!-- Fabricante (Manufacturer) -->
+					<div class="form-group mb-6">
+						<label for="manufacturer_id" class="form-label-dark">{{ AdminLang.entry_manufacturer_title }}</label>
+						<select id="manufacturer_id" name="manufacturer_id" class="form-control form-control-lg">
+							<option value="0">{{ AdminLang.text_none }}</option>
+							{% for m in manufacturers %}
+								<option value="{{ m.id }}">{{ m.name }}</option>
 							{% endfor %}
+						</select>
+					</div>
+
+					<!-- Status Geral -->
+					<div class="form-group mb-6">
+						<label for="status" class="form-label-dark">{{ AdminLang.entry_status_general }}</label>
+						<select id="status" name="status" class="form-control form-control-lg">
+							<option value="1" selected>{{ AdminLang.text_active }}</option>
+							<option value="0">{{ AdminLang.text_inactive }}</option>
+						</select>
+					</div>
+
+					<!-- Data Disponível -->
+					<div class="form-group mb-6">
+						<label for="date_available" class="form-label-dark">{{ AdminLang.entry_date_available }}</label>
+						<input type="date" id="date_available" name="date_available" class="form-control form-control-lg" value="{{ "now"|date("Y-m-d") }}" />
+					</div>
+
+					<!-- Categorias -->
+					<div class="form-group mb-6 col-span-2">
+						<label class="form-label-dark">{{ AdminLang.entry_categories }}</label>
+						<div class="product-categories-box">
+							<div class="product-categories-grid">
+								{% for c in categories %}
+									<label class="product-category-item">
+										<input type="checkbox" name="product_category[]" value="{{ c.id }}" class="form-checkbox" />
+										<span>{{ c.name }}</span>
+									</label>
+								{% endfor %}
+							</div>
 						</div>
 					</div>
-				</div>
 
-				<!-- Data Disponível -->
-				<div class="form-group mb-6">
-					<label for="date_available" class="form-label-dark">{{ AdminLang.entry_date_available }}</label>
-					<input type="date" id="date_available" name="date_available" class="form-control form-control-lg" value="{{ "now"|date("Y-m-d") }}" />
-				</div>
+					<!-- Foto Principal do Produto -->
+					<div class="form-group col-span-2 mb-8 product-image-upload-box">
+						<label for="image" class="form-label-lg">{{ AdminLang.entry_image }}</label>
+						<div class="upload-input-wrap">
+							<input type="file" id="image" name="image" accept="image/*" class="form-control form-control-lg" />
+							<p class="form-text-muted">{{ AdminLang.text_image_help }}</p>
+						</div>
+					</div>
 
-				<!-- Status -->
-				<div class="form-group mb-6">
-					<label for="status" class="form-label-dark">{{ AdminLang.entry_status_general }}</label>
-					<select id="status" name="status" class="form-control form-control-lg">
-						<option value="1">{{ AdminLang.text_active }}</option>
-						<option value="0">{{ AdminLang.text_inactive }}</option>
-					</select>
-				</div>
+					<!-- Tags do Produto -->
+					<div class="form-group col-span-2 mb-6">
+						<label for="tag" class="form-label-dark">{{ AdminLang.entry_tag }}</label>
+						<input type="text" id="tag" name="tag" class="form-control form-control-lg" placeholder="{{ AdminLang.placeholder_tag }}" />
+					</div>
 
-				<!-- Imagem do Produto -->
-				<div class="form-group col-span-2 mb-8 product-image-upload-box">
-					<label for="image" class="form-label-lg">{{ AdminLang.entry_image }}</label>
-					
-					<div class="upload-input-wrap">
-						<input type="file" id="image" name="image" accept="image/*" class="form-control form-control-lg" />
-						<p class="form-text-muted">{{ AdminLang.text_image_help }}</p>
+					<!-- Descrição Detalhada -->
+					<div class="form-group col-span-2 mb-8">
+						<label for="description" class="form-label-dark">{{ AdminLang.entry_description }}</label>
+						<textarea id="description" name="description" class="form-control form-control-lg" rows="8" placeholder="{{ AdminLang.placeholder_description }}"></textarea>
 					</div>
 				</div>
+			</div>
 
-				<!-- Descrição Detalhada -->
-				<div class="form-group col-span-2 mb-8">
-					<label for="description" class="form-label-dark">{{ AdminLang.entry_description }}</label>
-					<textarea id="description" name="description" class="form-control form-control-lg" rows="8" placeholder="{{ AdminLang.placeholder_description }}"></textarea>
+			<!-- 2. ABA DADOS & ESTOQUE -->
+			<div id="tab-data" class="tab-content-panel d-none">
+				<div class="form-grid grid-2-cols">
+					<!-- Modelo -->
+					<div class="form-group mb-6">
+						<label for="model" class="form-label-dark">{{ AdminLang.entry_model }}</label>
+						<input type="text" id="model" name="model" class="form-control form-control-lg" placeholder="{{ AdminLang.placeholder_model }}" />
+					</div>
+
+					<!-- SKU Principal -->
+					<div class="form-group mb-6">
+						<label for="sku" class="form-label-dark">{{ AdminLang.entry_sku }}</label>
+						<input type="text" id="sku" name="sku" class="form-control form-control-lg" placeholder="{{ AdminLang.placeholder_sku }}" />
+					</div>
+
+					<!-- Preço de Venda -->
+					<div class="form-group mb-6">
+						<label for="price" class="form-label-dark">{{ AdminLang.entry_price_title }} *</label>
+						<input type="number" id="price" name="price" class="form-control form-control-lg" step="0.01" value="0.00" required />
+					</div>
+
+					<!-- Quantidade em Estoque -->
+					<div class="form-group mb-6">
+						<label for="quantity" class="form-label-dark">{{ AdminLang.entry_quantity_title }} *</label>
+						<input type="number" id="quantity" name="quantity" class="form-control form-control-lg" value="0" required />
+					</div>
+
+					<!-- Quantidade Mínima -->
+					<div class="form-group mb-6">
+						<label for="minimum" class="form-label-dark">{{ AdminLang.entry_minimum }}</label>
+						<input type="number" id="minimum" name="minimum" class="form-control form-control-lg" value="1" min="1" />
+					</div>
+
+					<!-- Subtrair Estoque -->
+					<div class="form-group mb-6">
+						<label for="subtract" class="form-label-dark">{{ AdminLang.entry_subtract }}</label>
+						<select id="subtract" name="subtract" class="form-control form-control-lg">
+							<option value="1" selected>{{ AdminLang.text_yes }}</option>
+							<option value="0">{{ AdminLang.text_no }}</option>
+						</select>
+					</div>
+
+					<!-- Status quando Esgotado -->
+					<div class="form-group mb-6">
+						<label for="stock_status_id" class="form-label-dark">{{ AdminLang.entry_stock_status }}</label>
+						<select id="stock_status_id" name="stock_status_id" class="form-control form-control-lg">
+							{% for s in stock_statuses %}
+								<option value="{{ s.id }}" {% if s.id == 7 %}selected{% endif %}>{{ s.name }}</option>
+							{% endfor %}
+						</select>
+					</div>
+
+					<!-- Localização no Depósito -->
+					<div class="form-group mb-6">
+						<label for="location" class="form-label-dark">{{ AdminLang.entry_location }}</label>
+						<input type="text" id="location" name="location" class="form-control form-control-lg" placeholder="{{ AdminLang.placeholder_location }}" />
+					</div>
+
+					<!-- Pontos de Fidelidade -->
+					<div class="form-group mb-6">
+						<label for="points" class="form-label-dark">{{ AdminLang.entry_points }}</label>
+						<input type="number" id="points" name="points" class="form-control form-control-lg" value="0" />
+					</div>
+
+					<!-- Ordem de Exibição -->
+					<div class="form-group mb-6">
+						<label for="sort_order" class="form-label-dark">{{ AdminLang.entry_sort_order }}</label>
+						<input type="number" id="sort_order" name="sort_order" class="form-control form-control-lg" value="0" />
+					</div>
 				</div>
+			</div>
 
+			<!-- 3. ABA MEDIDAS & FRETE -->
+			<div id="tab-dimensions" class="tab-content-panel d-none">
+				<p class="form-text-muted mb-6">
+					<i class="fas fa-info-circle"></i> {{ AdminLang.text_dimensions_help }}
+				</p>
+				<div class="form-grid grid-2-cols">
+					<!-- Exige Envio / Frete -->
+					<div class="form-group mb-6 col-span-2">
+						<label for="shipping" class="form-label-dark">{{ AdminLang.entry_shipping }}</label>
+						<select id="shipping" name="shipping" class="form-control form-control-lg">
+							<option value="1" selected>{{ AdminLang.text_yes }}</option>
+							<option value="0">{{ AdminLang.text_no }}</option>
+						</select>
+					</div>
+
+					<!-- Peso -->
+					<div class="form-group mb-6">
+						<label for="weight" class="form-label-dark">{{ AdminLang.entry_weight }}</label>
+						<input type="number" id="weight" name="weight" class="form-control form-control-lg" step="0.0001" value="0.0000" />
+					</div>
+
+					<!-- Unidade de Peso -->
+					<div class="form-group mb-6">
+						<label for="weight_class_id" class="form-label-dark">{{ AdminLang.entry_weight_class }}</label>
+						<select id="weight_class_id" name="weight_class_id" class="form-control form-control-lg">
+							{% for wc in weight_classes %}
+								<option value="{{ wc.id }}" {% if wc.id == 1 %}selected{% endif %}>{{ wc.title }} ({{ wc.unit }})</option>
+							{% endfor %}
+						</select>
+					</div>
+
+					<!-- Comprimento -->
+					<div class="form-group mb-6">
+						<label for="length" class="form-label-dark">{{ AdminLang.entry_length }}</label>
+						<input type="number" id="length" name="length" class="form-control form-control-lg" step="0.01" value="0.00" />
+					</div>
+
+					<!-- Largura -->
+					<div class="form-group mb-6">
+						<label for="width" class="form-label-dark">{{ AdminLang.entry_width }}</label>
+						<input type="number" id="width" name="width" class="form-control form-control-lg" step="0.01" value="0.00" />
+					</div>
+
+					<!-- Altura -->
+					<div class="form-group mb-6">
+						<label for="height" class="form-label-dark">{{ AdminLang.entry_height }}</label>
+						<input type="number" id="height" name="height" class="form-control form-control-lg" step="0.01" value="0.00" />
+					</div>
+
+					<!-- Unidade de Comprimento / Medida -->
+					<div class="form-group mb-6">
+						<label for="length_class_id" class="form-label-dark">{{ AdminLang.entry_length_class }}</label>
+						<select id="length_class_id" name="length_class_id" class="form-control form-control-lg">
+							{% for lc in length_classes %}
+								<option value="{{ lc.id }}" {% if lc.id == 1 %}selected{% endif %}>{{ lc.title }} ({{ lc.unit }})</option>
+							{% endfor %}
+						</select>
+					</div>
+				</div>
+			</div>
+
+			<!-- 4. ABA FISCAL & CÓDIGOS -->
+			<div id="tab-fiscal" class="tab-content-panel d-none">
+				<div class="form-grid grid-2-cols">
+					<!-- NCM -->
+					<div class="form-group mb-6">
+						<label for="ncm" class="form-label-dark">{{ AdminLang.entry_ncm }}</label>
+						<input type="text" id="ncm" name="ncm" class="form-control form-control-lg" placeholder="{{ AdminLang.placeholder_ncm }}" maxlength="10" />
+					</div>
+
+					<!-- CEST -->
+					<div class="form-group mb-6">
+						<label for="cest" class="form-label-dark">{{ AdminLang.entry_cest }}</label>
+						<input type="text" id="cest" name="cest" class="form-control form-control-lg" placeholder="{{ AdminLang.placeholder_cest }}" maxlength="15" />
+					</div>
+
+					<!-- Classe de Impostos (Tax Class) -->
+					<div class="form-group mb-6">
+						<label for="tax_class_id" class="form-label-dark">{{ AdminLang.entry_tax_class }}</label>
+						<select id="tax_class_id" name="tax_class_id" class="form-control form-control-lg">
+							<option value="0">{{ AdminLang.text_none }}</option>
+							{% for tc in tax_classes %}
+								<option value="{{ tc.id }}">{{ tc.title }}</option>
+							{% endfor %}
+						</select>
+					</div>
+
+					<!-- EAN / Código de Barras (GTIN) -->
+					<div class="form-group mb-6">
+						<label for="ean" class="form-label-dark">{{ AdminLang.entry_ean_title }}</label>
+						<input type="text" id="ean" name="ean" class="form-control form-control-lg" placeholder="{{ AdminLang.placeholder_ean_val }}" />
+					</div>
+
+					<!-- UPC -->
+					<div class="form-group mb-6">
+						<label for="upc" class="form-label-dark">{{ AdminLang.entry_upc }}</label>
+						<input type="text" id="upc" name="upc" class="form-control form-control-lg" placeholder="{{ AdminLang.placeholder_upc }}" />
+					</div>
+
+					<!-- MPN -->
+					<div class="form-group mb-6">
+						<label for="mpn" class="form-label-dark">{{ AdminLang.entry_mpn }}</label>
+						<input type="text" id="mpn" name="mpn" class="form-control form-control-lg" placeholder="{{ AdminLang.placeholder_mpn }}" />
+					</div>
+
+					<!-- ISBN -->
+					<div class="form-group mb-6">
+						<label for="isbn" class="form-label-dark">{{ AdminLang.entry_isbn }}</label>
+						<input type="text" id="isbn" name="isbn" class="form-control form-control-lg" placeholder="{{ AdminLang.placeholder_isbn }}" />
+					</div>
+
+					<!-- JAN -->
+					<div class="form-group mb-6">
+						<label for="jan" class="form-label-dark">{{ AdminLang.entry_jan }}</label>
+						<input type="text" id="jan" name="jan" class="form-control form-control-lg" placeholder="{{ AdminLang.placeholder_jan }}" />
+					</div>
+				</div>
+			</div>
+
+			<!-- 5. ABA SEO & BUSCA -->
+			<div id="tab-seo" class="tab-content-panel d-none">
+				<div class="form-grid grid-2-cols">
+					<!-- Meta Título -->
+					<div class="form-group col-span-2 mb-6">
+						<label for="meta_title" class="form-label-dark">{{ AdminLang.entry_meta_title }}</label>
+						<input type="text" id="meta_title" name="meta_title" class="form-control form-control-lg" placeholder="{{ AdminLang.placeholder_meta_title }}" />
+					</div>
+
+					<!-- Meta Descrição -->
+					<div class="form-group col-span-2 mb-6">
+						<label for="meta_description" class="form-label-dark">{{ AdminLang.entry_meta_description }}</label>
+						<textarea id="meta_description" name="meta_description" class="form-control form-control-lg" rows="3" placeholder="{{ AdminLang.placeholder_meta_description }}"></textarea>
+					</div>
+
+					<!-- Meta Palavras-chave -->
+					<div class="form-group col-span-2 mb-8">
+						<label for="meta_keyword" class="form-label-dark">{{ AdminLang.entry_meta_keyword }}</label>
+						<textarea id="meta_keyword" name="meta_keyword" class="form-control form-control-lg" rows="2" placeholder="{{ AdminLang.placeholder_meta_keyword }}"></textarea>
+					</div>
+				</div>
 			</div>
 
 			<!-- Botões de Ação -->
@@ -133,4 +340,30 @@
 			</div>
 		</form>
 	</div>
+
+	<script>
+	document.addEventListener('DOMContentLoaded', function() {
+		const tabBtns = document.querySelectorAll('.tab-btn');
+		const tabPanels = document.querySelectorAll('.tab-content-panel');
+		
+		tabBtns.forEach(btn => {
+			btn.addEventListener('click', function() {
+				const targetTab = this.getAttribute('data-tab');
+				
+				tabBtns.forEach(b => b.classList.remove('active-tab'));
+				tabPanels.forEach(p => {
+					p.style.display = 'none';
+					p.classList.add('d-none');
+				});
+				
+				this.classList.add('active-tab');
+				const activePanel = document.getElementById(targetTab);
+				if (activePanel) {
+					activePanel.style.display = 'block';
+					activePanel.classList.remove('d-none');
+				}
+			});
+		});
+	});
+	</script>
 {% endblock %}

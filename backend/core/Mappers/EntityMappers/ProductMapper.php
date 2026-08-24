@@ -749,7 +749,7 @@ class ProductMapper extends BaseMapper {
             ->from(DB_PREFIX . 'product', 'p')
             ->leftJoin(DB_PREFIX . 'product_description', 'pd', 'p.id = pd.product_id AND pd.language_id = ' . (int)$languageId)
             ->where('p.id = ?', [$productId])
-            ->select('p.*', 'pd.name', 'pd.description');
+            ->select('p.*', 'pd.name', 'pd.description', 'pd.tag', 'pd.meta_title', 'pd.meta_description', 'pd.meta_keyword');
 
         $rows = $this->dao->executeQuery($builder);
         return $rows ? $rows[0] : null;
@@ -784,6 +784,49 @@ class ProductMapper extends BaseMapper {
     }
 
     /**
+     * Retorna a lista de classes de peso para selects no Admin.
+     */
+    public function getWeightClasses(int $languageId): array
+    {
+        $builder = (new QueryBuilder())
+            ->from(DB_PREFIX . 'weight_class', 'wc')
+            ->leftJoin(DB_PREFIX . 'weight_class_description', 'wcd', 'wc.id = wcd.weight_class_id AND wcd.language_id = ' . (int)$languageId)
+            ->where('wcd.title IS NOT NULL')
+            ->orderBy('wc.id', 'ASC')
+            ->select('wc.id', 'wcd.title', 'wcd.unit');
+
+        return $this->dao->executeQuery($builder);
+    }
+
+    /**
+     * Retorna a lista de classes de medida/comprimento para selects no Admin.
+     */
+    public function getLengthClasses(int $languageId): array
+    {
+        $builder = (new QueryBuilder())
+            ->from(DB_PREFIX . 'length_class', 'lc')
+            ->leftJoin(DB_PREFIX . 'length_class_description', 'lcd', 'lc.id = lcd.length_class_id AND lcd.language_id = ' . (int)$languageId)
+            ->where('lcd.title IS NOT NULL')
+            ->orderBy('lc.id', 'ASC')
+            ->select('lc.id', 'lcd.title', 'lcd.unit');
+
+        return $this->dao->executeQuery($builder);
+    }
+
+    /**
+     * Retorna a lista de classes de impostos para selects no Admin.
+     */
+    public function getTaxClasses(): array
+    {
+        $builder = (new QueryBuilder())
+            ->from(DB_PREFIX . 'tax_class')
+            ->orderBy('title', 'ASC')
+            ->select('id', 'title', 'description');
+
+        return $this->dao->executeQuery($builder);
+    }
+
+    /**
      * Cria um produto e seus dados correlatos de forma atômica.
      */
     public function createAdminProduct(array $data, int $storeId, int $languageId): int
@@ -793,25 +836,75 @@ class ProductMapper extends BaseMapper {
 
         $uow->transaction(function () use ($data, $storeId, $languageId, &$productId) {
             $name = trim($data['name'] ?? '');
+            $description = $data['description'] ?? '';
+            $tag = trim($data['tag'] ?? '');
+            $metaTitle = trim($data['meta_title'] ?? '');
+            if (empty($metaTitle)) {
+                $metaTitle = $name;
+            }
+            $metaDescription = trim($data['meta_description'] ?? '');
+            $metaKeyword = trim($data['meta_keyword'] ?? '');
+
             $model = trim($data['model'] ?? '');
+            $sku = trim($data['sku'] ?? '');
+            $upc = trim($data['upc'] ?? '');
+            $ean = trim($data['ean'] ?? '');
+            $jan = trim($data['jan'] ?? '');
+            $isbn = trim($data['isbn'] ?? '');
+            $mpn = trim($data['mpn'] ?? '');
+            $location = trim($data['location'] ?? '');
             $price = (float)($data['price'] ?? 0.0);
             $quantity = (int)($data['quantity'] ?? 0);
+            $minimum = max(1, (int)($data['minimum'] ?? 1));
+            $subtract = isset($data['subtract']) ? (int)$data['subtract'] : 1;
             $status = isset($data['status']) ? (int)$data['status'] : 1;
-            $description = $data['description'] ?? '';
-            $ean = trim($data['ean'] ?? '');
             $stockStatusId = (int)($data['stock_status_id'] ?? 7);
             $manufacturerId = (int)($data['manufacturer_id'] ?? 0);
             $dbManufacturerId = $manufacturerId === 0 ? null : $manufacturerId;
+            $shipping = isset($data['shipping']) ? (int)$data['shipping'] : 1;
+            $points = (int)($data['points'] ?? 0);
+            $taxClassId = (int)($data['tax_class_id'] ?? 0);
+            $sortOrder = (int)($data['sort_order'] ?? 0);
+
             $dateAvailable = trim($data['date_available'] ?? '');
             if (empty($dateAvailable)) {
                 $dateAvailable = date('Y-m-d');
             }
+
+            $weight = (float)($data['weight'] ?? 0.0);
+            $weightClassId = (int)($data['weight_class_id'] ?? 1);
+            $length = (float)($data['length'] ?? 0.0);
+            $width = (float)($data['width'] ?? 0.0);
+            $height = (float)($data['height'] ?? 0.0);
+            $lengthClassId = (int)($data['length_class_id'] ?? 1);
+
+            $ncm = trim($data['ncm'] ?? '');
+            $cest = trim($data['cest'] ?? '');
+
             $imagePath = $data['image'] ?? '';
             $categoryIds = isset($data['product_category']) && is_array($data['product_category']) ? $data['product_category'] : [];
 
             // 1. Inserção na tabela product
-            $sqlProd = "INSERT INTO `" . DB_PREFIX . "product` (`master_id`, `model`, `sku`, `upc`, `ean`, `jan`, `isbn`, `mpn`, `location`, `variant`, `override`, `quantity`, `stock_status_id`, `image`, `manufacturer_id`, `shipping`, `price`, `points`, `tax_class_id`, `date_available`, `weight`, `weight_class_id`, `length`, `width`, `height`, `length_class_id`, `subtract`, `minimum`, `rating`, `sort_order`, `status`, `date_added`, `date_modified`, `ncm`, `cest`) VALUES (0, ?, '', '', ?, '', '', '', '', '', '', ?, ?, ?, ?, 1, ?, 0, 0, ?, 0.00000000, 0, 0.00000000, 0.00000000, 0.00000000, 0, 1, 1, 0, 0, ?, NOW(), NOW(), '', '')";
-            $this->dao->executeRawSQL($sqlProd, [$model, $ean, $quantity, $stockStatusId, $imagePath, $dbManufacturerId, $price, $dateAvailable, $status]);
+            $sqlProd = "INSERT INTO `" . DB_PREFIX . "product` (
+                `master_id`, `model`, `sku`, `upc`, `ean`, `jan`, `isbn`, `mpn`, `location`, 
+                `variant`, `override`, `quantity`, `stock_status_id`, `image`, `manufacturer_id`, 
+                `shipping`, `price`, `points`, `tax_class_id`, `date_available`, `weight`, 
+                `weight_class_id`, `length`, `width`, `height`, `length_class_id`, `subtract`, 
+                `minimum`, `rating`, `sort_order`, `status`, `date_added`, `date_modified`, `ncm`, `cest`
+            ) VALUES (
+                0, ?, ?, ?, ?, ?, ?, ?, ?, 
+                '', '', ?, ?, ?, ?, 
+                ?, ?, ?, ?, ?, ?, 
+                ?, ?, ?, ?, ?, ?, 
+                ?, 0, ?, ?, NOW(), NOW(), ?, ?
+            )";
+            $this->dao->executeRawSQL($sqlProd, [
+                $model, $sku, $upc, $ean, $jan, $isbn, $mpn, $location,
+                $quantity, $stockStatusId, $imagePath, $dbManufacturerId,
+                $shipping, $price, $points, $taxClassId, $dateAvailable, $weight,
+                $weightClassId, $length, $width, $height, $lengthClassId, $subtract,
+                $minimum, $sortOrder, $status, $ncm, $cest
+            ]);
 
             $conn = \Alpha\Model\DataAccessObject\ConnectionDB::getInstance()->getConnection();
             $productId = (int)$conn->lastInsertId();
@@ -820,9 +913,9 @@ class ProductMapper extends BaseMapper {
             $stmtLangs = $conn->query("SELECT id FROM `" . DB_PREFIX . "language`");
             $languages = $stmtLangs->fetchAll(\PDO::FETCH_COLUMN);
 
-            $sqlDesc = "INSERT INTO `" . DB_PREFIX . "product_description` (`product_id`, `language_id`, `name`, `description`, `tag`, `meta_title`, `meta_description`, `meta_keyword`) VALUES (?, ?, ?, ?, '', ?, '', '')";
+            $sqlDesc = "INSERT INTO `" . DB_PREFIX . "product_description` (`product_id`, `language_id`, `name`, `description`, `tag`, `meta_title`, `meta_description`, `meta_keyword`) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
             foreach ($languages as $langId) {
-                $this->dao->executeRawSQL($sqlDesc, [$productId, $langId, $name, $description, $name]);
+                $this->dao->executeRawSQL($sqlDesc, [$productId, $langId, $name, $description, $tag, $metaTitle, $metaDescription, $metaKeyword]);
             }
 
             // 3. Inserção em product_to_store
@@ -851,19 +944,50 @@ class ProductMapper extends BaseMapper {
 
         return (bool)$uow->transaction(function () use ($productId, $data, $storeId, $languageId) {
             $name = trim($data['name'] ?? '');
+            $description = $data['description'] ?? '';
+            $tag = trim($data['tag'] ?? '');
+            $metaTitle = trim($data['meta_title'] ?? '');
+            if (empty($metaTitle)) {
+                $metaTitle = $name;
+            }
+            $metaDescription = trim($data['meta_description'] ?? '');
+            $metaKeyword = trim($data['meta_keyword'] ?? '');
+
             $model = trim($data['model'] ?? '');
+            $sku = trim($data['sku'] ?? '');
+            $upc = trim($data['upc'] ?? '');
+            $ean = trim($data['ean'] ?? '');
+            $jan = trim($data['jan'] ?? '');
+            $isbn = trim($data['isbn'] ?? '');
+            $mpn = trim($data['mpn'] ?? '');
+            $location = trim($data['location'] ?? '');
             $price = (float)($data['price'] ?? 0.0);
             $quantity = (int)($data['quantity'] ?? 0);
+            $minimum = max(1, (int)($data['minimum'] ?? 1));
+            $subtract = isset($data['subtract']) ? (int)$data['subtract'] : 1;
             $status = isset($data['status']) ? (int)$data['status'] : 1;
-            $description = $data['description'] ?? '';
-            $ean = trim($data['ean'] ?? '');
             $stockStatusId = (int)($data['stock_status_id'] ?? 0);
             $manufacturerId = (int)($data['manufacturer_id'] ?? 0);
             $dbManufacturerId = $manufacturerId === 0 ? null : $manufacturerId;
+            $shipping = isset($data['shipping']) ? (int)$data['shipping'] : 1;
+            $points = (int)($data['points'] ?? 0);
+            $taxClassId = (int)($data['tax_class_id'] ?? 0);
+            $sortOrder = (int)($data['sort_order'] ?? 0);
+
             $dateAvailable = trim($data['date_available'] ?? '');
             if (empty($dateAvailable)) {
                 $dateAvailable = date('Y-m-d');
             }
+
+            $weight = (float)($data['weight'] ?? 0.0);
+            $weightClassId = (int)($data['weight_class_id'] ?? 1);
+            $length = (float)($data['length'] ?? 0.0);
+            $width = (float)($data['width'] ?? 0.0);
+            $height = (float)($data['height'] ?? 0.0);
+            $lengthClassId = (int)($data['length_class_id'] ?? 1);
+
+            $ncm = trim($data['ncm'] ?? '');
+            $cest = trim($data['cest'] ?? '');
 
             $existing = $this->getAdminProductForEdit($productId, $languageId);
             if (!$existing) {
@@ -875,12 +999,56 @@ class ProductMapper extends BaseMapper {
             $newImagePath = $removeImage ? '' : (!empty($data['image']) ? $data['image'] : $currentImagePath);
 
             // 1. Atualiza tabela principal product
-            $sqlUpd = "UPDATE `" . DB_PREFIX . "product` SET `model` = ?, `price` = ?, `quantity` = ?, `status` = ?, `ean` = ?, `stock_status_id` = ?, `manufacturer_id` = ?, `date_available` = ?, `image` = ?, `date_modified` = NOW() WHERE `id` = ?";
-            $this->dao->executeRawSQL($sqlUpd, [$model, $price, $quantity, $status, $ean, $stockStatusId, $dbManufacturerId, $dateAvailable, $newImagePath, $productId]);
+            $sqlUpd = "UPDATE `" . DB_PREFIX . "product` SET 
+                `model` = ?, 
+                `sku` = ?,
+                `upc` = ?,
+                `ean` = ?,
+                `jan` = ?,
+                `isbn` = ?,
+                `mpn` = ?,
+                `location` = ?,
+                `price` = ?, 
+                `quantity` = ?, 
+                `minimum` = ?,
+                `subtract` = ?,
+                `points` = ?,
+                `tax_class_id` = ?,
+                `shipping` = ?,
+                `weight` = ?,
+                `weight_class_id` = ?,
+                `length` = ?,
+                `width` = ?,
+                `height` = ?,
+                `length_class_id` = ?,
+                `sort_order` = ?,
+                `status` = ?, 
+                `stock_status_id` = ?, 
+                `manufacturer_id` = ?, 
+                `date_available` = ?, 
+                `image` = ?, 
+                `ncm` = ?,
+                `cest` = ?,
+                `date_modified` = NOW() 
+            WHERE `id` = ?";
+            $this->dao->executeRawSQL($sqlUpd, [
+                $model, $sku, $upc, $ean, $jan, $isbn, $mpn, $location,
+                $price, $quantity, $minimum, $subtract, $points, $taxClassId,
+                $shipping, $weight, $weightClassId, $length, $width, $height, $lengthClassId,
+                $sortOrder, $status, $stockStatusId, $dbManufacturerId, $dateAvailable,
+                $newImagePath, $ncm, $cest, $productId
+            ]);
 
             // 2. Atualiza product_description
-            $sqlDesc = "UPDATE `" . DB_PREFIX . "product_description` SET `name` = ?, `description` = ? WHERE `product_id` = ? AND `language_id` = ?";
-            $this->dao->executeRawSQL($sqlDesc, [$name, $description, $productId, $languageId]);
+            $sqlDesc = "UPDATE `" . DB_PREFIX . "product_description` SET 
+                `name` = ?, 
+                `description` = ?,
+                `tag` = ?,
+                `meta_title` = ?,
+                `meta_description` = ?,
+                `meta_keyword` = ?
+            WHERE `product_id` = ? AND `language_id` = ?";
+            $this->dao->executeRawSQL($sqlDesc, [$name, $description, $tag, $metaTitle, $metaDescription, $metaKeyword, $productId, $languageId]);
 
             // 3. Processa Variações (Produtos Filhos)
             if (isset($data['variants']) && is_array($data['variants'])) {

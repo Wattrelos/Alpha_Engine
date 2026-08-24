@@ -24,8 +24,8 @@ class AuditDatabaseFallbackTest extends TestCase
             require_once $configPath;
         }
 
-        // Mock do QueueService que simula falha/ausencia de RabbitMQ
-        $mockQueue = $this->createMock(QueueService::class);
+        // Stub do QueueService que simula falha/ausencia de RabbitMQ
+        $mockQueue = $this->createStub(QueueService::class);
         $mockQueue->method('publish')->willThrowException(new \RuntimeException("RabbitMQ offline"));
 
         $this->auditLogger = new AuditLoggerService($mockQueue);

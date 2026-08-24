@@ -553,6 +553,38 @@ class ProductRepository extends AbstractRepository implements BaseRepositoryInte
     }
 
     /**
+     * Retorna lista de classes de peso para select.
+     */
+    public function getWeightClasses(?int $languageId = null): array
+    {
+        $lId = $languageId ?? $this->language_id;
+        /** @var ProductMapper $mapper */
+        $mapper = $this->mapperFactory->get(ProductMapper::class);
+        return $mapper->getWeightClasses($lId);
+    }
+
+    /**
+     * Retorna lista de classes de medida/comprimento para select.
+     */
+    public function getLengthClasses(?int $languageId = null): array
+    {
+        $lId = $languageId ?? $this->language_id;
+        /** @var ProductMapper $mapper */
+        $mapper = $this->mapperFactory->get(ProductMapper::class);
+        return $mapper->getLengthClasses($lId);
+    }
+
+    /**
+     * Retorna lista de classes de imposto para select.
+     */
+    public function getTaxClasses(): array
+    {
+        /** @var ProductMapper $mapper */
+        $mapper = $this->mapperFactory->get(ProductMapper::class);
+        return $mapper->getTaxClasses();
+    }
+
+    /**
      * Cria um novo produto e invalida os caches.
      */
     public function createAdminProduct(array $data, ?int $storeId = null, ?int $languageId = null): int

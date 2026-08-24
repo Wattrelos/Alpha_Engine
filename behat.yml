@@ -9,6 +9,7 @@ default:
         - CartContext
         - CheckoutContext
         - ApiContext
+        - AuthContext
   extensions:
     Behat\MinkExtension:
       base_url: http://localhost/

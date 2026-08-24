@@ -71,7 +71,7 @@ class AdminAuthService extends AbstractAuthService
      */
     private function logAdminLogin(string $status, string $username, string $ip): void
     {
-        $logDir = defined('DIR_LOGS') ? DIR_LOGS : (defined('DIR_STORAGE') ? DIR_STORAGE . 'logs/' : __DIR__ . '/../../storage/logs/');
+        $logDir = defined('DIR_LOGS') ? DIR_LOGS : (defined('DIR_STORAGE') ? DIR_STORAGE . 'logs/' : dirname(__DIR__, 3) . '/storage/logs/');
         if (!is_dir($logDir)) {
             @mkdir($logDir, 0777, true);
         }
@@ -82,5 +82,6 @@ class AdminAuthService extends AbstractAuthService
         $logEntry = sprintf("[%s] [%s] User: '%s' | IP: '%s' | UA: '%s'\n", $timestamp, $status, $cleanUsername, $ip, $userAgent);
         $sanitizedLogEntry = \Alpha\Support\LgpdSanitizer::sanitizeLogMessage($logEntry);
         @file_put_contents($logFile, $sanitizedLogEntry, FILE_APPEND);
+        @chmod($logFile, 0666);
     }
 }

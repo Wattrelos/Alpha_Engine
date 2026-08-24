@@ -25,43 +25,34 @@
 			
 			<div class="product-tabs-container">
 				<div class="product-tabs">
-					<button type="button" class="tab-btn product-tab-btn active-tab" data-tab="tab-general">{{ AdminLang.tab_general }}</button>
-					<button type="button" class="tab-btn product-tab-btn" data-tab="tab-variants">{{ AdminLang.tab_variants }}</button>
+					<button type="button" class="tab-btn product-tab-btn active-tab" data-tab="tab-general">
+						<i class="fas fa-tag"></i> {{ AdminLang.tab_general }}
+					</button>
+					<button type="button" class="tab-btn product-tab-btn" data-tab="tab-data">
+						<i class="fas fa-box"></i> {{ AdminLang.tab_data }}
+					</button>
+					<button type="button" class="tab-btn product-tab-btn" data-tab="tab-dimensions">
+						<i class="fas fa-ruler-combined"></i> {{ AdminLang.tab_dimensions }}
+					</button>
+					<button type="button" class="tab-btn product-tab-btn" data-tab="tab-fiscal">
+						<i class="fas fa-file-invoice"></i> {{ AdminLang.tab_fiscal }}
+					</button>
+					<button type="button" class="tab-btn product-tab-btn" data-tab="tab-seo">
+						<i class="fas fa-search"></i> {{ AdminLang.tab_seo }}
+					</button>
+					<button type="button" class="tab-btn product-tab-btn" data-tab="tab-variants">
+						<i class="fas fa-cubes"></i> {{ AdminLang.tab_variants }}
+					</button>
 				</div>
 			</div>
 
-			<!-- ABA GERAL -->
+			<!-- 1. ABA GERAL -->
 			<div id="tab-general" class="tab-content-panel">
 				<div class="form-grid grid-2-cols">
-					
 					<!-- Nome do Produto -->
 					<div class="form-group col-span-2 grid-form-row">
 						<label for="name" class="form-label-dark">{{ AdminLang.entry_name }} *</label>
 						<input type="text" id="name" name="name" class="form-control form-control-lg" value="{{ product.name }}" required />
-					</div>
-
-					<!-- Modelo -->
-					<div class="form-group mb-6">
-						<label for="model" class="form-label-dark">{{ AdminLang.entry_model }}</label>
-						<input type="text" id="model" name="model" class="form-control form-control-lg" value="{{ product.model }}" />
-					</div>
-
-					<!-- EAN / Código de Barras -->
-					<div class="form-group mb-6">
-						<label for="ean" class="form-label-dark">{{ AdminLang.entry_ean_title }}</label>
-						<input type="text" id="ean" name="ean" class="form-control form-control-lg" value="{{ product.ean }}" />
-					</div>
-
-					<!-- Preço -->
-					<div class="form-group mb-6">
-						<label for="price" class="form-label-dark">{{ AdminLang.entry_price_title }}</label>
-						<input type="number" id="price" name="price" class="form-control form-control-lg" step="0.01" value="{{ product.price }}" />
-					</div>
-
-					<!-- Quantidade -->
-					<div class="form-group mb-6">
-						<label for="quantity" class="form-label-dark">{{ AdminLang.entry_quantity_title }}</label>
-						<input type="number" id="quantity" name="quantity" class="form-control form-control-lg" value="{{ product.quantity }}" />
 					</div>
 
 					<!-- Fabricante (Manufacturer) -->
@@ -75,14 +66,25 @@
 						</select>
 					</div>
 
-					<!-- Status de Estoque (Stock Status) -->
+					<!-- Status Geral -->
 					<div class="form-group mb-6">
-						<label for="stock_status_id" class="form-label-dark">{{ AdminLang.entry_stock_status }}</label>
-						<select id="stock_status_id" name="stock_status_id" class="form-control form-control-lg">
-							{% for s in stock_statuses %}
-								<option value="{{ s.id }}" {% if product.stock_status_id == s.id %}selected{% endif %}>{{ s.name }}</option>
-							{% endfor %}
+						<label for="status" class="form-label-dark">{{ AdminLang.entry_status_general }}</label>
+						<select id="status" name="status" class="form-control form-control-lg">
+							<option value="1" {% if product.status == 1 %}selected{% endif %}>{{ AdminLang.text_active }}</option>
+							<option value="0" {% if product.status == 0 %}selected{% endif %}>{{ AdminLang.text_inactive }}</option>
 						</select>
+					</div>
+
+					<!-- Data Disponível -->
+					<div class="form-group mb-6">
+						<label for="date_available" class="form-label-dark">{{ AdminLang.entry_date_available }}</label>
+						<input type="date" id="date_available" name="date_available" class="form-control form-control-lg" value="{{ product.date_available }}" />
+					</div>
+
+					<!-- Última Modificação (Somente Leitura) -->
+					<div class="form-group mb-6">
+						<label class="form-label-dark">{{ AdminLang.entry_date_modified }}</label>
+						<input type="text" class="form-control form-control-lg" value="{{ product.date_modified|default(AdminLang.text_no_modification) }}" readonly />
 					</div>
 
 					<!-- Categorias -->
@@ -100,26 +102,6 @@
 						</div>
 					</div>
 
-					<!-- Data Disponível -->
-					<div class="form-group mb-6">
-						<label for="date_available" class="form-label-dark">{{ AdminLang.entry_date_available }}</label>
-						<input type="date" id="date_available" name="date_available" class="form-control form-control-lg" value="{{ product.date_available }}" />
-					</div>
-
-					<!-- Status -->
-					<div class="form-group mb-6">
-						<label for="status" class="form-label-dark">{{ AdminLang.entry_status_general }}</label>
-						<select id="status" name="status" class="form-control form-control-lg">
-							<option value="1" {% if product.status == 1 %}selected{% endif %}>{{ AdminLang.text_active }}</option>
-							<option value="0" {% if product.status == 0 %}selected{% endif %}>{{ AdminLang.text_inactive }}</option>
-						</select>
-					</div>
-
-					<!-- Última Modificação -->
-					<div class="form-group col-span-2 grid-form-row">
-						<label class="form-label">{{ AdminLang.entry_date_modified }}</label>
-						<input type="text" class="form-control" value="{{ product.date_modified|default(AdminLang.text_no_modification) }}" readonly />
-					</div>
 					<!-- Imagem do Produto -->
 					<div class="form-group col-span-2 mb-8 product-image-upload-box">
 						<label for="image" class="form-label-lg">{{ AdminLang.entry_image }}</label>
@@ -151,12 +133,235 @@
 						</div>
 					</div>
 
+					<!-- Tags do Produto -->
+					<div class="form-group col-span-2 mb-6">
+						<label for="tag" class="form-label-dark">{{ AdminLang.entry_tag }}</label>
+						<input type="text" id="tag" name="tag" class="form-control form-control-lg" value="{{ product.tag|default('') }}" placeholder="{{ AdminLang.placeholder_tag }}" />
+					</div>
+
+					<!-- Descrição Detalhada -->
 					<div class="form-group col-span-2 mb-8">
 						<label for="description" class="form-label-dark">{{ AdminLang.entry_description }}</label>
 						<textarea id="description" name="description" class="form-control form-control-lg" rows="8">{{ product.description }}</textarea>
+					</div>
+				</div>
 			</div>
 
-			<!-- ABA DE VARIAÇÕES -->
+			<!-- 2. ABA DADOS & ESTOQUE -->
+			<div id="tab-data" class="tab-content-panel d-none">
+				<div class="form-grid grid-2-cols">
+					<!-- Modelo -->
+					<div class="form-group mb-6">
+						<label for="model" class="form-label-dark">{{ AdminLang.entry_model }}</label>
+						<input type="text" id="model" name="model" class="form-control form-control-lg" value="{{ product.model }}" />
+					</div>
+
+					<!-- SKU Principal -->
+					<div class="form-group mb-6">
+						<label for="sku" class="form-label-dark">{{ AdminLang.entry_sku }}</label>
+						<input type="text" id="sku" name="sku" class="form-control form-control-lg" value="{{ product.sku|default('') }}" placeholder="{{ AdminLang.placeholder_sku }}" />
+					</div>
+
+					<!-- Preço de Venda -->
+					<div class="form-group mb-6">
+						<label for="price" class="form-label-dark">{{ AdminLang.entry_price_title }} *</label>
+						<input type="number" id="price" name="price" class="form-control form-control-lg" step="0.01" value="{{ product.price }}" required />
+					</div>
+
+					<!-- Quantidade em Estoque -->
+					<div class="form-group mb-6">
+						<label for="quantity" class="form-label-dark">{{ AdminLang.entry_quantity_title }} *</label>
+						<input type="number" id="quantity" name="quantity" class="form-control form-control-lg" value="{{ product.quantity }}" required />
+					</div>
+
+					<!-- Quantidade Mínima -->
+					<div class="form-group mb-6">
+						<label for="minimum" class="form-label-dark">{{ AdminLang.entry_minimum }}</label>
+						<input type="number" id="minimum" name="minimum" class="form-control form-control-lg" value="{{ product.minimum|default(1) }}" min="1" />
+					</div>
+
+					<!-- Subtrair Estoque -->
+					<div class="form-group mb-6">
+						<label for="subtract" class="form-label-dark">{{ AdminLang.entry_subtract }}</label>
+						<select id="subtract" name="subtract" class="form-control form-control-lg">
+							<option value="1" {% if product.subtract == 1 or product.subtract is not defined %}selected{% endif %}>{{ AdminLang.text_yes }}</option>
+							<option value="0" {% if product.subtract == 0 %}selected{% endif %}>{{ AdminLang.text_no }}</option>
+						</select>
+					</div>
+
+					<!-- Status de Estoque quando Esgotado -->
+					<div class="form-group mb-6">
+						<label for="stock_status_id" class="form-label-dark">{{ AdminLang.entry_stock_status }}</label>
+						<select id="stock_status_id" name="stock_status_id" class="form-control form-control-lg">
+							{% for s in stock_statuses %}
+								<option value="{{ s.id }}" {% if product.stock_status_id == s.id %}selected{% endif %}>{{ s.name }}</option>
+							{% endfor %}
+						</select>
+					</div>
+
+					<!-- Localização no Depósito -->
+					<div class="form-group mb-6">
+						<label for="location" class="form-label-dark">{{ AdminLang.entry_location }}</label>
+						<input type="text" id="location" name="location" class="form-control form-control-lg" value="{{ product.location|default('') }}" placeholder="{{ AdminLang.placeholder_location }}" />
+					</div>
+
+					<!-- Pontos de Fidelidade -->
+					<div class="form-group mb-6">
+						<label for="points" class="form-label-dark">{{ AdminLang.entry_points }}</label>
+						<input type="number" id="points" name="points" class="form-control form-control-lg" value="{{ product.points|default(0) }}" />
+					</div>
+
+					<!-- Ordem de Exibição -->
+					<div class="form-group mb-6">
+						<label for="sort_order" class="form-label-dark">{{ AdminLang.entry_sort_order }}</label>
+						<input type="number" id="sort_order" name="sort_order" class="form-control form-control-lg" value="{{ product.sort_order|default(0) }}" />
+					</div>
+				</div>
+			</div>
+
+			<!-- 3. ABA MEDIDAS & FRETE -->
+			<div id="tab-dimensions" class="tab-content-panel d-none">
+				<p class="form-text-muted mb-6">
+					<i class="fas fa-info-circle"></i> {{ AdminLang.text_dimensions_help }}
+				</p>
+				<div class="form-grid grid-2-cols">
+					<!-- Exige Envio / Frete -->
+					<div class="form-group mb-6 col-span-2">
+						<label for="shipping" class="form-label-dark">{{ AdminLang.entry_shipping }}</label>
+						<select id="shipping" name="shipping" class="form-control form-control-lg">
+							<option value="1" {% if product.shipping == 1 or product.shipping is not defined %}selected{% endif %}>{{ AdminLang.text_yes }}</option>
+							<option value="0" {% if product.shipping == 0 %}selected{% endif %}>{{ AdminLang.text_no }}</option>
+						</select>
+					</div>
+
+					<!-- Peso -->
+					<div class="form-group mb-6">
+						<label for="weight" class="form-label-dark">{{ AdminLang.entry_weight }}</label>
+						<input type="number" id="weight" name="weight" class="form-control form-control-lg" step="0.0001" value="{{ product.weight|default(0.0000) }}" />
+					</div>
+
+					<!-- Unidade de Peso -->
+					<div class="form-group mb-6">
+						<label for="weight_class_id" class="form-label-dark">{{ AdminLang.entry_weight_class }}</label>
+						<select id="weight_class_id" name="weight_class_id" class="form-control form-control-lg">
+							{% for wc in weight_classes %}
+								<option value="{{ wc.id }}" {% if product.weight_class_id == wc.id %}selected{% endif %}>{{ wc.title }} ({{ wc.unit }})</option>
+							{% endfor %}
+						</select>
+					</div>
+
+					<!-- Comprimento -->
+					<div class="form-group mb-6">
+						<label for="length" class="form-label-dark">{{ AdminLang.entry_length }}</label>
+						<input type="number" id="length" name="length" class="form-control form-control-lg" step="0.01" value="{{ product.length|default(0.00) }}" />
+					</div>
+
+					<!-- Largura -->
+					<div class="form-group mb-6">
+						<label for="width" class="form-label-dark">{{ AdminLang.entry_width }}</label>
+						<input type="number" id="width" name="width" class="form-control form-control-lg" step="0.01" value="{{ product.width|default(0.00) }}" />
+					</div>
+
+					<!-- Altura -->
+					<div class="form-group mb-6">
+						<label for="height" class="form-label-dark">{{ AdminLang.entry_height }}</label>
+						<input type="number" id="height" name="height" class="form-control form-control-lg" step="0.01" value="{{ product.height|default(0.00) }}" />
+					</div>
+
+					<!-- Unidade de Comprimento / Medida -->
+					<div class="form-group mb-6">
+						<label for="length_class_id" class="form-label-dark">{{ AdminLang.entry_length_class }}</label>
+						<select id="length_class_id" name="length_class_id" class="form-control form-control-lg">
+							{% for lc in length_classes %}
+								<option value="{{ lc.id }}" {% if product.length_class_id == lc.id %}selected{% endif %}>{{ lc.title }} ({{ lc.unit }})</option>
+							{% endfor %}
+						</select>
+					</div>
+				</div>
+			</div>
+
+			<!-- 4. ABA FISCAL & CÓDIGOS -->
+			<div id="tab-fiscal" class="tab-content-panel d-none">
+				<div class="form-grid grid-2-cols">
+					<!-- NCM -->
+					<div class="form-group mb-6">
+						<label for="ncm" class="form-label-dark">{{ AdminLang.entry_ncm }}</label>
+						<input type="text" id="ncm" name="ncm" class="form-control form-control-lg" value="{{ product.ncm|default('') }}" placeholder="{{ AdminLang.placeholder_ncm }}" maxlength="10" />
+					</div>
+
+					<!-- CEST -->
+					<div class="form-group mb-6">
+						<label for="cest" class="form-label-dark">{{ AdminLang.entry_cest }}</label>
+						<input type="text" id="cest" name="cest" class="form-control form-control-lg" value="{{ product.cest|default('') }}" placeholder="{{ AdminLang.placeholder_cest }}" maxlength="15" />
+					</div>
+
+					<!-- Classe de Impostos (Tax Class) -->
+					<div class="form-group mb-6">
+						<label for="tax_class_id" class="form-label-dark">{{ AdminLang.entry_tax_class }}</label>
+						<select id="tax_class_id" name="tax_class_id" class="form-control form-control-lg">
+							<option value="0">{{ AdminLang.text_none }}</option>
+							{% for tc in tax_classes %}
+								<option value="{{ tc.id }}" {% if product.tax_class_id == tc.id %}selected{% endif %}>{{ tc.title }}</option>
+							{% endfor %}
+						</select>
+					</div>
+
+					<!-- EAN / Código de Barras (GTIN) -->
+					<div class="form-group mb-6">
+						<label for="ean" class="form-label-dark">{{ AdminLang.entry_ean_title }}</label>
+						<input type="text" id="ean" name="ean" class="form-control form-control-lg" value="{{ product.ean|default('') }}" placeholder="{{ AdminLang.placeholder_ean_val }}" />
+					</div>
+
+					<!-- UPC -->
+					<div class="form-group mb-6">
+						<label for="upc" class="form-label-dark">{{ AdminLang.entry_upc }}</label>
+						<input type="text" id="upc" name="upc" class="form-control form-control-lg" value="{{ product.upc|default('') }}" placeholder="{{ AdminLang.placeholder_upc }}" />
+					</div>
+
+					<!-- MPN -->
+					<div class="form-group mb-6">
+						<label for="mpn" class="form-label-dark">{{ AdminLang.entry_mpn }}</label>
+						<input type="text" id="mpn" name="mpn" class="form-control form-control-lg" value="{{ product.mpn|default('') }}" placeholder="{{ AdminLang.placeholder_mpn }}" />
+					</div>
+
+					<!-- ISBN -->
+					<div class="form-group mb-6">
+						<label for="isbn" class="form-label-dark">{{ AdminLang.entry_isbn }}</label>
+						<input type="text" id="isbn" name="isbn" class="form-control form-control-lg" value="{{ product.isbn|default('') }}" placeholder="{{ AdminLang.placeholder_isbn }}" />
+					</div>
+
+					<!-- JAN -->
+					<div class="form-group mb-6">
+						<label for="jan" class="form-label-dark">{{ AdminLang.entry_jan }}</label>
+						<input type="text" id="jan" name="jan" class="form-control form-control-lg" value="{{ product.jan|default('') }}" placeholder="{{ AdminLang.placeholder_jan }}" />
+					</div>
+				</div>
+			</div>
+
+			<!-- 5. ABA SEO & BUSCA -->
+			<div id="tab-seo" class="tab-content-panel d-none">
+				<div class="form-grid grid-2-cols">
+					<!-- Meta Título -->
+					<div class="form-group col-span-2 mb-6">
+						<label for="meta_title" class="form-label-dark">{{ AdminLang.entry_meta_title }}</label>
+						<input type="text" id="meta_title" name="meta_title" class="form-control form-control-lg" value="{{ product.meta_title|default('') }}" placeholder="{{ AdminLang.placeholder_meta_title }}" />
+					</div>
+
+					<!-- Meta Descrição -->
+					<div class="form-group col-span-2 mb-6">
+						<label for="meta_description" class="form-label-dark">{{ AdminLang.entry_meta_description }}</label>
+						<textarea id="meta_description" name="meta_description" class="form-control form-control-lg" rows="3" placeholder="{{ AdminLang.placeholder_meta_description }}">{{ product.meta_description|default('') }}</textarea>
+					</div>
+
+					<!-- Meta Palavras-chave -->
+					<div class="form-group col-span-2 mb-8">
+						<label for="meta_keyword" class="form-label-dark">{{ AdminLang.entry_meta_keyword }}</label>
+						<textarea id="meta_keyword" name="meta_keyword" class="form-control form-control-lg" rows="2" placeholder="{{ AdminLang.placeholder_meta_keyword }}">{{ product.meta_keyword|default('') }}</textarea>
+					</div>
+				</div>
+			</div>
+
+			<!-- 6. ABA DE VARIAÇÕES -->
 			<div id="tab-variants" class="tab-content-panel d-none">
 				<h3 class="variants-section-title">{{ AdminLang.text_variants_title }}</h3>
 				<p class="variants-section-desc">{{ AdminLang.text_variants_help }}</p>
@@ -264,6 +469,10 @@
 					p.classList.add('d-none');
 					p.style.display = 'none';
 				});
+				tabPanels.forEach(p => {
+					p.style.display = 'none';
+					p.classList.add('d-none');
+				});
 				
 				this.classList.add('active-tab');
 				const targetPanel = document.getElementById(targetTab);
@@ -271,133 +480,145 @@
 					targetPanel.classList.remove('d-none');
 					targetPanel.style.display = 'block';
 				}
+				const activePanel = document.getElementById(targetTab);
+				if (activePanel) {
+					activePanel.style.display = 'block';
+					activePanel.classList.remove('d-none');
+				}
 			});
 		});
 		
 		// 2. Adicionar Variação Dinamicamente
 		const addBtn = document.getElementById('add-variant-btn');
 		const tableBody = document.querySelector('#variants-table tbody');
-		let rowIndex = tableBody.querySelectorAll('tr').length;
+		let rowIndex = tableBody ? tableBody.querySelectorAll('tr').length : 0;
 		
-		addBtn.addEventListener('click', function() {
-			const tr = document.createElement('tr');
-			tr.className = 'variant-row';
-			tr.innerHTML = `
-				<td>
-					<div class="variant-image-upload-wrapper">
-						<!-- Preview Container -->
-						<div class="variant-image-preview">
-							<i class="fas fa-image"></i>
+		if (addBtn && tableBody) {
+			addBtn.addEventListener('click', function() {
+				const tr = document.createElement('tr');
+				tr.className = 'variant-row';
+				tr.innerHTML = `
+					<td>
+						<div class="variant-image-upload-wrapper">
+							<!-- Preview Container -->
+							<div class="variant-image-preview">
+								<i class="fas fa-image"></i>
+							</div>
+							<!-- Actions & Inputs -->
+							<div class="variant-actions-col">
+								<label class="btn btn-secondary btn-variant-upload">
+									<i class="fas fa-upload"></i>
+									<span>{{ AdminLang.button_upload }}</span>
+									<input type="file" name="variant_image_${rowIndex}" accept="image/*" class="variant-image-input d-none" />
+								</label>
+							</div>
 						</div>
-						<!-- Actions & Inputs -->
-						<div class="variant-actions-col">
-							<label class="btn btn-secondary btn-variant-upload">
-								<i class="fas fa-upload"></i>
-								<span>{{ AdminLang.button_upload }}</span>
-								<input type="file" name="variant_image_${rowIndex}" accept="image/*" class="variant-image-input d-none" />
-							</label>
-						</div>
-					</div>
-				</td>
-				</td>
-				<td>
-					<input type="hidden" name="variants[${rowIndex}][id]" value="0" />
-					<input type="hidden" name="variants[${rowIndex}][delete]" value="0" class="delete-flag" />
-					<input type="text" name="variants[${rowIndex}][name]" class="form-control variant-input" placeholder="{{ AdminLang.placeholder_variant_name }}" required />
-				</td>
-				<td>
-					<input type="text" name="variants[${rowIndex}][sku]" class="form-control variant-input" placeholder="{{ AdminLang.placeholder_variant_sku }}" />
-				</td>
-				<td>
-					<input type="number" name="variants[${rowIndex}][price]" class="form-control variant-input" value="0.00" step="0.01" />
-				</td>
-				<td>
-					<input type="number" name="variants[${rowIndex}][quantity]" class="form-control variant-input" value="1" />
-				</td>
-				<td>
-					<select name="variants[${rowIndex}][status]" class="form-control variant-input">
-						<option value="1" selected>{{ AdminLang.text_active }}</option>
-						<option value="0">{{ AdminLang.text_inactive }}</option>
-					</select>
-				</td>
-				<td class="text-right">
-					<button type="button" class="btn btn-danger btn-variant-delete remove-variant-btn"><i class="fas fa-trash-alt"></i></button>
-				</td>
-			`;
-			tableBody.appendChild(tr);
-			
-			// Bind remove event on new row
-			bindRowRemove(tr);
-			
-			rowIndex++;
-		});
-		
-		// 3. Remover/Marcar Exclusão de Variações
-		function bindRowRemove(row) {
-			row.querySelector('.remove-variant-btn').addEventListener('click', function() {
-				const idInput = row.querySelector('input[name*="[id]"]');
-				if (idInput && parseInt(idInput.value) > 0) {
-					// É uma variação antiga salva no BD, marcamos para deletar no backend
-					row.querySelector('.delete-flag').value = '1';
-					row.style.display = 'none';
-				} else {
-					// É uma variação nova, removemos direto do DOM
-					row.remove();
-				}
+					</td>
+					<td>
+						<input type="hidden" name="variants[${rowIndex}][id]" value="0" />
+						<input type="hidden" name="variants[${rowIndex}][delete]" value="0" class="delete-flag" />
+						<input type="text" name="variants[${rowIndex}][name]" class="form-control variant-input" placeholder="{{ AdminLang.placeholder_variant_name }}" required />
+					</td>
+					<td>
+						<input type="text" name="variants[${rowIndex}][sku]" class="form-control variant-input" placeholder="{{ AdminLang.placeholder_variant_sku }}" />
+					</td>
+					<td>
+						<input type="number" name="variants[${rowIndex}][price]" class="form-control variant-input" value="0.00" step="0.01" />
+					</td>
+					<td>
+						<input type="number" name="variants[${rowIndex}][quantity]" class="form-control variant-input" value="1" />
+					</td>
+					<td>
+						<select name="variants[${rowIndex}][status]" class="form-control variant-input">
+							<option value="1" selected>{{ AdminLang.text_active }}</option>
+							<option value="0">{{ AdminLang.text_inactive }}</option>
+						</select>
+					</td>
+					<td class="text-right">
+						<button type="button" class="btn btn-danger btn-variant-delete remove-variant-btn"><i class="fas fa-trash-alt"></i></button>
+					</td>
+				`;
+				tableBody.appendChild(tr);
+				
+				// Bind remove event on new row
+				bindRowRemove(tr);
+				
+				rowIndex++;
 			});
 		}
 		
+		// 3. Remover/Marcar Exclusão de Variações
+		function bindRowRemove(row) {
+			const removeBtn = row.querySelector('.remove-variant-btn');
+			if (removeBtn) {
+				removeBtn.addEventListener('click', function() {
+					const idInput = row.querySelector('input[name*="[id]"]');
+					if (idInput && parseInt(idInput.value) > 0) {
+						// É uma variação antiga salva no BD, marcamos para deletar no backend
+						row.querySelector('.delete-flag').value = '1';
+						row.style.display = 'none';
+					} else {
+						// É uma variação nova, removemos direto do DOM
+						row.remove();
+					}
+				});
+			}
+		}
+		
 		// Bind nas linhas iniciais
-		tableBody.querySelectorAll('tr').forEach(tr => bindRowRemove(tr));
+		if (tableBody) {
+			tableBody.querySelectorAll('tr').forEach(tr => bindRowRemove(tr));
+		}
  
 		// 4. Delegar eventos para inputs de imagem (Preview em Tempo Real)
-		document.getElementById('variants-table').addEventListener('change', function(e) {
-			if (e.target && e.target.classList.contains('variant-image-input')) {
-				const input = e.target;
-				const file = input.files[0];
-				const row = input.closest('tr');
-				const previewContainer = row.querySelector('.variant-image-preview');
-				
-				if (file) {
-					const reader = new FileReader();
-					reader.onload = function(e) {
-						previewContainer.innerHTML = `<img src="${e.target.result}" class="v-img-preview" />`;
-						previewContainer.classList.add('preview-active');
-					};
-					reader.readAsDataURL(file);
+		const variantsTable = document.getElementById('variants-table');
+		if (variantsTable) {
+			variantsTable.addEventListener('change', function(e) {
+				if (e.target && e.target.classList.contains('variant-image-input')) {
+					const input = e.target;
+					const file = input.files[0];
+					const row = input.closest('tr');
+					const previewContainer = row.querySelector('.variant-image-preview');
 					
-					// Desmarca o checkbox de remoção se houver
-					const removeCheckbox = row.querySelector('.remove-image-flag');
-					if (removeCheckbox) {
-						removeCheckbox.checked = false;
-						const img = row.querySelector('.v-img-preview');
-						if (img) {
-							img.classList.remove('image-removed');
+					if (file) {
+						const reader = new FileReader();
+						reader.onload = function(e) {
+							previewContainer.innerHTML = `<img src="${e.target.result}" class="v-img-preview" />`;
+							previewContainer.classList.add('preview-active');
+						};
+						reader.readAsDataURL(file);
+						
+						// Desmarca o checkbox de remoção se houver
+						const removeCheckbox = row.querySelector('.remove-image-flag');
+						if (removeCheckbox) {
+							removeCheckbox.checked = false;
+							const img = row.querySelector('.v-img-preview');
+							if (img) {
+								img.classList.remove('image-removed');
+							}
+							previewContainer.classList.remove('image-removed-border');
 						}
-						previewContainer.classList.remove('image-removed-border');
 					}
 				}
-			}
- 
-			// Efeito de escurecimento/escala de cinza ao marcar "Remover"
-			if (e.target && e.target.classList.contains('remove-image-flag')) {
-				const checkbox = e.target;
-				const row = checkbox.closest('tr');
-				const img = row.querySelector('.v-img-preview');
-				const previewContainer = row.querySelector('.variant-image-preview');
-				if (img) {
-					if (checkbox.checked) {
-						img.classList.add('image-removed');
-						previewContainer.classList.add('image-removed-border');
-					} else {
-						img.classList.remove('image-removed');
-						previewContainer.classList.remove('image-removed-border');
+	 
+				// Efeito de escurecimento/escala de cinza ao marcar "Remover"
+				if (e.target && e.target.classList.contains('remove-image-flag')) {
+					const checkbox = e.target;
+					const row = checkbox.closest('tr');
+					const img = row.querySelector('.v-img-preview');
+					const previewContainer = row.querySelector('.variant-image-preview');
+					if (img) {
+						if (checkbox.checked) {
+							img.classList.add('image-removed');
+							previewContainer.classList.add('image-removed-border');
+						} else {
+							img.classList.remove('image-removed');
+							previewContainer.classList.remove('image-removed-border');
+						}
 					}
 				}
-			}
-		});
+			});
+		}
 	});
 	</script>
-		</form>
-	</div>
 {% endblock %}

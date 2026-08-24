@@ -51,6 +51,11 @@ class EditProductAction extends BaseController implements ActionInterface
         // 6. Busca as variações (produtos filhos) cadastradas
         $variants = $productRepo->getProductVariants($productId);
 
+        // 7. Busca classes de peso, comprimento e impostos para selects
+        $weightClasses = $productRepo->getWeightClasses($this->languageId);
+        $lengthClasses = $productRepo->getLengthClasses($this->languageId);
+        $taxClasses = $productRepo->getTaxClasses();
+
         $html = $this->getTemplate('admin/pages/products/edit.html.twig', [
             'title'              => 'Editar Produto | Painel Administrativo',
             'product'            => $product,
@@ -58,7 +63,10 @@ class EditProductAction extends BaseController implements ActionInterface
             'stock_statuses'     => $stockStatuses,
             'categories'         => $categories,
             'product_categories' => $productCategories,
-            'variants'           => $variants
+            'variants'           => $variants,
+            'weight_classes'     => $weightClasses,
+            'length_classes'     => $lengthClasses,
+            'tax_classes'        => $taxClasses
         ]);
 
         $response->getBody()->write($html);

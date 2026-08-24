@@ -1,0 +1,100 @@
+functional_requirements:
+  calculator_module:
+    - id: RF026
+      prio: H
+      name: Cálculo de área de revestimento vertical (Paredes)
+      desc: SYS_EXEC cálculo automatizado da área total de paredes baseando-se nas dimensões do cômodo (comprimento, largura e pé-direito) ou dimensões lineares customizadas.
+      trace: [RN001, RN003]
+
+    - id: RF027
+      prio: H
+      name: Dedução de vãos e aberturas (Portas e Janelas)
+      desc: SYS_PERMIT cadastro de aberturas com dimensões (largura e altura) e quantidade, executando SYS_EXEC dedução automática da área bruta de alvenaria.
+      trace: [RN001]
+
+    - id: RF028
+      prio: H
+      name: Cálculo de área de piso horizontal
+      desc: SYS_EXEC cálculo da área útil de piso a partir da largura e comprimento do ambiente em metros quadrados (m²).
+      trace: [RN001]
+
+    - id: RF029
+      prio: M
+      name: Aplicação de margem de perda e recortes
+      desc: SYS_EXEC aplicação de percentual configurável de perda/recorte de material (padrão de 10%) sobre a metragem líquida calculada de pisos e revestimentos.
+      trace: [RN001]
+
+    - id: RF030
+      prio: H
+      name: Conversão de m² para caixas comerciais
+      desc: SYS_EXEC conversão de área total (com margem de perdas) para quantidade inteira de caixas comerciais baseado no rendimento (m²/caixa) do SKU, aplicando arredondamento para cima (CEIL).
+      trace: [RN001]
+
+    - id: RF031
+      prio: M
+      name: Integração da calculadora na PDP e carrinho
+      desc: SYS_PERMIT acionamento da calculadora diretamente na PDP de pisos e revestimentos com transferência imediata da quantidade de caixas calculada para o carrinho.
+      trace: [RN001]
+
+    - id: RF032
+      prio: L
+      name: Exibição de aviso legal e disclaimer técnico
+      desc: SYS_PERMIT exibição de alerta de isenção técnica na interface informando o caráter estimativo do cálculo e sugerindo validação com profissional especializado.
+
+calculation_engine:
+  wall_coating:
+    gross_area_formula: "(2 * length * height) + (2 * width * height)"
+    openings_deduction:
+      doors_formula: "sum(door_width * door_height * door_quantity)"
+      windows_formula: "sum(window_width * window_height * window_quantity)"
+      total_deduction_formula: "doors_area + windows_area"
+    net_area_formula: "gross_wall_area - total_openings_area"
+    waste_margin_default: 0.10
+    total_area_with_waste_formula: "net_wall_area * (1 + waste_margin)"
+    boxes_formula: "ceil(total_area_with_waste / yield_per_box_m2)"
+
+  floor_coating:
+    gross_area_formula: "length * width"
+    waste_margin_default: 0.10
+    total_area_with_waste_formula: "gross_floor_area * (1 + waste_margin)"
+    boxes_formula: "ceil(total_area_with_waste / yield_per_box_m2)"
+
+examples:
+  simulation_scenario:
+    room_parameters:
+      length_meters: 4.0
+      width_meters: 3.0
+      ceiling_height_meters: 2.8
+    openings:
+      doors:
+        - width_meters: 0.8
+          height_meters: 2.1
+          quantity: 2
+          total_area_m2: 3.36
+      windows:
+        - width_meters: 1.2
+          height_meters: 1.0
+          quantity: 2
+          total_area_m2: 2.40
+      total_deductions_m2: 5.76
+
+    wall_calculation:
+      gross_wall_area_m2: 39.20
+      net_wall_area_m2: 33.44
+      waste_margin_percent: 10
+      total_area_with_waste_m2: 36.78
+      selected_product: "Cerâmica 32A28 32 x 62 cm Relevo Brilhante Retificado"
+      yield_per_box_m2: 1.95
+      calculated_boxes: 19
+
+    floor_calculation:
+      gross_floor_area_m2: 12.00
+      waste_margin_percent: 10
+      total_area_with_waste_m2: 13.20
+      selected_product: "Cerâmica HD 62HDA52 62 x 62 cm Liso Brilhante Retificado"
+      yield_per_box_m2: 2.28
+      calculated_boxes: 6
+
+disclaimer:
+  message: "A calculadora é apenas para estimativa. Necessário validar a quantidade final de caixas com um profissional de sua confiança."
+  display_type: "alert_warning"
