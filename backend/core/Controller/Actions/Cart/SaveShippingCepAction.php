@@ -21,7 +21,11 @@ class SaveShippingCepAction implements ActionInterface
 
     public function __invoke(Request $request, Response $response, array $args): Response
     {
-        $body = json_decode($request->getBody()->getContents(), true);
+        $body = $request->getParsedBody();
+        if (!is_array($body)) {
+            $raw = (string)$request->getBody();
+            $body = !empty($raw) ? json_decode($raw, true) : [];
+        }
         $cep = trim((string)($body['cep'] ?? ''));
         $viaCepData = $body['via_cep'] ?? null;
 
@@ -33,30 +37,47 @@ class SaveShippingCepAction implements ActionInterface
             return $response->withHeader('Content-Type', 'application/json')->withStatus(400);
         }
 
-        $session = $this->container->get('session');
-        if ($session) {
-            $session->data['shipping_cep'] = preg_replace('/\D/', '', $cep);
-            
-            if ($viaCepData && is_array($viaCepData)) {
-                $session->data['shipping_via_cep'] = $viaCepData;
-                
-                $currentAddress = $session->data['shipping_address'] ?? [];
-                if (!is_array($currentAddress)) {
-                    $currentAddress = [];
-                }
+        if (session_status() === PHP_SESSION_NONE && !headers_sent()) {
+            @session_start();
+        }
+        $sanitizedCep = preg_replace('/\D/', '', $cep);
+        $_SESSION['shipping_cep'] = $sanitizedCep;
 
-                $session->data['shipping_address'] = array_merge(
-                    $currentAddress,
-                    [
-                        'postcode' => $viaCepData['cep'] ?? $cep,
-                        'street' => $viaCepData['logradouro'] ?? '',
-                        'complement' => $viaCepData['complemento'] ?? '',
-                        'city' => $viaCepData['localidade'] ?? '',
-                        'zone' => $viaCepData['uf'] ?? '',
-                        'neighborhood' => $viaCepData['bairro'] ?? '',
-                        'country_id' => 30 // Fixo Brasil (Alpha Engine standard)
-                    ]
-                );
+        $currentAddress = $_SESSION['shipping_address'] ?? [];
+        if (!is_array($currentAddress)) {
+            $currentAddress = [];
+        }
+
+        if ($viaCepData && is_array($viaCepData)) {
+            $_SESSION['shipping_via_cep'] = $viaCepData;
+            $_SESSION['shipping_address'] = array_merge(
+                $currentAddress,
+                [
+                    'postcode' => $viaCepData['cep'] ?? $sanitizedCep,
+                    'street' => $viaCepData['logradouro'] ?? '',
+                    'complement' => $viaCepData['complemento'] ?? '',
+                    'city' => $viaCepData['localidade'] ?? '',
+                    'zone' => $viaCepData['uf'] ?? '',
+                    'neighborhood' => $viaCepData['bairro'] ?? '',
+                    'country_id' => 30 // Fixo Brasil (Alpha Engine standard)
+                ]
+            );
+        } else {
+            $_SESSION['shipping_address'] = array_merge(
+                $currentAddress,
+                [
+                    'postcode' => $sanitizedCep,
+                    'country_id' => 30
+                ]
+            );
+        }
+
+        $session = $this->container->has('session') ? $this->container->get('session') : null;
+        if ($session && is_object($session) && property_exists($session, 'data') && is_array($session->data)) {
+            $session->data['shipping_cep'] = $_SESSION['shipping_cep'];
+            $session->data['shipping_address'] = $_SESSION['shipping_address'];
+            if (isset($_SESSION['shipping_via_cep'])) {
+                $session->data['shipping_via_cep'] = $_SESSION['shipping_via_cep'];
             }
         }
 

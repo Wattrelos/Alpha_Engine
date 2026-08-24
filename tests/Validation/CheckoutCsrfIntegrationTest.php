@@ -85,4 +85,40 @@ class CheckoutCsrfIntegrationTest extends TestCase
         $this->assertTrue($resData['success']);
         $this->assertEquals('João', $resData['payment_firstname']);
     }
+
+    public function testApiRoutesBypassCsrfValidation(): void
+    {
+        $app = AppFactory::create();
+        $twigEnv = null;
+
+        $app->add(new CsrfGuardMiddleware($twigEnv));
+        $app->addBodyParsingMiddleware();
+
+        $app->post('/api/carrinho/dados', function (Request $request, Response $response) {
+            $parsed = $request->getParsedBody();
+            $response->getBody()->write(json_encode([
+                'success' => true,
+                'items_count' => count($parsed['items'] ?? [])
+            ]));
+            return $response->withHeader('Content-Type', 'application/json')->withStatus(200);
+        });
+
+        $requestFactory = new ServerRequestFactory();
+        $streamFactory = new StreamFactory();
+
+        // Envia POST sem nenhum token CSRF
+        $postReq = $requestFactory->createServerRequest('POST', '/api/carrinho/dados')
+            ->withHeader('Content-Type', 'application/json')
+            ->withHeader('Accept', 'application/json')
+            ->withBody($streamFactory->createStream(json_encode([
+                'items' => [['product_id' => 1, 'quantity' => 1]]
+            ])));
+
+        $postRes = $app->handle($postReq);
+
+        $this->assertEquals(200, $postRes->getStatusCode(), "Requisições para /api/* não devem ser bloqueadas pelo CsrfGuardMiddleware.");
+        $resData = json_decode((string)$postRes->getBody(), true);
+        $this->assertTrue($resData['success']);
+        $this->assertEquals(1, $resData['items_count']);
+    }
 }

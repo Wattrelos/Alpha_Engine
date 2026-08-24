@@ -216,37 +216,60 @@ document.addEventListener('DOMContentLoaded', () => {
         const postcodeEl = document.getElementById(postcodeId);
         if (!postcodeEl) return;
 
-        postcodeEl.addEventListener('blur', function () {
-            const cep = this.value.replace(/\D/g, '');
+        let lastSearched = '';
 
-            if (cep.length === 8) {
-                fetch(`https://viacep.com.br/ws/${cep}/json/`)
-                    .then(response => response.json())
-                    .then(data => {
-                        if (!data.erro) {
-                            const setFieldVal = (id, val) => {
-                                const el = document.getElementById(id);
-                                if (!el) return;
-                                el.value = val || '';
-                                if (val) {
-                                    el.setAttribute('readonly', 'readonly');
-                                } else {
-                                    el.removeAttribute('readonly');
-                                }
-                            };
+        const searchCep = (rawCep) => {
+            if (rawCep.length !== 8 || rawCep === lastSearched) return;
+            lastSearched = rawCep;
 
-                            setFieldVal(address1Id, data.logradouro);
-                            setFieldVal(neighborhoodId, data.bairro);
-                            setFieldVal(cityId, data.localidade);
-                            setFieldVal(zoneInputId, data.uf);
-                        } else {
+            fetch(`https://viacep.com.br/ws/${rawCep}/json/`)
+                .then(response => response.json())
+                .then(data => {
+                    if (!data.erro) {
+                        const setFieldVal = (id, val) => {
+                            const el = document.getElementById(id);
+                            if (!el) return;
+                            el.value = val || '';
+                            if (val) {
+                                el.setAttribute('readonly', 'readonly');
+                            } else {
+                                el.removeAttribute('readonly');
+                            }
+                        };
+
+                        setFieldVal(address1Id, data.logradouro);
+                        setFieldVal(neighborhoodId, data.bairro);
+                        setFieldVal(cityId, data.localidade);
+                        setFieldVal(zoneInputId, data.uf);
+                    } else {
+                        if (typeof window.showNotification === 'function') {
                             window.showNotification('CEP não encontrado.', 'danger');
                         }
-                    })
-                    .catch(error => {
-                        console.error('Erro ao buscar CEP:', error);
+                    }
+                })
+                .catch(error => {
+                    console.error('Erro ao buscar CEP:', error);
+                    if (typeof window.showNotification === 'function') {
                         window.showNotification('Erro ao consultar ViaCEP.', 'danger');
-                    });
+                    }
+                });
+        };
+
+        postcodeEl.addEventListener('input', function () {
+            let v = this.value.replace(/\D/g, '').slice(0, 8);
+            if (v.length > 5) v = v.slice(0, 5) + '-' + v.slice(5);
+            this.value = v;
+
+            const clean = v.replace(/\D/g, '');
+            if (clean.length === 8) {
+                searchCep(clean);
+            }
+        });
+
+        postcodeEl.addEventListener('blur', function () {
+            const cep = this.value.replace(/\D/g, '');
+            if (cep.length === 8) {
+                searchCep(cep);
             }
         });
     }

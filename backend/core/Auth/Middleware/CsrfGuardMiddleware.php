@@ -102,6 +102,12 @@ class CsrfGuardMiddleware implements MiddlewareInterface
 
     public function process(Request $request, Handler $handler): Response
     {
+        // Endpoints RESTful e APIs internas (/api/*) operam sem validação CSRF de formulário web
+        $path = $request->getUri()->getPath();
+        if (preg_match('#^/?api(/|$)#', $path)) {
+            return $handler->handle($request);
+        }
+
         $guard = $this->getGuard();
 
         // Fallback: se for requisição JSON e o parsedBody estiver vazio, faz a conversão do corpo da requisição

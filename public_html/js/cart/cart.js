@@ -356,17 +356,24 @@ function renderGuestCartPage() {
         </div>
     `;
 
-    // Busca detalhes dos produtos na base pelo novo endpoint da API
+    // Busca detalhes dos produtos na base pelo endpoint da API
     fetch('/api/carrinho/dados', {
         method: 'POST',
         headers: {
-            'Content-Type': 'application/json'
+            'Content-Type': 'application/json',
+            'Accept': 'application/json'
         },
         body: JSON.stringify({ items: items })
     })
-    .then(res => res.json())
+    .then(async res => {
+        if (!res.ok) {
+            const errData = await res.json().catch(() => ({}));
+            throw new Error(errData.error?.warning || ('HTTP ' + res.status));
+        }
+        return res.json();
+    })
     .then(data => {
-        if (!data.success || data.products.length === 0) {
+        if (!data.success || !Array.isArray(data.products) || data.products.length === 0) {
             guestCart.clear();
             renderGuestCartPage();
             return;
@@ -463,6 +470,27 @@ function renderGuestCartPage() {
                         <div class="egen-cart-totals-list">
                             ${summaryRows}
                         </div>
+
+                        <!-- Simulador de Frete -->
+                        <div class="egen-shipping-simulator" style="margin-top: 1.25rem; margin-bottom: 1.25rem;">
+                            <h4 class="egen-shipping-simulator__title" style="font-size: 0.95rem; font-weight: 600; margin-bottom: 0.5rem; display: flex; align-items: center; gap: 0.5rem;">
+                                <i class="fa-solid fa-truck egen-shipping-simulator__icon" style="color: var(--egen-primary-color, #ff6b00);"></i> Calcular Frete
+                            </h4>
+                            <div class="egen-shipping-simulator__form" style="display: flex; gap: 0.5rem; margin-bottom: 0.75rem;">
+                                <input type="text" id="shipping-cep" placeholder="00000-000" maxlength="9" class="egen-form-input egen-shipping-simulator__input" style="flex: 1; padding: 0.5rem 0.75rem; border-radius: 8px; border: 1px solid rgba(255,255,255,0.15); background: rgba(0,0,0,0.2); color: inherit;" oninput="this.value = this.value.replace(/\D/g, '').replace(/^(\d{5})(\d)/, '$1-$2')">
+                                <button type="button" id="btn-calculate-shipping" class="egen-btn-primary egen-shipping-simulator__btn" style="padding: 0.5rem 1rem; border-radius: 8px;">Calcular</button>
+                            </div>
+                            <div id="shipping-results" class="egen-shipping-simulator__results" style="display: none;">
+                                <div class="egen-shipping-simulator__result-item">
+                                    <div>
+                                        <span class="egen-shipping-simulator__result-title">Retirar na Loja</span>
+                                        <span class="egen-shipping-simulator__result-desc">Disponível em até 1 dia útil</span>
+                                    </div>
+                                    <span class="egen-shipping-simulator__result-price">Grátis</span>
+                                </div>
+                            </div>
+                        </div>
+
                         <div class="egen-cart-checkout-actions">
                             <a href="/checkout" class="egen-btn-primary egen-btn-checkout">
                                 Finalizar Compra <i class="fa-solid fa-arrow-right"></i>
@@ -478,6 +506,9 @@ function renderGuestCartPage() {
 
         // Ativa os listeners nos novos botões injetados
         attachGuestCartActions();
+        if (typeof window.initShippingSimulator === 'function') {
+            window.initShippingSimulator();
+        }
     })
     .catch(err => {
         console.error('Erro ao processar dados do carrinho do visitante:', err);

@@ -27,8 +27,12 @@ class SyncCartAction implements ActionInterface
     {
         $customer = $this->container->get('customer');
 
-        $body = json_decode($request->getBody()->getContents(), true);
-        $items = $body['items'] ?? [];
+        $body = $request->getParsedBody();
+        if (!is_array($body)) {
+            $raw = (string)$request->getBody();
+            $body = !empty($raw) ? json_decode($raw, true) : [];
+        }
+        $items = is_array($body) ? ($body['items'] ?? []) : [];
 
         /** @var CartRepository $cartRepository */
         $cartRepository = \Alpha\Model\Domain\Repositories\RepositoryFactory::getInstance()->get(CartRepository::class);

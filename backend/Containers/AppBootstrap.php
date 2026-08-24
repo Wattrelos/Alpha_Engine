@@ -179,9 +179,21 @@ class AppBootstrap
         $this->container->bind(\Alpha\Support\Language::class, $translator);
         $this->container->bind('languageEntity', $this->language);
 
-        $sessionMock = new \stdClass();
-        $sessionMock->data = []; // Evita erros de "property of non-object" no legado
-        $this->container->bind('session', $sessionMock);
+        $sessionWrapper = new class {
+            public array $data = [];
+            public function __construct() {
+                if (session_status() === PHP_SESSION_NONE && !headers_sent()) {
+                    if (defined('APPLICATION') && APPLICATION === 'admin') {
+                        session_name('admin_session_id');
+                    }
+                    @session_start();
+                }
+                if (session_status() === PHP_SESSION_ACTIVE) {
+                    $this->data = &$_SESSION;
+                }
+            }
+        };
+        $this->container->bind('session', $sessionWrapper);
 
         // Alpha Engine: Instancia e vincula o helper de dados do cliente
         $customerHelper = new \Alpha\Support\Customer();

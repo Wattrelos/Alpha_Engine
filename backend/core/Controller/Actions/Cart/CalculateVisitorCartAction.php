@@ -33,8 +33,12 @@ class CalculateVisitorCartAction implements ActionInterface
 
     public function __invoke(Request $request, Response $response, array $args): Response
     {
-        $body = json_decode($request->getBody()->getContents(), true);
-        $items = $body['items'] ?? [];
+        $body = $request->getParsedBody();
+        if (!is_array($body)) {
+            $raw = (string)$request->getBody();
+            $body = !empty($raw) ? json_decode($raw, true) : [];
+        }
+        $items = is_array($body) ? ($body['items'] ?? []) : [];
 
         $products = [];
         $subtotal = 0;
@@ -48,7 +52,10 @@ class CalculateVisitorCartAction implements ActionInterface
 
         $config = $this->container->has('config') ? $this->container->get('config') : null;
         $langId = $config ? (int)$config->get('config_language_id') : 2;
-        $storeId = 0;
+        $storeId = $config && $config->get('config_store_id') !== null ? (int)$config->get('config_store_id') : 1;
+        if ($storeId <= 0) {
+            $storeId = 1;
+        }
         $customerGroupId = 1;
         $priceStatements = $priceRepository->getPriceStatements($customerGroupId);
 
@@ -235,7 +242,7 @@ class CalculateVisitorCartAction implements ActionInterface
             $cartKey = $productId . '_' . str_replace(['+', '/', '='], ['-', '_', ''], base64_encode($optionStr));
 
             $displayId = (int)($productInfo['master_id'] ?? 0) > 0 ? (int)$productInfo['master_id'] : $productId;
-            $keyword = $seoRepository->getKeywordByQuery('product_id', $displayId, 0, $langId);
+            $keyword = $seoRepository->getKeywordByQuery('product_id', $displayId, $storeId, $langId);
             $slug = !empty($keyword) ? $keyword : $displayId;
 
             $products[] = [

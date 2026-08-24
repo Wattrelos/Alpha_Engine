@@ -207,7 +207,7 @@
                     <input type="text" id="shipping-cep" value="{% if shipping_cep %}{{ shipping_cep|slice(0, 5) ~ '-' ~ shipping_cep|slice(5) }}{% endif %}" placeholder="00000-000" maxlength="9" class="egen-form-input egen-shipping-simulator__input" oninput="this.value = this.value.replace(/\D/g, '').replace(/^(\d{5})(\d)/, '$1-$2')">
                     <button type="button" id="btn-calculate-shipping" class="egen-btn-primary egen-shipping-simulator__btn">Calcular</button>
                 </div>
-                <div id="shipping-results" class="egen-shipping-simulator__results d-none">
+                <div id="shipping-results" class="egen-shipping-simulator__results" style="display: none;">
                     <div class="egen-shipping-simulator__result-item">
                         <div>
                             <span class="egen-shipping-simulator__result-title">Retirar na Loja</span>
