@@ -281,4 +281,27 @@ class QuotationAndTakeoffValidationTest extends TestCase
         $this->assertEquals(499.80, $item->getTotalPrice());
         $this->assertEquals('un', $item->getUnit());
     }
+
+    /**
+     * Valida que o CartMapper suporta session_id longo (64+ caracteres, ex: bin2hex(random_bytes(32))).
+     */
+    public function testCartMapperAcceptsLongSessionId(): void
+    {
+        $factory = \Alpha\Model\Domain\Repositories\RepositoryFactory::getInstance();
+        /** @var \Alpha\Model\Domain\Repositories\CartRepository $cartRepo */
+        $cartRepo = $factory->get(CartRepository::class);
+        $this->assertInstanceOf(CartRepository::class, $cartRepo);
+
+        $mapper = \Alpha\Mappers\MapperFactory::getInstance()->get(\Alpha\Mappers\EntityMappers\CartMapper::class);
+        $longSessionId = bin2hex(random_bytes(32)); // 64 caracteres
+
+        // Não deve lançar PDOException SQLSTATE[22001]
+        $mapper->addItem(16694, $longSessionId, 0, 99999, 1, '{}', 0);
+        $items = $mapper->getItems(16694, $longSessionId, 0);
+        $this->assertNotEmpty($items);
+
+        // Limpeza do item de teste
+        $conn = \Alpha\Model\DataAccessObject\ConnectionDB::getInstance()->getConnection();
+        $conn->prepare("DELETE FROM `agsc_cart` WHERE `customer_id` = 16694 AND `product_id` = 99999")->execute();
+    }
 }

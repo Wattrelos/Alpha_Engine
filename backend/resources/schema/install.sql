@@ -157,7 +157,7 @@ CREATE TABLE `agsc_cart` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT,
   `store_id` bigint(20) NOT NULL,
   `customer_id` bigint(20) NOT NULL,
-  `session_id` varchar(32) DEFAULT NULL,
+  `session_id` varchar(255) DEFAULT NULL,
   `product_id` bigint(20) NOT NULL,
   `subscription_plan_id` bigint(20) NOT NULL,
   `option` text DEFAULT NULL,
@@ -166,7 +166,7 @@ CREATE TABLE `agsc_cart` (
   `price` decimal(15,4) DEFAULT NULL,
   `date_added` datetime DEFAULT NULL,
   PRIMARY KEY (`id`),
-  KEY `cart_id` (`customer_id`,`session_id`,`product_id`,`subscription_plan_id`)
+  KEY `cart_id` (`customer_id`,`session_id`(191),`product_id`,`subscription_plan_id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=252 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- Structure for table `agsc_category`

@@ -150,7 +150,7 @@ class CartMapper extends BaseMapper
         $stmt = $conn->prepare($sql);
         $stmt->execute([
             $customerId,
-            $sessionId,
+            substr($sessionId, 0, 255),
             $storeId,
             $productId,
             $subscriptionPlanId,
