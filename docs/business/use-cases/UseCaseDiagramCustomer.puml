@@ -1,14 +1,15 @@
 @startuml "Diagrama_Casos_De_Uso_Cliente"
 
-' --- Estilo CSS Moderno (Corrigido para PlantUML) ---
+' --- Estilo CSS Moderno para PlantUML ---
 <style>
 root {
     BackgroundColor #FAFAFA
     FontName "Helvetica Neue"
-    FontSize 13
+    FontSize 12
 }
 arrow {
-    LineColor #263238
+    LineColor #37474F
+    TextColor #37474F
 }
 actor {
     BackgroundColor #FFF3E0
@@ -22,55 +23,114 @@ usecase {
 }
 rectangle {
     BackgroundColor #FFFFFF
-    BorderColor #37474F
-    LineColor #37474F
+    BorderColor #455A64
+    LineColor #455A64
+}
+package {
+    BackgroundColor #F5F5F5
+    BorderColor #90A4AE
+    LineColor #90A4AE
 }
 </style>
 
 left to right direction
+skinparam packageStyle rectangle
+skinparam shadowing false
 
-actor "Visitante" as Guest
-actor "Cliente Logado" as Customer
-actor "Sistema / Gateway" as System
+actor "Visitante\n(Guest)" as Guest
+actor "Cliente Logado\n(Customer)" as Customer
+actor "Sistema / Gateway\n(Alpha Engine)" as System
 
 Guest <|-- Customer : Herda permissões
 
-rectangle "Alpha Engine - Loja Virtual" {
-    usecase "Navegar no Catálogo" as UC_Nav
-    usecase "Buscar Produtos" as UC_Search
-    usecase "Adicionar ao Carrinho" as UC_Cart
-    usecase "Selecionar Variantes/Assinaturas" as UC_Cart_Inc
-    usecase "Fazer Login / Cadastro" as UC_Auth
-    usecase "Mesclar Carrinho na Sessão" as UC_Auth_Inc
-    usecase "Realizar Checkout" as UC_Checkout
-    usecase "Aplicar Cupom de Desconto" as UC_Coupon
-    usecase "Comprar como Visitante (Guest)" as UC_Checkout_Ext
-    usecase "Acompanhar Pedidos" as UC_Orders
-    usecase "Solicitar Devolução de Produto" as UC_Return
-    usecase "Processar Pagamento" as UC_Payment
+rectangle "Alpha Engine - Loja Virtual & Portal do Cliente" {
+
+    package "Catálogo, Busca & Mídia" {
+        usecase "Navegar no Catálogo & Categorias" as UC_Nav
+        usecase "Buscar Produtos com Filtros" as UC_Search
+        usecase "Visualizar Detalhes do Produto" as UC_ProductDetail
+        usecase "Selecionar Variantes & Opções" as UC_Variants
+        usecase "Carregar Mídia & Cache On-Demand" as UC_MediaCache
+    }
+
+    package "Carrinho & Compras" {
+        usecase "Adicionar ao Carrinho" as UC_Cart
+        usecase "Calcular Frete por CEP" as UC_Shipping
+        usecase "Aplicar Cupom de Desconto" as UC_Coupon
+        usecase "Realizar Checkout" as UC_Checkout
+        usecase "Comprar como Visitante" as UC_GuestCheckout
+        usecase "Processar Pagamento" as UC_Payment
+    }
+
+    package "Autenticação & Sessão" {
+        usecase "Cadastrar Nova Conta" as UC_Register
+        usecase "Autenticar-se (Login / Logout)" as UC_Login
+        usecase "Recuperar Senha por E-mail" as UC_ForgotPass
+        usecase "Sincronizar Sessão Redis & Carrinho" as UC_SyncSession
+    }
+
+    package "Área 'Minha Conta' (Painel do Cliente)" {
+        usecase "Acessar Painel do Cliente" as UC_AccountDash
+        usecase "Gerenciar Dados Cadastrais\n(/account/edit)" as UC_EditAccount
+        usecase "Alterar Senha Logado\n(/account/resetar-senha)" as UC_ChangePass
+        usecase "Gerenciar Livro de Endereços\n(/account/addresses)" as UC_Addresses
+        usecase "Gerenciar Lista de Desejos\n(/account/wishlist)" as UC_Wishlist
+        usecase "Consultar Pedidos & Histórico\n(/account/orders)" as UC_Orders
+        usecase "Consultar Extrato & Transações\n(/account/transaction)" as UC_Transactions
+        usecase "Solicitar Devolução / RMA\n(/account/return)" as UC_Returns
+        usecase "Gerenciar Inscrição na Newsletter\n(/account/newsletter)" as UC_Newsletter
+    }
+
+    package "Cotações & Projetos (RFQ / BoQ)" {
+        usecase "Criar Solicitação de Orçamento (RFQ)\n(/projetos/novo)" as UC_CreateRfq
+        usecase "Acompanhar Meus Projetos\n(/account/projetos)" as UC_MyProjects
+        usecase "Comparar Propostas Recebidas\n(/propostas)" as UC_CompareBids
+        usecase "Aceitar Proposta de Prestador\n(/aceitar)" as UC_AcceptBid
+        usecase "Aprovar BoQ & Enviar ao Carrinho\n(/boq)" as UC_ApproveBoq
+    }
 }
 
-' Associações Diretas do Visitante
+' ── Relacionamentos do Visitante (Guest) ──────────────────────────────
 Guest --> UC_Nav
 Guest --> UC_Search
+Guest --> UC_ProductDetail
 Guest --> UC_Cart
-Guest --> UC_Auth
+Guest --> UC_Register
+Guest --> UC_Login
+Guest --> UC_ForgotPass
 Guest --> UC_Checkout
 
-' Inclusões (Include) - Ações Obrigatórias do Fluxo
-UC_Cart ..> UC_Cart_Inc : <<include>>
-UC_Auth ..> UC_Auth_Inc : <<include>>
+' ── Inclusões (Include) & Extensões (Extend) no Fluxo Geral ───────────
+UC_ProductDetail <.. UC_Variants : <<extend>>
+UC_ProductDetail ..> UC_MediaCache : <<include>>
+UC_Cart <.. UC_Shipping : <<extend>>
+UC_Checkout <.. UC_Coupon : <<extend>>
+UC_Checkout <.. UC_GuestCheckout : <<extend>>
 UC_Checkout ..> UC_Payment : <<include>>
+UC_Login ..> UC_SyncSession : <<include>>
 
-' Extensões (Extend) - Ações Opcionais do Fluxo
-UC_Coupon .up.> UC_Checkout : <<extend>>
-UC_Checkout_Ext .up.> UC_Checkout : <<extend>>
-
-' Ações Exclusivas do Cliente Logado
+' ── Ações Exclusivas do Cliente Logado (Customer) ─────────────────────
+Customer --> UC_AccountDash
+Customer --> UC_EditAccount
+Customer --> UC_ChangePass
+Customer --> UC_Addresses
+Customer --> UC_Wishlist
 Customer --> UC_Orders
-Customer --> UC_Return
+Customer --> UC_Transactions
+Customer --> UC_Returns
+Customer --> UC_Newsletter
 
-' Associação do Sistema (Externa)
+' ── Fluxos de Cotações & Projetos (RFQ / BoQ) ─────────────────────────
+Customer --> UC_CreateRfq
+Customer --> UC_MyProjects
+UC_MyProjects <.. UC_CompareBids : <<extend>>
+UC_CompareBids <.. UC_AcceptBid : <<extend>>
+UC_MyProjects <.. UC_ApproveBoq : <<extend>>
+UC_ApproveBoq ..> UC_Cart : <<include>>
+
+' ── Integração de Sistema Externo (Gateway) ───────────────────────────
 System --> UC_Payment
+System --> UC_MediaCache
 
 @enduml
+
