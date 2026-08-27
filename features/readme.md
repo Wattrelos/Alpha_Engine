@@ -18,10 +18,23 @@ Ela integra-se diretamente com a aplicação **Alpha Engine**, reaproveitando e 
 composer test:behat
 ```
 
-### 2. Execução da Bateria Integrada (Behat + PHPUnit)
+### 2. Execução da Bateria Unitária & Integração (PHPUnit)
 ```bash
 # Executa os testes de validação unitária e de integração em PHPUnit
 composer test:phpunit
+```
+
+### 3. Execução dos Testes End-to-End (Playwright)
+```bash
+# Executa a suíte de testes E2E cross-browser e acessibilidade
+composer test:e2e
+# Ou diretamente pelo NPM
+npm run test:e2e:chromium
+```
+
+### 4. Execução Completa da Pirâmide de Testes (PHPUnit + Behat + Playwright)
+```bash
+composer test:all
 ```
 
 ---

@@ -81,3 +81,11 @@ cache/
 # Imagens Dinâmicas / Cache da Loja
 /public_html/image/product/*
 /public_html/image/cache/*
+
+# Playwright
+node_modules/
+/test-results/
+/playwright-report/
+/blob-report/
+/playwright/.cache/
+/playwright/.auth/

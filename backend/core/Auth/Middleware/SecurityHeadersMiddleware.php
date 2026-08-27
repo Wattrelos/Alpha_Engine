@@ -28,9 +28,9 @@ class SecurityHeadersMiddleware implements MiddlewareInterface
             "default-src 'self'",
             "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://fonts.googleapis.com https://cdnjs.cloudflare.com",
             "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdnjs.cloudflare.com",
-            "font-src 'self' data: https://fonts.gstatic.com https://cdnjs.cloudflare.com",
-            "img-src 'self' data: blob: https:",
-            "connect-src 'self' https://viacep.com.br https://*.viacep.com.br",
+            "font-src 'self' data: https://fonts.gstatic.com https://fonts.googleapis.com https://cdnjs.cloudflare.com",
+            "img-src 'self' data: blob: https: http:",
+            "connect-src 'self' https://viacep.com.br https://*.viacep.com.br https://fonts.googleapis.com https://fonts.gstatic.com",
             "frame-ancestors 'self'",
             "form-action 'self'",
             "base-uri 'self'"

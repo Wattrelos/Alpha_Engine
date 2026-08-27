@@ -16,6 +16,10 @@
         "test:behat:cart": "./vendor/bin/behat features/cart/ --no-snippets",
         "test:behat:checkout": "./vendor/bin/behat features/checkout/ --no-snippets",
         "test:behat:api": "./vendor/bin/behat features/api/ --no-snippets",
-        "test:phpunit": "cd backend && ./vendor/bin/phpunit"
+        "test:phpunit": "cd backend && ./vendor/bin/phpunit",
+        "test:e2e": "npx playwright test",
+        "test:e2e:chromium": "npx playwright test --project=chromium",
+        "test:all": "composer test:phpunit && composer test:behat && npx playwright test --project=chromium",
+        "test:all:full": "composer test:phpunit && composer test:behat && npx playwright test"
     }
 }

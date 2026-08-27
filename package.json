@@ -1,0 +1,49 @@
+{
+  "name": "agsonhos",
+  "version": "1.0.0",
+  "description": "Suíte E2E com Playwright para Alpha Engine (agsonhos)",
+  "main": "index.js",
+  "directories": {
+    "doc": "docs",
+    "test": "e2e"
+  },
+  "scripts": {
+    "test": "playwright test",
+    "test:e2e": "playwright test",
+    "test:e2e:chromium": "playwright test --project=chromium",
+    "test:e2e:firefox": "playwright test --project=firefox",
+    "test:e2e:webkit": "playwright test --project=webkit",
+    "test:e2e:mobile": "playwright test --project=mobile-chrome --project=mobile-safari",
+    "test:e2e:headed": "playwright test --headed",
+    "test:e2e:ui": "playwright test --ui",
+    "test:e2e:debug": "playwright test --debug",
+    "test:e2e:report": "playwright show-report",
+    "test:e2e:smoke": "playwright test e2e/specs/frontend/home.spec.ts --project=chromium",
+    "test:e2e:network": "playwright test e2e/specs/network --project=chromium",
+    "test:e2e:visual": "playwright test e2e/specs/visual --project=chromium",
+    "test:e2e:visual:update": "playwright test e2e/specs/visual --project=chromium --update-snapshots"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Wattrelos/Alpha_Engine.git"
+  },
+  "keywords": [
+    "playwright",
+    "e2e",
+    "testing",
+    "alpha-engine"
+  ],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Wattrelos/Alpha_Engine/issues"
+  },
+  "homepage": "https://github.com/Wattrelos/Alpha_Engine#readme",
+  "devDependencies": {
+    "@axe-core/playwright": "^4.13.0",
+    "@playwright/test": "^1.62.1",
+    "@types/node": "^26.4.0",
+    "dotenv": "^17.4.2",
+    "typescript": "^7.0.2"
+  }
+}

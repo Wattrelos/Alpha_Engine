@@ -1,0 +1,49 @@
+import { test as baseTest, expect } from '@playwright/test';
+import AxeBuilder from '@axe-core/playwright';
+import { HomePage } from '../pages/HomePage';
+import { LoginPage } from '../pages/LoginPage';
+import { SearchPage } from '../pages/SearchPage';
+import { ProductDetailPage } from '../pages/ProductDetailPage';
+import { CartPage } from '../pages/CartPage';
+import * as mockRoutes from '../helpers/mock-routes';
+
+/**
+ * Fixture tipada do Playwright estendida com instâncias de Page Objects,
+ * helpers de mock de rede e suporte nativo a análise de acessibilidade WCAG.
+ */
+type CustomFixtures = {
+  homePage: HomePage;
+  loginPage: LoginPage;
+  searchPage: SearchPage;
+  pdpPage: ProductDetailPage;
+  cartPage: CartPage;
+  makeAxeBuilder: () => AxeBuilder;
+  mocks: typeof mockRoutes;
+};
+
+export const test = baseTest.extend<CustomFixtures>({
+  homePage: async ({ page }, use) => {
+    await use(new HomePage(page));
+  },
+  loginPage: async ({ page }, use) => {
+    await use(new LoginPage(page));
+  },
+  searchPage: async ({ page }, use) => {
+    await use(new SearchPage(page));
+  },
+  pdpPage: async ({ page }, use) => {
+    await use(new ProductDetailPage(page));
+  },
+  cartPage: async ({ page }, use) => {
+    await use(new CartPage(page));
+  },
+  makeAxeBuilder: async ({ page }, use) => {
+    const makeAxe = () => new AxeBuilder({ page }).withTags(['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa']);
+    await use(makeAxe);
+  },
+  mocks: async ({}, use) => {
+    await use(mockRoutes);
+  },
+});
+
+export { expect };

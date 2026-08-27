@@ -55,28 +55,31 @@ class StoreSettings
         $store['geocode'] = $this->rawSettings['config_geocode'] ?? '';
         $store['open'] = $this->rawSettings['config_open'] ?? '';
         
-        // Resolve logo & icon urls
-        $baseUrl = HTTP_SERVER;
+        // Resolve logo & icon urls (usando caminhos relativos de mesma origem)
         if (!empty($this->rawSettings['config_logo'])) {
             $logoPath = $this->rawSettings['config_logo'];
-            if (strpos($logoPath, 'image/') === 0) {
-                $store['logo'] = $baseUrl . $logoPath;
+            if (str_starts_with($logoPath, 'http://') || str_starts_with($logoPath, 'https://') || str_starts_with($logoPath, '/')) {
+                $store['logo'] = $logoPath;
+            } elseif (str_starts_with($logoPath, 'image/')) {
+                $store['logo'] = '/' . $logoPath;
             } else {
-                $store['logo'] = $baseUrl . 'image/' . $logoPath;
+                $store['logo'] = '/image/' . $logoPath;
             }
         } else {
-            $store['logo'] = $baseUrl . 'image/logo.png';
+            $store['logo'] = '/image/logo.png';
         }
 
         if (!empty($this->rawSettings['config_icon'])) {
             $iconPath = $this->rawSettings['config_icon'];
-            if (strpos($iconPath, 'image/') === 0) {
-                $store['icon'] = $baseUrl . $iconPath;
+            if (str_starts_with($iconPath, 'http://') || str_starts_with($iconPath, 'https://') || str_starts_with($iconPath, '/')) {
+                $store['icon'] = $iconPath;
+            } elseif (str_starts_with($iconPath, 'image/')) {
+                $store['icon'] = '/' . $iconPath;
             } else {
-                $store['icon'] = $baseUrl . 'image/' . $iconPath;
+                $store['icon'] = '/image/' . $iconPath;
             }
         } else {
-            $store['icon'] = $baseUrl . 'image/logo2.png';
+            $store['icon'] = '/image/logo2.png';
         }
 
         // Parse localized descriptions (meta title, description, keywords)
