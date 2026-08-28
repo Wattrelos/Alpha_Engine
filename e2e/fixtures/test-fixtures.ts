@@ -5,6 +5,8 @@ import { LoginPage } from '../pages/LoginPage';
 import { SearchPage } from '../pages/SearchPage';
 import { ProductDetailPage } from '../pages/ProductDetailPage';
 import { CartPage } from '../pages/CartPage';
+import { CheckoutPage } from '../pages/CheckoutPage';
+import { OrderSuccessPage } from '../pages/OrderSuccessPage';
 import * as mockRoutes from '../helpers/mock-routes';
 
 /**
@@ -17,6 +19,8 @@ type CustomFixtures = {
   searchPage: SearchPage;
   pdpPage: ProductDetailPage;
   cartPage: CartPage;
+  checkoutPage: CheckoutPage;
+  orderSuccessPage: OrderSuccessPage;
   makeAxeBuilder: () => AxeBuilder;
   mocks: typeof mockRoutes;
 };
@@ -36,6 +40,12 @@ export const test = baseTest.extend<CustomFixtures>({
   },
   cartPage: async ({ page }, use) => {
     await use(new CartPage(page));
+  },
+  checkoutPage: async ({ page }, use) => {
+    await use(new CheckoutPage(page));
+  },
+  orderSuccessPage: async ({ page }, use) => {
+    await use(new OrderSuccessPage(page));
   },
   makeAxeBuilder: async ({ page }, use) => {
     const makeAxe = () => new AxeBuilder({ page }).withTags(['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa']);

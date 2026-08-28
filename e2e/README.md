@@ -76,14 +76,17 @@ e2e/
 │   ├── BasePage.ts               # Métodos base: navegação i18n, CSRF, SEO, console errors
 │   ├── HomePage.ts               # Componentes da Home (Header, Logo, Menu, Busca, Footer)
 │   ├── LoginPage.ts              # Formulário de login, CSRF e alertas
-│   ├── SearchPage.ts             # Listagem de catálogo, filtros e ordenação
+│   ├── SearchPage.ts             # Listagem de catálogo, filtros e compra rápida
 │   ├── ProductDetailPage.ts      # Detalhes do produto (PDP), variantes e compra
-│   └── CartPage.ts               # Carrinho de compras, totais e checkout
+│   ├── CartPage.ts               # Carrinho de compras, simulador de frete e checkout
+│   ├── CheckoutPage.ts           # Checkout multi-etapas (Identificação, Endereço e Pagamento)
+│   └── OrderSuccessPage.ts       # Tela de confirmação e pedido concluído com sucesso
 ├── specs/                        # Especificações executáveis de testes E2E
 │   ├── auth/
 │   │   └── login.spec.ts         # Validação de formulário, CSRF e credenciais
 │   ├── cart/
-│   │   └── cart-flow.spec.ts     # Estado do carrinho e fluxo de compra
+│   │   ├── cart-flow.spec.ts     # Estado do carrinho e navegação PDP
+│   │   └── checkout-flow.spec.ts # Jornada completa de compras E2E (Busca até Sucesso)
 │   ├── frontend/
 │   │   ├── home.spec.ts          # Renderização, SEO, integridade JS e Acessibilidade (Axe)
 │   │   └── search.spec.ts        # Busca global e termos sem resultados
@@ -95,6 +98,7 @@ e2e/
 │   │   └── security-headers.spec.ts # Validação de cabeçalhos OWASP e cookies de sessão
 │   └── visual/
 │       ├── home-visual.spec.ts   # Regressão visual de Header e Rodapé
-│       └── components-visual.spec.ts # Regressão visual de Login e Card de Produto
+│       ├── components-visual.spec.ts # Regressão visual de Login e Card de Produto
+│       └── checkout-flow-visual.spec.ts # Regressão visual de todo o funil de compras (6 snapshots)
 └── README.md                     # Esta documentação
 ```

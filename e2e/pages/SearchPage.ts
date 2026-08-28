@@ -42,4 +42,14 @@ export class SearchPage extends BasePage {
   async clickFirstProduct() {
     await this.productCards.first().locator('a').first().click();
   }
+
+  /**
+   * Adiciona um produto ao carrinho diretamente pelo card da listagem
+   */
+  async addProductToCart(index = 0) {
+    const card = this.productCards.nth(index);
+    await expect(card).toBeVisible();
+    const addBtn = card.locator('.egen-prod-btn-cart, button[title*="carrinho" i]').first();
+    await addBtn.click();
+  }
 }
