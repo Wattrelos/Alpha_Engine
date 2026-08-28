@@ -184,4 +184,34 @@ class GuestCheckoutSettingTest extends TestCase
             $settingRepo->editSetting('config', array_merge($updatedSettings, ['config_checkout_guest' => '1']), 1);
         }
     }
+
+    public function testEditStoreSettingTwigTemplateRendersOptionsTabProperly(): void
+    {
+        $loader = new \Twig\Loader\FilesystemLoader(__DIR__ . '/../../backend/resources/views');
+        $twig = new \Twig\Environment($loader, ['cache' => false]);
+
+        $rendered = $twig->render('admin/setting/store_setting/edit.html.twig', [
+            'admin_path' => '/admin',
+            'settings' => ['config_name' => 'Minha Loja', 'config_checkout_guest' => '1'],
+            'AdminLang' => [
+                'tab_options' => 'Opções de Compra',
+                'title_options' => 'Opções de Compra e Finalização de Pedidos',
+                'entry_checkout_guest' => 'Permitir Compras como Visitante (Guest Checkout)'
+            ],
+            'languages' => [],
+            'information_pages' => [],
+            'errors' => []
+        ]);
+
+        // Valida que o botão da aba e o container de conteúdo existem no HTML
+        $this->assertStringContainsString('id="tab-btn-options"', $rendered);
+        $this->assertStringContainsString('id="tab-content-options"', $rendered);
+        $this->assertStringContainsString('name="config_checkout_guest"', $rendered);
+        $this->assertStringContainsString('control-checkout-guest', $rendered);
+
+        // Valida que a aba Opções de Compra NÃO está aninhada dentro de tab-content-information
+        $posInformation = strpos($rendered, 'id="tab-content-information"');
+        $posOptions = strpos($rendered, 'id="tab-content-options"');
+        $this->assertLessThan($posInformation, $posOptions, 'tab-content-options deve ser renderizada antes de tab-content-information como um elemento irmão independente.');
+    }
 }
