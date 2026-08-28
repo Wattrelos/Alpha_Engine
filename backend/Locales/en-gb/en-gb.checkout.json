@@ -34,5 +34,6 @@
   "buttonNext": "Next",
   "buttonConfirm": "Confirm Order",
   "textAddressExisting": "I want to use an existing address",
-  "textAddressNew": "I want to use a new address"
+  "textAddressNew": "I want to use a new address",
+  "textAccountRequired": "To complete your order in this store, please log in to your account or create a quick registration."
 }

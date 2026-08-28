@@ -115,6 +115,8 @@ class StoreSettings
         $store['metaKeyword'] = $metaKeyword;
 
         // Custom socials or extra options
+        $store['checkoutGuest'] = isset($this->rawSettings['config_checkout_guest']) ? (bool)(int)$this->rawSettings['config_checkout_guest'] : true;
+
         $store['social'] = [
             'facebook' => $this->rawSettings['config_facebook'] ?? 'https://facebook.com',
             'instagram' => $this->rawSettings['config_instagram'] ?? 'https://instagram.com',

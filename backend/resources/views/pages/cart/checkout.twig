@@ -69,15 +69,23 @@
 						<div
 							class="egen-checkout-step-content">
 							<!-- Botões de login/cadastro -->
-							<div class="egen-checkout-identity-options">
+							{% if not allow_guest_checkout %}
+								<div class="egen-alert egen-alert--info mb-4" id="guest-checkout-disabled-notice" style="margin-bottom: 1.25rem;">
+									<i class="fa-solid fa-circle-info"></i>
+									<span>{{ Checkout.textAccountRequired|default('Para concluir seu pedido nesta loja, é necessário entrar na sua conta ou criar um cadastro rápido.') }}</span>
+								</div>
+							{% endif %}
+							<div class="egen-checkout-identity-options" data-allow-guest="{{ allow_guest_checkout ? 'true' : 'false' }}">
 								<button type="button" class="egen-btn-secondary" data-checkout-action="login">
 									<i class="fa-solid fa-right-to-bracket"></i>
 									{{ Checkout.buttonLoginChoice|default('Já tenho conta') }}
 								</button>
-								<button type="button" class="egen-btn-secondary" data-checkout-action="guest">
-									<i class="fa-solid fa-user-plus"></i>
-									{{ Checkout.buttonGuestChoice|default('Comprar como visitante') }}
-								</button>
+								{% if allow_guest_checkout %}
+									<button type="button" class="egen-btn-secondary" data-checkout-action="guest">
+										<i class="fa-solid fa-user-plus"></i>
+										{{ Checkout.buttonGuestChoice|default('Comprar como visitante') }}
+									</button>
+								{% endif %}
 								<button type="button" class="egen-btn-secondary" data-checkout-action="register">
 									<i class="fa-solid fa-user-tie"></i>
 									{{ Checkout.buttonRegisterChoice|default('Quero me cadastrar') }}

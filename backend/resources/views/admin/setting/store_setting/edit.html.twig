@@ -48,6 +48,10 @@
 			<i class="fas fa-share-alt"></i>
 			<span>{{ AdminLang.tab_social|default('Redes Sociais') }}</span>
 		</button>
+		<button type="button" onclick="switchTab('options')" id="tab-btn-options" class="tab-button">
+			<i class="fas fa-sliders-h"></i>
+			<span>{{ AdminLang.tab_options|default('Opções de Compra') }}</span>
+		</button>
 		<button type="button" onclick="switchTab('information')" id="tab-btn-information" class="tab-button">
 			<i class="fas fa-file-alt"></i>
 			<span>{{ AdminLang.tab_information|default('Informações') }}</span>
@@ -437,6 +441,47 @@
 						</details>
 					</div>
 				</div>
+			<!-- 6. Aba: Opções de Compra (Checkout) -->
+			<div id="tab-content-options" class="tab-content d-none">
+				<div class="info-header-bar mb-6">
+					<div>
+						<h3 class="section-title mb-1"><i class="fas fa-shopping-cart text-primary"></i> Opções de Compra e Finalização de Pedidos</h3>
+						<p class="text-muted text-sm mb-0">Defina as políticas de acesso e fechamento de pedidos na loja virtual.</p>
+					</div>
+				</div>
+
+				<div class="options-container">
+					<div class="option-item-card">
+						<div class="option-main-flex">
+							<div class="option-icon-wrapper">
+								<i class="fas fa-user-clock"></i>
+							</div>
+							<div class="option-text-wrapper">
+								<h4 class="option-heading">Permitir Compras como Visitante (Guest Checkout)</h4>
+								<p class="option-subtext">
+									Quando habilitado, clientes podem concluir pedidos rapidamente fornecendo apenas os dados essenciais de entrega e pagamento, sem precisar criar uma senha de cadastro.
+								</p>
+								<p class="option-subtext text-xs text-muted mb-0">
+									<i class="fas fa-info-circle text-info mr-1"></i> Se desabilitado, os visitantes anônimos serão direcionados a fazer login ou criar uma conta na etapa de identificação do checkout.
+								</p>
+							</div>
+							<div class="option-action-wrapper">
+								<div class="segmented-control" id="control-checkout-guest">
+									<label class="segmented-option {% if settings.config_checkout_guest|default('1') == '1' %}selected{% endif %}" id="seg-guest-1">
+										<input type="radio" name="config_checkout_guest" value="1" {% if settings.config_checkout_guest|default('1') == '1' %}checked{% endif %} onchange="updateSegmentedControl('guest', this.value)">
+										<i class="fas fa-check"></i>
+										<span>Permitir (Sim)</span>
+									</label>
+									<label class="segmented-option segmented-option-danger {% if settings.config_checkout_guest|default('1') == '0' %}selected{% endif %}" id="seg-guest-0">
+										<input type="radio" name="config_checkout_guest" value="0" {% if settings.config_checkout_guest|default('1') == '0' %}checked{% endif %} onchange="updateSegmentedControl('guest', this.value)">
+										<i class="fas fa-lock"></i>
+										<span>Exigir Cadastro (Não)</span>
+									</label>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
 			</div>
 
 			<!-- Campo oculto para preservar a aba ativa ao submeter -->
@@ -500,9 +545,41 @@
 		.seo-accordion-summary { padding: 0.75rem 1rem; font-weight: 500; font-size: 0.9rem; color: #94a3b8; cursor: pointer; user-select: none; }
 		.seo-accordion-summary:hover { color: #f8fafc; }
 		.seo-accordion-content { padding: 1rem; border-top: 1px solid rgba(255, 255, 255, 0.06); }
+
+		/* Estilos da Aba de Opções de Compra */
+		.options-container { display: flex; flex-direction: column; gap: 1rem; }
+		.option-item-card { background: rgba(15, 23, 42, 0.4); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 12px; padding: 1.5rem; transition: border-color 0.2s; }
+		.option-item-card:hover { border-color: rgba(255, 255, 255, 0.15); }
+		.option-main-flex { display: flex; align-items: center; justify-content: space-between; gap: 1.5rem; flex-wrap: wrap; }
+		.option-icon-wrapper { width: 48px; height: 48px; border-radius: 12px; background: rgba(59, 130, 246, 0.1); color: #3b82f6; display: flex; align-items: center; justify-content: center; font-size: 1.25rem; flex-shrink: 0; }
+		.option-text-wrapper { flex: 1; min-width: 250px; }
+		.option-heading { font-size: 1.05rem; font-weight: 600; color: #f8fafc; margin-bottom: 0.25rem; }
+		.option-subtext { color: #94a3b8; font-size: 0.875rem; line-height: 1.5; margin-bottom: 0.5rem; }
+		.option-action-wrapper { flex-shrink: 0; }
+
+		/* Segmented Control */
+		.segmented-control { display: inline-flex; background: rgba(15, 23, 42, 0.8); border: 1px solid rgba(255, 255, 255, 0.12); padding: 4px; border-radius: 10px; gap: 4px; }
+		.segmented-option { display: flex; align-items: center; gap: 0.5rem; padding: 0.5rem 1rem; font-size: 0.85rem; font-weight: 500; color: #94a3b8; border-radius: 7px; cursor: pointer; user-select: none; transition: all 0.2s ease; margin-bottom: 0; }
+		.segmented-option input[type="radio"] { display: none; }
+		.segmented-option:hover { color: #f3f4f6; background: rgba(255, 255, 255, 0.05); }
+		.segmented-option.selected { background: #10b981; color: #ffffff; font-weight: 600; box-shadow: 0 2px 8px rgba(16, 185, 129, 0.35); }
+		.segmented-option-danger.selected { background: #ef4444; color: #ffffff; font-weight: 600; box-shadow: 0 2px 8px rgba(239, 68, 68, 0.35); }
 	</style>
 
 	<script>
+		// Atualiza o visual do segmented control nas opções
+		function updateSegmentedControl(name, value) {
+			const label1 = document.getElementById('seg-' + name + '-1');
+			const label0 = document.getElementById('seg-' + name + '-0');
+			if (value === '1' || value === 1) {
+				if (label1) label1.classList.add('selected');
+				if (label0) label0.classList.remove('selected');
+			} else {
+				if (label1) label1.classList.remove('selected');
+				if (label0) label0.classList.add('selected');
+			}
+		}
+
 		// Switcher de abas principais
 		function switchTab(tabName) {
 			document.querySelectorAll('.tab-content').forEach(el => {

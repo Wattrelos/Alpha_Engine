@@ -421,14 +421,16 @@ document.addEventListener('DOMContentLoaded', () => {
                     window.showNotification('Por favor, preencha todos os campos obrigatórios de cadastro.', 'danger');
                     return false;
                 }
-                
-                // TODO: Chamada AJAX para salvar os dados de cadastro na sessão e validar backend (E-mail duplicado, etc)
-                /* const formData = new FormData(registerForm);
-                   const res = await fetch('/api/checkout/save-identity', { method: 'POST', body: formData });
-                   const data = await res.json();
-                   if (!data.success) { window.showNotification(data.error, 'danger'); return false; } */
             }
-            // Se action for 'guest', prossegue para o passo 2 sem validar form
+
+            // Se action for 'guest', verifica se é permitido
+            if (action === 'guest') {
+                const allowGuest = idOptions?.getAttribute('data-allow-guest') !== 'false';
+                if (!allowGuest) {
+                    window.showNotification('Compras como visitante estão desabilitadas nesta loja. Por favor, faça login ou cadastre-se.', 'danger');
+                    return false;
+                }
+            }
         }
 
         // Se for etapa 2, valida os campos de cobrança

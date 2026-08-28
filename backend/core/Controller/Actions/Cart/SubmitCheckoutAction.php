@@ -88,6 +88,23 @@ class SubmitCheckoutAction implements ActionInterface
             }
         }
 
+        // Validação de Política de Compra de Visitante (Guest Checkout)
+        $customerId = (int)($_SESSION['customer_id'] ?? 0);
+        $allowGuestCheckout = isset($configSettings['config_checkout_guest']) ? (string)$configSettings['config_checkout_guest'] !== '0' : true;
+        if ($customerId <= 0 && !$allowGuestCheckout) {
+            $errorMessage = 'Compras de visitantes estão desabilitadas nesta loja. Por favor, acesse sua conta ou crie um cadastro para concluir o pedido.';
+            if ($this->isJsonRequest($request)) {
+                $response->getBody()->write(json_encode([
+                    'error' => 'GUEST_CHECKOUT_DISABLED',
+                    'message' => $errorMessage
+                ], JSON_UNESCAPED_UNICODE));
+                return $response->withHeader('Content-Type', 'application/json')->withStatus(403);
+            }
+            $_SESSION['error'] = $errorMessage;
+            $errorUrl = $routeParser ? $routeParser->urlFor('checkout.index', ['lang' => $lang]) : '/' . $lang . '/checkout';
+            return $response->withHeader('Location', $errorUrl)->withStatus(302);
+        }
+
         // Buscar GeoZoneRepository para obter IDs a partir de siglas/UF
         /** @var \Alpha\Model\Domain\Repositories\GeoZoneRepository $zoneRepository */
         $zoneRepository = $repositoryFactory->get(\Alpha\Model\Domain\Repositories\GeoZoneRepository::class);

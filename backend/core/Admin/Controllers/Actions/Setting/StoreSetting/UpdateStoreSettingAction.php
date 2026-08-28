@@ -155,6 +155,11 @@ class UpdateStoreSettingAction extends BaseController implements \Alpha\Controll
             $newSettings['config_instagram'] = trim($formData['config_instagram'] ?? '');
             $newSettings['config_youtube'] = trim($formData['config_youtube'] ?? '');
 
+            // Opções de Compra e Finalização de Pedidos (Checkout)
+            if (isset($formData['config_checkout_guest'])) {
+                $newSettings['config_checkout_guest'] = (string)((int)$formData['config_checkout_guest']);
+            }
+
             try {
                 $settingRepo->editSetting('config', $newSettings, 1);
 
@@ -259,6 +264,7 @@ class UpdateStoreSettingAction extends BaseController implements \Alpha\Controll
                 'config_facebook'  => $formData['config_facebook'] ?? '',
                 'config_instagram' => $formData['config_instagram'] ?? '',
                 'config_youtube'   => $formData['config_youtube'] ?? '',
+                'config_checkout_guest' => $formData['config_checkout_guest'] ?? $settings['config_checkout_guest'] ?? '1',
                 'config_logo'      => $configLogo,
                 'config_icon'      => $configIcon
             ],

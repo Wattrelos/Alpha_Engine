@@ -135,13 +135,16 @@ class Checkout implements ActionInterface
             'name' => $c->getName()
         ], $countryMapper->getCountries());
 
+        $allowGuestCheckout = isset($configSettings['config_checkout_guest']) ? (string)$configSettings['config_checkout_guest'] !== '0' : true;
+
         $viewData = array_merge($languageData, [
-            'breadcrumbs' => $breadcrumbs,
-            'countries'   => $countriesList,
-            'action'      => $routeParser->urlFor('checkout.submit', ['lang' => $lang]),
-            'login_email' => $_SESSION['email'] ?? '',
-            'forgotten'   => '/' . $lang . '/forgotten', // Rota pública de esqueci a senha
-            'error_warning' => $_SESSION['error'] ?? '',
+            'breadcrumbs'          => $breadcrumbs,
+            'countries'            => $countriesList,
+            'action'               => $routeParser->urlFor('checkout.submit', ['lang' => $lang]),
+            'login_email'          => $_SESSION['email'] ?? '',
+            'forgotten'            => '/' . $lang . '/forgotten', // Rota pública de esqueci a senha
+            'error_warning'        => $_SESSION['error'] ?? '',
+            'allow_guest_checkout' => $allowGuestCheckout,
 
             // Valores padrão dos campos de endereço / cadastro
             'payment_firstname' => $paymentAddress['firstname'] ?? ($customer ? $customer->getFirstname() : ''),

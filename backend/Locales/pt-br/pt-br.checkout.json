@@ -34,5 +34,6 @@
   "buttonNext": "Avançar",
   "buttonConfirm": "Finalizar Compra",
   "textAddressExisting": "Utilizar um endereço cadastrado",
-  "textAddressNew": "Utilizar um novo endereço"
+  "textAddressNew": "Utilizar um novo endereço",
+  "textAccountRequired": "Para concluir seu pedido nesta loja, é necessário entrar na sua conta ou criar um cadastro rápido."
 }
