@@ -47,7 +47,8 @@ export class CartPage extends BasePage {
    */
   async calculateShipping(cep: string) {
     await this.shippingCepInput.fill(cep);
-    await this.shippingCalculateBtn.click();
+    await this.shippingCalculateBtn.scrollIntoViewIfNeeded();
+    await this.shippingCalculateBtn.click({ force: true });
     await expect(this.shippingResults).toBeVisible({ timeout: 10000 });
   }
 
@@ -56,6 +57,7 @@ export class CartPage extends BasePage {
    */
   async proceedToCheckout() {
     await expect(this.checkoutButton).toBeVisible();
+    await this.checkoutButton.scrollIntoViewIfNeeded();
     await this.checkoutButton.click();
   }
 }

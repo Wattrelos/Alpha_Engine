@@ -2,6 +2,7 @@ import { test as baseTest, expect } from '@playwright/test';
 import AxeBuilder from '@axe-core/playwright';
 import { HomePage } from '../pages/HomePage';
 import { LoginPage } from '../pages/LoginPage';
+import { RegisterPage } from '../pages/RegisterPage';
 import { SearchPage } from '../pages/SearchPage';
 import { ProductDetailPage } from '../pages/ProductDetailPage';
 import { CartPage } from '../pages/CartPage';
@@ -16,6 +17,7 @@ import * as mockRoutes from '../helpers/mock-routes';
 type CustomFixtures = {
   homePage: HomePage;
   loginPage: LoginPage;
+  registerPage: RegisterPage;
   searchPage: SearchPage;
   pdpPage: ProductDetailPage;
   cartPage: CartPage;
@@ -31,6 +33,9 @@ export const test = baseTest.extend<CustomFixtures>({
   },
   loginPage: async ({ page }, use) => {
     await use(new LoginPage(page));
+  },
+  registerPage: async ({ page }, use) => {
+    await use(new RegisterPage(page));
   },
   searchPage: async ({ page }, use) => {
     await use(new SearchPage(page));

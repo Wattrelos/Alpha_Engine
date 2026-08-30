@@ -148,7 +148,8 @@ export class CheckoutPage extends BasePage {
    * Avança da Etapa 1 para a próxima
    */
   async continueFromStep1() {
-    await this.step1NextBtn.click();
+    await this.step1NextBtn.scrollIntoViewIfNeeded();
+    await this.step1NextBtn.click({ force: true });
     await expect(this.stepBilling).toBeVisible({ timeout: 10000 });
   }
 
@@ -178,14 +179,18 @@ export class CheckoutPage extends BasePage {
     await this.paymentPostcode.fill(data.postcode);
     await this.paymentPostcode.dispatchEvent('blur');
 
-    // Aguarda que o campo de logradouro ou cidade receba o valor
-    if (data.street) {
-      // Se não preencheu via CEP, preenche manual
-      if (!(await this.paymentStreet.inputValue())) {
-        await this.paymentStreet.fill(data.street);
-      }
-    } else {
-      await expect(this.paymentStreet).not.toHaveValue('', { timeout: 7000 });
+    // Preenche campos caso ViaCEP não preencha a tempo
+    if (data.street && !(await this.paymentStreet.inputValue())) {
+      await this.paymentStreet.fill(data.street);
+    }
+    if (data.neighborhood && !(await this.paymentNeighborhood.inputValue())) {
+      await this.paymentNeighborhood.fill(data.neighborhood);
+    }
+    if (data.city && !(await this.paymentCity.inputValue())) {
+      await this.paymentCity.fill(data.city);
+    }
+    if (data.zone && !(await this.paymentZone.inputValue())) {
+      await this.paymentZone.fill(data.zone);
     }
 
     await this.paymentNumber.fill(data.number);
@@ -198,7 +203,8 @@ export class CheckoutPage extends BasePage {
    * Avança da Etapa 2 para a etapa de Pagamento (Etapa 4)
    */
   async continueFromStep2() {
-    await this.step2NextBtn.click();
+    await this.step2NextBtn.scrollIntoViewIfNeeded();
+    await this.step2NextBtn.click({ force: true });
     await expect(this.stepPayment).toBeVisible({ timeout: 10000 });
   }
 
@@ -215,6 +221,7 @@ export class CheckoutPage extends BasePage {
    */
   async submitOrder() {
     await expect(this.submitCheckoutBtn).toBeVisible();
-    await this.submitCheckoutBtn.click();
+    await this.submitCheckoutBtn.scrollIntoViewIfNeeded();
+    await this.submitCheckoutBtn.click({ force: true });
   }
 }

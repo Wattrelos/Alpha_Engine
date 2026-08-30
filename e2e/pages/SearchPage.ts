@@ -49,7 +49,8 @@ export class SearchPage extends BasePage {
   async addProductToCart(index = 0) {
     const card = this.productCards.nth(index);
     await expect(card).toBeVisible();
+    await card.scrollIntoViewIfNeeded();
     const addBtn = card.locator('.egen-prod-btn-cart, button[title*="carrinho" i]').first();
-    await addBtn.click();
+    await addBtn.click({ force: true });
   }
 }

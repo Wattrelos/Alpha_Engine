@@ -49,7 +49,7 @@ test.describe('Fluxo Completo de Compras E2E (End-to-End)', () => {
 
     // 8. Clica em "Finalizar compra"
     await cartPage.proceedToCheckout();
-    await expect(page).toHaveURL(/.*\/checkout/);
+    await expect(page).toHaveURL(/.*\/checkout/, { timeout: 10000 });
 
     // 9. Tela de Cadastro ou Login: Escolhe "Quero me cadastrar"
     await checkoutPage.chooseIdentity('register');

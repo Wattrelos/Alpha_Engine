@@ -62,19 +62,41 @@ class CustomerAuthService extends AbstractAuthService
     }
 
     /**
-     * Cria e persiste a sessão do cliente, sincronizando chaves legadas no $_SESSION.
+     * Cria e persiste a sessão do cliente, sincronizando chaves legadas no $_SESSION
+     * e preservando tokens CSRF e estado pré-existente da sessão.
      */
     public function createSession(array $userData): string
     {
-        $sessionId = parent::createSession($userData);
+        $existingSessionData = $_SESSION ?? [];
 
-        // Sincroniza chaves legadas flat em $_SESSION para máxima compatibilidade
-        if (session_status() === PHP_SESSION_NONE && !headers_sent()) {
-            session_name($this->cookieName);
-            session_id($sessionId);
-            @session_start();
+        if (session_status() === PHP_SESSION_ACTIVE) {
+            $sessionId = session_id();
+            if (empty($sessionId)) {
+                $sessionId = bin2hex(random_bytes(32));
+                session_id($sessionId);
+            }
+            if ($this->useRedis && $this->redis) {
+                try {
+                    $this->redis->set($this->redisPrefix . $sessionId, json_encode($userData));
+                    $this->redis->expire($this->redisPrefix . $sessionId, $this->sessionLifetime);
+                } catch (\Throwable) {
+                    // Fallback silencioso
+                }
+            }
+        } else {
+            $sessionId = parent::createSession($userData);
+            if (session_status() === PHP_SESSION_NONE && !headers_sent()) {
+                session_name($this->cookieName);
+                session_id($sessionId);
+                @session_start();
+            }
         }
-        
+
+        // Restaura dados preservados da sessão (ex: tokens CSRF, carrinho, endereço)
+        foreach ($existingSessionData as $k => $v) {
+            $_SESSION[$k] = $v;
+        }
+
         $_SESSION['logged_user'] = json_encode($userData);
         $_SESSION['customer_id'] = $userData['id'];
         $_SESSION['customer_group_id'] = $userData['customer_group_id'] ?? 1;
@@ -82,6 +104,8 @@ class CustomerAuthService extends AbstractAuthService
         $_SESSION['customer_lastname'] = explode(' ', trim($userData['name']), 2)[1] ?? '';
         $_SESSION['customer_email'] = $userData['email'] ?? '';
         $_SESSION['customer_telephone'] = $userData['telephone'] ?? '';
+        $_SESSION['email'] = $userData['email'] ?? '';
+        $_SESSION['telephone'] = $userData['telephone'] ?? '';
 
         return $sessionId;
     }
@@ -108,5 +132,7 @@ class CustomerAuthService extends AbstractAuthService
         unset($_SESSION['customer_lastname']);
         unset($_SESSION['customer_email']);
         unset($_SESSION['customer_telephone']);
+        unset($_SESSION['email']);
+        unset($_SESSION['telephone']);
     }
 }

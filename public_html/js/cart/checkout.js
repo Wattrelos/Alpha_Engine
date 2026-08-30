@@ -421,6 +421,117 @@ document.addEventListener('DOMContentLoaded', () => {
                     window.showNotification('Por favor, preencha todos os campos obrigatórios de cadastro.', 'danger');
                     return false;
                 }
+
+                // Se já efetuou o cadastro e autenticou nesta sessão, prossegue diretamente
+                if (window.checkoutCustomerRegistered) {
+                    return true;
+                }
+
+                // Submete o cadastro via AJAX com Auto-Login
+                const metaNameKey = document.querySelector('meta[name="csrf-key-name"]')?.content || 'csrf_name';
+                const metaValueKey = document.querySelector('meta[name="csrf-key-value"]')?.content || 'csrf_value';
+                const metaName = document.querySelector('meta[name="csrf-name"]')?.content;
+                const metaValue = document.querySelector('meta[name="csrf-value"]')?.content;
+                const lang = document.body.getAttribute('data-lang') || 'pt-br';
+
+                const registerPayload = new URLSearchParams({
+                    firstname: document.getElementById('register-firstname')?.value.trim() || '',
+                    lastname: document.getElementById('register-lastname')?.value.trim() || '',
+                    email: document.getElementById('register-email')?.value.trim() || '',
+                    telephone: document.getElementById('register-telephone')?.value.trim() || '',
+                    password: password ? password.value : '',
+                    confirm: confirm ? confirm.value : '',
+                    agree: '1',
+                    redirect: `/${lang}/checkout`
+                });
+
+                if (metaName && metaValue) {
+                    registerPayload.append(metaNameKey, metaName);
+                    registerPayload.append(metaValueKey, metaValue);
+                }
+
+                try {
+                    const res = await fetch(`/${lang}/cadastro`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/x-www-form-urlencoded',
+                            'X-Requested-With': 'XMLHttpRequest'
+                        },
+                        body: registerPayload
+                    });
+
+                    const resData = await res.json();
+
+                    if (res.ok && resData.success) {
+                        window.checkoutCustomerRegistered = true;
+                        window.showNotification('Cadastro realizado com sucesso! Sessão iniciada.', 'success');
+
+                        // Atualiza estado na página
+                        document.body.setAttribute('data-logged', 'true');
+
+                        // Atualiza tokens CSRF se retornados pelo backend
+                        if (resData.csrf && resData.csrf.name && resData.csrf.value) {
+                            const metaNameEl = document.querySelector('meta[name="csrf-name"]');
+                            const metaValEl = document.querySelector('meta[name="csrf-value"]');
+                            if (metaNameEl) metaNameEl.setAttribute('content', resData.csrf.name);
+                            if (metaValEl) metaValEl.setAttribute('content', resData.csrf.value);
+                            document.querySelectorAll('input[name="csrf_name"]').forEach(el => el.value = resData.csrf.name);
+                            document.querySelectorAll('input[name="csrf_value"]').forEach(el => el.value = resData.csrf.value);
+                        }
+
+                        // Preenche automaticamente os dados nos passos seguintes se estiverem vazios
+                        const fn = document.getElementById('register-firstname')?.value.trim() || '';
+                        const ln = document.getElementById('register-lastname')?.value.trim() || '';
+                        const payFn = document.getElementById('input-payment-firstname');
+                        const payLn = document.getElementById('input-payment-lastname');
+                        if (payFn && !payFn.value) payFn.value = fn;
+                        if (payLn && !payLn.value) payLn.value = ln;
+
+                        // Sincroniza o carrinho local com o banco de dados
+                        if (typeof guestCart !== 'undefined' && guestCart.getItems().length > 0) {
+                            try {
+                                const syncPayload = { items: guestCart.getItems() };
+                                if (metaName && metaValue) {
+                                    syncPayload[metaNameKey] = metaName;
+                                    syncPayload[metaValueKey] = metaValue;
+                                }
+                                await fetch('/api/carrinho/sincronizar', {
+                                    method: 'POST',
+                                    headers: {
+                                        'Content-Type': 'application/json',
+                                        'X-Requested-With': 'XMLHttpRequest'
+                                    },
+                                    body: JSON.stringify(syncPayload)
+                                });
+                                guestCart.clear();
+                            } catch (e) {
+                                console.error('Erro ao sincronizar carrinho:', e);
+                            }
+                        }
+
+                        return true;
+                    } else {
+                        let errMsg = 'Erro ao realizar cadastro.';
+                        if (resData.error) {
+                            if (typeof resData.error === 'string') {
+                                errMsg = resData.error;
+                            } else if (typeof resData.error === 'object') {
+                                const firstKey = Object.keys(resData.error)[0];
+                                errMsg = resData.error[firstKey] || errMsg;
+                                Object.keys(resData.error).forEach(field => {
+                                    const input = document.getElementById(`register-${field}`) || document.querySelector(`[name="register[${field}]"]`);
+                                    if (input) input.classList.add('is-invalid');
+                                });
+                            }
+                        }
+                        window.showNotification(errMsg, 'danger');
+                        return false;
+                    }
+                } catch (err) {
+                    console.error('Erro na requisição de cadastro do checkout:', err);
+                    window.showNotification('Erro de rede ou servidor ao efetuar cadastro.', 'danger');
+                    return false;
+                }
             }
 
             // Se action for 'guest', verifica se é permitido

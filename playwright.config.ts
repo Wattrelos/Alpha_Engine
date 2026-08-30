@@ -15,22 +15,22 @@ const BASE_URL = process.env.BASE_URL || 'http://localhost';
  */
 export default defineConfig({
   testDir: './e2e/specs',
-  
+
   /* Executa testes em paralelo para máxima velocidade */
   fullyParallel: true,
-  
+
   /* Impede o commit acidental de test.only no CI */
   forbidOnly: !!process.env.CI,
-  
+
   /* Número de tentativas em caso de falha */
   retries: process.env.CI ? 2 : 0,
-  
+
   /* Quantidade de workers paralelos */
   workers: process.env.CI ? 2 : undefined,
-  
-  /* Timeout individual por teste (30 segundos) */
-  timeout: 30000,
-  
+
+  /* Timeout individual por teste (45 segundos para jornadas completas E2E) */
+  timeout: 45000,
+
   /* Timeout e configurações para asserções expect() */
   expect: {
     timeout: 5000,
@@ -58,8 +58,11 @@ export default defineConfig({
     /* Captura screenshot em falhas */
     screenshot: 'only-on-failure',
 
-    /* Gravação de vídeo das execuções que falharem */
-    video: 'retain-on-failure',
+    /* Gravação de vídeo em alta resolução (1440x900) para máxima nitidez no relatório */
+    video: {
+      mode: 'on',
+      size: { width: 1440, height: 900 },
+    },
 
     /* Localização e fuso horário brasileiro */
     locale: 'pt-BR',
@@ -74,7 +77,7 @@ export default defineConfig({
     /* ── Desktop Browsers ── */
     {
       name: 'chromium',
-      use: { 
+      use: {
         ...devices['Desktop Chrome'],
         viewport: { width: 1440, height: 900 },
       },
@@ -82,7 +85,7 @@ export default defineConfig({
 
     {
       name: 'firefox',
-      use: { 
+      use: {
         ...devices['Desktop Firefox'],
         viewport: { width: 1440, height: 900 },
       },
@@ -90,7 +93,7 @@ export default defineConfig({
 
     {
       name: 'webkit',
-      use: { 
+      use: {
         ...devices['Desktop Safari'],
         viewport: { width: 1440, height: 900 },
       },

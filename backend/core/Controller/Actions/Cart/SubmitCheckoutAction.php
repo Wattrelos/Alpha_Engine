@@ -31,7 +31,10 @@ class SubmitCheckoutAction implements ActionInterface
     {
         $parsedBody = $request->getParsedBody();
         if (empty($parsedBody)) {
-            $input = file_get_contents('php://input');
+            $input = (string)$request->getBody();
+            if (empty($input)) {
+                $input = file_get_contents('php://input');
+            }
             $parsedBody = json_decode($input, true) ?? [];
         }
 
@@ -271,10 +274,10 @@ class SubmitCheckoutAction implements ActionInterface
             $orderData['customer_id'] = $customerId;
             $orderData['customer_group_id'] = $customerId > 0 ? ($_SESSION['customer_group_id'] ?? 1) : (int)($configSettings['config_customer_group_id'] ?? 1);
 
-            $orderData['firstname'] = $parsedBody['payment_firstname'] ?? $_SESSION['payment_address']['firstname'] ?? '';
-            $orderData['lastname']  = $parsedBody['payment_lastname'] ?? $_SESSION['payment_address']['lastname'] ?? '';
-            $orderData['email']     = $parsedBody['email'] ?? $_SESSION['email'] ?? '';
-            $orderData['telephone'] = $parsedBody['telephone'] ?? $_SESSION['telephone'] ?? '';
+            $orderData['firstname'] = $parsedBody['payment_firstname'] ?? $_SESSION['payment_address']['firstname'] ?? $_SESSION['customer_firstname'] ?? '';
+            $orderData['lastname']  = $parsedBody['payment_lastname'] ?? $_SESSION['payment_address']['lastname'] ?? $_SESSION['customer_lastname'] ?? '';
+            $orderData['email']     = $parsedBody['email'] ?? $_SESSION['customer_email'] ?? $_SESSION['email'] ?? '';
+            $orderData['telephone'] = $parsedBody['telephone'] ?? $_SESSION['customer_telephone'] ?? $_SESSION['telephone'] ?? '';
 
             $orderData['payment_firstname']   = $_SESSION['payment_address']['firstname'] ?? '';
             $orderData['payment_lastname']    = $_SESSION['payment_address']['lastname'] ?? '';

@@ -22,7 +22,7 @@ export class OrderSuccessPage extends BasePage {
    * Valida se a página de sucesso foi carregada com sucesso
    */
   async expectSuccess() {
-    await expect(this.page).toHaveURL(/.*\/checkout\/sucesso/);
+    await expect(this.page).toHaveURL(/.*\/checkout\/sucesso/, { timeout: 15000 });
     await expect(this.successCard).toBeVisible({ timeout: 15000 });
     await expect(this.successTitle).toContainText(/Pedido Realizado com Sucesso/i);
   }
