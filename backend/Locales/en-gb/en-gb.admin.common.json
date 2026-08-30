@@ -10,6 +10,7 @@
         "manufacturers": "Manufacturers",
         "suppliers": "Suppliers",
         "settings": "Settings",
+        "audit": "Audit & Logs",
         "logout": "Logout"
     },
     "topbar": {

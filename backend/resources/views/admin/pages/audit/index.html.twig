@@ -1,0 +1,504 @@
+{% extends 'admin/layouts/base.html.twig' %}
+
+{% block title %}
+	{{ title|default('Auditoria & Logs de Acesso | AgSonhos Admin') }}
+{% endblock %}
+
+{% block content %}
+	<!-- Page Header -->
+	<div class="page-header d-flex justify-content-between align-items-center mb-6">
+		<div>
+			<h2><i class="fas fa-shield-alt text-primary mr-2"></i> Auditoria & Logs de Acesso</h2>
+			<p class="page-subtitle">Monitoramento em tempo real de requisições, visitantes, IPs, navegadores e eventos do sistema.</p>
+		</div>
+		<div>
+			<a href="{{ admin_path }}/auditoria" class="btn btn-secondary btn-sm">
+				<i class="fas fa-sync-alt mr-1"></i> Atualizar Dados
+			</a>
+		</div>
+	</div>
+
+	{% if success %}
+		<div class="alert-success-custom mb-4">
+			<i class="fas fa-check-circle mr-2"></i> {{ success }}
+		</div>
+	{% endif %}
+
+	{% if error %}
+		<div class="alert-danger-custom mb-4">
+			<i class="fas fa-exclamation-circle mr-2"></i> {{ error }}
+		</div>
+	{% endif %}
+
+	<!-- Stats Grid -->
+	<div class="stats-grid mb-6">
+		<!-- Stat 1: Total Requisições Hoje -->
+		<div class="card stat-card">
+			<div>
+				<p class="stat-title">Requisições Hoje</p>
+				<h3 class="stat-value">{{ stats.total_today|default(0)|number_format(0, ',', '.') }}</h3>
+				<span class="stat-trend trend-up"><i class="fas fa-bolt"></i> Tempo real</span>
+			</div>
+			<div class="stat-icon-box icon-blue">
+				<i class="fas fa-network-wired"></i>
+			</div>
+		</div>
+
+		<!-- Stat 2: IPs Únicos 24h -->
+		<div class="card stat-card">
+			<div>
+				<p class="stat-title">Visitantes Únicos (24h)</p>
+				<h3 class="stat-value">{{ stats.unique_ips_24h|default(0)|number_format(0, ',', '.') }}</h3>
+				<span class="stat-trend trend-up"><i class="fas fa-user-check"></i> IPs rastreados</span>
+			</div>
+			<div class="stat-icon-box icon-green">
+				<i class="fas fa-globe-americas"></i>
+			</div>
+		</div>
+
+		<!-- Stat 3: Total Geral de Logs -->
+		<div class="card stat-card">
+			<div>
+				<p class="stat-title">Histórico de Eventos</p>
+				<h3 class="stat-value">{{ stats.total_all|default(0)|number_format(0, ',', '.') }}</h3>
+				<span class="stat-trend"><i class="fas fa-database"></i> Registros em banco</span>
+			</div>
+			<div class="stat-icon-box icon-purple">
+				<i class="fas fa-history"></i>
+			</div>
+		</div>
+
+		<!-- Stat 4: Top Navegador -->
+		<div class="card stat-card">
+			<div>
+				<p class="stat-title">Navegadores Populares</p>
+				<h3 class="stat-value" style="font-size: 1.1rem; line-height: 1.4;">
+					{% set topB = 'Chrome' %}
+					{% set topC = 0 %}
+					{% for bName, bVal in stats.browser_counts %}
+						{% if bVal > topC %}
+							{% set topB = bName %}
+							{% set topC = bVal %}
+						{% endif %}
+					{% endfor %}
+					{{ topB }} ({{ topC }})
+				</h3>
+				<span class="stat-trend"><i class="fab fa-chrome"></i> Chrome / Edge / Safari</span>
+			</div>
+			<div class="stat-icon-box icon-yellow">
+				<i class="fas fa-compass"></i>
+			</div>
+		</div>
+	</div>
+
+	<!-- Filter Card -->
+	<div class="card mb-6">
+		<h3 class="dashboard-section-title-clean mb-4">
+			<i class="fas fa-filter text-muted mr-2"></i> Filtros de Auditoria
+		</h3>
+		<form method="GET" action="{{ admin_path }}/auditoria" class="audit-filters-form">
+			<div class="grid-filters" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px;">
+				<!-- Busca textual -->
+				<div class="form-group mb-0">
+					<label for="search" class="form-label-sm">Buscar (IP, Usuário, URL, Payload)</label>
+					<input type="text" id="search" name="search" class="form-control" value="{{ filters.search }}" placeholder="Ex: 192.168, /carrinho, admin..." />
+				</div>
+
+				<!-- Tipo de Evento -->
+				<div class="form-group mb-0">
+					<label for="event" class="form-label-sm">Tipo de Evento</label>
+					<select id="event" name="event" class="form-control">
+						<option value="">-- Todos os Eventos --</option>
+						<option value="visitor.request" {% if filters.event == 'visitor.request' %}selected{% endif %}>Requisições de Visitantes (Loja)</option>
+						<option value="admin.request" {% if filters.event == 'admin.request' %}selected{% endif %}>Requisições Administrativas (Painel)</option>
+						<option value="http.404_not_found" {% if filters.event == 'http.404_not_found' %}selected{% endif %}>Erros 404 (Página Não Encontrada)</option>
+						<option value="http.403_forbidden" {% if filters.event == 'http.403_forbidden' %}selected{% endif %}>Erros 403 (Acesso Negado)</option>
+						<option value="http.500_error" {% if filters.event == 'http.500_error' %}selected{% endif %}>Erros 500 (Falhas de Servidor)</option>
+					</select>
+				</div>
+
+				<!-- Data Inicial -->
+				<div class="form-group mb-0">
+					<label for="start_date" class="form-label-sm">Data Inicial</label>
+					<input type="date" id="start_date" name="start_date" class="form-control" value="{{ filters.start_date }}" />
+				</div>
+
+				<!-- Data Final -->
+				<div class="form-group mb-0">
+					<label for="end_date" class="form-label-sm">Data Final</label>
+					<input type="date" id="end_date" name="end_date" class="form-control" value="{{ filters.end_date }}" />
+				</div>
+			</div>
+
+			<div class="d-flex justify-content-end gap-2 mt-4">
+				<a href="{{ admin_path }}/auditoria" class="btn btn-secondary btn-sm">Limpar Filtros</a>
+				<button type="submit" class="btn btn-primary btn-sm">
+					<i class="fas fa-search mr-1"></i> Filtrar Logs
+				</button>
+			</div>
+		</form>
+	</div>
+
+	<!-- Audit Logs Table Card -->
+	<div class="card mb-6">
+		<div class="dashboard-section-header mb-4">
+			<h3 class="dashboard-section-title-clean">
+				Registros de Auditoria ({{ total|number_format(0, ',', '.') }} encontrados)
+			</h3>
+			<span class="text-sm text-muted">Página {{ current_page }} de {{ total_pages > 0 ? total_pages : 1 }}</span>
+		</div>
+
+		<div class="overflow-x-auto">
+			<table class="table mb-0">
+				<thead>
+					<tr>
+						<th style="width: 70px;">ID</th>
+						<th style="width: 140px;">Método & Status</th>
+						<th>Evento / Ação</th>
+						<th>Rota Requisitada</th>
+						<th>Usuário</th>
+						<th>IP / Local</th>
+						<th>Navegador & SO</th>
+						<th style="width: 150px;">Data & Hora</th>
+						<th class="text-right" style="width: 90px;">Detalhes</th>
+					</tr>
+				</thead>
+				<tbody>
+					{% if logs|length == 0 %}
+						<tr>
+							<td colspan="9" class="text-center py-6 text-muted">
+								<i class="fas fa-inbox fa-2x mb-2 d-block text-muted"></i>
+								Nenhum registro de auditoria encontrado para os filtros selecionados.
+							</td>
+						</tr>
+					{% else %}
+						{% for row in logs %}
+							{% set p = row.payload %}
+							{% set statusCode = p.status|default(200) %}
+							{% set method = p.method|default('GET') %}
+							<tr>
+								<!-- ID -->
+								<td class="text-muted text-sm cell-order-id">#{{ row.id }}</td>
+
+								<!-- Método e Status HTTP -->
+								<td>
+									<!-- Método -->
+									{% if method == 'GET' %}
+										<span class="status-pill" style="background: #e0f2fe; color: #0369a1; font-size: 0.7rem;">GET</span>
+									{% elseif method == 'POST' %}
+										<span class="status-pill" style="background: #dcfce7; color: #15803d; font-size: 0.7rem;">POST</span>
+									{% elseif method == 'PUT' or method == 'PATCH' %}
+										<span class="status-pill" style="background: #fef9c3; color: #a16207; font-size: 0.7rem;">{{ method }}</span>
+									{% elseif method == 'DELETE' %}
+										<span class="status-pill" style="background: #fee2e2; color: #b91c1c; font-size: 0.7rem;">DEL</span>
+									{% else %}
+										<span class="status-pill" style="background: #f3f4f6; color: #4b5563; font-size: 0.7rem;">{{ method }}</span>
+									{% endif %}
+
+									<!-- Status -->
+									{% if statusCode >= 200 and statusCode < 300 %}
+										<span class="status-pill status-approved" style="font-size: 0.7rem;">{{ statusCode }}</span>
+									{% elseif statusCode >= 300 and statusCode < 400 %}
+										<span class="status-pill" style="background: #e0e7ff; color: #4338ca; font-size: 0.7rem;">{{ statusCode }}</span>
+									{% elseif statusCode >= 400 and statusCode < 500 %}
+										<span class="status-pill status-pending" style="font-size: 0.7rem;">{{ statusCode }}</span>
+									{% else %}
+										<span class="status-pill status-cancelled" style="font-size: 0.7rem;">{{ statusCode }}</span>
+									{% endif %}
+								</td>
+
+								<!-- Evento -->
+								<td>
+									{% if row.event == 'visitor.request' %}
+										<span class="badge-text" style="color: #0284c7; font-weight: 500;"><i class="fas fa-shopping-cart mr-1"></i> Visitante Loja</span>
+									{% elseif row.event == 'admin.request' %}
+										<span class="badge-text" style="color: #7c3aed; font-weight: 500;"><i class="fas fa-user-shield mr-1"></i> Painel Admin</span>
+									{% elseif row.event == 'http.404_not_found' %}
+										<span class="badge-text" style="color: #d97706; font-weight: 500;"><i class="fas fa-exclamation-triangle mr-1"></i> 404 Não Encontrado</span>
+									{% elseif row.event == 'http.500_error' %}
+										<span class="badge-text" style="color: #dc2626; font-weight: 500;"><i class="fas fa-bug mr-1"></i> Erro 500</span>
+									{% else %}
+										<span class="badge-text font-semibold">{{ row.event }}</span>
+									{% endif %}
+								</td>
+
+								<!-- Rota -->
+								<td>
+									<code style="background: #1e293b; color: #38bdf8; padding: 2px 6px; border-radius: 4px; font-size: 0.8rem;">
+										{{ p.path|default('/')|slice(0, 45) }}{% if (p.path|default('/')|length) > 45 %}...{% endif %}
+									</code>
+									{% if p.duration_ms is defined %}
+										<span class="text-xs text-muted d-block mt-1">{{ p.duration_ms }} ms</span>
+									{% endif %}
+								</td>
+
+								<!-- Usuário -->
+								<td>
+									{% if row.username starts with 'ADMIN:' %}
+										<span class="status-pill" style="background: #f3e8ff; color: #6b21a8;">
+											<i class="fas fa-crown mr-1"></i> {{ row.username|replace({'ADMIN: ': ''}) }}
+										</span>
+									{% elseif row.username starts with 'CLIENTE:' %}
+										<span class="status-pill" style="background: #dbeafe; color: #1e40af;">
+											<i class="fas fa-user mr-1"></i> {{ row.username|replace({'CLIENTE: ': ''}) }}
+										</span>
+									{% else %}
+										<span class="text-muted text-sm"><i class="fas fa-user-secret mr-1"></i> Visitante</span>
+									{% endif %}
+								</td>
+
+								<!-- IP -->
+								<td>
+									<span class="text-dark font-mono text-sm" style="font-family: monospace;">
+										<i class="fas fa-map-marker-alt text-danger mr-1"></i> {{ row.ip }}
+									</span>
+								</td>
+
+								<!-- Navegador & SO -->
+								<td>
+									<div class="d-flex align-items-center gap-1">
+										{% set browser = p.browser|default('Desconhecido') %}
+										{% if 'Chrome' in browser %}
+											<i class="fab fa-chrome text-warning" title="Google Chrome"></i>
+										{% elseif 'Firefox' in browser %}
+											<i class="fab fa-firefox-browser text-danger" title="Mozilla Firefox"></i>
+										{% elseif 'Safari' in browser %}
+											<i class="fab fa-safari text-info" title="Apple Safari"></i>
+										{% elseif 'Edge' in browser %}
+											<i class="fab fa-edge text-primary" title="Microsoft Edge"></i>
+										{% elseif 'Opera' in browser %}
+											<i class="fab fa-opera text-danger" title="Opera"></i>
+										{% elseif 'Bot' in browser or p.device|default('') == 'Bot/Crawler' %}
+											<i class="fas fa-robot text-purple" title="Bot/Crawler"></i>
+										{% else %}
+											<i class="fas fa-globe text-muted" title="Navegador"></i>
+										{% endif %}
+										<span class="text-sm font-medium">{{ browser }}</span>
+									</div>
+									<span class="text-xs text-muted d-block mt-1">
+										{{ p.os|default('SO Desconhecido') }} &bull; {{ p.device|default('Desktop') }}
+									</span>
+								</td>
+
+								<!-- Data & Hora -->
+								<td class="text-sm text-muted">
+									{{ row.created_at|date('d/m/Y') }}
+									<span class="d-block font-semibold text-dark">{{ row.created_at|date('H:i:s') }}</span>
+								</td>
+
+								<!-- Ações / Modal -->
+								<td class="text-right">
+									<button type="button" 
+									        class="btn btn-secondary btn-sm btn-view-audit" 
+									        data-id="{{ row.id }}"
+									        data-event="{{ row.event }}"
+									        data-username="{{ row.username }}"
+									        data-ip="{{ row.ip }}"
+									        data-created="{{ row.created_at }}"
+									        data-payload='{{ row.payload|json_encode|raw }}'
+									        title="Ver Payload Detalhado">
+										<i class="fas fa-eye"></i>
+									</button>
+								</td>
+							</tr>
+						{% endfor %}
+					{% endif %}
+				</tbody>
+			</table>
+		</div>
+
+		<!-- Paginação -->
+		{% if total_pages > 1 %}
+			<div class="pagination-wrapper d-flex justify-content-between align-items-center mt-6 pt-4 border-top">
+				<div class="text-sm text-muted">
+					Exibindo logs {{ (current_page - 1) * limit + 1 }} a {{ min(current_page * limit, total) }} de {{ total }}
+				</div>
+				<div class="pagination-links d-flex gap-1">
+					{% if current_page > 1 %}
+						<a href="{{ pagination_url }}1" class="btn btn-secondary btn-sm" title="Primeira Página">
+							<i class="fas fa-angle-double-left"></i>
+						</a>
+						<a href="{{ pagination_url }}{{ current_page - 1 }}" class="btn btn-secondary btn-sm" title="Página Anterior">
+							<i class="fas fa-angle-left"></i>
+						</a>
+					{% endif %}
+
+					{% for p in max(1, current_page - 2)..min(total_pages, current_page + 2) %}
+						<a href="{{ pagination_url }}{{ p }}" class="btn btn-sm {% if p == current_page %}btn-primary{% else %}btn-secondary{% endif %}">
+							{{ p }}
+						</a>
+					{% endfor %}
+
+					{% if current_page < total_pages %}
+						<a href="{{ pagination_url }}{{ current_page + 1 }}" class="btn btn-secondary btn-sm" title="Próxima Página">
+							<i class="fas fa-angle-right"></i>
+						</a>
+						<a href="{{ pagination_url }}{{ total_pages }}" class="btn btn-secondary btn-sm" title="Última Página">
+							<i class="fas fa-angle-double-right"></i>
+						</a>
+					{% endif %}
+				</div>
+			</div>
+		{% endif %}
+	</div>
+
+	<!-- Modal de Detalhes do Log de Auditoria -->
+	<div id="auditDetailModal" class="audit-modal-backdrop" style="display: none;">
+		<div class="audit-modal-content">
+			<div class="audit-modal-header">
+				<h3 class="modal-title" id="modalAuditTitle">
+					<i class="fas fa-info-circle text-primary mr-2"></i> Detalhes da Requisição / Evento
+				</h3>
+				<button type="button" class="modal-close-btn" onclick="closeAuditModal()">&times;</button>
+			</div>
+			<div class="audit-modal-body">
+				<div class="meta-details-grid mb-4" style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; background: rgba(0,0,0,0.2); padding: 12px; border-radius: 8px;">
+					<div><strong>Evento:</strong> <span id="modalEvent">-</span></div>
+					<div><strong>Data/Hora:</strong> <span id="modalDate">-</span></div>
+					<div><strong>Usuário:</strong> <span id="modalUser">-</span></div>
+					<div><strong>Endereço IP:</strong> <span id="modalIp">-</span></div>
+				</div>
+				<h4 class="text-sm font-semibold mb-2 text-primary">Payload Sanitizado (LGPD Compliant):</h4>
+				<pre id="modalPayloadJson" class="audit-json-box"></pre>
+			</div>
+			<div class="audit-modal-footer text-right">
+				<button type="button" class="btn btn-secondary btn-sm" onclick="closeAuditModal()">Fechar</button>
+			</div>
+		</div>
+	</div>
+
+	<style>
+		.audit-modal-backdrop {
+			position: fixed;
+			top: 0;
+			left: 0;
+			width: 100vw;
+			height: 100vh;
+			background: rgba(10, 15, 29, 0.75);
+			backdrop-filter: blur(4px);
+			z-index: 9999;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			padding: 20px;
+		}
+		.audit-modal-content {
+			background: var(--card-bg, #1a2234);
+			border: 1px solid rgba(255, 255, 255, 0.1);
+			border-radius: 12px;
+			max-width: 700px;
+			width: 100%;
+			max-height: 90vh;
+			overflow-y: auto;
+			box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+			display: flex;
+			flex-direction: column;
+		}
+		.audit-modal-header {
+			padding: 16px 20px;
+			border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+			display: flex;
+			justify-content: space-between;
+			align-items: center;
+		}
+		.audit-modal-header .modal-title {
+			margin: 0;
+			font-size: 1.1rem;
+			font-weight: 600;
+			color: #f8fafc;
+		}
+		.modal-close-btn {
+			background: transparent;
+			border: none;
+			color: #94a3b8;
+			font-size: 1.5rem;
+			cursor: pointer;
+			line-height: 1;
+		}
+		.modal-close-btn:hover {
+			color: #fff;
+		}
+		.audit-modal-body {
+			padding: 20px;
+		}
+		.audit-modal-footer {
+			padding: 14px 20px;
+			border-top: 1px solid rgba(255, 255, 255, 0.08);
+			background: rgba(0, 0, 0, 0.1);
+		}
+		.audit-json-box {
+			background: #0f172a;
+			color: #38bdf8;
+			padding: 14px;
+			border-radius: 8px;
+			font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+			font-size: 0.85rem;
+			max-height: 350px;
+			overflow-y: auto;
+			border: 1px solid rgba(255, 255, 255, 0.05);
+			white-space: pre-wrap;
+			word-break: break-word;
+		}
+		.gap-1 { gap: 0.25rem; }
+		.gap-2 { gap: 0.5rem; }
+		.border-top { border-top: 1px solid rgba(255, 255, 255, 0.08); }
+	</style>
+
+	<script>
+		function openAuditModal(data) {
+			document.getElementById('modalAuditTitle').innerHTML = '<i class="fas fa-shield-alt text-primary mr-2"></i> Log #' + data.id + ' - Detalhes';
+			document.getElementById('modalEvent').textContent = data.event || '-';
+			document.getElementById('modalDate').textContent = data.created || '-';
+			document.getElementById('modalUser').textContent = data.username || '-';
+			document.getElementById('modalIp').textContent = data.ip || '-';
+
+			var payloadFormatted = '';
+			try {
+				var p = typeof data.payload === 'string' ? JSON.parse(data.payload) : data.payload;
+				payloadFormatted = JSON.stringify(p, null, 2);
+			} catch(e) {
+				payloadFormatted = data.payload || 'Sem dados adicionais.';
+			}
+
+			document.getElementById('modalPayloadJson').textContent = payloadFormatted;
+			document.getElementById('auditDetailModal').style.display = 'flex';
+		}
+
+		function closeAuditModal() {
+			document.getElementById('auditDetailModal').style.display = 'none';
+		}
+
+		document.addEventListener('DOMContentLoaded', function() {
+			var buttons = document.querySelectorAll('.btn-view-audit');
+			buttons.forEach(function(btn) {
+				btn.addEventListener('click', function() {
+					var id = this.getAttribute('data-id');
+					var event = this.getAttribute('data-event');
+					var username = this.getAttribute('data-username');
+					var ip = this.getAttribute('data-ip');
+					var created = this.getAttribute('data-created');
+					var payload = this.getAttribute('data-payload');
+
+					openAuditModal({
+						id: id,
+						event: event,
+						username: username,
+						ip: ip,
+						created: created,
+						payload: payload
+					});
+				});
+			});
+
+			// Fechar modal ao clicar fora
+			var modalBackdrop = document.getElementById('auditDetailModal');
+			if (modalBackdrop) {
+				modalBackdrop.addEventListener('click', function(e) {
+					if (e.target === modalBackdrop) {
+						closeAuditModal();
+					}
+				});
+			}
+		});
+	</script>
+{% endblock %}

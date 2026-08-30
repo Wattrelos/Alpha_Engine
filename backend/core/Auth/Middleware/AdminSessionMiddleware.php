@@ -61,6 +61,8 @@ class AdminSessionMiddleware
         'admin.user_group.create' => 'user/user_group',
         'admin.user_group.edit' => 'user/user_group',
         'admin.user_group.delete' => 'user/user_group',
+        'admin.audit.list' => 'system/audit',
+        'admin.audit.view' => 'system/audit',
     ];
 
     public function __construct(?\Psr\Container\ContainerInterface $container = null)

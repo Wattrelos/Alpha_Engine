@@ -96,6 +96,14 @@
 							{{ AdminLang.sidebar.settings|default('Configurações') }}
 						</a>
 					</li>
+					{% if logged_admin.user_group_id == 1 or 'system/audit' in logged_admin_permissions.access %}
+						<li>
+							<a href="{{ admin_path }}/auditoria">
+								<i class="fas fa-shield-alt sidebar-link-icon"></i>
+								{{ AdminLang.sidebar.audit|default('Auditoria & Logs') }}
+							</a>
+						</li>
+					{% endif %}
 					<li class="sidebar-logout-item">
 						<a href="{{ admin_path }}/logout">
 							<i class="fas fa-sign-out-alt sidebar-link-icon"></i>

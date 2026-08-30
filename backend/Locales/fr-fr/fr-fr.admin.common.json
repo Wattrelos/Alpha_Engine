@@ -10,6 +10,7 @@
         "manufacturers": "Fabricants",
         "suppliers": "Fournisseurs",
         "settings": "Configurations",
+        "audit": "Audit & Journaux",
         "logout": "Se Déconnecter"
     },
     "topbar": {

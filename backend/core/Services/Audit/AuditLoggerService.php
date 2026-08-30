@@ -23,7 +23,7 @@ use Throwable;
 class AuditLoggerService
 {
     private static bool $tableChecked = false;
-    private ?QueueService $queueService;
+    private QueueService $queueService;
 
     public function __construct(?QueueService $queueService = null)
     {
@@ -162,23 +162,71 @@ class AuditLoggerService
     }
 
     /**
-     * Consulta os registros de auditoria salvos no MySQL.
+     * Consulta os registros de auditoria salvos no MySQL com suporte a filtros e paginação.
      */
     public function getAuditLogs(int $storeId = 1, int $limit = 50, int $offset = 0): array
     {
+        return $this->getFilteredAuditLogs($storeId, $limit, $offset);
+    }
+
+    /**
+     * Consulta registros de auditoria com filtros avançados.
+     */
+    public function getFilteredAuditLogs(
+        int $storeId = 1,
+        int $limit = 20,
+        int $offset = 0,
+        ?string $search = null,
+        ?string $event = null,
+        ?string $startDate = null,
+        ?string $endDate = null
+    ): array {
         try {
             $this->ensureTableExists();
             $db = ConnectionDB::getInstance()->getConnection();
             $tableName = (defined('DB_PREFIX') ? DB_PREFIX : 'tbkk_') . 'audit_logs';
 
+            $where = ["store_id = :store_id"];
+            $params = [':store_id' => $storeId];
+
+            if (!empty($search)) {
+                $where[] = "(username LIKE :search1 OR ip LIKE :search2 OR event LIKE :search3 OR payload LIKE :search4)";
+                $params[':search1'] = '%' . $search . '%';
+                $params[':search2'] = '%' . $search . '%';
+                $params[':search3'] = '%' . $search . '%';
+                $params[':search4'] = '%' . $search . '%';
+            }
+
+            if (!empty($event)) {
+                $where[] = "event = :event";
+                $params[':event'] = $event;
+            }
+
+            if (!empty($startDate)) {
+                $where[] = "created_at >= :start_date";
+                $params[':start_date'] = $startDate . ' 00:00:00';
+            }
+
+            if (!empty($endDate)) {
+                $where[] = "created_at <= :end_date";
+                $params[':end_date'] = $endDate . ' 23:59:59';
+            }
+
+            $whereSql = implode(' AND ', $where);
             $sql = "SELECT id, store_id, event, username, ip, user_agent, payload, created_at 
                     FROM `{$tableName}` 
-                    WHERE store_id = :store_id 
+                    WHERE {$whereSql} 
                     ORDER BY id DESC 
                     LIMIT :limit OFFSET :offset";
 
             $stmt = $db->prepare($sql);
-            $stmt->bindValue(':store_id', $storeId, PDO::PARAM_INT);
+            foreach ($params as $key => $val) {
+                if (is_int($val)) {
+                    $stmt->bindValue($key, $val, PDO::PARAM_INT);
+                } else {
+                    $stmt->bindValue($key, $val, PDO::PARAM_STR);
+                }
+            }
             $stmt->bindValue(':limit', $limit, PDO::PARAM_INT);
             $stmt->bindValue(':offset', $offset, PDO::PARAM_INT);
             $stmt->execute();
@@ -191,8 +239,176 @@ class AuditLoggerService
             }
             return $results;
         } catch (Throwable $e) {
-            error_log("Erro ao buscar logs de auditoria: " . $e->getMessage());
+            error_log("Erro ao buscar logs de auditoria filtrados: " . $e->getMessage());
             return [];
+        }
+    }
+
+    /**
+     * Retorna a contagem total de registros de auditoria com os mesmos filtros aplicados.
+     */
+    public function getTotalAuditLogsCount(
+        int $storeId = 1,
+        ?string $search = null,
+        ?string $event = null,
+        ?string $startDate = null,
+        ?string $endDate = null
+    ): int {
+        try {
+            $this->ensureTableExists();
+            $db = ConnectionDB::getInstance()->getConnection();
+            $tableName = (defined('DB_PREFIX') ? DB_PREFIX : 'tbkk_') . 'audit_logs';
+
+            $where = ["store_id = :store_id"];
+            $params = [':store_id' => $storeId];
+
+            if (!empty($search)) {
+                $where[] = "(username LIKE :search1 OR ip LIKE :search2 OR event LIKE :search3 OR payload LIKE :search4)";
+                $params[':search1'] = '%' . $search . '%';
+                $params[':search2'] = '%' . $search . '%';
+                $params[':search3'] = '%' . $search . '%';
+                $params[':search4'] = '%' . $search . '%';
+            }
+
+            if (!empty($event)) {
+                $where[] = "event = :event";
+                $params[':event'] = $event;
+            }
+
+            if (!empty($startDate)) {
+                $where[] = "created_at >= :start_date";
+                $params[':start_date'] = $startDate . ' 00:00:00';
+            }
+
+            if (!empty($endDate)) {
+                $where[] = "created_at <= :end_date";
+                $params[':end_date'] = $endDate . ' 23:59:59';
+            }
+
+            $whereSql = implode(' AND ', $where);
+            $sql = "SELECT COUNT(*) FROM `{$tableName}` WHERE {$whereSql}";
+
+            $stmt = $db->prepare($sql);
+            foreach ($params as $key => $val) {
+                if (is_int($val)) {
+                    $stmt->bindValue($key, $val, PDO::PARAM_INT);
+                } else {
+                    $stmt->bindValue($key, $val, PDO::PARAM_STR);
+                }
+            }
+            $stmt->execute();
+
+            return (int)$stmt->fetchColumn();
+        } catch (Throwable $e) {
+            error_log("Erro ao contar logs de auditoria: " . $e->getMessage());
+            return 0;
+        }
+    }
+
+    /**
+     * Retorna um registro de log específico por ID.
+     */
+    public function getAuditLogById(int $id, int $storeId = 1): ?array
+    {
+        try {
+            $this->ensureTableExists();
+            $db = ConnectionDB::getInstance()->getConnection();
+            $tableName = (defined('DB_PREFIX') ? DB_PREFIX : 'tbkk_') . 'audit_logs';
+
+            $sql = "SELECT id, store_id, event, username, ip, user_agent, payload, created_at 
+                    FROM `{$tableName}` 
+                    WHERE id = :id AND store_id = :store_id 
+                    LIMIT 1";
+
+            $stmt = $db->prepare($sql);
+            $stmt->bindValue(':id', $id, PDO::PARAM_INT);
+            $stmt->bindValue(':store_id', $storeId, PDO::PARAM_INT);
+            $stmt->execute();
+
+            $row = $stmt->fetch(PDO::FETCH_ASSOC);
+            if ($row) {
+                if (!empty($row['payload']) && is_string($row['payload'])) {
+                    $row['payload'] = json_decode($row['payload'], true);
+                }
+                return $row;
+            }
+            return null;
+        } catch (Throwable $e) {
+            error_log("Erro ao buscar log de auditoria por ID: " . $e->getMessage());
+            return null;
+        }
+    }
+
+    /**
+     * Retorna estatísticas consolidadas dos logs de auditoria para o dashboard / painel.
+     */
+    public function getAuditStats(int $storeId = 1): array
+    {
+        try {
+            $this->ensureTableExists();
+            $db = ConnectionDB::getInstance()->getConnection();
+            $tableName = (defined('DB_PREFIX') ? DB_PREFIX : 'tbkk_') . 'audit_logs';
+
+            // 1. Total de requisições hoje
+            $stmtToday = $db->prepare("SELECT COUNT(*) FROM `{$tableName}` WHERE store_id = :store_id AND DATE(created_at) = CURDATE()");
+            $stmtToday->execute([':store_id' => $storeId]);
+            $totalToday = (int)$stmtToday->fetchColumn();
+
+            // 2. Total geral de logs
+            $stmtTotal = $db->prepare("SELECT COUNT(*) FROM `{$tableName}` WHERE store_id = :store_id");
+            $stmtTotal->execute([':store_id' => $storeId]);
+            $totalAll = (int)$stmtTotal->fetchColumn();
+
+            // 3. IPs únicos nas últimas 24 horas
+            $stmtIps = $db->prepare("SELECT COUNT(DISTINCT ip) FROM `{$tableName}` WHERE store_id = :store_id AND created_at >= NOW() - INTERVAL 1 DAY");
+            $stmtIps->execute([':store_id' => $storeId]);
+            $uniqueIps24h = (int)$stmtIps->fetchColumn();
+
+            // 4. Tipos de eventos mais frequentes
+            $stmtEvents = $db->prepare("SELECT event, COUNT(*) as total FROM `{$tableName}` WHERE store_id = :store_id GROUP BY event ORDER BY total DESC LIMIT 5");
+            $stmtEvents->execute([':store_id' => $storeId]);
+            $topEvents = $stmtEvents->fetchAll(PDO::FETCH_ASSOC);
+
+            // 5. Navegadores / dispositivos mais frequentes
+            $stmtAgents = $db->prepare("SELECT user_agent, COUNT(*) as total FROM `{$tableName}` WHERE store_id = :store_id AND user_agent IS NOT NULL AND user_agent != '' GROUP BY user_agent ORDER BY total DESC LIMIT 10");
+            $stmtAgents->execute([':store_id' => $storeId]);
+            $rawAgents = $stmtAgents->fetchAll(PDO::FETCH_ASSOC);
+
+            $browserCounts = ['Chrome' => 0, 'Firefox' => 0, 'Safari' => 0, 'Edge' => 0, 'Opera' => 0, 'Mobile/Outros' => 0];
+            foreach ($rawAgents as $row) {
+                $ua = $row['user_agent'] ?? '';
+                $count = (int)$row['total'];
+                if (stripos($ua, 'Edg') !== false) {
+                    $browserCounts['Edge'] += $count;
+                } elseif (stripos($ua, 'OPR') !== false || stripos($ua, 'Opera') !== false) {
+                    $browserCounts['Opera'] += $count;
+                } elseif (stripos($ua, 'Chrome') !== false) {
+                    $browserCounts['Chrome'] += $count;
+                } elseif (stripos($ua, 'Firefox') !== false) {
+                    $browserCounts['Firefox'] += $count;
+                } elseif (stripos($ua, 'Safari') !== false) {
+                    $browserCounts['Safari'] += $count;
+                } else {
+                    $browserCounts['Mobile/Outros'] += $count;
+                }
+            }
+
+            return [
+                'total_today'    => $totalToday,
+                'total_all'      => $totalAll,
+                'unique_ips_24h' => $uniqueIps24h,
+                'top_events'     => $topEvents,
+                'browser_counts' => $browserCounts,
+            ];
+        } catch (Throwable $e) {
+            error_log("Erro ao compilar estatísticas de auditoria: " . $e->getMessage());
+            return [
+                'total_today'    => 0,
+                'total_all'      => 0,
+                'unique_ips_24h' => 0,
+                'top_events'     => [],
+                'browser_counts' => [],
+            ];
         }
     }
 }

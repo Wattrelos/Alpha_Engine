@@ -154,6 +154,18 @@
 				</a>
 			{% endif %}
 
+			{% if logged_admin.user_group_id == 1 or 'system/audit' in logged_admin_permissions.access %}
+				<a href="{{ admin_path }}/auditoria" class="shortcut-card">
+					<div class="stat-icon-box icon-purple shortcut-icon-box">
+						<i class="fas fa-shield-alt"></i>
+					</div>
+					<div>
+						<h4 class="shortcut-title">Auditoria & Logs</h4>
+						<span class="shortcut-subtitle">Visitantes & Requisições</span>
+					</div>
+				</a>
+			{% endif %}
+
 		</div>
 	</div>
 

@@ -10,6 +10,7 @@
         "manufacturers": "Fabricantes",
         "suppliers": "Fornecedores",
         "settings": "Configurações",
+        "audit": "Auditoria & Logs",
         "logout": "Sair do Painel"
     },
     "topbar": {

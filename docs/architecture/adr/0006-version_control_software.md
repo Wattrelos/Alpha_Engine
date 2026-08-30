@@ -1,18 +1,79 @@
-Recentemente, tivemos problemas de disponibilidade com o GitHub. Por causa do risco de indisponibilidade e até mesmo de perda do projeot, devemos implementar uma alternativa. Nesse caso, optamos por uma ferramenta livre, robusta e compatível com o Debian 13.
-O Forgejo é a opção que melhor equilibra esses três critérios no Debian 13 (Trixie).
-Embora o GitLab seja mais robusto em recursos corporativos, ele falha no critério "livre" (por usar um modelo comercial open-core) e é extremamente pesado.
-Abaixo está o comparativo direto focado nas suas exigências:
+---
+adr: 6
+title: Adoção do Forgejo como Plataforma de Controle de Versão e CI/CD Self-Hosted no Debian 13
+status: Approved
+date: 2026-08-30
+authors:
+  - Antigravity AI
+  - Josias
+impacted_components:
+  - infrastructure: "Git Server / VCS"
+  - os_platform: "Debian GNU/Linux 13 (Trixie)"
+  - ci_cd_engine: "Forgejo Actions"
+  - deployment: "Docker / Standalone Go Binary"
+rules:
+  license_model: "100% Free & Open Source (GPLv3)"
+  hosting_mode: "Self-Hosted / Local Mirror & Fallback"
+  ci_cd_compatibility: "GitHub Actions YAML format compatible"
+  resource_constraints:
+    max_memory_footprint: "< 150MB RAM"
+    storage: "Local persistent volumes / Git bare repos"
+---
 
-| Critério | Forgejo (A escolha ideal) | Gitea | GitLab (CE) |
+# ADR 006: Adoção do Forgejo como Plataforma de Controle de Versão e CI/CD Self-Hosted no Debian 13
+
+## Status
+Aprovado (2026-08-30)
+
+## Contexto
+Recentemente, o ecossistema de desenvolvimento e entrega contínua enfrentou incidentes de indisponibilidade e instabilidade técnica em plataformas de hospedagem Git de terceiros (como o GitHub). Diante do risco operacional de interrupção nas esteiras de deploy, perda temporária de acesso ao código-fonte da Alpha Engine e potenciais bloqueios de conta ou repositório, surgiu a necessidade premente de estabelecer uma infraestrutura de controle de versão *self-hosted* resiliente.
+
+Para garantir a soberania técnica e a segurança operacional do projeto, a solução a ser adotada precisava satisfazer a 3 requisitos não-funcionais inegociáveis:
+1. **Completude Funcional**: Disponibilizar gestão completa de repositórios, controle de issues/tarefas, documentação via Wiki, quadros Kanban e automação de testes com esteira de CI/CD nativa.
+2. **Software 100% Livre e Governança Comunitária**: Código totalmente auditável, sem modelos comerciais agressivos do tipo *open-core*, com licença de código aberto (FOSS) e governança transparente sem risco de privatização do software.
+3. **Leveza, Baixo Consumo e Compatibilidade com Debian 13 (Trixie)**: Operar de forma nativa e estável no Debian 13, mantendo consumo de memória RAM inferior a 150MB sem poluir o sistema operacional host com dependências complexas.
+
+---
+
+## Comparativo Técnico e Avaliação de Alternativas
+
+Para embasar a tomada de decisão, foram comparadas as 3 principais soluções self-hosted do mercado frente aos critérios definidos:
+
+| Critério de Avaliação | Forgejo (Opção Escolhida) | Gitea | GitLab CE (Community Edition) |
 |---|---|---|---|
-| Mais Completo? | Muito completo. Possui Issues, Wiki, Projetos, Kanban e o Forgejo Actions integrado (CI/CD compatível com GitHub Actions). | Médio. Possui as mesmas funções visuais, mas o sistema de CI/CD nativo é menos maduro comparado ao do Forgejo. | Máximo. É uma plataforma DevOps total (Monitoramento, Segurança, CI/CD avançado). |
-| Mais Livre? | 100% Livre. Criado sob governança comunitária e sem fins lucrativos (licença GPLv3) após o Gitea adotar uma estrutura comercial. | Parcial. Licença MIT, mas governado por uma empresa com fins lucrativos (Gitea Ltd), o que limita decisões comunitárias. | Open-Core. A versão comunitária (CE) é grátis, mas os recursos mais avançados são pagos e fechados. |
-| Compatível com Debian 13? | Excelente. Existem guias dedicados para o Debian 13, pacotes .deb comunitários e imagens Docker otimizadas. Roda com menos de 100MB de RAM. | Excelente. Roda via Docker ou binário único em Go. Consumo mínimo de hardware. | Complexo. O instalador oficial (Omnibus) é pesado e costuma demorar a homologar novas versões maiores do Debian. Exige no mínimo 4GB de RAM. |
+| **Completude Funcional** | **Muito Completo**: Gerenciamento de código, Issues, Wiki, Projetos, Kanban e o **Forgejo Actions** (esteira CI/CD totalmente compatível com a sintaxe do GitHub Actions). | **Médio**: Possui interface visual e ferramentas semelhantes, mas o ecossistema de CI/CD nativo é menos maduro e diverge em padrões comunitários. | **Máximo**: Plataforma DevOps corporativa integral (Monitoramento avançado, DAST/SAST, Container Registry, CI/CD robusto). |
+| **Licenciamento & Liberdade** | **100% Livre (GPLv3)**: Criado e gerido pela comunidade sob a *Codeberg e-Forgejo Foundation*, sem fins lucrativos e com foco estrito no interesse público. | **Parcial (MIT)**: Embora aberto, o projeto é governado por uma empresa com fins lucrativos (*Gitea Ltd*), sujeitando a comunidade a decisões comerciais unilaterais. | **Open-Core**: A versão comunitária é gratuita, mas recursos críticos de segurança, governança e relatórios são proprietários e pagos (*GitLab EE*). |
+| **Compatibilidade & Recursos (Debian 13)** | **Excelente**: Binário único em Go ou imagem Docker ultraotimizada. Consumo médio de **< 100MB de RAM**. Pacotes e guias dedicados para o Debian 13. | **Excelente**: Binário único em Go e baixo consumo de hardware (< 120MB de RAM). | **Complexo & Pesado**: O instalador oficial (*Omnibus*) é monolítico e pesado. Exige no mínimo **4GB a 8GB de RAM** e dezenas de serviços dependentes (PostgreSQL, Puma, Sidekiq, Redis). |
 
-## Por que o Forgejo se destaca para o seu caso?
+---
 
-   1. O fator "Livre": O Forgejo nasceu justamente porque a comunidade de software livre se revoltou quando o Gitea virou uma empresa comercial. Ele foca estritamente em software de código aberto e interesse público.
-   2. Habilidades do GitHub: Ele foi desenhado para você conseguir migrar seus repositórios do GitHub com poucos cliques, mantendo até o mesmo formato de arquivos YAML para rodar suas automações e testes (CI/CD).
-   3. Leveza no Debian: Você pode instalá-lo no Debian 13 de forma limpa usando containers Docker ou baixando o binário direto compilado para Linux, sem poluir o seu sistema operacional com centenas de dependências pesadas. 
+## Decisão Arquitetural
 
+Decidiu-se pela **adoção do Forgejo** como a plataforma oficial *self-hosted* de controle de versões, espelhamento contínuo de código e contingência operacional para o projeto AgSonhos e a Alpha Engine no ambiente Debian 13.
 
+### Pilares da Escolha:
+
+1. **Garantia de Liberdade e Soberania (GPLv3)**:
+   * O Forgejo surgiu como um fork comunitário ético após a privatização do Gitea. Ele assegura que todas as funcionalidades desenvolvidas presentes e futuras permanecerão 100% livres, sem recursos artificialmente bloqueados sob assinaturas corporativas.
+2. **Interoperabilidade com GitHub Actions (Forgejo Actions)**:
+   * O Forgejo Actions implementa suporte direto à sintaxe de workflows YAML padrão do GitHub (`.forgejo/workflows` ou `.github/workflows`). Isso permite que os testes automatizados (Behat, PHPUnit e Playwright) rodem identicamente no servidor local sem necessidade de reescrever esteiras de automação.
+3. **Footprint Mínimo no Debian 13**:
+   * O software é empacotado como um binário único compilado em Go, consumindo menos de 100MB de RAM em repouso. A instalação pode ser operada via Docker Compose ou *systemd service* no Debian 13 de maneira limpa e isolada.
+4. **Migração e Espelhamento com Zero Fricção**:
+   * Suporte nativo a *Push/Pull Mirroring*, permitindo sincronizar automaticamente repositórios com o GitHub em tempo real para manter contingência ativa (backup vivo).
+
+---
+
+## Consequências
+
+### Positivas (Prós)
+* **Alta Disponibilidade e Independência**: A equipe mantém capacidade plena de desenvolvimento, deploy e revisão de código mesmo em cenários de queda global de serviços de nuvem de terceiros.
+* **Economia de Recursos de Hardware**: Utilização irrisória de CPU e memória RAM no servidor Debian 13, permitindo compartilhar a mesma máquina com os serviços da loja sem concorrência de recursos.
+* **Portabilidade de CI/CD**: Reutilização direta dos arquivos de testes e pipelines já configurados no projeto sem complexidade de adaptação.
+* **Privacidade Total de Dados**: Nenhum dado sensível de código, chave de API interna ou histórico de commits trafega para terceiros sem autorização explícita.
+
+### Negativas / Mitigações (Contras)
+* **Responsabilidade sobre Backup da Infraestrutura**: A infraestrutura do servidor Forgejo exige rotina periódica de cópia de segurança (dump do banco SQLite/PostgreSQL e volumes Git).
+  * *Mitigação*: Criação de cron job diário automatizado com compactação e envio seguro dos repositórios para armazenamento offsite criptografado.
+* **Manutenção e Atualização Manual**: Atualizações de segurança da plataforma precisam ser aplicadas pela equipe de TI através da atualização das imagens Docker ou substituição do binário Go.
+  * *Mitigação*: Utilização de containers Docker com versionamento semântico claro para atualizações rápidas via script.

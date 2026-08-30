@@ -242,6 +242,9 @@ $app->addBodyParsingMiddleware();
 // Adiciona os Cabeçalhos de Segurança HTTP (Security Headers)
 $app->add(new \Alpha\Auth\Middleware\SecurityHeadersMiddleware());
 
+// Adiciona Auditoria e Monitoramento de Visitantes / Requisições
+$app->add(new \Alpha\Auth\Middleware\RequestAuditMiddleware());
+
 // Adiciona o Middleware de Estado de Instalação (Bloqueia re-instalação se já instalado)
 $app->add(new InstallationCheckMiddleware($envManager));
 

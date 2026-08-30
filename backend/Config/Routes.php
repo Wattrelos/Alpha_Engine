@@ -144,6 +144,10 @@ return function (\Slim\App $app) {
             $group->get('/pos/caixa', \Alpha\Admin\Controllers\Actions\POS\ShowCashierDashboardAction::class)->setName('admin.pos.cashier');
             $group->get('/pos/pedidos/{id:[0-9]+}', \Alpha\Admin\Controllers\Actions\POS\GetPreOrderAction::class)->setName('admin.pos.orders.get');
             $group->post('/pos/pedidos/{id:[0-9]+}/pagar', \Alpha\Admin\Controllers\Actions\POS\PayOrderAction::class)->setName('admin.pos.orders.pay');
+
+            // Auditoria & Monitoramento de Logs
+            $group->get('/auditoria', \Alpha\Admin\Controllers\Actions\Audit\ListAuditLogsAction::class)->setName('admin.audit.list');
+            $group->get('/auditoria/{id:[0-9]+}', \Alpha\Admin\Controllers\Actions\Audit\ViewAuditLogDetailAction::class)->setName('admin.audit.view');
         })
         ->add(new \Alpha\Auth\Middleware\AdminLanguageMiddleware(
             $app->getContainer()->get(\Alpha\Model\Domain\Repositories\LanguageRepository::class),

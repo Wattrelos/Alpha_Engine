@@ -27,6 +27,7 @@ class CreateUserGroupAction extends BaseController implements ActionInterface
         'pos/cashier'           => 'PDV - Caixa',
         'user/user'             => 'Gestão de Funcionários',
         'user/user_group'        => 'Gestão de Papéis & Permissões',
+        'system/audit'          => 'Auditoria & Logs de Acesso',
     ];
 
     public function __invoke(Request $request, Response $response, array $args): Response
