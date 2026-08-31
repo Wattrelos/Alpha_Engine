@@ -16,13 +16,13 @@
 [8\.	Cronograma de Marcos Resumido	4](#heading-5)  
 [9\.	Orçamento Resumido	4](#heading-6)
 
-2. # **OBJETIVOS** {#objetivos}
+2. # **OBJETIVOS**
 
-   2.1. ## **Objetivo Geral** {#objetivo-geral}
+   2.1. ## **Objetivo Geral**
 
 Desenvolver uma plataforma de comércio eletrônico (*e-commerce*) praticamente do zero e com suporte nativo para o mercado brasileiro, com um motor (*engine*) de *back-end* desacoplado baseado nos padrões de projeto do *Gang of Four* (GoF), além de um *front-end* baseado em telas dinâmicas Twig, com *Java Script,* gerenciamento de sessão com assinaturas de páginas e certificados digitais, utilizando ferramentas de assistência baseadas em Inteligência Artificial para viabilizar a arquitetura e garantir a conformidade (*compliance*) fiscal e logística do modelo de negócios.
 
-   2.2. ## **Objetivos Específicos** {#objetivos-específicos}
+   2.2. ## **Objetivos Específicos**
 
 Para alcançar o objetivo geral, estabelecem-se os seguintes objetivos específicos:
 
@@ -78,7 +78,7 @@ Aproveite essa secao para discriminar tambem todos os itens que estarao fora do 
 - Wallace Francis Miranda (Turma ADS 2-20025 - FATEC-FV)
 
 
-6. **Especificações Técnicas** {#especificacoes-tecnicas}
+6. **Especificações Técnicas**
 
 A plataforma **Alpha Engine** adota uma arquitetura desacoplada, modular e orientada a padrões de projeto modernos (*Design Patterns*), assegurando alta performance, conformidade estrita com o padrão PSR da comunidade PHP-FIG, facilidade de manutenção e segurança robusta para operações de comércio eletrônico e ponto de venda (PDV).
 
@@ -127,7 +127,7 @@ A plataforma **Alpha Engine** adota uma arquitetura desacoplada, modular e orien
 * **Análise Estática e Padronização:** PHPStan configurado em nível rigoroso de checagem e PHP-CS-Fixer para conformidade estrita com o padrão de formatação PSR-12.
 * **Assistência com Inteligência Artificial:** Uso de ferramentas de IA (Google Antigravity) como acelerador de desenvolvimento, validação arquitetural contra diagramas PlantUML (`.puml`) e detecção preventiva de *bugs*.
 
-7. **Riscos e Plano de Contingência** {#riscos}
+7. **Riscos e Plano de Contingência**
 
 O gerenciamento de riscos busca antecipar eventos de incerteza técnica, operacional, gerencial ou externa que possam impactar o cronograma, a conformidade legal ou a estabilidade da plataforma Alpha Engine.
 
