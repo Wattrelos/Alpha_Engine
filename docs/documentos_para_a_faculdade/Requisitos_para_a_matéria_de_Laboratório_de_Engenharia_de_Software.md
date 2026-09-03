@@ -3,7 +3,7 @@
 - [x] Documento de Visão
 - [x] Diagrama de Atividades do negócio
 - [x] Requisitos Funcionais, Requisitos não funcionais, regras de negócio
-- [ ] Matriz de relacionamento RN x RF
+- [x] Matriz de relacionamento RN x RF: [Matriz_de_Relacionamento_RN_x_RF.doc.md](file:///var/www/html/agsonhos/docs/documentos_para_a_faculdade/Matriz_de_Relacionamento_RN_x_RF.doc.md)
 
  - [ ] Diagrama de Entidade e Relacionamento
 
