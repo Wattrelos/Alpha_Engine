@@ -2,7 +2,7 @@
 
 ## 📋 Visão Geral
 
-Este documento compila o conjunto de recomendações, especificações técnicas e boas práticas de segurança cibernética para o SaaS **Alpha Engine** (baseado em Slim 4, Twig, PHP 8+, Redis e MySQL). Servindo como guia de referência técnica, todas as diretrizes listadas neste documento foram integralmente **implementadas, auditadas e validadas por suítes de testes automatizados**.
+Este documento compila o conjunto de recomendações, especificações técnicas e boas práticas de segurança cibernética para o On-Premise **Alpha Engine** (baseado em Slim 4, Twig, PHP 8+, Redis e MySQL). Servindo como guia de referência técnica, todas as diretrizes listadas neste documento foram integralmente **implementadas, auditadas e validadas por suítes de testes automatizados**.
 
 ---
 
@@ -16,7 +16,7 @@ Este documento compila o conjunto de recomendações, especificações técnicas
 | **🟡 MÉDIA** | Disponibilidade / Brute-Force | Ausência de Rate Limiting por IP para login e APIs públicas | Alto | Médio | ✅ **IMPLEMENTADO** |
 | **🟡 MÉDIA** | Divulgação de Dados | Exibição de rastros de erro e `debug = true` habilitado em produção | Médio | Baixo | ✅ **IMPLEMENTADO** |
 | **🟢 BAIXA** | Gestão de Arquivos | Execução acidental de scripts PHP no diretório de uploads | Alto | Baixo | ✅ **IMPLEMENTADO** |
-| **🟢 BAIXA** | SaaS Multi-tenant | Risco de acesso cross-tenant por falta de escopo `store_id` | Crítico | Baixo | ✅ **IMPLEMENTADO** |
+| **🟢 BAIXA** | On-Premise Multi-tenant | Risco de acesso cross-tenant por falta de escopo `store_id` | Crítico | Baixo | ✅ **IMPLEMENTADO** |
 | **🟢 BAIXA** | Privacidade / LGPD | Vazamento de PII (dados sensíveis) em arquivos de log | Médio | Baixo | ✅ **IMPLEMENTADO** |
 
 ---

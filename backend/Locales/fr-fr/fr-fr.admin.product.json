@@ -27,7 +27,6 @@
     "text_delete": "Supprimer",
     "text_confirm_delete": "Êtes-vous sûr de vouloir supprimer ce produit?",
     "text_empty": "Aucun produit enregistré pour le moment.",
-    
     "text_title_create": "Ajouter un Produit | Panneau Administratif",
     "heading_title_create": "Ajouter un Produit",
     "text_subtitle_create": "Enregistrez un nouveau produit dans votre boutique.",
@@ -51,12 +50,11 @@
     "placeholder_description": "Saisissez la description détaillée du produit...",
     "button_cancel": "Annuler",
     "button_create": "Enregistrer le Produit",
-    
     "text_title_edit": "Modifier le Produit | Panneau Administratif",
     "heading_title_edit": "Modifier le Produit",
     "text_subtitle_edit": "Mettez à jour les informations du produit dans votre boutique.",
     "tab_general": "Général",
-    "tab_variants": "Variantes (Standard SaaS)",
+    "tab_variants": "Variantes (Standard On-Premise)",
     "entry_date_modified": "Dernière Modification",
     "text_no_modification": "Aucune modification enregistrée",
     "text_current_image": "Chemin de l'image actuelle:",

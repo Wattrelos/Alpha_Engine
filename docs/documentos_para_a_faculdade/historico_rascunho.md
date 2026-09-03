@@ -9,7 +9,7 @@
 #09	Implementation Plan - Autofill CEP on Cart Page	2026-06-20T10:09:07-03:00
 #10	Plan: Populate permissions and implement login logging	2026-06-20T10:14:31-03:00
 #11	Plano de Implementação: Adição de Fabricante e Logotipo nos Produtos	2026-06-21T09:25:09-03:00
-#12	Plano de Implementação: Variações de Produto no Padrão SaaS (Pai e Filho)	2026-06-21T10:05:11-03:00
+#12	Plano de Implementação: Variações de Produto no Padrão On-Premise (Pai e Filho)	2026-06-21T10:05:11-03:00
 #13	Adicionar Edição de Imagem para Variações de Produto	2026-06-22T12:55:11-03:00
 #14	Refatoração do Carrinho de Compras para Tratar Variações de Produtos	2026-06-22T13:34:44-03:00
 #15	Exibição de Intervalos de Preços ("A partir de") para Variações	2026-06-22T14:34:12-03:00
@@ -59,7 +59,7 @@
 #61	Atalhos Dinâmicos no Dashboard Condicionados ao Papel (`UserGroup`)	2026-07-30T11:33:52-03:00
 #62	Internacionalização de Papéis de Usuário (User Group Descriptions)	2026-07-30T15:49:13-03:00
 #63	Aperfeiçoamento do mecanismo de busca por produtos: Busca Full-Text de Produtos (MySQL MATCH/AGAINST)	2026-08-02T09:26:14-03:00
-#64	SaaS Tenant Provisioning & Setup Wizard	2026-08-02T10:50:54-03:00
+#64	On-Premise Tenant Provisioning & Setup Wizard	2026-08-02T10:50:54-03:00
 #65	Configuração Dinâmica do Prefixo de Banco de Dados e Mascaramento do Dashboard	2026-08-02T15:36:26-03:00
 #66	Eliminação de Códigos SQL Soltos nas Actions do Painel Administrativo	2026-08-05T19:06:00-03:00
 #67	Bateria de Testes Automatizados de Validação de Software (PHPUnit)	2026-08-09T12:01:13-03:00

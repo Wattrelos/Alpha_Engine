@@ -37,6 +37,91 @@
         </div>
     </div>
     
+    <!-- Panel Central: Detalhes do Produto Selecionado -->
+    <aside id="product_detail_panel" class="product-detail-panel">
+        <div class="product-detail-header">
+            <h3 class="product-detail-title-top">
+                <i class="fas fa-info-circle pos-accent-text"></i>
+                Ficha Técnica
+            </h3>
+            <span id="detail_header_badge" class="detail-badge detail-badge-stock-in" style="display: none;">Disponível</span>
+        </div>
+        
+        <div id="product_detail_body" class="product-detail-body">
+            <!-- Estado Vazio / Instrução -->
+            <div class="product-detail-empty" id="detail_empty_state">
+                <i class="fas fa-search-plus detail-empty-icon"></i>
+                <h4 class="detail-empty-title">Nenhum item selecionado</h4>
+                <p class="detail-empty-desc">Selecione ou clique em um produto no catálogo para consultar medidas, peso, código EAN e estoque.</p>
+            </div>
+            
+            <!-- Conteúdo Dinâmico do Produto -->
+            <div id="detail_product_info" style="display: none; flex-direction: column; gap: 1rem;">
+                <div class="product-detail-img-box">
+                    <img id="detail_img" src="/image/no-image.png" class="product-detail-img" alt="Produto">
+                    <div class="product-detail-badges">
+                        <span id="detail_stock_badge" class="detail-badge detail-badge-stock-in">Em Estoque</span>
+                        <span id="detail_qty_badge" class="detail-badge" style="background-color: rgba(11, 15, 25, 0.85); color: #fff;">0 un</span>
+                    </div>
+                </div>
+
+                <div class="product-detail-main">
+                    <div class="product-detail-brand" id="detail_brand_row">
+                        <i class="fas fa-tag"></i>
+                        <span id="detail_brand">AgSonhos</span>
+                    </div>
+                    <h3 class="product-detail-name" id="detail_name">Nome do Produto</h3>
+                    <div class="product-detail-prices">
+                        <span class="detail-price-current" id="detail_price">R$ 0,00</span>
+                        <span class="detail-price-old" id="detail_old_price" style="display: none;">R$ 0,00</span>
+                        <span class="detail-discount-tag" id="detail_discount_tag" style="display: none;">PROMOÇÃO</span>
+                    </div>
+                </div>
+
+                <!-- Grade de Especificações Técnicas -->
+                <div class="product-detail-specs-grid">
+                    <div class="spec-item">
+                        <span class="spec-label"><i class="fas fa-barcode"></i> Cód. Barras (EAN)</span>
+                        <span class="spec-value" id="detail_ean">-</span>
+                    </div>
+                    <div class="spec-item">
+                        <span class="spec-label"><i class="fas fa-fingerprint"></i> SKU / Ref</span>
+                        <span class="spec-value" id="detail_sku">-</span>
+                    </div>
+                    <div class="spec-item">
+                        <span class="spec-label"><i class="fas fa-ruler-combined"></i> Medidas (CxLxA)</span>
+                        <span class="spec-value" id="detail_dimensions">-</span>
+                    </div>
+                    <div class="spec-item">
+                        <span class="spec-label"><i class="fas fa-weight-hanging"></i> Peso Líquido</span>
+                        <span class="spec-value" id="detail_weight">-</span>
+                    </div>
+                </div>
+
+                <!-- Descrição Curta -->
+                <div class="product-detail-desc-box" id="detail_desc_container">
+                    <div class="product-detail-desc-title"><i class="fas fa-align-left"></i> Descrição Técnica</div>
+                    <p class="product-detail-desc-text" id="detail_desc">Sem descrição informada.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Footer com Seletor de Quantidade e Ação de Adicionar -->
+        <div class="product-detail-footer" id="detail_footer" style="display: none;">
+            <div class="detail-action-row">
+                <div class="detail-qty-control">
+                    <button class="detail-qty-btn" id="detail_qty_minus" type="button">-</button>
+                    <span class="detail-qty-val" id="detail_qty_input">1</span>
+                    <button class="detail-qty-btn" id="detail_qty_plus" type="button">+</button>
+                </div>
+                <button class="detail-add-btn" id="detail_add_btn" type="button">
+                    <i class="fas fa-cart-plus"></i>
+                    <span>Adicionar</span>
+                </button>
+            </div>
+        </div>
+    </aside>
+    
     <!-- Panel Direito: Carrinho de Compras -->
     <div class="cart-panel">
         <div class="cart-header">
@@ -113,7 +198,7 @@
 {% block extra_scripts %}
 <script>
     document.addEventListener('DOMContentLoaded', () => {
-        // Elementos da interface
+        // Elementos da interface principal
         const productSearchInput = document.getElementById('product_search_input');
         const customerSearchInput = document.getElementById('customer_search_input');
         const customerSearchResults = document.getElementById('customer_search_results');
@@ -125,17 +210,47 @@
         const cartTotal = document.getElementById('cart_total');
         const checkoutBtn = document.getElementById('checkout_btn');
         
-        // Modal
+        // Elementos do Painel de Detalhes do Produto
+        const detailEmptyState = document.getElementById('detail_empty_state');
+        const detailProductInfo = document.getElementById('detail_product_info');
+        const detailFooter = document.getElementById('detail_footer');
+        const detailHeaderBadge = document.getElementById('detail_header_badge');
+        const detailImg = document.getElementById('detail_img');
+        const detailStockBadge = document.getElementById('detail_stock_badge');
+        const detailQtyBadge = document.getElementById('detail_qty_badge');
+        const detailBrand = document.getElementById('detail_brand');
+        const detailName = document.getElementById('detail_name');
+        const detailPrice = document.getElementById('detail_price');
+        const detailOldPrice = document.getElementById('detail_old_price');
+        const detailDiscountTag = document.getElementById('detail_discount_tag');
+        const detailEan = document.getElementById('detail_ean');
+        const detailSku = document.getElementById('detail_sku');
+        const detailDimensions = document.getElementById('detail_dimensions');
+        const detailWeight = document.getElementById('detail_weight');
+        const detailDesc = document.getElementById('detail_desc');
+        const detailQtyInput = document.getElementById('detail_qty_input');
+        const detailQtyMinus = document.getElementById('detail_qty_minus');
+        const detailQtyPlus = document.getElementById('detail_qty_plus');
+        const detailAddBtn = document.getElementById('detail_add_btn');
+
+        // Modais
         const alertModal = document.getElementById('alert_modal');
         const modalIcon = document.getElementById('modal_icon');
         const modalTitle = document.getElementById('modal_title');
         const modalMessage = document.getElementById('modal_message');
         const modalCloseBtn = document.getElementById('modal_close_btn');
+        const variantsModal = document.getElementById('variants_modal');
+        const variantsModalTitle = document.getElementById('variants_modal_title');
+        const variantsModalList = document.getElementById('variants_modal_list');
+        const variantsModalCloseBtn = document.getElementById('variants_modal_close_btn');
         
-        // Estado do Carrinho em memória
+        // Estados em memória
         let cart = [];
         let selectedCustomerId = 0;
         let productsDatabase = [];
+        let focusedProduct = null;
+        let focusedVariant = null;
+        let detailQuantity = 1;
         
         // Utilitário de formatação de dinheiro
         const formatMoney = (val) => {
@@ -152,7 +267,7 @@
         
         let idempotencyKey = generateUUID();
 
-        // 1. Carrega Produtos inicialmente
+        // 1. Carrega Produtos inicialmente ou por busca
         const loadProducts = (query = '') => {
             fetch(`{{ admin_path }}/pos/produtos/buscar?q=${encodeURIComponent(query)}`)
                 .then(res => res.json())
@@ -186,22 +301,23 @@
             productsGrid.innerHTML = productsDatabase.map(p => {
                 const hasVariants = p.variants && p.variants.length > 0;
                 const isOutOfStock = p.quantity <= 0;
+                const isSelected = focusedProduct && focusedProduct.product_id === p.product_id;
                 const priceHtml = p.special_formatted 
                     ? `<span class="product-price-old">${p.price_formatted}</span> <span class="product-price pos-text-success">${p.special_formatted}</span>`
                     : `<span class="product-price">${p.price_formatted}</span>`;
                 
                 return `
-                    <div class="product-card" onclick="triggerAdd(${p.product_id}, ${isOutOfStock})">
+                    <div class="product-card ${isSelected ? 'is-active' : ''}" id="prod_card_${p.product_id}" onclick="selectProduct(${p.product_id})">
                         <div class="product-image-container">
                             <img src="${p.image}" class="product-image" alt="${p.name}" onerror="this.src='/image/no-image.png'">
                             <span class="product-badge">${p.quantity} unid</span>
                         </div>
                         <div class="product-info">
                             <h3 class="product-name" title="${p.name}">${p.name}</h3>
-                            <p class="product-meta">Ref: ${p.model || 'N/A'}</p>
+                            <p class="product-meta">Ref: ${p.sku || p.model || 'N/A'}</p>
                             <div class="product-pricing">
                                 <div>${priceHtml}</div>
-                                <button class="add-btn" ${isOutOfStock && !hasVariants ? 'disabled' : ''} onclick="event.stopPropagation(); addToCart(${p.product_id})">
+                                <button class="add-btn" ${isOutOfStock && !hasVariants ? 'disabled' : ''} onclick="event.stopPropagation(); triggerAdd(${p.product_id}, ${isOutOfStock})" title="Adicionar ao Carrinho">
                                     <i class="fas ${hasVariants ? 'fa-list-ul' : (isOutOfStock ? 'fa-ban' : 'fa-plus')}"></i>
                                 </button>
                             </div>
@@ -211,14 +327,151 @@
             }).join('');
         };
         
+        // Selecionar Produto para exibir no Painel de Detalhes
+        window.selectProduct = (productId, variantId = null) => {
+            const product = productsDatabase.find(p => p.product_id === productId);
+            if (!product) return;
+
+            focusedProduct = product;
+            focusedVariant = variantId && product.variants ? product.variants.find(v => v.product_id === variantId) : null;
+            detailQuantity = 1;
+
+            // Atualiza classe ativa nos cards
+            document.querySelectorAll('.product-card').forEach(card => card.classList.remove('is-active'));
+            const activeCard = document.getElementById(`prod_card_${productId}`);
+            if (activeCard) {
+                activeCard.classList.add('is-active');
+            }
+
+            renderProductDetail(product, focusedVariant);
+        };
+
+        // Renderizar Painel de Detalhes
+        const renderProductDetail = (product, variant = null) => {
+            const activeItem = variant || product;
+            const hasVariants = product.variants && product.variants.length > 0;
+            const isOutOfStock = (activeItem.quantity || 0) <= 0;
+            const currentPrice = activeItem.special !== null && activeItem.special !== undefined ? activeItem.special : activeItem.price;
+
+            // Exibir blocos
+            detailEmptyState.style.display = 'none';
+            detailProductInfo.style.display = 'flex';
+            detailFooter.style.display = 'flex';
+            detailHeaderBadge.style.display = 'inline-block';
+
+            // Badges
+            if (isOutOfStock) {
+                detailStockBadge.className = 'detail-badge detail-badge-stock-out';
+                detailStockBadge.textContent = 'Esgotado';
+                detailHeaderBadge.className = 'detail-badge detail-badge-stock-out';
+                detailHeaderBadge.textContent = 'Indisponível';
+            } else {
+                detailStockBadge.className = 'detail-badge detail-badge-stock-in';
+                detailStockBadge.textContent = 'Em Estoque';
+                detailHeaderBadge.className = 'detail-badge detail-badge-stock-in';
+                detailHeaderBadge.textContent = 'Disponível';
+            }
+            detailQtyBadge.textContent = `${activeItem.quantity || 0} un`;
+
+            // Imagem e Nome
+            detailImg.src = activeItem.image || '/image/no-image.png';
+            detailImg.alt = variant ? `${product.name} (${variant.name})` : product.name;
+            detailName.textContent = variant ? `${product.name} - ${variant.name}` : product.name;
+            detailBrand.textContent = product.manufacturer || 'AgSonhos';
+
+            // Preços
+            if (product.special_formatted && !variant) {
+                detailPrice.textContent = product.special_formatted;
+                detailOldPrice.textContent = product.price_formatted;
+                detailOldPrice.style.display = 'inline-block';
+                detailDiscountTag.style.display = 'inline-block';
+            } else {
+                detailPrice.textContent = activeItem.price_formatted || formatMoney(currentPrice);
+                detailOldPrice.style.display = 'none';
+                detailDiscountTag.style.display = 'none';
+            }
+
+            // Códigos
+            detailEan.textContent = activeItem.ean || 'N/A';
+            detailSku.textContent = activeItem.sku || activeItem.model || 'N/A';
+
+            // Dimensões (CxLxA)
+            const length = parseFloat(activeItem.length) || 0;
+            const width  = parseFloat(activeItem.width) || 0;
+            const height = parseFloat(activeItem.height) || 0;
+            if (length > 0 || width > 0 || height > 0) {
+                detailDimensions.textContent = `${length} × ${width} × ${height} cm`;
+            } else {
+                detailDimensions.textContent = '-';
+            }
+
+            // Peso
+            const weight = parseFloat(activeItem.weight) || 0;
+            detailWeight.textContent = weight > 0 ? `${weight.toFixed(2)} kg` : '-';
+
+            // Descrição
+            detailDesc.textContent = product.description || 'Sem descrição técnica cadastrada.';
+
+            // Quantidade e Botão
+            detailQtyInput.textContent = detailQuantity;
+            if (isOutOfStock && !hasVariants) {
+                detailAddBtn.disabled = true;
+                detailAddBtn.innerHTML = '<i class="fas fa-ban"></i> <span>Esgotado</span>';
+            } else if (hasVariants && !variant) {
+                detailAddBtn.disabled = false;
+                detailAddBtn.innerHTML = '<i class="fas fa-list-ul"></i> <span>Escolher Variação</span>';
+            } else {
+                detailAddBtn.disabled = false;
+                detailAddBtn.innerHTML = '<i class="fas fa-cart-plus"></i> <span>Adicionar</span>';
+            }
+        };
+
+        // Controles de quantidade no Painel de Detalhes
+        detailQtyMinus.addEventListener('click', () => {
+            if (detailQuantity > 1) {
+                detailQuantity--;
+                detailQtyInput.textContent = detailQuantity;
+            }
+        });
+
+        detailQtyPlus.addEventListener('click', () => {
+            if (!focusedProduct) return;
+            const maxQty = focusedVariant ? (focusedVariant.quantity || 0) : (focusedProduct.quantity || 0);
+            if (detailQuantity < maxQty || (focusedProduct.variants && focusedProduct.variants.length > 0 && !focusedVariant)) {
+                detailQuantity++;
+                detailQtyInput.textContent = detailQuantity;
+            } else {
+                showModal('Limite de estoque', `Quantidade máxima disponível em estoque: ${maxQty} unidades.`, 'fa-exclamation-circle', 'var(--warning)');
+            }
+        });
+
+        // Adicionar ao Carrinho pelo Painel de Detalhes
+        detailAddBtn.addEventListener('click', () => {
+            if (!focusedProduct) return;
+
+            if (focusedProduct.variants && focusedProduct.variants.length > 0 && !focusedVariant) {
+                openVariantsModal(focusedProduct);
+                return;
+            }
+
+            if (focusedVariant) {
+                addVariantToCart(focusedProduct.product_id, focusedVariant.product_id, detailQuantity);
+            } else {
+                addToCart(focusedProduct.product_id, detailQuantity);
+            }
+        });
+
         window.triggerAdd = (productId, isOutOfStock) => {
             const product = productsDatabase.find(p => p.product_id === productId);
             if (!product) return;
             
+            // Atualiza seleção para feedback visual
+            selectProduct(productId);
+
             if (product.variants && product.variants.length > 0) {
-                addToCart(productId);
+                openVariantsModal(product);
             } else if (!isOutOfStock) {
-                addToCart(productId);
+                addToCart(productId, 1);
             }
         };
 
@@ -274,17 +527,8 @@
             selectedCustomerName.classList.add('unidentified');
             clearCustomerBtn.style.display = 'none';
         });
-        
-        const variantsModal = document.getElementById('variants_modal');
-        const variantsModalTitle = document.getElementById('variants_modal_title');
-        const variantsModalList = document.getElementById('variants_modal_list');
-        const variantsModalCloseBtn = document.getElementById('variants_modal_close_btn');
 
-        variantsModalCloseBtn.addEventListener('click', () => {
-            variantsModal.style.display = 'none';
-        });
-
-        // Fechar dropdown de clientes se clicar fora
+        // Fechar dropdown de clientes ou modais se clicar fora
         document.addEventListener('click', (e) => {
             if (!e.target.closest('.customer-search-dropdown')) {
                 customerSearchResults.style.display = 'none';
@@ -294,45 +538,17 @@
             }
         });
 
-        // 3. Gerenciamento do Carrinho de Compras
-        window.addToCart = (productId) => {
-            const product = productsDatabase.find(p => p.product_id === productId);
-            if (!product) return;
-            
-            // Se o produto tiver variações, abre o modal de variações
-            if (product.variants && product.variants.length > 0) {
-                openVariantsModal(product);
-                return;
-            }
-            
-            const existingItem = cart.find(item => item.product_id === productId);
-            if (existingItem) {
-                if (existingItem.quantity < product.quantity) {
-                    existingItem.quantity += 1;
-                } else {
-                    showModal('Limite de estoque', `Você já adicionou a quantidade máxima disponível (${product.quantity} unid) de ${product.name}.`, 'fa-exclamation-circle', 'var(--warning)');
-                }
-            } else {
-                const finalPrice = product.special !== null ? product.special : product.price;
-                cart.push({
-                    product_id: product.product_id,
-                    name: product.name,
-                    price: finalPrice,
-                    image: product.image,
-                    quantity: 1,
-                    max_quantity: product.quantity
-                });
-            }
-            
-            renderCart();
-        };
+        variantsModalCloseBtn.addEventListener('click', () => {
+            variantsModal.style.display = 'none';
+        });
 
+        // 3. Gerenciamento de Variações de Produto
         const openVariantsModal = (product) => {
             variantsModalTitle.textContent = `Escolha a variação de: ${product.name}`;
             variantsModalList.innerHTML = product.variants.map(v => {
                 const isOutOfStock = v.quantity <= 0;
                 return `
-                    <div class="variant-item-card">
+                    <div class="variant-item-card" onclick="selectVariantAndDetail(${product.product_id}, ${v.product_id})">
                         <div class="variant-info-wrapper">
                             <img src="${v.image}" class="variant-image-thumb" onerror="this.src='/image/no-image.png'">
                             <div class="variant-meta-wrapper">
@@ -347,7 +563,7 @@
                                     ${v.quantity} unid
                                 </span>
                             </div>
-                            <button class="add-btn" ${isOutOfStock ? 'disabled' : ''} onclick="addVariantToCart(${product.product_id}, ${v.product_id})">
+                            <button class="add-btn" ${isOutOfStock ? 'disabled' : ''} onclick="event.stopPropagation(); addVariantToCart(${product.product_id}, ${v.product_id}, 1)">
                                 <i class="fas ${isOutOfStock ? 'fa-ban' : 'fa-plus'}"></i>
                             </button>
                         </div>
@@ -357,7 +573,11 @@
             variantsModal.style.display = 'flex';
         };
 
-        window.addVariantToCart = (productId, variantId) => {
+        window.selectVariantAndDetail = (productId, variantId) => {
+            selectProduct(productId, variantId);
+        };
+
+        window.addVariantToCart = (productId, variantId, qty = 1) => {
             const product = productsDatabase.find(p => p.product_id === productId);
             if (!product) return;
             
@@ -366,23 +586,66 @@
             
             const existingItem = cart.find(item => item.product_id === variantId);
             if (existingItem) {
-                if (existingItem.quantity < variant.quantity) {
-                    existingItem.quantity += 1;
+                if (existingItem.quantity + qty <= variant.quantity) {
+                    existingItem.quantity += qty;
                 } else {
                     showModal('Limite de estoque', `Você já adicionou a quantidade máxima disponível (${variant.quantity} unid) de ${product.name} - ${variant.name}.`, 'fa-exclamation-circle', 'var(--warning)');
+                    return;
                 }
             } else {
+                if (qty > variant.quantity) {
+                    showModal('Limite de estoque', `Quantidade solicitada (${qty}) maior que a disponível (${variant.quantity}).`, 'fa-exclamation-circle', 'var(--warning)');
+                    return;
+                }
                 cart.push({
                     product_id: variant.product_id,
                     name: `${product.name} - ${variant.name}`,
                     price: variant.price,
                     image: variant.image,
-                    quantity: 1,
+                    quantity: qty,
                     max_quantity: variant.quantity
                 });
             }
             
             variantsModal.style.display = 'none';
+            renderCart();
+        };
+
+        // 4. Gerenciamento do Carrinho de Compras
+        window.addToCart = (productId, qty = 1) => {
+            const product = productsDatabase.find(p => p.product_id === productId);
+            if (!product) return;
+            
+            // Se o produto tiver variações, abre o modal de variações
+            if (product.variants && product.variants.length > 0) {
+                openVariantsModal(product);
+                return;
+            }
+            
+            const existingItem = cart.find(item => item.product_id === productId);
+            if (existingItem) {
+                if (existingItem.quantity + qty <= product.quantity) {
+                    existingItem.quantity += qty;
+                } else {
+                    showModal('Limite de estoque', `Você já adicionou a quantidade máxima disponível (${product.quantity} unid) de ${product.name}.`, 'fa-exclamation-circle', 'var(--warning)');
+                    return;
+                }
+            } else {
+                if (qty > product.quantity) {
+                    showModal('Limite de estoque', `Quantidade solicitada (${qty}) maior que a disponível (${product.quantity}).`, 'fa-exclamation-circle', 'var(--warning)');
+                    return;
+                }
+                const finalPrice = product.special !== null ? product.special : product.price;
+                cart.push({
+                    product_id: product.product_id,
+                    name: product.name,
+                    price: finalPrice,
+                    image: product.image,
+                    quantity: qty,
+                    max_quantity: product.quantity
+                });
+            }
+            
             renderCart();
         };
         
@@ -450,7 +713,7 @@
             checkoutBtn.disabled = false;
         };
 
-        // 4. Salvar Pré-Venda
+        // 5. Salvar Pré-Venda
         checkoutBtn.addEventListener('click', () => {
             if (cart.length === 0) return;
             
@@ -476,7 +739,6 @@
             })
             .then(res => {
                 if (res.status === 422) {
-                    // Trata duplicidade
                     return res.json().then(data => {
                         throw new Error(data.message || 'Requisição duplicada já processada.');
                     });
@@ -490,7 +752,6 @@
             })
             .then(data => {
                 if (data.success && data.order_id) {
-                    // Sucesso: Redireciona para tela de checkout sucesso
                     window.location.href = `{{ admin_path }}/pos/vendedor/checkout?order_id=${data.order_id}`;
                 } else {
                     throw new Error(data.error || 'Falha ao processar pré-venda.');
@@ -500,16 +761,14 @@
                 console.error("Erro na requisição:", err);
                 showModal('Falha na Operação', err.message, 'fa-exclamation-triangle', 'var(--danger)');
                 
-                // Restaura o botão
                 checkoutBtn.disabled = false;
                 checkoutBtn.innerHTML = '<i class="fas fa-ticket-alt"></i> Salvar Pré-Venda';
                 
-                // Gera uma nova chave idempotente em caso de falha real para permitir retentativas
                 idempotencyKey = generateUUID();
             });
         });
 
-        // 5. Exibição de Alertas Modal
+        // 6. Exibição de Alertas Modal
         const showModal = (title, message, iconClass, iconColor) => {
             modalTitle.textContent = title;
             modalMessage.textContent = message;
@@ -522,7 +781,7 @@
             alertModal.style.display = 'none';
         });
 
-        // 6. Busca de produtos dinâmica
+        // 7. Busca dinâmica com debounce
         let productSearchTimeout;
         productSearchInput.addEventListener('input', () => {
             clearTimeout(productSearchTimeout);
@@ -531,7 +790,7 @@
             }, 300);
         });
 
-        // Carga inicial
+        // Carga inicial do catálogo
         loadProducts();
     });
 </script>

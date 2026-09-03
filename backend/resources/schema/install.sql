@@ -1,5 +1,5 @@
 -- ========================================================
--- Alpha Engine SaaS Database Install Schema & Seeds
+-- Alpha Engine On-Premise Database Install Schema & Seeds
 -- Generated: 2026-08-02 14:56:20
 -- Aligned with EERDiagram.puml and MySQL 8.0 Full-Text Search
 -- ========================================================

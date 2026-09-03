@@ -15,6 +15,12 @@ use Alpha\Model\Domain\Repositories\ProductRepository;
  */
 class SearchProductAction extends BaseController implements ActionInterface
 {
+    /**
+     * @param Request $request
+     * @param Response $response
+     * @param array<string, mixed> $args
+     * @return Response
+     */
     public function __invoke(Request $request, Response $response, array $args): Response
     {
         $queryParams = $request->getQueryParams();
@@ -63,28 +69,45 @@ class SearchProductAction extends BaseController implements ActionInterface
 
                     $variants[] = [
                         'product_id'      => (int)$variant['id'],
-                        'name'            => $variant['variant'],
-                        'sku'             => $variant['sku'],
+                        'name'            => $variant['variant'] ?? ($variant['name'] ?? ''),
+                        'sku'             => $variant['sku'] ?? '',
+                        'ean'             => $variant['ean'] ?? '',
                         'price'           => $vPriceRaw,
                         'price_formatted' => $vPriceFormatted,
                         'quantity'        => (int)$variant['quantity'],
+                        'weight'          => (float)($variant['weight'] ?? 0),
+                        'length'          => (float)($variant['length'] ?? 0),
+                        'width'           => (float)($variant['width'] ?? 0),
+                        'height'          => (float)($variant['height'] ?? 0),
+                        'stock_status'    => (int)$variant['quantity'] > 0 ? 'Em Estoque' : 'Esgotado',
                         'image'           => !empty($variant['image']) ? (strpos($variant['image'], 'image/') === 0 ? '/' . $variant['image'] : (strpos($variant['image'], '/image/') === 0 ? $variant['image'] : '/image/' . $variant['image'])) : '/image/no-image.png'
                     ];
                 }
             }
 
+            $cleanDescription = trim(preg_replace('/\s+/', ' ', strip_tags((string)($p['description'] ?? ''))));
+
             $products[] = [
-                'product_id' => $productId,
-                'name'       => $p['name'],
-                'model'      => $p['model'] ?? '',
-                'price'      => $price,
-                'special'    => $special,
-                'price_formatted' => $priceFormatted,
+                'product_id'        => $productId,
+                'name'              => $p['name'],
+                'model'             => $p['model'] ?? '',
+                'sku'               => $p['sku'] ?? '',
+                'ean'               => $p['ean'] ?? '',
+                'manufacturer'      => $p['manufacturer'] ?? '',
+                'price'             => $price,
+                'special'           => $special,
+                'price_formatted'   => $priceFormatted,
                 'special_formatted' => $specialFormatted,
-                'image'      => !empty($p['image']) ? (strpos($p['image'], 'image/') === 0 ? '/' . $p['image'] : (strpos($p['image'], '/image/') === 0 ? $p['image'] : '/image/' . $p['image'])) : '/image/no-image.png',
-                'thumb'      => $imagePresenter->resize($p['image'] ?? '', 80, 80),
-                'quantity'   => (int)($p['quantity'] ?? 0),
-                'variants'   => $variants,
+                'image'             => !empty($p['image']) ? (strpos($p['image'], 'image/') === 0 ? '/' . $p['image'] : (strpos($p['image'], '/image/') === 0 ? $p['image'] : '/image/' . $p['image'])) : '/image/no-image.png',
+                'thumb'             => $imagePresenter->resize($p['image'] ?? '', 80, 80),
+                'quantity'          => (int)($p['quantity'] ?? 0),
+                'weight'            => (float)($p['weight'] ?? 0),
+                'length'            => (float)($p['length'] ?? 0),
+                'width'             => (float)($p['width'] ?? 0),
+                'height'            => (float)($p['height'] ?? 0),
+                'description'       => $cleanDescription,
+                'stock_status'      => (int)($p['quantity'] ?? 0) > 0 ? 'Em Estoque' : 'Esgotado',
+                'variants'          => $variants,
             ];
         }
 

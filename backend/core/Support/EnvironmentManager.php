@@ -93,7 +93,7 @@ class EnvironmentManager
         $mergedData = array_merge($currentData, $newValues);
 
         $lines = [];
-        $lines[] = "# Configurações Gerais da Alpha Engine (SaaS)";
+        $lines[] = "# Configurações Gerais da Alpha Engine (On-Premise)";
         $lines[] = "# Gerado Automaticamente pelo Setup Wizard em " . date('Y-m-d H:i:s');
         $lines[] = "";
 

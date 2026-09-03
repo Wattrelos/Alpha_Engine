@@ -1,6 +1,6 @@
-# 🛡️ Arquitetura de Segurança, Auditoria e Detecção de Fraudes — Alpha Engine SaaS
+# 🛡️ Arquitetura de Segurança, Auditoria e Detecção de Fraudes — Alpha Engine On-Premise
 
-Este documento especifica a arquitetura técnica de segurança, auditoria imutável, privacidade de dados (LGPD) e detecção de fraudes implementada no **Alpha Engine SaaS** (baseado em **Slim 4**, **PHP 8.4**, **Twig 3.x**, **Redis**, **RabbitMQ** e **MySQL 8.0**).
+Este documento especifica a arquitetura técnica de segurança, auditoria imutável, privacidade de dados (LGPD) e detecção de fraudes implementada no **Alpha Engine On-Premise** (baseado em **Slim 4**, **PHP 8.4**, **Twig 3.x**, **Redis**, **RabbitMQ** e **MySQL 8.0**).
 
 ---
 

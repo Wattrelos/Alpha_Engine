@@ -1,7 +1,7 @@
-# ***Alpha Engine: Plataforma E-commerce SaaS & Ponto de Venda para Materiais de Construção***
+# ***Alpha Engine: Plataforma E-commerce On-Premise & Ponto de Venda para Materiais de Construção***
 
 ***Documento de Modelagem de Atividades do Negócio e Engenharia de Processos***  
-**Projeto:** Alpha Engine (Plataforma E-commerce SaaS & Ponto de Venda para Materiais de Construção)
+**Projeto:** Alpha Engine (Plataforma E-commerce On-Premise & Ponto de Venda para Materiais de Construção)
 
 ---
 
@@ -108,7 +108,7 @@ Abaixo estão detalhadas as operações essenciais executadas pelos atores human
 
 ### 3.3. Atividade 3: Fluxo de Compra e Árvore de Decisão do Checkout E-Commerce
 
-- **Objetivo do Processo:** Estruturar a árvore de decisão do checkout digital no e-commerce SaaS, gerenciando validações de sessão, seleção de endereços múltiplos, motor de cálculo de frete por cubagem (*ShippingStrategyManager*), aplicação de cupons de desconto, roteamento entre múltiplos meios de pagamento e execução de observers pós-venda.
+- **Objetivo do Processo:** Estruturar a árvore de decisão do checkout digital no e-commerce On-Premise, gerenciando validações de sessão, seleção de endereços múltiplos, motor de cálculo de frete por cubagem (*ShippingStrategyManager*), aplicação de cupons de desconto, roteamento entre múltiplos meios de pagamento e execução de observers pós-venda.
 - **Participantes / Atores:** Cliente Web/Mobile, Alpha Engine Backend, Gateways de Pagamento (PIX / Cartão / Boleto).
 - **Regras de Negócio Aplicadas:** `RN002` (Peso/cubagem), `RN008` (Regras de frete grátis), `RN015` (Desconto por volume), `RN016` (Desconto no PIX).
 

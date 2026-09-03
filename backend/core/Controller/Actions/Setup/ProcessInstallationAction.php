@@ -54,7 +54,7 @@ class ProcessInstallationAction
         $storeEmail = trim($params['store_email'] ?? '');
 
         $adminFirstname = trim($params['admin_firstname'] ?? 'Administrador');
-        $adminLastname = trim($params['admin_lastname'] ?? 'SaaS');
+        $adminLastname = trim($params['admin_lastname'] ?? 'On-Premise');
         $adminUser = trim($params['admin_user'] ?? 'admin');
         $adminEmail = trim($params['admin_email'] ?? 'admin@mystore.com');
         $adminPass = (string)($params['admin_pass'] ?? '');

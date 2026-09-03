@@ -1,7 +1,7 @@
-# ***Alpha Engine: Plataforma E-commerce SaaS & Ponto de Venda para Materiais de Construção***
+# ***Alpha Engine: Plataforma E-commerce On-Premise & Ponto de Venda para Materiais de Construção***
 
 ***Documento de Engenharia de Requisitos e Regras de Negócio***  
-**Projeto:** Alpha Engine (Plataforma E-commerce SaaS para Varejo de Materiais de Construção)
+**Projeto:** Alpha Engine (Plataforma E-commerce On-Premise para Varejo de Materiais de Construção)
 
 ---
 
@@ -61,7 +61,7 @@
 
 ## 2. **Objetivo**
 
-2.1. Este documento define formalmente os requisitos funcionais, requisitos não funcionais, regras de negócio e a matriz de rastreabilidade do projeto de um **site de e-commerce SaaS adaptado à realidade brasileira** (**Alpha Engine**). 
+2.1. Este documento define formalmente os requisitos funcionais, requisitos não funcionais, regras de negócio e a matriz de rastreabilidade do projeto de um **site de e-commerce On-Premise adaptado à realidade brasileira** (**Alpha Engine**). 
 
 2.2. O objetivo primordial é estruturar uma plataforma modular, escalável e de alto desempenho que atenda às complexidades tributárias, fiscais, logísticas e de consumo do mercado brasileiro. Em seu escopo inicial, o projeto é customizado para suprir as dores operacionais e comerciais do setor de **varejo de materiais para construção** caracterizado pela venda fracionada por unidade/m²/peso, produtos com alta variação de cubagem e restrições legais específicas do Código de Defesa do Consumidor (CDC), mantendo uma arquitetura extensível para expansão a outros nichos do comércio eletrônico.
 
@@ -71,7 +71,7 @@
 
 3.1. **Entrevistas Estruturadas com Lojistas do Varejo:** Realização de entrevistas com comerciantes e gestores do varejo de materiais de construção, compreendendo as rotinas de balcão, expedição, processos de cotação para obras civis, garantia de fabricantes, controle de avarias e fluxos de devolução.
 
-3.2. **Análise de Domínio e Benchmarking SaaS:** Levantamento comparativo de recursos em plataformas líderes de e-commerce e SaaS de comércio eletrônico, mapeando funcionalidades críticas para checkout transparente, carrinho com cálculo de cubagem, múltiplos centros de distribuição e gestão de múltiplos canais de venda (omnichannel).
+3.2. **Análise de Domínio e Benchmarking On-Premise:** Levantamento comparativo de recursos em plataformas líderes de e-commerce e On-Premise de comércio eletrônico, mapeando funcionalidades críticas para checkout transparente, carrinho com cálculo de cubagem, múltiplos centros de distribuição e gestão de múltiplos canais de venda (omnichannel).
 
 3.3. **Prospecção Tecnológica e Padrões Arquiteturais:** Avaliação de arquitetura orientada a serviços leves utilizando PHP 8 / Slim Framework 4 (Single Action Controllers), Twig View Engine, persistência relacional MySQL/MariaDB com Doctrine DBAL/ORM, camada de cache distribuído em Redis e filas assíncronas para desacoplamento de eventos.
 
@@ -218,7 +218,7 @@ Os requisitos funcionais estão organizados em **6 módulos temáticos**, reflet
 | RF018 - Multi-meios de pagamento | Prioridade: Alta |
 | :--- | :--- |
 | **Especificação da Regra de Negócio:** | Oferecer pagamento seguro via PIX (com geração de QR Code dinâmico e código Copia e Cola com expiração de 15 minutos), Cartão de Crédito (com parcelamento em até 12x e aplicação de regras de juros) e Boleto Bancário. O sistema deve aplicar automaticamente desconto percentual configurável para pagamentos à vista via PIX ou dinheiro ([RN016](#rn016---descontos-por-modalidade-de-pagamento-à-vista)). |
-| **Detalhes da implementação prevista:** | Checkout transparente com integração direta via SDK/API do gateway parceiro (Mercado Pago / Asaas / Pagar.me / PagBank). Webhook para captura assíncrona de notificações de confirmação de pagamento. |
+| **Detalhes da implementação prevista:** | Checkout transparente com integração direta via SDK/API do gateway parceiro (Mercado Pago / AOn-Premise / Pagar.me / PagBank). Webhook para captura assíncrona de notificações de confirmação de pagamento. |
 
 #### RF019 - Integração com gateway de pagamento seguro
 | RF019 - Gateway de Pagamento e Antifraude | Prioridade: Baixa |
@@ -536,7 +536,7 @@ As Regras de Negócio (**RN001 a RN018**) definem as políticas operacionais, va
   - *Varejo (B2C):* Clientes cadastrados com CPF pagam os valores padrão de varejo com opções flexíveis de parcelamento.
   - *Atacado (B2B):* Clientes PJ (CNPJ de construtoras, empreiteiras, engenheiros cadastrados) com inscrição estadual ativa têm acesso a tabela com margens diferenciadas mediante volume mínimo de compra.
 - **Validação / Condição:** Alternância automática de preços nas vitrines e no carrinho mediante autenticação do usuário B2B.
-- **Benefício de Negócio:** Permite atender tanto o consumidor residencial que faz pequenas reformas quanto grandes construtoras no mesmo canal SaaS.
+- **Benefício de Negócio:** Permite atender tanto o consumidor residencial que faz pequenas reformas quanto grandes construtoras no mesmo canal On-Premise.
 
 #### RN018 - Campanhas promocionais sazonais e segmentadas
 - **Identificador:** `RN018`

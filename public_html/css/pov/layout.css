@@ -150,11 +150,13 @@ header.pos-header {
     display: flex;
     width: 100%;
     height: 100%;
-    gap: 1.5rem;
+    gap: 1.25rem;
+    position: relative;
 }
 
 .catalog-panel {
-    flex: 2;
+    flex: 2.2;
+    min-width: 0;
     display: flex;
     flex-direction: column;
     gap: 1rem;
@@ -162,14 +164,54 @@ header.pos-header {
     overflow: hidden;
 }
 
-.cart-panel {
-    flex: 1;
+.product-detail-panel {
+    flex: 1.1;
+    min-width: 290px;
+    max-width: 360px;
     display: flex;
     flex-direction: column;
     background-color: var(--bg-secondary);
-    border-left: 1px solid var(--border);
-    height: 100%;
-    border-radius: var(--radius-lg);
     border: 1px solid rgba(255, 255, 255, 0.05);
+    border-radius: var(--radius-lg);
+    height: 100%;
+    overflow: hidden;
+    transition: var(--transition);
+}
+
+.cart-panel {
+    flex: 1.2;
+    min-width: 300px;
+    max-width: 380px;
+    display: flex;
+    flex-direction: column;
+    background-color: var(--bg-secondary);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    border-radius: var(--radius-lg);
+    height: 100%;
     overflow: hidden;
 }
+
+/* Responsividade do Workspace */
+@media (max-width: 1200px) {
+    .product-detail-panel {
+        min-width: 260px;
+        max-width: 300px;
+    }
+}
+
+@media (max-width: 992px) {
+    .pos-workspace {
+        flex-direction: column;
+        overflow-y: auto;
+    }
+    .catalog-panel,
+    .product-detail-panel,
+    .cart-panel {
+        flex: none;
+        max-width: 100%;
+        width: 100%;
+        height: auto;
+        min-height: 380px;
+    }
+}
+

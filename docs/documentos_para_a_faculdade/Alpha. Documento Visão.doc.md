@@ -1,6 +1,6 @@
 
 
-# ***Alpha Engine: Plataforma E-commerce SaaS & Ponto de Venda para Materiais de Construção***
+# ***Alpha Engine: Plataforma E-commerce On-Premise & Ponto de Venda para Materiais de Construção***
 
 ***Documento de Visão***
 
@@ -51,7 +51,7 @@ Diante desse panorama, a ausência de um canal de vendas digital gera uma série
 
 3.1.1.2 **Complexidade na Gestão de Catálogo e Estoque:** Materiais de construção possuem alta diversidade de SKUs (unidades de manutenção de estoque), variações de peso, volume e restrições de entrega logística. A falta de uma plataforma integrada dificulta a exibição em tempo real da disponibilidade dos produtos.
 
-Portanto, a necessidade do negócio centraliza-se na expansão de sua presença de mercado e na otimização de suas operações por meio de uma plataforma de comércio eletrônico. A opção pelo modelo Software as a Service (SaaS) justifica-se pela urgência em adotar uma solução robusta, escalável e de rápida implementação, reduzindo a necessidade de investimentos elevados em infraestrutura de TI local e permitindo que a empresa foque em sua atividade-fim: a comercialização e a logística de materiais de construção.
+Portanto, a necessidade do negócio centraliza-se na expansão de sua presença de mercado e na otimização de suas operações por meio de uma plataforma de comércio eletrônico. A opção pelo modelo Software as a Service (On-Premise) justifica-se pela urgência em adotar uma solução robusta, escalável e de rápida implementação, reduzindo a necessidade de investimentos elevados em infraestrutura de TI local e permitindo que a empresa foque em sua atividade-fim: a comercialização e a logística de materiais de construção.
 
 3.1.2. **Peculiaridades Tributárias:**  
 3.1.2.1. **Cálculo Automático de ICMS:** Necessidade de processamento do ICMS-ST (Substituição Tributária) e do Diferencial de Alíquota (DIFAL) nas operações interestaduais, dinâmicas que variam conforme o estado de destino;  
@@ -100,7 +100,7 @@ A plataforma **Alpha Engine** adota uma arquitetura desacoplada, modular e orien
 * **Linguagem:** PHP 8.2+ com tipagem estrita (`declare(strict_types=1);`), *match expressions*, *readonly properties*, atributos nativos e tratamento avançado de exceções.
 * **Microframework:** Slim Framework 4 (leve, veloz e focado em orquestração de rotas e middlewares).
 * **Banco de Dados Relacional:** MySQL 8.0+ / MariaDB 10.5+ (motor InnoDB com suporte a transações ACID, chaves estrangeiras com integridade referencial rigorosa, índices compostos e busca Full-Text nativa via `MATCH() AGAINST()`).
-* **Multi-Tenancy e Isolamento:** Isolamento lógico rígido por inquilino (`store_id`), permitindo escalabilidade SaaS sobre infraestrutura compartilhada sem vazamento cruzado de dados.
+* **Multi-Tenancy e Isolamento:** Isolamento lógico rígido por inquilino (`store_id`), permitindo escalabilidade On-Premise sobre infraestrutura compartilhada sem vazamento cruzado de dados.
 * **Camada de Cache & Mensageria:**
   * *Redis:* Armazenamento em memória para sessões autenticadas, dados de catálogo voláteis e controle de taxa (*Rate Limiting*).
   * *Fallback File/Memory Cache:* Mecanismo inteligente de contingência para execução fluida em hospedagens sem servidor Redis nativo (ex.: Hostinger e hospedagens compartilhadas).
@@ -187,7 +187,7 @@ Os itens deste cronograma estão dispostos em ordem cronológica, ou seja, o pri
 | #09 | Autofill CEP on Cart Page | 20/06/2026 10:09:07 |
 | #10 | Plan: Populate permissions and implement login logging | 20/06/2026 10:14:31 |
 | #11 | Adição de Fabricante e Logotipo nos Produtos | 21/06/2026 09:25:09 |
-| #12 | Variações de Produto no Padrão SaaS (Pai e Filho) | 21/06/2026 10:05:11 |
+| #12 | Variações de Produto no Padrão On-Premise (Pai e Filho) | 21/06/2026 10:05:11 |
 | #13 | Adicionar Edição de Imagem para Variações de Produto | 22/06/2026 12:55:11 |
 | #14 | Refatoração do Carrinho de Compras para Tratar Variações de Produtos | 22/06/2026 13:34:44 |
 | #15 | Exibição de Intervalos de Preços ("A partir de") para Variações | 22/06/2026 14:34:12 |
@@ -237,7 +237,7 @@ Os itens deste cronograma estão dispostos em ordem cronológica, ou seja, o pri
 | #61 | Atalhos Dinâmicos no Dashboard Condicionados ao Papel (`UserGroup`) | 30/07/2026 11:33:52 |
 | #62 | Internacionalização de Papéis de Usuário (User Group Descriptions) | 30/07/2026 15:49:13 |
 | #63 | Aperfeiçoamento do mecanismo de busca por produtos: Busca Full-Text de Produtos (MySQL MATCH/AGAINST) | 02/08/2026 09:26:14 |
-| #64 | SaaS Tenant Provisioning & Setup Wizard | 02/08/2026 10:50:54 |
+| #64 | On-Premise Tenant Provisioning & Setup Wizard | 02/08/2026 10:50:54 |
 | #65 | Configuração Dinâmica do Prefixo de Banco de Dados e Mascaramento do Dashboard | 02/08/2026 15:36:26 |
 | #66 | Eliminação de Códigos SQL Soltos nas Actions do Painel Administrativo | 05/08/2026 19:06:00 |
 | #67 | Bateria de Testes Automatizados de Validação de Software (PHPUnit) | 09/08/2026 12:01:13 |
@@ -266,10 +266,10 @@ Apresentar um orcamento reduzido considerando:
 * Custos fixos   
   * Hardware:
     Cenário 1:
-      Como é um sistema SaaS, o cliente só precisará dos hardwares de PDV (Ponto de Venda), ou seja, os hardwares necessários são: Computador ou Tablet com navegador instalado e conexão com a internet, leitor de código de barras e impressora de nota fiscal.
+      Como é um sistema On-Premise, o cliente só precisará dos hardwares de PDV (Ponto de Venda), ou seja, os hardwares necessários são: Computador ou Tablet com navegador instalado e conexão com a internet, leitor de código de barras e impressora de nota fiscal.
     Cenário 2: 
       Caso o cliente deseje que o software funcione em modo local e/ou offline, o cliente precisará de um servidor local, o que implicaria em um custo adicional de hardware, tais como roteador, switches, cabos, computadores, etc. De forma similar ao cenário 1, precisará tambem de leitor de código de barras e impressora de nota fiscal.
-    Resumindo: O custo dependerá da escolha do cliente em relação ao modelo de implantação (SaaS vs Local) e da quantidade de computadores/tablets que serão utilizados para o PDV.
+    Resumindo: O custo dependerá da escolha do cliente em relação ao modelo de implantação (On-Premise vs Local) e da quantidade de computadores/tablets que serão utilizados para o PDV.
     A estimativa de mínima de custo para um ponto de venda seria em torno de R$ 2.500,00, considerando: Computador ou Tablet, Leitor de código de barras e Impressora de nota fiscal.    
 
   * Licensas de software  
@@ -279,11 +279,11 @@ Apresentar um orcamento reduzido considerando:
   * Treinamentos  
       O treinamento será realizado de forma presencial ou remota, dependendo da preferência do cliente.
 * Custos variaveis (dependem do esforco de desenvolvimento e aumentam conforme o tempo do projeto)  
-  * Hospedagem: Para o modelo SaaS, o cliente precisará contratar uma hospedagem para o software, que pode ser em um servidor local ou em um servidor na nuvem. O custo da hospedagem dependerá do plano escolhido, alem de 20% sobre cada venda realizada a título de consultoria. Há também o custo de dominio que é cobrada anualmente pelo Registro.br. Se o cliente optar pelo modelo local, não terá esse custo.   
-  * Contrato de manutenção e assistência técnica: O custo de manutenção e assistência técnica dependerá do modelo de implantação (SaaS vs Local) e da quantidade de computadores/tablets que serão utilizados para o PDV. Como o software é livre, a manutenção e assistência técnica serão cobradas à parte, conforme o serviço contratado e de livre escolha do cliente.
-  * Custo de instalacoes: O custo de instalacoes dependerá do modelo de implantação (SaaS vs Local) e da quantidade de computadores/tablets que serão utilizados para o PDV.  
-  * Consumo de energia e materiais: O custo de consumo de energia e materiais dependerá do modelo de implantação (SaaS vs Local) e da quantidade de computadores/tablets que serão utilizados para o PDV.  
-  * Operacao da rede de computadores: O custo de operacao da rede de computadores dependerá do modelo de implantação (SaaS vs Local) e da quantidade de computadores/tablets que serão utilizados para o PDV.  
+  * Hospedagem: Para o modelo On-Premise, o cliente precisará contratar uma hospedagem para o software, que pode ser em um servidor local ou em um servidor na nuvem. O custo da hospedagem dependerá do plano escolhido, alem de 20% sobre cada venda realizada a título de consultoria. Há também o custo de dominio que é cobrada anualmente pelo Registro.br. Se o cliente optar pelo modelo local, não terá esse custo.   
+  * Contrato de manutenção e assistência técnica: O custo de manutenção e assistência técnica dependerá do modelo de implantação (On-Premise vs Local) e da quantidade de computadores/tablets que serão utilizados para o PDV. Como o software é livre, a manutenção e assistência técnica serão cobradas à parte, conforme o serviço contratado e de livre escolha do cliente.
+  * Custo de instalacoes: O custo de instalacoes dependerá do modelo de implantação (On-Premise vs Local) e da quantidade de computadores/tablets que serão utilizados para o PDV.  
+  * Consumo de energia e materiais: O custo de consumo de energia e materiais dependerá do modelo de implantação (On-Premise vs Local) e da quantidade de computadores/tablets que serão utilizados para o PDV.  
+  * Operacao da rede de computadores: O custo de operacao da rede de computadores dependerá do modelo de implantação (On-Premise vs Local) e da quantidade de computadores/tablets que serão utilizados para o PDV.  
 * Orçamento para riscos (margem de contingência)
 
 10. **Plano de Negócios**

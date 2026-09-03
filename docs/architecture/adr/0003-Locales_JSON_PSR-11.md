@@ -57,7 +57,7 @@ Adotaremos uma nova arquitetura unificada para o gerenciamento de internacionali
 ## Consequências
 
 ### Positivas (Prós)
-* Padronização: Formato JSON único facilita a integração com plataformas modernas de tradução (SaaS).
+* Padronização: Formato JSON único facilita a integração com plataformas modernas de tradução (On-Premise).
 * Interoperabilidade: O uso do container PSR-11 garante a injeção limpa do serviço de tradução nos controladores e middlewares.
 * Organização: A pasta `/Locales` centraliza o escopo de tradução, limpando a estrutura dos módulos legados.
 * Performance: Arquivos JSON nativos possuem解析 (parsing) rápido e o serviço cacheia namespaces carregados.
