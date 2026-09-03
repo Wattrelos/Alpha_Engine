@@ -10,8 +10,7 @@
          displayDetailsOnPhpunitDeprecations="true"
          failOnPhpunitDeprecation="false"
          failOnRisky="false"
-         failOnWarning="false"
-         warnWhenPhpIsNotConfiguredForDevelopment="false">
+         failOnWarning="false">
     <testsuites>
         <testsuite name="default">
             <directory>../tests/Validation</directory>

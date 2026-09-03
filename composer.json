@@ -1,10 +1,15 @@
 {
+    "config": {
+        "platform": {
+            "php": "8.2.0"
+        }
+    },
     "require-dev": {
         "behat/behat": "^3.32",
         "behat/mink": "^1.13",
         "friends-of-behat/mink-extension": "^2.7",
         "behat/mink-browserkit-driver": "^2.3",
-        "symfony/http-client": "^8.1"
+        "symfony/http-client": "^7.2"
     },
     "scripts": {
         "test:behat": "./vendor/bin/behat --no-snippets",
