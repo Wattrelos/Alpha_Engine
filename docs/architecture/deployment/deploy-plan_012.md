@@ -1,4 +1,4 @@
-# DP-12: Plano de Implementação: Variações de Produto no Padrão SaaS (Pai e Filho)
+# DP-12: Plano de Implementação: Variações de Produto no Padrão On-Premise (Pai e Filho)
 
 - **Tipo:** Deployment plan
 - **Status:** Closed
@@ -10,7 +10,7 @@
 
 ## Descrição
 
-# Plano de Implementação: Variações de Produto no Padrão SaaS (Pai e Filho)
+# Plano de Implementação: Variações de Produto no Padrão On-Premise (Pai e Filho)
 
 Este documento planeja a implementação e viabilidade de variações de produto no sistema. Mapearemos os relacionamentos pai e filho diretamente na tabela `product` usando a coluna existente `master_id` para garantir a velocidade e escalabilidade de um e-commerce moderno.
 
@@ -93,7 +93,7 @@ $variants = $this->productRepository->getProductVariants($productId);
 4. Entrar na página de detalhes do produto no frontend, selecionar a variação "Cor: Azul" e verificar se o preço e estoque exibidos correspondem aos valores específicos da variação.
 5. Adicionar a variação ao carrinho e validar no checkout se o produto correto (filho) foi adicionado e as informações fiscais e tributárias permanecem precisas.
 
-# Tarefas: Variações de Produtos no Padrão SaaS (Pai e Filho)
+# Tarefas: Variações de Produtos no Padrão On-Premise (Pai e Filho)
 
 - [x] Ajustar o `ProductMapper.php` para filtrar produtos pai (`master_id = 0`) no catálogo público e criar o método `getProductVariants()`.
 - [x] Ajustar o `ListProductsAction.php` do painel administrativo para filtrar apenas produtos pai (`master_id = 0`).
@@ -103,9 +103,9 @@ $variants = $this->productRepository->getProductVariants($productId);
 - [x] Modificar o `ShowProductAction.php` do frontend para buscar e formatar as variações do produto.
 - [x] Modificar a visualização do produto no frontend (`show.html.twig`) para renderizar os seletores de variações e atualizar a tela via JavaScript.
 
-# Walkthrough: Variações de Produto no Padrão SaaS (Pai e Filho)
+# Walkthrough: Variações de Produto no Padrão On-Premise (Pai e Filho)
 
-Implementamos com sucesso a arquitetura e interface de gerenciamento de **Variações de Produto** seguindo o padrão SaaS. Isso permite que um produto principal ("Pai") possua diversos SKUs variantes ("Filhos") cadastrados na mesma tabela física de produtos, compartilhando atributos em lote e possuindo preços, estoques e SKUs próprios.
+Implementamos com sucesso a arquitetura e interface de gerenciamento de **Variações de Produto** seguindo o padrão On-Premise. Isso permite que um produto principal ("Pai") possua diversos SKUs variantes ("Filhos") cadastrados na mesma tabela física de produtos, compartilhando atributos em lote e possuindo preços, estoques e SKUs próprios.
 
 ## Mudanças Realizadas
 
@@ -139,7 +139,7 @@ Implementamos com sucesso a arquitetura e interface de gerenciamento de **Varia�
 
 1. **Gestão Administrativa (Admin):**
    - Acesse o painel de produtos, clique em **Editar** em um produto.
-   - Acesse a nova aba **Variações (Padrão SaaS)**.
+   - Acesse a nova aba **Variações (Padrão On-Premise)**.
    - Adicione variações (ex: "Voltagem: 110v", "Voltagem: 220v").
    - Atribua estoques e preços diferentes, preencha o SKU e clique em **Salvar Alterações**.
    - Os registros filhos serão salvos no banco de dados com `master_id` apontando para o produto editado.

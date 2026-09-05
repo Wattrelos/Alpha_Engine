@@ -12,7 +12,7 @@
 
 # Plano de Implementação - Reforço e Validação de Segurança & Auditoria (Alpha Engine)
 
-Este plano descreve o roteiro de execução para validar, integrar e aprimorar os requisitos descritos em [`security-and-audit-architecture.md`](file:///var/www/html/agsonhos/backend/docs/architecture/security-and-audit-architecture.md) no SaaS **Alpha Engine**.
+Este plano descreve o roteiro de execução para validar, integrar e aprimorar os requisitos descritos em [`security-and-audit-architecture.md`](file:///var/www/html/agsonhos/backend/docs/architecture/security-and-audit-architecture.md) no On-Premise **Alpha Engine**.
 
 ---
 
@@ -99,7 +99,7 @@ vendor/bin/phpunit tests/Validation/MimeTypeUploadTest.php
 
 # Walkthrough — Implementação de Segurança, Auditoria & LGPD (Alpha Engine)
 
-Concluímos a integração, adaptação de documentos e validação das especificações de segurança e auditoria no **Alpha Engine SaaS**.
+Concluímos a integração, adaptação de documentos e validação das especificações de segurança e auditoria no **Alpha Engine On-Premise**.
 
 ---
 

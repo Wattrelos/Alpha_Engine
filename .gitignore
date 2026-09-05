@@ -65,19 +65,6 @@ docs/joplin/*
 .DS_Store
 Thumbs.db
 
-# Legado OpenCart
-system/storage/cache/*
-system/storage/download/*
-system/storage/logs/*
-system/storage/modification/*
-system/storage/session/*
-system/storage/upload/*
-system/storage/vendor/*
-image/cache/*
-system/
-helper/ 
-cache/
-
 # Imagens Dinâmicas / Cache da Loja
 /public_html/image/product/*
 /public_html/image/cache/*

@@ -12,12 +12,12 @@
 
 # Plano de Implementação - Isolamento Rígido de Tenants (store_id)
 
-Este plano descreve o reforço da camada de **Isolamento Multi-tenant (`store_id`)** na **Alpha Engine**, garantindo que todas as consultas a produtos, pedidos, clientes, categorias e configurações sejam filtradas de forma estrita pela loja ativa (`store_id`), prevenindo totalmente o vazamento de dados entre lojas em um ambiente SaaS.
+Este plano descreve o reforço da camada de **Isolamento Multi-tenant (`store_id`)** na **Alpha Engine**, garantindo que todas as consultas a produtos, pedidos, clientes, categorias e configurações sejam filtradas de forma estrita pela loja ativa (`store_id`), prevenindo totalmente o vazamento de dados entre lojas em um ambiente On-Premise.
 
 ## User Review Required
 
 > [!IMPORTANT]
-> Em arquiteturas SaaS Multi-tenant, o vazamento de dados entre inquilinos (*cross-tenant data leakage*) ocorre se qualquer consulta SQL resgatar entidades apenas pelo ID primário (ex: `WHERE id = :id`) sem verificar a posse da loja (`AND store_id = :store_id`).
+> Em arquiteturas On-Premise Multi-tenant, o vazamento de dados entre inquilinos (*cross-tenant data leakage*) ocorre se qualquer consulta SQL resgatar entidades apenas pelo ID primário (ex: `WHERE id = :id`) sem verificar a posse da loja (`AND store_id = :store_id`).
 
 > [!NOTE]
 > **Validação em Cascata de `store_id`**:

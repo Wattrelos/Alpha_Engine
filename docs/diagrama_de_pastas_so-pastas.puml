@@ -83,35 +83,13 @@
 │   ├── BusinessKnowledgeBase/                  # 📂 Base de Conhecimento Corporativa
 │   │   └── enterprise_context.jsonc            # 📄 Contexto corporativo e regras de negócio
 │   ├── diagramsForStackholders/                # 📊 Diagramas visuais para Stakeholders (Comercial)
-│   ├── docs/                                   # 📚 Arquivos de Documentação Arquitetural e Progresso
-│   │   ├── architecture/                       # 🏗️ Arquitetura do software
-│   │   │   ├── adr/                            # 📝 Architecture Decision Records (ADRs)
-│   │   │   ├── agents/                         # 📍 Glossário/Tokens dos Agentes de IA
-│   │   │   ├── components/                     # 🧩 Componentes arquiteturais
-│   │   │   └── deployment/                     # 🚀 Deployment
-│   │   ├── BPMN/                               # 🔄 BPMN
-│   │   ├── business/                           # 🧰 Regras de Negócio e Processos
-│   │   │   ├── glossary/                       # 📖 Glossário de termos técnicos (README)
-│   │   │   ├── processes/                      # 📋 Processos de negócio (README   )
-│   │   │   └── use-cases/                      # 🧩 Requerimentos e Casos de Uso (README)
-│   │   ├── database/                           # 🗄️ Banco de dados e diagramas EER
-│   │   ├── diagrams/                           # 📊 Diagramas
-│   │   ├── DoD/                                # 🎯 Definition of Done (DoD)
-│   │   ├── instalation/                        # 🔧 Instalação
-│   │   ├── kb/                                 # 🧠 Base de conhecimento de políticas da loja
-│   │   ├── requirements/                       # 🎯 Especificações de Requisitos
-│   │   │   ├── business_rules/                 # 📋 Regras de negócio (.yaml, glossário)
-│   │   │   ├── functional/                     # 📋 Requisitos funcionais (.yaml)
-│   │   │   └── non_functional/                 # 📋 Requisitos não funcionais (.yaml)
-│   │   ├── specs/                              # 🗄️Especificações
-│   │   ├── tutorials/                          # 📖 Tutoriais
-│   │   └── workflows/                          # 🔄 Workflows de Processos
-│   │       ├── activity_diagrams/              # 🔄 Diagramas de atividades (README)
-│   │       └── sequence_diagrams/              # 🔄 Diagramas de sequência (.puml)
 │   ├── Locales/                                # 🌐 Arquivos de internacionalização
-│   │   ├── en-gb/                              # 🇬🇧 Inglês britânico (idioma secundário)
+│   │   ├── en-gb/                              # 🇬🇧 Inglês britânico
+│   │   ├── es-es/                              # 🇪🇸 Espanhol da espanha
 │   │   ├── fr-fr/                              # 🇫🇷 Francês da frança
-│   │   └── pt-br/                              # 🇧🇷 Pt-br é o idioma padrão da aplicação
+│   │   ├── no-no/                              # 🇳🇴 Norueguês da noruega
+│   │   ├── pt-br/                              # 🇧🇷 Pt-br é o idioma padrão da aplicação
+│   │   └── se-sw/                              # 🇸🇪 Sueco da suécia
 │   ├── LogsPersonalizados/                     # 🗄️ Arquivos de logs personalizados
 │   ├── resources/                              # 🎨 Recursos Estáticos Não-Compilados e Views
 │   │   └── views/                              # 🎨 Templates Twig
@@ -176,7 +154,6 @@
 │   │                   ├── main/                 # 🖥️ Main
 │   │                   └── product/              # 🖥️ Produtos
 │   └── scripts/                                # 📂 Scripts
-│
 ├── public_html/                                # 🌐 Webroot (Document Root exposto e servido para a Internet)
 │   ├── cache/                                  # 🗂️ Cache
 │   ├── css/                                    # 🎨 Folhas de estilo (Estilos centralizados)    
@@ -185,7 +162,36 @@
 │   └── js/                                     # ⚡ Scripts Vanilla JS e integrações de formulário (AJAX)
 │   └── LPDHED2dC7Gjrg2b/                       # 🛡️ Root público do painel administrativa (ofuscado p/ segurança)
 │
-│   # Pastas de testes que não irão para produção   
+│   # =====================================> Pastas que não irão para produção (testes, docs e specs)  <=========================
+│
+├── docs/                                       # 📚 Arquivos de Documentação Arquitetural e Progresso
+│   ├── architecture/                           # 🏗️ Arquitetura do software
+│   │   ├── adr/                                # 📝 Architecture Decision Records (ADRs)
+│   │   ├── agents/                             # 📍 Glossário/Tokens dos Agentes de IA
+│   │   ├── components/                         # 🧩 Componentes arquiteturais
+│   │   ├── deployment/                         # 🚀 Deployment
+│   │   └── reviews                             # 🔍 Walkthroughs técnicos e revisões de design
+│   ├── BPMN/                                   # 🔄 BPMN
+│   ├── business/                               # 🧰 Regras de Negócio e Processos
+│   │   ├── glossary/                           # 📖 Glossário de termos técnicos (README)
+│   │   ├── processes/                          # 📋 Processos de negócio (README   )
+│   │   └── use-cases/                          # 🧩 Requerimentos e Casos de Uso (README)
+│   ├── database/                               # 🗄️ Banco de dados e diagramas EER
+│   ├── diagrams/                               # 📊 Diagramas
+│   ├── DoD/                                    # 🎯 Definition of Done (DoD)
+│   ├── instalation/                            # 🔧 Instalação
+│   ├── kb/                                     # 🧠 Base de conhecimento de políticas da loja
+│   ├── requirements/                           # 🎯 Especificações de Requisitos
+│   │   ├── business_rules/                     # 📋 Regras de negócio (.yaml, glossário)
+│   │   ├── functional/                         # 📋 Requisitos funcionais (.yaml)
+│   │   └── non_functional/                     # 📋 Requisitos não funcionais (.yaml)
+│   ├── specs/                                  # 🗄️Especificações
+│   ├── tutorials/                              # 📖 Tutoriais
+│   └── workflows/                              # 🔄 Workflows de Processos
+│       ├── activity_diagrams/                  # 🔄 Diagramas de atividades (README)
+│       └── sequence_diagrams/                  # 🔄 Diagramas de sequência (.puml)
+│
+├── e2e/                                        # 🧪 Testes de ponta a ponta
 ├── features/                                   # 📂 Funcionalidades testes de software
 │   ├── api/                                    # 🖥️ Testes de API
 │   ├── auth/                                   # 👤 Testes de Autenticação

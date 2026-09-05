@@ -12,7 +12,7 @@
 
 # Plano de Estruturação e Preenchimento do Documento de Atividades do Negócio
 
-Consolidação formal de todas as rotinas operacionais, comerciais e de infraestrutura do sistema **Alpha Engine (E-commerce SaaS de Materiais de Construção)** no arquivo [`Alpha. Atividades do Negócio.doc.md`](file:///var/www/html/agsonhos/docs/documentos_para_a_faculdade/Alpha.%20Atividades%20do%20Neg%C3%B3cio.doc.md).
+Consolidação formal de todas as rotinas operacionais, comerciais e de infraestrutura do sistema **Alpha Engine (E-commerce On-Premise de Materiais de Construção)** no arquivo [`Alpha. Atividades do Negócio.doc.md`](file:///var/www/html/agsonhos/docs/documentos_para_a_faculdade/Alpha.%20Atividades%20do%20Neg%C3%B3cio.doc.md).
 
 ---
 
@@ -79,7 +79,7 @@ Detalhamento dos mecanismos técnicos que sustentam a resiliência da aplicaçã
 - Garantir a clareza da redação acadêmica e a precisão da nomenclatura técnica (Slim 4, Redis, RabbitMQ, MySQL, RBAC, CDC, LGPD).
 
 
-Ambos os documentos acadêmicos do projeto **Alpha Engine (E-commerce SaaS de Materiais de Construção)** foram totalmente estruturados, preenchidos e validados:
+Ambos os documentos acadêmicos do projeto **Alpha Engine (E-commerce On-Premise de Materiais de Construção)** foram totalmente estruturados, preenchidos e validados:
 
 1. [`Alpha. Requisitos do Sistema.doc.md`](file:///var/www/html/agsonhos/docs/documentos_para_a_faculdade/Alpha.%20Requisitos%20do%20Sistema.doc.md)
 2. [`Alpha. Atividades do Negócio.doc.md`](file:///var/www/html/agsonhos/docs/documentos_para_a_faculdade/Alpha.%20Atividades%20do%20Neg%C3%B3cio.doc.md)
@@ -88,7 +88,7 @@ Ambos os documentos acadêmicos do projeto **Alpha Engine (E-commerce SaaS de Ma
 
 ## 1. Documento de Requisitos do Sistema (`Alpha. Requisitos do Sistema.doc.md`)
 
-- **Objetivo & Metodologia:** Contextualização do modelo SaaS para varejo de construção no Brasil, técnicas de elucidação, conformidade legal (CDC, LGPD e SEFAZ).
+- **Objetivo & Metodologia:** Contextualização do modelo On-Premise para varejo de construção no Brasil, técnicas de elucidação, conformidade legal (CDC, LGPD e SEFAZ).
 - **25 Requisitos Funcionais (RF001 a RF025):** Tabelas individuais com regras de negócio e especificações de implementação divididas em 6 módulos funcionais.
 - **8 Requisitos Não Funcionais (RNF001 a RNF008):** Tabelas com critérios de aceitação mensuráveis e estratégias técnicas (LCP < 2.5s, 500 RPS, SLA 99.9%, TLS 1.3, Apache `.htaccess`).
 - **18 Regras de Negócio (RN001 a RN018):** Detalhamento de venda fracionada por m²/cx/kg, cubagem, restrições CDC com exceção BOPIS, estoques realtime e precificação B2B/B2C.

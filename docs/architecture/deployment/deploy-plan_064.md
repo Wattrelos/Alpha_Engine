@@ -1,4 +1,4 @@
-# DP-64: SaaS Tenant Provisioning & Setup Wizard
+# DP-64: On-Premise Tenant Provisioning & Setup Wizard
 
 - **Tipo:** Deployment plan
 - **Status:** Closed
@@ -10,7 +10,7 @@
 
 ## Descrição
 
-# Plano de Implementação - SaaS Tenant Provisioning & Setup Wizard
+# Plano de Implementação - On-Premise Tenant Provisioning & Setup Wizard
 
 Desenvolvimento do pipeline de instalação inicial e onboarding de tenants para a **Alpha Engine**, permitindo versionamento seguro no GitHub (`.env.example` zerado) e provisionamento automatizado de novos ambientes/bancos de dados.
 
@@ -113,7 +113,7 @@ Criação da classe utilitária `Alpha\Support\EnvironmentManager` para:
 ### Manual Verification
 - Testar o assistente de instalação no navegador simulando um ambiente zerado (`APP_INSTALLED=false`), navegando pelas etapas, testando o banco e confirmando a transição de estado e acesso ao painel admin.
 
-# Tarefas: SaaS Tenant Provisioning & Setup Wizard
+# Tarefas: On-Premise Tenant Provisioning & Setup Wizard
 
 - [x] Atualizar `.env.example` com variáveis em branco e `APP_INSTALLED=false` <!-- id: 0 -->
 - [x] Criar `Alpha\Support\EnvironmentManager.php` para leitura e escrita atômica do `.env` <!-- id: 1 -->
@@ -127,9 +127,9 @@ Criação da classe utilitária `Alpha\Support\EnvironmentManager` para:
 - [x] Atualizar a documentação técnica `docs/instalation/instalation.md` <!-- id: 9 -->
 - [x] Criar e executar script de teste `tests/test_tenant_provisioning.php` para validação automatizada <!-- id: 10 -->
 
-# Walkthrough - SaaS Tenant Provisioning & Setup Wizard
+# Walkthrough - On-Premise Tenant Provisioning & Setup Wizard
 
-Implementação completa da funcionalidade de **Assistente de Instalação (Setup Wizard)** e **Onboarding de Tenants (SaaS)** na **Alpha Engine**. O sistema permite versionamento seguro no GitHub (via `.env.example` zerado) e realiza o provisionamento completo de novos bancos de dados, criação do Super Admin com hash `PASSWORD_ARGON2ID` e atualização atômica da flag `APP_INSTALLED=true` no `.env`.
+Implementação completa da funcionalidade de **Assistente de Instalação (Setup Wizard)** e **Onboarding de Tenants (On-Premise)** na **Alpha Engine**. O sistema permite versionamento seguro no GitHub (via `.env.example` zerado) e realiza o provisionamento completo de novos bancos de dados, criação do Super Admin com hash `PASSWORD_ARGON2ID` e atualização atômica da flag `APP_INSTALLED=true` no `.env`.
 
 ---
 

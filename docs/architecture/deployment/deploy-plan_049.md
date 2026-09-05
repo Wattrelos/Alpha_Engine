@@ -62,10 +62,10 @@ Recomendação: Condicionar estas opções à variável de ambiente APP_ENV:
 php
 $displayErrors = ($_ENV['APP_ENV'] ?? 'production') === 'development';
 $errorMiddleware = $app->addErrorMiddleware($displayErrors, true, true);
-🏢 Prioridade Arquitetural SaaS & Multi-Tenant
+🏢 Prioridade Arquitetural On-Premise & Multi-Tenant
 6. Isolamento Rígido de Tenants (store_id)
 Cenário Atual: A aplicação suporta múltiplas lojas/tenants.
-Recomendação: Assegurar que todas as chamadas nos Data Mappers e Repositórios incluam a cláusula WHERE store_id = :store_id (ou utilizem um escopo global do repositório) para impedir vazamento ou mutação cruzada de dados entre lojas parceiras do SaaS.
+Recomendação: Assegurar que todas as chamadas nos Data Mappers e Repositórios incluam a cláusula WHERE store_id = :store_id (ou utilizem um escopo global do repositório) para impedir vazamento ou mutação cruzada de dados entre lojas parceiras do On-Premise.
 7. Proteção do Diretório de Uploads (public_html/image e storage/)
 Cenário Atual: Arquivos de imagem e uploads de devoluções são armazenados localmente.
 Recomendação:
@@ -90,7 +90,7 @@ AdminSessionMiddleware
 
 ## 📋 Visão Geral
 
-Este documento compila o conjunto de recomendações, especificações técnicas e boas práticas de segurança cibernética para o SaaS **Alpha Engine** (baseado em Slim 4, Twig, PHP 8+, Redis e MySQL). Seu objetivo é servir como guia de referência para futuras implementações, auditorias e refinamentos da arquitetura de segurança da aplicação.
+Este documento compila o conjunto de recomendações, especificações técnicas e boas práticas de segurança cibernética para o On-Premise **Alpha Engine** (baseado em Slim 4, Twig, PHP 8+, Redis e MySQL). Seu objetivo é servir como guia de referência para futuras implementações, auditorias e refinamentos da arquitetura de segurança da aplicação.
 
 ---
 
@@ -104,7 +104,7 @@ Este documento compila o conjunto de recomendações, especificações técnicas
 | **🟡 MÉDIA** | Disponibilidade / Brute-Force | Ausência de Rate Limiting por IP para login e APIs públicas | Alto | Médio |
 | **🟡 MÉDIA** | Divulgação de Dados | Exibição de rastros de erro e `debug = true` habilitado em produção | Médio | Baixo |
 | **🟢 BAIXA** | Gestão de Arquivos | Execução acidental de scripts PHP no diretório de uploads | Alto | Baixo |
-| **🟢 BAIXA** | SaaS Multi-tenant | Risco de acesso cross-tenant por falta de escopo `store_id` | Crítico | Baixo |
+| **🟢 BAIXA** | On-Premise Multi-tenant | Risco de acesso cross-tenant por falta de escopo `store_id` | Crítico | Baixo |
 
 ---
 
@@ -315,7 +315,7 @@ Manter `displayErrorDetails => true` ou `debug => true` em produção pode expor
 ### 6. Isolamento Multi-Tenant e Segregação de Uploads
 
 #### Contexto e Risco
-1. **Vazamento Cross-Tenant**: Em um sistema SaaS multi-loja, falhar no filtro de `store_id` pode expor dados de um cliente de uma loja para os administradores de outra.
+1. **Vazamento Cross-Tenant**: Em um sistema On-Premise multi-loja, falhar no filtro de `store_id` pode expor dados de um cliente de uma loja para os administradores de outra.
 2. **Execução de Código Distante (RCE) via Upload**: Uploads de arquivos (avatares, imagens de produtos, documentos) não devem permitir a execução de arquivos com extensão de script (`.php`, `.phtml`, `.phar`).
 
 #### Especificação Técnica

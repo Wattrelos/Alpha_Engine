@@ -12,7 +12,7 @@
 
 # Plano de Estruturação e Preenchimento do Documento de Requisitos Acadêmico
 
-Consolidação e formalização de todo o levantamento de engenharia de requisitos do projeto **Alpha Engine (E-commerce SaaS de Materiais de Construção)** no arquivo [`Alpha. Requisitos do Sistema.doc.md`](file:///var/www/html/agsonhos/docs/documentos_para_a_faculdade/Alpha.%20Requisitos%20do%20Sistema.doc.md), alinhando as especificações técnicas, regras de negócio e rastreabilidade com os padrões exigidos no ambiente universitário.
+Consolidação e formalização de todo o levantamento de engenharia de requisitos do projeto **Alpha Engine (E-commerce On-Premise de Materiais de Construção)** no arquivo [`Alpha. Requisitos do Sistema.doc.md`](file:///var/www/html/agsonhos/docs/documentos_para_a_faculdade/Alpha.%20Requisitos%20do%20Sistema.doc.md), alinhando as especificações técnicas, regras de negócio e rastreabilidade com os padrões exigidos no ambiente universitário.
 
 ---
 
