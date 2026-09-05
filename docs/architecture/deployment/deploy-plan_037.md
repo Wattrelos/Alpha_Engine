@@ -1,11 +1,11 @@
-# Issue #37: Plano de Implementação — Fase 2 (Consolidação de Estilos de Pedidos)
+# DP-37: Plano de Implementação — Fase 2 (Consolidação de Estilos de Pedidos)
 
 - **Tipo:** Deployment plan
-- **Status:** open
+- **Status:** Closed
 - **Autor:** [Wattrelos](https://github.com/Wattrelos)
 - **Criado em:** 2026-07-09 20:50:03
 - **Labels:** Nenhuma
-- **Responsáveis:** Nenhum
+- **Responsáveis:** Wattrelos
 - **URL no GitHub:** https://github.com/Wattrelos/Alpha_Engine/issues/37
 
 ## Descrição

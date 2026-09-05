@@ -1,11 +1,11 @@
-# Issue #76: Ajuste no Mecanismo de Implantação (Deploy & Setup Wizard)
+# DP-76: Ajuste no Mecanismo de Implantação (Deploy & Setup Wizard)
 
 - **Tipo:** Deployment plan
-- **Status:** open
+- **Status:** Closed
 - **Autor:** [Wattrelos](https://github.com/Wattrelos)
 - **Criado em:** 2026-08-13 14:41:46
 - **Labels:** Nenhuma
-- **Responsáveis:** Nenhum
+- **Responsáveis:** Wattrelos
 - **URL no GitHub:** https://github.com/Wattrelos/Alpha_Engine/issues/76
 
 ## Descrição

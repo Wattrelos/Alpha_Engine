@@ -1,11 +1,11 @@
-# Issue #101: Implementação de Detalhes do Produto no PDV
+# DP-101: Implementação de Detalhes do Produto no PDV
 
 - **Tipo:** Deployment plan
-- **Status:** open
+- **Status:** Closed
 - **Autor:** [Wattrelos](https://github.com/Wattrelos)
 - **Criado em:** 2026-09-03 17:14:50
 - **Labels:** Nenhuma
-- **Responsáveis:** Nenhum
+- **Responsáveis:** Wattrelos
 - **URL no GitHub:** https://github.com/Wattrelos/Alpha_Engine/issues/101
 
 ## Descrição

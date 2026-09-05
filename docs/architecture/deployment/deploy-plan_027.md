@@ -1,11 +1,11 @@
-# Issue #27: Plano de Implementação - Refatoração e Internacionalização do Módulo de Devoluções
+# DP-27: Plano de Implementação - Refatoração e Internacionalização do Módulo de Devoluções
 
 - **Tipo:** Deployment plan
-- **Status:** open
+- **Status:** Closed
 - **Autor:** [Wattrelos](https://github.com/Wattrelos)
 - **Criado em:** 2026-06-25 21:40:02
 - **Labels:** Nenhuma
-- **Responsáveis:** Nenhum
+- **Responsáveis:** Wattrelos
 - **URL no GitHub:** https://github.com/Wattrelos/Alpha_Engine/issues/27
 
 ## Descrição

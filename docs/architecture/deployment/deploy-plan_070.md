@@ -1,11 +1,11 @@
-# Issue #70: Novos Diagramas de Atividades (Activity Diagrams)
+# DP-70: Novos Diagramas de Atividades (Activity Diagrams)
 
 - **Tipo:** Deployment plan
-- **Status:** open
+- **Status:** Closed
 - **Autor:** [Wattrelos](https://github.com/Wattrelos)
 - **Criado em:** 2026-08-09 23:10:11
 - **Labels:** Nenhuma
-- **Responsáveis:** Nenhum
+- **Responsáveis:** Wattrelos
 - **URL no GitHub:** https://github.com/Wattrelos/Alpha_Engine/issues/70
 
 ## Descrição

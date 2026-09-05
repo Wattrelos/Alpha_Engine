@@ -1,11 +1,11 @@
-# Issue #34: Plano de Implementação - Controle de Concorrência Otimista (RMA)
+# DP-34: Plano de Implementação - Controle de Concorrência Otimista (RMA)
 
 - **Tipo:** Deployment plan
-- **Status:** open
+- **Status:** Closed
 - **Autor:** [Wattrelos](https://github.com/Wattrelos)
 - **Criado em:** 2026-06-28 19:38:42
 - **Labels:** Nenhuma
-- **Responsáveis:** Nenhum
+- **Responsáveis:** Wattrelos
 - **URL no GitHub:** https://github.com/Wattrelos/Alpha_Engine/issues/34
 
 ## Descrição

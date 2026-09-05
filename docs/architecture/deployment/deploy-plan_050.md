@@ -1,11 +1,11 @@
-# Issue #50: Proteção CSRF (Cross-Site Request Forgery)
+# DP-50: Proteção CSRF (Cross-Site Request Forgery)
 
 - **Tipo:** Deployment plan
-- **Status:** open
+- **Status:** Closed
 - **Autor:** [Wattrelos](https://github.com/Wattrelos)
 - **Criado em:** 2026-07-28 21:58:20
 - **Labels:** Nenhuma
-- **Responsáveis:** Nenhum
+- **Responsáveis:** Wattrelos
 - **URL no GitHub:** https://github.com/Wattrelos/Alpha_Engine/issues/50
 
 ## Descrição

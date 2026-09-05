@@ -1,11 +1,11 @@
-# Issue #42: Conversão de `returns-institutional.css` para SCSS e Melhorias no Compilador
+# DP-42: Conversão de `returns-institutional.css` para SCSS e Melhorias no Compilador
 
 - **Tipo:** Deployment plan
-- **Status:** open
+- **Status:** Closed
 - **Autor:** [Wattrelos](https://github.com/Wattrelos)
 - **Criado em:** 2026-07-10 12:22:31
 - **Labels:** Nenhuma
-- **Responsáveis:** Nenhum
+- **Responsáveis:** Wattrelos
 - **URL no GitHub:** https://github.com/Wattrelos/Alpha_Engine/issues/42
 
 ## Descrição

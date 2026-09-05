@@ -1,11 +1,11 @@
-# Issue #24: Plano de Implementação - Refatoração e Internacionalização do Módulo de Endereços do Cliente
+# DP-24: Plano de Implementação - Refatoração e Internacionalização do Módulo de Endereços do Cliente
 
 - **Tipo:** Deployment plan
-- **Status:** open
+- **Status:** Closed
 - **Autor:** [Wattrelos](https://github.com/Wattrelos)
 - **Criado em:** 2026-06-25 21:06:28
 - **Labels:** Nenhuma
-- **Responsáveis:** Nenhum
+- **Responsáveis:** Wattrelos
 - **URL no GitHub:** https://github.com/Wattrelos/Alpha_Engine/issues/24
 
 ## Descrição

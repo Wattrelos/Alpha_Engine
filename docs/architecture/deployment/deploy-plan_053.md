@@ -1,11 +1,11 @@
-# Issue #53: Limitação de Taxa por IP (Rate Limiting com Redis)
+# DP-53: Limitação de Taxa por IP (Rate Limiting com Redis)
 
 - **Tipo:** Deployment plan
-- **Status:** open
+- **Status:** Closed
 - **Autor:** [Wattrelos](https://github.com/Wattrelos)
 - **Criado em:** 2026-07-29 00:19:38
 - **Labels:** Nenhuma
-- **Responsáveis:** Nenhum
+- **Responsáveis:** Wattrelos
 - **URL no GitHub:** https://github.com/Wattrelos/Alpha_Engine/issues/53
 
 ## Descrição

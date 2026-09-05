@@ -1,11 +1,11 @@
-# Issue #78: Fallback de Auditoria em Banco de Dados (MySQL)
+# DP-78: Fallback de Auditoria em Banco de Dados (MySQL)
 
 - **Tipo:** Deployment plan
-- **Status:** open
+- **Status:** Closed
 - **Autor:** [Wattrelos](https://github.com/Wattrelos)
 - **Criado em:** 2026-08-13 21:59:43
 - **Labels:** Nenhuma
-- **Responsáveis:** Nenhum
+- **Responsáveis:** Wattrelos
 - **URL no GitHub:** https://github.com/Wattrelos/Alpha_Engine/issues/78
 
 ## Descrição

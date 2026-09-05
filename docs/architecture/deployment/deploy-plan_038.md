@@ -1,11 +1,11 @@
-# Issue #38: Fase 3 (Consolidação de Estilos de Devoluções e Institucional)
+# DP-38: Fase 3 (Consolidação de Estilos de Devoluções e Institucional)
 
 - **Tipo:** Deployment plan
-- **Status:** open
+- **Status:** Closed
 - **Autor:** [Wattrelos](https://github.com/Wattrelos)
 - **Criado em:** 2026-07-09 20:53:02
 - **Labels:** Nenhuma
-- **Responsáveis:** Nenhum
+- **Responsáveis:** Wattrelos
 - **URL no GitHub:** https://github.com/Wattrelos/Alpha_Engine/issues/38
 
 ## Descrição

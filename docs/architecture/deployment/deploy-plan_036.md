@@ -1,11 +1,11 @@
-# Issue #36: Análise de Reaproveitamento de Estilos CSS e Otimização de Templates Twig
+# DP-36: Análise de Reaproveitamento de Estilos CSS e Otimização de Templates Twig
 
 - **Tipo:** Deployment plan
-- **Status:** open
+- **Status:** Closed
 - **Autor:** [Wattrelos](https://github.com/Wattrelos)
 - **Criado em:** 2026-07-09 20:47:15
 - **Labels:** Nenhuma
-- **Responsáveis:** Nenhum
+- **Responsáveis:** Wattrelos
 - **URL no GitHub:** https://github.com/Wattrelos/Alpha_Engine/issues/36
 
 ## Descrição

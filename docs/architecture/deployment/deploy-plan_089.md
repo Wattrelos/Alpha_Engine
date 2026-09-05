@@ -1,11 +1,11 @@
-# Issue #89: Implementação do Módulo de Cotação de Projetos e Prestadores de Serviço (RFQ, BoQ e Material Takeoff)
+# DP-89: Implementação do Módulo de Cotação de Projetos e Prestadores de Serviço (RFQ, BoQ e Material Takeoff)
 
 - **Tipo:** Deployment plan
-- **Status:** open
+- **Status:** Closed
 - **Autor:** [Wattrelos](https://github.com/Wattrelos)
 - **Criado em:** 2026-08-24 18:48:51
 - **Labels:** Nenhuma
-- **Responsáveis:** Nenhum
+- **Responsáveis:** Wattrelos
 - **URL no GitHub:** https://github.com/Wattrelos/Alpha_Engine/issues/89
 
 ## Descrição

@@ -1,11 +1,11 @@
-# Issue #65: Configuração Dinâmica do Prefixo de Banco de Dados e Mascaramento do Dashboard
+# DP-65: Configuração Dinâmica do Prefixo de Banco de Dados e Mascaramento do Dashboard
 
 - **Tipo:** Deployment plan
-- **Status:** open
+- **Status:** Closed
 - **Autor:** [Wattrelos](https://github.com/Wattrelos)
 - **Criado em:** 2026-08-02 18:36:26
 - **Labels:** Nenhuma
-- **Responsáveis:** Nenhum
+- **Responsáveis:** Wattrelos
 - **URL no GitHub:** https://github.com/Wattrelos/Alpha_Engine/issues/65
 
 ## Descrição

@@ -1,11 +1,11 @@
-# Issue #87: Implementação: Edição de Atributos Estendidos de Produtos e Organização em Abas
+# DP-87: Implementação: Edição de Atributos Estendidos de Produtos e Organização em Abas
 
 - **Tipo:** Deployment plan
-- **Status:** open
+- **Status:** Closed
 - **Autor:** [Wattrelos](https://github.com/Wattrelos)
 - **Criado em:** 2026-08-24 12:58:31
 - **Labels:** Nenhuma
-- **Responsáveis:** Nenhum
+- **Responsáveis:** Wattrelos
 - **URL no GitHub:** https://github.com/Wattrelos/Alpha_Engine/issues/87
 
 ## Descrição

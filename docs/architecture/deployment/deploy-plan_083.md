@@ -1,11 +1,11 @@
-# Issue #83: Estruturação e Preenchimento do Documento de Requisitos Acadêmico
+# DP-83: Estruturação e Preenchimento do Documento de Requisitos Acadêmico
 
 - **Tipo:** Deployment plan
-- **Status:** open
+- **Status:** Closed
 - **Autor:** [Wattrelos](https://github.com/Wattrelos)
 - **Criado em:** 2026-08-17 11:36:02
 - **Labels:** Nenhuma
-- **Responsáveis:** Nenhum
+- **Responsáveis:** Wattrelos
 - **URL no GitHub:** https://github.com/Wattrelos/Alpha_Engine/issues/83
 
 ## Descrição

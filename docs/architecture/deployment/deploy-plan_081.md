@@ -1,11 +1,11 @@
-# Issue #81: Suíte de Testes BDD Modular e Especializada (Alpha Engine) `features/security/`
+# DP-81: Suíte de Testes BDD Modular e Especializada (Alpha Engine) `features/security/`
 
 - **Tipo:** Deployment plan
-- **Status:** open
+- **Status:** Closed
 - **Autor:** [Wattrelos](https://github.com/Wattrelos)
 - **Criado em:** 2026-08-16 17:51:13
 - **Labels:** Nenhuma
-- **Responsáveis:** Nenhum
+- **Responsáveis:** Wattrelos
 - **URL no GitHub:** https://github.com/Wattrelos/Alpha_Engine/issues/81
 
 ## Descrição

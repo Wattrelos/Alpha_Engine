@@ -1,11 +1,11 @@
-# Issue #49: Prioridade Alta (Vulnerabilidades Críticas de Aplicação Web)
+# DP-49: Prioridade Alta (Vulnerabilidades Críticas de Aplicação Web)
 
 - **Tipo:** Deployment plan
-- **Status:** open
+- **Status:** Closed
 - **Autor:** [Wattrelos](https://github.com/Wattrelos)
 - **Criado em:** 2026-07-28 21:46:07
 - **Labels:** Nenhuma
-- **Responsáveis:** Nenhum
+- **Responsáveis:** Wattrelos
 - **URL no GitHub:** https://github.com/Wattrelos/Alpha_Engine/issues/49
 
 ## Descrição

@@ -1,11 +1,11 @@
-# Issue #20: Hydration of Twig Variables with Selected Language in Admin Dashboard
+# DP-20: Hydration of Twig Variables with Selected Language in Admin Dashboard
 
 - **Tipo:** Deployment plan
-- **Status:** open
+- **Status:** Closed
 - **Autor:** [Wattrelos](https://github.com/Wattrelos)
 - **Criado em:** 2026-06-22 23:10:34
 - **Labels:** Nenhuma
-- **Responsáveis:** Nenhum
+- **Responsáveis:** Wattrelos
 - **URL no GitHub:** https://github.com/Wattrelos/Alpha_Engine/issues/20
 
 ## Descrição

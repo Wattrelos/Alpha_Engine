@@ -1,11 +1,11 @@
-# Issue #97: Implementação de Auto-Login no Cadastro e Atualização de Testes E2E
+# DP-97: Implementação de Auto-Login no Cadastro e Atualização de Testes E2E
 
 - **Tipo:** Deployment plan
-- **Status:** open
+- **Status:** Closed
 - **Autor:** [Wattrelos](https://github.com/Wattrelos)
 - **Criado em:** 2026-08-28 20:48:33
 - **Labels:** Nenhuma
-- **Responsáveis:** Nenhum
+- **Responsáveis:** Wattrelos
 - **URL no GitHub:** https://github.com/Wattrelos/Alpha_Engine/issues/97
 
 ## Descrição

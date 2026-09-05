@@ -1,11 +1,11 @@
-# Issue #54: Desativação do Modo de Depuração (Debug Mode) em Produção
+# DP-54: Desativação do Modo de Depuração (Debug Mode) em Produção
 
 - **Tipo:** Deployment plan
-- **Status:** open
+- **Status:** Closed
 - **Autor:** [Wattrelos](https://github.com/Wattrelos)
 - **Criado em:** 2026-07-29 00:44:10
 - **Labels:** Nenhuma
-- **Responsáveis:** Nenhum
+- **Responsáveis:** Wattrelos
 - **URL no GitHub:** https://github.com/Wattrelos/Alpha_Engine/issues/54
 
 ## Descrição

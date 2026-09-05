@@ -1,11 +1,11 @@
-# Issue #91: Implementamos o tratamento e geração dinâmica de imagens sob demanda
+# DP-91: Implementamos o tratamento e geração dinâmica de imagens sob demanda
 
 - **Tipo:** Deployment plan
-- **Status:** open
+- **Status:** Closed
 - **Autor:** [Wattrelos](https://github.com/Wattrelos)
 - **Criado em:** 2026-08-24 23:04:18
 - **Labels:** Nenhuma
-- **Responsáveis:** Nenhum
+- **Responsáveis:** Wattrelos
 - **URL no GitHub:** https://github.com/Wattrelos/Alpha_Engine/issues/91
 
 ## Descrição

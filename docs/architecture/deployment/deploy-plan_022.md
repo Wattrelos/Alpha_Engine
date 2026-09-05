@@ -1,11 +1,11 @@
-# Issue #22: Plano de Implementação - Refatoração e Internacionalização do Módulo de Fabricantes
+# DP-22: Plano de Implementação - Refatoração e Internacionalização do Módulo de Fabricantes
 
 - **Tipo:** Deployment plan
-- **Status:** open
+- **Status:** Closed
 - **Autor:** [Wattrelos](https://github.com/Wattrelos)
 - **Criado em:** 2026-06-25 20:38:29
 - **Labels:** Nenhuma
-- **Responsáveis:** Nenhum
+- **Responsáveis:** Wattrelos
 - **URL no GitHub:** https://github.com/Wattrelos/Alpha_Engine/issues/22
 
 ## Descrição

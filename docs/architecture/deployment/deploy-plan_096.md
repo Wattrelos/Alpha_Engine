@@ -1,11 +1,11 @@
-# Issue #96: Implementação de Configuração para Permitir/Bloquear Compras de Visitantes (Guest Checkout)
+# DP-96: Implementação de Configuração para Permitir/Bloquear Compras de Visitantes (Guest Checkout)
 
 - **Tipo:** Deployment plan
-- **Status:** open
+- **Status:** Closed
 - **Autor:** [Wattrelos](https://github.com/Wattrelos)
 - **Criado em:** 2026-08-28 16:07:02
 - **Labels:** Nenhuma
-- **Responsáveis:** Nenhum
+- **Responsáveis:** Wattrelos
 - **URL no GitHub:** https://github.com/Wattrelos/Alpha_Engine/issues/96
 
 ## Descrição

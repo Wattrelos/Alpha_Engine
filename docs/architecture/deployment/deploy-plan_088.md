@@ -1,11 +1,11 @@
-# Issue #88: Implementação de Calculadora de Materiais de Construção (Pisos e Revestimentos)
+# DP-88: Implementação de Calculadora de Materiais de Construção (Pisos e Revestimentos)
 
 - **Tipo:** Deployment plan
-- **Status:** open
+- **Status:** Closed
 - **Autor:** [Wattrelos](https://github.com/Wattrelos)
 - **Criado em:** 2026-08-24 15:34:36
 - **Labels:** Nenhuma
-- **Responsáveis:** Nenhum
+- **Responsáveis:** Wattrelos
 - **URL no GitHub:** https://github.com/Wattrelos/Alpha_Engine/issues/88
 
 ## Descrição

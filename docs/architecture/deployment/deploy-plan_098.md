@@ -1,11 +1,11 @@
-# Issue #98: Proposta: Adicionar uma funcionalidade de auditoria e monitoramento de acessos no Dashboard, cruciais para a plataforma.
+# DP-98: Proposta: Adicionar uma funcionalidade de auditoria e monitoramento de acessos no Dashboard, cruciais para a plataforma.
 
 - **Tipo:** Deployment plan
-- **Status:** open
+- **Status:** Closed
 - **Autor:** [Wattrelos](https://github.com/Wattrelos)
 - **Criado em:** 2026-08-30 14:28:42
 - **Labels:** Nenhuma
-- **Responsáveis:** Nenhum
+- **Responsáveis:** Wattrelos
 - **URL no GitHub:** https://github.com/Wattrelos/Alpha_Engine/issues/98
 
 ## Descrição

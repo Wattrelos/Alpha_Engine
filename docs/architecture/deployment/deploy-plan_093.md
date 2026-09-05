@@ -1,11 +1,11 @@
-# Issue #93: Implementação da Pirâmide de Testes e a Divisão de Responsabilidades
+# DP-93: Implementação da Pirâmide de Testes e a Divisão de Responsabilidades
 
 - **Tipo:** Deployment plan
-- **Status:** open
+- **Status:** Closed
 - **Autor:** [Wattrelos](https://github.com/Wattrelos)
 - **Criado em:** 2026-08-27 20:40:49
 - **Labels:** Nenhuma
-- **Responsáveis:** Nenhum
+- **Responsáveis:** Wattrelos
 - **URL no GitHub:** https://github.com/Wattrelos/Alpha_Engine/issues/93
 
 ## Descrição

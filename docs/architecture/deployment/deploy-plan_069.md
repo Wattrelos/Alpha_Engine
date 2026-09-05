@@ -1,11 +1,11 @@
-# Issue #69: Novos Diagramas de Sequência
+# DP-69: Novos Diagramas de Sequência
 
 - **Tipo:** Deployment plan
-- **Status:** open
+- **Status:** Closed
 - **Autor:** [Wattrelos](https://github.com/Wattrelos)
 - **Criado em:** 2026-08-09 22:50:46
 - **Labels:** Nenhuma
-- **Responsáveis:** Nenhum
+- **Responsáveis:** Wattrelos
 - **URL no GitHub:** https://github.com/Wattrelos/Alpha_Engine/issues/69
 
 ## Descrição

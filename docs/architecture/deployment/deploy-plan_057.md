@@ -1,11 +1,11 @@
-# Issue #57: Conformidade LGPD (Anonimização e Sanitização de Logs)
+# DP-57: Conformidade LGPD (Anonimização e Sanitização de Logs)
 
 - **Tipo:** Deployment plan
-- **Status:** open
+- **Status:** Closed
 - **Autor:** [Wattrelos](https://github.com/Wattrelos)
 - **Criado em:** 2026-07-29 01:03:54
 - **Labels:** Nenhuma
-- **Responsáveis:** Nenhum
+- **Responsáveis:** Wattrelos
 - **URL no GitHub:** https://github.com/Wattrelos/Alpha_Engine/issues/57
 
 ## Descrição

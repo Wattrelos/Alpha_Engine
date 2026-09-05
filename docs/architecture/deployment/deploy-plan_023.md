@@ -1,11 +1,11 @@
-# Issue #23: Plano de Implementação - Refatoração e Internacionalização do Módulo de Clientes
+# DP-23: Plano de Implementação - Refatoração e Internacionalização do Módulo de Clientes
 
 - **Tipo:** Deployment plan
-- **Status:** open
+- **Status:** Closed
 - **Autor:** [Wattrelos](https://github.com/Wattrelos)
 - **Criado em:** 2026-06-25 20:54:39
 - **Labels:** Nenhuma
-- **Responsáveis:** Nenhum
+- **Responsáveis:** Wattrelos
 - **URL no GitHub:** https://github.com/Wattrelos/Alpha_Engine/issues/23
 
 ## Descrição

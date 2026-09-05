@@ -1,11 +1,11 @@
-# Issue #11: Plano de Implementação: Adição de Fabricante e Logotipo nos Produtos
+# DP-11: Plano de Implementação: Adição de Fabricante e Logotipo nos Produtos
 
 - **Tipo:** Deployment plan
-- **Status:** open
+- **Status:** Closed
 - **Autor:** [Wattrelos](https://github.com/Wattrelos)
 - **Criado em:** 2026-06-21 12:25:09
 - **Labels:** Nenhuma
-- **Responsáveis:** Nenhum
+- **Responsáveis:** Wattrelos
 - **URL no GitHub:** https://github.com/Wattrelos/Alpha_Engine/issues/11
 
 ## Descrição

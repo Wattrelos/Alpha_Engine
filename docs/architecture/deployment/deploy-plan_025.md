@@ -1,11 +1,11 @@
-# Issue #25: Plano de Implementação - Refatoração e Internacionalização do Módulo de Autenticação Admin
+# DP-25: Plano de Implementação - Refatoração e Internacionalização do Módulo de Autenticação Admin
 
 - **Tipo:** Deployment plan
-- **Status:** open
+- **Status:** Closed
 - **Autor:** [Wattrelos](https://github.com/Wattrelos)
 - **Criado em:** 2026-06-25 21:14:18
 - **Labels:** Nenhuma
-- **Responsáveis:** Nenhum
+- **Responsáveis:** Wattrelos
 - **URL no GitHub:** https://github.com/Wattrelos/Alpha_Engine/issues/25
 
 ## Descrição

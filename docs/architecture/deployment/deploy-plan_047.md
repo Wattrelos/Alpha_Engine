@@ -1,11 +1,11 @@
-# Issue #47: Aperfeiçoamento da Pasta de Documentação (`docs/`)
+# DP-47: Aperfeiçoamento da Pasta de Documentação (`docs/`)
 
 - **Tipo:** Deployment plan
-- **Status:** open
+- **Status:** Closed
 - **Autor:** [Wattrelos](https://github.com/Wattrelos)
 - **Criado em:** 2026-07-16 16:51:01
 - **Labels:** Nenhuma
-- **Responsáveis:** Nenhum
+- **Responsáveis:** Wattrelos
 - **URL no GitHub:** https://github.com/Wattrelos/Alpha_Engine/issues/47
 
 ## Descrição

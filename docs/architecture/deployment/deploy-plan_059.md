@@ -1,11 +1,11 @@
-# Issue #59: Estrutura e Exemplos Spec-Driven (`docs/specs/`)
+# DP-59: Estrutura e Exemplos Spec-Driven (`docs/specs/`)
 
 - **Tipo:** Deployment plan
-- **Status:** open
+- **Status:** Closed
 - **Autor:** [Wattrelos](https://github.com/Wattrelos)
 - **Criado em:** 2026-07-30 12:22:44
 - **Labels:** Nenhuma
-- **Responsáveis:** Nenhum
+- **Responsáveis:** Wattrelos
 - **URL no GitHub:** https://github.com/Wattrelos/Alpha_Engine/issues/59
 
 ## Descrição

@@ -1,11 +1,11 @@
-# Issue #95: mplementação de Suíte Completa de Testes E2E & Visuais do Fluxo de Compras
+# DP-95: mplementação de Suíte Completa de Testes E2E & Visuais do Fluxo de Compras
 
 - **Tipo:** Deployment plan
-- **Status:** open
+- **Status:** Closed
 - **Autor:** [Wattrelos](https://github.com/Wattrelos)
 - **Criado em:** 2026-08-28 15:19:36
 - **Labels:** Nenhuma
-- **Responsáveis:** Nenhum
+- **Responsáveis:** Wattrelos
 - **URL no GitHub:** https://github.com/Wattrelos/Alpha_Engine/issues/95
 
 ## Descrição

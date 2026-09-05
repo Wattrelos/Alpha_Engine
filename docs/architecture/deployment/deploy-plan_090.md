@@ -1,11 +1,11 @@
-# Issue #90: Correção dos Atalhos da Área "Minha Conta" Redirecionando para Login
+# DP-90: Correção dos Atalhos da Área "Minha Conta" Redirecionando para Login
 
 - **Tipo:** Deployment plan
-- **Status:** open
+- **Status:** Closed
 - **Autor:** [Wattrelos](https://github.com/Wattrelos)
 - **Criado em:** 2026-08-24 22:45:48
 - **Labels:** Nenhuma
-- **Responsáveis:** Nenhum
+- **Responsáveis:** Wattrelos
 - **URL no GitHub:** https://github.com/Wattrelos/Alpha_Engine/issues/90
 
 ## Descrição

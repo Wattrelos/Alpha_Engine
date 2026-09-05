@@ -1,11 +1,11 @@
-# Issue #73: Reorganizar e Consolidar Testes em `tests/Validation
+# DP-73: Reorganizar e Consolidar Testes em `tests/Validation
 
 - **Tipo:** Deployment plan
-- **Status:** open
+- **Status:** Closed
 - **Autor:** [Wattrelos](https://github.com/Wattrelos)
 - **Criado em:** 2026-08-11 00:00:52
 - **Labels:** Nenhuma
-- **Responsáveis:** Nenhum
+- **Responsáveis:** Wattrelos
 - **URL no GitHub:** https://github.com/Wattrelos/Alpha_Engine/issues/73
 
 ## Descrição

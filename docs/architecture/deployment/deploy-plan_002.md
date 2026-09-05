@@ -1,11 +1,11 @@
-# Issue #2: # Implementar Exclusão de Produto no Dashboard
+# DP-2: # Implementar Exclusão de Produto no Dashboard
 
 - **Tipo:** Deployment plan
-- **Status:** open
+- **Status:** Closed
 - **Autor:** [Wattrelos](https://github.com/Wattrelos)
 - **Criado em:** 2026-06-18 21:17:34
 - **Labels:** Nenhuma
-- **Responsáveis:** Nenhum
+- **Responsáveis:** Wattrelos
 - **URL no GitHub:** https://github.com/Wattrelos/Alpha_Engine/issues/2
 
 ## Descrição

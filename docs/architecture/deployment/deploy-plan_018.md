@@ -1,11 +1,11 @@
-# Issue #18: Implementar contatos no painel de administração de fornecedores
+# DP-18: Implementar contatos no painel de administração de fornecedores
 
 - **Tipo:** Deployment plan
-- **Status:** open
+- **Status:** Closed
 - **Autor:** [Wattrelos](https://github.com/Wattrelos)
 - **Criado em:** 2026-06-22 21:36:45
 - **Labels:** Nenhuma
-- **Responsáveis:** Nenhum
+- **Responsáveis:** Wattrelos
 - **URL no GitHub:** https://github.com/Wattrelos/Alpha_Engine/issues/18
 
 ## Descrição

@@ -1,11 +1,11 @@
-# Issue #10: Plan: Populate permissions and implement login logging
+# DP-10: Plan: Populate permissions and implement login logging
 
 - **Tipo:** Deployment plan
-- **Status:** open
+- **Status:** Closed
 - **Autor:** [Wattrelos](https://github.com/Wattrelos)
 - **Criado em:** 2026-06-20 13:14:31
 - **Labels:** Nenhuma
-- **Responsáveis:** Nenhum
+- **Responsáveis:** Wattrelos
 - **URL no GitHub:** https://github.com/Wattrelos/Alpha_Engine/issues/10
 
 ## Descrição

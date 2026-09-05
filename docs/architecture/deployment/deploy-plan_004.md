@@ -1,11 +1,11 @@
-# Issue #4: Relatório do andamento do projeto Alpha em 2026-06-05
+# DP-4: Relatório do andamento do projeto Alpha em 2026-06-05
 
 - **Tipo:** Deployment plan
-- **Status:** open
+- **Status:** Closed
 - **Autor:** [Wattrelos](https://github.com/Wattrelos)
 - **Criado em:** 2026-06-20 12:35:02
 - **Labels:** Nenhuma
-- **Responsáveis:** Nenhum
+- **Responsáveis:** Wattrelos
 - **URL no GitHub:** https://github.com/Wattrelos/Alpha_Engine/issues/4
 
 ## Descrição

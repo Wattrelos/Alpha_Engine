@@ -1,11 +1,11 @@
-# Issue #82: Estrutura Completa & Modular de Testes BDD (Alpha Engine)
+# DP-82: Estrutura Completa & Modular de Testes BDD (Alpha Engine)
 
 - **Tipo:** Deployment plan
-- **Status:** open
+- **Status:** Closed
 - **Autor:** [Wattrelos](https://github.com/Wattrelos)
 - **Criado em:** 2026-08-16 18:11:30
 - **Labels:** Nenhuma
-- **Responsáveis:** Nenhum
+- **Responsáveis:** Wattrelos
 - **URL no GitHub:** https://github.com/Wattrelos/Alpha_Engine/issues/82
 
 ## Descrição

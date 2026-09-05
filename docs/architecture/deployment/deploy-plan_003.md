@@ -1,11 +1,11 @@
-# Issue #3: Conclusão da Migração do Sistema de Idiomas (Compatibilidade PSR-11)
+# DP-3: Conclusão da Migração do Sistema de Idiomas (Compatibilidade PSR-11)
 
 - **Tipo:** Deployment plan
-- **Status:** open
+- **Status:** Closed
 - **Autor:** [Wattrelos](https://github.com/Wattrelos)
 - **Criado em:** 2026-06-20 12:29:13
 - **Labels:** Nenhuma
-- **Responsáveis:** Nenhum
+- **Responsáveis:** Wattrelos
 - **URL no GitHub:** https://github.com/Wattrelos/Alpha_Engine/issues/3
 
 ## Descrição

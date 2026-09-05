@@ -1,11 +1,11 @@
-# Issue #44: Conversão de `orders.css` para SCSS
+# DP-44: Conversão de `orders.css` para SCSS
 
 - **Tipo:** Deployment plan
-- **Status:** open
+- **Status:** Closed
 - **Autor:** [Wattrelos](https://github.com/Wattrelos)
 - **Criado em:** 2026-07-10 12:30:48
 - **Labels:** Nenhuma
-- **Responsáveis:** Nenhum
+- **Responsáveis:** Wattrelos
 - **URL no GitHub:** https://github.com/Wattrelos/Alpha_Engine/issues/44
 
 ## Descrição

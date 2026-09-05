@@ -1,11 +1,11 @@
-# Issue #51: Implementação de Cabeçalhos de Segurança HTTP (Security Headers)
+# DP-51: Implementação de Cabeçalhos de Segurança HTTP (Security Headers)
 
 - **Tipo:** Deployment plan
-- **Status:** open
+- **Status:** Closed
 - **Autor:** [Wattrelos](https://github.com/Wattrelos)
 - **Criado em:** 2026-07-28 22:06:40
 - **Labels:** Nenhuma
-- **Responsáveis:** Nenhum
+- **Responsáveis:** Wattrelos
 - **URL no GitHub:** https://github.com/Wattrelos/Alpha_Engine/issues/51
 
 ## Descrição

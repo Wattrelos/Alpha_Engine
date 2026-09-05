@@ -1,11 +1,11 @@
-# Issue #62: Internacionalização de Papéis de Usuário (User Group Descriptions)
+# DP-62: Internacionalização de Papéis de Usuário (User Group Descriptions)
 
 - **Tipo:** Deployment plan
-- **Status:** open
+- **Status:** Closed
 - **Autor:** [Wattrelos](https://github.com/Wattrelos)
 - **Criado em:** 2026-07-30 18:49:13
 - **Labels:** Nenhuma
-- **Responsáveis:** Nenhum
+- **Responsáveis:** Wattrelos
 - **URL no GitHub:** https://github.com/Wattrelos/Alpha_Engine/issues/62
 
 ## Descrição

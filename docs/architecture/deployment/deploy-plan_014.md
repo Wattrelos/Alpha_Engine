@@ -1,11 +1,11 @@
-# Issue #14: Refatoração do Carrinho de Compras para Tratar Variações de Produtos
+# DP-14: Refatoração do Carrinho de Compras para Tratar Variações de Produtos
 
 - **Tipo:** Deployment plan
-- **Status:** open
+- **Status:** Closed
 - **Autor:** [Wattrelos](https://github.com/Wattrelos)
 - **Criado em:** 2026-06-22 16:34:44
 - **Labels:** Nenhuma
-- **Responsáveis:** Nenhum
+- **Responsáveis:** Wattrelos
 - **URL no GitHub:** https://github.com/Wattrelos/Alpha_Engine/issues/14
 
 ## Descrição

@@ -1,11 +1,11 @@
-# Issue #84: Estruturação e Preenchimento do Documento de Atividades do Negócio
+# DP-84: Estruturação e Preenchimento do Documento de Atividades do Negócio
 
 - **Tipo:** Deployment plan
-- **Status:** open
+- **Status:** Closed
 - **Autor:** [Wattrelos](https://github.com/Wattrelos)
 - **Criado em:** 2026-08-17 12:22:12
 - **Labels:** Nenhuma
-- **Responsáveis:** Nenhum
+- **Responsáveis:** Wattrelos
 - **URL no GitHub:** https://github.com/Wattrelos/Alpha_Engine/issues/84
 
 ## Descrição

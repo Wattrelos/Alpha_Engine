@@ -1,11 +1,11 @@
-# Issue #102: Elaboração das Especificações de Casos de Uso & Reorganização de Pastas
+# DP-102: Elaboração das Especificações de Casos de Uso & Reorganização de Pastas
 
 - **Tipo:** Deployment plan
-- **Status:** open
+- **Status:** Closed
 - **Autor:** [Wattrelos](https://github.com/Wattrelos)
 - **Criado em:** 2026-09-03 18:54:11
 - **Labels:** Nenhuma
-- **Responsáveis:** Nenhum
+- **Responsáveis:** Wattrelos
 - **URL no GitHub:** https://github.com/Wattrelos/Alpha_Engine/issues/102
 
 ## Descrição

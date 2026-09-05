@@ -1,11 +1,11 @@
-# Issue #12: Plano de Implementação: Variações de Produto no Padrão SaaS (Pai e Filho)
+# DP-12: Plano de Implementação: Variações de Produto no Padrão SaaS (Pai e Filho)
 
 - **Tipo:** Deployment plan
-- **Status:** open
+- **Status:** Closed
 - **Autor:** [Wattrelos](https://github.com/Wattrelos)
 - **Criado em:** 2026-06-21 13:05:11
 - **Labels:** Nenhuma
-- **Responsáveis:** Nenhum
+- **Responsáveis:** Wattrelos
 - **URL no GitHub:** https://github.com/Wattrelos/Alpha_Engine/issues/12
 
 ## Descrição

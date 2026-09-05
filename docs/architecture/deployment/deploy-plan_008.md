@@ -1,11 +1,11 @@
-# Issue #8: Implementation Plan - Hydrate Sorts and Limits for Category and Search Pages
+# DP-8: Implementation Plan - Hydrate Sorts and Limits for Category and Search Pages
 
 - **Tipo:** Deployment plan
-- **Status:** open
+- **Status:** Closed
 - **Autor:** [Wattrelos](https://github.com/Wattrelos)
 - **Criado em:** 2026-06-20 13:04:15
 - **Labels:** Nenhuma
-- **Responsáveis:** Nenhum
+- **Responsáveis:** Wattrelos
 - **URL no GitHub:** https://github.com/Wattrelos/Alpha_Engine/issues/8
 
 ## Descrição

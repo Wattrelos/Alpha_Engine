@@ -1,11 +1,11 @@
-# Issue #66: Eliminação de Códigos SQL Soltos nas Actions do Painel Administrativo
+# DP-66: Eliminação de Códigos SQL Soltos nas Actions do Painel Administrativo
 
 - **Tipo:** Deployment plan
-- **Status:** open
+- **Status:** Closed
 - **Autor:** [Wattrelos](https://github.com/Wattrelos)
 - **Criado em:** 2026-08-05 22:06:00
 - **Labels:** Nenhuma
-- **Responsáveis:** Nenhum
+- **Responsáveis:** Wattrelos
 - **URL no GitHub:** https://github.com/Wattrelos/Alpha_Engine/issues/66
 
 ## Descrição

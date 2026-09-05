@@ -1,11 +1,11 @@
-# Issue #7: Adaptar Descrição do Produto para Markdown
+# DP-7: Adaptar Descrição do Produto para Markdown
 
 - **Tipo:** Deployment plan
-- **Status:** open
+- **Status:** Closed
 - **Autor:** [Wattrelos](https://github.com/Wattrelos)
 - **Criado em:** 2026-06-20 12:59:45
 - **Labels:** Nenhuma
-- **Responsáveis:** Nenhum
+- **Responsáveis:** Wattrelos
 - **URL no GitHub:** https://github.com/Wattrelos/Alpha_Engine/issues/7
 
 ## Descrição

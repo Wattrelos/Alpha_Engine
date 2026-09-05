@@ -1,11 +1,11 @@
-# Issue #75: Adaptação de Cache para Hospedagens sem Redis (Hostinger)
+# DP-75: Adaptação de Cache para Hospedagens sem Redis (Hostinger)
 
 - **Tipo:** Deployment plan
-- **Status:** open
+- **Status:** Closed
 - **Autor:** [Wattrelos](https://github.com/Wattrelos)
 - **Criado em:** 2026-08-12 20:33:59
 - **Labels:** Nenhuma
-- **Responsáveis:** Nenhum
+- **Responsáveis:** Wattrelos
 - **URL no GitHub:** https://github.com/Wattrelos/Alpha_Engine/issues/75
 
 ## Descrição

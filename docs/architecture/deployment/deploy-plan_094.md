@@ -1,11 +1,11 @@
-# Issue #94: Evolução da Suíte E2E Playwright
+# DP-94: Evolução da Suíte E2E Playwright
 
 - **Tipo:** Deployment plan
-- **Status:** open
+- **Status:** Closed
 - **Autor:** [Wattrelos](https://github.com/Wattrelos)
 - **Criado em:** 2026-08-27 20:49:05
 - **Labels:** Nenhuma
-- **Responsáveis:** Nenhum
+- **Responsáveis:** Wattrelos
 - **URL no GitHub:** https://github.com/Wattrelos/Alpha_Engine/issues/94
 
 ## Descrição

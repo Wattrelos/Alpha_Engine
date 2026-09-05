@@ -1,11 +1,11 @@
-# Issue #92: Atualização do Diagrama de Casos de Uso do Cliente
+# DP-92: Atualização do Diagrama de Casos de Uso do Cliente
 
 - **Tipo:** Deployment plan
-- **Status:** open
+- **Status:** Closed
 - **Autor:** [Wattrelos](https://github.com/Wattrelos)
 - **Criado em:** 2026-08-25 00:18:19
 - **Labels:** Nenhuma
-- **Responsáveis:** Nenhum
+- **Responsáveis:** Wattrelos
 - **URL no GitHub:** https://github.com/Wattrelos/Alpha_Engine/issues/92
 
 ## Descrição

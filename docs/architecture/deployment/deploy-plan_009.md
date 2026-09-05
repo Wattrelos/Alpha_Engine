@@ -1,11 +1,11 @@
-# Issue #9: Implementation Plan - Autofill CEP on Cart Page
+# DP-9: Implementation Plan - Autofill CEP on Cart Page
 
 - **Tipo:** Deployment plan
-- **Status:** open
+- **Status:** Closed
 - **Autor:** [Wattrelos](https://github.com/Wattrelos)
 - **Criado em:** 2026-06-20 13:09:07
 - **Labels:** Nenhuma
-- **Responsáveis:** Nenhum
+- **Responsáveis:** Wattrelos
 - **URL no GitHub:** https://github.com/Wattrelos/Alpha_Engine/issues/9
 
 ## Descrição

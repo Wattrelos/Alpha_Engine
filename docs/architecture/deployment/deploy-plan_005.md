@@ -1,11 +1,11 @@
-# Issue #5: Plano de Implementação --- Generalização do Sistema de Autenticação
+# DP-5: Plano de Implementação --- Generalização do Sistema de Autenticação
 
 - **Tipo:** Deployment plan
-- **Status:** open
+- **Status:** Closed
 - **Autor:** [Wattrelos](https://github.com/Wattrelos)
 - **Criado em:** 2026-06-20 12:45:05
 - **Labels:** Nenhuma
-- **Responsáveis:** Nenhum
+- **Responsáveis:** Wattrelos
 - **URL no GitHub:** https://github.com/Wattrelos/Alpha_Engine/issues/5
 
 ## Descrição

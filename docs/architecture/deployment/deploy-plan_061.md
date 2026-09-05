@@ -1,11 +1,11 @@
-# Issue #61: Atalhos Dinâmicos no Dashboard Condicionados ao Papel (`UserGroup`)
+# DP-61: Atalhos Dinâmicos no Dashboard Condicionados ao Papel (`UserGroup`)
 
 - **Tipo:** Deployment plan
-- **Status:** open
+- **Status:** Closed
 - **Autor:** [Wattrelos](https://github.com/Wattrelos)
 - **Criado em:** 2026-07-30 14:33:52
 - **Labels:** Nenhuma
-- **Responsáveis:** Nenhum
+- **Responsáveis:** Wattrelos
 - **URL no GitHub:** https://github.com/Wattrelos/Alpha_Engine/issues/61
 
 ## Descrição

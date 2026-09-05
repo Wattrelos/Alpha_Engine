@@ -1,11 +1,11 @@
-# Issue #71: Diagramas de Componentes de Arquitetura
+# DP-71: Diagramas de Componentes de Arquitetura
 
 - **Tipo:** Deployment plan
-- **Status:** open
+- **Status:** Closed
 - **Autor:** [Wattrelos](https://github.com/Wattrelos)
 - **Criado em:** 2026-08-10 01:05:15
 - **Labels:** Nenhuma
-- **Responsáveis:** Nenhum
+- **Responsáveis:** Wattrelos
 - **URL no GitHub:** https://github.com/Wattrelos/Alpha_Engine/issues/71
 
 ## Descrição

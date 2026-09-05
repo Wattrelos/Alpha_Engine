@@ -1,11 +1,11 @@
-# Issue #33: Plano de Implementação - Refatoração de Estilos do PDV
+# DP-33: Plano de Implementação - Refatoração de Estilos do PDV
 
 - **Tipo:** Deployment plan
-- **Status:** open
+- **Status:** Closed
 - **Autor:** [Wattrelos](https://github.com/Wattrelos)
 - **Criado em:** 2026-06-28 14:31:35
 - **Labels:** Nenhuma
-- **Responsáveis:** Nenhum
+- **Responsáveis:** Wattrelos
 - **URL no GitHub:** https://github.com/Wattrelos/Alpha_Engine/issues/33
 
 ## Descrição

@@ -1,11 +1,11 @@
-# Issue #15: Exibição de Intervalos de Preços ("A partir de") para Variações
+# DP-15: Exibição de Intervalos de Preços ("A partir de") para Variações
 
 - **Tipo:** Deployment plan
-- **Status:** open
+- **Status:** Closed
 - **Autor:** [Wattrelos](https://github.com/Wattrelos)
 - **Criado em:** 2026-06-22 17:34:12
 - **Labels:** Nenhuma
-- **Responsáveis:** Nenhum
+- **Responsáveis:** Wattrelos
 - **URL no GitHub:** https://github.com/Wattrelos/Alpha_Engine/issues/15
 
 ## Descrição

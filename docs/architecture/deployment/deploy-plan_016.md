@@ -1,11 +1,11 @@
-# Issue #16: Adicionar opção de categoria aos produtos no painel de administração
+# DP-16: Adicionar opção de categoria aos produtos no painel de administração
 
 - **Tipo:** Deployment plan
-- **Status:** open
+- **Status:** Closed
 - **Autor:** [Wattrelos](https://github.com/Wattrelos)
 - **Criado em:** 2026-06-22 18:44:01
 - **Labels:** Nenhuma
-- **Responsáveis:** Nenhum
+- **Responsáveis:** Wattrelos
 - **URL no GitHub:** https://github.com/Wattrelos/Alpha_Engine/issues/16
 
 ## Descrição

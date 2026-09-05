@@ -1,11 +1,11 @@
-# Issue #31: Implementação da Tela do Vendedor (PDV / POS)
+# DP-31: Implementação da Tela do Vendedor (PDV / POS)
 
 - **Tipo:** Deployment plan
-- **Status:** open
+- **Status:** Closed
 - **Autor:** [Wattrelos](https://github.com/Wattrelos)
 - **Criado em:** 2026-06-28 00:30:01
 - **Labels:** Nenhuma
-- **Responsáveis:** Nenhum
+- **Responsáveis:** Wattrelos
 - **URL no GitHub:** https://github.com/Wattrelos/Alpha_Engine/issues/31
 
 ## Descrição

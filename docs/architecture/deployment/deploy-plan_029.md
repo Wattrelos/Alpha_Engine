@@ -1,11 +1,11 @@
-# Issue #29: Suporte a Variações de Produtos no Carrinho do Visitante
+# DP-29: Suporte a Variações de Produtos no Carrinho do Visitante
 
 - **Tipo:** Deployment plan
-- **Status:** open
+- **Status:** Closed
 - **Autor:** [Wattrelos](https://github.com/Wattrelos)
 - **Criado em:** 2026-06-27 22:12:52
 - **Labels:** Nenhuma
-- **Responsáveis:** Nenhum
+- **Responsáveis:** Wattrelos
 - **URL no GitHub:** https://github.com/Wattrelos/Alpha_Engine/issues/29
 
 ## Descrição

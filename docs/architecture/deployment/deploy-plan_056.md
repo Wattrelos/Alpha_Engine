@@ -1,11 +1,11 @@
-# Issue #56: Proteção dos Diretórios de Uploads (public_html/image e storage/)
+# DP-56: Proteção dos Diretórios de Uploads (public_html/image e storage/)
 
 - **Tipo:** Deployment plan
-- **Status:** open
+- **Status:** Closed
 - **Autor:** [Wattrelos](https://github.com/Wattrelos)
 - **Criado em:** 2026-07-29 00:57:29
 - **Labels:** Nenhuma
-- **Responsáveis:** Nenhum
+- **Responsáveis:** Wattrelos
 - **URL no GitHub:** https://github.com/Wattrelos/Alpha_Engine/issues/56
 
 ## Descrição

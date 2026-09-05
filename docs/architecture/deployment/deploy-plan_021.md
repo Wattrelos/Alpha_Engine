@@ -1,11 +1,11 @@
-# Issue #21: Plano de Implementação - Internacionalização das Configurações da Loja
+# DP-21: Plano de Implementação - Internacionalização das Configurações da Loja
 
 - **Tipo:** Deployment plan
-- **Status:** open
+- **Status:** Closed
 - **Autor:** [Wattrelos](https://github.com/Wattrelos)
 - **Criado em:** 2026-06-25 20:26:21
 - **Labels:** Nenhuma
-- **Responsáveis:** Nenhum
+- **Responsáveis:** Wattrelos
 - **URL no GitHub:** https://github.com/Wattrelos/Alpha_Engine/issues/21
 
 ## Descrição

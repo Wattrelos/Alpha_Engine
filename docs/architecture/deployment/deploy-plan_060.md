@@ -1,11 +1,11 @@
-# Issue #60: Gestão de Funcionários e Papéis/Permissões no Dashboard Admin
+# DP-60: Gestão de Funcionários e Papéis/Permissões no Dashboard Admin
 
 - **Tipo:** Deployment plan
-- **Status:** open
+- **Status:** Closed
 - **Autor:** [Wattrelos](https://github.com/Wattrelos)
 - **Criado em:** 2026-07-30 14:19:56
 - **Labels:** Nenhuma
-- **Responsáveis:** Nenhum
+- **Responsáveis:** Wattrelos
 - **URL no GitHub:** https://github.com/Wattrelos/Alpha_Engine/issues/60
 
 ## Descrição

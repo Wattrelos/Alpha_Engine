@@ -1,11 +1,11 @@
-# Issue #99: Adequação e Suporte ao PHP 8.2 na Alpha Engine para compatibilidade, por exemplo, XAMPP
+# DP-99: Adequação e Suporte ao PHP 8.2 na Alpha Engine para compatibilidade, por exemplo, XAMPP
 
 - **Tipo:** Deployment plan
-- **Status:** open
+- **Status:** Closed
 - **Autor:** [Wattrelos](https://github.com/Wattrelos)
 - **Criado em:** 2026-09-03 01:31:44
 - **Labels:** Nenhuma
-- **Responsáveis:** Nenhum
+- **Responsáveis:** Wattrelos
 - **URL no GitHub:** https://github.com/Wattrelos/Alpha_Engine/issues/99
 
 ## Descrição

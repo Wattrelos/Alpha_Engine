@@ -1,11 +1,11 @@
-# Issue #17: Ocultar Produtos e Variações Fora de Estoque
+# DP-17: Ocultar Produtos e Variações Fora de Estoque
 
 - **Tipo:** Deployment plan
-- **Status:** open
+- **Status:** Closed
 - **Autor:** [Wattrelos](https://github.com/Wattrelos)
 - **Criado em:** 2026-06-22 19:18:31
 - **Labels:** Nenhuma
-- **Responsáveis:** Nenhum
+- **Responsáveis:** Wattrelos
 - **URL no GitHub:** https://github.com/Wattrelos/Alpha_Engine/issues/17
 
 ## Descrição

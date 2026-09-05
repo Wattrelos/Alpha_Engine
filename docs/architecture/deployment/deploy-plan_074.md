@@ -1,11 +1,11 @@
-# Issue #74: Reestruturação da Arquitetura: Isolamento da Pasta `backend/`
+# DP-74: Reestruturação da Arquitetura: Isolamento da Pasta `backend/`
 
 - **Tipo:** Deployment plan
-- **Status:** open
+- **Status:** Closed
 - **Autor:** [Wattrelos](https://github.com/Wattrelos)
 - **Criado em:** 2026-08-12 18:15:07
 - **Labels:** Nenhuma
-- **Responsáveis:** Nenhum
+- **Responsáveis:** Wattrelos
 - **URL no GitHub:** https://github.com/Wattrelos/Alpha_Engine/issues/74
 
 ## Descrição

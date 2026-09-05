@@ -1,11 +1,11 @@
-# Issue #67: Bateria de Testes Automatizados de Validação de Software (PHPUnit)
+# DP-67: Bateria de Testes Automatizados de Validação de Software (PHPUnit)
 
 - **Tipo:** Deployment plan
-- **Status:** open
+- **Status:** Closed
 - **Autor:** [Wattrelos](https://github.com/Wattrelos)
 - **Criado em:** 2026-08-09 15:01:13
 - **Labels:** Nenhuma
-- **Responsáveis:** Nenhum
+- **Responsáveis:** Wattrelos
 - **URL no GitHub:** https://github.com/Wattrelos/Alpha_Engine/issues/67
 
 ## Descrição

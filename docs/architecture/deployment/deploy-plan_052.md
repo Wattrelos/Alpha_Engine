@@ -1,11 +1,11 @@
-# Issue #52: Implementação: Flag `; Secure` Condicional em Cookies de Sessão
+# DP-52: Implementação: Flag `; Secure` Condicional em Cookies de Sessão
 
 - **Tipo:** Deployment plan
-- **Status:** open
+- **Status:** Closed
 - **Autor:** [Wattrelos](https://github.com/Wattrelos)
 - **Criado em:** 2026-07-28 22:14:06
 - **Labels:** Nenhuma
-- **Responsáveis:** Nenhum
+- **Responsáveis:** Wattrelos
 - **URL no GitHub:** https://github.com/Wattrelos/Alpha_Engine/issues/52
 
 ## Descrição

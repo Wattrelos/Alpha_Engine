@@ -1,11 +1,11 @@
-# Issue #13: Adicionar Edição de Imagem para Variações de Produto
+# DP-13: Adicionar Edição de Imagem para Variações de Produto
 
 - **Tipo:** Deployment plan
-- **Status:** open
+- **Status:** Closed
 - **Autor:** [Wattrelos](https://github.com/Wattrelos)
 - **Criado em:** 2026-06-22 15:55:11
 - **Labels:** Nenhuma
-- **Responsáveis:** Nenhum
+- **Responsáveis:** Wattrelos
 - **URL no GitHub:** https://github.com/Wattrelos/Alpha_Engine/issues/13
 
 ## Descrição

@@ -1,11 +1,11 @@
-# Issue #80: Criação dos Arquivos Gherkin (.feature) para Cart e Checkout
+# DP-80: Criação dos Arquivos Gherkin (.feature) para Cart e Checkout
 
 - **Tipo:** Deployment plan
-- **Status:** open
+- **Status:** Closed
 - **Autor:** [Wattrelos](https://github.com/Wattrelos)
 - **Criado em:** 2026-08-16 17:02:25
 - **Labels:** Nenhuma
-- **Responsáveis:** Nenhum
+- **Responsáveis:** Wattrelos
 - **URL no GitHub:** https://github.com/Wattrelos/Alpha_Engine/issues/80
 
 ## Descrição

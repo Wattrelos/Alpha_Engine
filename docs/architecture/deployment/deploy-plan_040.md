@@ -1,11 +1,11 @@
-# Issue #40: Refatoração de Botões (buttons.css) e Reaproveitamento de Variáveis
+# DP-40: Refatoração de Botões (buttons.css) e Reaproveitamento de Variáveis
 
 - **Tipo:** Deployment plan
-- **Status:** open
+- **Status:** Closed
 - **Autor:** [Wattrelos](https://github.com/Wattrelos)
 - **Criado em:** 2026-07-09 22:20:02
 - **Labels:** Nenhuma
-- **Responsáveis:** Nenhum
+- **Responsáveis:** Wattrelos
 - **URL no GitHub:** https://github.com/Wattrelos/Alpha_Engine/issues/40
 
 ## Descrição

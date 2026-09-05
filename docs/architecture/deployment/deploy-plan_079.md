@@ -1,11 +1,11 @@
-# Issue #79: Testes com Gherkin (Behat) & Integration com Testes Existentes
+# DP-79: Testes com Gherkin (Behat) & Integration com Testes Existentes
 
 - **Tipo:** Deployment plan
-- **Status:** open
+- **Status:** Closed
 - **Autor:** [Wattrelos](https://github.com/Wattrelos)
 - **Criado em:** 2026-08-16 15:33:58
 - **Labels:** Nenhuma
-- **Responsáveis:** Nenhum
+- **Responsáveis:** Wattrelos
 - **URL no GitHub:** https://github.com/Wattrelos/Alpha_Engine/issues/79
 
 ## Descrição

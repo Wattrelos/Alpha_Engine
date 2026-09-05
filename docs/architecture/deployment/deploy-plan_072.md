@@ -1,11 +1,11 @@
-# Issue #72: Fazer a tela para o administrador da loja com a aba inserir informações
+# DP-72: Fazer a tela para o administrador da loja com a aba inserir informações
 
 - **Tipo:** Deployment plan
-- **Status:** open
+- **Status:** Closed
 - **Autor:** [Wattrelos](https://github.com/Wattrelos)
 - **Criado em:** 2026-08-10 22:56:11
 - **Labels:** Nenhuma
-- **Responsáveis:** Nenhum
+- **Responsáveis:** Wattrelos
 - **URL no GitHub:** https://github.com/Wattrelos/Alpha_Engine/issues/72
 
 ## Descrição
