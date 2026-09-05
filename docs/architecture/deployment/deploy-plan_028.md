@@ -1,6 +1,6 @@
 # Issue #28: Plano de Implementação - Tradução e Localização de Pedidos e Faturas
 
-- **Tipo:** Issue
+- **Tipo:** Deployment plan
 - **Status:** open
 - **Autor:** [Wattrelos](https://github.com/Wattrelos)
 - **Criado em:** 2026-06-25 21:57:45

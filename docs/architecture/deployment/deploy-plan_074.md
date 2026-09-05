@@ -1,6 +1,6 @@
 # Issue #74: Reestruturação da Arquitetura: Isolamento da Pasta `backend/`
 
-- **Tipo:** Issue
+- **Tipo:** Deployment plan
 - **Status:** open
 - **Autor:** [Wattrelos](https://github.com/Wattrelos)
 - **Criado em:** 2026-08-12 18:15:07

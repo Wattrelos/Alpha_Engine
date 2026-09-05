@@ -1,6 +1,6 @@
 # Issue #79: Testes com Gherkin (Behat) & Integration com Testes Existentes
 
-- **Tipo:** Issue
+- **Tipo:** Deployment plan
 - **Status:** open
 - **Autor:** [Wattrelos](https://github.com/Wattrelos)
 - **Criado em:** 2026-08-16 15:33:58

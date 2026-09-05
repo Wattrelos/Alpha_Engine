@@ -1,6 +1,6 @@
 # Issue #53: Limitação de Taxa por IP (Rate Limiting com Redis)
 
-- **Tipo:** Issue
+- **Tipo:** Deployment plan
 - **Status:** open
 - **Autor:** [Wattrelos](https://github.com/Wattrelos)
 - **Criado em:** 2026-07-29 00:19:38

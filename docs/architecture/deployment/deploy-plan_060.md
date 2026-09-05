@@ -1,6 +1,6 @@
 # Issue #60: Gestão de Funcionários e Papéis/Permissões no Dashboard Admin
 
-- **Tipo:** Issue
+- **Tipo:** Deployment plan
 - **Status:** open
 - **Autor:** [Wattrelos](https://github.com/Wattrelos)
 - **Criado em:** 2026-07-30 14:19:56

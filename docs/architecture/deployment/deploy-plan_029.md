@@ -1,6 +1,6 @@
 # Issue #29: Suporte a Variações de Produtos no Carrinho do Visitante
 
-- **Tipo:** Issue
+- **Tipo:** Deployment plan
 - **Status:** open
 - **Autor:** [Wattrelos](https://github.com/Wattrelos)
 - **Criado em:** 2026-06-27 22:12:52

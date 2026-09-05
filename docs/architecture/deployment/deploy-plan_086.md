@@ -1,6 +1,6 @@
 # Issue #86: Adicionar Testes BDD de Autenticação (`login.feature`)
 
-- **Tipo:** Issue
+- **Tipo:** Deployment plan
 - **Status:** open
 - **Autor:** [Wattrelos](https://github.com/Wattrelos)
 - **Criado em:** 2026-08-21 23:56:11

@@ -1,6 +1,6 @@
 # Issue #90: Correção dos Atalhos da Área "Minha Conta" Redirecionando para Login
 
-- **Tipo:** Issue
+- **Tipo:** Deployment plan
 - **Status:** open
 - **Autor:** [Wattrelos](https://github.com/Wattrelos)
 - **Criado em:** 2026-08-24 22:45:48

@@ -1,6 +1,6 @@
 # Issue #54: Desativação do Modo de Depuração (Debug Mode) em Produção
 
-- **Tipo:** Issue
+- **Tipo:** Deployment plan
 - **Status:** open
 - **Autor:** [Wattrelos](https://github.com/Wattrelos)
 - **Criado em:** 2026-07-29 00:44:10

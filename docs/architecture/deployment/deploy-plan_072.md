@@ -1,6 +1,6 @@
 # Issue #72: Fazer a tela para o administrador da loja com a aba inserir informações
 
-- **Tipo:** Issue
+- **Tipo:** Deployment plan
 - **Status:** open
 - **Autor:** [Wattrelos](https://github.com/Wattrelos)
 - **Criado em:** 2026-08-10 22:56:11

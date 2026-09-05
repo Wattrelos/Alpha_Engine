@@ -1,6 +1,6 @@
 # Issue #83: Estruturação e Preenchimento do Documento de Requisitos Acadêmico
 
-- **Tipo:** Issue
+- **Tipo:** Deployment plan
 - **Status:** open
 - **Autor:** [Wattrelos](https://github.com/Wattrelos)
 - **Criado em:** 2026-08-17 11:36:02

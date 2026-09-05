@@ -1,6 +1,6 @@
 # Issue #55: Isolamento Rígido de Tenants (store_id)
 
-- **Tipo:** Issue
+- **Tipo:** Deployment plan
 - **Status:** open
 - **Autor:** [Wattrelos](https://github.com/Wattrelos)
 - **Criado em:** 2026-07-29 00:51:45

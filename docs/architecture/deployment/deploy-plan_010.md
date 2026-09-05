@@ -1,6 +1,6 @@
 # Issue #10: Plan: Populate permissions and implement login logging
 
-- **Tipo:** Issue
+- **Tipo:** Deployment plan
 - **Status:** open
 - **Autor:** [Wattrelos](https://github.com/Wattrelos)
 - **Criado em:** 2026-06-20 13:14:31

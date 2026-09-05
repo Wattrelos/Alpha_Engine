@@ -1,6 +1,6 @@
 # Issue #38: Fase 3 (Consolidação de Estilos de Devoluções e Institucional)
 
-- **Tipo:** Issue
+- **Tipo:** Deployment plan
 - **Status:** open
 - **Autor:** [Wattrelos](https://github.com/Wattrelos)
 - **Criado em:** 2026-07-09 20:53:02

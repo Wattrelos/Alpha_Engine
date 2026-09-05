@@ -1,6 +1,6 @@
 # Issue #51: Implementação de Cabeçalhos de Segurança HTTP (Security Headers)
 
-- **Tipo:** Issue
+- **Tipo:** Deployment plan
 - **Status:** open
 - **Autor:** [Wattrelos](https://github.com/Wattrelos)
 - **Criado em:** 2026-07-28 22:06:40

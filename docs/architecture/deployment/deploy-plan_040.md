@@ -1,6 +1,6 @@
 # Issue #40: Refatoração de Botões (buttons.css) e Reaproveitamento de Variáveis
 
-- **Tipo:** Issue
+- **Tipo:** Deployment plan
 - **Status:** open
 - **Autor:** [Wattrelos](https://github.com/Wattrelos)
 - **Criado em:** 2026-07-09 22:20:02

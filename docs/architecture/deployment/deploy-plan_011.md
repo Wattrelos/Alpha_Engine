@@ -1,6 +1,6 @@
 # Issue #11: Plano de Implementação: Adição de Fabricante e Logotipo nos Produtos
 
-- **Tipo:** Issue
+- **Tipo:** Deployment plan
 - **Status:** open
 - **Autor:** [Wattrelos](https://github.com/Wattrelos)
 - **Criado em:** 2026-06-21 12:25:09

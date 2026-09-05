@@ -1,6 +1,6 @@
 # Issue #22: Plano de Implementação - Refatoração e Internacionalização do Módulo de Fabricantes
 
-- **Tipo:** Issue
+- **Tipo:** Deployment plan
 - **Status:** open
 - **Autor:** [Wattrelos](https://github.com/Wattrelos)
 - **Criado em:** 2026-06-25 20:38:29

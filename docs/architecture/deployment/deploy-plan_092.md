@@ -1,6 +1,6 @@
 # Issue #92: Atualização do Diagrama de Casos de Uso do Cliente
 
-- **Tipo:** Issue
+- **Tipo:** Deployment plan
 - **Status:** open
 - **Autor:** [Wattrelos](https://github.com/Wattrelos)
 - **Criado em:** 2026-08-25 00:18:19

@@ -1,6 +1,6 @@
 # Issue #58: Ajuste de Isolamento Multi-tenant (`store_id = 1`)
 
-- **Tipo:** Issue
+- **Tipo:** Deployment plan
 - **Status:** open
 - **Autor:** [Wattrelos](https://github.com/Wattrelos)
 - **Criado em:** 2026-07-30 11:14:14

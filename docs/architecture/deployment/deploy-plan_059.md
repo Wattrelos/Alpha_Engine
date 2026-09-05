@@ -1,6 +1,6 @@
 # Issue #59: Estrutura e Exemplos Spec-Driven (`docs/specs/`)
 
-- **Tipo:** Issue
+- **Tipo:** Deployment plan
 - **Status:** open
 - **Autor:** [Wattrelos](https://github.com/Wattrelos)
 - **Criado em:** 2026-07-30 12:22:44

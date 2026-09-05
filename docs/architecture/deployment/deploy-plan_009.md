@@ -1,6 +1,6 @@
 # Issue #9: Implementation Plan - Autofill CEP on Cart Page
 
-- **Tipo:** Issue
+- **Tipo:** Deployment plan
 - **Status:** open
 - **Autor:** [Wattrelos](https://github.com/Wattrelos)
 - **Criado em:** 2026-06-20 13:09:07

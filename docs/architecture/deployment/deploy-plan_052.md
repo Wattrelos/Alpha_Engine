@@ -1,6 +1,6 @@
 # Issue #52: Implementação: Flag `; Secure` Condicional em Cookies de Sessão
 
-- **Tipo:** Issue
+- **Tipo:** Deployment plan
 - **Status:** open
 - **Autor:** [Wattrelos](https://github.com/Wattrelos)
 - **Criado em:** 2026-07-28 22:14:06

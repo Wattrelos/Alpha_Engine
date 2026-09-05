@@ -1,6 +1,6 @@
 # Issue #96: Implementação de Configuração para Permitir/Bloquear Compras de Visitantes (Guest Checkout)
 
-- **Tipo:** Issue
+- **Tipo:** Deployment plan
 - **Status:** open
 - **Autor:** [Wattrelos](https://github.com/Wattrelos)
 - **Criado em:** 2026-08-28 16:07:02

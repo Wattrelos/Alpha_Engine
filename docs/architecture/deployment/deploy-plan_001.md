@@ -1,6 +1,6 @@
 # Issue #1: Implementation Plan - Product Registration in Admin Dashboard
 
-- **Tipo:** Issue
+- **Tipo:** Deployment plan
 - **Status:** open
 - **Autor:** [Wattrelos](https://github.com/Wattrelos)
 - **Criado em:** 2026-06-18 20:18:04

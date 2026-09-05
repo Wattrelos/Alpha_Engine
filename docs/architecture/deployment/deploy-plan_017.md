@@ -1,6 +1,6 @@
 # Issue #17: Ocultar Produtos e Variações Fora de Estoque
 
-- **Tipo:** Issue
+- **Tipo:** Deployment plan
 - **Status:** open
 - **Autor:** [Wattrelos](https://github.com/Wattrelos)
 - **Criado em:** 2026-06-22 19:18:31

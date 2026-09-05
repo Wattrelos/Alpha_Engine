@@ -1,6 +1,6 @@
 # Issue #7: Adaptar Descrição do Produto para Markdown
 
-- **Tipo:** Issue
+- **Tipo:** Deployment plan
 - **Status:** open
 - **Autor:** [Wattrelos](https://github.com/Wattrelos)
 - **Criado em:** 2026-06-20 12:59:45

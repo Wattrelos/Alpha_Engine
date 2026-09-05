@@ -1,6 +1,6 @@
 # Issue #14: Refatoração do Carrinho de Compras para Tratar Variações de Produtos
 
-- **Tipo:** Issue
+- **Tipo:** Deployment plan
 - **Status:** open
 - **Autor:** [Wattrelos](https://github.com/Wattrelos)
 - **Criado em:** 2026-06-22 16:34:44

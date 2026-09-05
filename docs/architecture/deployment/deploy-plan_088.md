@@ -1,6 +1,6 @@
 # Issue #88: Implementação de Calculadora de Materiais de Construção (Pisos e Revestimentos)
 
-- **Tipo:** Issue
+- **Tipo:** Deployment plan
 - **Status:** open
 - **Autor:** [Wattrelos](https://github.com/Wattrelos)
 - **Criado em:** 2026-08-24 15:34:36

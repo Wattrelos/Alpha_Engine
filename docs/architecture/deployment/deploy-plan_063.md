@@ -1,6 +1,6 @@
 # Issue #63: Aperfeiçoamento do mecanismo de busca por produtos: Busca Full-Text de Produtos (MySQL MATCH/AGAINST)
 
-- **Tipo:** Issue
+- **Tipo:** Deployment plan
 - **Status:** open
 - **Autor:** [Wattrelos](https://github.com/Wattrelos)
 - **Criado em:** 2026-08-02 12:26:14

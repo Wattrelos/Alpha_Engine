@@ -1,6 +1,6 @@
 # Issue #49: Prioridade Alta (Vulnerabilidades Críticas de Aplicação Web)
 
-- **Tipo:** Issue
+- **Tipo:** Deployment plan
 - **Status:** open
 - **Autor:** [Wattrelos](https://github.com/Wattrelos)
 - **Criado em:** 2026-07-28 21:46:07

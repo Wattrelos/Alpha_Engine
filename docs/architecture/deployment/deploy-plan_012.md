@@ -1,6 +1,6 @@
 # Issue #12: Plano de Implementação: Variações de Produto no Padrão SaaS (Pai e Filho)
 
-- **Tipo:** Issue
+- **Tipo:** Deployment plan
 - **Status:** open
 - **Autor:** [Wattrelos](https://github.com/Wattrelos)
 - **Criado em:** 2026-06-21 13:05:11

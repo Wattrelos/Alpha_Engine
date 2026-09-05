@@ -1,6 +1,6 @@
 # Issue #98: Proposta: Adicionar uma funcionalidade de auditoria e monitoramento de acessos no Dashboard, cruciais para a plataforma.
 
-- **Tipo:** Issue
+- **Tipo:** Deployment plan
 - **Status:** open
 - **Autor:** [Wattrelos](https://github.com/Wattrelos)
 - **Criado em:** 2026-08-30 14:28:42

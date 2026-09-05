@@ -1,6 +1,6 @@
 # Issue #93: Implementação da Pirâmide de Testes e a Divisão de Responsabilidades
 
-- **Tipo:** Issue
+- **Tipo:** Deployment plan
 - **Status:** open
 - **Autor:** [Wattrelos](https://github.com/Wattrelos)
 - **Criado em:** 2026-08-27 20:40:49

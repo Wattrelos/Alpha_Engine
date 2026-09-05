@@ -1,6 +1,6 @@
 # Issue #5: Plano de Implementação --- Generalização do Sistema de Autenticação
 
-- **Tipo:** Issue
+- **Tipo:** Deployment plan
 - **Status:** open
 - **Autor:** [Wattrelos](https://github.com/Wattrelos)
 - **Criado em:** 2026-06-20 12:45:05

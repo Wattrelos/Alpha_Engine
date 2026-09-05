@@ -1,6 +1,6 @@
 # Issue #15: Exibição de Intervalos de Preços ("A partir de") para Variações
 
-- **Tipo:** Issue
+- **Tipo:** Deployment plan
 - **Status:** open
 - **Autor:** [Wattrelos](https://github.com/Wattrelos)
 - **Criado em:** 2026-06-22 17:34:12

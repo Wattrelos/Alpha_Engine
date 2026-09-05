@@ -1,6 +1,6 @@
 # Issue #20: Hydration of Twig Variables with Selected Language in Admin Dashboard
 
-- **Tipo:** Issue
+- **Tipo:** Deployment plan
 - **Status:** open
 - **Autor:** [Wattrelos](https://github.com/Wattrelos)
 - **Criado em:** 2026-06-22 23:10:34

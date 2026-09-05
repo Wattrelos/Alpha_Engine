@@ -1,6 +1,6 @@
 # Issue #57: Conformidade LGPD (Anonimização e Sanitização de Logs)
 
-- **Tipo:** Issue
+- **Tipo:** Deployment plan
 - **Status:** open
 - **Autor:** [Wattrelos](https://github.com/Wattrelos)
 - **Criado em:** 2026-07-29 01:03:54

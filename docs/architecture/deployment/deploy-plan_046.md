@@ -1,6 +1,6 @@
 # Issue #46: Otimização de Documentação e Glossário para Agentes de IA
 
-- **Tipo:** Issue
+- **Tipo:** Deployment plan
 - **Status:** open
 - **Autor:** [Wattrelos](https://github.com/Wattrelos)
 - **Criado em:** 2026-07-16 16:33:09

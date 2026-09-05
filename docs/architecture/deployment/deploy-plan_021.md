@@ -1,6 +1,6 @@
 # Issue #21: Plano de Implementação - Internacionalização das Configurações da Loja
 
-- **Tipo:** Issue
+- **Tipo:** Deployment plan
 - **Status:** open
 - **Autor:** [Wattrelos](https://github.com/Wattrelos)
 - **Criado em:** 2026-06-25 20:26:21

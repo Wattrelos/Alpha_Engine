@@ -1,6 +1,6 @@
 # Issue #27: Plano de Implementação - Refatoração e Internacionalização do Módulo de Devoluções
 
-- **Tipo:** Issue
+- **Tipo:** Deployment plan
 - **Status:** open
 - **Autor:** [Wattrelos](https://github.com/Wattrelos)
 - **Criado em:** 2026-06-25 21:40:02

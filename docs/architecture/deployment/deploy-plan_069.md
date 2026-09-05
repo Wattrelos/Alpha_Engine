@@ -1,6 +1,6 @@
 # Issue #69: Novos Diagramas de Sequência
 
-- **Tipo:** Issue
+- **Tipo:** Deployment plan
 - **Status:** open
 - **Autor:** [Wattrelos](https://github.com/Wattrelos)
 - **Criado em:** 2026-08-09 22:50:46

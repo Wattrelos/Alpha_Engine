@@ -1,6 +1,6 @@
 # Issue #80: Criação dos Arquivos Gherkin (.feature) para Cart e Checkout
 
-- **Tipo:** Issue
+- **Tipo:** Deployment plan
 - **Status:** open
 - **Autor:** [Wattrelos](https://github.com/Wattrelos)
 - **Criado em:** 2026-08-16 17:02:25

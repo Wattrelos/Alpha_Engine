@@ -1,6 +1,6 @@
 # Issue #31: Implementação da Tela do Vendedor (PDV / POS)
 
-- **Tipo:** Issue
+- **Tipo:** Deployment plan
 - **Status:** open
 - **Autor:** [Wattrelos](https://github.com/Wattrelos)
 - **Criado em:** 2026-06-28 00:30:01

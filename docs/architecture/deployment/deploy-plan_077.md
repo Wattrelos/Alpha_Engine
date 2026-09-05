@@ -1,6 +1,6 @@
 # Issue #77: Reforço e Validação de Segurança & Auditoria (Alpha Engine)
 
-- **Tipo:** Issue
+- **Tipo:** Deployment plan
 - **Status:** open
 - **Autor:** [Wattrelos](https://github.com/Wattrelos)
 - **Criado em:** 2026-08-13 21:18:27

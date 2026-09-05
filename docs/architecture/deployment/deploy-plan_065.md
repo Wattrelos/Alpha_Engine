@@ -1,6 +1,6 @@
 # Issue #65: Configuração Dinâmica do Prefixo de Banco de Dados e Mascaramento do Dashboard
 
-- **Tipo:** Issue
+- **Tipo:** Deployment plan
 - **Status:** open
 - **Autor:** [Wattrelos](https://github.com/Wattrelos)
 - **Criado em:** 2026-08-02 18:36:26

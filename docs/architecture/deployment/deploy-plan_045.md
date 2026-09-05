@@ -1,6 +1,6 @@
 # Issue #45: Implementação de Sistema de Eventos (Observer) e Integração com RabbitMQ
 
-- **Tipo:** Issue
+- **Tipo:** Deployment plan
 - **Status:** open
 - **Autor:** [Wattrelos](https://github.com/Wattrelos)
 - **Criado em:** 2026-07-10 19:25:03

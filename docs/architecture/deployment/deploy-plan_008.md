@@ -1,6 +1,6 @@
 # Issue #8: Implementation Plan - Hydrate Sorts and Limits for Category and Search Pages
 
-- **Tipo:** Issue
+- **Tipo:** Deployment plan
 - **Status:** open
 - **Autor:** [Wattrelos](https://github.com/Wattrelos)
 - **Criado em:** 2026-06-20 13:04:15

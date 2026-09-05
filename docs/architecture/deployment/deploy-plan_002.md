@@ -1,6 +1,6 @@
 # Issue #2: # Implementar Exclusão de Produto no Dashboard
 
-- **Tipo:** Issue
+- **Tipo:** Deployment plan
 - **Status:** open
 - **Autor:** [Wattrelos](https://github.com/Wattrelos)
 - **Criado em:** 2026-06-18 21:17:34

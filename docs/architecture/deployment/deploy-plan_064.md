@@ -1,6 +1,6 @@
 # Issue #64: SaaS Tenant Provisioning & Setup Wizard
 
-- **Tipo:** Issue
+- **Tipo:** Deployment plan
 - **Status:** open
 - **Autor:** [Wattrelos](https://github.com/Wattrelos)
 - **Criado em:** 2026-08-02 13:50:54

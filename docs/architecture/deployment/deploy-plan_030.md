@@ -1,6 +1,6 @@
 # Issue #30: Adaptar Diagrama de Sequência do PDV (POS) para a Arquitetura do Projeto
 
-- **Tipo:** Issue
+- **Tipo:** Deployment plan
 - **Status:** open
 - **Autor:** [Wattrelos](https://github.com/Wattrelos)
 - **Criado em:** 2026-06-28 00:07:19

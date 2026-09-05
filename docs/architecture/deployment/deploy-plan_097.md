@@ -1,6 +1,6 @@
 # Issue #97: Implementação de Auto-Login no Cadastro e Atualização de Testes E2E
 
-- **Tipo:** Issue
+- **Tipo:** Deployment plan
 - **Status:** open
 - **Autor:** [Wattrelos](https://github.com/Wattrelos)
 - **Criado em:** 2026-08-28 20:48:33

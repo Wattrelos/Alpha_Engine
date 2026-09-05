@@ -1,6 +1,6 @@
 # Issue #70: Novos Diagramas de Atividades (Activity Diagrams)
 
-- **Tipo:** Issue
+- **Tipo:** Deployment plan
 - **Status:** open
 - **Autor:** [Wattrelos](https://github.com/Wattrelos)
 - **Criado em:** 2026-08-09 23:10:11

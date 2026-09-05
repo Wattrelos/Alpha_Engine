@@ -1,6 +1,6 @@
 # Issue #66: Eliminação de Códigos SQL Soltos nas Actions do Painel Administrativo
 
-- **Tipo:** Issue
+- **Tipo:** Deployment plan
 - **Status:** open
 - **Autor:** [Wattrelos](https://github.com/Wattrelos)
 - **Criado em:** 2026-08-05 22:06:00

@@ -1,6 +1,6 @@
 # Issue #42: Conversão de `returns-institutional.css` para SCSS e Melhorias no Compilador
 
-- **Tipo:** Issue
+- **Tipo:** Deployment plan
 - **Status:** open
 - **Autor:** [Wattrelos](https://github.com/Wattrelos)
 - **Criado em:** 2026-07-10 12:22:31

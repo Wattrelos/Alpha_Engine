@@ -1,6 +1,6 @@
 # Issue #36: Análise de Reaproveitamento de Estilos CSS e Otimização de Templates Twig
 
-- **Tipo:** Issue
+- **Tipo:** Deployment plan
 - **Status:** open
 - **Autor:** [Wattrelos](https://github.com/Wattrelos)
 - **Criado em:** 2026-07-09 20:47:15

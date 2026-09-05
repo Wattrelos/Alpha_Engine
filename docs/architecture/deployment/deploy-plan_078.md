@@ -1,6 +1,6 @@
 # Issue #78: Fallback de Auditoria em Banco de Dados (MySQL)
 
-- **Tipo:** Issue
+- **Tipo:** Deployment plan
 - **Status:** open
 - **Autor:** [Wattrelos](https://github.com/Wattrelos)
 - **Criado em:** 2026-08-13 21:59:43

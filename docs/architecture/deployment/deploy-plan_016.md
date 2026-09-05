@@ -1,6 +1,6 @@
 # Issue #16: Adicionar opção de categoria aos produtos no painel de administração
 
-- **Tipo:** Issue
+- **Tipo:** Deployment plan
 - **Status:** open
 - **Autor:** [Wattrelos](https://github.com/Wattrelos)
 - **Criado em:** 2026-06-22 18:44:01

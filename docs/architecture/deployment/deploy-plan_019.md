@@ -1,6 +1,6 @@
 # Issue #19: Dashboard Language Selection Implementation Plan
 
-- **Tipo:** Issue
+- **Tipo:** Deployment plan
 - **Status:** open
 - **Autor:** [Wattrelos](https://github.com/Wattrelos)
 - **Criado em:** 2026-06-22 22:58:34

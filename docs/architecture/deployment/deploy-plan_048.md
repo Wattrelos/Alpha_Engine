@@ -1,6 +1,6 @@
 # Issue #48: Remoção Segura de Tabelas Obsoletas
 
-- **Tipo:** Issue
+- **Tipo:** Deployment plan
 - **Status:** open
 - **Autor:** [Wattrelos](https://github.com/Wattrelos)
 - **Criado em:** 2026-07-28 21:18:26

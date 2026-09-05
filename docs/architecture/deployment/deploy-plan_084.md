@@ -1,6 +1,6 @@
 # Issue #84: Estruturação e Preenchimento do Documento de Atividades do Negócio
 
-- **Tipo:** Issue
+- **Tipo:** Deployment plan
 - **Status:** open
 - **Autor:** [Wattrelos](https://github.com/Wattrelos)
 - **Criado em:** 2026-08-17 12:22:12

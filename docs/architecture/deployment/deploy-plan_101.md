@@ -1,6 +1,6 @@
 # Issue #101: Implementação de Detalhes do Produto no PDV
 
-- **Tipo:** Issue
+- **Tipo:** Deployment plan
 - **Status:** open
 - **Autor:** [Wattrelos](https://github.com/Wattrelos)
 - **Criado em:** 2026-09-03 17:14:50

@@ -1,6 +1,6 @@
 # Issue #95: mplementação de Suíte Completa de Testes E2E & Visuais do Fluxo de Compras
 
-- **Tipo:** Issue
+- **Tipo:** Deployment plan
 - **Status:** open
 - **Autor:** [Wattrelos](https://github.com/Wattrelos)
 - **Criado em:** 2026-08-28 15:19:36

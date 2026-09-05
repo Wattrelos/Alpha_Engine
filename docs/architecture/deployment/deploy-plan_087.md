@@ -1,6 +1,6 @@
 # Issue #87: Implementação: Edição de Atributos Estendidos de Produtos e Organização em Abas
 
-- **Tipo:** Issue
+- **Tipo:** Deployment plan
 - **Status:** open
 - **Autor:** [Wattrelos](https://github.com/Wattrelos)
 - **Criado em:** 2026-08-24 12:58:31

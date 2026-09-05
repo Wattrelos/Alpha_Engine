@@ -1,6 +1,6 @@
 # Issue #61: Atalhos Dinâmicos no Dashboard Condicionados ao Papel (`UserGroup`)
 
-- **Tipo:** Issue
+- **Tipo:** Deployment plan
 - **Status:** open
 - **Autor:** [Wattrelos](https://github.com/Wattrelos)
 - **Criado em:** 2026-07-30 14:33:52

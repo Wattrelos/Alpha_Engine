@@ -1,6 +1,6 @@
 # Issue #18: Implementar contatos no painel de administração de fornecedores
 
-- **Tipo:** Issue
+- **Tipo:** Deployment plan
 - **Status:** open
 - **Autor:** [Wattrelos](https://github.com/Wattrelos)
 - **Criado em:** 2026-06-22 21:36:45

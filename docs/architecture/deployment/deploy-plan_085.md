@@ -1,6 +1,6 @@
 # Issue #85: Arquivos importantes para a raiz do site
 
-- **Tipo:** Issue
+- **Tipo:** Deployment plan
 - **Status:** open
 - **Autor:** [Wattrelos](https://github.com/Wattrelos)
 - **Criado em:** 2026-08-18 19:37:02

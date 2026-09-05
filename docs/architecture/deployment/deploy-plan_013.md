@@ -1,6 +1,6 @@
 # Issue #13: Adicionar Edição de Imagem para Variações de Produto
 
-- **Tipo:** Issue
+- **Tipo:** Deployment plan
 - **Status:** open
 - **Autor:** [Wattrelos](https://github.com/Wattrelos)
 - **Criado em:** 2026-06-22 15:55:11

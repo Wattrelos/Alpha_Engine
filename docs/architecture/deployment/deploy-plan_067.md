@@ -1,6 +1,6 @@
 # Issue #67: Bateria de Testes Automatizados de Validação de Software (PHPUnit)
 
-- **Tipo:** Issue
+- **Tipo:** Deployment plan
 - **Status:** open
 - **Autor:** [Wattrelos](https://github.com/Wattrelos)
 - **Criado em:** 2026-08-09 15:01:13

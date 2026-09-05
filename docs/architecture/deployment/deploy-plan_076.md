@@ -1,6 +1,6 @@
 # Issue #76: Ajuste no Mecanismo de Implantação (Deploy & Setup Wizard)
 
-- **Tipo:** Issue
+- **Tipo:** Deployment plan
 - **Status:** open
 - **Autor:** [Wattrelos](https://github.com/Wattrelos)
 - **Criado em:** 2026-08-13 14:41:46

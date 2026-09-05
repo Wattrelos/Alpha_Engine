@@ -1,6 +1,6 @@
 # Issue #89: Implementação do Módulo de Cotação de Projetos e Prestadores de Serviço (RFQ, BoQ e Material Takeoff)
 
-- **Tipo:** Issue
+- **Tipo:** Deployment plan
 - **Status:** open
 - **Autor:** [Wattrelos](https://github.com/Wattrelos)
 - **Criado em:** 2026-08-24 18:48:51

@@ -1,6 +1,6 @@
 # Issue #56: Proteção dos Diretórios de Uploads (public_html/image e storage/)
 
-- **Tipo:** Issue
+- **Tipo:** Deployment plan
 - **Status:** open
 - **Autor:** [Wattrelos](https://github.com/Wattrelos)
 - **Criado em:** 2026-07-29 00:57:29

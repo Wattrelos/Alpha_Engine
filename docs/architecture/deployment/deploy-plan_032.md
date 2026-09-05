@@ -1,6 +1,6 @@
 # Issue #32: Implementação do Módulo do Caixa (PDV / POS Cashier)
 
-- **Tipo:** Issue
+- **Tipo:** Deployment plan
 - **Status:** open
 - **Autor:** [Wattrelos](https://github.com/Wattrelos)
 - **Criado em:** 2026-06-28 00:53:02

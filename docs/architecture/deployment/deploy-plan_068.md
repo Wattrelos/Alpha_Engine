@@ -1,6 +1,6 @@
 # Issue #68: Configuração e Otimização do PHPStan para Agentes de IA
 
-- **Tipo:** Issue
+- **Tipo:** Deployment plan
 - **Status:** open
 - **Autor:** [Wattrelos](https://github.com/Wattrelos)
 - **Criado em:** 2026-08-09 16:04:59

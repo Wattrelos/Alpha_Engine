@@ -1,6 +1,6 @@
 # Issue #37: Plano de Implementação — Fase 2 (Consolidação de Estilos de Pedidos)
 
-- **Tipo:** Issue
+- **Tipo:** Deployment plan
 - **Status:** open
 - **Autor:** [Wattrelos](https://github.com/Wattrelos)
 - **Criado em:** 2026-07-09 20:50:03

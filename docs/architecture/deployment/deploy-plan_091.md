@@ -1,6 +1,6 @@
 # Issue #91: Implementamos o tratamento e geração dinâmica de imagens sob demanda
 
-- **Tipo:** Issue
+- **Tipo:** Deployment plan
 - **Status:** open
 - **Autor:** [Wattrelos](https://github.com/Wattrelos)
 - **Criado em:** 2026-08-24 23:04:18

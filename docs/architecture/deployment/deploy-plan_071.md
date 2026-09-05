@@ -1,6 +1,6 @@
 # Issue #71: Diagramas de Componentes de Arquitetura
 
-- **Tipo:** Issue
+- **Tipo:** Deployment plan
 - **Status:** open
 - **Autor:** [Wattrelos](https://github.com/Wattrelos)
 - **Criado em:** 2026-08-10 01:05:15

@@ -1,6 +1,6 @@
 # Issue #75: Adaptação de Cache para Hospedagens sem Redis (Hostinger)
 
-- **Tipo:** Issue
+- **Tipo:** Deployment plan
 - **Status:** open
 - **Autor:** [Wattrelos](https://github.com/Wattrelos)
 - **Criado em:** 2026-08-12 20:33:59

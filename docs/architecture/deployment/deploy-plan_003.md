@@ -1,6 +1,6 @@
 # Issue #3: Conclusão da Migração do Sistema de Idiomas (Compatibilidade PSR-11)
 
-- **Tipo:** Issue
+- **Tipo:** Deployment plan
 - **Status:** open
 - **Autor:** [Wattrelos](https://github.com/Wattrelos)
 - **Criado em:** 2026-06-20 12:29:13

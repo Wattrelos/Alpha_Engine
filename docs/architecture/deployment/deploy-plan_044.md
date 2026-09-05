@@ -1,6 +1,6 @@
 # Issue #44: Conversão de `orders.css` para SCSS
 
-- **Tipo:** Issue
+- **Tipo:** Deployment plan
 - **Status:** open
 - **Autor:** [Wattrelos](https://github.com/Wattrelos)
 - **Criado em:** 2026-07-10 12:30:48

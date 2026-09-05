@@ -1,6 +1,6 @@
 # Issue #41: Modularização e Especialização de CSS/SCSS
 
-- **Tipo:** Issue
+- **Tipo:** Deployment plan
 - **Status:** open
 - **Autor:** [Wattrelos](https://github.com/Wattrelos)
 - **Criado em:** 2026-07-10 12:01:53

@@ -1,6 +1,6 @@
 # Issue #50: Proteção CSRF (Cross-Site Request Forgery)
 
-- **Tipo:** Issue
+- **Tipo:** Deployment plan
 - **Status:** open
 - **Autor:** [Wattrelos](https://github.com/Wattrelos)
 - **Criado em:** 2026-07-28 21:58:20

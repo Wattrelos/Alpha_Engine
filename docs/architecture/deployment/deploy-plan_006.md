@@ -1,6 +1,6 @@
 # Issue #6: Unificação Visual e Funcional da Busca com a Página de Categoria
 
-- **Tipo:** Issue
+- **Tipo:** Deployment plan
 - **Status:** open
 - **Autor:** [Wattrelos](https://github.com/Wattrelos)
 - **Criado em:** 2026-06-20 12:55:16

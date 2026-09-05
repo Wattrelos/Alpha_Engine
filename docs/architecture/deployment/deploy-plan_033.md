@@ -1,6 +1,6 @@
 # Issue #33: Plano de Implementação - Refatoração de Estilos do PDV
 
-- **Tipo:** Issue
+- **Tipo:** Deployment plan
 - **Status:** open
 - **Autor:** [Wattrelos](https://github.com/Wattrelos)
 - **Criado em:** 2026-06-28 14:31:35

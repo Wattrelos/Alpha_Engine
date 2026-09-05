@@ -1,6 +1,6 @@
 # Issue #47: Aperfeiçoamento da Pasta de Documentação (`docs/`)
 
-- **Tipo:** Issue
+- **Tipo:** Deployment plan
 - **Status:** open
 - **Autor:** [Wattrelos](https://github.com/Wattrelos)
 - **Criado em:** 2026-07-16 16:51:01

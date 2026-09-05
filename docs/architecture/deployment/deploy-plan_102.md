@@ -1,6 +1,6 @@
 # Issue #102: Elaboração das Especificações de Casos de Uso & Reorganização de Pastas
 
-- **Tipo:** Issue
+- **Tipo:** Deployment plan
 - **Status:** open
 - **Autor:** [Wattrelos](https://github.com/Wattrelos)
 - **Criado em:** 2026-09-03 18:54:11
