@@ -37,7 +37,7 @@ Um dos maiores equívocos conceituais entre estudantes é acreditar que o Git fu
 ### O Cenário Clássico do Erro:
 1. O aluno faz o commit do arquivo `.env` com senhas reais.
 2. Faz o `git push` para o GitHub.
-3. Alguém avisa: *"Ei, você subiu suas senhas!"*
+3. Alguém avisa: *"Ei, você subiu tuas senhas!"*
 4. Em pânico, o aluno apaga o arquivo do editor ou roda `git rm .env`.
 5. Faz um novo commit: `git commit -m "Removendo senhas"` e dá `git push`.
 6. O aluno respira aliviado achando que resolveu o problema.
@@ -70,7 +70,7 @@ Para desenvolver de forma colaborativa sem expor segredos, a engenharia de softw
 ```
 
 ### 1. Separação Estrita de Ambientes (Dev vs. Staging vs. Prod)
-O banco de dados do seu computador local (`localhost`) não deve ser o mesmo banco de dados oficial do sistema em produção. Ao isolar os segredos no `.env` local, garante-se que cada desenvolvedor tenha suas configurações próprias sem risco de sobrescrever dados ou quebrar o ambiente de colegas.
+O banco de dados do seu computador local (`localhost`) não deve ser o mesmo banco de dados oficial do sistema em produção. Ao isolar os segredos no `.env` local, garante-se que cada desenvolvedor tenha tuas configurações próprias sem risco de sobrescrever dados ou quebrar o ambiente de colegas.
 
 ### 2. O Papel Estruturante do `.env.example`
 Como o `.env` real nunca irá para o repositório, novos desenvolvedores ou ferramentas de implantação automatizada não saberiam quais variáveis o sistema exige para inicializar.
@@ -262,4 +262,4 @@ PASSO 4: SANITIZAÇÃO DO REPOSITÓRIO
 
 A segurança da informação não é uma etapa que se adiciona no final do projeto; é um fundamento que começa na primeira linha de código e no primeiro commit. 
 
-Dominar o uso correto de variáveis de ambiente, arquivos `.gitignore`, modelos `.env.example` e ferramentas de detecção precoce é o que diferencia o programador amador do engenheiro de software profissional preparado para o mercado. Proteger credenciais não é apenas zelar pela infraestrutura — é proteger suas finanças, a reputação da sua equipe e a sua própria carreira.
+Dominar o uso correto de variáveis de ambiente, arquivos `.gitignore`, modelos `.env.example` e ferramentas de detecção precoce é o que diferencia o programador amador do engenheiro de software profissional preparado para o mercado. Proteger credenciais não é apenas zelar pela infraestrutura, mas sim proteger tuas finanças, a reputação da tua equipe e a tua própria carreira.

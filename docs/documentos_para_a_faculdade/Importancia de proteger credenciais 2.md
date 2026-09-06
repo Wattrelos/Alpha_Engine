@@ -28,7 +28,7 @@ Neste artigo, entenderemos o conceito de **Hardcoding**, por que espalhar config
 
 #### ❌ PHP — Senha embutida no `connection.php`:
 ```php
-// ERRO CRÍTICO: Se este arquivo for versionado, sua senha vazou!
+// ERRO CRÍTICO: Se este arquivo for versionado, tua senha vazou!
 $host = "localhost";
 $db   = "sistema_vendas";
 $user = "root";
@@ -94,14 +94,14 @@ O **Fator III** trata especificamente de **Configurações (Config)**:
 > *"A configuração de uma aplicação é tudo aquilo que pode variar entre deploys (ambientes de desenvolvimento, homologação, produção, etc.).  
 > **Regra de ouro:** O código-fonte da aplicação deve poder ser tornado público a qualquer momento no GitHub sem expor nenhuma credencial ou comprometer a segurança do sistema."*
 
-Se você precisa alterar o código-fonte para trocar o banco de dados de desenvolvimento para produção, **a arquitetura da sua aplicação está incorreta**. O código deve ser imutável; quem varia é o ambiente.
+Se você precisa alterar o código-fonte para trocar o banco de dados de desenvolvimento para produção, **a arquitetura da tua aplicação está incorreta**. O código deve ser imutável; quem varia é o ambiente.
 
 ---
 
 ## 4. A Solução Arquitetural: Centralização em Uma Única Fonte da Verdade (SSOT)
 
 A arquitetura correta baseia-se em um princípio simples:
-1. **O arquivo `.env` é o único repositório local de variáveis e segredos.** (Fica na sua máquina e nunca vai para o Git).
+1. **O arquivo `.env` é o único repositório local de variáveis e segredos.** (Fica na tua máquina e nunca vai para o Git).
 2. **O código-fonte NUNCA armazena senhas:** ele apenas *consome* as variáveis de ambiente disponibilizadas pelo sistema operacional ou pelo arquivo `.env`.
 3. **Existe um arquivo central de configuração da aplicação** que lê o ambiente, define valores padrão seguros e disponibiliza as configurações para o restante do sistema.
 
@@ -231,14 +231,14 @@ module.exports = pool;
 
 ## 6. O Teste Supremo do Desenvolvedor: O "Teste do Repositório Aberto"
 
-Como saber se você e sua equipe implementaram a segurança de credenciais com perfeição?
+Como saber se você e tua equipe implementaram a segurança de credenciais com perfeição?
 
 Faça a si mesmo a seguinte pergunta mental antes de cada commit:
 
 > 🧪 **O Teste do Repositório Aberto:**  
 > *"Se eu transformasse este repositório de privado para público no GitHub agora mesmo, o projeto continuaria seguro e nenhuma credencial real seria revelada?"*
 
-* Se a resposta for **"Sim"**: Parabéns! Seu código está desacoplado, suas credenciais estão centralizadas no `.env` (ignorado), seu `.env.example` documenta as variáveis e a sua aplicação está pronta para ambientes profissionais de produção.
+* Se a resposta for **"Sim"**: Parabéns! Seu código está desacoplado, tuas credenciais estão centralizadas no `.env` (ignorado), seu `.env.example` documenta as variáveis e a tua aplicação está pronta para ambientes profissionais de produção.
 * Se a resposta for **"Não, porque no arquivo X tem a senha do meu banco ou a chave da API"**: Pare imediatamente. Mova essa credencial para o `.env`, leia-a dinamicamente e remova a string literal do código antes de fazer o commit.
 
 ---

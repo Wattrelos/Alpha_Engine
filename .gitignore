@@ -67,6 +67,7 @@ Thumbs.db
 
 # Imagens Dinâmicas / Cache da Loja
 /public_html/image/product/*
+/public_html/cache/*
 /public_html/image/cache/*
 
 # Playwright
