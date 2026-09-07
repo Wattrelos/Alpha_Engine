@@ -1,9 +1,10 @@
 @startfiles
 .
-├── backend/
+├── .env.example                                # 🔑 Arquivo modelo de variáveis de ambiente
+├── backend/                                    # 📁 Backend (Core Business Logic)
 │   ├── Config/                                 # 📂 Configurações da Aplicação
 │   │   └── Routes.php                          # 📁 Rotas PSR-15 centralizadas (Slim Framework)
-│   ├── Containers/                             # � Infraestrutura de Injeção de Dependências (DI)
+│   ├── Containers/                             # 📦 Infraestrutura de Injeção de Dependências (DI)
 │   │   ├── AppContainer.php                    # 📦 Contêiner Pimple/PHP-DI com definições de classes
 │   │   └── AppBootstrap.php                    # 📦 Bootstrap de inicialização
 │   ├── core/                                   # 🤖 Lógica principal da aplicação (Core Business Logic)
@@ -164,6 +165,7 @@
 │
 │   # =====================================> Pastas que não irão para produção (testes, docs e specs)  <=========================
 │
+├── .env                                        # 🔑 Arquivo de variáveis de ambiente
 ├── docs/                                       # 📚 Arquivos de Documentação Arquitetural e Progresso
 │   ├── architecture/                           # 🏗️ Arquitetura do software
 │   │   ├── adr/                                # 📝 Architecture Decision Records (ADRs)

@@ -1,10 +1,11 @@
 # Environment & Secrets
+# Bloqueia qualquer arquivo .env em qualquer pasta do projeto (raiz ou subpastas)
 .env
-.env.local
 .env.*
-backend/.env
-backend/.env.local
-backend/.env.*
+
+# Abre a exceção para qualquer .env.example do projeto
+!.env.example
+
 
 # Build & Release Artifacts (ZIPs e Pacotes de Release)
 dist/
