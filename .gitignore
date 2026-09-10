@@ -16,6 +16,10 @@ backend/dist/agsonhos-release.zip
 *.tgz
 *.rar
 
+# Documents
+# Documentos reservados (Administrativos/Legais)
+# docs/legal/ # Atenção: Se tornar público o repositório remova a `#` antes de `docs/legal/`!
+
 # Storage, Cache e Logs
 storage/
 backend/storage/

@@ -181,8 +181,14 @@
 │   ├── database/                               # 🗄️ Banco de dados e diagramas EER
 │   ├── diagrams/                               # 📊 Diagramas
 │   ├── DoD/                                    # 🎯 Definition of Done (DoD)
+│   ├── domain/                                 # 📂 Contém as definições do domínio do negócio
+│   │   └── roles/                              # 📂 Pasta específica para os papéis de trabalho
 │   ├── instalation/                            # 🔧 Instalação
 │   ├── kb/                                     # 🧠 Base de conhecimento de políticas da loja
+│   ├── legal/                                  # 🔒 ⚖️ Documentos legais (Acesso: Restricted / Apenas Gerência e RH)
+│   │   ├── labor-opinions/                     # ⚖️ Pareceres trabalhistas
+│   │   ├── privacy-policies/                   # ⚖️ Políticas de privacidade
+│   │   └── terms-and-conditions/               # ⚖️ Termos e condições
 │   ├── requirements/                           # 🎯 Especificações de Requisitos
 │   │   ├── business_rules/                     # 📋 Regras de negócio (.yaml, glossário)
 │   │   ├── functional/                         # 📋 Requisitos funcionais (.yaml)
