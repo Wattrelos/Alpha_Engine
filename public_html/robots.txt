@@ -19,6 +19,9 @@ Disallow: /setup/
 Disallow: /clean_cache.php
 Disallow: /index_unit_test.php
 
+# Trabalho acadêmico
+Disallow: /presentation/
+
 # Bloqueio de Endpoints de API e Webhooks
 Disallow: /api/
 Disallow: /api/*
