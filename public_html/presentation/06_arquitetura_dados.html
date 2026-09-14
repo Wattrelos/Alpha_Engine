@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="pt-BR" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>06. Arquitetura & Banco EER | Alpha Engine - FATEC-FV</title>
+  <meta name="description" content="Arquitetura de Software, Modelagem de Dados EER e Padrões GoF para Laboratório de Engenharia de Software - FATEC Ferraz de Vasconcelos.">
+  <link rel="stylesheet" href="assets/css/style.css">
+  <link rel="stylesheet" href="assets/css/print.css" media="print">
+</head>
+<body>
+
+  <div class="progress-container"><div class="progress-bar"></div></div>
+
+  <!-- Topbar -->
+  <header class="topbar">
+    <div class="topbar-left">
+      <button class="menu-toggle" id="menuToggle" aria-label="Abrir Menu">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
+      </button>
+      <a href="index.html" class="topbar-brand">
+        <div class="topbar-logos">
+          <img src="assets/img/logos/Fatec_logo.svg" alt="Logo FATEC" />
+          <img src="assets/img/logos/logo-cps-2022.svg" alt="Logo Centro Paula Souza" />
+          <img src="assets/img/logos/sp.jpg" alt="Governo do Estado de São Paulo" />
+        </div>
+        <div class="brand-text">
+          <span class="brand-title">Alpha Engine</span>
+          <span class="brand-subtitle">06. Arquitetura & Banco EER</span>
+        </div>
+      </a>
+    </div>
+
+    <div class="topbar-right">
+      <button class="nav-tool-btn" id="modeToggleBtn" title="Alternar Modo Apresentação (P)">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect><line x1="8" y1="21" x2="16" y2="21"></line><line x1="12" y1="17" x2="12" y2="21"></line></svg>
+        <span class="mode-label">Modo Apresentação</span>
+      </button>
+      <button class="nav-tool-btn" id="themeToggleBtn" title="Alternar Tema (T)">
+        <span class="theme-icon"></span>
+      </button>
+      <button class="nav-tool-btn" id="fullscreenBtn" title="Tela Cheia (F)">
+        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"></path></svg>
+      </button>
+    </div>
+  </header>
+
+  <div class="app-container">
+    <!-- Sidebar -->
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-header">
+        <div class="sidebar-label">Dossiê Acadêmico</div>
+        <div class="sidebar-course">Análise e Desenv. Sistemas</div>
+      </div>
+      <nav class="sidebar-nav">
+        <a href="index.html" class="nav-item">
+          <div class="nav-item-title"><span class="nav-num">00</span><span>Capa & Visão Geral</span></div>
+          <span class="nav-badge">Início</span>
+        </a>
+        <a href="01_visao.html" class="nav-item">
+          <div class="nav-item-title"><span class="nav-num">01</span><span>Documento de Visão</span></div>
+          <span class="nav-badge">Doc</span>
+        </a>
+        <a href="02_processos_atividades.html" class="nav-item">
+          <div class="nav-item-title"><span class="nav-num">02</span><span>Processos & Atividades</span></div>
+          <span class="nav-badge">10 Ativ.</span>
+        </a>
+        <a href="03_requisitos_regras.html" class="nav-item">
+          <div class="nav-item-title"><span class="nav-num">03</span><span>Engenharia de Requisitos</span></div>
+          <span class="nav-badge">25 RFs</span>
+        </a>
+        <a href="04_casos_de_uso.html" class="nav-item">
+          <div class="nav-item-title"><span class="nav-num">04</span><span>Casos de Uso do Sistema</span></div>
+          <span class="nav-badge">10 UCs</span>
+        </a>
+        <a href="05_matriz_rastreabilidade.html" class="nav-item">
+          <div class="nav-item-title"><span class="nav-num">05</span><span>Matriz de Rastreabilidade</span></div>
+          <span class="nav-badge">RN × RF</span>
+        </a>
+        <a href="06_arquitetura_dados.html" class="nav-item active">
+          <div class="nav-item-title"><span class="nav-num">06</span><span>Arquitetura & Banco EER</span></div>
+          <span class="nav-badge">C4 / DER</span>
+        </a>
+        <a href="07_diagramas_sequencia.html" class="nav-item">
+          <div class="nav-item-title"><span class="nav-num">07</span><span>Diagramas de Sequência</span></div>
+          <span class="nav-badge">14 Diagr.</span>
+        </a>
+        <a href="08_checklist_disciplina.html" class="nav-item">
+          <div class="nav-item-title"><span class="nav-num">08</span><span>Checklist da Disciplina</span></div>
+          <span class="nav-badge">100% OK</span>
+        </a>
+      </nav>
+      <div class="sidebar-footer">
+        <p><strong>Orientadora:</strong> Profa. Patrícia Sarno</p>
+        <p><strong>Aluno:</strong> Josias da Conceição Sobrinho</p>
+        <p>FATEC Ferraz de Vasconcelos</p>
+      </div>
+    </aside>
+
+    <!-- Conteúdo Principal -->
+    <main class="main-content">
+      <header class="page-header">
+        <div class="page-category">Módulo 06 • Engenharia de Software</div>
+        <h1 class="page-title">Arquitetura de Software e Banco de Dados (EER)</h1>
+        <p class="page-subtitle">
+          Estrutura em camadas de alta coesão e baixo acoplamento (Clean ADR), Diagrama Entidade-Relacionamento Estendido (EER) com 40+ tabelas, Grafo de Persistência e catálogo de Padrões GoF.
+        </p>
+      </header>
+
+      <!-- 1. DIAGRAMA DE BANCO DE DADOS (EER DIAGRAM) -->
+      <section style="margin-bottom: 4rem;">
+        <h2 style="font-family: var(--font-display); font-size: 1.6rem; margin-bottom: 0.5rem; color: var(--fatec-red-light);">
+          1. Diagrama Entidade-Relacionamento Estendido (EER / DER Completo)
+        </h2>
+        <p style="color: var(--text-muted); margin-bottom: 1.5rem;">
+          Modelagem relacional abrangente para MySQL 8.0 (InnoDB com transações ACID), contendo entidades centrais de produtos, SKUs fracionados, estoque físico, clientes PF/PJ, pedidos, itens, transações multi-meios, documentos fiscais e logs de auditoria.
+        </p>
+
+        <div class="diagram-container">
+          <div class="diagram-header">
+            <div class="diagram-info">
+              <span class="diagram-title">Diagrama Entidade-Relacionamento (EER_Diagram.svg)</span>
+              <span class="diagram-badge">MySQL 8.0 • InnoDB • 303 KB • Alta Resolução</span>
+            </div>
+            <div class="diagram-actions">
+              <button class="btn-icon btn-zoom" title="Ampliar Diagrama">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line><line x1="11" y1="8" x2="11" y2="14"></line><line x1="8" y1="11" x2="14" y2="11"></line></svg>
+                Pan & Zoom
+              </button>
+            </div>
+          </div>
+          <div class="diagram-frame" style="max-height: 650px;">
+            <img src="assets/img/diagrams/EER_Diagram.svg" alt="Diagrama Entidade-Relacionamento EER Completo" />
+          </div>
+          <div class="diagram-caption">
+            <span>Dica: Abra no visualizador interativo para aplicar zoom nos tipos de dados, chaves primárias e relacionamentos 1:N.</span>
+            <span>Artefato oficial: <code>docs/database/EER_Diagram.svg</code></span>
+          </div>
+        </div>
+
+        <div class="grid-cards-3">
+          <div class="card">
+            <h4 class="card-title" style="color: var(--accent-cyan);">Concorrência & Versão</h4>
+            <p class="card-desc">Colunas de controle de versão (<code>version INT</code>) em tabelas transacionais críticas (estoque e pedidos) para suporte a bloqueio otimista.</p>
+          </div>
+          <div class="card">
+            <h4 class="card-title" style="color: var(--accent-cyan);">Tradução Sintática</h4>
+            <p class="card-desc">Nomenclatura <code>snake_case</code> normalizada no banco mapeada automaticamente para objetos <code>PascalCase</code> via camada DAO reflexiva.</p>
+          </div>
+          <div class="card">
+            <h4 class="card-title" style="color: var(--accent-cyan);">Compliance Fiscal</h4>
+            <p class="card-desc">Campos estruturados para NCM (8 dígitos), Inscrição Estadual com validação de UF, chave de acesso da NF-e (44 dígitos) e protocolo SEFAZ.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- 2. GRAFO DE PERSISTÊNCIA DO PEDIDO -->
+      <section style="margin-bottom: 4rem;">
+        <h2 style="font-family: var(--font-display); font-size: 1.6rem; margin-bottom: 0.5rem; color: var(--accent-cyan);">
+          2. Grafo de Persistência e Agregado de Pedido (Order Aggregate)
+        </h2>
+        <p style="color: var(--text-muted); margin-bottom: 1.5rem;">
+          Mapeamento formal da agregação orientada a DDD (Domain-Driven Design). A raiz da agregação (<code>Order</code>) orquestra a gravação consistente de seus nós satélites em uma única transação atômica.
+        </p>
+
+        <div class="diagram-container">
+          <div class="diagram-header">
+            <div class="diagram-info">
+              <span class="diagram-title">Grafo de Persistência e Entidades Agregadas do Pedido</span>
+              <span class="diagram-badge">DDD • Unit of Work • Transações Atômicas</span>
+            </div>
+            <div class="diagram-actions">
+              <button class="btn-icon btn-zoom" title="Ampliar Diagrama">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line><line x1="11" y1="8" x2="11" y2="14"></line><line x1="8" y1="11" x2="14" y2="11"></line></svg>
+                Zoom
+              </button>
+            </div>
+          </div>
+          <div class="diagram-frame">
+            <img src="assets/img/diagrams/GrafoPersistenciaPedido.svg" alt="Grafo de Persistência do Pedido" />
+          </div>
+          <div class="diagram-caption">
+            <span>Ciclo de persistência de Orders, OrderItems, Payments, FiscalNotes e ShippingStatus.</span>
+            <span>Artefato oficial: <code>docs/diagrams/GrafoPersistenciaPedido.svg</code></span>
+          </div>
+        </div>
+      </section>
+
+      <!-- 3. CATÁLOGO DE PADRÕES GOF IMPLEMENTADOS -->
+      <section style="margin-bottom: 4rem;">
+        <h2 style="font-family: var(--font-display); font-size: 1.6rem; margin-bottom: 1.25rem;">3. Padrões de Projeto Gang of Four (GoF) Implementados</h2>
+        <div class="grid-cards">
+          <div class="card">
+            <div class="card-icon">🎯</div>
+            <h4 class="card-title">Strategy Pattern (Comportamental)</h4>
+            <p class="card-desc">
+              <strong>Finalidade:</strong> Algoritmos intercambiáveis de cálculo de frete (SEDEX, PAC, Transportadora Própria, Retirada no Balcão) e estratégias tributárias por UF (ICMS-ST vs. DIFAL).<br>
+              <strong>Benefício:</strong> Permite plugar novas transportadoras ou regras tributárias sem alterar uma única linha do carrinho ou checkout.
+            </p>
+          </div>
+
+          <div class="card">
+            <div class="card-icon">🏭</div>
+            <h4 class="card-title">Factory / Abstract Factory (Criacional)</h4>
+            <p class="card-desc">
+              <strong>Finalidade:</strong> Instanciação dinâmica de DAOs, repositórios e entidades do sistema durante a execução.<br>
+              <strong>Benefício:</strong> Garante que o motor de persistência seja completamente agnóstico à implementação física do repositório.
+            </p>
+          </div>
+
+          <div class="card">
+            <div class="card-icon">🗄️</div>
+            <h4 class="card-title">DAO & Repository Pattern (Estrutural)</h4>
+            <p class="card-desc">
+              <strong>Finalidade:</strong> Isolamento absoluto entre as instruções SQL e os modelos do domínio de negócio.<br>
+              <strong>Benefício:</strong> Incorpora tradutor sintático automático e gerencia consultas dinâmicas de forma segura e padronizada.
+            </p>
+          </div>
+
+          <div class="card">
+            <div class="card-icon">📡</div>
+            <h4 class="card-title">Observer Pattern (Comportamental)</h4>
+            <p class="card-desc">
+              <strong>Finalidade:</strong> Disparo desacoplado de eventos como fechamento de compra, baixa física de estoque e geração de nota fiscal.<br>
+              <strong>Benefício:</strong> Notifica serviços externos e publica mensagens assíncronas no RabbitMQ sem travar o ciclo HTTP.
+            </p>
+          </div>
+
+          <div class="card">
+            <div class="card-icon">🛡️</div>
+            <h4 class="card-title">Proxy Pattern / Lazy Loading (Estrutural)</h4>
+            <p class="card-desc">
+              <strong>Finalidade:</strong> <code>ProxyFactory</code> que intercepta o acesso a coleções filhas pesadas (ex.: itens do pedido ou fotos do produto).<br>
+              <strong>Benefício:</strong> A entidade filha só é consultada no banco no instante exato em que seu método <em>getter</em> é invocado.
+            </p>
+          </div>
+
+          <div class="card">
+            <div class="card-icon">🔌</div>
+            <h4 class="card-title">Adapter Pattern (Estrutural)</h4>
+            <p class="card-desc">
+              <strong>Finalidade:</strong> Unificação das interfaces heterogêneas dos gateways de pagamento (Mercado Pago, Gerencianet/Efí, Cielo).<br>
+              <strong>Benefício:</strong> A aplicação conversa exclusivamente com a interface padronizada <code>PaymentGatewayInterface</code>.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <!-- 4. CONFORMIDADE COM PSR (PHP-FIG) -->
+      <section style="margin-bottom: 4rem;">
+        <h2 style="font-family: var(--font-display); font-size: 1.6rem; margin-bottom: 1.25rem;">4. Conformidade Estrita com Recomendações PSR (PHP-FIG)</h2>
+        <div class="table-wrapper">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Padrão PSR</th>
+                <th>Nome da Especificação</th>
+                <th>Aplicação Prática no Projeto Alpha Engine</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td class="cell-bold">PSR-4</td>
+                <td>Autoloading Standard</td>
+                <td>Mapeamento uniforme de namespaces <code>AlphaEngine\Domain</code>, <code>AlphaEngine\Infrastructure</code> e <code>AlphaEngine\Actions</code>.</td>
+              </tr>
+              <tr>
+                <td class="cell-bold">PSR-7</td>
+                <td>HTTP Message Interfaces</td>
+                <td>Imutabilidade estrita de requisições e respostas HTTP (<code>ServerRequestInterface</code>, <code>ResponseInterface</code>) no Slim 4.</td>
+              </tr>
+              <tr>
+                <td class="cell-bold">PSR-11</td>
+                <td>Container Interface</td>
+                <td>Gestão de ciclo de vida e injeção automática de dependências utilizando o container <strong>PHP-DI</strong>.</td>
+              </tr>
+              <tr>
+                <td class="cell-bold">PSR-15</td>
+                <td>HTTP Server Handlers & Middleware</td>
+                <td>Pipeline de middlewares para segurança em camadas: Anti-CSRF, Rate Limiting, autenticação de sessão e cabeçalhos de segurança.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- Navegação Inferior -->
+      <footer class="page-nav-bar">
+        <a href="05_matriz_rastreabilidade.html" class="nav-page-link">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"></polyline></svg>
+          <div class="nav-page-meta">
+            <span class="nav-page-direction">← Módulo Anterior</span>
+            <span class="nav-page-title">05. Matriz de Rastreabilidade</span>
+          </div>
+        </a>
+        <a href="07_diagramas_sequencia.html" class="nav-page-link next">
+          <div class="nav-page-meta">
+            <span class="nav-page-direction">Próximo Módulo →</span>
+            <span class="nav-page-title">07. Diagramas de Sequência</span>
+          </div>
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"></polyline></svg>
+        </a>
+      </footer>
+
+      <div class="academic-footer">
+        <p><strong>FATEC Ferraz de Vasconcelos</strong> — Faculdade de Tecnologia de Ferraz de Vasconcelos</p>
+        <p>Disciplina: Laboratório de Engenharia de Software | Orientadora: Profa. Patrícia Sarno</p>
+      </div>
+    </main>
+  </div>
+
+  <script src="assets/js/main.js"></script>
+  <script src="assets/js/svg-viewer.js"></script>
+</body>
+</html>

@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html lang="pt-BR" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>05. Matriz de Rastreabilidade | Alpha Engine - FATEC-FV</title>
+  <meta name="description" content="Matriz de Rastreabilidade e Relacionamento RN x RF para Laboratório de Engenharia de Software - FATEC Ferraz de Vasconcelos.">
+  <link rel="stylesheet" href="assets/css/style.css">
+  <link rel="stylesheet" href="assets/css/print.css" media="print">
+  <style>
+    .matrix-table td.active-cell {
+      background: rgba(178, 0, 0, 0.3) !important;
+      outline: 2px solid var(--fatec-red);
+      color: #ffffff !important;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="progress-container"><div class="progress-bar"></div></div>
+
+  <!-- Topbar -->
+  <header class="topbar">
+    <div class="topbar-left">
+      <button class="menu-toggle" id="menuToggle" aria-label="Abrir Menu">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
+      </button>
+      <a href="index.html" class="topbar-brand">
+        <div class="topbar-logos">
+          <img src="assets/img/logos/Fatec_logo.svg" alt="Logo FATEC" />
+          <img src="assets/img/logos/logo-cps-2022.svg" alt="Logo Centro Paula Souza" />
+          <img src="assets/img/logos/sp.jpg" alt="Governo do Estado de São Paulo" />
+        </div>
+        <div class="brand-text">
+          <span class="brand-title">Alpha Engine</span>
+          <span class="brand-subtitle">05. Matriz de Rastreabilidade</span>
+        </div>
+      </a>
+    </div>
+
+    <div class="topbar-right">
+      <button class="nav-tool-btn" id="modeToggleBtn" title="Alternar Modo Apresentação (P)">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect><line x1="8" y1="21" x2="16" y2="21"></line><line x1="12" y1="17" x2="12" y2="21"></line></svg>
+        <span class="mode-label">Modo Apresentação</span>
+      </button>
+      <button class="nav-tool-btn" id="themeToggleBtn" title="Alternar Tema (T)">
+        <span class="theme-icon"></span>
+      </button>
+      <button class="nav-tool-btn" id="fullscreenBtn" title="Tela Cheia (F)">
+        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"></path></svg>
+      </button>
+    </div>
+  </header>
+
+  <div class="app-container">
+    <!-- Sidebar -->
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-header">
+        <div class="sidebar-label">Dossiê Acadêmico</div>
+        <div class="sidebar-course">Análise e Desenv. Sistemas</div>
+      </div>
+      <nav class="sidebar-nav">
+        <a href="index.html" class="nav-item">
+          <div class="nav-item-title"><span class="nav-num">00</span><span>Capa & Visão Geral</span></div>
+          <span class="nav-badge">Início</span>
+        </a>
+        <a href="01_visao.html" class="nav-item">
+          <div class="nav-item-title"><span class="nav-num">01</span><span>Documento de Visão</span></div>
+          <span class="nav-badge">Doc</span>
+        </a>
+        <a href="02_processos_atividades.html" class="nav-item">
+          <div class="nav-item-title"><span class="nav-num">02</span><span>Processos & Atividades</span></div>
+          <span class="nav-badge">10 Ativ.</span>
+        </a>
+        <a href="03_requisitos_regras.html" class="nav-item">
+          <div class="nav-item-title"><span class="nav-num">03</span><span>Engenharia de Requisitos</span></div>
+          <span class="nav-badge">25 RFs</span>
+        </a>
+        <a href="04_casos_de_uso.html" class="nav-item">
+          <div class="nav-item-title"><span class="nav-num">04</span><span>Casos de Uso do Sistema</span></div>
+          <span class="nav-badge">10 UCs</span>
+        </a>
+        <a href="05_matriz_rastreabilidade.html" class="nav-item active">
+          <div class="nav-item-title"><span class="nav-num">05</span><span>Matriz de Rastreabilidade</span></div>
+          <span class="nav-badge">RN × RF</span>
+        </a>
+        <a href="06_arquitetura_dados.html" class="nav-item">
+          <div class="nav-item-title"><span class="nav-num">06</span><span>Arquitetura & Banco EER</span></div>
+          <span class="nav-badge">C4 / DER</span>
+        </a>
+        <a href="07_diagramas_sequencia.html" class="nav-item">
+          <div class="nav-item-title"><span class="nav-num">07</span><span>Diagramas de Sequência</span></div>
+          <span class="nav-badge">14 Diagr.</span>
+        </a>
+        <a href="08_checklist_disciplina.html" class="nav-item">
+          <div class="nav-item-title"><span class="nav-num">08</span><span>Checklist da Disciplina</span></div>
+          <span class="nav-badge">100% OK</span>
+        </a>
+      </nav>
+      <div class="sidebar-footer">
+        <p><strong>Orientadora:</strong> Profa. Patrícia Sarno</p>
+        <p><strong>Aluno:</strong> Josias da Conceição Sobrinho</p>
+        <p>FATEC Ferraz de Vasconcelos</p>
+      </div>
+    </aside>
+
+    <!-- Conteúdo Principal -->
+    <main class="main-content">
+      <header class="page-header">
+        <div class="page-category">Módulo 05 • Engenharia de Software</div>
+        <h1 class="page-title">Matriz de Rastreabilidade: Regras de Negócio × Requisitos Funcionais</h1>
+        <p class="page-subtitle">
+          Mapeamento formal bidirecional cruzando as 18 Regras de Negócio com os 25 Requisitos Funcionais, com auditoria de integridade (zero regras órfãs) e análise de impacto de mudanças.
+        </p>
+      </header>
+
+      <!-- 1. INTRODUÇÃO E FUNDAMENTAÇÃO -->
+      <section style="margin-bottom: 3rem;">
+        <h2 style="font-family: var(--font-display); font-size: 1.6rem; margin-bottom: 1rem;">1. Fundamentação Teórica da Rastreabilidade</h2>
+        <div class="card" style="margin-bottom: 2rem;">
+          <p style="margin-bottom: 1rem; color: var(--text-muted); font-size: 0.98rem; line-height: 1.7;">
+            Na Engenharia de Software, a <strong>Matriz de Rastreabilidade Bidirecional</strong> é o artefato central de governança que conecta o <em>porquê</em> o sistema foi concebido (as Regras de Negócio, políticas fiscais e diretrizes legais) com o <em>o que</em> o sistema entrega (os Requisitos Funcionais e telas operacionais).
+          </p>
+          <div class="grid-cards-3" style="margin: 1.5rem 0 0.5rem 0;">
+            <div style="background: var(--bg-surface); padding: 1.25rem; border-radius: var(--border-radius-sm); border-left: 3px solid var(--accent-emerald);">
+              <strong style="color: var(--text-main); display: block; margin-bottom: 0.35rem;">1. Garantia de Não-Orfandade</strong>
+              <span style="font-size: 0.85rem; color: var(--text-muted);">Assegura que 100% das regras comerciais sejam atendidas pelo código e previne a criação de funcionalidades sem propósito (<em>Zero Gold Plating</em>).</span>
+            </div>
+            <div style="background: var(--bg-surface); padding: 1.25rem; border-radius: var(--border-radius-sm); border-left: 3px solid var(--accent-cyan);">
+              <strong style="color: var(--text-main); display: block; margin-bottom: 0.35rem;">2. Análise de Impacto Ágil</strong>
+              <span style="font-size: 0.85rem; color: var(--text-muted);">Se uma lei fiscal mudar (ex.: Reforma Tributária IBS/CBS ou prazos do CDC), a equipe sabe exatamente quais controllers e testes refatorar.</span>
+            </div>
+            <div style="background: var(--bg-surface); padding: 1.25rem; border-radius: var(--border-radius-sm); border-left: 3px solid var(--fatec-red);">
+              <strong style="color: var(--text-main); display: block; margin-bottom: 0.35rem;">3. Rigor para Avaliação Acadêmica</strong>
+              <span style="font-size: 0.85rem; color: var(--text-muted);">Demonstra alinhamento estrito com os métodos ensinados em Laboratório de Engenharia de Software na FATEC-FV.</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 2. PAINEL DINÂMICO E CAIXA DE BUSCA -->
+      <section style="margin-bottom: 1.5rem;">
+        <div class="card highlight" id="matrixDetailBox" style="padding: 1.5rem;">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem; flex-wrap: wrap; gap: 0.75rem;">
+            <h3 style="font-family: var(--font-display); font-size: 1.15rem; color: var(--fatec-red-light);">
+              🧭 Inspetor Interativo de Relacionamento Cruzado
+            </h3>
+            <span id="detailRelText"><span class="badge badge-blue">Passe o mouse ou clique em qualquer célula da tabela</span></span>
+          </div>
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 1rem;">
+            <div id="detailRnText" style="font-size: 0.9rem; color: var(--text-muted); background: var(--bg-surface); padding: 0.85rem 1rem; border-radius: 6px; border: 1px solid var(--border-subtle);">
+              <strong>Regra de Negócio:</strong> Selecione uma linha na matriz.
+            </div>
+            <div id="detailRfText" style="font-size: 0.9rem; color: var(--text-muted); background: var(--bg-surface); padding: 0.85rem 1rem; border-radius: 6px; border: 1px solid var(--border-subtle);">
+              <strong>Requisito Funcional:</strong> Selecione uma coluna na matriz.
+            </div>
+          </div>
+        </div>
+
+        <div style="margin: 1.25rem 0;">
+          <input type="text" id="matrixSearch" placeholder="🔍 Filtrar linha por Regra (ex: RN001, cubagem, frete, estoque, CDC)..." 
+                 style="width: 100%; padding: 0.75rem 1.25rem; border-radius: var(--border-radius-sm); border: 1px solid var(--border-subtle); background: var(--bg-surface); color: var(--text-main); font-family: inherit; font-size: 0.92rem;" />
+        </div>
+      </section>
+
+      <!-- 3. GRADE CRUZADA DE RASTREABILIDADE (GRID COMPLETO) -->
+      <section style="margin-bottom: 4rem;">
+        <div class="table-wrapper" style="max-height: 620px;">
+          <table class="data-table matrix-table" id="traceabilityMatrix">
+            <thead>
+              <tr>
+                <th style="min-width: 180px;">Regra de Negócio (RN)</th>
+                <th title="RF001: Cadastro produtos HD" data-rf="RF001">RF01</th>
+                <th title="RF002: Specs por categoria" data-rf="RF002">RF02</th>
+                <th title="RF003: Taxonomia categorias" data-rf="RF003">RF03</th>
+                <th title="RF004: Venda fracionada m²" data-rf="RF004">RF04</th>
+                <th title="RF005: CRUD SKUs Admin" data-rf="RF005">RF05</th>
+                <th title="RF006: Baixa estoque realtime" data-rf="RF006">RF06</th>
+                <th title="RF007: Kits e combos" data-rf="RF007">RF07</th>
+                <th title="RF008: Cross-selling" data-rf="RF008">RF08</th>
+                <th title="RF009: Carrinho persistente" data-rf="RF009">RF09</th>
+                <th title="RF010: Cálculo frete cubagem" data-rf="RF010">RF10</th>
+                <th title="RF011: Busca facetada" data-rf="RF011">RF11</th>
+                <th title="RF012: Página do produto PDP" data-rf="RF012">RF12</th>
+                <th title="RF013: Avaliações moderadas" data-rf="RF013">RF13</th>
+                <th title="RF014: Auth cadastro PF/PJ" data-rf="RF014">RF14</th>
+                <th title="RF015: Reset senha" data-rf="RF015">RF15</th>
+                <th title="RF016: Histórico pedidos" data-rf="RF016">RF16</th>
+                <th title="RF017: Múltiplos SHIPTOS" data-rf="RF017">RF17</th>
+                <th title="RF018: Multi-meios pagamento" data-rf="RF018">RF18</th>
+                <th title="RF019: Integ gateway seguro" data-rf="RF019">RF19</th>
+                <th title="RF020: Faturamento NF-e/NFC-e" data-rf="RF020">RF20</th>
+                <th title="RF021: BOPIS retirada loja" data-rf="RF021">RF21</th>
+                <th title="RF022: Rastreamento last-mile" data-rf="RF022">RF22</th>
+                <th title="RF023: Catálogo B2B atacado" data-rf="RF023">RF23</th>
+                <th title="RF024: Alerta ruptura estoque" data-rf="RF024">RF24</th>
+                <th title="RF025: Dashboard relatórios" data-rf="RF025">RF25</th>
+                <th style="font-weight: bold; background: var(--bg-surface-elevated);">Total</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td data-rn="RN001"><strong>RN001</strong> (Variações m²/cx)</td>
+                <td></td><td></td><td></td><td><span class="matrix-check">X</span></td><td><span class="matrix-check">X</span></td><td></td><td></td><td></td><td><span class="matrix-check">X</span></td><td></td><td></td><td><span class="matrix-check">X</span></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td class="cell-bold">4</td>
+              </tr>
+              <tr>
+                <td data-rn="RN002"><strong>RN002</strong> (Cubagem e Peso)</td>
+                <td></td><td><span class="matrix-check">X</span></td><td></td><td></td><td><span class="matrix-check">X</span></td><td></td><td></td><td></td><td></td><td><span class="matrix-check">X</span></td><td></td><td><span class="matrix-check">X</span></td><td></td><td></td><td></td><td></td><td><span class="matrix-check">X</span></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td class="cell-bold">5</td>
+              </tr>
+              <tr>
+                <td data-rn="RN003"><strong>RN003</strong> (Specs Técnicas)</td>
+                <td><span class="matrix-check">X</span></td><td><span class="matrix-check">X</span></td><td><span class="matrix-check">X</span></td><td></td><td><span class="matrix-check">X</span></td><td></td><td></td><td><span class="matrix-check">X</span></td><td></td><td></td><td><span class="matrix-check">X</span></td><td><span class="matrix-check">X</span></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td class="cell-bold">7</td>
+              </tr>
+              <tr>
+                <td data-rn="RN004"><strong>RN004</strong> (Kits e Combos)</td>
+                <td></td><td></td><td></td><td></td><td></td><td></td><td><span class="matrix-check">X</span></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td class="cell-bold">1</td>
+              </tr>
+              <tr>
+                <td data-rn="RN005"><strong>RN005</strong> (Estoque Realtime)</td>
+                <td></td><td></td><td></td><td></td><td></td><td><span class="matrix-check">X</span></td><td></td><td></td><td><span class="matrix-check">X</span></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td class="cell-bold">2</td>
+              </tr>
+              <tr>
+                <td data-rn="RN006"><strong>RN006</strong> (Alerta Ruptura)</td>
+                <td></td><td></td><td></td><td></td><td></td><td><span class="matrix-check">X</span></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td><span class="matrix-check">X</span></td><td></td><td class="cell-bold">2</td>
+              </tr>
+              <tr>
+                <td data-rn="RN007"><strong>RN007</strong> (Opções de Frete)</td>
+                <td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td><span class="matrix-check">X</span></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td class="cell-bold">1</td>
+              </tr>
+              <tr>
+                <td data-rn="RN008"><strong>RN008</strong> (Frete Grátis/BOPIS)</td>
+                <td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td><span class="matrix-check">X</span></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td><span class="matrix-check">X</span></td><td></td><td></td><td></td><td></td><td class="cell-bold">2</td>
+              </tr>
+              <tr>
+                <td data-rn="RN009"><strong>RN009</strong> (Política Devolução)</td>
+                <td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td><span class="matrix-check">X</span></td><td></td><td></td><td></td><td><span class="matrix-check">X</span></td><td></td><td></td><td><span class="matrix-check">X</span></td><td></td><td></td><td class="cell-bold">3</td>
+              </tr>
+              <tr>
+                <td data-rn="RN010"><strong>RN010</strong> (Materiais Sensíveis)</td>
+                <td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td><span class="matrix-check">X</span></td><td></td><td></td><td></td><td><span class="matrix-check">X</span></td><td></td><td></td><td></td><td></td><td></td><td class="cell-bold">2</td>
+              </tr>
+              <tr>
+                <td data-rn="RN011"><strong>RN011</strong> (CDC 7 Dias / Arrependimento)</td>
+                <td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td><span class="matrix-check">X</span></td><td></td><td></td><td></td><td><span class="matrix-check">X</span></td><td><span class="matrix-check">X</span></td><td></td><td></td><td></td><td></td><td class="cell-bold">3</td>
+              </tr>
+              <tr>
+                <td data-rn="RN012"><strong>RN012</strong> (Doc. Fiscal / NF-e)</td>
+                <td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td><span class="matrix-check">X</span></td><td></td><td></td><td></td><td><span class="matrix-check">X</span></td><td></td><td></td><td></td><td></td><td></td><td class="cell-bold">2</td>
+              </tr>
+              <tr>
+                <td data-rn="RN013"><strong>RN013</strong> (Rastreio / Notificação)</td>
+                <td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td><span class="matrix-check">X</span></td><td></td><td></td><td></td><td></td><td></td><td><span class="matrix-check">X</span></td><td></td><td></td><td></td><td class="cell-bold">2</td>
+              </tr>
+              <tr>
+                <td data-rn="RN014"><strong>RN014</strong> (Suporte e Avaliações)</td>
+                <td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td><span class="matrix-check">X</span></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td class="cell-bold">1</td>
+              </tr>
+              <tr>
+                <td data-rn="RN015"><strong>RN015</strong> (Desconto Volume / B2B)</td>
+                <td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td><span class="matrix-check">X</span></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td><span class="matrix-check">X</span></td><td></td><td><span class="matrix-check">X</span></td><td class="cell-bold">3</td>
+              </tr>
+              <tr>
+                <td data-rn="RN016"><strong>RN016</strong> (Desconto PIX / Idempotência)</td>
+                <td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td><span class="matrix-check">X</span></td><td><span class="matrix-check">X</span></td><td></td><td></td><td></td><td></td><td></td><td></td><td class="cell-bold">2</td>
+              </tr>
+              <tr>
+                <td data-rn="RN017"><strong>RN017</strong> (Preço Varejo vs Atacado)</td>
+                <td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td><span class="matrix-check">X</span></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td><span class="matrix-check">X</span></td><td></td><td></td><td class="cell-bold">2</td>
+              </tr>
+              <tr>
+                <td data-rn="RN018"><strong>RN018</strong> (Campanhas Categoria)</td>
+                <td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td><span class="matrix-check">X</span></td><td></td><td></td><td class="cell-bold">1</td>
+              </tr>
+            </tbody>
+            <tfoot>
+              <tr style="background: var(--bg-surface-elevated); font-weight: bold;">
+                <td>Total RNs por RF</td>
+                <td>1</td><td>2</td><td>1</td><td>1</td><td>3</td><td>2</td><td>1</td><td>1</td><td>3</td><td>3</td><td>1</td><td>3</td><td>1</td><td>1</td><td>0*</td><td>5</td><td>1</td><td>1</td><td>1</td><td>3</td><td>1</td><td>1</td><td>3</td><td>1</td><td>1</td><td style="color: var(--fatec-red-light);">41</td>
+              </tr>
+            </tfoot>
+          </table>
+        </div>
+        <div style="font-size: 0.8rem; color: var(--text-dim); margin-top: 0.5rem;">
+          *Nota sobre RF015 (Reset de Senha): Requisito técnico essencial de Segurança da Informação, mapeado formalmente em <strong>RNF003/RNF004</strong> (Tokens criptográficos temporários).
+        </div>
+      </section>
+
+      <!-- 4. AUDITORIA FORMAL DE INTEGRIDADE -->
+      <section style="margin-bottom: 4rem;">
+        <h2 style="font-family: var(--font-display); font-size: 1.6rem; margin-bottom: 1.25rem;">4. Auditoria de Integridade e Não-Orfandade</h2>
+        <div class="grid-cards-3">
+          <div class="card" style="border-top: 4px solid var(--accent-emerald);">
+            <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.5rem;">
+              <span class="badge badge-green">TRC_001</span>
+              <strong style="color: var(--accent-emerald);">100%</strong>
+            </div>
+            <h4 class="card-title">Mapeamento Direto</h4>
+            <p class="card-desc">Todos os 25 Requisitos Funcionais possuem finalidade explícita de negócio ou segurança da informação auditada.</p>
+          </div>
+
+          <div class="card" style="border-top: 4px solid var(--accent-emerald);">
+            <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.5rem;">
+              <span class="badge badge-green">TRC_002</span>
+              <strong style="color: var(--accent-emerald);">0 Órfãs</strong>
+            </div>
+            <h4 class="card-title">Ausência de Regras Órfãs</h4>
+            <p class="card-desc">Todas as 18 Regras de Negócio (100%) possuem ao menos um Requisito Funcional encarregado de sua execução.</p>
+          </div>
+
+          <div class="card" style="border-top: 4px solid var(--accent-emerald);">
+            <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.5rem;">
+              <span class="badge badge-green">TRC_003</span>
+              <strong style="color: var(--accent-emerald);">Auditado</strong>
+            </div>
+            <h4 class="card-title">Conexão com Diagramas</h4>
+            <p class="card-desc">Sincronia direta com os 14 Diagramas de Sequência e Casos de Uso detalhados no projeto.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- 5. ANÁLISE DE IMPACTO DE MUDANÇAS -->
+      <section style="margin-bottom: 4rem;">
+        <h2 style="font-family: var(--font-display); font-size: 1.6rem; margin-bottom: 1.25rem;">5. Análise de Impacto de Mudanças (Impact Analysis)</h2>
+        <div class="table-wrapper">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Cenário de Mudança Externa</th>
+                <th>Regra Afetada</th>
+                <th>Componentes PHP Impactados</th>
+                <th>Diagrama de Sequência a Revisar</th>
+                <th>Testes Automatizados a Reexecutar</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td class="cell-bold">Alteração de Embalagem (m² p/ caixa)</td>
+                <td>RN001</td>
+                <td><code>ProductOptionController</code>, <code>AreaCalculator</code></td>
+                <td>Área e Revestimento Cerâmico</td>
+                <td><code>AreaCalculationTest.php</code></td>
+              </tr>
+              <tr>
+                <td class="cell-bold">Novas Regras de Tabela de Frete</td>
+                <td>RN002, RN007</td>
+                <td><code>ShippingStrategyManager</code>, <code>CorreiosAdapter</code></td>
+                <td>Cálculo de Frete Strategy</td>
+                <td><code>ShippingStrategyTest.php</code></td>
+              </tr>
+              <tr>
+                <td class="cell-bold">Ajuste de Estoque de Segurança</td>
+                <td>RN005, RN006</td>
+                <td><code>InventoryService</code>, <code>StockDeductionObserver</code></td>
+                <td>Lock Otimista Falha e Fluxo Pedido</td>
+                <td><code>StockDeductionTest.php</code></td>
+              </tr>
+              <tr>
+                <td class="cell-bold">Nova Portaria CDC (Logística Reversa)</td>
+                <td>RN011</td>
+                <td><code>ReturnService</code>, <code>AccountReturnController</code></td>
+                <td>Devolução de Produtos (RMA)</td>
+                <td><code>ReturnPolicyCdcTest.php</code></td>
+              </tr>
+              <tr>
+                <td class="cell-bold">Reforma Tributária (IBS / CBS)</td>
+                <td>RN003, RN017</td>
+                <td><code>TaxCalculationStrategy</code>, <code>NfeEmitter</code></td>
+                <td>Webhook de Pagamento & Faturamento</td>
+                <td><code>TaxCalculationStrategyTest.php</code></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- Navegação Inferior -->
+      <footer class="page-nav-bar">
+        <a href="04_casos_de_uso.html" class="nav-page-link">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"></polyline></svg>
+          <div class="nav-page-meta">
+            <span class="nav-page-direction">← Módulo Anterior</span>
+            <span class="nav-page-title">04. Casos de Uso do Sistema</span>
+          </div>
+        </a>
+        <a href="06_arquitetura_dados.html" class="nav-page-link next">
+          <div class="nav-page-meta">
+            <span class="nav-page-direction">Próximo Módulo →</span>
+            <span class="nav-page-title">06. Arquitetura & Banco EER</span>
+          </div>
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"></polyline></svg>
+        </a>
+      </footer>
+
+      <div class="academic-footer">
+        <p><strong>FATEC Ferraz de Vasconcelos</strong> — Faculdade de Tecnologia de Ferraz de Vasconcelos</p>
+        <p>Disciplina: Laboratório de Engenharia de Software | Orientadora: Profa. Patrícia Sarno</p>
+      </div>
+    </main>
+  </div>
+
+  <script src="assets/js/main.js"></script>
+  <script src="assets/js/matrix-filter.js"></script>
+</body>
+</html>

@@ -1,4 +1,4 @@
-@startuml "Atendimento Presencial (POS / Venda Balcão)"
+@startuml "Atendimento Presencial (POS - Venda Balcão)"
 skinparam backgroundColor #FFFFFF
 skinparam shadowing false
 skinparam activity {

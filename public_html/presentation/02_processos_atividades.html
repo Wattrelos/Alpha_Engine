@@ -1,0 +1,454 @@
+<!DOCTYPE html>
+<html lang="pt-BR" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>02. Processos & Atividades | Alpha Engine - FATEC-FV</title>
+  <meta name="description" content="Modelagem Formal de Processos e Atividades do Negócio para a plataforma Alpha Engine - FATEC Ferraz de Vasconcelos.">
+  <link rel="stylesheet" href="assets/css/style.css">
+  <link rel="stylesheet" href="assets/css/print.css" media="print">
+</head>
+<body>
+
+  <div class="progress-container"><div class="progress-bar"></div></div>
+
+  <!-- Topbar -->
+  <header class="topbar">
+    <div class="topbar-left">
+      <button class="menu-toggle" id="menuToggle" aria-label="Abrir Menu">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
+      </button>
+      <a href="index.html" class="topbar-brand">
+        <div class="topbar-logos">
+          <img src="assets/img/logos/Fatec_logo.svg" alt="Logo FATEC" />
+          <img src="assets/img/logos/logo-cps-2022.svg" alt="Logo Centro Paula Souza" />
+          <img src="assets/img/logos/sp.jpg" alt="Governo do Estado de São Paulo" />
+        </div>
+        <div class="brand-text">
+          <span class="brand-title">Alpha Engine</span>
+          <span class="brand-subtitle">02. Processos & Atividades</span>
+        </div>
+      </a>
+    </div>
+
+    <div class="topbar-right">
+      <button class="nav-tool-btn" id="modeToggleBtn" title="Alternar Modo Apresentação (P)">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect><line x1="8" y1="21" x2="16" y2="21"></line><line x1="12" y1="17" x2="12" y2="21"></line></svg>
+        <span class="mode-label">Modo Apresentação</span>
+      </button>
+      <button class="nav-tool-btn" id="themeToggleBtn" title="Alternar Tema (T)">
+        <span class="theme-icon"></span>
+      </button>
+      <button class="nav-tool-btn" id="fullscreenBtn" title="Tela Cheia (F)">
+        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"></path></svg>
+      </button>
+    </div>
+  </header>
+
+  <div class="app-container">
+    <!-- Sidebar -->
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-header">
+        <div class="sidebar-label">Dossiê Acadêmico</div>
+        <div class="sidebar-course">Análise e Desenv. Sistemas</div>
+      </div>
+      <nav class="sidebar-nav">
+        <a href="index.html" class="nav-item">
+          <div class="nav-item-title"><span class="nav-num">00</span><span>Capa & Visão Geral</span></div>
+          <span class="nav-badge">Início</span>
+        </a>
+        <a href="01_visao.html" class="nav-item">
+          <div class="nav-item-title"><span class="nav-num">01</span><span>Documento de Visão</span></div>
+          <span class="nav-badge">Doc</span>
+        </a>
+        <a href="02_processos_atividades.html" class="nav-item active">
+          <div class="nav-item-title"><span class="nav-num">02</span><span>Processos & Atividades</span></div>
+          <span class="nav-badge">10 Ativ.</span>
+        </a>
+        <a href="03_requisitos_regras.html" class="nav-item">
+          <div class="nav-item-title"><span class="nav-num">03</span><span>Engenharia de Requisitos</span></div>
+          <span class="nav-badge">25 RFs</span>
+        </a>
+        <a href="04_casos_de_uso.html" class="nav-item">
+          <div class="nav-item-title"><span class="nav-num">04</span><span>Casos de Uso do Sistema</span></div>
+          <span class="nav-badge">10 UCs</span>
+        </a>
+        <a href="05_matriz_rastreabilidade.html" class="nav-item">
+          <div class="nav-item-title"><span class="nav-num">05</span><span>Matriz de Rastreabilidade</span></div>
+          <span class="nav-badge">RN × RF</span>
+        </a>
+        <a href="06_arquitetura_dados.html" class="nav-item">
+          <div class="nav-item-title"><span class="nav-num">06</span><span>Arquitetura & Banco EER</span></div>
+          <span class="nav-badge">C4 / DER</span>
+        </a>
+        <a href="07_diagramas_sequencia.html" class="nav-item">
+          <div class="nav-item-title"><span class="nav-num">07</span><span>Diagramas de Sequência</span></div>
+          <span class="nav-badge">14 Diagr.</span>
+        </a>
+        <a href="08_checklist_disciplina.html" class="nav-item">
+          <div class="nav-item-title"><span class="nav-num">08</span><span>Checklist da Disciplina</span></div>
+          <span class="nav-badge">100% OK</span>
+        </a>
+      </nav>
+      <div class="sidebar-footer">
+        <p><strong>Orientadora:</strong> Profa. Patrícia Sarno</p>
+        <p><strong>Aluno:</strong> Josias da Conceição Sobrinho</p>
+        <p>FATEC Ferraz de Vasconcelos</p>
+      </div>
+    </aside>
+
+    <!-- Conteúdo Principal -->
+    <main class="main-content">
+      <header class="page-header">
+        <div class="page-category">Módulo 02 • Engenharia de Processos</div>
+        <h1 class="page-title">Modelagem de Atividades e Processos de Negócio</h1>
+        <p class="page-subtitle">
+          Mapeamento formal dos 10 fluxos operacionais e técnicos com diagramas de atividades em SVG PlantUML, contemplando vendas presenciais em PDV, checkout digital, concorrência de estoque e governança LGPD.
+        </p>
+      </header>
+
+      <!-- PARTE I: ATIVIDADES COMERCIAIS E OPERACIONAIS -->
+      <section style="margin-bottom: 4rem;">
+        <h2 style="font-family: var(--font-display); font-size: 1.6rem; margin-bottom: 0.5rem; color: var(--fatec-red-light);">
+          Parte I: Atividades Comerciais & Operacionais (Visão de Negócio)
+        </h2>
+        <p style="color: var(--text-muted); margin-bottom: 2rem;">Fluxos que envolvem consumidores, vendedores de balcão, operadores de caixa e canais de logística reversa.</p>
+
+        <!-- Atividade 1 -->
+        <article class="card" style="margin-bottom: 2.5rem;">
+          <h3 class="card-title" style="font-size: 1.3rem;">3.1. Atividade 1: Processo de Venda com Tratamento de Rejeição de Pagamento (POS)</h3>
+          <p class="card-desc" style="margin-bottom: 1.25rem;">
+            No balcão presencial ou caixa rápido, o operador registra os SKUs (via leitor de código de barras), o sistema valida o saldo em estoque em tempo real e calcula impostos. Caso a operadora de cartão rejeite a transação (saldo insuficiente, falha de comunicação ou suspeita de fraude), o sistema permite a troca imediata do meio de pagamento (PIX, dinheiro ou outro cartão) sem desmanchar o carrinho ou perder o lock do pedido.
+          </p>
+
+          <div class="diagram-container">
+            <div class="diagram-header">
+              <div class="diagram-info">
+                <span class="diagram-title">Diagrama de Atividades: Venda POS com Rejeição de Pagamento</span>
+                <span class="diagram-badge">Atividade 3.1 • POS • Fallback de Pagamento</span>
+              </div>
+              <div class="diagram-actions">
+                <button class="btn-icon btn-zoom" title="Ampliar">
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line><line x1="11" y1="8" x2="11" y2="14"></line><line x1="8" y1="11" x2="14" y2="11"></line></svg>
+                  Zoom
+                </button>
+              </div>
+            </div>
+            <div class="diagram-frame">
+              <img src="assets/img/diagrams/ProcessodeVendacomTratamentodeRejeiçãodePagamento(POS).svg" alt="Processo de Venda com Tratamento de Rejeição de Pagamento (POS)" />
+            </div>
+            <div class="diagram-caption">
+              <span>Clique no diagrama para interagir com Pan & Zoom.</span>
+              <span>Regras atendidas: <strong>RN005, RN015, RN017</strong></span>
+            </div>
+          </div>
+        </article>
+
+        <!-- Atividade 2 -->
+        <article class="card" style="margin-bottom: 2.5rem;">
+          <h3 class="card-title" style="font-size: 1.3rem;">3.2. Atividade 2: Atendimento Presencial no Balcão e Modalidades de Entrega (POS Balcão)</h3>
+          <p class="card-desc" style="margin-bottom: 1.25rem;">
+            O vendedor técnico faz o atendimento consultivo: calcula a quantidade de argamassa e rejunte com base na metragem quadrada (m²) de revestimento solicitada pelo cliente. O cliente escolhe entre retirar de imediato no pátio da loja (BOPIS) ou agendar entrega pesada por caminhão munck no canteiro de obras.
+          </p>
+
+          <div class="diagram-container">
+            <div class="diagram-header">
+              <div class="diagram-info">
+                <span class="diagram-title">Diagrama de Atividades: Atendimento Presencial Balcão & Entrega</span>
+                <span class="diagram-badge">Atividade 3.2 • Venda Consultiva • Fracionamento m²</span>
+              </div>
+              <div class="diagram-actions">
+                <button class="btn-icon btn-zoom" title="Ampliar">
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line><line x1="11" y1="8" x2="11" y2="14"></line><line x1="8" y1="11" x2="14" y2="11"></line></svg>
+                  Zoom
+                </button>
+              </div>
+            </div>
+            <div class="diagram-frame">
+              <img src="assets/img/diagrams/Atendimento Presencial (POS - Venda Balcão).svg" alt="Atendimento Presencial no Balcão e Modalidades de Entrega" />
+            </div>
+            <div class="diagram-caption">
+              <span>Fluxo presencial de orçamentação e seleção de transporte pesado.</span>
+              <span>Regras atendidas: <strong>RN001, RN002, RN007, RN008</strong></span>
+            </div>
+          </div>
+        </article>
+
+        <!-- Atividade 3 -->
+        <article class="card" style="margin-bottom: 2.5rem;">
+          <h3 class="card-title" style="font-size: 1.3rem;">3.3. Atividade 3: Fluxo de Compra e Árvore de Decisão do Checkout E-Commerce</h3>
+          <p class="card-desc" style="margin-bottom: 1.25rem;">
+            Árvore de decisão estruturada que analisa a condição do cliente (Visitante vs. Cadastrado), o tipo de documento (CPF vs. CNPJ com IE), a disponibilidade de estoque e a rota logística antes de autorizar o envio ao gateway de pagamento.
+          </p>
+
+          <div class="diagram-container">
+            <div class="diagram-header">
+              <div class="diagram-info">
+                <span class="diagram-title">Árvore de Decisão do Checkout E-Commerce</span>
+                <span class="diagram-badge">Atividade 3.3 • Árvore Decisória • Checkout Seguro</span>
+              </div>
+              <div class="diagram-actions">
+                <button class="btn-icon btn-zoom" title="Ampliar">
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line><line x1="11" y1="8" x2="11" y2="14"></line><line x1="8" y1="11" x2="14" y2="11"></line></svg>
+                  Zoom
+                </button>
+              </div>
+            </div>
+            <div class="diagram-frame">
+              <img src="assets/img/diagrams/Árvore de Decisão do Checkout.svg" alt="Árvore de Decisão do Checkout" />
+            </div>
+            <div class="diagram-caption">
+              <span>Trifurcação de pagamento (PIX, Cartão e Boleto) e validação fiscal interestadual.</span>
+              <span>Regras atendidas: <strong>RN003, RN009, RN015, RN016</strong></span>
+            </div>
+          </div>
+        </article>
+
+        <!-- Atividade 4 -->
+        <article class="card" style="margin-bottom: 2.5rem;">
+          <h3 class="card-title" style="font-size: 1.3rem;">3.4. Atividade 4: Ciclo de Vida e Processamento de Devolução (RMA / Logística Reversa CDC)</h3>
+          <p class="card-desc" style="margin-bottom: 1.25rem;">
+            Em conformidade estrita com o Artigo 49 do Código de Defesa do Consumidor (CDC), o cliente pode solicitar o cancelamento por arrependimento em até 7 dias corridos após a entrega, ou 90 dias para defeito de fabricação. O processo cobre geração de etiqueta reversa, inspeção física de qualidade no almoxarifado, estorno financeiro e retorno automático ao estoque.
+          </p>
+
+          <div class="diagram-container">
+            <div class="diagram-header">
+              <div class="diagram-info">
+                <span class="diagram-title">Ciclo de Vida da Devolução e Logística Reversa (RMA)</span>
+                <span class="diagram-badge">Atividade 3.4 • Compliance CDC • Estorno</span>
+              </div>
+              <div class="diagram-actions">
+                <button class="btn-icon btn-zoom" title="Ampliar">
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line><line x1="11" y1="8" x2="11" y2="14"></line><line x1="8" y1="11" x2="14" y2="11"></line></svg>
+                  Zoom
+                </button>
+              </div>
+            </div>
+            <div class="diagram-frame">
+              <img src="assets/img/diagrams/Ciclo de Vida da Devolução (RMA).svg" alt="Ciclo de Vida da Devolução (RMA)" />
+            </div>
+            <div class="diagram-caption">
+              <span>Auditoria de retorno ao estoque ou direcionamento a descarte/fabricante.</span>
+              <span>Regras atendidas: <strong>RN011, RN005</strong></span>
+            </div>
+          </div>
+        </article>
+
+        <!-- Atividade 5 -->
+        <article class="card" style="margin-bottom: 2.5rem;">
+          <h3 class="card-title" style="font-size: 1.3rem;">3.5. Atividade 5: Gestão de Inventário e Baixa de Estoque Concorrente (Optimistic Locking)</h3>
+          <p class="card-desc" style="margin-bottom: 1.25rem;">
+            Como a loja virtual e o terminal do caixa físico operam sobre o mesmo saldo de produtos (omnichannel), múltiplos clientes podem tentar arrematar as últimas unidades simultaneamente. O fluxo modela a reserva temporária (TTL no Redis) e a confirmação via controle de versão no banco de dados.
+          </p>
+
+          <div class="diagram-container">
+            <div class="diagram-header">
+              <div class="diagram-info">
+                <span class="diagram-title">Reserva e Baixa de Estoque Concorrente</span>
+                <span class="diagram-badge">Atividade 3.5 • Concorrência ACID • Bloqueio Otimista</span>
+              </div>
+              <div class="diagram-actions">
+                <button class="btn-icon btn-zoom" title="Ampliar">
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line><line x1="11" y1="8" x2="11" y2="14"></line><line x1="8" y1="11" x2="14" y2="11"></line></svg>
+                  Zoom
+                </button>
+              </div>
+            </div>
+            <div class="diagram-frame">
+              <img src="assets/img/diagrams/Reserva e Baixa de Estoque Concorrente.svg" alt="Reserva e Baixa de Estoque Concorrente" />
+            </div>
+            <div class="diagram-caption">
+              <span>Prevenção de Overselling com invalidação imediata de cache Redis.</span>
+              <span>Regras atendidas: <strong>RN005, RN006</strong></span>
+            </div>
+          </div>
+        </article>
+
+        <!-- Atividade 6 -->
+        <article class="card" style="margin-bottom: 2.5rem;">
+          <h3 class="card-title" style="font-size: 1.3rem;">3.6. Atividade 6: Governança de Dados, Sanitização e Direito ao Esquecimento (LGPD)</h3>
+          <p class="card-desc" style="margin-bottom: 1.25rem;">
+            Atendimento aos direitos do titular previstos na Lei Geral de Proteção de Dados (Lei nº 13.709/2018). O sistema executa a anonimização irreversível dos dados pessoais (substituição de nome, telefone e endereço por hash SHA-256), preservando exclusivamente as chaves de notas fiscais e registros de venda exigidos pela legislação tributária federal (Guarda fiscal de 5 anos).
+          </p>
+
+          <div class="diagram-container">
+            <div class="diagram-header">
+              <div class="diagram-info">
+                <span class="diagram-title">Governança de Dados e Sanitização LGPD</span>
+                <span class="diagram-badge">Atividade 3.6 • Compliance LGPD • Anonimização</span>
+              </div>
+              <div class="diagram-actions">
+                <button class="btn-icon btn-zoom" title="Ampliar">
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line><line x1="11" y1="8" x2="11" y2="14"></line><line x1="8" y1="11" x2="14" y2="11"></line></svg>
+                  Zoom
+                </button>
+              </div>
+            </div>
+            <div class="diagram-frame">
+              <img src="assets/img/diagrams/Governança de Dados e Sanitização LGPD.svg" alt="Governança de Dados e Sanitização LGPD" />
+            </div>
+            <div class="diagram-caption">
+              <span>Equilíbrio entre anonimização LGPD e obrigação legal de custódia fiscal.</span>
+              <span>Regras atendidas: <strong>RN010</strong></span>
+            </div>
+          </div>
+        </article>
+      </section>
+
+      <!-- PARTE II: ATIVIDADES TÉCNICAS E DE ARQUITETURA -->
+      <section style="margin-bottom: 4rem;">
+        <h2 style="font-family: var(--font-display); font-size: 1.6rem; margin-bottom: 0.5rem; color: var(--accent-cyan);">
+          Parte II: Atividades Técnicas (Infraestrutura, Segurança & Arquitetura)
+        </h2>
+        <p style="color: var(--text-muted); margin-bottom: 2rem;">Mecanismos de engenharia que garantem alta disponibilidade, tolerância a falhas e defesa em profundidade.</p>
+
+        <!-- Atividade 7 -->
+        <article class="card" style="margin-bottom: 2.5rem;">
+          <h3 class="card-title" style="font-size: 1.3rem;">4.1. Atividade 7: Autenticação Dual com Cache Redis e Fallback Gracioso para Sessão PHP</h3>
+          <p class="card-desc" style="margin-bottom: 1.25rem;">
+            O subsistema de segurança opera prioritariamente com armazenamento de sessões em memória no Redis para latência sub-milissegundo. Caso o cluster Redis fique indisponível, um bloco de tratamento de exceções (<em>try-catch</em>) comuta de forma transparente para sessões nativas em disco (<code>$_SESSION</code>), mantendo a loja online sem deslogar os usuários ativos.
+          </p>
+
+          <div class="diagram-container">
+            <div class="diagram-header">
+              <div class="diagram-info">
+                <span class="diagram-title">Autenticação Dual: Redis + Fallback PHP Session</span>
+                <span class="diagram-badge">Atividade 4.1 • Resiliência • Graceful Degradation</span>
+              </div>
+              <div class="diagram-actions">
+                <button class="btn-icon btn-zoom" title="Ampliar">
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line><line x1="11" y1="8" x2="11" y2="14"></line><line x1="8" y1="11" x2="14" y2="11"></line></svg>
+                  Zoom
+                </button>
+              </div>
+            </div>
+            <div class="diagram-frame">
+              <img src="assets/img/diagrams/Dual_Authentication_with_Redis_&_Fallback_PHP_Session.svg" alt="Dual Authentication with Redis and Fallback PHP Session" />
+            </div>
+            <div class="diagram-caption">
+              <span>Prevenção de Single Point of Failure (SPoF) na gestão de autenticação.</span>
+              <span>Requisitos Não Funcionais: <strong>RNF002, RNF003, RNF004</strong></span>
+            </div>
+          </div>
+        </article>
+
+        <!-- Atividade 8 -->
+        <article class="card" style="margin-bottom: 2.5rem;">
+          <h3 class="card-title" style="font-size: 1.3rem;">4.2. Atividade 8: Controle de Idempotência e Proteção de Filas Assíncronas (Anti-Duplo Clique)</h3>
+          <p class="card-desc" style="margin-bottom: 1.25rem;">
+            Proteção contra duplo envio de transações bancárias ocasionado por lentidão de rede ou múltiplos cliques rápidos do consumidor no botão de finalizar compra. O middleware gera um <code>Idempotency-Key</code> único (UUID v4) armazenado no Redis com lock atômico <code>SETNX</code>.
+          </p>
+
+          <div class="diagram-container">
+            <div class="diagram-header">
+              <div class="diagram-info">
+                <span class="diagram-title">Controle de Idempotência Técnica & Proteção de Filas</span>
+                <span class="diagram-badge">Atividade 4.2 • Anti-Duplo Clique • Atomic Lock</span>
+              </div>
+              <div class="diagram-actions">
+                <button class="btn-icon btn-zoom" title="Ampliar">
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line><line x1="11" y1="8" x2="11" y2="14"></line><line x1="8" y1="11" x2="14" y2="11"></line></svg>
+                  Zoom
+                </button>
+              </div>
+            </div>
+            <div class="diagram-frame">
+              <img src="assets/img/diagrams/Technical_Idempotency_&_Queue_Protection.svg" alt="Technical Idempotency and Queue Protection" />
+            </div>
+            <div class="diagram-caption">
+              <span>Evita cobranças duplicadas em cartões de crédito e pedidos fantasmas.</span>
+              <span>Regras atendidas: <strong>RN016</strong></span>
+            </div>
+          </div>
+        </article>
+
+        <!-- Atividade 9 -->
+        <article class="card" style="margin-bottom: 2.5rem;">
+          <h3 class="card-title" style="font-size: 1.3rem;">4.3. Atividade 9: Tratamento de Falhas de Concorrência com Bloqueio Otimista</h3>
+          <p class="card-desc" style="margin-bottom: 1.25rem;">
+            Detecção precisa de colisão quando duas instâncias da aplicação tentam decrementar o inventário de um produto simultaneamente. A transação valida a coluna de versão (<code>version = version + 1</code>). Se a versão no banco for maior que a lida em memória, a exceção <code>OptimisticLockException</code> é disparada, descartando a escrita concorrente e notificando a interface amigavelmente.
+          </p>
+
+          <div class="diagram-container">
+            <div class="diagram-header">
+              <div class="diagram-info">
+                <span class="diagram-title">Tratamento de Falha de Bloqueio Otimista</span>
+                <span class="diagram-badge">Atividade 4.3 • Versioning • Concurrency Control</span>
+              </div>
+              <div class="diagram-actions">
+                <button class="btn-icon btn-zoom" title="Ampliar">
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line><line x1="11" y1="8" x2="11" y2="14"></line><line x1="8" y1="11" x2="14" y2="11"></line></svg>
+                  Zoom
+                </button>
+              </div>
+            </div>
+            <div class="diagram-frame">
+              <img src="assets/img/diagrams/Optimistic_Lock_Failure_Flow.svg" alt="Optimistic Lock Failure Flow" />
+            </div>
+            <div class="diagram-caption">
+              <span>Integridade de dados garantida em cenários de alta concorrência de checkout.</span>
+              <span>Regras atendidas: <strong>RN005</strong></span>
+            </div>
+          </div>
+        </article>
+
+        <!-- Atividade 10 -->
+        <article class="card" style="margin-bottom: 2.5rem;">
+          <h3 class="card-title" style="font-size: 1.3rem;">4.4. Atividade 10: Esteira de Segurança HTTP e Pipeline de Middlewares Slim 4</h3>
+          <p class="card-desc" style="margin-bottom: 1.25rem;">
+            Pipeline sequencial de execução compatível com <strong>PSR-15</strong>. Antes de atingir as <em>Action Controllers</em>, cada requisição HTTP passa por camadas sucessivas de: 1. Rate Limiting (anti-DDoS e brute-force), 2. Validação de Token Anti-CSRF (com hash criptográfico assinado), 3. Sanitização de Input (prevenção de XSS e SQL Injection) e 4. Controle de Acesso Baseado em Perfis (RBAC).
+          </p>
+
+          <div class="diagram-container">
+            <div class="diagram-header">
+              <div class="diagram-info">
+                <span class="diagram-title">Esteira de Segurança HTTP e Middlewares PSR-15</span>
+                <span class="diagram-badge">Atividade 4.4 • PSR-15 • Anti-CSRF • Rate Limit</span>
+              </div>
+              <div class="diagram-actions">
+                <button class="btn-icon btn-zoom" title="Ampliar">
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line><line x1="11" y1="8" x2="11" y2="14"></line><line x1="8" y1="11" x2="14" y2="11"></line></svg>
+                  Zoom
+                </button>
+              </div>
+            </div>
+            <div class="diagram-frame">
+              <img src="assets/img/diagrams/Esteira de Segurança e Middlewares HTTP.svg" alt="Esteira de Segurança e Middlewares HTTP" />
+            </div>
+            <div class="diagram-caption">
+              <span>Defesa em profundidade blindando todas as rotas públicas e administrativas.</span>
+              <span>Requisitos Não Funcionais: <strong>RNF004</strong></span>
+            </div>
+          </div>
+        </article>
+      </section>
+
+      <!-- Navegação Inferior -->
+      <footer class="page-nav-bar">
+        <a href="01_visao.html" class="nav-page-link">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"></polyline></svg>
+          <div class="nav-page-meta">
+            <span class="nav-page-direction">← Módulo Anterior</span>
+            <span class="nav-page-title">01. Documento de Visão</span>
+          </div>
+        </a>
+        <a href="03_requisitos_regras.html" class="nav-page-link next">
+          <div class="nav-page-meta">
+            <span class="nav-page-direction">Próximo Módulo →</span>
+            <span class="nav-page-title">03. Engenharia de Requisitos</span>
+          </div>
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"></polyline></svg>
+        </a>
+      </footer>
+
+      <div class="academic-footer">
+        <p><strong>FATEC Ferraz de Vasconcelos</strong> — Faculdade de Tecnologia de Ferraz de Vasconcelos</p>
+        <p>Disciplina: Laboratório de Engenharia de Software | Orientadora: Profa. Patrícia Sarno</p>
+      </div>
+    </main>
+  </div>
+
+  <script src="assets/js/main.js"></script>
+  <script src="assets/js/svg-viewer.js"></script>
+</body>
+</html>

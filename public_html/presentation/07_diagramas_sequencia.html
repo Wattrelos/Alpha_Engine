@@ -1,0 +1,436 @@
+<!DOCTYPE html>
+<html lang="pt-BR" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>07. Diagramas de Sequência | Alpha Engine - FATEC-FV</title>
+  <meta name="description" content="Galeria dos 14 Diagramas de Sequência Técnicos para a disciplina de Laboratório de Engenharia de Software - FATEC Ferraz de Vasconcelos.">
+  <link rel="stylesheet" href="assets/css/style.css">
+  <link rel="stylesheet" href="assets/css/print.css" media="print">
+</head>
+<body>
+
+  <div class="progress-container"><div class="progress-bar"></div></div>
+
+  <!-- Topbar -->
+  <header class="topbar">
+    <div class="topbar-left">
+      <button class="menu-toggle" id="menuToggle" aria-label="Abrir Menu">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
+      </button>
+      <a href="index.html" class="topbar-brand">
+        <div class="topbar-logos">
+          <img src="assets/img/logos/Fatec_logo.svg" alt="Logo FATEC" />
+          <img src="assets/img/logos/logo-cps-2022.svg" alt="Logo Centro Paula Souza" />
+          <img src="assets/img/logos/sp.jpg" alt="Governo do Estado de São Paulo" />
+        </div>
+        <div class="brand-text">
+          <span class="brand-title">Alpha Engine</span>
+          <span class="brand-subtitle">07. Diagramas de Sequência</span>
+        </div>
+      </a>
+    </div>
+
+    <div class="topbar-right">
+      <button class="nav-tool-btn" id="modeToggleBtn" title="Alternar Modo Apresentação (P)">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect><line x1="8" y1="21" x2="16" y2="21"></line><line x1="12" y1="17" x2="12" y2="21"></line></svg>
+        <span class="mode-label">Modo Apresentação</span>
+      </button>
+      <button class="nav-tool-btn" id="themeToggleBtn" title="Alternar Tema (T)">
+        <span class="theme-icon"></span>
+      </button>
+      <button class="nav-tool-btn" id="fullscreenBtn" title="Tela Cheia (F)">
+        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"></path></svg>
+      </button>
+    </div>
+  </header>
+
+  <div class="app-container">
+    <!-- Sidebar -->
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-header">
+        <div class="sidebar-label">Dossiê Acadêmico</div>
+        <div class="sidebar-course">Análise e Desenv. Sistemas</div>
+      </div>
+      <nav class="sidebar-nav">
+        <a href="index.html" class="nav-item">
+          <div class="nav-item-title"><span class="nav-num">00</span><span>Capa & Visão Geral</span></div>
+          <span class="nav-badge">Início</span>
+        </a>
+        <a href="01_visao.html" class="nav-item">
+          <div class="nav-item-title"><span class="nav-num">01</span><span>Documento de Visão</span></div>
+          <span class="nav-badge">Doc</span>
+        </a>
+        <a href="02_processos_atividades.html" class="nav-item">
+          <div class="nav-item-title"><span class="nav-num">02</span><span>Processos & Atividades</span></div>
+          <span class="nav-badge">10 Ativ.</span>
+        </a>
+        <a href="03_requisitos_regras.html" class="nav-item">
+          <div class="nav-item-title"><span class="nav-num">03</span><span>Engenharia de Requisitos</span></div>
+          <span class="nav-badge">25 RFs</span>
+        </a>
+        <a href="04_casos_de_uso.html" class="nav-item">
+          <div class="nav-item-title"><span class="nav-num">04</span><span>Casos de Uso do Sistema</span></div>
+          <span class="nav-badge">10 UCs</span>
+        </a>
+        <a href="05_matriz_rastreabilidade.html" class="nav-item">
+          <div class="nav-item-title"><span class="nav-num">05</span><span>Matriz de Rastreabilidade</span></div>
+          <span class="nav-badge">RN × RF</span>
+        </a>
+        <a href="06_arquitetura_dados.html" class="nav-item">
+          <div class="nav-item-title"><span class="nav-num">06</span><span>Arquitetura & Banco EER</span></div>
+          <span class="nav-badge">C4 / DER</span>
+        </a>
+        <a href="07_diagramas_sequencia.html" class="nav-item active">
+          <div class="nav-item-title"><span class="nav-num">07</span><span>Diagramas de Sequência</span></div>
+          <span class="nav-badge">14 Diagr.</span>
+        </a>
+        <a href="08_checklist_disciplina.html" class="nav-item">
+          <div class="nav-item-title"><span class="nav-num">08</span><span>Checklist da Disciplina</span></div>
+          <span class="nav-badge">100% OK</span>
+        </a>
+      </nav>
+      <div class="sidebar-footer">
+        <p><strong>Orientadora:</strong> Profa. Patrícia Sarno</p>
+        <p><strong>Aluno:</strong> Josias da Conceição Sobrinho</p>
+        <p>FATEC Ferraz de Vasconcelos</p>
+      </div>
+    </aside>
+
+    <!-- Conteúdo Principal -->
+    <main class="main-content">
+      <header class="page-header">
+        <div class="page-category">Módulo 07 • Engenharia de Software</div>
+        <h1 class="page-title">Galeria Técnica dos 14 Diagramas de Sequência</h1>
+        <p class="page-subtitle">
+          Detalhamento da troca de mensagens assíncronas e síncronas entre objetos, middlewares PSR-15, persistência DAO e serviços externos para os 14 cenários críticos da plataforma.
+        </p>
+      </header>
+
+      <!-- SELETOR DE CATEGORIAS -->
+      <div class="card" style="margin-bottom: 2.5rem; padding: 1.25rem;">
+        <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+          <button class="diag-filter-btn active" data-diag-cat="all" style="padding: 0.45rem 0.85rem; border-radius: 6px; border: 1px solid var(--border-subtle); background: var(--fatec-red); color: white; cursor: pointer; font-size: 0.82rem; font-weight: 600;">Todos os 14 Diagramas</button>
+          <button class="diag-filter-btn" data-diag-cat="security" style="padding: 0.45rem 0.85rem; border-radius: 6px; border: 1px solid var(--border-subtle); background: var(--bg-surface); color: var(--text-main); cursor: pointer; font-size: 0.82rem; font-weight: 600;">Segurança & Resiliência (3)</button>
+          <button class="diag-filter-btn" data-diag-cat="sales" style="padding: 0.45rem 0.85rem; border-radius: 6px; border: 1px solid var(--border-subtle); background: var(--bg-surface); color: var(--text-main); cursor: pointer; font-size: 0.82rem; font-weight: 600;">E-commerce & PDV (5)</button>
+          <button class="diag-filter-btn" data-diag-cat="concurrency" style="padding: 0.45rem 0.85rem; border-radius: 6px; border: 1px solid var(--border-subtle); background: var(--bg-surface); color: var(--text-main); cursor: pointer; font-size: 0.82rem; font-weight: 600;">Persistência & Concorrência (2)</button>
+          <button class="diag-filter-btn" data-diag-cat="integration" style="padding: 0.45rem 0.85rem; border-radius: 6px; border: 1px solid var(--border-subtle); background: var(--bg-surface); color: var(--text-main); cursor: pointer; font-size: 0.82rem; font-weight: 600;">Integrações & Padrões GoF (4)</button>
+        </div>
+      </div>
+
+      <!-- LISTA DOS 14 DIAGRAMAS -->
+      <div id="diagramList">
+
+        <!-- 01. Autenticação Dual Redis -->
+        <article class="diagram-entry" data-diag-cat="security" style="margin-bottom: 3.5rem;">
+          <h2 style="font-family: var(--font-display); font-size: 1.35rem; margin-bottom: 0.5rem; color: var(--fatec-red-light);">
+            01. Autenticação Dual com Cache Redis e Fallback PHP Session
+          </h2>
+          <p style="color: var(--text-muted); font-size: 0.95rem; margin-bottom: 1rem;">
+            <strong>Desafio:</strong> Evitar que a indisponibilidade momentânea do servidor Redis deslogue clientes e interrompa vendas em andamento.
+            <br><strong>Solução:</strong> Middleware com bloco <em>try-catch</em> que intercepta o <code>RedisException</code> e faz <em>degrade</em> transparente para sessões locais em disco.
+          </p>
+          <div class="diagram-container">
+            <div class="diagram-header">
+              <span class="diagram-title">Dual Authentication with Redis & Fallback PHP Session</span>
+              <button class="btn-icon btn-zoom" title="Ampliar"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line><line x1="11" y1="8" x2="11" y2="14"></line><line x1="8" y1="11" x2="14" y2="11"></line></svg> Zoom</button>
+            </div>
+            <div class="diagram-frame"><img src="assets/img/diagrams/Dual_Authentication_with_Redis_&_Fallback_PHP_Session.svg" alt="Autenticação Dual com Cache Redis" /></div>
+          </div>
+        </article>
+
+        <!-- 02. Busca de Produtos -->
+        <article class="diagram-entry" data-diag-cat="sales" style="margin-bottom: 3.5rem;">
+          <h2 style="font-family: var(--font-display); font-size: 1.35rem; margin-bottom: 0.5rem; color: var(--fatec-red-light);">
+            02. Busca Indexada de Produtos e Filtros Facetados
+          </h2>
+          <p style="color: var(--text-muted); font-size: 0.95rem; margin-bottom: 1rem;">
+            <strong>Desafio:</strong> Garantir respostas em sub-50ms para consultas por texto livre e filtros compostos (voltagem, marca, faixa de preço).
+            <br><strong>Solução:</strong> Sanitização no controller, verificação de cache no Redis com chave MD5 dos parâmetros e consulta Full-Text otimizada no MySQL.
+          </p>
+          <div class="diagram-container">
+            <div class="diagram-header">
+              <span class="diagram-title">Product Search Sequence Diagram</span>
+              <button class="btn-icon btn-zoom" title="Ampliar"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line><line x1="11" y1="8" x2="11" y2="14"></line><line x1="8" y1="11" x2="14" y2="11"></line></svg> Zoom</button>
+            </div>
+            <div class="diagram-frame"><img src="assets/img/diagrams/Product_Search_Sequence_Diagram.svg" alt="Busca de Produtos" /></div>
+          </div>
+        </article>
+
+        <!-- 03. Calculadora de Revestimento -->
+        <article class="diagram-entry" data-diag-cat="sales" style="margin-bottom: 3.5rem;">
+          <h2 style="font-family: var(--font-display); font-size: 1.35rem; margin-bottom: 0.5rem; color: var(--fatec-red-light);">
+            03. Calculadora de Revestimento Cerâmico e Pisos (Área m²)
+          </h2>
+          <p style="color: var(--text-muted); font-size: 0.95rem; margin-bottom: 1rem;">
+            <strong>Desafio:</strong> O cliente precisa cobrir uma área contínua em m², mas a fábrica comercializa exclusivamente caixas fechadas.
+            <br><strong>Solução:</strong> O serviço <code>AreaCalculator</code> aplica margem de segurança contra quebras (10%), calcula o número exato de caixas e arredonda sempre para cima via <code>ceil()</code>.
+          </p>
+          <div class="diagram-container">
+            <div class="diagram-header">
+              <span class="diagram-title">Area Calculation for Ceramic Flooring and Wall Tiles</span>
+              <button class="btn-icon btn-zoom" title="Ampliar"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line><line x1="11" y1="8" x2="11" y2="14"></line><line x1="8" y1="11" x2="14" y2="11"></line></svg> Zoom</button>
+            </div>
+            <div class="diagram-frame"><img src="assets/img/diagrams/Area_Calculation_for_Ceramic_Flooring_and_Wall_Tiles.svg" alt="Calculadora de Revestimento" /></div>
+          </div>
+        </article>
+
+        <!-- 04. Cálculo de Frete Strategy -->
+        <article class="diagram-entry" data-diag-cat="integration" style="margin-bottom: 3.5rem;">
+          <h2 style="font-family: var(--font-display); font-size: 1.35rem; margin-bottom: 0.5rem; color: var(--fatec-red-light);">
+            04. Cálculo de Frete com Strategy Pattern
+          </h2>
+          <p style="color: var(--text-muted); font-size: 0.95rem; margin-bottom: 1rem;">
+            <strong>Desafio:</strong> Múltiplas transportadoras possuem tabelas de cubagem distintas para cargas leves (SEDEX) e pesadas (Caminhão munck).
+            <br><strong>Solução:</strong> Padrão GoF <code>Strategy</code> com <code>ShippingStrategyFactory</code> selecionando dinamicamente a estratégia ideal conforme a cubagem total.
+          </p>
+          <div class="diagram-container">
+            <div class="diagram-header">
+              <span class="diagram-title">Shipping Cost Calculation with the Strategy Pattern</span>
+              <button class="btn-icon btn-zoom" title="Ampliar"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line><line x1="11" y1="8" x2="11" y2="14"></line><line x1="8" y1="11" x2="14" y2="11"></line></svg> Zoom</button>
+            </div>
+            <div class="diagram-frame"><img src="assets/img/diagrams/Shipping_Cost_Calculation_with_the_Strategy_Pattern.svg" alt="Cálculo de Frete Strategy" /></div>
+          </div>
+        </article>
+
+        <!-- 05. Devolução de Produtos (RMA) -->
+        <article class="diagram-entry" data-diag-cat="integration" style="margin-bottom: 3.5rem;">
+          <h2 style="font-family: var(--font-display); font-size: 1.35rem; margin-bottom: 0.5rem; color: var(--fatec-red-light);">
+            05. Fluxo de Devolução de Produtos e Logística Reversa (RMA)
+          </h2>
+          <p style="color: var(--text-muted); font-size: 0.95rem; margin-bottom: 1rem;">
+            <strong>Desafio:</strong> Processar devoluções em estrita conformidade com o prazo de 7 dias do CDC com emissão de nota fiscal de entrada e estorno seguro.
+            <br><strong>Solução:</strong> Máquina de estados do RMA com inspeção de qualidade, acionamento do gateway de pagamento para estorno e retorno atômico dos itens ao inventário.
+          </p>
+          <div class="diagram-container">
+            <div class="diagram-header">
+              <span class="diagram-title">Complete Product Return Flow (RMA)</span>
+              <button class="btn-icon btn-zoom" title="Ampliar"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line><line x1="11" y1="8" x2="11" y2="14"></line><line x1="8" y1="11" x2="14" y2="11"></line></svg> Zoom</button>
+            </div>
+            <div class="diagram-frame"><img src="assets/img/diagrams/Complete_product_return_flow-Secure_Architecture.svg" alt="Fluxo de Devolução RMA" /></div>
+          </div>
+        </article>
+
+        <!-- 06. Idempotência Técnica -->
+        <article class="diagram-entry" data-diag-cat="security" style="margin-bottom: 3.5rem;">
+          <h2 style="font-family: var(--font-display); font-size: 1.35rem; margin-bottom: 0.5rem; color: var(--fatec-red-light);">
+            06. Idempotência Técnica & Proteção Anti-Duplo Clique
+          </h2>
+          <p style="color: var(--text-muted); font-size: 0.95rem; margin-bottom: 1rem;">
+            <strong>Desafio:</strong> Impedir que clientes que clicam repetidamente no botão "Finalizar Pedido" gerem múltiplos débitos bancários ou pedidos duplicados.
+            <br><strong>Solução:</strong> Middleware com lock distribuído no Redis via comando atômico <code>SET key val NX EX 120</code>.
+          </p>
+          <div class="diagram-container">
+            <div class="diagram-header">
+              <span class="diagram-title">Technical Idempotency & Queue Protection</span>
+              <button class="btn-icon btn-zoom" title="Ampliar"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line><line x1="11" y1="8" x2="11" y2="14"></line><line x1="8" y1="11" x2="14" y2="11"></line></svg> Zoom</button>
+            </div>
+            <div class="diagram-frame"><img src="assets/img/diagrams/Technical_Idempotency_&_Queue_Protection.svg" alt="Idempotência Técnica" /></div>
+          </div>
+        </article>
+
+        <!-- 07. Fluxo do Pedido (Order Creation) -->
+        <article class="diagram-entry" data-diag-cat="sales" style="margin-bottom: 3.5rem;">
+          <h2 style="font-family: var(--font-display); font-size: 1.35rem; margin-bottom: 0.5rem; color: var(--fatec-red-light);">
+            07. Fluxo Completo de Criação e Leitura de Pedidos
+          </h2>
+          <p style="color: var(--text-muted); font-size: 0.95rem; margin-bottom: 1rem;">
+            <strong>Desafio:</strong> Orquestrar o fechamento do carrinho, gravação atômica da ordem, baixa de estoque e publicação de eventos assíncronos.
+            <br><strong>Solução:</strong> Padrão <em>Unit of Work</em> coordenando DAOs e disparando <code>OrderCreatedEvent</code> para a fila RabbitMQ.
+          </p>
+          <div class="diagram-container">
+            <div class="diagram-header">
+              <span class="diagram-title">Order Creation and Reading Workflow</span>
+              <button class="btn-icon btn-zoom" title="Ampliar"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line><line x1="11" y1="8" x2="11" y2="14"></line><line x1="8" y1="11" x2="14" y2="11"></line></svg> Zoom</button>
+            </div>
+            <div class="diagram-frame"><img src="assets/img/diagrams/Order_Creation_and_Reading_Workflow.svg" alt="Fluxo do Pedido" /></div>
+          </div>
+        </article>
+
+        <!-- 08. Fluxo de Venda no PDV (Caixa) -->
+        <article class="diagram-entry" data-diag-cat="sales" style="margin-bottom: 3.5rem;">
+          <h2 style="font-family: var(--font-display); font-size: 1.35rem; margin-bottom: 0.5rem; color: var(--fatec-red-light);">
+            08. Fluxo de Venda no Ponto de Venda (PDV Balcão & Caixa)
+          </h2>
+          <p style="color: var(--text-muted); font-size: 0.95rem; margin-bottom: 1rem;">
+            <strong>Desafio:</strong> Garantir velocidade no atendimento presencial de loja com integração a impressoras térmicas e TEF.
+            <br><strong>Solução:</strong> Comunicação rápida com leitura de código de barras, autorização de pagamento presencial e emissão síncrona da NFC-e.
+          </p>
+          <div class="diagram-container">
+            <div class="diagram-header">
+              <span class="diagram-title">POS - Sales and Checkout Sequence Diagram</span>
+              <button class="btn-icon btn-zoom" title="Ampliar"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line><line x1="11" y1="8" x2="11" y2="14"></line><line x1="8" y1="11" x2="14" y2="11"></line></svg> Zoom</button>
+            </div>
+            <div class="diagram-frame"><img src="assets/img/diagrams/POS-Sales_and_Checkout_Sequence_Diagram.svg" alt="Fluxo de Venda PDV" /></div>
+          </div>
+        </article>
+
+        <!-- 09. Lazy Loading Proxy -->
+        <article class="diagram-entry" data-diag-cat="concurrency" style="margin-bottom: 3.5rem;">
+          <h2 style="font-family: var(--font-display); font-size: 1.35rem; margin-bottom: 0.5rem; color: var(--fatec-red-light);">
+            09. Carregamento Preguiçoso (Lazy Loading) via ProxyFactory no DAO
+          </h2>
+          <p style="color: var(--text-muted); font-size: 0.95rem; margin-bottom: 1rem;">
+            <strong>Desafio:</strong> Evitar o problema de consultas excessivas (N+1 queries) ou sobrecarga de memória ao carregar produtos com múltiplas fotos e especificações.
+            <br><strong>Solução:</strong> Criação de proxies virtuais que interceptam a primeira chamada aos métodos de coleção e executam a query SQL sob demanda.
+          </p>
+          <div class="diagram-container">
+            <div class="diagram-header">
+              <span class="diagram-title">Lazy Loading via ProxyFactory no DAO</span>
+              <button class="btn-icon btn-zoom" title="Ampliar"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line><line x1="11" y1="8" x2="11" y2="14"></line><line x1="8" y1="11" x2="14" y2="11"></line></svg> Zoom</button>
+            </div>
+            <div class="diagram-frame"><img src="assets/img/diagrams/Lazy_Loading_via_ProxyFactory_no_DAO.svg" alt="Lazy Loading via ProxyFactory" /></div>
+          </div>
+        </article>
+
+        <!-- 10. Lock Otimista Falha -->
+        <article class="diagram-entry" data-diag-cat="concurrency" style="margin-bottom: 3.5rem;">
+          <h2 style="font-family: var(--font-display); font-size: 1.35rem; margin-bottom: 0.5rem; color: var(--fatec-red-light);">
+            10. Tratamento de Falha de Concorrência com Lock Otimista
+          </h2>
+          <p style="color: var(--text-muted); font-size: 0.95rem; margin-bottom: 1rem;">
+            <strong>Desafio:</strong> Tratar elegantemente o cenário em que dois compradores simultâneos disputam a última unidade de um SKU sem travar o banco com locks pessimistas (<code>SELECT FOR UPDATE</code>).
+            <br><strong>Solução:</strong> Comparação da coluna de versão; colisão dispara <code>OptimisticLockException</code>, descartando o pedido conflitante sem corromper o estoque.
+          </p>
+          <div class="diagram-container">
+            <div class="diagram-header">
+              <span class="diagram-title">Optimistic Lock Failure Flow</span>
+              <button class="btn-icon btn-zoom" title="Ampliar"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line><line x1="11" y1="8" x2="11" y2="14"></line><line x1="8" y1="11" x2="14" y2="11"></line></svg> Zoom</button>
+            </div>
+            <div class="diagram-frame"><img src="assets/img/diagrams/Optimistic_Lock_Failure_Flow.svg" alt="Lock Otimista Falha" /></div>
+          </div>
+        </article>
+
+        <!-- 11. Fusão do Carrinho no Login -->
+        <article class="diagram-entry" data-diag-cat="sales" style="margin-bottom: 3.5rem;">
+          <h2 style="font-family: var(--font-display); font-size: 1.35rem; margin-bottom: 0.5rem; color: var(--fatec-red-light);">
+            11. Login e Fusão (Merge) do Carrinho Anônimo
+          </h2>
+          <p style="color: var(--text-muted); font-size: 0.95rem; margin-bottom: 1rem;">
+            <strong>Desafio:</strong> Permitir que o consumidor monte o carrinho antes de se cadastrar e preservar todos os itens após efetuar login.
+            <br><strong>Solução:</strong> Ao autenticar, o <code>CartMergeService</code> lê os itens da sessão Redis e mescla com os itens persistidos do usuário no banco relacional.
+          </p>
+          <div class="diagram-container">
+            <div class="diagram-header">
+              <span class="diagram-title">Shopping Cart Merge on Login</span>
+              <button class="btn-icon btn-zoom" title="Ampliar"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line><line x1="11" y1="8" x2="11" y2="14"></line><line x1="8" y1="11" x2="14" y2="11"></line></svg> Zoom</button>
+            </div>
+            <div class="diagram-frame"><img src="assets/img/diagrams/Shopping_Cart_Merge_on_Login.svg" alt="Fusão de Carrinho no Login" /></div>
+          </div>
+        </article>
+
+        <!-- 12. Middleware Anti-CSRF -->
+        <article class="diagram-entry" data-diag-cat="security" style="margin-bottom: 3.5rem;">
+          <h2 style="font-family: var(--font-display); font-size: 1.35rem; margin-bottom: 0.5rem; color: var(--fatec-red-light);">
+            12. Middleware Anti-CSRF em Pipeline PSR-15
+          </h2>
+          <p style="color: var(--text-muted); font-size: 0.95rem; margin-bottom: 1rem;">
+            <strong>Desafio:</strong> Blindar todos os formulários e rotas de mutação de dados (POST, PUT, DELETE) contra ataques de falsificação de requisição cross-site.
+            <br><strong>Solução:</strong> Validação criptográfica de tokens vinculados à sessão com regeneração periódica e rejeição HTTP 403 para requisições inválidas.
+          </p>
+          <div class="diagram-container">
+            <div class="diagram-header">
+              <span class="diagram-title">Middleware Anti-CSRF Flow</span>
+              <button class="btn-icon btn-zoom" title="Ampliar"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line><line x1="11" y1="8" x2="11" y2="14"></line><line x1="8" y1="11" x2="14" y2="11"></line></svg> Zoom</button>
+            </div>
+            <div class="diagram-frame"><img src="assets/img/diagrams/Middleware_Anti-CSRF_Flow.svg" alt="Middleware Anti-CSRF" /></div>
+          </div>
+        </article>
+
+        <!-- 13. Resolução SEO URL -->
+        <article class="diagram-entry" data-diag-cat="integration" style="margin-bottom: 3.5rem;">
+          <h2 style="font-family: var(--font-display); font-size: 1.35rem; margin-bottom: 0.5rem; color: var(--fatec-red-light);">
+            13. Resolução Dinâmica de SEO URLs e Cache
+          </h2>
+          <p style="color: var(--text-muted); font-size: 0.95rem; margin-bottom: 1rem;">
+            <strong>Desafio:</strong> Mapear URLs semânticas amigáveis para mecanismos de busca (Google) com redirecionamentos 301 rápidos sem consultar o banco repetidamente.
+            <br><strong>Solução:</strong> Resolução em memória através do Redis com fallback para a tabela de rotas do MySQL.
+          </p>
+          <div class="diagram-container">
+            <div class="diagram-header">
+              <span class="diagram-title">Dynamic SEO URL Resolution & Caching</span>
+              <button class="btn-icon btn-zoom" title="Ampliar"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line><line x1="11" y1="8" x2="11" y2="14"></line><line x1="8" y1="11" x2="14" y2="11"></line></svg> Zoom</button>
+            </div>
+            <div class="diagram-frame"><img src="assets/img/diagrams/Dynamic_SEO_URL_Resolution_&_Caching.svg" alt="Resolução SEO URL" /></div>
+          </div>
+        </article>
+
+        <!-- 14. Webhook Pagamento Adapter -->
+        <article class="diagram-entry" data-diag-cat="integration" style="margin-bottom: 3.5rem;">
+          <h2 style="font-family: var(--font-display); font-size: 1.35rem; margin-bottom: 0.5rem; color: var(--fatec-red-light);">
+            14. Webhook de Pagamento com GoF Adapter & Observers
+          </h2>
+          <p style="color: var(--text-muted); font-size: 0.95rem; margin-bottom: 1rem;">
+            <strong>Desafio:</strong> Receber confirmações de pagamento assíncronas do PIX e cartão, validar assinaturas criptográficas e aprovar o pedido.
+            <br><strong>Solução:</strong> Adapter para normalizar payloads externos e <em>EventDispatcher</em> com <em>Observers</em> para atualizar status, enviar e-mail e emitir nota fiscal.
+          </p>
+          <div class="diagram-container">
+            <div class="diagram-header">
+              <span class="diagram-title">Payment Webhook with GoF Adapter & Observers</span>
+              <button class="btn-icon btn-zoom" title="Ampliar"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line><line x1="11" y1="8" x2="11" y2="14"></line><line x1="8" y1="11" x2="14" y2="11"></line></svg> Zoom</button>
+            </div>
+            <div class="diagram-frame"><img src="assets/img/diagrams/Payment_Webhook_with_GoF_Adapter_&_Observers.svg" alt="Webhook Pagamento Adapter" /></div>
+          </div>
+        </article>
+
+      </div>
+
+      <!-- Navegação Inferior -->
+      <footer class="page-nav-bar">
+        <a href="06_arquitetura_dados.html" class="nav-page-link">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"></polyline></svg>
+          <div class="nav-page-meta">
+            <span class="nav-page-direction">← Módulo Anterior</span>
+            <span class="nav-page-title">06. Arquitetura & Banco EER</span>
+          </div>
+        </a>
+        <a href="08_checklist_disciplina.html" class="nav-page-link next">
+          <div class="nav-page-meta">
+            <span class="nav-page-direction">Próximo Módulo →</span>
+            <span class="nav-page-title">08. Checklist da Disciplina</span>
+          </div>
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"></polyline></svg>
+        </a>
+      </footer>
+
+      <div class="academic-footer">
+        <p><strong>FATEC Ferraz de Vasconcelos</strong> — Faculdade de Tecnologia de Ferraz de Vasconcelos</p>
+        <p>Disciplina: Laboratório de Engenharia de Software | Orientadora: Profa. Patrícia Sarno</p>
+      </div>
+    </main>
+  </div>
+
+  <script src="assets/js/main.js"></script>
+  <script src="assets/js/svg-viewer.js"></script>
+  <script>
+    // Filtro por categorias da galeria de diagramas
+    document.addEventListener('DOMContentLoaded', () => {
+      const filterBtns = document.querySelectorAll('.diag-filter-btn');
+      const entries = document.querySelectorAll('.diagram-entry');
+
+      filterBtns.forEach((btn) => {
+        btn.addEventListener('click', () => {
+          filterBtns.forEach(b => {
+            b.classList.remove('active');
+            b.style.background = 'var(--bg-surface)';
+            b.style.color = 'var(--text-main)';
+          });
+          btn.classList.add('active');
+          btn.style.background = 'var(--fatec-red)';
+          btn.style.color = '#ffffff';
+
+          const cat = btn.getAttribute('data-diag-cat');
+          entries.forEach((entry) => {
+            const entryCat = entry.getAttribute('data-diag-cat');
+            if (cat === 'all' || cat === entryCat) {
+              entry.style.display = '';
+            } else {
+              entry.style.display = 'none';
+            }
+          });
+        });
+      });
+    });
+  </script>
+</body>
+</html>

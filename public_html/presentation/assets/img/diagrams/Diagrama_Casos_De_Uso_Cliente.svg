@@ -1,0 +1,183 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" contentScriptType="application/ecmascript" contentStyleType="text/css" height="2227px" preserveAspectRatio="none" style="width:1854px;height:2227px;" version="1.1" viewBox="0 0 1854 2227" width="1854px" zoomAndPan="magnify"><defs/><g><!--MD5=[1eaf0e6fa702f479a4267051034c8c2f]
+cluster Alpha Engine - Loja Virtual & Portal do Cliente--><rect fill="#FFFFFF" height="2092" style="stroke: #000000; stroke-width: 1.5;" width="1462" x="381" y="124"/><text fill="#000000" font-family="sans-serif" font-size="14" font-weight="bold" lengthAdjust="spacingAndGlyphs" textLength="318" x="953" y="140.9659">Alpha Engine - Loja Virtual &amp; Portal do Cliente</text><!--MD5=[134b26996445b841a3d2ff90a3976138]
+cluster Catálogo, Busca & Mídia--><polygon fill="#FFFFFF" points="418.5,170,591.5,170,598.5,195.0679,1110,195.0679,1110,450,418.5,450,418.5,170" style="stroke: #000000; stroke-width: 1.5;"/><line style="stroke: #000000; stroke-width: 1.5;" x1="418.5" x2="598.5" y1="195.0679" y2="195.0679"/><text fill="#000000" font-family="sans-serif" font-size="14" font-weight="bold" lengthAdjust="spacingAndGlyphs" textLength="167" x="422.5" y="186.9659">Catálogo, Busca &amp; Mídia</text><!--MD5=[25f0aaf097c10cdcdf9959da39e48e35]
+cluster Carrinho & Compras--><polygon fill="#FFFFFF" points="1234.5,1859,1381.5,1859,1388.5,1884.0679,1819,1884.0679,1819,2192,1234.5,2192,1234.5,1859" style="stroke: #000000; stroke-width: 1.5;"/><line style="stroke: #000000; stroke-width: 1.5;" x1="1234.5" x2="1388.5" y1="1884.0679" y2="1884.0679"/><text fill="#000000" font-family="sans-serif" font-size="14" font-weight="bold" lengthAdjust="spacingAndGlyphs" textLength="141" x="1238.5" y="1875.9659">Carrinho &amp; Compras</text><!--MD5=[be8c63c65f4658fc5c059940b3eaaedb]
+cluster Autenticação & Sessão--><polygon fill="#FFFFFF" points="433.5,474,596.5,474,603.5,499.0679,1108.5,499.0679,1108.5,738,433.5,738,433.5,474" style="stroke: #000000; stroke-width: 1.5;"/><line style="stroke: #000000; stroke-width: 1.5;" x1="433.5" x2="603.5" y1="499.0679" y2="499.0679"/><text fill="#000000" font-family="sans-serif" font-size="14" font-weight="bold" lengthAdjust="spacingAndGlyphs" textLength="157" x="437.5" y="490.9659">Autenticação &amp; Sessão</text><!--MD5=[3aa7ffe75d8a4628960fc4c30e7b0419]
+cluster Área 'Minha Conta' (Painel do Cliente)--><polygon fill="#FFFFFF" points="407,762,675,762,682,787.0679,718,787.0679,718,1604,407,1604,407,762" style="stroke: #000000; stroke-width: 1.5;"/><line style="stroke: #000000; stroke-width: 1.5;" x1="407" x2="682" y1="787.0679" y2="787.0679"/><text fill="#000000" font-family="sans-serif" font-size="14" font-weight="bold" lengthAdjust="spacingAndGlyphs" textLength="262" x="411" y="778.9659">Área 'Minha Conta' (Painel do Cliente)</text><!--MD5=[756a3da6652769b09728392bab93aa0b]
+cluster Cotações & Projetos (RFQ / BoQ)--><polygon fill="#FFFFFF" points="405,1628,636,1628,643,1653.0679,1483,1653.0679,1483,1835,405,1835,405,1628" style="stroke: #000000; stroke-width: 1.5;"/><line style="stroke: #000000; stroke-width: 1.5;" x1="405" x2="643" y1="1653.0679" y2="1653.0679"/><text fill="#000000" font-family="sans-serif" font-size="14" font-weight="bold" lengthAdjust="spacingAndGlyphs" textLength="225" x="409" y="1644.9659">Cotações &amp; Projetos (RFQ / BoQ)</text><ellipse cx="562.4506" cy="235.9901" fill="#FEFECE" rx="127.9506" ry="27.9901" style="stroke: #A80036; stroke-width: 1.5;"/><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacingAndGlyphs" textLength="231" x="446.9506" y="242.0241">Navegar no Catálogo &amp; Categorias</text><ellipse cx="562.4507" cy="322.9901" fill="#FEFECE" rx="107.9507" ry="23.9901" style="stroke: #A80036; stroke-width: 1.5;"/><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacingAndGlyphs" textLength="187" x="468.9507" y="329.0241">Buscar Produtos com Filtros</text><ellipse cx="562.4963" cy="408.1993" fill="#FEFECE" rx="116.4963" ry="25.6993" style="stroke: #A80036; stroke-width: 1.5;"/><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacingAndGlyphs" textLength="206" x="459.4963" y="414.2332">Visualizar Detalhes do Produto</text><ellipse cx="958.5427" cy="399.1085" fill="#FEFECE" rx="116.0427" ry="25.6085" style="stroke: #A80036; stroke-width: 1.5;"/><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacingAndGlyphs" textLength="205" x="856.0427" y="405.1425">Selecionar Variantes &amp; Opções</text><ellipse cx="958.3807" cy="273.9761" fill="#FEFECE" rx="135.3807" ry="29.4761" style="stroke: #A80036; stroke-width: 1.5;"/><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacingAndGlyphs" textLength="247" x="834.8807" y="280.0101">Carregar Mídia &amp; Cache On-Demand</text><ellipse cx="1341.1051" cy="1918.021" fill="#FEFECE" rx="90.6051" ry="20.521" style="stroke: #A80036; stroke-width: 1.5;"/><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacingAndGlyphs" textLength="147" x="1267.6051" y="1924.055">Adicionar ao Carrinho</text><ellipse cx="1695.4458" cy="1918.1892" fill="#FEFECE" rx="91.4458" ry="20.6892" style="stroke: #A80036; stroke-width: 1.5;"/><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacingAndGlyphs" textLength="149" x="1620.9458" y="1924.2231">Calcular Frete por CEP</text><ellipse cx="1695.5055" cy="2151.9011" fill="#FEFECE" rx="107.5055" ry="23.9011" style="stroke: #A80036; stroke-width: 1.5;"/><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacingAndGlyphs" textLength="186" x="1602.5055" y="2157.9351">Aplicar Cupom de Desconto</text><ellipse cx="1341.1316" cy="2032.8263" fill="#FEFECE" rx="79.6316" ry="18.3263" style="stroke: #A80036; stroke-width: 1.5;"/><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacingAndGlyphs" textLength="120" x="1281.1316" y="2038.8603">Realizar Checkout</text><ellipse cx="1695.5556" cy="2071.2111" fill="#FEFECE" rx="96.5556" ry="21.7111" style="stroke: #A80036; stroke-width: 1.5;"/><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacingAndGlyphs" textLength="161" x="1615.0556" y="2077.2451">Comprar como Visitante</text><ellipse cx="1695.2678" cy="1993.8536" fill="#FEFECE" rx="89.7678" ry="20.3536" style="stroke: #A80036; stroke-width: 1.5;"/><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacingAndGlyphs" textLength="145" x="1622.7678" y="1999.8875">Processar Pagamento</text><ellipse cx="562.6051" cy="533.021" fill="#FEFECE" rx="90.6051" ry="20.521" style="stroke: #A80036; stroke-width: 1.5;"/><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacingAndGlyphs" textLength="147" x="489.1051" y="539.055">Cadastrar Nova Conta</text><ellipse cx="562.3791" cy="613.9758" fill="#FEFECE" rx="112.8791" ry="24.9758" style="stroke: #A80036; stroke-width: 1.5;"/><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacingAndGlyphs" textLength="198" x="463.3791" y="620.0098">Autenticar-se (Login / Logout)</text><ellipse cx="562.3426" cy="698.1685" fill="#FEFECE" rx="108.8426" ry="24.1685" style="stroke: #A80036; stroke-width: 1.5;"/><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacingAndGlyphs" textLength="189" x="467.8426" y="704.2025">Recuperar Senha por E-mail</text><ellipse cx="958.4825" cy="614.1965" fill="#FEFECE" rx="133.9825" ry="29.1965" style="stroke: #A80036; stroke-width: 1.5;"/><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacingAndGlyphs" textLength="244" x="836.4825" y="620.2305">Sincronizar Sessão Redis &amp; Carrinho</text><ellipse cx="562.5189" cy="1564.9038" fill="#FEFECE" rx="100.0189" ry="22.4038" style="stroke: #A80036; stroke-width: 1.5;"/><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacingAndGlyphs" textLength="169" x="478.0189" y="1570.9377">Acessar Painel do Cliente</text><ellipse cx="562.2535" cy="828.1259" fill="#FEFECE" rx="123.7535" ry="27.6259" style="stroke: #A80036; stroke-width: 1.5;"/><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacingAndGlyphs" textLength="187" x="468.7535" y="828.1102">Gerenciar Dados Cadastrais</text><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacingAndGlyphs" textLength="97" x="513.7535" y="847.1781">(/account/edit)</text><ellipse cx="562.4" cy="920.2097" fill="#FEFECE" rx="116.4" ry="29.2097" style="stroke: #A80036; stroke-width: 1.5;"/><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacingAndGlyphs" textLength="145" x="489.9" y="915.6241">Alterar Senha Logado</text><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacingAndGlyphs" textLength="165" x="479.9" y="934.692">(/account/resetar-senha)</text><ellipse cx="562.6442" cy="1013.2288" fill="#FEFECE" rx="131.6442" ry="28.7288" style="stroke: #A80036; stroke-width: 1.5;"/><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacingAndGlyphs" textLength="197" x="464.1442" y="1012.2473">Gerenciar Livro de Endereços</text><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacingAndGlyphs" textLength="140" x="492.6442" y="1031.3153">(/account/addresses)</text><ellipse cx="562.3184" cy="1105.2422" fill="#FEFECE" rx="120.8184" ry="28.2422" style="stroke: #A80036; stroke-width: 1.5;"/><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacingAndGlyphs" textLength="178" x="473.3184" y="1104.2698">Gerenciar Lista de Desejos</text><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacingAndGlyphs" textLength="122" x="501.3184" y="1123.3377">(/account/wishlist)</text><ellipse cx="562.4589" cy="1196.7918" fill="#FEFECE" rx="129.4589" ry="28.2918" style="stroke: #A80036; stroke-width: 1.5;"/><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacingAndGlyphs" textLength="199" x="462.9589" y="1196.7499">Consultar Pedidos &amp; Histórico</text><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacingAndGlyphs" textLength="115" x="504.9589" y="1215.8179">(/account/orders)</text><ellipse cx="562.3656" cy="1289.9731" fill="#FEFECE" rx="135.3656" ry="29.4731" style="stroke: #A80036; stroke-width: 1.5;"/><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacingAndGlyphs" textLength="210" x="457.3656" y="1289.4219">Consultar Extrato &amp; Transações</text><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacingAndGlyphs" textLength="147" x="488.8656" y="1308.4898">(/account/transaction)</text><ellipse cx="562.3312" cy="1383.1632" fill="#FEFECE" rx="115.8312" ry="28.1632" style="stroke: #A80036; stroke-width: 1.5;"/><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacingAndGlyphs" textLength="171" x="476.8312" y="1382.3116">Solicitar Devolução / RMA</text><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacingAndGlyphs" textLength="114" x="505.3312" y="1401.3795">(/account/return)</text><ellipse cx="562.4294" cy="1476.7859" fill="#FEFECE" rx="139.4294" ry="30.2859" style="stroke: #A80036; stroke-width: 1.5;"/><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacingAndGlyphs" textLength="229" x="447.9294" y="1477.5177">Gerenciar Inscrição na Newsletter</text><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacingAndGlyphs" textLength="142" x="491.4294" y="1496.5856">(/account/newsletter)</text><ellipse cx="562.447" cy="1697.1894" fill="#FEFECE" rx="141.447" ry="30.6894" style="stroke: #A80036; stroke-width: 1.5;"/><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacingAndGlyphs" textLength="247" x="438.947" y="1700.2428">Criar Solicitação de Orçamento (RFQ)</text><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacingAndGlyphs" textLength="105" x="509.947" y="1719.3107">(/projetos/novo)</text><ellipse cx="562.3625" cy="1791.2238" fill="#FEFECE" rx="125.3625" ry="28.2238" style="stroke: #A80036; stroke-width: 1.5;"/><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacingAndGlyphs" textLength="185" x="469.8625" y="1790.2795">Acompanhar Meus Projetos</text><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacingAndGlyphs" textLength="126" x="499.3625" y="1809.3474">(/account/projetos)</text><ellipse cx="958.5422" cy="1696.8084" fill="#FEFECE" rx="129.5422" ry="28.3084" style="stroke: #A80036; stroke-width: 1.5;"/><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacingAndGlyphs" textLength="210" x="853.5422" y="1698.2513">Comparar Propostas Recebidas</text><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacingAndGlyphs" textLength="80" x="918.5422" y="1717.3192">(/propostas)</text><ellipse cx="1340.8735" cy="1697.0747" fill="#FEFECE" rx="125.8735" ry="27.5747" style="stroke: #A80036; stroke-width: 1.5;"/><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacingAndGlyphs" textLength="200" x="1240.8735" y="1698.3627">Aceitar Proposta de Prestador</text><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacingAndGlyphs" textLength="59" x="1311.3735" y="1717.4306">(/aceitar)</text><ellipse cx="958.3927" cy="1789.9785" fill="#FEFECE" rx="132.8927" ry="28.9785" style="stroke: #A80036; stroke-width: 1.5;"/><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacingAndGlyphs" textLength="228" x="844.3927" y="1793.0948">Aprovar BoQ &amp; Enviar ao Carrinho</text><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacingAndGlyphs" textLength="39" x="938.8927" y="1812.1627">(/boq)</text><!--MD5=[9eecb807d8a7c1ba44cb916f191401d3]
+entity Guest--><ellipse cx="35" cy="573.5" fill="#FEFECE" rx="8" ry="8" style="stroke: #A80036; stroke-width: 1.5;"/><path d="M35,581.5 L35,608.5 M22,589.5 L48,589.5 M35,608.5 L22,623.5 M35,608.5 L48,623.5 " fill="none" style="stroke: #A80036; stroke-width: 1.5;"/><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacingAndGlyphs" textLength="58" x="6" y="640.9659">Visitante</text><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacingAndGlyphs" textLength="47" x="6" y="660.0339">(Guest)</text><!--MD5=[ae78ca0dd1f49bdd788e5556d70823ac]
+entity Customer--><ellipse cx="284" cy="1203.5" fill="#FEFECE" rx="8" ry="8" style="stroke: #A80036; stroke-width: 1.5;"/><path d="M284,1211.5 L284,1238.5 M271,1219.5 L297,1219.5 M284,1238.5 L271,1253.5 M284,1238.5 L297,1253.5 " fill="none" style="stroke: #A80036; stroke-width: 1.5;"/><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacingAndGlyphs" textLength="100" x="234" y="1270.9659">Cliente Logado</text><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacingAndGlyphs" textLength="73" x="234" y="1290.0339">(Customer)</text><!--MD5=[abea0b42432aea0f9ce66e53feda8644]
+entity System--><ellipse cx="562.5" cy="17.5" fill="#FEFECE" rx="8" ry="8" style="stroke: #A80036; stroke-width: 1.5;"/><path d="M562.5,25.5 L562.5,52.5 M549.5,33.5 L575.5,33.5 M562.5,52.5 L549.5,67.5 M562.5,52.5 L575.5,67.5 " fill="none" style="stroke: #A80036; stroke-width: 1.5;"/><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacingAndGlyphs" textLength="123" x="501" y="84.9659">Sistema / Gateway</text><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacingAndGlyphs" textLength="98" x="501" y="104.0339">(Alpha Engine)</text><!--MD5=[27004599a83f52bd225e6dde02d4de1e]
+reverse link Guest to Customer--><path d="M63.09,683.11 C113.21,810.94 219.29,1081.49 263.26,1193.65 " fill="none" id="Guest&lt;-Customer" style="stroke: #A80036; stroke-width: 1.0;"/><polygon fill="none" points="56.47,685.4,55.69,664.23,69.51,680.29,56.47,685.4" style="stroke: #A80036; stroke-width: 1.0;"/><text fill="#000000" font-family="sans-serif" font-size="13" lengthAdjust="spacingAndGlyphs" textLength="108" x="95" y="762.897">Herda permissões</text><!--MD5=[ae63bd38a512e0b07f32d9db87b915ec]
+link Guest to UC_Nav--><path d="M41.94,563.73 C48.8,524.67 63.37,471.08 94,434 C183.8,325.3 343.9,275.14 451.39,252.8 " fill="none" id="Guest-&gt;UC_Nav" style="stroke: #A80036; stroke-width: 1.0;"/><polygon fill="#A80036" points="456.47,251.75,446.846,249.6573,451.5738,252.7635,448.4676,257.4913,456.47,251.75" style="stroke: #A80036; stroke-width: 1.0;"/><!--MD5=[3c60312cd9e49501e6725b4bf496b2e2]
+link Guest to UC_Search--><path d="M52.46,563.99 C61.82,541.61 75.44,516.22 94,498 C195.58,398.31 359.23,354.51 463.5,335.91 " fill="none" id="Guest-&gt;UC_Search" style="stroke: #A80036; stroke-width: 1.0;"/><polygon fill="#A80036" points="468.73,334.99,459.171,332.6181,463.8064,335.8606,460.5639,340.4959,468.73,334.99" style="stroke: #A80036; stroke-width: 1.0;"/><!--MD5=[5ae4f26841ead016f1ae0e8abbe07ce1]
+link Guest to UC_ProductDetail--><path d="M64.05,576.28 C72.75,566.61 82.98,556.98 94,550 C207.63,478.01 359.86,440.72 459.28,422.77 " fill="none" id="Guest-&gt;UC_ProductDetail" style="stroke: #A80036; stroke-width: 1.0;"/><polygon fill="#A80036" points="464.27,421.87,454.711,419.4981,459.3464,422.7406,456.1039,427.3759,464.27,421.87" style="stroke: #A80036; stroke-width: 1.0;"/><!--MD5=[d5c2d182cd1f1bb333a496b3f2e966e4]
+link Guest to UC_Cart--><path d="M40.31,664.33 C61.19,900.58 156.06,1888 283,1888 C283,1888 283,1888 959.5,1888 C1061.95,1888 1179.43,1898.94 1256.43,1907.61 " fill="none" id="Guest-&gt;UC_Cart" style="stroke: #A80036; stroke-width: 1.0;"/><polygon fill="#A80036" points="1261.44,1908.18,1252.9573,1903.1757,1256.4729,1907.6074,1252.0411,1911.123,1261.44,1908.18" style="stroke: #A80036; stroke-width: 1.0;"/><!--MD5=[5a687e50496296cab0d8668916607e76]
+link Guest to UC_Register--><path d="M64.27,599.26 C73.53,595 84,590.76 94,588 C220.34,553.13 371.87,540.37 467.44,535.69 " fill="none" id="Guest-&gt;UC_Register" style="stroke: #A80036; stroke-width: 1.0;"/><polygon fill="#A80036" points="472.51,535.45,463.3265,531.8913,467.5159,535.6926,463.7147,539.8819,472.51,535.45" style="stroke: #A80036; stroke-width: 1.0;"/><!--MD5=[a0b9cd09cc67441be80fb366e5b2a356]
+link Guest to UC_Login--><path d="M64.25,614 C134.59,614 320.75,614 444.26,614 " fill="none" id="Guest-&gt;UC_Login" style="stroke: #A80036; stroke-width: 1.0;"/><polygon fill="#A80036" points="449.36,614,440.36,610,444.36,614,440.36,618,449.36,614" style="stroke: #A80036; stroke-width: 1.0;"/><!--MD5=[17df108afd0c2636cdb73736b58a6a6f]
+link Guest to UC_ForgotPass--><path d="M64.25,618.52 C139.43,630.53 346.9,663.7 468.79,683.18 " fill="none" id="Guest-&gt;UC_ForgotPass" style="stroke: #A80036; stroke-width: 1.0;"/><polygon fill="#A80036" points="473.81,683.98,465.552,678.613,468.8724,683.1928,464.2925,686.5132,473.81,683.98" style="stroke: #A80036; stroke-width: 1.0;"/><!--MD5=[50268850d9cdc0ada5aba09c90c51ee4]
+link Guest to UC_Checkout--><path d="M36.81,664.29 C40.41,872.35 56.39,1659.69 94,1764 C141.6,1896.04 142.64,2017 283,2017 C283,2017 283,2017 959.5,2017 C1063.02,2017 1182.23,2022.98 1259.23,2027.63 " fill="none" id="Guest-&gt;UC_Checkout" style="stroke: #A80036; stroke-width: 1.0;"/><polygon fill="#A80036" points="1264.24,2027.94,1255.4965,2023.4067,1259.249,2027.6397,1255.016,2031.3922,1264.24,2027.94" style="stroke: #A80036; stroke-width: 1.0;"/><!--MD5=[1315ea84dc9919f7c439d4c379b2ece4]
+reverse link UC_ProductDetail to UC_Variants--><path d="M683.71,405.25 C734.35,404.1 793.01,402.76 843.02,401.62 " fill="none" id="UC_ProductDetail&lt;-UC_Variants" style="stroke: #A80036; stroke-width: 1.0; stroke-dasharray: 7.0,7.0;"/><polygon fill="#A80036" points="678.52,405.37,687.6091,409.1633,683.5187,405.2557,687.4262,401.1654,678.52,405.37" style="stroke: #A80036; stroke-width: 1.0;"/><text fill="#000000" font-family="sans-serif" font-size="13" lengthAdjust="spacingAndGlyphs" textLength="56" x="735.5" y="398.897">«extend»</text><!--MD5=[d2138fde3237375ee19edc1badf22d4d]
+link UC_ProductDetail to UC_MediaCache--><path d="M640.46,388.96 C667.67,381.75 698.37,373.08 726,364 C782.24,345.51 844.73,320.97 890.6,302.19 " fill="none" id="UC_ProductDetail-&gt;UC_MediaCache" style="stroke: #A80036; stroke-width: 1.0; stroke-dasharray: 7.0,7.0;"/><polygon fill="#A80036" points="895.27,300.27,885.4252,299.9873,890.6445,302.1687,888.4632,307.3881,895.27,300.27" style="stroke: #A80036; stroke-width: 1.0;"/><text fill="#000000" font-family="sans-serif" font-size="13" lengthAdjust="spacingAndGlyphs" textLength="57" x="735" y="337.897">«include»</text><!--MD5=[5f5553fdcde1d6eb687776b63705d5dd]
+reverse link UC_Cart to UC_Shipping--><path d="M1437.16,1918 C1488.99,1918 1552.78,1918 1603.88,1918 " fill="none" id="UC_Cart&lt;-UC_Shipping" style="stroke: #A80036; stroke-width: 1.0; stroke-dasharray: 7.0,7.0;"/><polygon fill="#A80036" points="1431.86,1918,1440.86,1922,1436.86,1918,1440.86,1914,1431.86,1918" style="stroke: #A80036; stroke-width: 1.0;"/><text fill="#000000" font-family="sans-serif" font-size="13" lengthAdjust="spacingAndGlyphs" textLength="56" x="1500.5" y="1913.897">«extend»</text><!--MD5=[96a9843cc67c50b3e6f235ffa1b8ce0e]
+reverse link UC_Checkout to UC_Coupon--><path d="M1386.31,2050.91 C1417.59,2063.32 1460.6,2079.89 1499,2093 C1541.61,2107.55 1590.06,2122.18 1628.06,2133.24 " fill="none" id="UC_Checkout&lt;-UC_Coupon" style="stroke: #A80036; stroke-width: 1.0; stroke-dasharray: 7.0,7.0;"/><polygon fill="#A80036" points="1381.4,2048.96,1388.2894,2055.9982,1386.0473,2050.8046,1391.2408,2048.5625,1381.4,2048.96" style="stroke: #A80036; stroke-width: 1.0;"/><text fill="#000000" font-family="sans-serif" font-size="13" lengthAdjust="spacingAndGlyphs" textLength="56" x="1500.5" y="2088.897">«extend»</text><!--MD5=[17bd5028d8033572f6f51872d1050b98]
+reverse link UC_Checkout to UC_GuestCheckout--><path d="M1406.98,2045.89 C1435.16,2051.03 1468.6,2056.54 1499,2060 C1531.76,2063.73 1567.77,2066.21 1599.85,2067.85 " fill="none" id="UC_Checkout&lt;-UC_GuestCheckout" style="stroke: #A80036; stroke-width: 1.0; stroke-dasharray: 7.0,7.0;"/><polygon fill="#A80036" points="1401.78,2044.93,1409.9122,2050.4859,1406.6982,2045.8307,1411.3533,2042.6167,1401.78,2044.93" style="stroke: #A80036; stroke-width: 1.0;"/><text fill="#000000" font-family="sans-serif" font-size="13" lengthAdjust="spacingAndGlyphs" textLength="56" x="1500.5" y="2055.897">«extend»</text><!--MD5=[5be7d0e57a0cb0092cefa4fec5cf75d2]
+link UC_Checkout to UC_Payment--><path d="M1413.33,2025.11 C1469.98,2018.84 1549.36,2010.06 1609.34,2003.42 " fill="none" id="UC_Checkout-&gt;UC_Payment" style="stroke: #A80036; stroke-width: 1.0; stroke-dasharray: 7.0,7.0;"/><polygon fill="#A80036" points="1614.35,2002.87,1604.969,1999.8706,1609.3795,2003.4128,1605.8374,2007.8233,1614.35,2002.87" style="stroke: #A80036; stroke-width: 1.0;"/><text fill="#000000" font-family="sans-serif" font-size="13" lengthAdjust="spacingAndGlyphs" textLength="57" x="1500" y="2006.897">«include»</text><!--MD5=[46ff3f4307d0286f0630d764b8aa2cbd]
+link UC_Login to UC_SyncSession--><path d="M675.61,614 C720.28,614 772.14,614 819.11,614 " fill="none" id="UC_Login-&gt;UC_SyncSession" style="stroke: #A80036; stroke-width: 1.0; stroke-dasharray: 7.0,7.0;"/><polygon fill="#A80036" points="824.23,614,815.23,610,819.23,614,815.23,618,824.23,614" style="stroke: #A80036; stroke-width: 1.0;"/><text fill="#000000" font-family="sans-serif" font-size="13" lengthAdjust="spacingAndGlyphs" textLength="57" x="735" y="609.897">«include»</text><!--MD5=[16ac27cbc3f1d3d08caf5051b85dc2e7]
+link Customer to UC_AccountDash--><path d="M286.09,1294.14 C290.29,1357.46 307.39,1465.31 373,1525 C395.92,1545.86 426.94,1556.86 457.19,1562.4 " fill="none" id="Customer-&gt;UC_AccountDash" style="stroke: #A80036; stroke-width: 1.0;"/><polygon fill="#A80036" points="462.43,1563.31,454.2485,1557.8271,457.5039,1562.4533,452.8777,1565.7088,462.43,1563.31" style="stroke: #A80036; stroke-width: 1.0;"/><!--MD5=[d31ae57a89610b9a64030f81e3ba6254]
+link Customer to UC_EditAccount--><path d="M290.41,1193.76 C301.19,1103.2 328.21,917.85 373,873 C390.72,855.26 414.1,844.03 438.34,837.03 " fill="none" id="Customer-&gt;UC_EditAccount" style="stroke: #A80036; stroke-width: 1.0;"/><polygon fill="#A80036" points="443.2,835.68,433.4573,834.2377,438.3828,837.0197,435.6008,841.9452,443.2,835.68" style="stroke: #A80036; stroke-width: 1.0;"/><!--MD5=[25dc4334b7ca36378965445eb3e21da1]
+link Customer to UC_ChangePass--><path d="M286.72,1193.83 C291.64,1131.63 309.54,1026.57 373,967 C392.91,948.31 419.08,936.74 445.56,929.66 " fill="none" id="Customer-&gt;UC_ChangePass" style="stroke: #A80036; stroke-width: 1.0;"/><polygon fill="#A80036" points="450.5,928.39,440.7882,926.7528,445.6569,929.6329,442.7768,934.5017,450.5,928.39" style="stroke: #A80036; stroke-width: 1.0;"/><!--MD5=[b19ec0a6dc5f1301a76eb7098ca2a78a]
+link Customer to UC_Addresses--><path d="M296.13,1193.69 C308.06,1151.56 331.21,1093.01 373,1059 C391.66,1043.81 414.58,1033.52 437.93,1026.57 " fill="none" id="Customer-&gt;UC_Addresses" style="stroke: #A80036; stroke-width: 1.0;"/><polygon fill="#A80036" points="442.92,1025.14,433.1637,1023.7932,438.1162,1026.5268,435.3826,1031.4793,442.92,1025.14" style="stroke: #A80036; stroke-width: 1.0;"/><!--MD5=[1e887211ccf3b4b2c4cf3916f0d6e75d]
+link Customer to UC_Wishlist--><path d="M322.66,1193.95 C336.85,1178.13 354.16,1161.94 373,1151 C397.13,1136.98 425.39,1127.22 452.57,1120.43 " fill="none" id="Customer-&gt;UC_Wishlist" style="stroke: #A80036; stroke-width: 1.0;"/><polygon fill="#A80036" points="457.63,1119.19,447.9381,1117.4385,452.7726,1120.3758,449.8354,1125.2103,457.63,1119.19" style="stroke: #A80036; stroke-width: 1.0;"/><!--MD5=[210f45de668512a7921f6cffe8fc405c]
+link Customer to UC_Orders--><path d="M334.11,1235.65 C367.52,1229.97 413.02,1222.24 454.55,1215.18 " fill="none" id="Customer-&gt;UC_Orders" style="stroke: #A80036; stroke-width: 1.0;"/><polygon fill="#A80036" points="459.6,1214.32,450.0545,1211.8943,454.6715,1215.1628,451.4031,1219.7799,459.6,1214.32" style="stroke: #A80036; stroke-width: 1.0;"/><!--MD5=[b9b2306c0bd65b6b34cd862f79d00aec]
+link Customer to UC_Transactions--><path d="M334.11,1252.17 C366.05,1257.48 409.04,1264.64 449.04,1271.29 " fill="none" id="Customer-&gt;UC_Transactions" style="stroke: #A80036; stroke-width: 1.0;"/><polygon fill="#A80036" points="454.41,1272.18,446.1824,1266.7664,449.4769,1271.365,444.8783,1274.6594,454.41,1272.18" style="stroke: #A80036; stroke-width: 1.0;"/><!--MD5=[ea5577db8f996c0a12cdaa0aa038e61b]
+link Customer to UC_Returns--><path d="M322.66,1294.05 C336.85,1309.87 354.16,1326.06 373,1337 C398.06,1351.55 427.56,1361.52 455.69,1368.34 " fill="none" id="Customer-&gt;UC_Returns" style="stroke: #A80036; stroke-width: 1.0;"/><polygon fill="#A80036" points="460.56,1369.49,452.732,1363.5132,455.6961,1368.3313,450.878,1371.2954,460.56,1369.49" style="stroke: #A80036; stroke-width: 1.0;"/><!--MD5=[a7242c3eb8ad2b5b82a504b2f96043af]
+link Customer to UC_Newsletter--><path d="M296.45,1294.3 C308.54,1336.08 331.75,1393.99 373,1428 C391.02,1442.86 413.05,1453.27 435.6,1460.55 " fill="none" id="Customer-&gt;UC_Newsletter" style="stroke: #A80036; stroke-width: 1.0;"/><polygon fill="#A80036" points="440.42,1462.05,433.0339,1455.535,435.6501,1460.5505,430.6347,1463.1668,440.42,1462.05" style="stroke: #A80036; stroke-width: 1.0;"/><!--MD5=[4630257355c10185e46e584c3d44c15f]
+link Customer to UC_CreateRfq--><path d="M284.45,1294.27 C286.2,1369.63 299.82,1512.79 373,1604 C397.91,1635.05 435.83,1656.53 471.14,1670.95 " fill="none" id="Customer-&gt;UC_CreateRfq" style="stroke: #A80036; stroke-width: 1.0;"/><polygon fill="#A80036" points="475.88,1672.85,469.0093,1665.7936,471.2376,1670.993,466.0381,1673.2214,475.88,1672.85" style="stroke: #A80036; stroke-width: 1.0;"/><!--MD5=[51fd0bcf1dc2bb08cf00b3acca952a06]
+link Customer to UC_MyProjects--><path d="M287.02,1294.04 C292.63,1407.64 312.26,1680.14 373,1745 C389.88,1763.02 412.54,1774.49 436.29,1781.69 " fill="none" id="Customer-&gt;UC_MyProjects" style="stroke: #A80036; stroke-width: 1.0;"/><polygon fill="#A80036" points="441.37,1783.16,433.85,1776.8,436.57,1781.76,431.61,1784.48,441.37,1783.16" style="stroke: #A80036; stroke-width: 1.0;"/><!--MD5=[64c8e70c8955ec77cbd1d269b4f53eb4]
+reverse link UC_MyProjects to UC_CompareBids--><path d="M654.02,1769.4 C718.95,1753.91 805.93,1733.16 870.13,1717.84 " fill="none" id="UC_MyProjects&lt;-UC_CompareBids" style="stroke: #A80036; stroke-width: 1.0; stroke-dasharray: 7.0,7.0;"/><polygon fill="#A80036" points="648.99,1770.6,658.6708,1772.4118,653.8546,1769.4445,656.8219,1764.6283,648.99,1770.6" style="stroke: #A80036; stroke-width: 1.0;"/><text fill="#000000" font-family="sans-serif" font-size="13" lengthAdjust="spacingAndGlyphs" textLength="56" x="735.5" y="1732.897">«extend»</text><!--MD5=[558649e1f7935f9d6b0ed483e6328852]
+reverse link UC_CompareBids to UC_AcceptBid--><path d="M1093.35,1697 C1132.79,1697 1175.8,1697 1214.69,1697 " fill="none" id="UC_CompareBids&lt;-UC_AcceptBid" style="stroke: #A80036; stroke-width: 1.0; stroke-dasharray: 7.0,7.0;"/><polygon fill="#A80036" points="1088.05,1697,1097.05,1701,1093.05,1697,1097.05,1693,1088.05,1697" style="stroke: #A80036; stroke-width: 1.0;"/><text fill="#000000" font-family="sans-serif" font-size="13" lengthAdjust="spacingAndGlyphs" textLength="56" x="1127.5" y="1692.897">«extend»</text><!--MD5=[cef79bc16251f237f867d174413b46d1]
+reverse link UC_MyProjects to UC_ApproveBoq--><path d="M693.31,1790.67 C735.74,1790.56 782.89,1790.44 825.48,1790.34 " fill="none" id="UC_MyProjects&lt;-UC_ApproveBoq" style="stroke: #A80036; stroke-width: 1.0; stroke-dasharray: 7.0,7.0;"/><polygon fill="#A80036" points="688.16,1790.68,697.1714,1794.6543,693.16,1790.6657,697.1485,1786.6543,688.16,1790.68" style="stroke: #A80036; stroke-width: 1.0;"/><text fill="#000000" font-family="sans-serif" font-size="13" lengthAdjust="spacingAndGlyphs" textLength="56" x="735.5" y="1786.897">«extend»</text><!--MD5=[b424611525adc3438884a158adf94c1e]
+link UC_ApproveBoq to UC_Cart--><path d="M1035.93,1813.62 C1079.7,1827.34 1135.59,1845.19 1185,1862 C1219.58,1873.76 1258.22,1887.72 1288.27,1898.76 " fill="none" id="UC_ApproveBoq-&gt;UC_Cart" style="stroke: #A80036; stroke-width: 1.0; stroke-dasharray: 7.0,7.0;"/><polygon fill="#A80036" points="1293.02,1900.51,1285.9606,1893.6423,1288.329,1898.7795,1283.1918,1901.1479,1293.02,1900.51" style="stroke: #A80036; stroke-width: 1.0;"/><text fill="#000000" font-family="sans-serif" font-size="13" lengthAdjust="spacingAndGlyphs" textLength="57" x="1127" y="1839.897">«include»</text><!--MD5=[5ccaa7001cdbaf5e67436b442004b1ee]
+link System to UC_Payment--><path d="M624.2,54.04 C737.45,50.16 981.81,58.94 1118,192 C1190.54,262.87 1519.3,1881.4 1588,1956 C1597.24,1966.03 1609.3,1973.42 1621.98,1978.85 " fill="none" id="System-&gt;UC_Payment" style="stroke: #A80036; stroke-width: 1.0;"/><polygon fill="#A80036" points="1626.68,1980.77,1619.8544,1973.67,1622.0495,1978.8835,1616.836,1981.0787,1626.68,1980.77" style="stroke: #A80036; stroke-width: 1.0;"/><!--MD5=[774b6699341c8ab934f8c404d38c4e41]
+link System to UC_MediaCache--><path d="M624.2,91.28 C700.24,132.96 829.42,203.78 902.62,243.91 " fill="none" id="System-&gt;UC_MediaCache" style="stroke: #A80036; stroke-width: 1.0;"/><polygon fill="#A80036" points="907.36,246.51,901.3958,238.6724,902.9771,244.1037,897.5458,245.685,907.36,246.51" style="stroke: #A80036; stroke-width: 1.0;"/><!--MD5=[c4c91ab5882dbe13110ff1762fd691b5]
+@startuml "Diagrama_Casos_De_Uso_Cliente"
+
+<style>
+root {
+    BackgroundColor #FAFAFA
+    FontName "Helvetica Neue"
+    FontSize 12
+}
+arrow {
+    LineColor #37474F
+    TextColor #37474F
+}
+actor {
+    BackgroundColor #FFF3E0
+    BorderColor #E65100
+    LineColor #E65100
+}
+usecase {
+    BackgroundColor #E3F2FD
+    BorderColor #1565C0
+    LineColor #1565C0
+}
+rectangle {
+    BackgroundColor #FFFFFF
+    BorderColor #455A64
+    LineColor #455A64
+}
+package {
+    BackgroundColor #F5F5F5
+    BorderColor #90A4AE
+    LineColor #90A4AE
+}
+</style>
+
+left to right direction
+skinparam packageStyle rectangle
+skinparam shadowing false
+
+actor "Visitante\n(Guest)" as Guest
+actor "Cliente Logado\n(Customer)" as Customer
+actor "Sistema / Gateway\n(Alpha Engine)" as System
+
+Guest <|- - Customer : Herda permissões
+
+rectangle "Alpha Engine - Loja Virtual & Portal do Cliente" {
+
+    package "Catálogo, Busca & Mídia" {
+        usecase "Navegar no Catálogo & Categorias" as UC_Nav
+        usecase "Buscar Produtos com Filtros" as UC_Search
+        usecase "Visualizar Detalhes do Produto" as UC_ProductDetail
+        usecase "Selecionar Variantes & Opções" as UC_Variants
+        usecase "Carregar Mídia & Cache On-Demand" as UC_MediaCache
+    }
+
+    package "Carrinho & Compras" {
+        usecase "Adicionar ao Carrinho" as UC_Cart
+        usecase "Calcular Frete por CEP" as UC_Shipping
+        usecase "Aplicar Cupom de Desconto" as UC_Coupon
+        usecase "Realizar Checkout" as UC_Checkout
+        usecase "Comprar como Visitante" as UC_GuestCheckout
+        usecase "Processar Pagamento" as UC_Payment
+    }
+
+    package "Autenticação & Sessão" {
+        usecase "Cadastrar Nova Conta" as UC_Register
+        usecase "Autenticar-se (Login / Logout)" as UC_Login
+        usecase "Recuperar Senha por E-mail" as UC_ForgotPass
+        usecase "Sincronizar Sessão Redis & Carrinho" as UC_SyncSession
+    }
+
+    package "Área 'Minha Conta' (Painel do Cliente)" {
+        usecase "Acessar Painel do Cliente" as UC_AccountDash
+        usecase "Gerenciar Dados Cadastrais\n(/account/edit)" as UC_EditAccount
+        usecase "Alterar Senha Logado\n(/account/resetar-senha)" as UC_ChangePass
+        usecase "Gerenciar Livro de Endereços\n(/account/addresses)" as UC_Addresses
+        usecase "Gerenciar Lista de Desejos\n(/account/wishlist)" as UC_Wishlist
+        usecase "Consultar Pedidos & Histórico\n(/account/orders)" as UC_Orders
+        usecase "Consultar Extrato & Transações\n(/account/transaction)" as UC_Transactions
+        usecase "Solicitar Devolução / RMA\n(/account/return)" as UC_Returns
+        usecase "Gerenciar Inscrição na Newsletter\n(/account/newsletter)" as UC_Newsletter
+    }
+
+    package "Cotações & Projetos (RFQ / BoQ)" {
+        usecase "Criar Solicitação de Orçamento (RFQ)\n(/projetos/novo)" as UC_CreateRfq
+        usecase "Acompanhar Meus Projetos\n(/account/projetos)" as UC_MyProjects
+        usecase "Comparar Propostas Recebidas\n(/propostas)" as UC_CompareBids
+        usecase "Aceitar Proposta de Prestador\n(/aceitar)" as UC_AcceptBid
+        usecase "Aprovar BoQ & Enviar ao Carrinho\n(/boq)" as UC_ApproveBoq
+    }
+}
+
+Guest - -> UC_Nav
+Guest - -> UC_Search
+Guest - -> UC_ProductDetail
+Guest - -> UC_Cart
+Guest - -> UC_Register
+Guest - -> UC_Login
+Guest - -> UC_ForgotPass
+Guest - -> UC_Checkout
+
+UC_ProductDetail <.. UC_Variants : <<extend>>
+UC_ProductDetail ..> UC_MediaCache : <<include>>
+UC_Cart <.. UC_Shipping : <<extend>>
+UC_Checkout <.. UC_Coupon : <<extend>>
+UC_Checkout <.. UC_GuestCheckout : <<extend>>
+UC_Checkout ..> UC_Payment : <<include>>
+UC_Login ..> UC_SyncSession : <<include>>
+
+Customer - -> UC_AccountDash
+Customer - -> UC_EditAccount
+Customer - -> UC_ChangePass
+Customer - -> UC_Addresses
+Customer - -> UC_Wishlist
+Customer - -> UC_Orders
+Customer - -> UC_Transactions
+Customer - -> UC_Returns
+Customer - -> UC_Newsletter
+
+Customer - -> UC_CreateRfq
+Customer - -> UC_MyProjects
+UC_MyProjects <.. UC_CompareBids : <<extend>>
+UC_CompareBids <.. UC_AcceptBid : <<extend>>
+UC_MyProjects <.. UC_ApproveBoq : <<extend>>
+UC_ApproveBoq ..> UC_Cart : <<include>>
+
+System - -> UC_Payment
+System - -> UC_MediaCache
+
+@enduml
+
+PlantUML version 1.2020.02(Sun Mar 01 07:22:07 GMT-03:00 2020)
+(GPL source distribution)
+Java Runtime: OpenJDK Runtime Environment
+JVM: OpenJDK 64-Bit Server VM
+Java Version: 25.0.4+7-1-deb13u1-Debian
+Operating System: Linux
+Default Encoding: UTF-8
+Language: pt
+Country: BR
+--></g></svg>

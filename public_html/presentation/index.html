@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="pt-BR" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Alpha Engine | Apresentação Acadêmica - FATEC-FV</title>
+  <meta name="description" content="Apresentação do Trabalho Acadêmico da plataforma Alpha Engine para a disciplina de Laboratório de Engenharia de Software - FATEC Ferraz de Vasconcelos.">
+  <link rel="stylesheet" href="assets/css/style.css">
+  <link rel="stylesheet" href="assets/css/print.css" media="print">
+</head>
+<body>
+
+  <!-- Barra de Progresso de Leitura -->
+  <div class="progress-container">
+    <div class="progress-bar"></div>
+  </div>
+
+  <!-- Topbar Institucional -->
+  <header class="topbar">
+    <div class="topbar-left">
+      <button class="menu-toggle" id="menuToggle" aria-label="Abrir Menu de Navegação">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
+      </button>
+      <a href="index.html" class="topbar-brand">
+        <div class="topbar-logos">
+          <img src="assets/img/logos/Fatec_logo.svg" alt="Logo FATEC" />
+          <img src="assets/img/logos/logo-cps-2022.svg" alt="Logo Centro Paula Souza" />
+          <img src="assets/img/logos/sp.jpg" alt="Governo do Estado de São Paulo" />
+        </div>
+        <div class="brand-text">
+          <span class="brand-title">Alpha Engine</span>
+          <span class="brand-subtitle">FATEC-FV • Laboratório de Eng. Software</span>
+        </div>
+      </a>
+    </div>
+
+    <div class="topbar-right">
+      <button class="nav-tool-btn" id="modeToggleBtn" title="Alternar Modo Apresentação (P)">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect><line x1="8" y1="21" x2="16" y2="21"></line><line x1="12" y1="17" x2="12" y2="21"></line></svg>
+        <span class="mode-label">Modo Apresentação</span>
+      </button>
+      <button class="nav-tool-btn" id="themeToggleBtn" title="Alternar Tema (T)">
+        <span class="theme-icon"></span>
+      </button>
+      <button class="nav-tool-btn" id="fullscreenBtn" title="Tela Cheia (F)">
+        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"></path></svg>
+      </button>
+    </div>
+  </header>
+
+  <div class="app-container">
+    <!-- Sidebar de Navegação -->
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-header">
+        <div class="sidebar-label">Dossiê Acadêmico</div>
+        <div class="sidebar-course">Análise e Desenv. Sistemas</div>
+      </div>
+      <nav class="sidebar-nav">
+        <a href="index.html" class="nav-item active">
+          <div class="nav-item-title">
+            <span class="nav-num">00</span>
+            <span>Capa & Visão Geral</span>
+          </div>
+          <span class="nav-badge">Início</span>
+        </a>
+        <a href="01_visao.html" class="nav-item">
+          <div class="nav-item-title">
+            <span class="nav-num">01</span>
+            <span>Documento de Visão</span>
+          </div>
+          <span class="nav-badge">Doc</span>
+        </a>
+        <a href="02_processos_atividades.html" class="nav-item">
+          <div class="nav-item-title">
+            <span class="nav-num">02</span>
+            <span>Processos & Atividades</span>
+          </div>
+          <span class="nav-badge">10 Ativ.</span>
+        </a>
+        <a href="03_requisitos_regras.html" class="nav-item">
+          <div class="nav-item-title">
+            <span class="nav-num">03</span>
+            <span>Engenharia de Requisitos</span>
+          </div>
+          <span class="nav-badge">25 RFs</span>
+        </a>
+        <a href="04_casos_de_uso.html" class="nav-item">
+          <div class="nav-item-title">
+            <span class="nav-num">04</span>
+            <span>Casos de Uso do Sistema</span>
+          </div>
+          <span class="nav-badge">10 UCs</span>
+        </a>
+        <a href="05_matriz_rastreabilidade.html" class="nav-item">
+          <div class="nav-item-title">
+            <span class="nav-num">05</span>
+            <span>Matriz de Rastreabilidade</span>
+          </div>
+          <span class="nav-badge">RN × RF</span>
+        </a>
+        <a href="06_arquitetura_dados.html" class="nav-item">
+          <div class="nav-item-title">
+            <span class="nav-num">06</span>
+            <span>Arquitetura & Banco EER</span>
+          </div>
+          <span class="nav-badge">C4 / DER</span>
+        </a>
+        <a href="07_diagramas_sequencia.html" class="nav-item">
+          <div class="nav-item-title">
+            <span class="nav-num">07</span>
+            <span>Diagramas de Sequência</span>
+          </div>
+          <span class="nav-badge">14 Diagr.</span>
+        </a>
+        <a href="08_checklist_disciplina.html" class="nav-item">
+          <div class="nav-item-title">
+            <span class="nav-num">08</span>
+            <span>Checklist da Disciplina</span>
+          </div>
+          <span class="nav-badge">100% OK</span>
+        </a>
+      </nav>
+      <div class="sidebar-footer">
+        <p><strong>Orientadora:</strong> Profa. Patrícia Sarno</p>
+        <p><strong>Aluno:</strong> Josias da Conceição Sobrinho</p>
+        <p>FATEC Ferraz de Vasconcelos</p>
+      </div>
+    </aside>
+
+    <!-- Conteúdo Principal -->
+    <main class="main-content">
+      <!-- Capa Acadêmica Institucional -->
+      <header class="page-header">
+        <div class="page-category">
+          <span class="badge badge-red">FATEC-FV</span>
+          <span class="badge badge-blue">Centro Paula Souza</span>
+          <span class="badge badge-green">Laboratório de Engenharia de Software</span>
+        </div>
+        <h1 class="page-title">Alpha Engine: Plataforma E-commerce On-Premise & PDV para Materiais de Construção</h1>
+        <p class="page-subtitle">
+          Dossiê técnico e apresentação acadêmica formal de Engenharia de Software para o comércio eletrônico adaptado à realidade tributária, fiscal e logística brasileira.
+        </p>
+      </header>
+
+      <!-- Cartões de Dados Acadêmicos -->
+      <section class="grid-cards">
+        <div class="card highlight">
+          <div class="card-icon">👨‍🏫</div>
+          <h2 class="card-title">Equipe e Autoria</h2>
+          <div class="card-desc">
+            <p><strong>Aluno / Autor:</strong> Josias da Conceição Sobrinho</p>
+            <p><strong>Integrante:</strong> Gabriel Calidônio André</p>
+            <p><strong>Colaborador:</strong> Wallace Francis Miranda (ADS 2-2025)</p>
+            <p><strong>Professora / Orientadora:</strong> Patrícia Sarno</p>
+          </div>
+        </div>
+
+        <div class="card highlight">
+          <div class="card-icon">🏛️</div>
+          <h2 class="card-title">Instituição & Curso</h2>
+          <div class="card-desc">
+            <p><strong>Instituição:</strong> Centro Estadual de Educação Tecnológica Paula Souza</p>
+            <p><strong>Unidade:</strong> FATEC-FV (Faculdade de Tecnologia de Ferraz de Vasconcelos)</p>
+            <p><strong>Curso Superior:</strong> Análise e Desenvolvimento de Sistemas (ADS)</p>
+            <p><strong>Disciplina:</strong> Laboratório de Engenharia de Software</p>
+          </div>
+        </div>
+
+        <div class="card highlight">
+          <div class="card-icon">🎯</div>
+          <h2 class="card-title">Tema & Proposta</h2>
+          <div class="card-desc">
+            <p><strong>Tema Central:</strong> E-COMMERCE BR</p>
+            <p><strong>Subtítulo:</strong> Plataforma On-Premise e Ponto de Venda (PDV) de alto desacoplamento e conformidade fiscal (ICMS, NCM, DIFAL, NFC-e) para o varejo de materiais de construção.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- Indicadores de Engenharia de Software -->
+      <section style="margin: 3rem 0;">
+        <h2 style="font-family: var(--font-display); font-size: 1.5rem; margin-bottom: 1.25rem;">Métricas do Projeto e Cobertura Técnica</h2>
+        <div class="grid-cards-3">
+          <div class="stat-card">
+            <span class="stat-value">25</span>
+            <span class="stat-label">Requisitos Funcionais (RF001 a RF025)</span>
+          </div>
+          <div class="stat-card">
+            <span class="stat-value">18</span>
+            <span class="stat-label">Regras de Negócio Modeladas (RN001 a RN018)</span>
+          </div>
+          <div class="stat-card">
+            <span class="stat-value">08</span>
+            <span class="stat-label">Requisitos Não Funcionais (RNF001 a RNF008)</span>
+          </div>
+          <div class="stat-card">
+            <span class="stat-value">10</span>
+            <span class="stat-label">Atividades de Negócio & Técnicas Mapeadas</span>
+          </div>
+          <div class="stat-card">
+            <span class="stat-value">14</span>
+            <span class="stat-label">Diagramas de Sequência Técnicos GoF/PSR</span>
+          </div>
+          <div class="stat-card">
+            <span class="stat-value">100%</span>
+            <span class="stat-label">Rastreabilidade Bidirecional (Zero Órfãos)</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- Resumo Executivo da Solução -->
+      <section class="card" style="margin: 2.5rem 0;">
+        <h2 class="card-title" style="font-size: 1.4rem; margin-bottom: 1rem;">Resumo Executivo da Engenharia do Sistema</h2>
+        <p style="margin-bottom: 1rem; color: var(--text-muted); font-size: 0.98rem; line-height: 1.7;">
+          O projeto <strong>Alpha Engine</strong> aborda a complexidade intrínseca do comércio eletrônico e da operação de ponto de venda no setor de materiais de construção no Brasil. Plataformas internacionais conceituadas (como Magento ou Shopify) falham frequentemente ao atender às particularidades do varejo nacional: cubagem complexa para produtos pesados, cálculo assíncrono de ICMS-ST e DIFAL por estado de destino, vendas fracionadas (m² para pisos e revestimentos), e concorrência crítica de estoque entre balcão presencial e loja virtual.
+        </p>
+        <p style="color: var(--text-muted); font-size: 0.98rem; line-height: 1.7;">
+          Para solucionar esses desafios, concebeu-se uma arquitetura baseada em <strong>Clean Architecture / Action-Domain-Responder (ADR)</strong> sobre o microframework <strong>Slim 4</strong>, com conformidade estrita com as recomendações <strong>PHP-FIG (PSR-4, PSR-7, PSR-11, PSR-15)</strong>, padrões de projeto <strong>Gang of Four (Strategy, Factory, DAO, Observer, Proxy)</strong> e mecanismos avançados de concorrência com <strong>Bloqueio Otimista (Optimistic Locking)</strong> e cache inteligente com <strong>Redis e RabbitMQ</strong>.
+        </p>
+
+        <div class="callout callout-important" style="margin-top: 1.5rem;">
+          <div class="callout-icon">💡</div>
+          <div class="callout-content">
+            <div class="callout-title">Diferencial Metodológico para a Banca Avaliadora</div>
+            <div class="callout-text">
+              Todo o sistema foi formalmente especificado e rastreado: cada tela e funcionalidade responde a uma regra de negócio validada e cada diagrama de sequência aborda um gargalo de concorrência, segurança ou conformidade fiscal do mundo real.
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Portal de Módulos Navegáveis -->
+      <section style="margin: 3.5rem 0;">
+        <h2 style="font-family: var(--font-display); font-size: 1.5rem; margin-bottom: 1.25rem;">Navegação pelos Módulos do Dossiê Acadêmico</h2>
+        <div class="grid-cards">
+          <a href="01_visao.html" class="card" style="text-decoration: none; color: inherit;">
+            <div class="card-icon">📑</div>
+            <h3 class="card-title">01. Documento de Visão</h3>
+            <p class="card-desc">Objetivos gerais e específicos, justificativa comercial, dores do varejo de materiais de construção, peculiaridades tributárias e stack tecnológica GoF/PSR.</p>
+          </a>
+
+          <a href="02_processos_atividades.html" class="card" style="text-decoration: none; color: inherit;">
+            <div class="card-icon">🔄</div>
+            <h3 class="card-title">02. Processos & Atividades</h3>
+            <p class="card-desc">10 Atividades comerciais e de infraestrutura técnica, com diagramas de atividades SVG interativos (Venda POS, Checkout, RMA, LGPD, Lock Otimista).</p>
+          </a>
+
+          <a href="03_requisitos_regras.html" class="card" style="text-decoration: none; color: inherit;">
+            <div class="card-icon">📋</div>
+            <h3 class="card-title">03. Engenharia de Requisitos</h3>
+            <p class="card-desc">25 Requisitos Funcionais, 8 Requisitos Não Funcionais e 18 Regras de Negócio estruturadas com busca instantânea e filtros por prioridade.</p>
+          </a>
+
+          <a href="04_casos_de_uso.html" class="card" style="text-decoration: none; color: inherit;">
+            <div class="card-icon">👥</div>
+            <h3 class="card-title">04. Casos de Uso do Sistema</h3>
+            <p class="card-desc">Mapeamento dos 7 Atores do sistema, 3 Diagramas Gerais SVG (Loja, PDV, Painel) e especificações completas de 10 Casos de Uso essenciais.</p>
+          </a>
+
+          <a href="05_matriz_rastreabilidade.html" class="card" style="text-decoration: none; color: inherit;">
+            <div class="card-icon">📊</div>
+            <h3 class="card-title">05. Matriz de Rastreabilidade</h3>
+            <p class="card-desc">Grade cruzada interativa RN × RF com busca em tempo real, destaque bidirecional, painel dinâmico e auditoria formal de integridade (zero nós órfãos).</p>
+          </a>
+
+          <a href="06_arquitetura_dados.html" class="card" style="text-decoration: none; color: inherit;">
+            <div class="card-icon">🏛️</div>
+            <h3 class="card-title">06. Arquitetura & Banco EER</h3>
+            <p class="card-desc">Diagrama C4 de componentes, Diagrama Entidade-Relacionamento (EER) completo com Pan & Zoom, Grafo de Persistência e catálogo de Padrões GoF.</p>
+          </a>
+
+          <a href="07_diagramas_sequencia.html" class="card" style="text-decoration: none; color: inherit;">
+            <div class="card-icon">⚡</div>
+            <h3 class="card-title">07. Diagramas de Sequência</h3>
+            <p class="card-desc">Galeria técnica comentada com os 14 diagramas de sequência oficiais (Autenticação Dual, Calculadora de Revestimento, Anti-CSRF, Webhooks, SEO).</p>
+          </a>
+
+          <a href="08_checklist_disciplina.html" class="card" style="text-decoration: none; color: inherit;">
+            <div class="card-icon">✅</div>
+            <h3 class="card-title">08. Checklist da Disciplina</h3>
+            <p class="card-desc">Validação item a item do cumprimento integral de todos os requisitos exigidos pela ementa de Laboratório de Engenharia de Software da FATEC-FV.</p>
+          </a>
+        </div>
+      </section>
+
+      <!-- Barra de Navegação Inferior -->
+      <footer class="page-nav-bar">
+        <div></div>
+        <a href="01_visao.html" class="nav-page-link next">
+          <div class="nav-page-meta">
+            <span class="nav-page-direction">Próximo Módulo →</span>
+            <span class="nav-page-title">01. Documento de Visão</span>
+          </div>
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"></polyline></svg>
+        </a>
+      </footer>
+
+      <div class="academic-footer">
+        <p><strong>FATEC Ferraz de Vasconcelos</strong> — Faculdade de Tecnologia de Ferraz de Vasconcelos</p>
+        <p>Centro Estadual de Educação Tecnológica Paula Souza | Governo do Estado de São Paulo</p>
+        <p>Disciplina: Laboratório de Engenharia de Software | Orientadora: Profa. Patrícia Sarno</p>
+      </div>
+    </main>
+  </div>
+
+  <!-- Scripts -->
+  <script src="assets/js/main.js"></script>
+  <script src="assets/js/svg-viewer.js"></script>
+</body>
+</html>

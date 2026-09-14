@@ -1,0 +1,612 @@
+<!DOCTYPE html>
+<html lang="pt-BR" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>03. Engenharia de Requisitos | Alpha Engine - FATEC-FV</title>
+  <meta name="description" content="Engenharia de Requisitos Funcionais, Não Funcionais e Regras de Negócio para Laboratório de Engenharia de Software - FATEC Ferraz de Vasconcelos.">
+  <link rel="stylesheet" href="assets/css/style.css">
+  <link rel="stylesheet" href="assets/css/print.css" media="print">
+</head>
+<body>
+
+  <div class="progress-container"><div class="progress-bar"></div></div>
+
+  <!-- Topbar -->
+  <header class="topbar">
+    <div class="topbar-left">
+      <button class="menu-toggle" id="menuToggle" aria-label="Abrir Menu">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
+      </button>
+      <a href="index.html" class="topbar-brand">
+        <div class="topbar-logos">
+          <img src="assets/img/logos/Fatec_logo.svg" alt="Logo FATEC" />
+          <img src="assets/img/logos/logo-cps-2022.svg" alt="Logo Centro Paula Souza" />
+          <img src="assets/img/logos/sp.jpg" alt="Governo do Estado de São Paulo" />
+        </div>
+        <div class="brand-text">
+          <span class="brand-title">Alpha Engine</span>
+          <span class="brand-subtitle">03. Engenharia de Requisitos</span>
+        </div>
+      </a>
+    </div>
+
+    <div class="topbar-right">
+      <button class="nav-tool-btn" id="modeToggleBtn" title="Alternar Modo Apresentação (P)">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect><line x1="8" y1="21" x2="16" y2="21"></line><line x1="12" y1="17" x2="12" y2="21"></line></svg>
+        <span class="mode-label">Modo Apresentação</span>
+      </button>
+      <button class="nav-tool-btn" id="themeToggleBtn" title="Alternar Tema (T)">
+        <span class="theme-icon"></span>
+      </button>
+      <button class="nav-tool-btn" id="fullscreenBtn" title="Tela Cheia (F)">
+        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"></path></svg>
+      </button>
+    </div>
+  </header>
+
+  <div class="app-container">
+    <!-- Sidebar -->
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-header">
+        <div class="sidebar-label">Dossiê Acadêmico</div>
+        <div class="sidebar-course">Análise e Desenv. Sistemas</div>
+      </div>
+      <nav class="sidebar-nav">
+        <a href="index.html" class="nav-item">
+          <div class="nav-item-title"><span class="nav-num">00</span><span>Capa & Visão Geral</span></div>
+          <span class="nav-badge">Início</span>
+        </a>
+        <a href="01_visao.html" class="nav-item">
+          <div class="nav-item-title"><span class="nav-num">01</span><span>Documento de Visão</span></div>
+          <span class="nav-badge">Doc</span>
+        </a>
+        <a href="02_processos_atividades.html" class="nav-item">
+          <div class="nav-item-title"><span class="nav-num">02</span><span>Processos & Atividades</span></div>
+          <span class="nav-badge">10 Ativ.</span>
+        </a>
+        <a href="03_requisitos_regras.html" class="nav-item active">
+          <div class="nav-item-title"><span class="nav-num">03</span><span>Engenharia de Requisitos</span></div>
+          <span class="nav-badge">25 RFs</span>
+        </a>
+        <a href="04_casos_de_uso.html" class="nav-item">
+          <div class="nav-item-title"><span class="nav-num">04</span><span>Casos de Uso do Sistema</span></div>
+          <span class="nav-badge">10 UCs</span>
+        </a>
+        <a href="05_matriz_rastreabilidade.html" class="nav-item">
+          <div class="nav-item-title"><span class="nav-num">05</span><span>Matriz de Rastreabilidade</span></div>
+          <span class="nav-badge">RN × RF</span>
+        </a>
+        <a href="06_arquitetura_dados.html" class="nav-item">
+          <div class="nav-item-title"><span class="nav-num">06</span><span>Arquitetura & Banco EER</span></div>
+          <span class="nav-badge">C4 / DER</span>
+        </a>
+        <a href="07_diagramas_sequencia.html" class="nav-item">
+          <div class="nav-item-title"><span class="nav-num">07</span><span>Diagramas de Sequência</span></div>
+          <span class="nav-badge">14 Diagr.</span>
+        </a>
+        <a href="08_checklist_disciplina.html" class="nav-item">
+          <div class="nav-item-title"><span class="nav-num">08</span><span>Checklist da Disciplina</span></div>
+          <span class="nav-badge">100% OK</span>
+        </a>
+      </nav>
+      <div class="sidebar-footer">
+        <p><strong>Orientadora:</strong> Profa. Patrícia Sarno</p>
+        <p><strong>Aluno:</strong> Josias da Conceição Sobrinho</p>
+        <p>FATEC Ferraz de Vasconcelos</p>
+      </div>
+    </aside>
+
+    <!-- Conteúdo Principal -->
+    <main class="main-content">
+      <header class="page-header">
+        <div class="page-category">Módulo 03 • Engenharia de Software</div>
+        <h1 class="page-title">Engenharia de Requisitos e Regras de Negócio</h1>
+        <p class="page-subtitle">
+          Especificação formal de 25 Requisitos Funcionais divididos em 6 módulos, 8 Requisitos Não Funcionais com métricas de qualidade e 18 Regras de Negócio com restrições fiscais e comerciais.
+        </p>
+      </header>
+
+      <!-- Barra de Filtros e Busca -->
+      <div class="card" style="margin-bottom: 2.5rem; padding: 1.25rem;">
+        <div style="display: flex; gap: 1rem; flex-wrap: wrap; align-items: center;">
+          <input type="text" id="reqSearchInput" placeholder="🔍 Filtrar requisitos ou regras (ex: frete, RF009, estoque, PIX)..." 
+                 style="flex: 1; min-width: 260px; padding: 0.65rem 1rem; border-radius: var(--border-radius-sm); border: 1px solid var(--border-subtle); background: var(--bg-surface); color: var(--text-main); font-family: inherit; font-size: 0.9rem;" />
+          <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+            <button class="filter-btn active" data-filter="all" style="padding: 0.45rem 0.85rem; border-radius: 6px; border: 1px solid var(--border-subtle); background: var(--fatec-red); color: white; cursor: pointer; font-size: 0.82rem; font-weight: 600;">Todos</button>
+            <button class="filter-btn" data-filter="rf" style="padding: 0.45rem 0.85rem; border-radius: 6px; border: 1px solid var(--border-subtle); background: var(--bg-surface); color: var(--text-main); cursor: pointer; font-size: 0.82rem; font-weight: 600;">Requisitos Funcionais (25)</button>
+            <button class="filter-btn" data-filter="rnf" style="padding: 0.45rem 0.85rem; border-radius: 6px; border: 1px solid var(--border-subtle); background: var(--bg-surface); color: var(--text-main); cursor: pointer; font-size: 0.82rem; font-weight: 600;">Não Funcionais (8)</button>
+            <button class="filter-btn" data-filter="rn" style="padding: 0.45rem 0.85rem; border-radius: 6px; border: 1px solid var(--border-subtle); background: var(--bg-surface); color: var(--text-main); cursor: pointer; font-size: 0.82rem; font-weight: 600;">Regras de Negócio (18)</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- SEÇÃO 1: REQUISITOS FUNCIONAIS -->
+      <section id="rfSection" style="margin-bottom: 4rem;">
+        <h2 style="font-family: var(--font-display); font-size: 1.6rem; margin-bottom: 1.5rem; color: var(--fatec-red-light);">
+          1. Requisitos Funcionais do Sistema (RF001 a RF025)
+        </h2>
+
+        <!-- Módulo 1 -->
+        <h3 style="font-family: var(--font-display); font-size: 1.25rem; margin: 1.5rem 0 1rem; color: var(--accent-cyan);">
+          1.1. Módulo de Produtos & Catálogo
+        </h3>
+        <div class="grid-cards req-items-grid">
+          <div class="card req-card" data-category="rf">
+            <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.5rem;">
+              <span class="badge badge-red">RF001</span>
+              <span class="badge badge-blue">Prioridade: Alta</span>
+            </div>
+            <h4 class="card-title">Cadastro de produtos com fotos HD</h4>
+            <p class="card-desc">Permitir inclusão, edição e upload de fotos em alta resolução, dimensões físicas (C x L x A) e peso bruto para cubagem logística.</p>
+            <div style="margin-top: 1rem; font-size: 0.8rem; color: var(--text-dim);">Regras: <strong>RN001, RN002</strong> | Impl: <code>products</code>, <code>product_images</code></div>
+          </div>
+
+          <div class="card req-card" data-category="rf">
+            <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.5rem;">
+              <span class="badge badge-red">RF002</span>
+              <span class="badge badge-blue">Prioridade: Alta</span>
+            </div>
+            <h4 class="card-title">Especificações técnicas por categoria</h4>
+            <p class="card-desc">Campos dinâmicos e fichas técnicas personalizadas por nicho (ex.: voltagem para materiais elétricos, PEI e resistência para pisos cerâmicos).</p>
+            <div style="margin-top: 1rem; font-size: 0.8rem; color: var(--text-dim);">Regras: <strong>RN001, RN002</strong> | Impl: EAV / Atributos dinâmicos em JSON</div>
+          </div>
+
+          <div class="card req-card" data-category="rf">
+            <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.5rem;">
+              <span class="badge badge-red">RF003</span>
+              <span class="badge badge-blue">Prioridade: Alta</span>
+            </div>
+            <h4 class="card-title">Categorização e taxonomia hierárquica</h4>
+            <p class="card-desc">Estrutura multinível em árvore de Departamentos, Categorias e Subcategorias com slugs amigáveis para SEO e <em>Breadcrumbs</em>.</p>
+            <div style="margin-top: 1rem; font-size: 0.8rem; color: var(--text-dim);">Regras: <strong>RN001</strong> | Impl: Árvore adjacente com cache Redis</div>
+          </div>
+
+          <div class="card req-card" data-category="rf">
+            <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.5rem;">
+              <span class="badge badge-red">RF004</span>
+              <span class="badge badge-red">Prioridade: Crítica</span>
+            </div>
+            <h4 class="card-title">Venda fracionada e múltiplas unidades</h4>
+            <p class="card-desc">Venda por m² com conversão automática para caixas fechadas, metros lineares para tubulações e fracionamento de tintas por litros.</p>
+            <div style="margin-top: 1rem; font-size: 0.8rem; color: var(--text-dim);">Regras: <strong>RN001</strong> | Impl: Arredondamento seguro <code>ceil()</code> para embalagens</div>
+          </div>
+
+          <div class="card req-card" data-category="rf">
+            <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.5rem;">
+              <span class="badge badge-red">RF005</span>
+              <span class="badge badge-blue">Prioridade: Alta</span>
+            </div>
+            <h4 class="card-title">Gestão administrativa (CRUD) de SKUs</h4>
+            <p class="card-desc">Painel gerencial completo para controle de variações (voltagem 110V/220V, cor, dimensões), código EAN-13/barras e NCM fiscal.</p>
+            <div style="margin-top: 1rem; font-size: 0.8rem; color: var(--text-dim);">Regras: <strong>RN001, RN002, RN003</strong> | Impl: <code>product_skus</code></div>
+          </div>
+
+          <div class="card req-card" data-category="rf">
+            <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.5rem;">
+              <span class="badge badge-red">RF006</span>
+              <span class="badge badge-red">Prioridade: Crítica</span>
+            </div>
+            <h4 class="card-title">Gestão de inventário e baixa em tempo real</h4>
+            <p class="card-desc">Atualização instantânea do saldo de estoque físico tanto nas compras virtuais quanto no balcão presencial com bloqueio otimista.</p>
+            <div style="margin-top: 1rem; font-size: 0.8rem; color: var(--text-dim);">Regras: <strong>RN005, RN006</strong> | Impl: <code>inventory_balances</code> com versioning</div>
+          </div>
+        </div>
+
+        <!-- Módulo 2 -->
+        <h3 style="font-family: var(--font-display); font-size: 1.25rem; margin: 2rem 0 1rem; color: var(--accent-cyan);">
+          1.2. Módulo de Compras & Jornada do Cliente
+        </h3>
+        <div class="grid-cards req-items-grid">
+          <div class="card req-card" data-category="rf">
+            <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.5rem;">
+              <span class="badge badge-red">RF007</span>
+              <span class="badge badge-amber">Prioridade: Média</span>
+            </div>
+            <h4 class="card-title">Kits e combos promocionais</h4>
+            <p class="card-desc">Agrupamento de itens correlatos (ex: Combo Pintura: Balde de Tinta + 2 Trinchas + Rolo) com desconto vinculado ao saldo de estoque de cada item.</p>
+            <div style="margin-top: 1rem; font-size: 0.8rem; color: var(--text-dim);">Regras: <strong>RN004, RN005</strong> | Impl: <code>bundles</code> com multiplicadores</div>
+          </div>
+
+          <div class="card req-card" data-category="rf">
+            <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.5rem;">
+              <span class="badge badge-red">RF008</span>
+              <span class="badge badge-amber">Prioridade: Média</span>
+            </div>
+            <h4 class="card-title">Cross-selling dinâmico</h4>
+            <p class="card-desc">Sugestão contextualizada de itens complementares na PDP e no carrinho (ex: sugerir espaçadores niveladores e argamassa na compra de porcelanato).</p>
+            <div style="margin-top: 1rem; font-size: 0.8rem; color: var(--text-dim);">Regras: <strong>RN004</strong> | Impl: Algoritmo de correlação em sub-ms via Redis</div>
+          </div>
+
+          <div class="card req-card" data-category="rf">
+            <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.5rem;">
+              <span class="badge badge-red">RF009</span>
+              <span class="badge badge-blue">Prioridade: Alta</span>
+            </div>
+            <h4 class="card-title">Carrinho de compras interativo e persistente</h4>
+            <p class="card-desc">Modificação de quantidades em tempo real com recálculo assíncrono de impostos e frete. Merge de carrinho anônimo com o banco ao logar.</p>
+            <div style="margin-top: 1rem; font-size: 0.8rem; color: var(--text-dim);">Regras: <strong>RN001, RN005</strong> | Impl: Session Handler Redis + Merge no DB</div>
+          </div>
+
+          <div class="card req-card" data-category="rf">
+            <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.5rem;">
+              <span class="badge badge-red">RF010</span>
+              <span class="badge badge-blue">Prioridade: Alta</span>
+            </div>
+            <h4 class="card-title">Cálculo de frete dinâmico por peso, cubagem e CEP</h4>
+            <p class="card-desc">Cálculo por cubagem total com roteamento inteligente entre Correios (cargas leves) e transportadoras pesadas, além de frete grátis regional.</p>
+            <div style="margin-top: 1rem; font-size: 0.8rem; color: var(--text-dim);">Regras: <strong>RN002, RN007, RN008</strong> | Impl: Padrão GoF <code>Strategy</code></div>
+          </div>
+
+          <div class="card req-card" data-category="rf">
+            <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.5rem;">
+              <span class="badge badge-red">RF011</span>
+              <span class="badge badge-blue">Prioridade: Alta</span>
+            </div>
+            <h4 class="card-title">Busca indexada e filtros avançados</h4>
+            <p class="card-desc">Busca com tolerância a erros tipográficos, código de barras, SKU e filtros facetados (preço, marca, voltagem, acabamento).</p>
+            <div style="margin-top: 1rem; font-size: 0.8rem; color: var(--text-dim);">Regras: <strong>RN001</strong> | Impl: Full-Text Search e queries dinâmicas</div>
+          </div>
+
+          <div class="card req-card" data-category="rf">
+            <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.5rem;">
+              <span class="badge badge-red">RF012</span>
+              <span class="badge badge-blue">Prioridade: Alta</span>
+            </div>
+            <h4 class="card-title">Página de detalhes do produto (PDP)</h4>
+            <p class="card-desc">Galeria HD com zoom, calculadora de pisos cerâmicos embutida, simulador de frete por CEP e tabela de parcelamento.</p>
+            <div style="margin-top: 1rem; font-size: 0.8rem; color: var(--text-dim);">Regras: <strong>RN001, RN002</strong> | Impl: Templates Twig e microdados Schema.org</div>
+          </div>
+
+          <div class="card req-card" data-category="rf">
+            <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.5rem;">
+              <span class="badge badge-red">RF013</span>
+              <span class="badge badge-green">Prioridade: Baixa</span>
+            </div>
+            <h4 class="card-title">Avaliações e comentários com moderação</h4>
+            <p class="card-desc">Classificação por estrelas (1 a 5) e comentários com selo de comprador verificado para garantir credibilidade social.</p>
+            <div style="margin-top: 1rem; font-size: 0.8rem; color: var(--text-dim);">Regras: <strong>RN013</strong> | Impl: Moderação prévia no painel de administração</div>
+          </div>
+        </div>
+
+        <!-- Módulos 3, 4, 5 e 6 -->
+        <h3 style="font-family: var(--font-display); font-size: 1.25rem; margin: 2rem 0 1rem; color: var(--accent-cyan);">
+          1.3. Usuários, Pagamentos, Logística e Administração (RF014 a RF025)
+        </h3>
+        <div class="table-wrapper">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Código</th>
+                <th>Requisito Funcional</th>
+                <th>Prioridade</th>
+                <th>Regra Vinculada</th>
+                <th>Descrição Técnica da Implementação</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr class="req-row" data-category="rf">
+                <td class="cell-bold">RF014</td>
+                <td>Autenticação segura e cadastro (PF/PJ)</td>
+                <td><span class="badge badge-red">Alta</span></td>
+                <td>RN009, RN010</td>
+                <td>Validação de CPF/CNPJ, Inscrição Estadual por UF, senhas com <code>bcrypt</code> e sanitização LGPD.</td>
+              </tr>
+              <tr class="req-row" data-category="rf">
+                <td class="cell-bold">RF015</td>
+                <td>Recuperação de credenciais</td>
+                <td><span class="badge badge-amber">Média</span></td>
+                <td>RN009</td>
+                <td>Envio de token seguro de uso único (TTL 15 min) via fila RabbitMQ assíncrona.</td>
+              </tr>
+              <tr class="req-row" data-category="rf">
+                <td class="cell-bold">RF016</td>
+                <td>Histórico de compras e rastreamento</td>
+                <td><span class="badge badge-blue">Alta</span></td>
+                <td>RN012</td>
+                <td>Painel do cliente com timeline interativa de status (Aprovado, Em Separação, Enviado, Entregue).</td>
+              </tr>
+              <tr class="req-row" data-category="rf">
+                <td class="cell-bold">RF017</td>
+                <td>Múltiplos endereços de entrega (Shiptos)</td>
+                <td><span class="badge badge-amber">Média</span></td>
+                <td>RN014, RN002</td>
+                <td>Cadastro segregado de endereços para obras e canteiros vinculados à mesma conta de usuário.</td>
+              </tr>
+              <tr class="req-row" data-category="rf">
+                <td class="cell-bold">RF018</td>
+                <td>Checkout multi-meios (PIX, Cartão, Boleto)</td>
+                <td><span class="badge badge-red">Crítica</span></td>
+                <td>RN015, RN016</td>
+                <td>Geração de QR Code PIX dinâmico com expiração rápida, tokenização de cartão e código de barras.</td>
+              </tr>
+              <tr class="req-row" data-category="rf">
+                <td class="cell-bold">RF019</td>
+                <td>Integração com gateway de pagamento seguro</td>
+                <td><span class="badge badge-red">Crítica</span></td>
+                <td>RN015, RN016</td>
+                <td>Comunicação TLS 1.3 via GoF <em>Adapter</em> com tratamento de webhooks idempotentes.</td>
+              </tr>
+              <tr class="req-row" data-category="rf">
+                <td class="cell-bold">RF020</td>
+                <td>Faturamento e emissão de Nota Fiscal (NF-e)</td>
+                <td><span class="badge badge-blue">Alta</span></td>
+                <td>RN003, RN017</td>
+                <td>Transmissão síncrona/assíncrona do XML para SEFAZ com geração do DANFE e chave de 44 dígitos.</td>
+              </tr>
+              <tr class="req-row" data-category="rf">
+                <td class="cell-bold">RF021</td>
+                <td>Modalidades de entrega e retirada na loja (BOPIS)</td>
+                <td><span class="badge badge-blue">Alta</span></td>
+                <td>RN008</td>
+                <td>Retirada imediata no balcão físico sem cobrança de frete ou despacho via frota própria.</td>
+              </tr>
+              <tr class="req-row" data-category="rf">
+                <td class="cell-bold">RF022</td>
+                <td>Rastreamento last-mile e atualização de status</td>
+                <td><span class="badge badge-amber">Média</span></td>
+                <td>RN012</td>
+                <td>Webhooks para captação de ocorrências de transporte com disparo de e-mails via fila.</td>
+              </tr>
+              <tr class="req-row" data-category="rf">
+                <td class="cell-bold">RF023</td>
+                <td>Gestão de catálogo global e precificação</td>
+                <td><span class="badge badge-blue">Alta</span></td>
+                <td>RN018</td>
+                <td>Tabelas de preço segmentadas para cliente de balcão, construtoras (B2B) e consumidor final.</td>
+              </tr>
+              <tr class="req-row" data-category="rf">
+                <td class="cell-bold">RF024</td>
+                <td>Alerta proativo de ruptura de estoque (Stockout)</td>
+                <td><span class="badge badge-blue">Alta</span></td>
+                <td>RN006</td>
+                <td>Gatilho automatizado notificando o setor de compras ao atingir o estoque de segurança.</td>
+              </tr>
+              <tr class="req-row" data-category="rf">
+                <td class="cell-bold">RF025</td>
+                <td>Painel analítico de vendas e relatórios</td>
+                <td><span class="badge badge-amber">Média</span></td>
+                <td>RN017, RN018</td>
+                <td>Dashboard com faturamento em tempo real, curva ABC de produtos e conciliação de pagamentos.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- SEÇÃO 2: REQUISITOS NÃO FUNCIONAIS -->
+      <section id="rnfSection" style="margin-bottom: 4rem;">
+        <h2 style="font-family: var(--font-display); font-size: 1.6rem; margin-bottom: 1.5rem; color: var(--accent-emerald);">
+          2. Requisitos Não Funcionais (RNF001 a RNF008)
+        </h2>
+        <div class="grid-cards">
+          <div class="card req-card" data-category="rnf">
+            <span class="badge badge-green">RNF001 • Usabilidade</span>
+            <h4 class="card-title" style="margin-top: 0.5rem;">Interface Responsiva e Acessível</h4>
+            <p class="card-desc">Design otimizado para celulares, tablets e desktops de balcão (PDV), com tempos de resposta fluidos e conformidade com diretrizes WCAG 2.1.</p>
+          </div>
+
+          <div class="card req-card" data-category="rnf">
+            <span class="badge badge-green">RNF002 • Desempenho</span>
+            <h4 class="card-title" style="margin-top: 0.5rem;">Latência Sub-segundo nas Consultas</h4>
+            <p class="card-desc">Páginas de produto (PDP) carregadas em menos de 500ms sob carga normal, utilizando camadas de cache em memória no Redis.</p>
+          </div>
+
+          <div class="card req-card" data-category="rnf">
+            <span class="badge badge-green">RNF003 • Confiabilidade</span>
+            <h4 class="card-title" style="margin-top: 0.5rem;">Disponibilidade 99.9% com Failover</h4>
+            <p class="card-desc">Mecanismo de <em>Graceful Degradation</em> alternando automaticamente para sessões PHP tradicionais se o Redis oscilar.</p>
+          </div>
+
+          <div class="card req-card" data-category="rnf">
+            <span class="badge badge-green">RNF004 • Segurança</span>
+            <h4 class="card-title" style="margin-top: 0.5rem;">Proteção em Profundidade (OWASP)</h4>
+            <p class="card-desc">Defesa contra CSRF, injeção de SQL via Prepared Statements do PDO, cabeçalhos de segurança (CSP, HSTS) e sanitização rigorosa.</p>
+          </div>
+
+          <div class="card req-card" data-category="rnf">
+            <span class="badge badge-green">RNF005 • Escalabilidade</span>
+            <h4 class="card-title" style="margin-top: 0.5rem;">Arquitetura Desacoplada e Filas</h4>
+            <p class="card-desc">Capacidade de processar picos de fechamento de compras através de filas assíncronas no RabbitMQ sem onerar o banco relacional.</p>
+          </div>
+
+          <div class="card req-card" data-category="rnf">
+            <span class="badge badge-green">RNF006 • Manutenibilidade</span>
+            <h4 class="card-title" style="margin-top: 0.5rem;">Padrões GoF e PSR PHP-FIG</h4>
+            <p class="card-desc">Código 100% tipado no padrão PHP 8.2+, com separação estrita de camadas e desacoplamento via injeção de dependência PSR-11.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- SEÇÃO 3: REGRAS DE NEGÓCIO -->
+      <section id="rnSection" style="margin-bottom: 4rem;">
+        <h2 style="font-family: var(--font-display); font-size: 1.6rem; margin-bottom: 1.5rem; color: var(--accent-amber);">
+          3. Regras de Negócio (RN001 a RN018)
+        </h2>
+        <div class="grid-cards req-items-grid">
+          <div class="card req-card" data-category="rn">
+            <span class="badge badge-amber">RN001</span>
+            <h4 class="card-title" style="margin-top: 0.5rem;">Variações e Unidades de Venda</h4>
+            <p class="card-desc">O cálculo de pisos e revestimentos exige conversão de m² para caixas completas, aplicando sempre arredondamento para cima para evitar falta de material.</p>
+          </div>
+
+          <div class="card req-card" data-category="rn">
+            <span class="badge badge-amber">RN002</span>
+            <h4 class="card-title" style="margin-top: 0.5rem;">Cubagem e Peso Obrigatórios</h4>
+            <p class="card-desc">Nenhum produto pode ser ativado no catálogo sem que suas três dimensões em centímetros e seu peso bruto em gramas estejam cadastrados.</p>
+          </div>
+
+          <div class="card req-card" data-category="rn">
+            <span class="badge badge-amber">RN003</span>
+            <h4 class="card-title" style="margin-top: 0.5rem;">Tributação Origem e Destino</h4>
+            <p class="card-desc">O cálculo tributário de ICMS-ST e DIFAL deve ser executado dinamicamente com base na UF de entrega e no status fiscal do cliente (Contribuinte ou Não).</p>
+          </div>
+
+          <div class="card req-card" data-category="rn">
+            <span class="badge badge-amber">RN004</span>
+            <h4 class="card-title" style="margin-top: 0.5rem;">Kits e Combos Vinculados</h4>
+            <p class="card-desc">A comercialização de um combo é bloqueada caso qualquer um de seus itens constituintes atinja saldo zero no estoque.</p>
+          </div>
+
+          <div class="card req-card" data-category="rn">
+            <span class="badge badge-amber">RN005</span>
+            <h4 class="card-title" style="margin-top: 0.5rem;">Controle Rigoroso em Tempo Real</h4>
+            <p class="card-desc">A baixa de estoque utiliza concorrência com bloqueio otimista, impedindo que o mesmo item físico seja vendido no balcão e no site.</p>
+          </div>
+
+          <div class="card req-card" data-category="rn">
+            <span class="badge badge-amber">RN006</span>
+            <h4 class="card-title" style="margin-top: 0.5rem;">Alerta Proativo de Ruptura</h4>
+            <p class="card-desc">Ao atingir o ponto de ressuprimento crítico, o produto entra em status de alerta e dispara notificação imediata à equipe de compras.</p>
+          </div>
+
+          <div class="card req-card" data-category="rn">
+            <span class="badge badge-amber">RN007</span>
+            <h4 class="card-title" style="margin-top: 0.5rem;">Roteamento Logístico por Cubagem</h4>
+            <p class="card-desc">Volumes com peso superior a 30 kg ou dimensões superiores a 100 cm não podem ser cotados via Correios, exigindo transportadora pesada.</p>
+          </div>
+
+          <div class="card req-card" data-category="rn">
+            <span class="badge badge-amber">RN008</span>
+            <h4 class="card-title" style="margin-top: 0.5rem;">Frete Grátis Condicionado e BOPIS</h4>
+            <p class="card-desc">A retirada na loja física possui custo zero garantido; isenções de frete regional exigem tíquete mínimo parametrizado por faixa de CEP.</p>
+          </div>
+
+          <div class="card req-card" data-category="rn">
+            <span class="badge badge-amber">RN009</span>
+            <h4 class="card-title" style="margin-top: 0.5rem;">Autenticação Dual e Validação Fiscal</h4>
+            <p class="card-desc">Pessoas Físicas devem apresentar CPF válido; Pessoas Jurídicas devem fornecer CNPJ com Inscrição Estadual ativa na base da SEFAZ.</p>
+          </div>
+
+          <div class="card req-card" data-category="rn">
+            <span class="badge badge-amber">RN010</span>
+            <h4 class="card-title" style="margin-top: 0.5rem;">Conformidade LGPD e Custódia Fiscal</h4>
+            <p class="card-desc">A exclusão de conta anonimiza os dados do cliente, mas retém as notas fiscais e registros fiscais pelo período legal de 5 anos.</p>
+          </div>
+
+          <div class="card req-card" data-category="rn">
+            <span class="badge badge-amber">RN011</span>
+            <h4 class="card-title" style="margin-top: 0.5rem;">Direito de Arrependimento e Trocas (CDC)</h4>
+            <p class="card-desc">O cliente tem 7 dias corridos a partir da entrega para devolução por arrependimento com estorno total do frete, e 90 dias para defeitos.</p>
+          </div>
+
+          <div class="card req-card" data-category="rn">
+            <span class="badge badge-amber">RN012</span>
+            <h4 class="card-title" style="margin-top: 0.5rem;">Rastreabilidade de Pedidos e Eventos</h4>
+            <p class="card-desc">Toda alteração no status logístico do pedido é persistida com carimbo de data/hora imutável e despachada ao cliente via e-mail.</p>
+          </div>
+
+          <div class="card req-card" data-category="rn">
+            <span class="badge badge-amber">RN013</span>
+            <h4 class="card-title" style="margin-top: 0.5rem;">Auditoria de Avaliações</h4>
+            <p class="card-desc">Avaliações públicas com conteúdo ofensivo ou não condizente com o produto são retidas para moderação prévia do administrador.</p>
+          </div>
+
+          <div class="card req-card" data-category="rn">
+            <span class="badge badge-amber">RN014</span>
+            <h4 class="card-title" style="margin-top: 0.5rem;">Múltiplos Destinos de Entrega</h4>
+            <p class="card-desc">O cliente pode gerenciar diversos endereços de entrega com apelidos personalizados (ex.: Obra Centro, Matriz, Filial).</p>
+          </div>
+
+          <div class="card req-card" data-category="rn">
+            <span class="badge badge-amber">RN015</span>
+            <h4 class="card-title" style="margin-top: 0.5rem;">Multi-meios de Pagamento</h4>
+            <p class="card-desc">O sistema suporta PIX instantâneo com geração de payload copia-e-cola, cartões de crédito em até 12x e boleto bancário.</p>
+          </div>
+
+          <div class="card req-card" data-category="rn">
+            <span class="badge badge-amber">RN016</span>
+            <h4 class="card-title" style="margin-top: 0.5rem;">Idempotência Transacional Anti-Duplo Clique</h4>
+            <p class="card-desc">Tentativas repetidas de envio da mesma ordem de pagamento dentro de 120 segundos são interceptadas e descartadas pelo middleware.</p>
+          </div>
+
+          <div class="card req-card" data-category="rn">
+            <span class="badge badge-amber">RN017</span>
+            <h4 class="card-title" style="margin-top: 0.5rem;">Emissão e Custódia de NF-e / NFC-e</h4>
+            <p class="card-desc">Nenhum pedido pode ter sua saída autorizada do estoque sem que a chave eletrônica da nota fiscal tenha sido autorizada pela SEFAZ.</p>
+          </div>
+
+          <div class="card req-card" data-category="rn">
+            <span class="badge badge-amber">RN018</span>
+            <h4 class="card-title" style="margin-top: 0.5rem;">Precificação Segmentada B2B</h4>
+            <p class="card-desc">Contas corporativas (PJ com CNPJ cadastrado) têm acesso automático a tabelas com descontos progressivos por volume de compra.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- Navegação Inferior -->
+      <footer class="page-nav-bar">
+        <a href="02_processos_atividades.html" class="nav-page-link">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"></polyline></svg>
+          <div class="nav-page-meta">
+            <span class="nav-page-direction">← Módulo Anterior</span>
+            <span class="nav-page-title">02. Processos & Atividades</span>
+          </div>
+        </a>
+        <a href="04_casos_de_uso.html" class="nav-page-link next">
+          <div class="nav-page-meta">
+            <span class="nav-page-direction">Próximo Módulo →</span>
+            <span class="nav-page-title">04. Casos de Uso do Sistema</span>
+          </div>
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"></polyline></svg>
+        </a>
+      </footer>
+
+      <div class="academic-footer">
+        <p><strong>FATEC Ferraz de Vasconcelos</strong> — Faculdade de Tecnologia de Ferraz de Vasconcelos</p>
+        <p>Disciplina: Laboratório de Engenharia de Software | Orientadora: Profa. Patrícia Sarno</p>
+      </div>
+    </main>
+  </div>
+
+  <script src="assets/js/main.js"></script>
+  <script src="assets/js/svg-viewer.js"></script>
+  <script>
+    // Filtro interativo específico da página de requisitos
+    document.addEventListener('DOMContentLoaded', () => {
+      const searchInput = document.getElementById('reqSearchInput');
+      const filterBtns = document.querySelectorAll('.filter-btn');
+      const cards = document.querySelectorAll('.req-card');
+      const rows = document.querySelectorAll('.req-row');
+
+      function filterItems() {
+        const query = (searchInput?.value || '').toLowerCase().trim();
+        const activeBtn = document.querySelector('.filter-btn.active');
+        const filterType = activeBtn ? activeBtn.getAttribute('data-filter') : 'all';
+
+        // Cards
+        cards.forEach((card) => {
+          const category = card.getAttribute('data-category');
+          const matchesCategory = filterType === 'all' || filterType === category;
+          const matchesQuery = !query || card.textContent.toLowerCase().includes(query);
+          card.style.display = (matchesCategory && matchesQuery) ? '' : 'none';
+        });
+
+        // Rows
+        rows.forEach((row) => {
+          const category = row.getAttribute('data-category');
+          const matchesCategory = filterType === 'all' || filterType === category;
+          const matchesQuery = !query || row.textContent.toLowerCase().includes(query);
+          row.style.display = (matchesCategory && matchesQuery) ? '' : 'none';
+        });
+      }
+
+      if (searchInput) searchInput.addEventListener('input', filterItems);
+
+      filterBtns.forEach((btn) => {
+        btn.addEventListener('click', () => {
+          filterBtns.forEach(b => {
+            b.classList.remove('active');
+            b.style.background = 'var(--bg-surface)';
+            b.style.color = 'var(--text-main)';
+          });
+          btn.classList.add('active');
+          btn.style.background = 'var(--fatec-red)';
+          btn.style.color = '#ffffff';
+          filterItems();
+        });
+      });
+    });
+  </script>
+</body>
+</html>

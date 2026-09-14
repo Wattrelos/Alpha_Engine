@@ -3,22 +3,22 @@
 - [x] Documento de Visão
 - [x] Diagrama de Atividades do negócio
 - [x] Requisitos Funcionais, Requisitos não funcionais, regras de negócio
-- [x] Matriz de relacionamento RN x RF: [Matriz_de_Relacionamento_RN_x_RF.doc.md](file:///var/www/html/agsonhos/docs/documentos_para_a_faculdade/Matriz_de_Relacionamento_RN_x_RF.doc.md)
+- [x] Matriz de relacionamento RN x RF: [Matriz_de_Relacionamento_RN_x_RF.doc.md](/docs/documentos_para_a_faculdade/Matriz_de_Relacionamento_RN_x_RF.doc.md)
 
  - [ ] Diagrama de Entidade e Relacionamento
 
  - [x] Diagrama de Classe
 
  - [x] Diagrama geral de caso de uso
-     - [x] Cliente (Loja Virtual): [general_customer_use.puml](file:///var/www/html/agsonhos/docs/business/use-cases/general_customer_use.puml)
-     - [x] Vendedor e Caixa (PDV): [general_seller.puml](file:///var/www/html/agsonhos/docs/business/use-cases/general_seller.puml)
-     - [x] Admin (Dashboard): [general_dashboard.puml](file:///var/www/html/agsonhos/docs/business/use-cases/general_dashboard.puml)
+     - [x] Cliente (Loja Virtual): [general_customer_use.puml](/docs/business/use-cases/general_customer_use.puml)
+     - [x] Vendedor e Caixa (PDV): [general_seller.puml](/docs/business/use-cases/general_seller.puml)
+     - [x] Admin (Dashboard): [general_dashboard.puml](/docs/business/use-cases/general_dashboard.puml)
 
  - [x] Especificação do caso de uso (53 Especificações Modulares Detalhadas)
-     - [x] Índice Geral & Matriz de Rastreabilidade: [docs/business/use-cases/README.md](file:///var/www/html/agsonhos/docs/business/use-cases/README.md)
-     - [x] 29 Casos de Uso do Cliente: [docs/business/use-cases/customer/](file:///var/www/html/agsonhos/docs/business/use-cases/customer/)
-     - [x] 15 Casos de Uso do PDV (Vendedor/Caixa): [docs/business/use-cases/pos/](file:///var/www/html/agsonhos/docs/business/use-cases/pos/)
-     - [x] 9 Casos de Uso do Painel Administrativo: [docs/business/use-cases/dashboard/](file:///var/www/html/agsonhos/docs/business/use-cases/dashboard/)
+     - [x] Índice Geral & Matriz de Rastreabilidade: [docs/business/use-cases/README.md](/docs/business/use-cases/README.md)
+     - [x] 29 Casos de Uso do Cliente: [docs/business/use-cases/customer/](/docs/business/use-cases/customer/)
+     - [x] 15 Casos de Uso do PDV (Vendedor/Caixa): [docs/business/use-cases/pos/](/docs/business/use-cases/pos/)
+     - [x] 9 Casos de Uso do Painel Administrativo: [docs/business/use-cases/dashboard/](/docs/business/use-cases/dashboard/)
      
 
  - [x] Diagrama de Sequencia
