@@ -6,7 +6,7 @@
 - **Criado em:** 2026-08-12 18:15:07
 - **Labels:** Nenhuma
 - **Responsáveis:** Wattrelos
-- **URL no GitHub:** https://github.com/Wattrelos/Alpha_Engine/issues/74
+- **74
 
 ## Descrição
 

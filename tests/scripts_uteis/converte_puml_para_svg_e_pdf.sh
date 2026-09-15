@@ -5,8 +5,8 @@
 set -e
 
 DIR_ORIGEM="/var/www/html/agsonhos/docs"
-DIR_DESTINO="${HOME:-/home/wattrelos}/Documentos/AlphaEngine/docs"
-
+# DIR_DESTINO="${HOME:-/home/wattrelos}/Documentos/AlphaEngine/docs"
+DIR_DESTINO="/var/www/html/agsonhos/docs"
 echo "Limpando e gerando SVGs..."
 plantuml -tsvg "$DIR_ORIGEM/**.puml" || true
 
@@ -27,12 +27,17 @@ else
     echo "Aviso: Nem 'cairosvg' nem 'rsvg-convert' foram encontrados para converter SVG em PDF."
 fi
 
-echo "Organizando pastas..."
-mkdir -p "$DIR_DESTINO"
-rsync -av --remove-source-files --include="*/" --include="*.svg" --include="*.pdf" --exclude="*" "$DIR_ORIGEM/" "$DIR_DESTINO/"
+# Organiza os arquivos puml, svg e pdf na pasta docs
+# echo "Organizando pastas..."
+
+##  Cria a pasta de destino se não existir
+# mkdir -p "$DIR_DESTINO"
+
+# Move os arquivos para a pasta de destino
+# rsync -av --remove-source-files --include="*/" --include="*.svg" --include="*.pdf" --exclude="*" "$DIR_ORIGEM/" "$DIR_DESTINO/"
 
 # Remove pastas vazias que restarem na origem
-find "$DIR_ORIGEM" -type d -empty -delete
+# find "$DIR_ORIGEM" -type d -empty -delete
 echo "Documentação atualizada com sucesso!"
 
 exit 0
