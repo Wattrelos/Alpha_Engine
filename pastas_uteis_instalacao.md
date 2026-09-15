@@ -35,7 +35,7 @@ Dentro dessa estrutura, as **pastas e subdiretórios estritamente essenciais** s
 
 ### 3. Pasta Auxiliar Útil durante a Instalação
 
-* **`scripts/`**: Contém o script [`scripts/check_requirements.sh`](file:///var/www/html/agsonhos/scripts/check_requirements.sh), que você pode rodar no terminal para validar automaticamente se a versão do PHP, extensões do sistema e permissões de escrita das pastas estão 100% corretas antes de rodar o assistente visual.
+* **`scripts/`**: Contém o script [`scripts/check_requirements.sh`](/scripts/check_requirements.sh), que você pode rodar no terminal para validar automaticamente se a versão do PHP, extensões do sistema e permissões de escrita das pastas estão 100% corretas antes de rodar o assistente visual.
 
 ---
 

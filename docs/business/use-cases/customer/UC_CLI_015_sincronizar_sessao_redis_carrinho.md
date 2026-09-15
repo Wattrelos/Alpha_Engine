@@ -11,7 +11,7 @@
 | **Atores Secundários** | Servidor Redis, Banco de Dados MySQL |
 | **Tipo** | Inclusão de `UC_CLI_013` (`<<include>>`) / Processamento Sistêmico |
 | **Frequência de Uso** | Muito Alta |
-| **Rastreabilidade** | **RF:** [RF009](file:///var/www/html/agsonhos/docs/requirements/functional/functional_requirements.yaml) (Carrinho persistente), [RF014](file:///var/www/html/agsonhos/docs/requirements/functional/functional_requirements.yaml) (Auth e sessão)<br>**RN:** [RN005](file:///var/www/html/agsonhos/docs/requirements/business_rules/business_rules.yaml) (Validação de estoque na fusão)<br>**RNF:** [RNF002](file:///var/www/html/agsonhos/docs/requirements/non_functional/non_functional_requirements.yaml) (Baixa latência Redis), [RNF004](file:///var/www/html/agsonhos/docs/requirements/non_functional/non_functional_requirements.yaml) (Disponibilidade com fallback) |
+| **Rastreabilidade** | **RF:** [RF009](/docs/requirements/functional/functional_requirements.yaml) (Carrinho persistente), [RF014](/docs/requirements/functional/functional_requirements.yaml) (Auth e sessão)<br>**RN:** [RN005](/docs/requirements/business_rules/business_rules.yaml) (Validação de estoque na fusão)<br>**RNF:** [RNF002](/docs/requirements/non_functional/non_functional_requirements.yaml) (Baixa latência Redis), [RNF004](/docs/requirements/non_functional/non_functional_requirements.yaml) (Disponibilidade com fallback) |
 
 ---
 

@@ -11,7 +11,7 @@
 | **Atores Secundários** | Sistema Alpha Engine |
 | **Tipo** | Condução / Financeiro |
 | **Frequência de Uso** | Baixa a Média |
-| **Rastreabilidade** | **RF:** [RF016](file:///var/www/html/agsonhos/docs/requirements/functional/functional_requirements.yaml) (Histórico de transações), [RF018](file:///var/www/html/agsonhos/docs/requirements/functional/functional_requirements.yaml) (Pagamentos)<br>**RN:** [RN016](file:///var/www/html/agsonhos/docs/requirements/business_rules/business_rules.yaml) (Descontos e liquidação)<br>**RNF:** [RNF003](file:///var/www/html/agsonhos/docs/requirements/non_functional/non_functional_requirements.yaml) (Transparência financeira e segurança) |
+| **Rastreabilidade** | **RF:** [RF016](/docs/requirements/functional/functional_requirements.yaml) (Histórico de transações), [RF018](/docs/requirements/functional/functional_requirements.yaml) (Pagamentos)<br>**RN:** [RN016](/docs/requirements/business_rules/business_rules.yaml) (Descontos e liquidação)<br>**RNF:** [RNF003](/docs/requirements/non_functional/non_functional_requirements.yaml) (Transparência financeira e segurança) |
 
 ---
 

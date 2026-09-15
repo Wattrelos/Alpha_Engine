@@ -22,7 +22,7 @@ Atualmente, quando um visitante adiciona uma variação ao carrinho, os dados da
 
 ### 1. Backend: Hydration e Herança de Variações no Endpoint do Carrinho do Visitante
 
-#### [MODIFY] [CalculateVisitorCartAction.php](file:///var/www/html/agsonhos/core/Controller/Actions/Cart/CalculateVisitorCartAction.php)
+#### [MODIFY] [CalculateVisitorCartAction.php](/core/Controller/Actions/Cart/CalculateVisitorCartAction.php)
 - Obter o `ProductDiscountRepository` e o `SeoUrlRepository` a partir do `RepositoryFactory`.
 - Identificar se os produtos no carrinho do visitante possuem um produto pai (`master_id > 0`) e carregá-los em lote para evitar consultas N+1.
 - Implementar a lógica de herança de propriedades para variações (ex: herdar preço se o preço da variação for `<=` 0, imagens, classe de imposto, peso, compra mínima, etc.), alinhado com o que já é feito no `CartRepository::getProducts()`.
@@ -33,10 +33,10 @@ Atualmente, quando um visitante adiciona uma variação ao carrinho, os dados da
 
 ### 2. Backend: Suporte a Links de Variações no Carrinho de Usuários Logados
 
-#### [MODIFY] [CartRepository.php](file:///var/www/html/agsonhos/core/Model/Domain/Repositories/CartRepository.php)
+#### [MODIFY] [CartRepository.php](/core/Model/Domain/Repositories/CartRepository.php)
 - Adicionar o campo `'master_id' => (int)($productInfo['master_id'] ?? 0)` na estrutura retornada por `getProducts()`.
 
-#### [MODIFY] [ShowCartAction.php](file:///var/www/html/agsonhos/core/Controller/Actions/Cart/ShowCartAction.php)
+#### [MODIFY] [ShowCartAction.php](/core/Controller/Actions/Cart/ShowCartAction.php)
 - Atualizar a geração da URL (`href`) no loop de produtos. Se o produto possuir `master_id > 0`, usar o `master_id` para resolver o slug de SEO e a URL do produto, garantindo que o link aponte para a página do produto pai.
 
 ---
@@ -77,11 +77,11 @@ Concluímos com sucesso a implementação do suporte a variações de produtos (
 ## Alterações Realizadas
 
 ### 1. Repositório e Lógica de Carrinho (Cart)
-- **[CartRepository.php](file:///var/www/html/agsonhos/core/Model/Domain/Repositories/CartRepository.php):** Adicionamos a chave `'master_id'` no array retornado por `getProducts()`. Isso permite distinguir variações de produtos dos produtos normais.
-- **[ShowCartAction.php](file:///var/www/html/agsonhos/core/Controller/Actions/Cart/ShowCartAction.php):** Atualizamos a resolução de links (`href`) na listagem do carrinho para usuários logados. Se o item no carrinho for uma variação (`master_id > 0`), o link gerado agora aponta corretamente para a URL amigável do produto pai, em vez do ID individual da variação.
+- **[CartRepository.php](/core/Model/Domain/Repositories/CartRepository.php):** Adicionamos a chave `'master_id'` no array retornado por `getProducts()`. Isso permite distinguir variações de produtos dos produtos normais.
+- **[ShowCartAction.php](/core/Controller/Actions/Cart/ShowCartAction.php):** Atualizamos a resolução de links (`href`) na listagem do carrinho para usuários logados. Se o item no carrinho for uma variação (`master_id > 0`), o link gerado agora aponta corretamente para a URL amigável do produto pai, em vez do ID individual da variação.
 
 ### 2. Endpoint da API do Carrinho do Visitante
-- **[CalculateVisitorCartAction.php](file:///var/www/html/agsonhos/core/Controller/Actions/Cart/CalculateVisitorCartAction.php):**
+- **[CalculateVisitorCartAction.php](/core/Controller/Actions/Cart/CalculateVisitorCartAction.php):**
   - **Batch Loading (Evita N+1):** Identificamos se algum produto no carrinho local do visitante é uma variação (`master_id > 0`) e carregamos os produtos pai correspondentes em lote.
   - **Herança de Atributos:** Implementamos a lógica de herança de atributos idêntica ao `CartRepository` (ex: herdar preço do pai se o preço da variação for `<=` 0, imagens, peso, compra mínima, etc.).
   - **Precificação e Descontos:** Implementamos o suporte a preços especiais (`special`) e descontos progressivos por quantidade (`discount`) para os visitantes.
@@ -89,7 +89,7 @@ Concluímos com sucesso a implementação do suporte a variações de produtos (
   - **Links do Produto Pai:** Atualizamos os links gerados no JSON (`href`) das variações para que apontem diretamente para a URL do produto pai correspondente.
 
 ### 3. Correção de Erro no Motor de Impostos (Tax Engine)
-- **[Tax.php](file:///var/www/html/agsonhos/core/Support/Tax.php) e [TaxRuleMapper.php](file:///var/www/html/agsonhos/core/Mappers/EntityMappers/TaxRuleMapper.php):** Corrigimos um erro de SQL pré-existente no motor de impostos, onde a coluna da tabela `tax_rate` era incorretamente consultada como `geo_zone_id` em vez de `geo_zones_id` (plural), o que causaria um Fatal Error no cálculo de impostos ao simular taxas/frete para o visitante ou no checkout.
+- **[Tax.php](/core/Support/Tax.php) e [TaxRuleMapper.php](/core/Mappers/EntityMappers/TaxRuleMapper.php):** Corrigimos um erro de SQL pré-existente no motor de impostos, onde a coluna da tabela `tax_rate` era incorretamente consultada como `geo_zone_id` em vez de `geo_zones_id` (plural), o que causaria um Fatal Error no cálculo de impostos ao simular taxas/frete para o visitante ou no checkout.
 
 ---
 

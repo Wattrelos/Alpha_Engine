@@ -40,7 +40,7 @@ Abaixo está o parecer detalhado e a proposta de adequação.
 ---
 
 #### 🟢 Risco 5: Proteção de Dados Pessoais dos Clientes (LGPD - Lei nº 13.709/2018)
-* **Cenário Real:** Conforme os fluxos de pré-venda e balcão do sistema ([cenarioBalcao.puml](file:///var/www/html/agsonhos/docs/business/processes/cenarioBalcao.puml)), o balconista identifica o cliente no sistema (nome, CPF para emissão de nota, telefone).
+* **Cenário Real:** Conforme os fluxos de pré-venda e balcão do sistema ([cenarioBalcao.puml](/docs/business/processes/cenarioBalcao.puml)), o balconista identifica o cliente no sistema (nome, CPF para emissão de nota, telefone).
 * **Adequação necessária:** Incluir uma cláusula expressa de observância à LGPD e dever de confidencialidade dos dados dos clientes tratados no terminal.
 
 ---

@@ -25,27 +25,27 @@ Este plano descreve as modificações necessárias para exibir o nome e logotipo
 
 ### Backend: Mapeamento de Dados e Controllers
 
-#### [MODIFY] [ProductMapper.php](file:///var/www/html/agsonhos/core/Mappers/EntityMappers/ProductMapper.php)
+#### [MODIFY] [ProductMapper.php](/core/Mappers/EntityMappers/ProductMapper.php)
 - **`getProduct()`**: Ajustar a query de produto único adicionando `m.image AS manufacturer_logo` ao select de forma a expor a imagem do fabricante.
 - **`getProducts()`**: Adicionar o `leftJoin` com a tabela `manufacturer` (`m`) através do relacionamento `p.manufacturer_id = m.id`. Adicionar `m.name AS manufacturer` e `m.image AS manufacturer_logo` ao select principal da listagem.
 - **`getProductsByIds()`**: Adicionar o `leftJoin` com a tabela `manufacturer` (`m`) e expor `m.name AS manufacturer` e `m.image AS manufacturer_logo`.
 - **`getRelated()`**: Adicionar o `leftJoin` com a tabela `manufacturer` (`m`) e expor `m.name AS manufacturer` e `m.image AS manufacturer_logo`.
 
-#### [MODIFY] [ShowProductAction.php](file:///var/www/html/agsonhos/core/Controller/Actions/Product/ShowProductAction.php)
+#### [MODIFY] [ShowProductAction.php](/core/Controller/Actions/Product/ShowProductAction.php)
 - Redimensionar a imagem do fabricante do produto principal (usando `60x60` px) se `manufacturer_logo` estiver definida, armazenando em `manufacturer_logo_thumb`.
 - Redimensionar a imagem do fabricante dos produtos relacionados (`related`) se estiverem disponíveis (usando `40x40` px), armazenando em `manufacturer_logo_thumb`.
 
-#### [MODIFY] [SearchAction.php](file:///var/www/html/agsonhos/core/Controller/Actions/Product/SearchAction.php)
+#### [MODIFY] [SearchAction.php](/core/Controller/Actions/Product/SearchAction.php)
 - Redimensionar o logotipo do fabricante no laço de pós-processamento dos produtos encontrados (`products`) usando `40x40` px.
 
-#### [MODIFY] [ShowCategoryAction.php](file:///var/www/html/agsonhos/core/Controller/Actions/Category/ShowCategoryAction.php)
+#### [MODIFY] [ShowCategoryAction.php](/core/Controller/Actions/Category/ShowCategoryAction.php)
 - Redimensionar o logotipo do fabricante no laço de pós-processamento dos produtos da categoria (`products`) usando `40x40` px.
 
 ---
 
 ### Frontend: Templates Twig e Estilos
 
-#### [MODIFY] [product-card.html.twig](file:///var/www/html/agsonhos/resources/views/pages/product/product-card.html.twig)
+#### [MODIFY] [product-card.html.twig](/resources/views/pages/product/product-card.html.twig)
 - Adicionar o bloco de informações do fabricante logo acima do título do produto para dar um visual moderno de e-commerce de marcas:
 ```twig
 		{% if prod.manufacturer %}
@@ -58,7 +58,7 @@ Este plano descreve as modificações necessárias para exibir o nome e logotipo
 		{% endif %}
 ```
 
-#### [MODIFY] [show.html.twig](file:///var/www/html/agsonhos/resources/views/pages/product/show.html.twig)
+#### [MODIFY] [show.html.twig](/resources/views/pages/product/show.html.twig)
 - Exibir as informações da marca no cabeçalho do produto, ao lado ou logo abaixo do código do modelo:
 ```twig
                 {% if product.manufacturer %}
@@ -71,7 +71,7 @@ Este plano descreve as modificações necessárias para exibir o nome e logotipo
                 {% endif %}
 ```
 
-#### [MODIFY] [new-stylesheet.css](file:///var/www/html/agsonhos/public_html/css/custom/new-stylesheet.css)
+#### [MODIFY] [new-stylesheet.css](/public_html/css/custom/new-stylesheet.css)
 - Adicionar estilização CSS para o fabricante no card do produto e na página de detalhes, garantindo harmonização de layout e responsividade:
 ```css
 /* Fabricante no Card de Produto */
@@ -144,26 +144,26 @@ Implementamos a funcionalidade que permite exibir as informações da marca (fab
 ## Mudanças Realizadas
 
 ### 1. Camada de Persistência (Database)
-- [ProductMapper.php](file:///var/www/html/agsonhos/core/Mappers/EntityMappers/ProductMapper.php):
+- [ProductMapper.php](/core/Mappers/EntityMappers/ProductMapper.php):
   - Atualizamos as consultas SQL de produto único (`getProduct`), listagem de produtos (`getProducts`), lote de IDs (`getProductsByIds`) e produtos recomendados/relacionados (`getRelated`).
   - Adicionamos o `LEFT JOIN` com a tabela de fabricantes `manufacturer` e expusemos as colunas `m.name AS manufacturer` e `m.image AS manufacturer_logo`.
 
 ### 2. Controladores (Actions)
-- [ShowProductAction.php](file:///var/www/html/agsonhos/core/Controller/Actions/Product/ShowProductAction.php):
+- [ShowProductAction.php](/core/Controller/Actions/Product/ShowProductAction.php):
   - Redimensionamos dinamicamente os logotipos dos fabricantes usando a classe `ImagePresenter`: tamanho `60x60` px para o produto principal e `40x40` px para os produtos recomendados na seção de relacionados.
-- [SearchAction.php](file:///var/www/html/agsonhos/core/Controller/Actions/Product/SearchAction.php):
+- [SearchAction.php](/core/Controller/Actions/Product/SearchAction.php):
   - Processamos o lote de produtos da busca e redimensionamos seus respectivos logos de fabricantes para `40x40` px.
-- [ShowCategoryAction.php](file:///var/www/html/agsonhos/core/Controller/Actions/Category/ShowCategoryAction.php):
+- [ShowCategoryAction.php](/core/Controller/Actions/Category/ShowCategoryAction.php):
   - Processamos o lote de produtos da categoria ativa e redimensionamos seus respectivos logos de fabricantes para `40x40` px.
 
 ### 3. Templates Twig (Visão)
-- [product-card.html.twig](file:///var/www/html/agsonhos/resources/views/pages/product/product-card.html.twig):
+- [product-card.html.twig](/resources/views/pages/product/product-card.html.twig):
   - Adicionamos a exibição do logotipo e nome do fabricante antes do título do produto dentro do card.
-- [show.html.twig](file:///var/www/html/agsonhos/resources/views/pages/product/show.html.twig):
+- [show.html.twig](/resources/views/pages/product/show.html.twig):
   - Criamos o elemento `.egen-product-info__meta` agrupando o código do modelo e as informações da marca (logo e nome) no topo da coluna de compra.
 
 ### 4. Estilos Globais (Aparência)
-- [new-stylesheet.css](file:///var/www/html/agsonhos/public_html/css/custom/new-stylesheet.css):
+- [new-stylesheet.css](/public_html/css/custom/new-stylesheet.css):
   - Adicionamos as regras de layout em CSS Flexbox para alinhar harmoniosamente os badges, logos e nomes de fabricantes.
   - O logotipo é renderizado em box com fundo contrastante e bordas arredondadas, mantendo a consistência com o tema visual escuro/moderno do e-commerce.
 

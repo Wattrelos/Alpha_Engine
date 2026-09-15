@@ -49,55 +49,55 @@ Criação da classe utilitária `Alpha\Support\EnvironmentManager` para:
 
 ### Core Infrastructure & Environment
 
-#### [MODIFY] [.env.example](file:///var/www/html/agsonhos/.env.example)
+#### [MODIFY] [.env.example](/.env.example)
 - Adicionar todas as variáveis de ambiente em branco com comentários explicativos (`APP_INSTALLED=false`, `DB_HOSTNAME=`, `DB_USERNAME=`, `DB_PASSWORD=`, `DB_DATABASE=`, `DB_PREFIX=agsc_`, etc.).
 
-#### [NEW] [EnvironmentManager.php](file:///var/www/html/agsonhos/core/Support/EnvironmentManager.php)
+#### [NEW] [EnvironmentManager.php](/core/Support/EnvironmentManager.php)
 - Gerenciador de leitura, validação e persistência atômica do arquivo `.env`.
 
-#### [MODIFY] [config.php](file:///var/www/html/agsonhos/config.php)
+#### [MODIFY] [config.php](/config.php)
 - Refatorar a definição das constantes `DB_*` para consumir dinamicamente `$_ENV` ou `getenv()`.
 
 ---
 
 ### Middleware & Entrypoint Pipeline
 
-#### [NEW] [InstallationCheckMiddleware.php](file:///var/www/html/agsonhos/core/Auth/Middleware/InstallationCheckMiddleware.php)
+#### [NEW] [InstallationCheckMiddleware.php](/core/Auth/Middleware/InstallationCheckMiddleware.php)
 - Middleware responsável por checar o estado `APP_INSTALLED`.
 - Redireciona requisições para `/setup` quando `APP_INSTALLED=false`.
 - Retorna `403 Forbidden` se um usuário tentar acessar `/setup` quando `APP_INSTALLED=true`.
 
-#### [MODIFY] [public_html/index.php](file:///var/www/html/agsonhos/public_html/index.php)
+#### [MODIFY] [public_html/index.php](/public_html/index.php)
 - Integrar a verificação de `APP_INSTALLED` antes do boot completo de `AppBootstrap` e banco de dados.
 
 ---
 
 ### Setup Actions & Wizard View
 
-#### [NEW] [ShowSetupAction.php](file:///var/www/html/agsonhos/core/Controller/Actions/Setup/ShowSetupAction.php)
+#### [NEW] [ShowSetupAction.php](/core/Controller/Actions/Setup/ShowSetupAction.php)
 - Exibe o assistente visual de instalação em Twig.
 
-#### [NEW] [TestDatabaseConnectionAction.php](file:///var/www/html/agsonhos/core/Controller/Actions/Setup/TestDatabaseConnectionAction.php)
+#### [NEW] [TestDatabaseConnectionAction.php](/core/Controller/Actions/Setup/TestDatabaseConnectionAction.php)
 - Action AJAX para validação instantânea de credenciais MySQL.
 
-#### [NEW] [ProcessInstallationAction.php](file:///var/www/html/agsonhos/core/Controller/Actions/Setup/ProcessInstallationAction.php)
+#### [NEW] [ProcessInstallationAction.php](/core/Controller/Actions/Setup/ProcessInstallationAction.php)
 - Executa o pipeline de provisionamento:
   1. Teste e criação do Banco de Dados.
   2. Execução da Migration (DDL) e Carga Inicial (Seeds).
   3. Criação do Super Admin com hash `PASSWORD_ARGON2ID`.
   4. Gravação atômica do `.env` com `APP_INSTALLED=true`.
 
-#### [NEW] [install.sql](file:///var/www/html/agsonhos/resources/schema/install.sql)
+#### [NEW] [install.sql](/resources/schema/install.sql)
 - Script SQL consolidador de esquema DDL e Seeds de onboarding.
 
-#### [NEW] [installer.html.twig](file:///var/www/html/agsonhos/resources/views/setup/installer.html.twig)
+#### [NEW] [installer.html.twig](/resources/views/setup/installer.html.twig)
 - Interface visual moderna, fluida e responsiva (Dark mode, glassmorphism, etapas progressivas).
 
 ---
 
 ### Documentação & Especificações
 
-#### [MODIFY] [instalation.md](file:///var/www/html/agsonhos/docs/instalation/instalation.md)
+#### [MODIFY] [instalation.md](/docs/instalation/instalation.md)
 - Atualizar a especificação técnica com o protocolo moderno de provisionamento, fluxo Mermaid e contrato de variáveis.
 
 ---
@@ -136,45 +136,45 @@ Implementação completa da funcionalidade de **Assistente de Instalação (Setu
 ## Alterações Realizadas
 
 ### 1. Arquivo de Exemplo `.env.example`
-- **Arquivo**: [.env.example](file:///var/www/html/agsonhos/.env.example)
+- **Arquivo**: [.env.example](/.env.example)
 - Adicionadas todas as variáveis padrão zeradas e configurada a flag `APP_INSTALLED=false`.
 
 ### 2. Gerenciador de Ambiente (`EnvironmentManager`)
-- **Arquivo**: [EnvironmentManager.php](file:///var/www/html/agsonhos/core/Support/EnvironmentManager.php)
+- **Arquivo**: [EnvironmentManager.php](/core/Support/EnvironmentManager.php)
 - Implementada a leitura, parsing e gravação atômica (`.env.tmp` + `rename` + `LOCK_EX`) com permissões `0640`, sanitização de caracteres especiais e geração de chaves secretas criptográficas (`JWT_SECRET_KEY`, `API_SIGNATURE_SECRET`).
 
 ### 3. Middleware de Controle de Instalação (`InstallationCheckMiddleware`)
-- **Arquivo**: [InstallationCheckMiddleware.php](file:///var/www/html/agsonhos/core/Auth/Middleware/InstallationCheckMiddleware.php)
+- **Arquivo**: [InstallationCheckMiddleware.php](/core/Auth/Middleware/InstallationCheckMiddleware.php)
 - Interceptação global de rotas baseada em `APP_INSTALLED`:
   - `APP_INSTALLED=false`: Redireciona qualquer requisição pública para `/setup` (status 302).
   - `APP_INSTALLED=true`: Bloqueia tentativas de acesso ao `/setup` com status `403 Forbidden`.
 
 ### 4. Ponto de Entrada (`public_html/index.php`) & Configuração
-- **Arquivos**: [index.php](file:///var/www/html/agsonhos/public_html/index.php) e [config.php](file:///var/www/html/agsonhos/config.php)
+- **Arquivos**: [index.php](/public_html/index.php) e [config.php](/config.php)
 - Desvio do fluxo de boot do banco de dados quando `APP_INSTALLED=false`, evitando erros de conexão indisponível durante o primeiro acesso.
 - Refatoradas as constantes `DB_*` para consumir dinamicamente `$_ENV` / `getenv()`.
 
 ### 5. Actions do Setup & Rotas Slim
 - **Arquivos**:
-  - [ShowSetupAction.php](file:///var/www/html/agsonhos/core/Controller/Actions/Setup/ShowSetupAction.php): Checa requisitos do servidor (PHP $\ge 8.1$, extensões, permissões) e renderiza a view.
-  - [TestDatabaseConnectionAction.php](file:///var/www/html/agsonhos/core/Controller/Actions/Setup/TestDatabaseConnectionAction.php): Rota AJAX `/setup/test-db` para teste instantâneo de conexão MySQL.
-  - [ProcessInstallationAction.php](file:///var/www/html/agsonhos/core/Controller/Actions/Setup/ProcessInstallationAction.php): Rota `/setup/process` que executa `CREATE DATABASE IF NOT EXISTS`, importa `install.sql`, grava configurações da loja, cria o Super Admin (`PASSWORD_ARGON2ID`) e atualiza o `.env` atômico.
-  - [Routes.php](file:///var/www/html/agsonhos/Config/Routes.php): Registradas as rotas do setup.
+  - [ShowSetupAction.php](/core/Controller/Actions/Setup/ShowSetupAction.php): Checa requisitos do servidor (PHP $\ge 8.1$, extensões, permissões) e renderiza a view.
+  - [TestDatabaseConnectionAction.php](/core/Controller/Actions/Setup/TestDatabaseConnectionAction.php): Rota AJAX `/setup/test-db` para teste instantâneo de conexão MySQL.
+  - [ProcessInstallationAction.php](/core/Controller/Actions/Setup/ProcessInstallationAction.php): Rota `/setup/process` que executa `CREATE DATABASE IF NOT EXISTS`, importa `install.sql`, grava configurações da loja, cria o Super Admin (`PASSWORD_ARGON2ID`) e atualiza o `.env` atômico.
+  - [Routes.php](/Config/Routes.php): Registradas as rotas do setup.
 
 ### 6. Interface Visual (Twig Template) & Arquivo SQL
 - **Arquivos**:
-  - [installer.html.twig](file:///var/www/html/agsonhos/resources/views/setup/installer.html.twig): Interface em 4 etapas (Requisitos, Banco de Dados, Loja/Admin, Conclusão) com design dark mode, glassmorphism e animações.
-  - [install.sql](file:///var/www/html/agsonhos/resources/schema/install.sql): Esquema DDL consolidado e seeds baseline do sistema.
+  - [installer.html.twig](/resources/views/setup/installer.html.twig): Interface em 4 etapas (Requisitos, Banco de Dados, Loja/Admin, Conclusão) com design dark mode, glassmorphism e animações.
+  - [install.sql](/resources/schema/install.sql): Esquema DDL consolidado e seeds baseline do sistema.
 
 ### 7. Documentação Técnica
-- **Arquivo**: [instalation.md](file:///var/www/html/agsonhos/docs/instalation/instalation.md)
+- **Arquivo**: [instalation.md](/docs/instalation/instalation.md)
 - Atualizada a especificação com o resumo técnico, YAML de automação e o diagrama de sequência em Mermaid.
 
 ---
 
 ## Resultados da Verificação Automatizada
 
-- **Script de Teste**: [test_tenant_provisioning.php](file:///var/www/html/agsonhos/tests/test_tenant_provisioning.php)
+- **Script de Teste**: [test_tenant_provisioning.php](/tests/test_tenant_provisioning.php)
 
 Resultados da execução da suíte de testes:
 ```text

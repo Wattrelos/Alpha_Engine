@@ -97,11 +97,11 @@ O subsistema foi homologado com cobertura total de testes automatizados e valida
 ---
 
 ## Artefatos e Componentes Impactados
-* **Middleware de Auditoria**: [`backend/core/Auth/Middleware/RequestAuditMiddleware.php`](file:///var/www/html/agsonhos/backend/core/Auth/Middleware/RequestAuditMiddleware.php)
-* **Serviço de Auditoria**: [`backend/core/Services/Audit/AuditLoggerService.php`](file:///var/www/html/agsonhos/backend/core/Services/Audit/AuditLoggerService.php)
-* **Sanitizador LGPD**: [`backend/core/Support/LgpdSanitizer.php`](file:///var/www/html/agsonhos/backend/core/Support/LgpdSanitizer.php)
-* **Middleware RBAC**: [`backend/core/Auth/Middleware/AdminSessionMiddleware.php`](file:///var/www/html/agsonhos/backend/core/Auth/Middleware/AdminSessionMiddleware.php)
-* **Controllers**: [`backend/core/Admin/Controllers/Actions/Audit/ListAuditLogsAction.php`](file:///var/www/html/agsonhos/backend/core/Admin/Controllers/Actions/Audit/ListAuditLogsAction.php) e [`backend/core/Admin/Controllers/Actions/Audit/ViewAuditLogDetailAction.php`](file:///var/www/html/agsonhos/backend/core/Admin/Controllers/Actions/Audit/ViewAuditLogDetailAction.php)
-* **Rotas**: [`backend/Config/Routes.php`](file:///var/www/html/agsonhos/backend/Config/Routes.php)
-* **Views Twig**: [`backend/resources/views/admin/pages/audit/index.html.twig`](file:///var/www/html/agsonhos/backend/resources/views/admin/pages/audit/index.html.twig), [`backend/resources/views/admin/pages/dashboard/index.html.twig`](file:///var/www/html/agsonhos/backend/resources/views/admin/pages/dashboard/index.html.twig) e [`backend/resources/views/admin/layouts/base.html.twig`](file:///var/www/html/agsonhos/backend/resources/views/admin/layouts/base.html.twig)
-* **Testes Automatizados**: [`tests/Validation/AuditLogValidationTest.php`](file:///var/www/html/agsonhos/tests/Validation/AuditLogValidationTest.php)
+* **Middleware de Auditoria**: [`backend/core/Auth/Middleware/RequestAuditMiddleware.php`](/backend/core/Auth/Middleware/RequestAuditMiddleware.php)
+* **Serviço de Auditoria**: [`backend/core/Services/Audit/AuditLoggerService.php`](/backend/core/Services/Audit/AuditLoggerService.php)
+* **Sanitizador LGPD**: [`backend/core/Support/LgpdSanitizer.php`](/backend/core/Support/LgpdSanitizer.php)
+* **Middleware RBAC**: [`backend/core/Auth/Middleware/AdminSessionMiddleware.php`](/backend/core/Auth/Middleware/AdminSessionMiddleware.php)
+* **Controllers**: [`backend/core/Admin/Controllers/Actions/Audit/ListAuditLogsAction.php`](/backend/core/Admin/Controllers/Actions/Audit/ListAuditLogsAction.php) e [`backend/core/Admin/Controllers/Actions/Audit/ViewAuditLogDetailAction.php`](/backend/core/Admin/Controllers/Actions/Audit/ViewAuditLogDetailAction.php)
+* **Rotas**: [`backend/Config/Routes.php`](/backend/Config/Routes.php)
+* **Views Twig**: [`backend/resources/views/admin/pages/audit/index.html.twig`](/backend/resources/views/admin/pages/audit/index.html.twig), [`backend/resources/views/admin/pages/dashboard/index.html.twig`](/backend/resources/views/admin/pages/dashboard/index.html.twig) e [`backend/resources/views/admin/layouts/base.html.twig`](/backend/resources/views/admin/layouts/base.html.twig)
+* **Testes Automatizados**: [`tests/Validation/AuditLogValidationTest.php`](/tests/Validation/AuditLogValidationTest.php)

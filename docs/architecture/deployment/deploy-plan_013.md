@@ -25,7 +25,7 @@ Nenhuma mudança estrutural no banco de dados é necessária, pois a tabela `pro
 
 ### Admin Interface (Twig View)
 
-#### [MODIFY] [edit.html.twig](file:///var/www/html/agsonhos/resources/views/admin/pages/products/edit.html.twig)
+#### [MODIFY] [edit.html.twig](/resources/views/admin/pages/products/edit.html.twig)
 - Adicionar uma nova coluna **Imagem** na tabela de variações (`#variants-table`), posicionada logo antes de "Nome da Variação *".
 - Exibir a miniatura da imagem atual da variação (caso exista) em um container circular/arredondado de `50x50px` com borda e sombra suaves.
 - Adicionar um botão de upload de arquivo estilizado (utilizando um `<label>` com ícone da FontAwesome e o input real oculto com `display: none`) para evitar a renderização feia do input padrão do navegador.
@@ -39,7 +39,7 @@ Nenhuma mudança estrutural no banco de dados é necessária, pois a tabela `pro
 
 ### Backend Logic (Controller)
 
-#### [MODIFY] [UpdateProductAction.php](file:///var/www/html/agsonhos/core/Admin/Controllers/Actions/Catalog/Product/UpdateProductAction.php)
+#### [MODIFY] [UpdateProductAction.php](/core/Admin/Controllers/Actions/Catalog/Product/UpdateProductAction.php)
 - Capturar os arquivos enviados na requisição através de `$request->getUploadedFiles()`.
 - Modificar o loop de processamento das variações enviadas no POST (`$data['variants']`):
   - **Para variações existentes:**
@@ -64,13 +64,13 @@ Nenhuma mudança estrutural no banco de dados é necessária, pois a tabela `pro
   1. Acessar a página de detalhes do produto.
   2. Clicar nas diferentes variações e observar se a imagem principal do produto é atualizada para a foto correspondente de forma fluida.
 
-- [x] Implement visual changes to the variations tab in [edit.html.twig](file:///var/www/html/agsonhos/resources/views/admin/pages/products/edit.html.twig)
+- [x] Implement visual changes to the variations tab in [edit.html.twig](/resources/views/admin/pages/products/edit.html.twig)
   - [x] Add "Imagem" column header to table
   - [x] Add current image preview and file upload button to existing variations rows
   - [x] Add checkbox to remove current variation image if present
   - [x] Update JavaScript to support new rows with custom upload buttons
   - [x] Add JavaScript logic for live browser file previews and grayscale dimming when "Remover" is checked
-- [x] Implement backend file upload and database update in [UpdateProductAction.php](file:///var/www/html/agsonhos/core/Admin/Controllers/Actions/Catalog/Product/UpdateProductAction.php)
+- [x] Implement backend file upload and database update in [UpdateProductAction.php](/core/Admin/Controllers/Actions/Catalog/Product/UpdateProductAction.php)
   - [x] Query and handle image deletion/retention for existing variations
   - [x] Handle uploading files from `variant_image_{index}` for existing variations
   - [x] Handle uploading files from `variant_image_{index}` for new variations
@@ -87,7 +87,7 @@ Implementamos com sucesso a capacidade de adicionar, alterar e remover imagens d
 ## Alterações Realizadas
 
 ### 1. Interface Administrativa (Painel de Edição de Produto)
-- **Arquivo modificado:** [edit.html.twig](file:///var/www/html/agsonhos/resources/views/admin/pages/products/edit.html.twig)
+- **Arquivo modificado:** [edit.html.twig](/resources/views/admin/pages/products/edit.html.twig)
 - **Modificações visuais:**
   - Adicionada a coluna **Imagem** no início da tabela de variações.
   - Exibição de miniatura arredondada (`50x50px`) da imagem atual da variação (com ícone padrão se não houver).
@@ -101,7 +101,7 @@ Implementamos com sucesso a capacidade de adicionar, alterar e remover imagens d
 ---
 
 ### 2. Lógica do Servidor (Controller de Atualização)
-- **Arquivo modificado:** [UpdateProductAction.php](file:///var/www/html/agsonhos/core/Admin/Controllers/Actions/Catalog/Product/UpdateProductAction.php)
+- **Arquivo modificado:** [UpdateProductAction.php](/core/Admin/Controllers/Actions/Catalog/Product/UpdateProductAction.php)
 - **Modificações de salvamento:**
   - Captura dinâmica dos arquivos de imagem associados aos índices das variações através de `$request->getUploadedFiles()`.
   - Tratamento de exclusão: caso a flag `remove_image` esteja presente, o caminho da imagem é limpo.
@@ -144,7 +144,7 @@ Implementamos com sucesso a capacidade de adicionar, alterar e remover imagens d
 ---
 
 ## Fallback no Catálogo (Loja)
-Como já implementado no arquivo [ShowProductAction.php](file:///var/www/html/agsonhos/core/Controller/Actions/Product/ShowProductAction.php#L228-L233):
+Como já implementado no arquivo [ShowProductAction.php](/core/Controller/Actions/Product/ShowProductAction.php#L228-L233):
 - Se uma variação possuir uma imagem personalizada, ela será redimensionada e exibida.
 - Caso contrário, a imagem principal do produto pai é usada como fallback dinâmico. Isso garante que as variações sem imagens customizadas herdem o design do produto principal automaticamente.
 

@@ -16,19 +16,19 @@ Este plano detalha a substituição dos textos estáticos (hard-coded) em portug
 
 ## Arquivos Envolvidos
 
-1. [NEW] [pt-br.admin.order.json](file:///var/www/html/agsonhos/Locales/pt-br/pt-br.admin.order.json) - Dicionário de termos em Português.
-2. [NEW] [en-gb.admin.order.json](file:///var/www/html/agsonhos/Locales/en-gb/en-gb.admin.order.json) - Dicionário de termos em Inglês.
-3. [NEW] [fr-fr.admin.order.json](file:///var/www/html/agsonhos/Locales/fr-fr/fr-fr.admin.order.json) - Dicionário de termos em Francês.
-4. [MODIFY] [AdminLanguageMiddleware.php](file:///var/www/html/agsonhos/core/Auth/Middleware/AdminLanguageMiddleware.php) - Mapeamento das rotas de pedidos para carregar o namespace de tradução `admin/order`.
-5. [MODIFY] [index.html.twig](file:///var/www/html/agsonhos/resources/views/admin/sales/order/index.html.twig) - Substituição dos textos estáticos por `AdminLang.key`.
-6. [MODIFY] [show.html.twig](file:///var/www/html/agsonhos/resources/views/admin/sales/order/show.html.twig) - Substituição dos textos estáticos por `AdminLang.key`.
-7. [MODIFY] [invoice.html.twig](file:///var/www/html/agsonhos/resources/views/admin/sales/order/invoice.html.twig) - Substituição dos textos estáticos por `AdminLang.key`.
+1. [NEW] [pt-br.admin.order.json](/Locales/pt-br/pt-br.admin.order.json) - Dicionário de termos em Português.
+2. [NEW] [en-gb.admin.order.json](/Locales/en-gb/en-gb.admin.order.json) - Dicionário de termos em Inglês.
+3. [NEW] [fr-fr.admin.order.json](/Locales/fr-fr/fr-fr.admin.order.json) - Dicionário de termos em Francês.
+4. [MODIFY] [AdminLanguageMiddleware.php](/core/Auth/Middleware/AdminLanguageMiddleware.php) - Mapeamento das rotas de pedidos para carregar o namespace de tradução `admin/order`.
+5. [MODIFY] [index.html.twig](/resources/views/admin/sales/order/index.html.twig) - Substituição dos textos estáticos por `AdminLang.key`.
+6. [MODIFY] [show.html.twig](/resources/views/admin/sales/order/show.html.twig) - Substituição dos textos estáticos por `AdminLang.key`.
+7. [MODIFY] [invoice.html.twig](/resources/views/admin/sales/order/invoice.html.twig) - Substituição dos textos estáticos por `AdminLang.key`.
 
 ---
 
 ## Detalhamento das Alterações
 
-### 1. [MODIFY] [AdminLanguageMiddleware.php](file:///var/www/html/agsonhos/core/Auth/Middleware/AdminLanguageMiddleware.php)
+### 1. [MODIFY] [AdminLanguageMiddleware.php](/core/Auth/Middleware/AdminLanguageMiddleware.php)
 Mapear as seguintes rotas de pedidos em `ROUTE_NAMESPACE_MAP`:
 ```php
         'admin.orders.index'            => 'admin/order',
@@ -43,7 +43,7 @@ Criar os arquivos de idioma contendo os mapeamentos chave-valor para os termos e
 - **Inglês (`en-gb.admin.order.json`)**
 - **Francês (`fr-fr.admin.order.json`)**
 
-### 3. [MODIFY] [index.html.twig](file:///var/www/html/agsonhos/resources/views/admin/sales/order/index.html.twig)
+### 3. [MODIFY] [index.html.twig](/resources/views/admin/sales/order/index.html.twig)
 Substituir termos estáticos pelas chaves correspondentes de `AdminLang`:
 - `Gerenciamento de Pedidos` -> `{{ AdminLang.heading_title }}`
 - `Acompanhe as vendas...` -> `{{ AdminLang.text_subtitle }}`
@@ -61,7 +61,7 @@ Substituir termos estáticos pelas chaves correspondentes de `AdminLang`:
 - Títulos de colunas da tabela principal (`ID`, `Cliente`, `Status`, `Total`, etc.) -> `AdminLang.column_X`
 - `Nenhum pedido encontrado.` -> `{{ AdminLang.text_empty }}`
 
-### 4. [MODIFY] [show.html.twig](file:///var/www/html/agsonhos/resources/views/admin/sales/order/show.html.twig)
+### 4. [MODIFY] [show.html.twig](/resources/views/admin/sales/order/show.html.twig)
 Substituir os termos estáticos pelas chaves correspondentes de `AdminLang`:
 - `Pedidos` (breadcrumb) -> `{{ AdminLang.text_orders }}`
 - `Pedido #...` -> `{{ AdminLang.text_order_id }} #...`
@@ -88,7 +88,7 @@ Substituir os termos estáticos pelas chaves correspondentes de `AdminLang`:
 - `Notificar Cliente por E-mail` -> `{{ AdminLang.entry_notify }}`
 - `Atualizar Status` -> `{{ AdminLang.button_update_status }}`
 
-### 5. [MODIFY] [invoice.html.twig](file:///var/www/html/agsonhos/resources/views/admin/sales/order/invoice.html.twig)
+### 5. [MODIFY] [invoice.html.twig](/resources/views/admin/sales/order/invoice.html.twig)
 Substituir os termos estáticos pelas chaves correspondentes de `AdminLang`:
 - `Fechar Janela` -> `{{ AdminLang.button_close }}`
 - `Imprimir Fatura` -> `{{ AdminLang.button_print }}`
@@ -130,23 +130,23 @@ Implantamos com sucesso o sistema de internacionalização para as telas de vend
 
 ### 1. Novo Dicionário de Idiomas
 Criamos os arquivos JSON contendo todas as traduções necessárias para o gerenciamento de pedidos e faturas:
-* **[pt-br.admin.order.json](file:///var/www/html/agsonhos/Locales/pt-br/pt-br.admin.order.json)**: Termos em português do Brasil.
-* **[en-gb.admin.order.json](file:///var/www/html/agsonhos/Locales/en-gb/en-gb.admin.order.json)**: Termos em inglês.
-* **[fr-fr.admin.order.json](file:///var/www/html/agsonhos/Locales/fr-fr/fr-fr.admin.order.json)**: Termos em francês.
+* **[pt-br.admin.order.json](/Locales/pt-br/pt-br.admin.order.json)**: Termos em português do Brasil.
+* **[en-gb.admin.order.json](/Locales/en-gb/en-gb.admin.order.json)**: Termos em inglês.
+* **[fr-fr.admin.order.json](/Locales/fr-fr/fr-fr.admin.order.json)**: Termos em francês.
 
 ### 2. Mapeamento de Rotas no Middleware
-* **[AdminLanguageMiddleware.php](file:///var/www/html/agsonhos/core/Auth/Middleware/AdminLanguageMiddleware.php)**: Mapeadas as rotas de pedidos (`admin.orders.index`, `admin.orders.show`, `admin.orders.invoice`, `admin.orders.update_status`) para carregar o namespace de tradução `admin/order` (associado aos arquivos `admin.order.json`).
+* **[AdminLanguageMiddleware.php](/core/Auth/Middleware/AdminLanguageMiddleware.php)**: Mapeadas as rotas de pedidos (`admin.orders.index`, `admin.orders.show`, `admin.orders.invoice`, `admin.orders.update_status`) para carregar o namespace de tradução `admin/order` (associado aos arquivos `admin.order.json`).
 
 ### 3. Localização dos Templates Twig
 Substituímos todos os textos hard-coded por variáveis do Twig baseadas em `AdminLang`:
-* **[index.html.twig](file:///var/www/html/agsonhos/resources/views/admin/sales/order/index.html.twig)**:
+* **[index.html.twig](/resources/views/admin/sales/order/index.html.twig)**:
   * Título da página, subtítulo, botões (Filtrar, Limpar, Visualizar, Fatura) e termos do formulário de busca/filtros.
   * Títulos das colunas da tabela principal e mensagem de listagem vazia.
-* **[show.html.twig](file:///var/www/html/agsonhos/resources/views/admin/sales/order/show.html.twig)**:
+* **[show.html.twig](/resources/views/admin/sales/order/show.html.twig)**:
   * Textos do cabeçalho, breadcrumbs, botões (Voltar, Imprimir Fatura) e alerta de status atualizado com sucesso.
   * Títulos dos cards, labels de detalhes do pedido (Canal/Loja, Forma de Envio, Forma de Pagamento, etc.) e informações do cliente.
   * Tabela de produtos comprados, cabeçalhos das colunas de itens, timeline (comentários, status de notificação) e formulário de status (labels, placeholders, checkbox e botão).
-* **[invoice.html.twig](file:///var/www/html/agsonhos/resources/views/admin/sales/order/invoice.html.twig)**:
+* **[invoice.html.twig](/resources/views/admin/sales/order/invoice.html.twig)**:
   * Metadados e atributos de acessibilidade (como a tag `<html lang="...">`).
   * Botões de cabeçalho (Fechar Janela, Imprimir), dados da loja (Telefone, E-mail, Site) e metadados da fatura (FATURA, Pedido, Data, Status).
   * Seções de endereços (Cobrar De, Enviar Para) e tabela de descrição de produtos e totais.

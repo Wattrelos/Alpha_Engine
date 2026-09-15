@@ -43,7 +43,7 @@ Quando um cliente está autenticado na loja, os seguintes 6 atalhos da página "
 
 ### 1. Núcleo de Suporte e Autenticação
 
-#### [MODIFY] [Customer.php](file:///var/www/html/agsonhos/backend/core/Support/Customer.php)
+#### [MODIFY] [Customer.php](/backend/core/Support/Customer.php)
 - Implementar cache em memória do usuário autenticado (`$user`, `$checked`).
 - Adicionar suporte a `setUser(?\stdClass $user)` e `clearUser()`.
 - No método `getLoggedUser()`:
@@ -51,28 +51,28 @@ Quando um cliente está autenticado na loja, os seguintes 6 atalhos da página "
   2. Se ausente, consultar o Redis utilizando o cookie `session_id` (`sessao:<session_id>`).
   3. Ao encontrar no Redis, sincronizar `$_SESSION` (`logged_user`, `customer_id`, `customer_group_id`, `customer_firstname`, `customer_lastname`, `customer_email`, `customer_telephone`) para garantir compatibilidade com toda a aplicação legada e moderna.
 
-#### [MODIFY] [SessionMiddleware.php](file:///var/www/html/agsonhos/backend/core/Auth/Middleware/SessionMiddleware.php)
+#### [MODIFY] [SessionMiddleware.php](/backend/core/Auth/Middleware/SessionMiddleware.php)
 - Injetar opcionalmente o `ContainerInterface`.
 - Após validar a sessão no Redis ou nativa, sincronizar `$_SESSION` e injetar o usuário no helper `Customer` (`$customerHelper->setUser($user)`).
 
-#### [MODIFY] [LanguageMiddleware.php](file:///var/www/html/agsonhos/backend/core/Auth/Middleware/LanguageMiddleware.php)
+#### [MODIFY] [LanguageMiddleware.php](/backend/core/Auth/Middleware/LanguageMiddleware.php)
 - No método `isUserLogged()`, ao encontrar a sessão no Redis, atualizar o helper `Customer` e sincronizar `$_SESSION`.
 
-#### [MODIFY] [CustomerAuthService.php](file:///var/www/html/agsonhos/backend/core/Auth/Services/CustomerAuthService.php)
+#### [MODIFY] [CustomerAuthService.php](/backend/core/Auth/Services/CustomerAuthService.php)
 - No método `createSession()`, garantir que `$_SESSION['logged_user']` e todas as chaves flat sejam preenchidas com o `session_id` correto.
 
 ---
 
 ### 2. Controladores e Rotas
 
-#### [MODIFY] [ResetPasswordAction.php](file:///var/www/html/agsonhos/backend/core/Controller/Actions/Customer/Auth/ResetPasswordAction.php)
+#### [MODIFY] [ResetPasswordAction.php](/backend/core/Controller/Actions/Customer/Auth/ResetPasswordAction.php)
 - Ajustar breadcrumbs e action POST quando o usuário estiver autenticado (`account.resetar-senha.logged`).
 
-#### [MODIFY] [Routes.php](file:///var/www/html/agsonhos/backend/Config/Routes.php)
+#### [MODIFY] [Routes.php](/backend/Config/Routes.php)
 - Passar o Container para o `SessionMiddleware`: `->add(new SessionMiddleware($app->getContainer()))`.
 - Adicionar aliases de compatibilidade para `/account/address`, `/account/password`, `/account/order`, `/account/transactions`.
 
-#### [MODIFY] [LegacyRouteRedirectMiddleware.php](file:///var/www/html/agsonhos/backend/core/Auth/Middleware/LegacyRouteRedirectMiddleware.php)
+#### [MODIFY] [LegacyRouteRedirectMiddleware.php](/backend/core/Auth/Middleware/LegacyRouteRedirectMiddleware.php)
 - Mapear rotas legadas de `account/*` no parâmetro `?route=`.
 
 ---
@@ -98,7 +98,7 @@ Quando um cliente está autenticado na loja, os seguintes 6 atalhos da página "
 ## 1. Atalhos da Área "Minha Conta" Redirecionando para Login
 
 ### Causa Raiz
-- A classe [`Customer`](file:///var/www/html/agsonhos/backend/core/Support/Customer.php) consultava apenas `$_SESSION` e não o Redis para identificar o cliente logado.
+- A classe [`Customer`](/backend/core/Support/Customer.php) consultava apenas `$_SESSION` e não o Redis para identificar o cliente logado.
 - Controladores filhos de `/account/*` validavam `$customer->isLogged()`, resultando em `false` e redirecionando para `/pt-br/login`.
 
 ### Solução Aplicada
@@ -117,7 +117,7 @@ Quando um cliente está autenticado na loja, os seguintes 6 atalhos da página "
 3. **Ausência de Integração com Redis e OPcache**: Não purgueva chaves de cache de aplicação do Redis nem executava `opcache_reset()`.
 4. **Falta de Carregamento de Autoload**: Impedia o uso do cliente `Predis\Client` quando executado isoladamente.
 
-### Soluções Aplicadas no [`public_html/clean_cache.php`](file:///var/www/html/agsonhos/public_html/clean_cache.php)
+### Soluções Aplicadas no [`public_html/clean_cache.php`](/public_html/clean_cache.php)
 1. **Expurgo Completo e Seguro de Todas as Camadas de Cache**:
    - **Templates Twig**: `storage/cache/twig_slim/` e `storage/cache/twig_setup/`.
    - **Cache de Dados/Queries do Core**: `storage/cache/*.cache` (`alpha_cache_*.cache`), `storage/cache/*.json` e `storage/cache/*.tmp`.
@@ -127,7 +127,7 @@ Quando um cliente está autenticado na loja, os seguintes 6 atalhos da página "
    - **Cache Redis**: Purgua chaves de cache de aplicação (`alpha_cache:*`, `cache:*`), preservando com total segurança as sessões ativas (`sessao:*` e `sessao:admin:*`).
 2. **Auto-Criação e Permissões**: Garante a recriação de todos os diretórios essenciais com permissão `0777`.
 3. **Saída Detalhada e Amigável**: Exibe relatório com a quantidade exata de itens expurgados por categoria.
-4. **Sincronização com [`backend/clean_twig_cache.php`](file:///var/www/html/agsonhos/backend/clean_twig_cache.php)** para execução via CLI.
+4. **Sincronização com [`backend/clean_twig_cache.php`](/backend/clean_twig_cache.php)** para execução via CLI.
 
 ---
 

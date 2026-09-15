@@ -11,7 +11,7 @@
 | **Atores Secundários** | Sistema Alpha Engine |
 | **Tipo** | Condução / Pós-Venda (SAC) |
 | **Frequência de Uso** | Baixa |
-| **Rastreabilidade** | **RF:** [RF016](file:///var/www/html/agsonhos/docs/requirements/functional/functional_requirements.yaml) (Histórico), [RF020](file:///var/www/html/agsonhos/docs/requirements/functional/functional_requirements.yaml) (NF-e de devolução)<br>**RN:** [RN009](file:///var/www/html/agsonhos/docs/requirements/business_rules/business_rules.yaml) (Política padronizada), [RN010](file:///var/www/html/agsonhos/docs/requirements/business_rules/business_rules.yaml) (Materiais sensíveis), [RN011](file:///var/www/html/agsonhos/docs/requirements/business_rules/business_rules.yaml) (Direito de arrependimento 7 dias CDC e exceção BOPIS), [RN012](file:///var/www/html/agsonhos/docs/requirements/business_rules/business_rules.yaml) (Documentação fiscal)<br>**RNF:** [RNF001](file:///var/www/html/agsonhos/docs/requirements/non_functional/non_functional_requirements.yaml) (Formulário claro com upload de fotos) |
+| **Rastreabilidade** | **RF:** [RF016](/docs/requirements/functional/functional_requirements.yaml) (Histórico), [RF020](/docs/requirements/functional/functional_requirements.yaml) (NF-e de devolução)<br>**RN:** [RN009](/docs/requirements/business_rules/business_rules.yaml) (Política padronizada), [RN010](/docs/requirements/business_rules/business_rules.yaml) (Materiais sensíveis), [RN011](/docs/requirements/business_rules/business_rules.yaml) (Direito de arrependimento 7 dias CDC e exceção BOPIS), [RN012](/docs/requirements/business_rules/business_rules.yaml) (Documentação fiscal)<br>**RNF:** [RNF001](/docs/requirements/non_functional/non_functional_requirements.yaml) (Formulário claro com upload de fotos) |
 
 ---
 

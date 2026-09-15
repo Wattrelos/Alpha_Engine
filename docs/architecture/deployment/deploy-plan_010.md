@@ -118,7 +118,7 @@ Colei as permissões nos perfis administrativos no banco de dados e implementei 
 
 2\. **Logs de Autenticação**:
 
-- Atualizado o método `authenticate` em [AdminAuthService.php](file:///var/www/html/agsonhos/core/Auth/Services/AdminAuthService.php) para interceptar os status de logins: `SUCCESS` (sucesso), `FAILURE` (falha de credenciais) e `LOCKED_OUT` (usuário temporariamente bloqueado por força bruta).
+- Atualizado o método `authenticate` em [AdminAuthService.php](/core/Auth/Services/AdminAuthService.php) para interceptar os status de logins: `SUCCESS` (sucesso), `FAILURE` (falha de credenciais) e `LOCKED_OUT` (usuário temporariamente bloqueado por força bruta).
 
 - O log é gravado no arquivo físico `storage/logs/admin_login.log`, contendo data/hora, status, usuário, IP e o cabeçalho User-Agent para segurança adicional.
 

@@ -18,8 +18,8 @@ Este plano descreve o processo de migração e unificação das folhas de estilo
 
 ## 🎯 Objetivo
 
-* **Unificar** seletores repetidos em [orders.twig](file:///var/www/html/agsonhos/resources/views/pages/users/accounts/orders.twig) e [order-history.twig](file:///var/www/html/agsonhos/resources/views/pages/users/accounts/order-history.twig).
-* **Migrar** os estilos resultantes para o arquivo [personalizada.css](file:///var/www/html/agsonhos/public_html/css/custom/personalizada.css).
+* **Unificar** seletores repetidos em [orders.twig](/resources/views/pages/users/accounts/orders.twig) e [order-history.twig](/resources/views/pages/users/accounts/order-history.twig).
+* **Migrar** os estilos resultantes para o arquivo [personalizada.css](/public_html/css/custom/personalizada.css).
 * **Remover** as tags `<style>` internas destas páginas para mantê-las limpas e otimizadas.
 
 ---
@@ -28,15 +28,15 @@ Este plano descreve o processo de migração e unificação das folhas de estilo
 
 ### 1. Folhas de Estilo (CSS)
 
-#### [MODIFY] [personalizada.css](file:///var/www/html/agsonhos/public_html/css/custom/personalizada.css)
+#### [MODIFY] [personalizada.css](/public_html/css/custom/personalizada.css)
 * Adicionar as regras de estilos unificados de Pedidos ao final do arquivo. As variações específicas de comportamento e layouts flex/grid de cada página serão tratadas de maneira organizada usando escopo de ID `#account-orders-page` e `#account-order-detail-page`.
 
 ### 2. Templates Twig (Views)
 
-#### [MODIFY] [orders.twig](file:///var/www/html/agsonhos/resources/views/pages/users/accounts/orders.twig)
+#### [MODIFY] [orders.twig](/resources/views/pages/users/accounts/orders.twig)
 * Remover todo o bloco `<style>` interno (linhas 121 a 412).
 
-#### [MODIFY] [order-history.twig](file:///var/www/html/agsonhos/resources/views/pages/users/accounts/order-history.twig)
+#### [MODIFY] [order-history.twig](/resources/views/pages/users/accounts/order-history.twig)
 * Remover todo o bloco `<style>` interno (linhas 162 a 542).
 
 ---
@@ -591,9 +591,9 @@ Este plano descreve o processo de migração e unificação das folhas de estilo
 
 # Tarefas — Fase 2 (Consolidação de Estilos de Pedidos)
 
-- `[x]` Migrar e consolidar estilos de Pedidos no [personalizada.css](file:///var/www/html/agsonhos/public_html/css/custom/personalizada.css)
-- `[x]` Remover o bloco `<style>` em [orders.twig](file:///var/www/html/agsonhos/resources/views/pages/users/accounts/orders.twig)
-- `[x]` Remover o bloco `<style>` em [order-history.twig](file:///var/www/html/agsonhos/resources/views/pages/users/accounts/order-history.twig)
+- `[x]` Migrar e consolidar estilos de Pedidos no [personalizada.css](/public_html/css/custom/personalizada.css)
+- `[x]` Remover o bloco `<style>` em [orders.twig](/resources/views/pages/users/accounts/orders.twig)
+- `[x]` Remover o bloco `<style>` em [order-history.twig](/resources/views/pages/users/accounts/order-history.twig)
 - `[x]` Validar layout das páginas de Pedidos no e-commerce
 
 # Walkthrough — Consolidação de Estilos (Fase 1 e Fase 2)
@@ -605,18 +605,18 @@ Concluímos com sucesso a execução das **Fases 1 e 2** da consolidação de es
 ## 🛠️ Fase 1: Área de Endereços
 
 ### 1. Centralização e Unificação de CSS
-* **[personalizada.css](file:///var/www/html/agsonhos/public_html/css/custom/personalizada.css)**:
+* **[personalizada.css](/public_html/css/custom/personalizada.css)**:
   * Agrupou e unificou estilos duplicados dos elementos das páginas de endereço (`.addr-hero`, `.addr-breadcrumb`, `.addr-wrapper`, `.addr-alert`, `.addr-btn-back`).
   * Manteve as variações de largura máxima e tamanho de ícones aplicando escopo a partir do ID da página-pai (`#address-create-page`, `#address-edit-page`, `#addresses-page`).
   * Consolidou os estilos dos formulários compartilhados de criação e edição (`.addr-form-card`, `.addr-form-section`, `.addr-form-grid`, etc.).
   * Adicionou estilos específicos da listagem (`.addr-grid`, `.addr-card`, `.addr-btn-card`).
 
 ### 2. Limpeza dos Templates Twig
-* **[create.twig](file:///var/www/html/agsonhos/resources/views/pages/users/addresses/create.twig)**:
+* **[create.twig](/resources/views/pages/users/addresses/create.twig)**:
   * Removido o bloco `<style>` contendo ~190 linhas.
-* **[edit.twig](file:///var/www/html/agsonhos/resources/views/pages/users/addresses/edit.twig)**:
+* **[edit.twig](/resources/views/pages/users/addresses/edit.twig)**:
   * Removido o bloco `<style>` contendo ~130 linhas de duplicação.
-* **[index.twig](file:///var/www/html/agsonhos/resources/views/pages/users/addresses/index.twig)**:
+* **[index.twig](/resources/views/pages/users/addresses/index.twig)**:
   * Removido o bloco `<style>` contendo ~190 linhas.
 
 ---
@@ -624,16 +624,16 @@ Concluímos com sucesso a execução das **Fases 1 e 2** da consolidação de es
 ## 🛠️ Fase 2: Área de Pedidos
 
 ### 1. Centralização e Unificação de CSS
-* **[personalizada.css](file:///var/www/html/agsonhos/public_html/css/custom/personalizada.css)**:
+* **[personalizada.css](/public_html/css/custom/personalizada.css)**:
   * Consolidou estilos de herói (`.orders-hero`), breadcrumbs (`.orders-breadcrumb`) e títulos das páginas de listagem e detalhes de pedidos.
   * Unificou a estilização das tabelas de listagem e itens de pedido (`.orders-table-wrap`, `.orders-table`, `.order-row`), incluindo alinhamentos tabulares.
   * Consolidou os estilos dos badges de status (`.status-pill` e `.timeline-status-pill`) e o botão de voltar (`.btn-back`) em seletores combinados.
   * Adicionou os componentes da timeline de histórico (`.timeline-wrap`, `.timeline`, `.timeline-item`, `.timeline-dot`, etc.) e visualização de detalhes (`.detail-grid`, `.detail-card`, `.totals-wrap`, `.total-row`).
 
 ### 2. Limpeza dos Templates Twig
-* **[orders.twig](file:///var/www/html/agsonhos/resources/views/pages/users/accounts/orders.twig)**:
+* **[orders.twig](/resources/views/pages/users/accounts/orders.twig)**:
   * Removido o bloco `<style>` contendo ~290 linhas.
-* **[order-history.twig](file:///var/www/html/agsonhos/resources/views/pages/users/accounts/order-history.twig)**:
+* **[order-history.twig](/resources/views/pages/users/accounts/order-history.twig)**:
   * Removido o bloco `<style>` contendo ~380 linhas.
 
 ---

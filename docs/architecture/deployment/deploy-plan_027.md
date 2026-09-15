@@ -39,7 +39,7 @@ Adicionaremos as seguintes classes utilitárias para substituir os estilos inlin
 
 ### 2. Mapeamento no Middleware de Idiomas
 
-Mapearemos as rotas de devoluções administrativas em [AdminLanguageMiddleware.php](file:///var/www/html/agsonhos/core/Auth/Middleware/AdminLanguageMiddleware.php) para carregar o namespace `admin/returns`:
+Mapearemos as rotas de devoluções administrativas em [AdminLanguageMiddleware.php](/core/Auth/Middleware/AdminLanguageMiddleware.php) para carregar o namespace `admin/returns`:
 ```php
 'admin.returns.index'         => 'admin/returns',
 'admin.returns.show'          => 'admin/returns',
@@ -49,35 +49,35 @@ Mapearemos as rotas de devoluções administrativas em [AdminLanguageMiddleware.
 ### 3. Criação de Arquivos de Idiomas (JSON)
 
 Criaremos os arquivos JSON correspondentes ao namespace `admin/returns`:
-- **Português**: [pt-br.admin.returns.json](file:///var/www/html/agsonhos/Locales/pt-br/pt-br.admin.returns.json)
-- **Inglês**: [en-gb.admin.returns.json](file:///var/www/html/agsonhos/Locales/en-gb/en-gb.admin.returns.json)
-- **Francês**: [fr-fr.admin.returns.json](file:///var/www/html/agsonhos/Locales/fr-fr/fr-fr.admin.returns.json)
+- **Português**: [pt-br.admin.returns.json](/Locales/pt-br/pt-br.admin.returns.json)
+- **Inglês**: [en-gb.admin.returns.json](/Locales/en-gb/en-gb.admin.returns.json)
+- **Francês**: [fr-fr.admin.returns.json](/Locales/fr-fr/fr-fr.admin.returns.json)
 
 As chaves cobrirão a lista de RMA, filtros, colunas de tabela, estatísticas, ficha do RMA detalhado, resumo do RMA, dados do cliente, produto, linha do tempo histórica, e formulário de atualização de status.
 
 ### 4. Substituição nas Views Twig
 
 Refatoraremos as views para utilizar classes CSS globais e traduzir todas as strings estáticas:
-- [index.html.twig](file:///var/www/html/agsonhos/resources/views/admin/sales/return/index.html.twig)
-- [show.html.twig](file:///var/www/html/agsonhos/resources/views/admin/sales/return/show.html.twig)
+- [index.html.twig](/resources/views/admin/sales/return/index.html.twig)
+- [show.html.twig](/resources/views/admin/sales/return/show.html.twig)
 
 ---
 
 ## Detalhes das Alterações por Arquivo
 
-### [MODIFY] [components.css](file:///var/www/html/agsonhos/public_html/css/admin/components.css)
+### [MODIFY] [components.css](/public_html/css/admin/components.css)
 Adicionar as novas classes utilitárias e regras para Devoluções.
 
-### [MODIFY] [AdminLanguageMiddleware.php](file:///var/www/html/agsonhos/core/Auth/Middleware/AdminLanguageMiddleware.php)
+### [MODIFY] [AdminLanguageMiddleware.php](/core/Auth/Middleware/AdminLanguageMiddleware.php)
 Mapear as rotas de devolução para o namespace `admin/returns`.
 
 ### [NEW] JSON Locales de Devoluções
 Criar os arquivos de tradução do módulo de devoluções nos três idiomas.
 
-### [MODIFY] [index.html.twig](file:///var/www/html/agsonhos/resources/views/admin/sales/return/index.html.twig)
+### [MODIFY] [index.html.twig](/resources/views/admin/sales/return/index.html.twig)
 Substituir estilos inline por classes utilitárias e textos estáticos por `AdminLang` com fallbacks.
 
-### [MODIFY] [show.html.twig](file:///var/www/html/agsonhos/resources/views/admin/sales/return/show.html.twig)
+### [MODIFY] [show.html.twig](/resources/views/admin/sales/return/show.html.twig)
 Substituir estilos inline por classes utilitárias e textos estáticos por `AdminLang` com fallbacks.
 
 ---
@@ -132,7 +132,7 @@ Concluímos com sucesso a remoção de todos os estilos CSS inline e a internaci
 ## Alterações Realizadas
 
 ### 1. Refatoração de Estilos (CSS)
-- **Folha de Estilos**: Integramos e reutilizamos novas classes no arquivo global [components.css](file:///var/www/html/agsonhos/public_html/css/admin/components.css) para remover os estilos inline:
+- **Folha de Estilos**: Integramos e reutilizamos novas classes no arquivo global [components.css](/public_html/css/admin/components.css) para remover os estilos inline:
   - `.is-invalid`: Borda de erro nos inputs.
   - `.align-start`: Alinhamento flex-start.
   - `.flex-column` e `.gap-3`: Layouts flex organizados.
@@ -167,14 +167,14 @@ Concluímos com sucesso a remoção de todos os estilos CSS inline e a internaci
   - `.stats-bar-flex`, `.stat-card-clean`, `.stat-icon-wrapper`, `.stat-title-sm`, `.stat-value-sm`: Elementos do painel superior de estatísticas de RMA.
   - `.grid-filters-returns`: Filtros de RMA com alinhamento na base.
   - `.text-decoration-none`: Atalho utilitário para links sem sublinhado.
-- **Views Twig**: Todos os atributos inline `style="..."` foram removidos e substituídos pelas classes CSS correspondentes em todas as views. No arquivo de layout [base_auth.html.twig](file:///var/www/html/agsonhos/resources/views/admin/layouts/base_auth.html.twig), adicionamos o bloco `container_class` para permitir o redimensionamento dinâmico sem estilos inline.
+- **Views Twig**: Todos os atributos inline `style="..."` foram removidos e substituídos pelas classes CSS correspondentes em todas as views. No arquivo de layout [base_auth.html.twig](/resources/views/admin/layouts/base_auth.html.twig), adicionamos o bloco `container_class` para permitir o redimensionamento dinâmico sem estilos inline.
 
 ### 2. Internacionalização (i18n)
-- **Middleware**: Mapeamos todas as rotas do cliente, endereços, rotas de autenticação (login/setup) e as rotas de devoluções em [AdminLanguageMiddleware.php](file:///var/www/html/agsonhos/core/Auth/Middleware/AdminLanguageMiddleware.php) para carregar os namespaces de tradução `admin/customer`, `admin/auth` e `admin/returns`.
+- **Middleware**: Mapeamos todas as rotas do cliente, endereços, rotas de autenticação (login/setup) e as rotas de devoluções em [AdminLanguageMiddleware.php](/core/Auth/Middleware/AdminLanguageMiddleware.php) para carregar os namespaces de tradução `admin/customer`, `admin/auth` e `admin/returns`.
 - **Arquivos JSON de Tradução**: Criamos e populamos arquivos JSON estruturados nos três idiomas oficiais da loja:
-  - **Clientes / Endereços**: [pt-br.admin.customer.json](file:///var/www/html/agsonhos/Locales/pt-br/pt-br.admin.customer.json), [en-gb.admin.customer.json](file:///var/www/html/agsonhos/Locales/en-gb/en-gb.admin.customer.json) e [fr-fr.admin.customer.json](file:///var/www/html/agsonhos/Locales/fr-fr/fr-fr.admin.customer.json).
-  - **Autenticação Admin**: [pt-br.admin.auth.json](file:///var/www/html/agsonhos/Locales/pt-br/pt-br.admin.auth.json), [en-gb.admin.auth.json](file:///var/www/html/agsonhos/Locales/en-gb/en-gb.admin.auth.json) e [fr-fr.admin.auth.json](file:///var/www/html/agsonhos/Locales/fr-fr/fr-fr.admin.auth.json).
-  - **Devoluções (RMA)**: [pt-br.admin.returns.json](file:///var/www/html/agsonhos/Locales/pt-br/pt-br.admin.returns.json), [en-gb.admin.returns.json](file:///var/www/html/agsonhos/Locales/en-gb/en-gb.admin.returns.json) e [fr-fr.admin.returns.json](file:///var/www/html/agsonhos/Locales/fr-fr/fr-fr.admin.returns.json).
+  - **Clientes / Endereços**: [pt-br.admin.customer.json](/Locales/pt-br/pt-br.admin.customer.json), [en-gb.admin.customer.json](/Locales/en-gb/en-gb.admin.customer.json) e [fr-fr.admin.customer.json](/Locales/fr-fr/fr-fr.admin.customer.json).
+  - **Autenticação Admin**: [pt-br.admin.auth.json](/Locales/pt-br/pt-br.admin.auth.json), [en-gb.admin.auth.json](/Locales/en-gb/en-gb.admin.auth.json) e [fr-fr.admin.auth.json](/Locales/fr-fr/fr-fr.admin.auth.json).
+  - **Devoluções (RMA)**: [pt-br.admin.returns.json](/Locales/pt-br/pt-br.admin.returns.json), [en-gb.admin.returns.json](/Locales/en-gb/en-gb.admin.returns.json) e [fr-fr.admin.returns.json](/Locales/fr-fr/fr-fr.admin.returns.json).
 - **Views Twig**: Substituímos os textos hardcoded de todas as páginas por referências ao objeto dinâmico `AdminLang` com fallbacks amigáveis. Nos avisos dinâmicos da página de erro de login e na linha do tempo de devoluções, utilizamos os filtros `|format` e `|raw` do Twig para injetar os valores traduzidos mantendo a estilização.
 
 ---

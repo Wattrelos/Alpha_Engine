@@ -12,7 +12,7 @@
 
 # Relatório de Implementações e Documentação
 
-## 1. Atualização do Diagrama de Casos de Uso do Cliente ([`UseCaseDiagramCustomer.puml`](file:///var/www/html/agsonhos/docs/business/use-cases/UseCaseDiagramCustomer.puml))
+## 1. Atualização do Diagrama de Casos de Uso do Cliente ([`UseCaseDiagramCustomer.puml`](/docs/business/use-cases/UseCaseDiagramCustomer.puml))
 
 O diagrama de casos de uso foi totalmente atualizado e estruturado em pacotes temáticos modernos, refletindo todas as funcionalidades implementadas no sistema:
 
@@ -55,6 +55,6 @@ O diagrama de casos de uso foi totalmente atualizado e estruturado em pacotes te
 
 ## 2. Compilação e Renderização dos Diagramas
 - Diagrama compilado e validado com PlantUML em formatos vetoriais e rasterizados:
-  - [`Diagrama_Casos_De_Uso_Cliente.svg`](file:///var/www/html/agsonhos/docs/business/use-cases/Diagrama_Casos_De_Uso_Cliente.svg)
-  - [`Diagrama_Casos_De_Uso_Cliente.png`](file:///var/www/html/agsonhos/docs/business/use-cases/Diagrama_Casos_De_Uso_Cliente.png)
+  - [`Diagrama_Casos_De_Uso_Cliente.svg`](/docs/business/use-cases/Diagrama_Casos_De_Uso_Cliente.svg)
+  - [`Diagrama_Casos_De_Uso_Cliente.png`](/docs/business/use-cases/Diagrama_Casos_De_Uso_Cliente.png)
 

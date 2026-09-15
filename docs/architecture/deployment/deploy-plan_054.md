@@ -32,7 +32,7 @@ Este plano descreve o ajuste na inicialização da **Alpha Engine** para alterna
 
 ### Bootstraps da Aplicação (Catálogo & Admin)
 
-#### [MODIFY] [index.php (Public Catalog)](file:///var/www/html/agsonhos/public_html/index.php)
+#### [MODIFY] [index.php (Public Catalog)](/public_html/index.php)
 - Ler `$appEnv` e `$appDebug` do `.env` para determinar se a aplicação está operando em desenvolvimento (`$isDev`).
 - Parametrizar a criação do Twig:
   ```php
@@ -43,9 +43,9 @@ Este plano descreve o ajuste na inicialização da **Alpha Engine** para alterna
   ```php
   $errorMiddleware = $app->addErrorMiddleware($isDev, true, true);
   ```
-- Registrar um **Handler Global de Erros 500** customizado para renderizar a view amigável [500.html.twig](file:///var/www/html/agsonhos/resources/views/pages/errors/500.html.twig) quando `$isDev` for `false`.
+- Registrar um **Handler Global de Erros 500** customizado para renderizar a view amigável [500.html.twig](/resources/views/pages/errors/500.html.twig) quando `$isDev` for `false`.
 
-#### [MODIFY] [index.php (Admin)](file:///var/www/html/agsonhos/public_html/LPDHED2dC7Gjrg2b/index.php)
+#### [MODIFY] [index.php (Admin)](/public_html/LPDHED2dC7Gjrg2b/index.php)
 - Aplicar a mesma lógica condicional baseada em `$isDev` na inicialização do painel administrativo.
 - Registrar Handler de Erros 500 customizado do backoffice.
 
@@ -53,10 +53,10 @@ Este plano descreve o ajuste na inicialização da **Alpha Engine** para alterna
 
 ### Camada de Apresentação (Views de Erro 500)
 
-#### [NEW] [500.html.twig (Public)](file:///var/www/html/agsonhos/resources/views/pages/errors/500.html.twig)
+#### [NEW] [500.html.twig (Public)](/resources/views/pages/errors/500.html.twig)
 - Criar a página de erro 500 amigável para o e-commerce público, estendendo o layout base com mensagem decorativa e botão de retorno à home.
 
-#### [NEW] [500.html.twig (Admin)](file:///var/www/html/agsonhos/resources/views/admin/pages/errors/500.html.twig)
+#### [NEW] [500.html.twig (Admin)](/resources/views/admin/pages/errors/500.html.twig)
 - Criar a página de erro 500 amigável para o painel administrativo.
 
 ---
@@ -84,29 +84,29 @@ Este plano descreve o ajuste na inicialização da **Alpha Engine** para alterna
 # Walkthrough - Implementação de Segurança (CSRF, Security Headers, Secure Cookies, Rate Limiting & Hardening de Produção)
 
 ## 🔒 1. Proteção Anti-CSRF
-- **[CsrfGuardMiddleware.php](file:///var/www/html/agsonhos/core/Auth/Middleware/CsrfGuardMiddleware.php)**: Proteção anti-CSRF com inicialização preguiçosa (*lazy initialization*) para evitar erros de sessão prematura e handler de erro JSON/HTML.
+- **[CsrfGuardMiddleware.php](/core/Auth/Middleware/CsrfGuardMiddleware.php)**: Proteção anti-CSRF com inicialização preguiçosa (*lazy initialization*) para evitar erros de sessão prematura e handler de erro JSON/HTML.
 
 ---
 
 ## 🛡️ 2. Cabeçalhos de Segurança HTTP (Security Headers)
-- **[SecurityHeadersMiddleware.php](file:///var/www/html/agsonhos/core/Auth/Middleware/SecurityHeadersMiddleware.php)**: Cabeçalhos defensivos `X-Frame-Options`, `nosniff`, `XSS-Protection`, `Referrer-Policy`, `Permissions-Policy`, `CSP` e `HSTS` (HTTPS).
+- **[SecurityHeadersMiddleware.php](/core/Auth/Middleware/SecurityHeadersMiddleware.php)**: Cabeçalhos defensivos `X-Frame-Options`, `nosniff`, `XSS-Protection`, `Referrer-Policy`, `Permissions-Policy`, `CSP` e `HSTS` (HTTPS).
 
 ---
 
 ## 🍪 3. Flag `; Secure` Condicional em Cookies de Sessão
-- **[CookieHelper.php](file:///var/www/html/agsonhos/core/Support/CookieHelper.php)**: Utilitário para formatar cookies HTTP anexando `; Secure` sob conexões HTTPS.
+- **[CookieHelper.php](/core/Support/CookieHelper.php)**: Utilitário para formatar cookies HTTP anexando `; Secure` sob conexões HTTPS.
 
 ---
 
 ## ⚡ 4. Limitação de Taxa por IP (Rate Limiting com Redis & Fallback em Arquivo)
-- **[RateLimitMiddleware.php](file:///var/www/html/agsonhos/core/Auth/Middleware/RateLimitMiddleware.php)**: Cota estrita (10 req/min) para rotas de autenticação e cota ampla (60 req/min) para APIs `/api/*`, com fallback local em arquivo para desenvolvimento.
+- **[RateLimitMiddleware.php](/core/Auth/Middleware/RateLimitMiddleware.php)**: Cota estrita (10 req/min) para rotas de autenticação e cota ampla (60 req/min) para APIs `/api/*`, com fallback local em arquivo para desenvolvimento.
 
 ---
 
 ## 🛠️ 5. Desativação do Modo de Depuração em Produção & Handler 500
 
 - **Parametrização Dinâmica do Ambiente (`$isDev`)**:
-  - Tanto em **[public_html/index.php](file:///var/www/html/agsonhos/public_html/index.php)** quanto no painel administrativo ([public_html/LPDHED2dC7Gjrg2b/index.php](file:///var/www/html/agsonhos/public_html/LPDHED2dC7Gjrg2b/index.php)), o estado de depuração é lido dinamicamente das variáveis do `.env`:
+  - Tanto em **[public_html/index.php](/public_html/index.php)** quanto no painel administrativo ([public_html/LPDHED2dC7Gjrg2b/index.php](/public_html/LPDHED2dC7Gjrg2b/index.php)), o estado de depuração é lido dinamicamente das variáveis do `.env`:
     ```php
     $appEnv = $_ENV['APP_ENV'] ?? 'production';
     $appDebug = filter_var($_ENV['APP_DEBUG'] ?? false, FILTER_VALIDATE_BOOLEAN);
@@ -116,8 +116,8 @@ Este plano descreve o ajuste na inicialização da **Alpha Engine** para alterna
   - Twig `'debug' => $isDev`, `'auto_reload' => $isDev`.
   - Slim `$app->addErrorMiddleware($isDev, true, true)`.
 - **Novas Views de Erro 500 Amigáveis**:
-  - **[500.html.twig (Público)](file:///var/www/html/agsonhos/resources/views/pages/errors/500.html.twig)** (`NEW`): Tela visual amigável para o e-commerce.
-  - **[500.html.twig (Admin)](file:///var/www/html/agsonhos/resources/views/admin/pages/errors/500.html.twig)** (`NEW`): Tela visual amigável para o backoffice.
+  - **[500.html.twig (Público)](/resources/views/pages/errors/500.html.twig)** (`NEW`): Tela visual amigável para o e-commerce.
+  - **[500.html.twig (Admin)](/resources/views/admin/pages/errors/500.html.twig)** (`NEW`): Tela visual amigável para o backoffice.
 - **Default Error Handler 500**:
   - Quando a aplicação executa em modo de produção (`$isDev = false`), exceções não tratadas são gravadas silenciosamente no log do servidor e o usuário recebe a resposta HTTP 500 limpa (JSON para AJAX ou página 500 renderizada para o navegador), impedindo o vazamento de caminhos de código e detalhes de infraestrutura.
 

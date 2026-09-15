@@ -21,22 +21,22 @@ Realizamos uma busca minuciosa em todas as páginas Twig no diretório `resource
 Encontramos **10 páginas Twig** contendo folhas de estilo internas que somam milhares de linhas duplicadas de CSS. Abaixo está a listagem dessas páginas agrupadas por domínio/contexto:
 
 ### 1. Contexto de Endereços (`Addresses`)
-* 📄 [addresses/create.twig](file:///var/www/html/agsonhos/resources/views/pages/users/addresses/create.twig) (~190 linhas)
-* 📄 [addresses/edit.twig](file:///var/www/html/agsonhos/resources/views/pages/users/addresses/edit.twig) (~130 linhas de duplicação idêntica)
-* 📄 [addresses/index.twig](file:///var/www/html/agsonhos/resources/views/pages/users/addresses/index.twig) (~190 linhas de estilos similares de layout e botões)
+* 📄 [addresses/create.twig](/resources/views/pages/users/addresses/create.twig) (~190 linhas)
+* 📄 [addresses/edit.twig](/resources/views/pages/users/addresses/edit.twig) (~130 linhas de duplicação idêntica)
+* 📄 [addresses/index.twig](/resources/views/pages/users/addresses/index.twig) (~190 linhas de estilos similares de layout e botões)
 
 ### 2. Contexto de Pedidos (`Orders & History`)
-* 📄 [accounts/orders.twig](file:///var/www/html/agsonhos/resources/views/pages/users/accounts/orders.twig) (~290 linhas)
-* 📄 [accounts/order-history.twig](file:///var/www/html/agsonhos/resources/views/pages/users/accounts/order-history.twig) (~370 linhas)
+* 📄 [accounts/orders.twig](/resources/views/pages/users/accounts/orders.twig) (~290 linhas)
+* 📄 [accounts/order-history.twig](/resources/views/pages/users/accounts/order-history.twig) (~370 linhas)
 
 ### 3. Contexto de Devoluções (`Returns`)
-* 📄 [users/return.twig](file:///var/www/html/agsonhos/resources/views/pages/users/return.twig) (~220 linhas)
-* 📄 [users/return-info.html.twig](file:///var/www/html/agsonhos/resources/views/pages/users/return-info.html.twig) (~220 linhas)
-* 📄 [product/product-returns.html.twig](file:///var/www/html/agsonhos/resources/views/pages/product/product-returns.html.twig) (~150 linhas)
+* 📄 [users/return.twig](/resources/views/pages/users/return.twig) (~220 linhas)
+* 📄 [users/return-info.html.twig](/resources/views/pages/users/return-info.html.twig) (~220 linhas)
+* 📄 [product/product-returns.html.twig](/resources/views/pages/product/product-returns.html.twig) (~150 linhas)
 
 ### 4. Páginas Institucionais (`Information & Contact`)
-* 📄 [information/show.html.twig](file:///var/www/html/agsonhos/resources/views/pages/information/show.html.twig) (~50 linhas)
-* 📄 [information/contact.twig](file:///var/www/html/agsonhos/resources/views/pages/information/contact.twig) (~180 linhas)
+* 📄 [information/show.html.twig](/resources/views/pages/information/show.html.twig) (~50 linhas)
+* 📄 [information/contact.twig](/resources/views/pages/information/contact.twig) (~180 linhas)
 
 ---
 
@@ -73,12 +73,12 @@ Para realizar essa limpeza de forma segura sem quebrar o layout das páginas em 
 1. **Fase 1 (Endereços)**:
    * Extrair os estilos repetidos de `create.twig`, `edit.twig` e `index.twig`.
    * Unificar seletores comuns (ex: prefixar classes como `.addr-` e remover duplicatas).
-   * Migrar para o final do [personalizada.css](file:///var/www/html/agsonhos/public_html/css/custom/personalizada.css).
+   * Migrar para o final do [personalizada.css](/public_html/css/custom/personalizada.css).
    * Remover os blocos `<style>` originais desses arquivos.
 
 2. **Fase 2 (Pedidos)**:
    * Unificar os elementos de tabela, histórico e detalhes entre `orders.twig` e `order-history.twig` (e.g., as pílulas de status `.status-pill` e os cartões `.orders-card`).
-   * Migrar para [personalizada.css](file:///var/www/html/agsonhos/public_html/css/custom/personalizada.css) e remover os blocos `<style>` originais.
+   * Migrar para [personalizada.css](/public_html/css/custom/personalizada.css) e remover os blocos `<style>` originais.
 
 3. **Fase 3 (Devoluções e Institucional)**:
    * Repetir o processo para as demais páginas mapeadas.
@@ -91,8 +91,8 @@ Este plano descreve o processo de migração e unificação das folhas de estilo
 
 ## 🎯 Objetivo
 
-* **Unificar** seletores repetidos em [create.twig](file:///var/www/html/agsonhos/resources/views/pages/users/addresses/create.twig), [edit.twig](file:///var/www/html/agsonhos/resources/views/pages/users/addresses/edit.twig) e [index.twig](file:///var/www/html/agsonhos/resources/views/pages/users/addresses/index.twig).
-* **Migrar** os estilos resultantes para o arquivo [personalizada.css](file:///var/www/html/agsonhos/public_html/css/custom/personalizada.css).
+* **Unificar** seletores repetidos em [create.twig](/resources/views/pages/users/addresses/create.twig), [edit.twig](/resources/views/pages/users/addresses/edit.twig) e [index.twig](/resources/views/pages/users/addresses/index.twig).
+* **Migrar** os estilos resultantes para o arquivo [personalizada.css](/public_html/css/custom/personalizada.css).
 * **Remover** as tags `<style>` internas destas páginas para manter os templates limpos, aproveitando o cache do navegador para o arquivo CSS global.
 
 ---
@@ -101,18 +101,18 @@ Este plano descreve o processo de migração e unificação das folhas de estilo
 
 ### 1. Folhas de Estilo (CSS)
 
-#### [MODIFY] [personalizada.css](file:///var/www/html/agsonhos/public_html/css/custom/personalizada.css)
+#### [MODIFY] [personalizada.css](/public_html/css/custom/personalizada.css)
 * Adicionar as regras de estilos unificados de Endereços ao final do arquivo. As variações específicas de tamanho dos heróis (`max-width`) e ícones serão mantidas através de escopo usando os seletores de ID pai das páginas (`#address-create-page`, `#address-edit-page`, `#addresses-page`).
 
 ### 2. Templates Twig (Views)
 
-#### [MODIFY] [index.twig](file:///var/www/html/agsonhos/resources/views/pages/users/addresses/index.twig)
+#### [MODIFY] [index.twig](/resources/views/pages/users/addresses/index.twig)
 * Remover todo o bloco `<style>` interno (linhas 142 a 339).
 
-#### [MODIFY] [create.twig](file:///var/www/html/agsonhos/resources/views/pages/users/addresses/create.twig)
+#### [MODIFY] [create.twig](/resources/views/pages/users/addresses/create.twig)
 * Remover todo o bloco `<style>` interno (linhas 152 a 345).
 
-#### [MODIFY] [edit.twig](file:///var/www/html/agsonhos/resources/views/pages/users/addresses/edit.twig)
+#### [MODIFY] [edit.twig](/resources/views/pages/users/addresses/edit.twig)
 * Remover todo o bloco `<style>` interno (linhas 159 a 291).
 
 ---
@@ -500,10 +500,10 @@ Este plano descreve o processo de migração e unificação das folhas de estilo
 
 # Tarefas — Fase 1 (Consolidação de Estilos de Endereço)
 
-- `[x]` Migrar e consolidar estilos no [personalizada.css](file:///var/www/html/agsonhos/public_html/css/custom/personalizada.css)
-- `[x]` Remover o bloco `<style>` em [create.twig](file:///var/www/html/agsonhos/resources/views/pages/users/addresses/create.twig)
-- `[x]` Remover o bloco `<style>` em [edit.twig](file:///var/www/html/agsonhos/resources/views/pages/users/addresses/edit.twig)
-- `[x]` Remover o bloco `<style>` em [index.twig](file:///var/www/html/agsonhos/resources/views/pages/users/addresses/index.twig)
+- `[x]` Migrar e consolidar estilos no [personalizada.css](/public_html/css/custom/personalizada.css)
+- `[x]` Remover o bloco `<style>` em [create.twig](/resources/views/pages/users/addresses/create.twig)
+- `[x]` Remover o bloco `<style>` em [edit.twig](/resources/views/pages/users/addresses/edit.twig)
+- `[x]` Remover o bloco `<style>` em [index.twig](/resources/views/pages/users/addresses/index.twig)
 - `[x]` Validar layout das páginas de Endereço no e-commerce
 
 # Walkthrough — Fase 1 (Consolidação de Estilos de Endereço)
@@ -515,18 +515,18 @@ Concluímos a execução da **Fase 1**, migrando e unificando com sucesso as fol
 ## 🛠️ Alterações Realizadas
 
 ### 1. Centralização e Unificação de CSS
-* **[personalizada.css](file:///var/www/html/agsonhos/public_html/css/custom/personalizada.css)**:
+* **[personalizada.css](/public_html/css/custom/personalizada.css)**:
   * Agrupou e unificou estilos duplicados dos elementos das páginas de endereço (`.addr-hero`, `.addr-breadcrumb`, `.addr-wrapper`, `.addr-alert`, `.addr-btn-back`).
   * Manteve as variações de largura máxima e tamanho de ícones aplicando escopo a partir do ID da página-pai (`#address-create-page`, `#address-edit-page`, `#addresses-page`).
   * Consolidou os estilos dos formulários compartilhados de criação e edição (`.addr-form-card`, `.addr-form-section`, `.addr-form-grid`, etc.).
   * Adicionou estilos específicos da listagem (`.addr-grid`, `.addr-card`, `.addr-btn-card`).
 
 ### 2. Limpeza dos Templates Twig
-* **[create.twig](file:///var/www/html/agsonhos/resources/views/pages/users/addresses/create.twig)**:
+* **[create.twig](/resources/views/pages/users/addresses/create.twig)**:
   * Removido o bloco `<style>` contendo ~190 linhas.
-* **[edit.twig](file:///var/www/html/agsonhos/resources/views/pages/users/addresses/edit.twig)**:
+* **[edit.twig](/resources/views/pages/users/addresses/edit.twig)**:
   * Removido o bloco `<style>` contendo ~130 linhas de duplicação.
-* **[index.twig](file:///var/www/html/agsonhos/resources/views/pages/users/addresses/index.twig)**:
+* **[index.twig](/resources/views/pages/users/addresses/index.twig)**:
   * Removido o bloco `<style>` contendo ~190 linhas.
 
 ---

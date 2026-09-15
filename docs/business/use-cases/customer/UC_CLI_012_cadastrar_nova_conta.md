@@ -11,7 +11,7 @@
 | **Atores Secundários** | API ViaCEP / Consulta Receita Federal, Sistema Alpha Engine |
 | **Tipo** | Condução / Cadastral |
 | **Frequência de Uso** | Alta |
-| **Rastreabilidade** | **RF:** [RF014](file:///var/www/html/agsonhos/docs/requirements/functional/functional_requirements.yaml) (Autenticação e cadastro PF/PJ), [RF017](file:///var/www/html/agsonhos/docs/requirements/functional/functional_requirements.yaml) (Múltiplos Shiptos)<br>**RN:** [RN017](file:///var/www/html/agsonhos/docs/requirements/business_rules/business_rules.yaml) (Preço diferenciado PJ / Varejo e Atacado)<br>**RNF:** [RNF003](file:///var/www/html/agsonhos/docs/requirements/non_functional/non_functional_requirements.yaml) (Proteção de dados/LGPD e Criptografia Argon2id) |
+| **Rastreabilidade** | **RF:** [RF014](/docs/requirements/functional/functional_requirements.yaml) (Autenticação e cadastro PF/PJ), [RF017](/docs/requirements/functional/functional_requirements.yaml) (Múltiplos Shiptos)<br>**RN:** [RN017](/docs/requirements/business_rules/business_rules.yaml) (Preço diferenciado PJ / Varejo e Atacado)<br>**RNF:** [RNF003](/docs/requirements/non_functional/non_functional_requirements.yaml) (Proteção de dados/LGPD e Criptografia Argon2id) |
 
 ---
 

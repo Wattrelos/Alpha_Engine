@@ -11,7 +11,7 @@
 | **Atores Secundários** | Sistema Alpha Engine |
 | **Tipo** | Condução / B2B & Projetos |
 | **Frequência de Uso** | Média |
-| **Rastreabilidade** | **RF:** [RF004](file:///var/www/html/agsonhos/docs/requirements/functional/functional_requirements.yaml) (Venda fracionada/múltiplas unidades), [RF014](file:///var/www/html/agsonhos/docs/requirements/functional/functional_requirements.yaml) (Perfil cliente)<br>**RN:** [RN015](file:///var/www/html/agsonhos/docs/requirements/business_rules/business_rules.yaml) (Desconto progressivo por volume), [RN017](file:///var/www/html/agsonhos/docs/requirements/business_rules/business_rules.yaml) (Preços de atacado B2B)<br>**RNF:** [RNF001](file:///var/www/html/agsonhos/docs/requirements/non_functional/non_functional_requirements.yaml) (Interface de montagem de lista de materiais) |
+| **Rastreabilidade** | **RF:** [RF004](/docs/requirements/functional/functional_requirements.yaml) (Venda fracionada/múltiplas unidades), [RF014](/docs/requirements/functional/functional_requirements.yaml) (Perfil cliente)<br>**RN:** [RN015](/docs/requirements/business_rules/business_rules.yaml) (Desconto progressivo por volume), [RN017](/docs/requirements/business_rules/business_rules.yaml) (Preços de atacado B2B)<br>**RNF:** [RNF001](/docs/requirements/non_functional/non_functional_requirements.yaml) (Interface de montagem de lista de materiais) |
 
 ---
 

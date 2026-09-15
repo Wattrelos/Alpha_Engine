@@ -11,7 +11,7 @@
 | **Atores Secundários** | Sistema Alpha Engine |
 | **Tipo** | Condução / Gestão de Cotações |
 | **Frequência de Uso** | Média |
-| **Rastreabilidade** | **RF:** [RF014](file:///var/www/html/agsonhos/docs/requirements/functional/functional_requirements.yaml) (Perfil), [RF016](file:///var/www/html/agsonhos/docs/requirements/functional/functional_requirements.yaml) (Histórico)<br>**RN:** [RN015](file:///var/www/html/agsonhos/docs/requirements/business_rules/business_rules.yaml) (Preços progressivos)<br>**RNF:** [RNF001](file:///var/www/html/agsonhos/docs/requirements/non_functional/non_functional_requirements.yaml) (Visão consolidada) |
+| **Rastreabilidade** | **RF:** [RF014](/docs/requirements/functional/functional_requirements.yaml) (Perfil), [RF016](/docs/requirements/functional/functional_requirements.yaml) (Histórico)<br>**RN:** [RN015](/docs/requirements/business_rules/business_rules.yaml) (Preços progressivos)<br>**RNF:** [RNF001](/docs/requirements/non_functional/non_functional_requirements.yaml) (Visão consolidada) |
 
 ---
 

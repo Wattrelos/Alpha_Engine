@@ -35,7 +35,7 @@ Adicionaremos regras de estilo reutilizáveis para tabelas, imagens e formulári
 
 ### 2. Mapeamento no Middleware de Idiomas
 
-Mapearemos a rota de fabricantes em [AdminLanguageMiddleware.php](file:///var/www/html/agsonhos/core/Auth/Middleware/AdminLanguageMiddleware.php) para carregar o namespace `admin/manufacturer`.
+Mapearemos a rota de fabricantes em [AdminLanguageMiddleware.php](/core/Auth/Middleware/AdminLanguageMiddleware.php) para carregar o namespace `admin/manufacturer`.
 ```php
 'admin.manufacturer.list'   => 'admin/manufacturer',
 'admin.manufacturer.create' => 'admin/manufacturer',
@@ -48,15 +48,15 @@ Mapearemos a rota de fabricantes em [AdminLanguageMiddleware.php](file:///var/ww
 ### 3. Criação de Arquivos de Idiomas (JSON)
 
 Criaremos os arquivos JSON com as strings de tradução nos três idiomas suportados:
-- **Português**: [pt-br.admin.manufacturer.json](file:///var/www/html/agsonhos/Locales/pt-br/pt-br.admin.manufacturer.json)
-- **Inglês**: [en-gb.admin.manufacturer.json](file:///var/www/html/agsonhos/Locales/en-gb/en-gb.admin.setting.json)
-- **Francês**: [fr-fr.admin.manufacturer.json](file:///var/www/html/agsonhos/Locales/fr-fr/fr-fr.admin.setting.json)
+- **Português**: [pt-br.admin.manufacturer.json](/Locales/pt-br/pt-br.admin.manufacturer.json)
+- **Inglês**: [en-gb.admin.manufacturer.json](/Locales/en-gb/en-gb.admin.setting.json)
+- **Francês**: [fr-fr.admin.manufacturer.json](/Locales/fr-fr/fr-fr.admin.setting.json)
 
 ### 4. Substituição de Estilos e Textos nas Views Twig
 
-- **[index.html.twig](file:///var/www/html/agsonhos/resources/views/admin/catalog/manufacturer/index.html.twig)**
-- **[create.html.twig](file:///var/www/html/agsonhos/resources/views/admin/catalog/manufacturer/create.html.twig)**
-- **[edit.html.twig](file:///var/www/html/agsonhos/resources/views/admin/catalog/manufacturer/edit.html.twig)**
+- **[index.html.twig](/resources/views/admin/catalog/manufacturer/index.html.twig)**
+- **[create.html.twig](/resources/views/admin/catalog/manufacturer/create.html.twig)**
+- **[edit.html.twig](/resources/views/admin/catalog/manufacturer/edit.html.twig)**
 
 Nas três views:
 - Removeremos os estilos inline (`style="..."`) e aplicaremos as classes CSS correspondentes.
@@ -66,19 +66,19 @@ Nas três views:
 
 ## Detalhes das Alterações por Arquivo
 
-### [MODIFY] [components.css](file:///var/www/html/agsonhos/public_html/css/admin/components.css)
+### [MODIFY] [components.css](/public_html/css/admin/components.css)
 Adicionar novas classes de utilitários de listagem e formulário ao fim do arquivo.
 
-### [MODIFY] [AdminLanguageMiddleware.php](file:///var/www/html/agsonhos/core/Auth/Middleware/AdminLanguageMiddleware.php)
+### [MODIFY] [AdminLanguageMiddleware.php](/core/Auth/Middleware/AdminLanguageMiddleware.php)
 Mapear as 6 rotas correspondentes ao namespace `admin/manufacturer`.
 
-### [NEW] [pt-br.admin.manufacturer.json](file:///var/www/html/agsonhos/Locales/pt-br/pt-br.admin.manufacturer.json)
+### [NEW] [pt-br.admin.manufacturer.json](/Locales/pt-br/pt-br.admin.manufacturer.json)
 Chaves de tradução em Português.
 
-### [NEW] [en-gb.admin.manufacturer.json](file:///var/www/html/agsonhos/Locales/en-gb/en-gb.admin.manufacturer.json)
+### [NEW] [en-gb.admin.manufacturer.json](/Locales/en-gb/en-gb.admin.manufacturer.json)
 Chaves de tradução em Inglês.
 
-### [NEW] [fr-fr.admin.manufacturer.json](file:///var/www/html/agsonhos/Locales/fr-fr/fr-fr.admin.manufacturer.json)
+### [NEW] [fr-fr.admin.manufacturer.json](/Locales/fr-fr/fr-fr.admin.manufacturer.json)
 Chaves de tradução em Francês.
 
 ### [MODIFY] Views de Fabricantes (`index`, `create`, `edit`)
@@ -110,7 +110,7 @@ Realizamos com sucesso a transferência de estilos inline e a internacionalizaç
 ## Alterações Realizadas
 
 ### 1. Refatoração de Estilos (CSS)
-- **Folha de Estilos**: Adicionamos classes em [components.css](file:///var/www/html/agsonhos/public_html/css/admin/components.css) para as listagens e formulários de fabricante:
+- **Folha de Estilos**: Adicionamos classes em [components.css](/public_html/css/admin/components.css) para as listagens e formulários de fabricante:
   - `.card-table`: Card customizado para conter tabelas (sem padding geral).
   - `.table-clean`: Tabela sem margem padrão para se integrar perfeitamente ao card.
   - `.table-image` e `.table-image-placeholder`: Visualização das logos de fabricante na listagem.
@@ -118,14 +118,14 @@ Realizamos com sucesso a transferência de estilos inline e a internacionalizaç
   - `.table-pagination-bar`: Barra de paginação.
   - `.form-label-lg` e `.form-text-muted`: Inputs de arquivo.
   - `.image-current-preview-box`, `.image-current-preview`, `.image-current-remove-label`, `.image-current-remove-checkbox`: Área de pré-visualização e exclusão de imagem existente.
-- **Views Twig**: Todos os atributos inline `style="..."` foram removidos e substituídos pelas classes CSS correspondentes em [index.html.twig](file:///var/www/html/agsonhos/resources/views/admin/catalog/manufacturer/index.html.twig), [create.html.twig](file:///var/www/html/agsonhos/resources/views/admin/catalog/manufacturer/create.html.twig) e [edit.html.twig](file:///var/www/html/agsonhos/resources/views/admin/catalog/manufacturer/edit.html.twig).
+- **Views Twig**: Todos os atributos inline `style="..."` foram removidos e substituídos pelas classes CSS correspondentes em [index.html.twig](/resources/views/admin/catalog/manufacturer/index.html.twig), [create.html.twig](/resources/views/admin/catalog/manufacturer/create.html.twig) e [edit.html.twig](/resources/views/admin/catalog/manufacturer/edit.html.twig).
 
 ### 2. Internacionalização (i18n)
-- **Middleware**: Mapeamos as rotas do módulo de fabricantes (`admin.manufacturer.*`) no middleware de idioma [AdminLanguageMiddleware.php](file:///var/www/html/agsonhos/core/Auth/Middleware/AdminLanguageMiddleware.php), fazendo com que carregue o namespace `admin/manufacturer`.
+- **Middleware**: Mapeamos as rotas do módulo de fabricantes (`admin.manufacturer.*`) no middleware de idioma [AdminLanguageMiddleware.php](/core/Auth/Middleware/AdminLanguageMiddleware.php), fazendo com que carregue o namespace `admin/manufacturer`.
 - **Arquivos JSON de Tradução**: Criamos os seguintes arquivos contendo todas as strings traduzidas:
-  - [pt-br.admin.manufacturer.json](file:///var/www/html/agsonhos/Locales/pt-br/pt-br.admin.manufacturer.json) (Português)
-  - [en-gb.admin.manufacturer.json](file:///var/www/html/agsonhos/Locales/en-gb/en-gb.admin.manufacturer.json) (Inglês)
-  - [fr-fr.admin.manufacturer.json](file:///var/www/html/agsonhos/Locales/fr-fr/fr-fr.admin.manufacturer.json) (Francês)
+  - [pt-br.admin.manufacturer.json](/Locales/pt-br/pt-br.admin.manufacturer.json) (Português)
+  - [en-gb.admin.manufacturer.json](/Locales/en-gb/en-gb.admin.manufacturer.json) (Inglês)
+  - [fr-fr.admin.manufacturer.json](/Locales/fr-fr/fr-fr.admin.manufacturer.json) (Francês)
 - **Views Twig**: Substituímos todos os textos estáticos nas três views de fabricantes por referências ao objeto dinâmico `AdminLang` com fallbacks amigáveis (ex: `{{ AdminLang.heading_title|default('Gerenciamento de Fabricantes') }}`).
 
 ---

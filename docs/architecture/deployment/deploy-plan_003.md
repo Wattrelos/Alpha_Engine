@@ -30,29 +30,29 @@ Este plano descreve como finalizaremos a migração do sistema legado de idiomas
 
 ### Script de Migração
 
-#### [NEW] [migrate_languages.php](file:///var/www/html/agsonhos/migrate_languages.php)
+#### [NEW] [migrate_languages.php](/migrate_languages.php)
 - Criar script PHP temporário que percorrerá recursivamente todos os diretórios de idiomas legados (`core/language_legacy/pt-br`, `en-gb`, `fr-fr`, etc).
 - Para cada arquivo `.php` encontrado, extrair as chaves de tradução do array `$_` e salvar no formato JSON na nova estrutura `Locales/{lang}/{lang}.{namespace}.json`.
 
 ### Backend
 
-#### [MODIFY] [CustomerRepository.php](file:///var/www/html/agsonhos/core/Model/Domain/Repositories/CustomerRepository.php)
+#### [MODIFY] [CustomerRepository.php](/core/Model/Domain/Repositories/CustomerRepository.php)
 - Remover o fallback manual com `include` em `getTranslation()`.
 - Utilizar exclusivamente o método herdado `$this->loadLanguage($route)` que já aciona a classe `Alpha\Support\Language` por debaixo dos panos através do container PSR-11.
 
-#### [MODIFY] [ShowRegistrationFormAction.php](file:///var/www/html/agsonhos/core/Controller/Actions/Customer/Auth/ShowRegistrationFormAction.php)
+#### [MODIFY] [ShowRegistrationFormAction.php](/core/Controller/Actions/Customer/Auth/ShowRegistrationFormAction.php)
 - Remover o método `private function loadLanguageData()`.
 - O container já tem suporte ao componente `Alpha\Support\Language`. Passaremos a obter o array de idiomas instanciando a nova classe de `Language` ou carregando-a devidamente para obter as chaves através do método genérico (JSON-first).
 
-#### [MODIFY] [UpdateAction.php](file:///var/www/html/agsonhos/core/Controller/Actions/Customer/Account/UpdateAction.php)
+#### [MODIFY] [UpdateAction.php](/core/Controller/Actions/Customer/Account/UpdateAction.php)
 - Semelhante ao `ShowRegistrationFormAction.php`, remover o carregamento legado (`loadLanguageData` com hardcode para a pasta `language_legacy`).
 
-#### [MODIFY] [Language.php](file:///var/www/html/agsonhos/core/Support/Language.php)
+#### [MODIFY] [Language.php](/core/Support/Language.php)
 - Deletar a propriedade `$legacyDir`.
 - Remover o construtor `$legacyDir`.
 - Remover o fallback existente na função `load()` (onde tentava fazer `include` caso não achasse o `.json`).
 
-#### [DELETE] [core/language_legacy](file:///var/www/html/agsonhos/core/language_legacy)
+#### [DELETE] [core/language_legacy](/core/language_legacy)
 - Exclusão do diretório legado de forma recursiva por não ter mais utilidade na Alpha Engine.
 
 ---
@@ -68,9 +68,9 @@ Este plano descreve como finalizaremos a migração do sistema legado de idiomas
 
 - [x] Criar script de migração para converter PHP legacy language files em JSON (`migrate_languages.php`).
 - [x] Executar o script para popular o diretório `Locales` com os novos arquivos JSON.
-- [x] Atualizar [CustomerRepository.php](file:///var/www/html/agsonhos/core/Model/Domain/Repositories/CustomerRepository.php) para usar `$this->loadLanguage($route)` sem fallback em `core/language_legacy`.
-- [x] Atualizar [ShowRegistrationFormAction.php](file:///var/www/html/agsonhos/core/Controller/Actions/Customer/Auth/ShowRegistrationFormAction.php) e [UpdateAction.php](file:///var/www/html/agsonhos/core/Controller/Actions/Customer/Account/UpdateAction.php) para utilizar a instância correta de Language através de injeção e remover as menções a `core/language_legacy`.
-- [x] Atualizar a classe [Language.php](file:///var/www/html/agsonhos/core/Support/Language.php) removendo as propriedades e lógicas do diretório `legacyDir`.
+- [x] Atualizar [CustomerRepository.php](/core/Model/Domain/Repositories/CustomerRepository.php) para usar `$this->loadLanguage($route)` sem fallback em `core/language_legacy`.
+- [x] Atualizar [ShowRegistrationFormAction.php](/core/Controller/Actions/Customer/Auth/ShowRegistrationFormAction.php) e [UpdateAction.php](/core/Controller/Actions/Customer/Account/UpdateAction.php) para utilizar a instância correta de Language através de injeção e remover as menções a `core/language_legacy`.
+- [x] Atualizar a classe [Language.php](/core/Support/Language.php) removendo as propriedades e lógicas do diretório `legacyDir`.
 - [x] Remover definitivamente o diretório legado `core/language_legacy`.
 - [x] Escrever documento walkthrough para revisão final.
 
@@ -86,17 +86,17 @@ A migração do sistema legado de traduções (`core/language_legacy`) para a no
 
 ### 2. Refatoração de Componentes que Consumiam o Legado
 Atualizamos as páginas listadas e o repositório de clientes para usarem o ecossistema PSR-11 no lugar de `includes` manuais do PHP:
-- **Arquivo Modificado:** [CustomerRepository.php](file:///var/www/html/agsonhos/core/Model/Domain/Repositories/CustomerRepository.php)
+- **Arquivo Modificado:** [CustomerRepository.php](/core/Model/Domain/Repositories/CustomerRepository.php)
   - Removemos a lógica complexa de `include $file` no método `getTranslation`.
   - Agora o método utiliza puramente `$this->loadLanguage($route)`, acionando de forma limpa a tradução de domínio.
-- **Arquivos Modificados:** [ShowRegistrationFormAction.php](file:///var/www/html/agsonhos/core/Controller/Actions/Customer/Auth/ShowRegistrationFormAction.php) e [UpdateAction.php](file:///var/www/html/agsonhos/core/Controller/Actions/Customer/Account/UpdateAction.php)
+- **Arquivos Modificados:** [ShowRegistrationFormAction.php](/core/Controller/Actions/Customer/Auth/ShowRegistrationFormAction.php) e [UpdateAction.php](/core/Controller/Actions/Customer/Account/UpdateAction.php)
   - Injetamos o tradutor (`Alpha\Support\Language $translator`) diretamente no construtor via Dependency Injection (DI).
   - Removemos o método utilitário `loadLanguageData` que fazia o scan nos diretórios legados, substituindo pela chamada nativa `$this->translator->load('route')`.
 
 ### 3. Limpeza do Core e Otimização do Language.php
-- **Arquivo Modificado:** [Language.php](file:///var/www/html/agsonhos/core/Support/Language.php)
+- **Arquivo Modificado:** [Language.php](/core/Support/Language.php)
   - Removemos a propriedade de fallback e a propriedade `$legacyDir` do construtor na classe `Language.php`.
-- **Diretório Deletado:** [core/language_legacy](file:///var/www/html/agsonhos/core/language_legacy)
+- **Diretório Deletado:** [core/language_legacy](/core/language_legacy)
   - O diretório inteiro foi deletado do disco, simplificando a base de código.
 
 ---
@@ -132,7 +132,7 @@ Durante a migração, foram executadas as seguintes atividades de desenvolviment
 - **Comandos executados:**
   - `php migrate_languages.php`
   - `rm -rf core/language_legacy migrate_languages.php`
-- **Arquivos editados/analisados:** [CustomerRepository.php](file:///var/www/html/agsonhos/core/Model/Domain/Repositories/CustomerRepository.php), `AppBootstrap.php`, [ShowRegistrationFormAction.php](file:///var/www/html/agsonhos/core/Controller/Actions/Customer/Auth/ShowRegistrationFormAction.php), [UpdateAction.php](file:///var/www/html/agsonhos/core/Controller/Actions/Customer/Account/UpdateAction.php), [Language.php](file:///var/www/html/agsonhos/core/Support/Language.php), `task.md`
+- **Arquivos editados/analisados:** [CustomerRepository.php](/core/Model/Domain/Repositories/CustomerRepository.php), `AppBootstrap.php`, [ShowRegistrationFormAction.php](/core/Controller/Actions/Customer/Auth/ShowRegistrationFormAction.php), [UpdateAction.php](/core/Controller/Actions/Customer/Account/UpdateAction.php), [Language.php](/core/Support/Language.php), `task.md`
 
 A migração foi totalmente concluída conforme o plano! 🎉
 O progresso detalhado e logs de execução podem ser revisados no [Walkthrough](file:///home/kiruma/.gemini/antigravity-ide/brain/10a9a9ed-e5e8-4b51-a624-f19bdcf8f325/walkthrough.md). Seu sistema de idiomas agora está limpo e totalmente preparado para o futuro moderno.

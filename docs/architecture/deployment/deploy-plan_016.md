@@ -27,19 +27,19 @@ Nenhuma nesta etapa, pois o layout do banco de dados já oferece suporte à asso
 
 ### Controladores e Operações de Banco de Dados
 
-#### [MODIFICAR] [CreateProductAction.php](file:///var/www/html/agsonhos/core/Admin/Controllers/Actions/Catalog/Product/CreateProductAction.php)
+#### [MODIFICAR] [CreateProductAction.php](/core/Admin/Controllers/Actions/Catalog/Product/CreateProductAction.php)
 - Buscar todas as categorias de `agsc_category_description` e passá-las para a view Twig.
 
 - No manipulador POST: analisar `product_category` do corpo da requisição.
 
 - Na transação: inserir associações para o novo ID do produto em `agsc_product_to_category`.
 
-#### [MODIFICAR] [EditProductAction.php](file:///var/www/html/agsonhos/core/Admin/Controllers/Actions/Catalog/Product/EditProductAction.php)
+#### [MODIFICAR] [EditProductAction.php](/core/Admin/Controllers/Actions/Catalog/Product/EditProductAction.php)
 - Buscar todas as categorias de `agsc_category_description` e passá-las para a view Twig.
 
 - Buscar as categorias atuais associadas ao produto de `agsc_product_to_category` e passá-las para a view como um array de IDs.
 
-#### [MODIFICAR] [UpdateProductAction.php](file:///var/www/html/agsonhos/core/Admin/Controllers/Actions/Catalog/Product/UpdateProductAction.php)
+#### [MODIFICAR] [UpdateProductAction.php](/core/Admin/Controllers/Actions/Catalog/Product/UpdateProductAction.php)
 - No manipulador POST: analisar `product_category` do corpo da requisição.
 - Exclua as categorias existentes do produto na transação: `DELETE FROM agsc_product_to_category WHERE product_id = ?`.
 
@@ -51,17 +51,17 @@ Nenhuma nesta etapa, pois o layout do banco de dados já oferece suporte à asso
 
 ### Modelos de Interface do Usuário
 
-#### [MODIFY] [create.html.twig](file:///var/www/html/agsonhos/resources/views/admin/pages/products/create.html.twig)
+#### [MODIFY] [create.html.twig](/resources/views/admin/pages/products/create.html.twig)
 - Adicione uma grade responsiva e rolável de caixas de seleção para seleção de categoria (usando CSS personalizado para combinar com o tema premium).
 
-#### [MODIFICAR] [edit.html.twig](file:///var/www/html/agsonhos/resources/views/admin/pages/products/edit.html.twig)
+#### [MODIFICAR] [edit.html.twig](/resources/views/admin/pages/products/edit.html.twig)
 - Adicionar a mesma grade de caixas de seleção na aba Geral, pré-selecionando as categorias atualmente associadas ao produto.
 
 ---
 
 ### Conjunto de Testes
 
-#### [MODIFICAR] [TestCreateProduct.php](file:///var/www/html/agsonhos/tests/TestCreateProduct.php)
+#### [MODIFICAR] [TestCreateProduct.php](/tests/TestCreateProduct.php)
 - Adicionar um campo de seleção de categoria aos dados POST simulados na requisição de teste.
 
 - Verificar se a categoria de teste é inserida na tabela `product_to_category`.
@@ -94,19 +94,19 @@ Integramos com sucesso a atribuição de categorias aos fluxos de trabalho de cr
 ## Alterações Implementadas
 
 ### Controladores
-- **[CreateProductAction.php](file:///var/www/html/agsonhos/core/Admin/Controllers/Actions/Catalog/Product/CreateProductAction.php)**: Adicionada lógica para consultar todas as categorias disponíveis e passá-las para o template no método GET. Adicionada análise do corpo da requisição para IDs de categoria e lógica para armazená-los em `product_to_category` dentro da transação no método POST.
+- **[CreateProductAction.php](/core/Admin/Controllers/Actions/Catalog/Product/CreateProductAction.php)**: Adicionada lógica para consultar todas as categorias disponíveis e passá-las para o template no método GET. Adicionada análise do corpo da requisição para IDs de categoria e lógica para armazená-los em `product_to_category` dentro da transação no método POST.
 
-- **[EditProductAction.php](file:///var/www/html/agsonhos/core/Admin/Controllers/Actions/Catalog/Product/EditProductAction.php)**: Consultadas todas as categorias e as categorias atuais associadas ao produto para passar para a view Twig.
+- **[EditProductAction.php](/core/Admin/Controllers/Actions/Catalog/Product/EditProductAction.php)**: Consultadas todas as categorias e as categorias atuais associadas ao produto para passar para a view Twig.
 
-- **[UpdateProductAction.php](file:///var/www/html/agsonhos/core/Admin/Controllers/Actions/Catalog/Product/UpdateProductAction.php)**: Adicionada análise de IDs de categoria a partir de requisições POST. Integrada lógica de transação para excluir relações de categoria antigas e inserir as atualizadas. A sincronização de categorias de subprodutos existente propaga essas seleções para as variantes filhas automaticamente.
+- **[UpdateProductAction.php](/core/Admin/Controllers/Actions/Catalog/Product/UpdateProductAction.php)**: Adicionada análise de IDs de categoria a partir de requisições POST. Integrada lógica de transação para excluir relações de categoria antigas e inserir as atualizadas. A sincronização de categorias de subprodutos existente propaga essas seleções para as variantes filhas automaticamente.
 
 ### Templates
-- **[create.html.twig](file:///var/www/html/agsonhos/resources/views/admin/pages/products/create.html.twig)**: Adicionada uma interface de usuário premium com caixas de seleção em formato de grade e rolagem para selecionar categorias de produtos.
+- **[create.html.twig](/resources/views/admin/pages/products/create.html.twig)**: Adicionada uma interface de usuário premium com caixas de seleção em formato de grade e rolagem para selecionar categorias de produtos.
 
-- **[edit.html.twig](file:///var/www/html/agsonhos/resources/views/admin/pages/products/edit.html.twig)**: Adicionada a mesma interface de usuário com caixas de seleção em formato de grade na aba Geral, com categorias pré-selecionadas para registros de produtos existentes.
+- **[edit.html.twig](/resources/views/admin/pages/products/edit.html.twig)**: Adicionada a mesma interface de usuário com caixas de seleção em formato de grade na aba Geral, com categorias pré-selecionadas para registros de produtos existentes.
 
 ### Testes
-- **[TestCreateProduct.php](file:///var/www/html/agsonhos/tests/TestCreateProduct.php)**: Aprimoramos o payload simulado para incluir categorias, verificamos a persistência adequada do banco de dados e a limpeza de relações.
+- **[TestCreateProduct.php](/tests/TestCreateProduct.php)**: Aprimoramos o payload simulado para incluir categorias, verificamos a persistência adequada do banco de dados e a limpeza de relações.
 
 ## Resultados da Verificação
 

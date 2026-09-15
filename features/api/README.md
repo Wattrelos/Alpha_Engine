@@ -8,11 +8,11 @@ Este diretório contém os arquivos de especificação executável em **Gherkin 
 
 | Arquivo Feature | Endpoints Cobertos | Métodos | Mecanismo Backend | Contexto Behat |
 | :--- | :--- | :---: | :--- | :--- |
-| [carrinho_checkout_api.feature](file:///var/www/html/agsonhos/features/api/carrinho_checkout_api.feature) | `/api/carrinho/dados`<br>`/api/carrinho/salvar-cep`<br>`/api/carrinho/sincronizar` | `POST` | `CalculateVisitorCartAction`, `SaveShippingCepAction`, `SyncCartAction` | `ApiContext` |
-| [localizacao_geozonas_api.feature](file:///var/www/html/agsonhos/features/api/localizacao_geozonas_api.feature) | `/api/geo/paises/{id}/estados`<br>`/api/geo/estados/{id}/cidades` | `GET` | `GetGeoZonesAction`, `GetGeoCitiesAction` | `ApiContext` |
-| [webhooks_assinatura_hmac.feature](file:///var/www/html/agsonhos/features/api/webhooks_assinatura_hmac.feature) | `/api/webhook/{provider}` | `POST` | `SignatureMiddleware` (HMAC SHA-256) | `ApiContext` |
-| [catalogo_busca_autocomplete_api.feature](file:///var/www/html/agsonhos/features/api/catalogo_busca_autocomplete_api.feature) | `/api/busca/autocomplete`<br>`/api/produtos/{id}/variantes/{sku}/estoque` | `GET` | `SearchAction` & `StockChecker` | `ApiContext` |
-| [contratos_rest_rate_limit_api.feature](file:///var/www/html/agsonhos/features/api/contratos_rest_rate_limit_api.feature) | Grupo `/api/*` | Todos | `RateLimitMiddleware` (60 req/min) & RFC 7807 | `ApiContext` |
+| [carrinho_checkout_api.feature](/features/api/carrinho_checkout_api.feature) | `/api/carrinho/dados`<br>`/api/carrinho/salvar-cep`<br>`/api/carrinho/sincronizar` | `POST` | `CalculateVisitorCartAction`, `SaveShippingCepAction`, `SyncCartAction` | `ApiContext` |
+| [localizacao_geozonas_api.feature](/features/api/localizacao_geozonas_api.feature) | `/api/geo/paises/{id}/estados`<br>`/api/geo/estados/{id}/cidades` | `GET` | `GetGeoZonesAction`, `GetGeoCitiesAction` | `ApiContext` |
+| [webhooks_assinatura_hmac.feature](/features/api/webhooks_assinatura_hmac.feature) | `/api/webhook/{provider}` | `POST` | `SignatureMiddleware` (HMAC SHA-256) | `ApiContext` |
+| [catalogo_busca_autocomplete_api.feature](/features/api/catalogo_busca_autocomplete_api.feature) | `/api/busca/autocomplete`<br>`/api/produtos/{id}/variantes/{sku}/estoque` | `GET` | `SearchAction` & `StockChecker` | `ApiContext` |
+| [contratos_rest_rate_limit_api.feature](/features/api/contratos_rest_rate_limit_api.feature) | Grupo `/api/*` | Todos | `RateLimitMiddleware` (60 req/min) & RFC 7807 | `ApiContext` |
 
 ---
 

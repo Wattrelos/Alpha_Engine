@@ -42,21 +42,21 @@ Este plano especifica a implementação de uma estratégia de **Fallback em Banc
 
 ### 1. Camada de Persistência & Serviços de Auditoria
 
-#### [NEW] [`AuditLoggerService.php`](file:///var/www/html/agsonhos/backend/core/Services/Audit/AuditLoggerService.php)
+#### [NEW] [`AuditLoggerService.php`](/backend/core/Services/Audit/AuditLoggerService.php)
 - Serviço central de auditoria que encapsula o fluxo de gravação:
   - Tenta publicar no RabbitMQ via `QueueService`.
   - Se RabbitMQ falhar ou estiver desativado, faz INSERT na tabela `tbkk_audit_logs`.
   - Se a tabela `tbkk_audit_logs` não existir, cria-a dinamicamente (`CREATE TABLE IF NOT EXISTS`).
   - Aplica `LgpdSanitizer::sanitizeArray()` em todos os dados e payloads JSON.
 
-#### [MODIFY] [`QueueService.php`](file:///var/www/html/agsonhos/backend/core/Events/QueueService.php)
+#### [MODIFY] [`QueueService.php`](/backend/core/Events/QueueService.php)
 - Adicionar verificação de conectividade e integração graciosa com o mecanismo de fallback em banco de dados caso a conexão com RabbitMQ falhe ou esteja desativada no `.env`.
 
 ---
 
 ### 2. Documentação de Arquitetura
 
-#### [MODIFY] [`security-and-audit-architecture.md`](file:///var/www/html/agsonhos/backend/docs/architecture/security-and-audit-architecture.md)
+#### [MODIFY] [`security-and-audit-architecture.md`](/backend/docs/architecture/security-and-audit-architecture.md)
 - Atualizar a seção 3 (Camada de Auditoria) para documentar a estratégia de **Fallback Multinível** (RabbitMQ -> MySQL `tbkk_audit_logs` -> `storage/logs/audit.log`) adaptada para a Hostinger e ambientes sem broker de mensagens.
 
 ---
@@ -65,7 +65,7 @@ Este plano especifica a implementação de uma estratégia de **Fallback em Banc
 
 ### Testes Automatizados (PHPUnit)
 
-#### [NEW] [`AuditDatabaseFallbackTest.php`](file:///var/www/html/agsonhos/backend/tests/Validation/AuditDatabaseFallbackTest.php)
+#### [NEW] [`AuditDatabaseFallbackTest.php`](/backend/tests/Validation/AuditDatabaseFallbackTest.php)
 - Teste unitário para validar:
   1. Inserção com sucesso de um evento de auditoria na tabela `tbkk_audit_logs` do MySQL quando o RabbitMQ está ausente.
   2. Higienização LGPD no banco de dados (redação de senhas, mascaramento de CPF/E-mail em JSON payload).
@@ -93,23 +93,23 @@ Concluímos com sucesso a implementação da estratégia de **Fallback Multinív
 
 ## 🎯 Componentes Desenvolvidos e Atualizados
 
-### 1. Novo Serviço de Auditoria [`AuditLoggerService.php`](file:///var/www/html/agsonhos/backend/core/Services/Audit/AuditLoggerService.php)
+### 1. Novo Serviço de Auditoria [`AuditLoggerService.php`](/backend/core/Services/Audit/AuditLoggerService.php)
 - Implementa o fluxo de resiliência multinível:
   - **Nível 1:** Publicação assíncrona no RabbitMQ (`RABBITMQ_ENABLED=true`).
   - **Nível 2 (Hostinger Fallback):** Gravação direta na tabela `tbkk_audit_logs` no MySQL via PDO (`ConnectionDB`).
   - **Nível 3 (Emergencial):** Gravação em arquivo local `storage/logs/audit.log`.
 - **Auto-Healing de BD:** Cria automaticamente a tabela `tbkk_audit_logs` no primeiro uso caso ela ainda não exista.
-- **Higienização LGPD Integrada:** Passa obrigatoriamente todos os payloads pelo [`LgpdSanitizer`](file:///var/www/html/agsonhos/backend/core/Support/LgpdSanitizer.php) (redigindo senhas, tokens, mascarando CPFs, CNPJs e e-mails).
+- **Higienização LGPD Integrada:** Passa obrigatoriamente todos os payloads pelo [`LgpdSanitizer`](/backend/core/Support/LgpdSanitizer.php) (redigindo senhas, tokens, mascarando CPFs, CNPJs e e-mails).
 
-### 2. Integração no [`QueueService.php`](file:///var/www/html/agsonhos/backend/core/Events/QueueService.php)
+### 2. Integração no [`QueueService.php`](/backend/core/Events/QueueService.php)
 - Atualizado para tratar graciosamente exceções de falha de conexão com o RabbitMQ, permitindo o chaveamento transparente para a camada de fallback em banco de dados.
 
-### 3. Teste de Validação Automatizada [`AuditDatabaseFallbackTest.php`](file:///var/www/html/agsonhos/backend/tests/Validation/AuditDatabaseFallbackTest.php)
+### 3. Teste de Validação Automatizada [`AuditDatabaseFallbackTest.php`](/backend/tests/Validation/AuditDatabaseFallbackTest.php)
 - Teste dedicado para simular a ausência de RabbitMQ e validar:
   1. O salvamento bem-sucedido do evento na tabela `tbkk_audit_logs` do MySQL.
   2. O mascaramento e redação LGPD dos dados gravados no banco de dados.
 
-### 4. Documentação de Arquitetura [`security-and-audit-architecture.md`](file:///var/www/html/agsonhos/backend/docs/architecture/security-and-audit-architecture.md)
+### 4. Documentação de Arquitetura [`security-and-audit-architecture.md`](/backend/docs/architecture/security-and-audit-architecture.md)
 - Atualizada a Seção 3 para documentar a estratégia multinível adaptada para ambientes de hospedagem compartilhada.
 
 ---

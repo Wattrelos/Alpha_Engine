@@ -23,12 +23,12 @@ Implement product creation functionality in the administrative dashboard. This w
 
 ### Routing Configuration
 
-#### [MODIFY] [Routes.php](file:///var/www/html/agsonhos/Config/Routes.php)
+#### [MODIFY] [Routes.php](/Config/Routes.php)
 - Add route mapping for `['GET', 'POST']` on `/produtos/criar` pointing to `CreateProductAction::class`.
 
 ### Controller Actions
 
-#### [NEW] [CreateProductAction.php](file:///var/www/html/agsonhos/core/Admin/Controllers/Actions/Catalog/Product/CreateProductAction.php)
+#### [NEW] [CreateProductAction.php](/core/Admin/Controllers/Actions/Catalog/Product/CreateProductAction.php)
 - Implement `CreateProductAction` to handle both GET and POST requests:
   - **GET**: Load list of manufacturers and stock statuses, and render the creation form.
   - **POST**:
@@ -42,10 +42,10 @@ Implement product creation functionality in the administrative dashboard. This w
 
 ### View Templates
 
-#### [NEW] [create.html.twig](file:///var/www/html/agsonhos/resources/views/admin/pages/products/create.html.twig)
+#### [NEW] [create.html.twig](/resources/views/admin/pages/products/create.html.twig)
 - Create a premium product registration form template matching the aesthetic design of the editing view.
 
-#### [MODIFY] [list.html.twig](file:///var/www/html/agsonhos/resources/views/admin/pages/products/list.html.twig)
+#### [MODIFY] [list.html.twig](/resources/views/admin/pages/products/list.html.twig)
 - Update the "Adicionar Produto" button link to point to `/LPDHED2dC7Gjrg2b/produtos/criar`.
 
 ## Verification Plan
@@ -77,7 +77,7 @@ We completed the implementation of the `ManyToMany` loading/hydration logic in `
 
 ### Changes Made
 
-#### [DataAccessObject.php](file:///var/www/html/agsonhos/core/Model/DataAccessObject/DataAccessObject.php)
+#### [DataAccessObject.php](/core/Model/DataAccessObject/DataAccessObject.php)
 - Updated attribute argument parsing within `processAssociations()` to support positional arguments `args[0]` as a fallback to named arguments for `targetEntity`.
 - Replaced the placeholder comment inside the `elseif ($isManyToMany)` block with a complete implementation that:
   1. Dynamically constructs the pivot table name (`tableLink`) and foreign key column names (`fkParent` and `fkChild`) using the naming conventions of the Alpha Engine.
@@ -98,10 +98,10 @@ We implemented the complete product registration (creation) flow in the administ
 
 ### Changes Made
 
-#### [Routes.php](file:///var/www/html/agsonhos/Config/Routes.php)
+#### [Routes.php](/Config/Routes.php)
 - Added route mapping for `['GET', 'POST']` on `/produtos/criar` directing requests to `CreateProductAction`.
 
-#### [CreateProductAction.php](file:///var/www/html/agsonhos/core/Admin/Controllers/Actions/Catalog/Product/CreateProductAction.php)
+#### [CreateProductAction.php](/core/Admin/Controllers/Actions/Catalog/Product/CreateProductAction.php)
 - Developed the controller class to handle both GET and POST requests:
   - **GET**: Queries the database to list manufacturers and stock statuses, then renders the creation view template.
   - **POST**:
@@ -113,10 +113,10 @@ We implemented the complete product registration (creation) flow in the administ
     - Purges the cache corresponding to the newly added product.
     - Redirects back to the products list view.
 
-#### [create.html.twig](file:///var/www/html/agsonhos/resources/views/admin/pages/products/create.html.twig)
+#### [create.html.twig](/resources/views/admin/pages/products/create.html.twig)
 - Created the creation form template matching the premium design system and style patterns of the edit view.
 
-#### [list.html.twig](file:///var/www/html/agsonhos/resources/views/admin/pages/products/list.html.twig)
+#### [list.html.twig](/resources/views/admin/pages/products/list.html.twig)
 - Updated the "Adicionar Produto" button to point directly to `/LPDHED2dC7Gjrg2b/produtos/criar`.
 
 ### Verification & Test Results

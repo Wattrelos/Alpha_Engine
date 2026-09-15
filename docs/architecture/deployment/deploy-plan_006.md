@@ -131,14 +131,14 @@ Concluí a refatoração da página de busca de produtos para herdar o mesmo lay
 
 ### Resumo das alterações:
 
-1. **[SearchAction.php](file:///var/www/html/agsonhos/core/Controller/Actions/Product/SearchAction.php):**
+1. **[SearchAction.php](/core/Controller/Actions/Product/SearchAction.php):**
 
 - Injetou repositórios de categoria e marca, `ContainerInterface` (para taxas e moeda) e `ImagePresenter` (para miniaturas).
 - Processou os parâmetros de filtros vindos da query string (`category`, `manufacturer`, `price_min`, `price_max`, `rating`).
 - Aplicou formatação de moeda com 2 casas decimais e símbolo (`price_formatted` e `special_formatted`) e redimensionamento de miniaturas nos produtos retornados.
 - Gerou as opções de ordenação, limites, lista de categorias/fabricantes e filtros ativos para a view.
 
-2. **[search.html.twig](file:///var/www/html/agsonhos/resources/views/pages/product/search.html.twig):**
+2. **[search.html.twig](/resources/views/pages/product/search.html.twig):**
 
 - Alterou a estrutura HTML para incluir a barra lateral de filtros (`aside_filters.html.twig`) e posicionar o conteúdo em duas colunas.
 

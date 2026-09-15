@@ -40,7 +40,7 @@ Detalhamento das árvores de agregação e grafos de objetos:
 ### 3. Infraestrutura, Segurança e Banco de Dados
 Explicação técnica sobre o `DataAccessObject` (DAO), abstração de transações aninhadas e hardening de segurança com PDO.
 *   Segurança, Sistema e Infraestrutura
-*   ✅ **[Guia de Recomendações e Diretrizes de Segurança](file:///var/www/html/agsonhos/docs/architecture/security_recommendations.md)** (100% Implementado: CSRF, Security Headers, Secure Cookies, Rate Limiting com Redis, Hardening Produção, Isolamento Multi-Tenant, Proteção de Uploads e LGPD).
+*   ✅ **[Guia de Recomendações e Diretrizes de Segurança](/docs/architecture/security_recommendations.md)** (100% Implementado: CSRF, Security Headers, Secure Cookies, Rate Limiting com Redis, Hardening Produção, Isolamento Multi-Tenant, Proteção de Uploads e LGPD).
 *   Desacoplamento do Sistema de Sessões
 
 ### 4. Persistência (Mappers & Repositories)
@@ -59,20 +59,20 @@ Coleção de scripts vitais em `tests/scripts_uteis/` (como o *Detector de Zumbi
 Adoção do contrato `CacheStrategyInterface` (inspirado na PSR-16), permitindo injeção de drivers de cache em memória nas instâncias de Repository para mitigação de consultas repetidas (N+1 Queries).
 
 ### 9. Subsistema de Catálogo (Categorias e Produtos)
-Detalhes sobre a implementação de rotas amigáveis, paginação de categorias e refatoração completa do visual das páginas de produto no padrão BEM/CSS sem Bootstrap. (Ver [Progresso do Catálogo](file:///var/www/html/agsonhos/docs/catalog_progress.md))
+Detalhes sobre a implementação de rotas amigáveis, paginação de categorias e refatoração completa do visual das páginas de produto no padrão BEM/CSS sem Bootstrap. (Ver [Progresso do Catálogo](/docs/catalog_progress.md))
 
 ### 10. Análises de Viabilidade Técnica e Migrações
 Estudos de impacto para decisões arquiteturais de banco de dados e infraestrutura:
-*   [Análise de Viabilidade de Migração de PKs/FKs para BIGINT](file:///var/www/html/agsonhos/docs/pks_fks_bigint_feasibility.md)
+*   [Análise de Viabilidade de Migração de PKs/FKs para BIGINT](/docs/pks_fks_bigint_feasibility.md)
 
 ### 11. Subsistema do Carrinho de Compras e Checkout (Alpha Engine)
-Substituição completa da biblioteca de carrinho legada pelo `CartRepository` e `CartMapper` desacoplados. Registro do helper de pesos `Weight` no Registry global e ativação da rota de checkout dinâmica `/{lang}/checkout` com interface responsiva e interativa no padrão BEM/CSS. (Ver [Progresso do Carrinho](file:///var/www/html/agsonhos/docs/cart_progress.md))
+Substituição completa da biblioteca de carrinho legada pelo `CartRepository` e `CartMapper` desacoplados. Registro do helper de pesos `Weight` no Registry global e ativação da rota de checkout dinâmica `/{lang}/checkout` com interface responsiva e interativa no padrão BEM/CSS. (Ver [Progresso do Carrinho](/docs/cart_progress.md))
 
 ### 12. Subsistema de Autenticação e Cadastro (Auth)
-Refatoração integral do fluxo de login, registro e gerenciamento de conta via middlewares (Slim) e abstração `AuthService`. (Ver [Progresso de Autenticação](file:///var/www/html/agsonhos/docs/auth_progress.md))
+Refatoração integral do fluxo de login, registro e gerenciamento de conta via middlewares (Slim) e abstração `AuthService`. (Ver [Progresso de Autenticação](/docs/auth_progress.md))
 
 ### 13. Componentização e Apresentação Visual (Twig)
-Mapeamento da estrutura visual adotando *Atomic Design* (Atoms, Molecules, Organisms, Layouts e Pages) e reestruturação da interface de usuário em subdiretórios. (Ver [Estrutura de Diretórios](file:///var/www/html/agsonhos/docs/directories_structure.md))
+Mapeamento da estrutura visual adotando *Atomic Design* (Atoms, Molecules, Organisms, Layouts e Pages) e reestruturação da interface de usuário em subdiretórios. (Ver [Estrutura de Diretórios](/docs/directories_structure.md))
 
 ### 14. Subsistemas Auxiliares e Transversais
 *   Refatoração da Biblioteca de Moedas (Currency)

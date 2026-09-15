@@ -21,36 +21,36 @@ Este plano visa transferir os estilos CSS embutidos (inline) nas templates do PD
 
 ## Proposed Changes
 
-Os estilos embutidos em cada template serão distribuídos da seguinte forma nos arquivos sob [css/pov/](file:///var/www/html/agsonhos/public_html/css/pov/):
-- **[variables.css](file:///var/www/html/agsonhos/public_html/css/pov/variables.css)**: Variáveis CSS globais (`:root`).
-- **[layout.css](file:///var/www/html/agsonhos/public_html/css/pov/layout.css)**: Seletores globais (`*`, `body`, scrollbars), `header.pos-header`, `.pos-container`, `.pos-content`, `.pos-workspace`, `.catalog-panel` e `.cart-panel`.
-- **[components.css](file:///var/www/html/agsonhos/public_html/css/pov/components.css)**: Componentes reutilizáveis e específicos (`.glass-card`, product grids, product cards, cart elements, custom modal, success ticket, ticket details, etc.).
+Os estilos embutidos em cada template serão distribuídos da seguinte forma nos arquivos sob [css/pov/](/public_html/css/pov/):
+- **[variables.css](/public_html/css/pov/variables.css)**: Variáveis CSS globais (`:root`).
+- **[layout.css](/public_html/css/pov/layout.css)**: Seletores globais (`*`, `body`, scrollbars), `header.pos-header`, `.pos-container`, `.pos-content`, `.pos-workspace`, `.catalog-panel` e `.cart-panel`.
+- **[components.css](/public_html/css/pov/components.css)**: Componentes reutilizáveis e específicos (`.glass-card`, product grids, product cards, cart elements, custom modal, success ticket, ticket details, etc.).
 
 ---
 
 ### POS CSS
 
-#### [MODIFY] [variables.css](file:///var/www/html/agsonhos/public_html/css/pov/variables.css)
-- Adição das variáveis `:root` extraídas de [layout.twig](file:///var/www/html/agsonhos/resources/views/%20pos/layout.twig).
+#### [MODIFY] [variables.css](/public_html/css/pov/variables.css)
+- Adição das variáveis `:root` extraídas de [layout.twig](/resources/views/%20pos/layout.twig).
 
-#### [MODIFY] [layout.css](file:///var/www/html/agsonhos/public_html/css/pov/layout.css)
-- Adição dos estilos estruturais e globais extraídos de [layout.twig](file:///var/www/html/agsonhos/resources/views/%20pos/layout.twig) e [register-control.twig](file:///var/www/html/agsonhos/resources/views/%20pos/sales-rep/register-control.twig).
+#### [MODIFY] [layout.css](/public_html/css/pov/layout.css)
+- Adição dos estilos estruturais e globais extraídos de [layout.twig](/resources/views/%20pos/layout.twig) e [register-control.twig](/resources/views/%20pos/sales-rep/register-control.twig).
 
-#### [MODIFY] [components.css](file:///var/www/html/agsonhos/public_html/css/pov/components.css)
-- Adição dos componentes extraídos de [layout.twig](file:///var/www/html/agsonhos/resources/views/%20pos/layout.twig), [checkout.twig](file:///var/www/html/agsonhos/resources/views/%20pos/sales-rep/checkout.twig) e [register-control.twig](file:///var/www/html/agsonhos/resources/views/%20pos/sales-rep/register-control.twig).
+#### [MODIFY] [components.css](/public_html/css/pov/components.css)
+- Adição dos componentes extraídos de [layout.twig](/resources/views/%20pos/layout.twig), [checkout.twig](/resources/views/%20pos/sales-rep/checkout.twig) e [register-control.twig](/resources/views/%20pos/sales-rep/register-control.twig).
 
 ---
 
 ### POS Views
 
-#### [MODIFY] [layout.twig](file:///var/www/html/agsonhos/resources/views/%20pos/layout.twig)
+#### [MODIFY] [layout.twig](/resources/views/%20pos/layout.twig)
 - Remoção do bloco `<style>...</style>`.
 - Inclusão do link externo para `<link rel="stylesheet" href="/css/pov/pov.css">`.
 
-#### [MODIFY] [checkout.twig](file:///var/www/html/agsonhos/resources/views/%20pos/sales-rep/checkout.twig)
+#### [MODIFY] [checkout.twig](/resources/views/%20pos/sales-rep/checkout.twig)
 - Remoção dos estilos contidos no bloco `{% block extra_styles %}...{% endblock %}` (mantendo o bloco vazio para extensibilidade).
 
-#### [MODIFY] [register-control.twig](file:///var/www/html/agsonhos/resources/views/%20pos/sales-rep/register-control.twig)
+#### [MODIFY] [register-control.twig](/resources/views/%20pos/sales-rep/register-control.twig)
 - Remoção dos estilos contidos no bloco `{% block extra_styles %}...{% endblock %}` (mantendo o bloco vazio para extensibilidade).
 
 ---
@@ -77,21 +77,21 @@ Os estilos CSS que estavam embutidos diretamente nos arquivos Twig do PDV foram 
 ## Alterações Realizadas
 
 ### Estilos Modulares (CSS)
-1. **[variables.css](file:///var/www/html/agsonhos/public_html/css/pov/variables.css)**:
+1. **[variables.css](/public_html/css/pov/variables.css)**:
    - Contém agora todas as variáveis globais de `:root` (paleta de cores, tipografia, bordas, sombras e transições).
-2. **[layout.css](file:///var/www/html/agsonhos/public_html/css/pov/layout.css)**:
+2. **[layout.css](/public_html/css/pov/layout.css)**:
    - Contém seletores base/reset (`*`, `body`, scrollbars), o cabeçalho (`header.pos-header`), container flex (`.pos-container`), workspace layout (`.pos-workspace`) e os painéis esquerdo/direito (`.catalog-panel`, `.cart-panel`).
-3. **[components.css](file:///var/www/html/agsonhos/public_html/css/pov/components.css)**:
+3. **[components.css](/public_html/css/pov/components.css)**:
    - Contém todos os componentes visuais, incluindo `.glass-card`, barra de pesquisa, grid de produtos e cards (`.product-card`), cabeçalho e itens do carrinho, rodapé com totais, botões de ação e modal personalizado (`.pos-modal`).
    - Contém também os estilos específicos de ticket do checkout e regras para impressão (`@media print`).
 
 ### Templates Twig
-1. **[layout.twig](file:///var/www/html/agsonhos/resources/views/%20pos/layout.twig)**:
+1. **[layout.twig](/resources/views/%20pos/layout.twig)**:
    - Remoção do bloco de estilo `<style>` embutido.
    - Adicionada a tag `<link rel="stylesheet" href="/css/pov/pov.css">` no cabeçalho.
-2. **[checkout.twig](file:///var/www/html/agsonhos/resources/views/%20pos/sales-rep/checkout.twig)**:
+2. **[checkout.twig](/resources/views/%20pos/sales-rep/checkout.twig)**:
    - Esvaziamento do bloco `{% block extra_styles %}`.
-3. **[register-control.twig](file:///var/www/html/agsonhos/resources/views/%20pos/sales-rep/register-control.twig)**:
+3. **[register-control.twig](/resources/views/%20pos/sales-rep/register-control.twig)**:
    - Esvaziamento do bloco `{% block extra_styles %}`.
 
 ## Validação Executada

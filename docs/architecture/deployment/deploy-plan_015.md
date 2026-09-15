@@ -26,22 +26,22 @@ As alterações propostas utilizarão subconsultas otimizadas diretamente nas co
 
 ### Component: Database Mapper & Controllers (Backend)
 
-#### [MODIFY] [ProductMapper.php](file:///var/www/html/agsonhos/core/Mappers/EntityMappers/ProductMapper.php)
+#### [MODIFY] [ProductMapper.php](/core/Mappers/EntityMappers/ProductMapper.php)
 - Adicionar subconsultas SQL no SELECT das funções `getProducts()`, `getProductsByIds()` e `getRelated()` para recuperar os valores `min_variant_price` e `max_variant_price` (preço mínimo e máximo entre as variações ativas do produto).
 - Fórmula da subconsulta SQL:
   `MIN(CASE WHEN pv.price > 0 THEN pv.price ELSE p.price END)` (garantindo que variações que herdam o preço base do pai herdem corretamente o valor do pai no cálculo).
 
-#### [MODIFY] [ShowCategoryAction.php](file:///var/www/html/agsonhos/core/Controller/Actions/Category/ShowCategoryAction.php)
+#### [MODIFY] [ShowCategoryAction.php](/core/Controller/Actions/Category/ShowCategoryAction.php)
 - Processar os novos campos `min_variant_price` e `max_variant_price` no loop de formatação de produtos.
 - Se houver variações com preços distintos, calcular os impostos e formatar os campos de exibição como `price_min_formatted` e `price_max_formatted`, e definir a flag `has_variants = true`.
 
-#### [MODIFY] [SearchAction.php](file:///var/www/html/agsonhos/core/Controller/Actions/Product/SearchAction.php)
+#### [MODIFY] [SearchAction.php](/core/Controller/Actions/Product/SearchAction.php)
 - Aplicar o mesmo processamento, formatação de impostos e moeda para `price_min_formatted` / `price_max_formatted` no loop de produtos da busca.
 
-#### [MODIFY] [ShowProductAction.php](file:///var/www/html/agsonhos/core/Controller/Actions/Product/ShowProductAction.php)
+#### [MODIFY] [ShowProductAction.php](/core/Controller/Actions/Product/ShowProductAction.php)
 - Aplicar a mesma formatação e flags para os **produtos relacionados** exibidos na página de detalhes do produto.
 
-#### [MODIFY] [ListProductsAction.php](file:///var/www/html/agsonhos/core/Admin/Controllers/Actions/Catalog/Product/ListProductsAction.php)
+#### [MODIFY] [ListProductsAction.php](/core/Admin/Controllers/Actions/Catalog/Product/ListProductsAction.php)
 - Atualizar a consulta SQL da listagem do admin para selecionar `min_variant_price` e `max_variant_price`.
 - No loop de formatação, se `min_variant_price` for diferente de `max_variant_price`, definir o campo `price` exibido na tabela como o intervalo `"R$ X,XX - R$ Y,YY"`.
 
@@ -49,10 +49,10 @@ As alterações propostas utilizarão subconsultas otimizadas diretamente nas co
 
 ### Component: Twig Views (Frontend & Admin)
 
-#### [MODIFY] [product-card.html.twig](file:///var/www/html/agsonhos/resources/views/pages/product/product-card.html.twig)
+#### [MODIFY] [product-card.html.twig](/resources/views/pages/product/product-card.html.twig)
 - Ajustar o bloco de preço do card para renderizar o texto **"A partir de"** seguido de `price_min_formatted` caso o produto possua variações ativas com preços distintos.
 
-#### [MODIFY] [list.html.twig](file:///var/www/html/agsonhos/resources/views/admin/pages/products/list.html.twig)
+#### [MODIFY] [list.html.twig](/resources/views/admin/pages/products/list.html.twig)
 - Exibir o preço formatado (que conterá o intervalo ou o preço único) na tabela do painel administrativo. (Nenhuma alteração é necessária na View além de garantir que a coluna renderize o valor vindo do controller).
 
 ## Verification Plan
@@ -67,16 +67,16 @@ As alterações propostas utilizarão subconsultas otimizadas diretamente nas co
 - **Testes de Regressão:**
   1. Executar os testes automatizados (`tests/TestCreateProduct.php`) para assegurar que não há quebras colaterais.
 
-- [x] Modify database queries to fetch variant price ranges in [ProductMapper.php](file:///var/www/html/agsonhos/core/Mappers/EntityMappers/ProductMapper.php)
+- [x] Modify database queries to fetch variant price ranges in [ProductMapper.php](/core/Mappers/EntityMappers/ProductMapper.php)
   - [x] Add subqueries for `min_variant_price` and `max_variant_price` in `getProducts()`
   - [x] Add subqueries for `min_variant_price` and `max_variant_price` in `getProductsByIds()`
   - [x] Add subqueries for `min_variant_price` and `max_variant_price` in `getRelated()`
 - [x] Format variation prices in Frontend Controllers
-  - [x] Format price range in [ShowCategoryAction.php](file:///var/www/html/agsonhos/core/Controller/Actions/Category/ShowCategoryAction.php)
-  - [x] Format price range in [SearchAction.php](file:///var/www/html/agsonhos/core/Controller/Actions/Product/SearchAction.php)
-  - [x] Format price range in [ShowProductAction.php](file:///var/www/html/agsonhos/core/Controller/Actions/Product/ShowProductAction.php) (for related products)
-- [x] Modify Admin product list query and pricing in [ListProductsAction.php](file:///var/www/html/agsonhos/core/Admin/Controllers/Actions/Catalog/Product/ListProductsAction.php)
-- [x] Update frontend Twig card in [product-card.html.twig](file:///var/www/html/agsonhos/resources/views/pages/product/product-card.html.twig) to render "A partir de"
+  - [x] Format price range in [ShowCategoryAction.php](/core/Controller/Actions/Category/ShowCategoryAction.php)
+  - [x] Format price range in [SearchAction.php](/core/Controller/Actions/Product/SearchAction.php)
+  - [x] Format price range in [ShowProductAction.php](/core/Controller/Actions/Product/ShowProductAction.php) (for related products)
+- [x] Modify Admin product list query and pricing in [ListProductsAction.php](/core/Admin/Controllers/Actions/Catalog/Product/ListProductsAction.php)
+- [x] Update frontend Twig card in [product-card.html.twig](/resources/views/pages/product/product-card.html.twig) to render "A partir de"
 - [x] Verify that all modifications work correctly
   - [x] Check PHP syntax (`php -l`) on modified files
   - [x] Run automated tests to check application status
@@ -92,7 +92,7 @@ Neste ciclo de desenvolvimento, implementamos suporte completo a variações de 
 ## Parte 1: Edição de Imagem em Variações de Produto
 
 ### 1. Interface Administrativa
-- **Arquivo modificado:** [edit.html.twig](file:///var/www/html/agsonhos/resources/views/admin/pages/products/edit.html.twig)
+- **Arquivo modificado:** [edit.html.twig](/resources/views/admin/pages/products/edit.html.twig)
 - **Modificações:**
   - Adicionada a coluna **Imagem** na tabela de variações.
   - Exibição de miniatura arredondada (`50x50px`) da imagem atual da variação (com ícone padrão se não houver).
@@ -104,7 +104,7 @@ Neste ciclo de desenvolvimento, implementamos suporte completo a variações de 
   - Suporte completo a novas linhas criadas dinamicamente ao clicar em "Adicionar Variação".
 
 ### 2. Lógica de Upload (Servidor)
-- **Arquivo modificado:** [UpdateProductAction.php](file:///var/www/html/agsonhos/core/Admin/Controllers/Actions/Catalog/Product/UpdateProductAction.php)
+- **Arquivo modificado:** [UpdateProductAction.php](/core/Admin/Controllers/Actions/Catalog/Product/UpdateProductAction.php)
 - **Modificações:**
   - Captura dinâmica dos arquivos de imagem associados aos índices das variações através de `$request->getUploadedFiles()`.
   - Tratamento de exclusão: caso a flag `remove_image` esteja presente, o caminho da imagem é limpo.
@@ -116,7 +116,7 @@ Neste ciclo de desenvolvimento, implementamos suporte completo a variações de 
 ## Parte 2: Refatoração do Carrinho de Compras
 
 ### 1. Lógica do Carrinho (Domínio)
-- **Arquivo modificado:** [CartRepository.php](file:///var/www/html/agsonhos/core/Model/Domain/Repositories/CartRepository.php)
+- **Arquivo modificado:** [CartRepository.php](/core/Model/Domain/Repositories/CartRepository.php)
 - **Modificações:**
   - Refatorado o método central `getProducts()` do carrinho para que, ao carregar os itens, identifique se algum item inserido trata-se de uma variação (`master_id > 0`).
   - Implementado **carregamento em lote (Batch Loading)** dos produtos pai das variações correspondentes em uma única consulta, respeitando as regras estritas da Alpha Engine de evitar consultas N+1 no banco de dados.
@@ -182,7 +182,7 @@ Neste ciclo de desenvolvimento, implementamos suporte completo a variações de 
 Nesta última parte do desenvolvimento de suporte a variações, implementamos a exibição dinâmica do preço inicial e do intervalo de preços em variações com preços distintos.
 
 ### 1. Consultas SQL Otimizadas (Subqueries)
-- **Arquivo modificado:** [ProductMapper.php](file:///var/www/html/agsonhos/core/Mappers/EntityMappers/ProductMapper.php)
+- **Arquivo modificado:** [ProductMapper.php](/core/Mappers/EntityMappers/ProductMapper.php)
 - **Modificações:**
   - Adicionadas subconsultas otimizadas nas buscas de `getProducts()`, `getProductsByIds()` e `getRelated()` para recuperar os valores `min_variant_price` e `max_variant_price` em uma única query.
   - As subconsultas realizam o fallback para o preço base do pai caso o preço da variação seja `0.00` via:
@@ -191,11 +191,11 @@ Nesta última parte do desenvolvimento de suporte a variações, implementamos a
 
 ### 2. Formatação no Backend e Renderização no Twig
 - **Arquivos modificados:**
-  - [ShowCategoryAction.php](file:///var/www/html/agsonhos/core/Controller/Actions/Category/ShowCategoryAction.php)
-  - [SearchAction.php](file:///var/www/html/agsonhos/core/Controller/Actions/Product/SearchAction.php)
-  - [ShowProductAction.php](file:///var/www/html/agsonhos/core/Controller/Actions/Product/ShowProductAction.php)
-  - [ListProductsAction.php](file:///var/www/html/agsonhos/core/Admin/Controllers/Actions/Catalog/Product/ListProductsAction.php)
-  - [product-card.html.twig](file:///var/www/html/agsonhos/resources/views/pages/product/product-card.html.twig)
+  - [ShowCategoryAction.php](/core/Controller/Actions/Category/ShowCategoryAction.php)
+  - [SearchAction.php](/core/Controller/Actions/Product/SearchAction.php)
+  - [ShowProductAction.php](/core/Controller/Actions/Product/ShowProductAction.php)
+  - [ListProductsAction.php](/core/Admin/Controllers/Actions/Catalog/Product/ListProductsAction.php)
+  - [product-card.html.twig](/resources/views/pages/product/product-card.html.twig)
 - **Detalhes:**
   - No site (Frontend), se um produto contiver variações com preços distintos, a flag `has_variants` é definida como `true`, e o card exibe o texto **"A partir de"** com o menor preço calculado (`price_min_formatted`).
   - No painel administrativo (Admin), a tabela de produtos exibe o intervalo de preço completo como `"R$ X,XX - R$ Y,YY"` se houver variações com preços diferentes (ou o preço padrão se os preços forem idênticos ou não houver variações).

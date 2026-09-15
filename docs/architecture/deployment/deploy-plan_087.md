@@ -106,7 +106,7 @@ graph TD
 
 ### Camada de Domínio & Entidades
 
-#### [MODIFY] [Product.php](file:///var/www/html/agsonhos/backend/core/Model/Domain/Entities/Product.php)
+#### [MODIFY] [Product.php](/backend/core/Model/Domain/Entities/Product.php)
 - Adicionar as propriedades privadas `$ncm` e `$cest`.
 - Adicionar os respectivos métodos getters e setters tipados (`getNcm()`, `setNcm()`, `getCest()`, `setCest()`).
 
@@ -114,7 +114,7 @@ graph TD
 
 ### Camada de Mapeamento & Persistência (Data Mappers & Repositories)
 
-#### [MODIFY] [ProductMapper.php](file:///var/www/html/agsonhos/backend/core/Mappers/EntityMappers/ProductMapper.php)
+#### [MODIFY] [ProductMapper.php](/backend/core/Mappers/EntityMappers/ProductMapper.php)
 - **`getAdminProductForEdit`**: Incluir na query de seleção todos os campos de metadados (`pd.tag`, `pd.meta_title`, `pd.meta_description`, `pd.meta_keyword`).
 - **`createAdminProduct`**: Mapear e persistir todos os campos estendidos na tabela `product` (`sku`, `upc`, `jan`, `isbn`, `mpn`, `location`, `points`, `tax_class_id`, `shipping`, `weight`, `weight_class_id`, `length`, `width`, `height`, `length_class_id`, `subtract`, `minimum`, `sort_order`, `ncm`, `cest`) e na tabela `product_description` (`tag`, `meta_title`, `meta_description`, `meta_keyword`).
 - **`updateAdminProduct`**: Atualizar atomicamente no `UPDATE` todos os novos campos na tabela `product` e `product_description`, mantendo a integridade transacional na `UnitOfWork`.
@@ -123,18 +123,18 @@ graph TD
 
 ### Controladores Administrativos (Slim Actions)
 
-#### [MODIFY] [EditProductAction.php](file:///var/www/html/agsonhos/backend/core/Admin/Controllers/Actions/Catalog/Product/EditProductAction.php)
+#### [MODIFY] [EditProductAction.php](/backend/core/Admin/Controllers/Actions/Catalog/Product/EditProductAction.php)
 - Obter instâncias de `WeightClassRepository`, `LengthClassRepository` e `TaxClassRepository`.
 - Injetar no template Twig: `weight_classes`, `length_classes` e `tax_classes`.
 
-#### [MODIFY] [CreateProductAction.php](file:///var/www/html/agsonhos/backend/core/Admin/Controllers/Actions/Catalog/Product/CreateProductAction.php)
+#### [MODIFY] [CreateProductAction.php](/backend/core/Admin/Controllers/Actions/Catalog/Product/CreateProductAction.php)
 - Injetar no template Twig as listas de `weight_classes`, `length_classes` e `tax_classes` para preenchimento dos selects na tela de cadastro.
 
 ---
 
 ### Apresentação & Templates (Twig Views)
 
-#### [MODIFY] [edit.html.twig](file:///var/www/html/agsonhos/backend/resources/views/admin/pages/products/edit.html.twig)
+#### [MODIFY] [edit.html.twig](/backend/resources/views/admin/pages/products/edit.html.twig)
 - Estruturar a barra de abas (`.product-tabs`) com 6 botões:
   1. `tab-general` (Geral)
   2. `tab-data` (Dados & Estoque)
@@ -144,14 +144,14 @@ graph TD
   6. `tab-variants` (Variações)
 - Distribuir os campos com grid visual harmônico de 2 colunas e responsividade.
 
-#### [MODIFY] [create.html.twig](file:///var/www/html/agsonhos/backend/resources/views/admin/pages/products/create.html.twig)
+#### [MODIFY] [create.html.twig](/backend/resources/views/admin/pages/products/create.html.twig)
 - Transformar o formulário único atual na mesma estrutura de 5 abas (`tab-general`, `tab-data`, `tab-dimensions`, `tab-fiscal`, `tab-seo`).
 
 ---
 
 ### Internacionalização (Locales)
 
-#### [MODIFY] [pt-br.admin.product.json](file:///var/www/html/agsonhos/backend/Locales/pt-br/pt-br.admin.product.json)
+#### [MODIFY] [pt-br.admin.product.json](/backend/Locales/pt-br/pt-br.admin.product.json)
 - Adicionar chaves e labels em português para as novas abas e todos os novos campos (NCM, CEST, Peso, Comprimento, Largura, Altura, Unidades de medida, SEO, etc.).
 
 ---
@@ -197,31 +197,31 @@ Os formulários de **Cadastro (`/produtos/criar`)** e **Edição (`/produtos/{id
 ---
 
 ### 2. Camada de Domínio e Entidades
-- **[Product.php](file:///var/www/html/agsonhos/backend/core/Model/Domain/Entities/Product.php)**:
+- **[Product.php](/backend/core/Model/Domain/Entities/Product.php)**:
   - Adicionadas propriedades privadas `$ncm` e `$cest`.
   - Adicionados métodos tipados `getNcm()`, `setNcm(string $ncm)`, `getCest()`, `setCest(string $cest)`.
 
 ---
 
 ### 3. Camada de Acesso a Dados & Repositórios
-- **[ProductMapper.php](file:///var/www/html/agsonhos/backend/core/Mappers/EntityMappers/ProductMapper.php)**:
+- **[ProductMapper.php](/backend/core/Mappers/EntityMappers/ProductMapper.php)**:
   - `getAdminProductForEdit`: Atualizado para retornar `pd.tag`, `pd.meta_title`, `pd.meta_description` e `pd.meta_keyword`.
   - `createAdminProduct`: Mapeia e insere todos os novos atributos nas tabelas `product` e `product_description`.
   - `updateAdminProduct`: Atualiza atomicamente todos os campos estendidos via `UnitOfWork`.
   - Novos métodos auxiliares: `getWeightClasses($langId)`, `getLengthClasses($langId)` e `getTaxClasses()`.
-- **[ProductRepository.php](file:///var/www/html/agsonhos/backend/core/Model/Domain/Repositories/ProductRepository.php)**:
+- **[ProductRepository.php](/backend/core/Model/Domain/Repositories/ProductRepository.php)**:
   - Métodos expostos para o domínio: `getWeightClasses()`, `getLengthClasses()`, `getTaxClasses()`.
 
 ---
 
 ### 4. Controladores e Views Twig
-- **[CreateProductAction.php](file:///var/www/html/agsonhos/backend/core/Admin/Controllers/Actions/Catalog/Product/CreateProductAction.php)** & **[EditProductAction.php](file:///var/www/html/agsonhos/backend/core/Admin/Controllers/Actions/Catalog/Product/EditProductAction.php)**:
+- **[CreateProductAction.php](/backend/core/Admin/Controllers/Actions/Catalog/Product/CreateProductAction.php)** & **[EditProductAction.php](/backend/core/Admin/Controllers/Actions/Catalog/Product/EditProductAction.php)**:
   - Injeção das listas `weight_classes`, `length_classes` e `tax_classes` para preenchimento automático dos dropdowns.
-- **[create.html.twig](file:///var/www/html/agsonhos/backend/resources/views/admin/pages/products/create.html.twig)**:
+- **[create.html.twig](/backend/resources/views/admin/pages/products/create.html.twig)**:
   - Formulário completo com 5 abas e alternador reativo via Vanilla JS.
-- **[edit.html.twig](file:///var/www/html/agsonhos/backend/resources/views/admin/pages/products/edit.html.twig)**:
+- **[edit.html.twig](/backend/resources/views/admin/pages/products/edit.html.twig)**:
   - Formulário completo com 6 abas (incluindo Variações) com preenchimento bidirecional de todos os campos.
-- **[pt-br.admin.product.json](file:///var/www/html/agsonhos/backend/Locales/pt-br/pt-br.admin.product.json)**:
+- **[pt-br.admin.product.json](/backend/Locales/pt-br/pt-br.admin.product.json)**:
   - Tradução e legendas em português para todos os novos campos, abas e placeholders.
 
 ---

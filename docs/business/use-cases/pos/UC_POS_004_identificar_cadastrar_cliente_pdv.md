@@ -11,7 +11,7 @@
 | **Atores Secundários** | Sistema Alpha Engine POS |
 | **Tipo** | Condução / Cadastral de Loja |
 | **Frequência de Uso** | Muito Alta |
-| **Rastreabilidade** | **RF:** [RF014](file:///var/www/html/agsonhos/docs/requirements/functional/functional_requirements.yaml) (Cadastro e identificação), [RF020](file:///var/www/html/agsonhos/docs/requirements/functional/functional_requirements.yaml) (Dados para emissão de NFC-e/NF-e)<br>**RN:** [RN017](file:///var/www/html/agsonhos/docs/requirements/business_rules/business_rules.yaml) (Preço de atacado para PJ/Construtoras)<br>**RNF:** [RNF001](file:///var/www/html/agsonhos/docs/requirements/non_functional/non_functional_requirements.yaml) (Agilidade no atendimento presencial) |
+| **Rastreabilidade** | **RF:** [RF014](/docs/requirements/functional/functional_requirements.yaml) (Cadastro e identificação), [RF020](/docs/requirements/functional/functional_requirements.yaml) (Dados para emissão de NFC-e/NF-e)<br>**RN:** [RN017](/docs/requirements/business_rules/business_rules.yaml) (Preço de atacado para PJ/Construtoras)<br>**RNF:** [RNF001](/docs/requirements/non_functional/non_functional_requirements.yaml) (Agilidade no atendimento presencial) |
 
 ---
 

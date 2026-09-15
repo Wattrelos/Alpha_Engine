@@ -42,13 +42,13 @@ Para um **Agente de IA**, receber 606 erros de código legado a cada edição ge
 
 ### Arquivos de Configuração
 
-#### [MODIFY] [phpstan.neon](file:///var/www/html/agsonhos/phpstan.neon)
+#### [MODIFY] [phpstan.neon](/phpstan.neon)
 - Atualizar parâmetros do PHPStan, registrar inclusão do `phpstan-baseline.neon` e diretórios de cache.
 
-#### [NEW] [phpstan-baseline.neon](file:///var/www/html/agsonhos/phpstan-baseline.neon)
+#### [NEW] [phpstan-baseline.neon](/phpstan-baseline.neon)
 - Gerar o arquivo de baseline do PHPStan com os 606 erros legados mapeados.
 
-#### [MODIFY] [composer.json](file:///var/www/html/agsonhos/composer.json)
+#### [MODIFY] [composer.json](/composer.json)
 - Registrar scripts padronizados `stan`, `stan:report` e `stan:baseline`.
 
 ---
@@ -113,7 +113,7 @@ Note: Using configuration file /var/www/html/agsonhos/phpstan.neon.
 composer stan:report
 ```
 
-O arquivo [.reports/phpstan-report.json](file:///var/www/html/agsonhos/.reports/phpstan-report.json) será atualizado com a estrutura JSON parseável:
+O arquivo [.reports/phpstan-report.json](/.reports/phpstan-report.json) será atualizado com a estrutura JSON parseável:
 ```json
 {
   "totals": {

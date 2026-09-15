@@ -11,7 +11,7 @@
 | **Atores Secundários** | Sistema Alpha Engine POS |
 | **Tipo** | Condução / Operação de Caixa |
 | **Frequência de Uso** | Contínua / Muito Alta |
-| **Rastreabilidade** | **RF:** [RF006](file:///var/www/html/agsonhos/docs/requirements/functional/functional_requirements.yaml) (Inventário), [RF018](file:///var/www/html/agsonhos/docs/requirements/functional/functional_requirements.yaml) (Recebimento de vendas)<br>**RN:** [RN005](file:///var/www/html/agsonhos/docs/requirements/business_rules/business_rules.yaml) (Controle de estoque), [RN016](file:///var/www/html/agsonhos/docs/requirements/business_rules/business_rules.yaml) (Descontos por modalidade)<br>**RNF:** [RNF001](file:///var/www/html/agsonhos/docs/requirements/non_functional/non_functional_requirements.yaml) (Operação ágil por leitor óptico) |
+| **Rastreabilidade** | **RF:** [RF006](/docs/requirements/functional/functional_requirements.yaml) (Inventário), [RF018](/docs/requirements/functional/functional_requirements.yaml) (Recebimento de vendas)<br>**RN:** [RN005](/docs/requirements/business_rules/business_rules.yaml) (Controle de estoque), [RN016](/docs/requirements/business_rules/business_rules.yaml) (Descontos por modalidade)<br>**RNF:** [RNF001](/docs/requirements/non_functional/non_functional_requirements.yaml) (Operação ágil por leitor óptico) |
 
 ---
 

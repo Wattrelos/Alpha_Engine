@@ -11,7 +11,7 @@
 | **Atores Secundários** | Impressora Fiscal/Térmica Não Fiscal, Cliente Presencial (*Customer*) |
 | **Tipo** | Inclusão de `UC_POS_014` (`<<include>>`) / Impressão Fiscal |
 | **Frequência de Uso** | Contínua / Muito Alta |
-| **Rastreabilidade** | **RF:** [RF020](file:///var/www/html/agsonhos/docs/requirements/functional/functional_requirements.yaml) (Faturamento/NF-e e NFC-e)<br>**RN:** [RN012](file:///var/www/html/agsonhos/docs/requirements/business_rules/business_rules.yaml) (Documentação fiscal obrigatória para eventuais devoluções)<br>**RNF:** [RNF001](file:///var/www/html/agsonhos/docs/requirements/non_functional/non_functional_requirements.yaml) (Impressão térmica em bobina de 80mm com QR Code legível) |
+| **Rastreabilidade** | **RF:** [RF020](/docs/requirements/functional/functional_requirements.yaml) (Faturamento/NF-e e NFC-e)<br>**RN:** [RN012](/docs/requirements/business_rules/business_rules.yaml) (Documentação fiscal obrigatória para eventuais devoluções)<br>**RNF:** [RNF001](/docs/requirements/non_functional/non_functional_requirements.yaml) (Impressão térmica em bobina de 80mm com QR Code legível) |
 
 ---
 

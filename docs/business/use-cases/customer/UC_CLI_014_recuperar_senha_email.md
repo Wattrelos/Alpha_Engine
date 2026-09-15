@@ -11,7 +11,7 @@
 | **Atores Secundários** | Servidor SMTP / Fila de E-mails RabbitMQ, Sistema Alpha Engine |
 | **Tipo** | Condução / Recuperação |
 | **Frequência de Uso** | Média |
-| **Rastreabilidade** | **RF:** [RF015](file:///var/www/html/agsonhos/docs/requirements/functional/functional_requirements.yaml) (Recuperação de credenciais)<br>**RNF:** [RNF003](file:///var/www/html/agsonhos/docs/requirements/non_functional/non_functional_requirements.yaml) (Tokens temporários com hash criptográfico e expiração em 30 min) |
+| **Rastreabilidade** | **RF:** [RF015](/docs/requirements/functional/functional_requirements.yaml) (Recuperação de credenciais)<br>**RNF:** [RNF003](/docs/requirements/non_functional/non_functional_requirements.yaml) (Tokens temporários com hash criptográfico e expiração em 30 min) |
 
 ---
 

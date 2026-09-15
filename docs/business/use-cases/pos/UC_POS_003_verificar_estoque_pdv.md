@@ -11,7 +11,7 @@
 | **Atores Secundários** | Vendedor de Balcão (*Sales Representative*) |
 | **Tipo** | Inclusão de `UC_POS_001` (`<<include>>`) / Consulta em Tempo Real |
 | **Frequência de Uso** | Contínua / Muito Alta |
-| **Rastreabilidade** | **RF:** [RF006](file:///var/www/html/agsonhos/docs/requirements/functional/functional_requirements.yaml) (Gestão automática e saldo de estoque)<br>**RN:** [RN005](file:///var/www/html/agsonhos/docs/requirements/business_rules/business_rules.yaml) (Controle rigoroso de estoque em tempo real), [RN006](file:///var/www/html/agsonhos/docs/requirements/business_rules/business_rules.yaml) (Alerta de baixo estoque)<br>**RNF:** [RNF002](file:///var/www/html/agsonhos/docs/requirements/non_functional/non_functional_requirements.yaml) (Consulta de saldo < 50ms) |
+| **Rastreabilidade** | **RF:** [RF006](/docs/requirements/functional/functional_requirements.yaml) (Gestão automática e saldo de estoque)<br>**RN:** [RN005](/docs/requirements/business_rules/business_rules.yaml) (Controle rigoroso de estoque em tempo real), [RN006](/docs/requirements/business_rules/business_rules.yaml) (Alerta de baixo estoque)<br>**RNF:** [RNF002](/docs/requirements/non_functional/non_functional_requirements.yaml) (Consulta de saldo < 50ms) |
 
 ---
 

@@ -11,7 +11,7 @@
 | **Atores Secundários** | Sistema Alpha Engine POS |
 | **Tipo** | Condução / Venda Presencial |
 | **Frequência de Uso** | Contínua / Muito Alta |
-| **Rastreabilidade** | **RF:** [RF006](file:///var/www/html/agsonhos/docs/requirements/functional/functional_requirements.yaml) (Gestão de inventário), [RF009](file:///var/www/html/agsonhos/docs/requirements/functional/functional_requirements.yaml) (Carrinho/Comanda), [RF021](file:///var/www/html/agsonhos/docs/requirements/functional/functional_requirements.yaml) (Modalidades de entrega/retirada)<br>**RN:** [RN005](file:///var/www/html/agsonhos/docs/requirements/business_rules/business_rules.yaml) (Estoque), [RN008](file:///var/www/html/agsonhos/docs/requirements/business_rules/business_rules.yaml) (Retirada balcão vs entrega), [RN015](file:///var/www/html/agsonhos/docs/requirements/business_rules/business_rules.yaml) (Descontos por volume)<br>**RNF:** [RNF001](file:///var/www/html/agsonhos/docs/requirements/non_functional/non_functional_requirements.yaml) (Atalhos rápidos de teclado) |
+| **Rastreabilidade** | **RF:** [RF006](/docs/requirements/functional/functional_requirements.yaml) (Gestão de inventário), [RF009](/docs/requirements/functional/functional_requirements.yaml) (Carrinho/Comanda), [RF021](/docs/requirements/functional/functional_requirements.yaml) (Modalidades de entrega/retirada)<br>**RN:** [RN005](/docs/requirements/business_rules/business_rules.yaml) (Estoque), [RN008](/docs/requirements/business_rules/business_rules.yaml) (Retirada balcão vs entrega), [RN015](/docs/requirements/business_rules/business_rules.yaml) (Descontos por volume)<br>**RNF:** [RNF001](/docs/requirements/non_functional/non_functional_requirements.yaml) (Atalhos rápidos de teclado) |
 
 ---
 

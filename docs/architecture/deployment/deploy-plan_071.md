@@ -12,7 +12,7 @@
 
 # Plano de Implementação: Diagramas de Componentes de Arquitetura
 
-Este plano detalha a criação de **diagramas de componentes** no formato **PlantUML (.puml)** utilizando a notação UML 2.0 e o modelo **C4 (Component Level)** no diretório [docs/diagrams/](file:///var/www/html/agsonhos/docs/diagrams/) e [docs/architecture/components/](file:///var/www/html/agsonhos/docs/architecture/components/).
+Este plano detalha a criação de **diagramas de componentes** no formato **PlantUML (.puml)** utilizando a notação UML 2.0 e o modelo **C4 (Component Level)** no diretório [docs/diagrams/](/docs/diagrams/) e [docs/architecture/components/](/docs/architecture/components/).
 
 ## Objetivo
 
@@ -33,7 +33,7 @@ Fornecer uma visão clara dos subsistemas desacoplados da **Alpha Engine**, most
 ## User Review Required
 
 > [!IMPORTANT]
-> Os novos diagramas complementarão a especificação arquitetural existente em [docs/architecture/README.md](file:///var/www/html/agsonhos/docs/architecture/README.md) e [docs/diagrams/componentDiagram.puml](file:///var/www/html/agsonhos/docs/diagrams/componentDiagram.puml), trazendo maior detalhamento para os subsistemas de mensageria (RabbitMQ), cache (Redis) e desacoplamento DDD.
+> Os novos diagramas complementarão a especificação arquitetural existente em [docs/architecture/README.md](/docs/architecture/README.md) e [docs/diagrams/componentDiagram.puml](/docs/diagrams/componentDiagram.puml), trazendo maior detalhamento para os subsistemas de mensageria (RabbitMQ), cache (Redis) e desacoplamento DDD.
 
 ---
 
@@ -41,13 +41,13 @@ Fornecer uma visão clara dos subsistemas desacoplados da **Alpha Engine**, most
 
 ### `docs/diagrams` & `docs/architecture/components`
 
-#### [NEW] [c4_component_architecture.puml](file:///var/www/html/agsonhos/docs/architecture/components/c4_component_architecture.puml)
+#### [NEW] [c4_component_architecture.puml](/docs/architecture/components/c4_component_architecture.puml)
 Diagrama de componentes C4 detalhando a comunicação entre containers de serviços, APIs externas (Gateways), Barramento de Mensagens (RabbitMQ) e Bancos de Dados.
 
-#### [NEW] [persistence_component_diagram.puml](file:///var/www/html/agsonhos/docs/diagrams/persistence_component_diagram.puml)
+#### [NEW] [persistence_component_diagram.puml](/docs/diagrams/persistence_component_diagram.puml)
 Diagrama UML do subssistema de persistência e mapeamento objeto-relacional (ORM customizado com Identity Map, Proxy Pattern e UoW).
 
-#### [NEW] [dual_architecture_components.puml](file:///var/www/html/agsonhos/docs/diagrams/dual_architecture_components.puml)
+#### [NEW] [dual_architecture_components.puml](/docs/diagrams/dual_architecture_components.puml)
 Diagrama demonstrando o isolamento de namespaces, bibliotecas e injeção de dependências entre o escopo Admin e o escopo Front-end.
 
 ---
@@ -72,35 +72,35 @@ Foram criadas três coleções completas de diagramas no formato **PlantUML (.pu
 
 ## 1. Diagramas de Componentes (Component Architecture)
 
-* [c4_component_architecture.puml](file:///var/www/html/agsonhos/docs/architecture/components/c4_component_architecture.puml): Visão C4 (Nível 3) de todos os subsistemas da Alpha Engine (Web Routing Slim 4, Auth Redis, Catálogo/SEO, Checkout/UoW, Pagamentos Adapter, Frete Strategy, RabbitMQ e Worker CLI).
-* [persistence_component_diagram.puml](file:///var/www/html/agsonhos/docs/diagrams/persistence_component_diagram.puml): Visão detalhada da camada de persistência e ORM customizado (`UnitOfWork`, `IdentityMap`, `ProxyFactory`, `DataAccessObject`, `QueryBuilder` e Drivers).
-* [dual_architecture_components.puml](file:///var/www/html/agsonhos/docs/diagrams/dual_architecture_components.puml): Mapeamento e contraste do isolamento entre o **Painel Administrativo** (`Alpha\Admin\...` via `BaseController`) e o **Front-End E-Commerce** (`Alpha\Controller\...` via `ActionInterface` e DI pura).
+* [c4_component_architecture.puml](/docs/architecture/components/c4_component_architecture.puml): Visão C4 (Nível 3) de todos os subsistemas da Alpha Engine (Web Routing Slim 4, Auth Redis, Catálogo/SEO, Checkout/UoW, Pagamentos Adapter, Frete Strategy, RabbitMQ e Worker CLI).
+* [persistence_component_diagram.puml](/docs/diagrams/persistence_component_diagram.puml): Visão detalhada da camada de persistência e ORM customizado (`UnitOfWork`, `IdentityMap`, `ProxyFactory`, `DataAccessObject`, `QueryBuilder` e Drivers).
+* [dual_architecture_components.puml](/docs/diagrams/dual_architecture_components.puml): Mapeamento e contraste do isolamento entre o **Painel Administrativo** (`Alpha\Admin\...` via `BaseController`) e o **Front-End E-Commerce** (`Alpha\Controller\...` via `ActionInterface` e DI pura).
 
 ---
 
 ## 2. Diagramas de Sequência em `docs/workflows/sequence_diagrams/`
 
-Diretório: [docs/workflows/sequence_diagrams/](file:///var/www/html/agsonhos/docs/workflows/sequence_diagrams/)
+Diretório: [docs/workflows/sequence_diagrams/](/docs/workflows/sequence_diagrams/)
 
-* [autenticacao_redis_fallback.puml](file:///var/www/html/agsonhos/docs/workflows/sequence_diagrams/autenticacao_redis_fallback.puml): Autenticação Dual com Cache Redis e Fallback gracioso para `$_SESSION`.
-* [lazy_loading_proxy.puml](file:///var/www/html/agsonhos/docs/workflows/sequence_diagrams/lazy_loading_proxy.puml): Virtual Proxy e hidratação diferida (*Lazy Loading*) no DAO.
-* [webhook_pagamento_adapter.puml](file:///var/www/html/agsonhos/docs/workflows/sequence_diagrams/webhook_pagamento_adapter.puml): Processamento assíncrono de webhook com GoF Adapter e Observers.
-* [fusao_carrinho_login.puml](file:///var/www/html/agsonhos/docs/workflows/sequence_diagrams/fusao_carrinho_login.puml): Mesclagem do carrinho anônimo para a conta do cliente no login.
-* [resolucao_seo_url.puml](file:///var/www/html/agsonhos/docs/workflows/sequence_diagrams/resolucao_seo_url.puml): Resolução de URLs amigáveis (SEO URLs) com cache em arquivo.
-* [calculo_frete_strategy.puml](file:///var/www/html/agsonhos/docs/workflows/sequence_diagrams/calculo_frete_strategy.puml): Cotação de frete multi-estratégia (GoF Strategy Pattern).
+* [autenticacao_redis_fallback.puml](/docs/workflows/sequence_diagrams/autenticacao_redis_fallback.puml): Autenticação Dual com Cache Redis e Fallback gracioso para `$_SESSION`.
+* [lazy_loading_proxy.puml](/docs/workflows/sequence_diagrams/lazy_loading_proxy.puml): Virtual Proxy e hidratação diferida (*Lazy Loading*) no DAO.
+* [webhook_pagamento_adapter.puml](/docs/workflows/sequence_diagrams/webhook_pagamento_adapter.puml): Processamento assíncrono de webhook com GoF Adapter e Observers.
+* [fusao_carrinho_login.puml](/docs/workflows/sequence_diagrams/fusao_carrinho_login.puml): Mesclagem do carrinho anônimo para a conta do cliente no login.
+* [resolucao_seo_url.puml](/docs/workflows/sequence_diagrams/resolucao_seo_url.puml): Resolução de URLs amigáveis (SEO URLs) com cache em arquivo.
+* [calculo_frete_strategy.puml](/docs/workflows/sequence_diagrams/calculo_frete_strategy.puml): Cotação de frete multi-estratégia (GoF Strategy Pattern).
 
 ---
 
 ## 3. Diagramas de Atividades em `docs/workflows/activity_diagrams/`
 
-Diretório: [docs/workflows/activity_diagrams/](file:///var/www/html/agsonhos/docs/workflows/activity_diagrams/)
+Diretório: [docs/workflows/activity_diagrams/](/docs/workflows/activity_diagrams/)
 
-* [checkout_decision_tree.puml](file:///var/www/html/agsonhos/docs/workflows/activity_diagrams/checkout_decision_tree.puml): Árvore de decisão completa do checkout (PIX, Cartão, Boleto, Frete, Cupons e exceções).
-* [gestao_estoque_concorrente.puml](file:///var/www/html/agsonhos/docs/workflows/activity_diagrams/gestao_estoque_concorrente.puml): Reserva e baixa de estoque sob alta concorrência com bloqueio otimista (*Optimistic Lock*).
-* [processamento_devolucao_rma.puml](file:///var/www/html/agsonhos/docs/workflows/activity_diagrams/processamento_devolucao_rma.puml): Fluxo de solicitação, triagem, inspeção física e estorno/crédito de devolução (RMA).
-* [pipeline_seguranca_middleware.puml](file:///var/www/html/agsonhos/docs/workflows/activity_diagrams/pipeline_seguranca_middleware.puml): Esteira de execução de Middlewares HTTP do Slim 4 (CSRF, Rate Limiting, RBAC e Sessão).
-* [fluxo_venda_pos_balcao.puml](file:///var/www/html/agsonhos/docs/workflows/activity_diagrams/fluxo_venda_pos_balcao.puml): Workflow de atendimento presencial no balcão da loja física (Vendedor, Caixa, Estoque e NFC-e).
-* [sanitizacao_lgpd_anonimizacao.puml](file:///var/www/html/agsonhos/docs/workflows/activity_diagrams/sanitizacao_lgpd_anonimizacao.puml): Governança de dados, direito ao esquecimento e sanitização via `LgpdSanitizer` sob o Art. 18 da LGPD.
+* [checkout_decision_tree.puml](/docs/workflows/activity_diagrams/checkout_decision_tree.puml): Árvore de decisão completa do checkout (PIX, Cartão, Boleto, Frete, Cupons e exceções).
+* [gestao_estoque_concorrente.puml](/docs/workflows/activity_diagrams/gestao_estoque_concorrente.puml): Reserva e baixa de estoque sob alta concorrência com bloqueio otimista (*Optimistic Lock*).
+* [processamento_devolucao_rma.puml](/docs/workflows/activity_diagrams/processamento_devolucao_rma.puml): Fluxo de solicitação, triagem, inspeção física e estorno/crédito de devolução (RMA).
+* [pipeline_seguranca_middleware.puml](/docs/workflows/activity_diagrams/pipeline_seguranca_middleware.puml): Esteira de execução de Middlewares HTTP do Slim 4 (CSRF, Rate Limiting, RBAC e Sessão).
+* [fluxo_venda_pos_balcao.puml](/docs/workflows/activity_diagrams/fluxo_venda_pos_balcao.puml): Workflow de atendimento presencial no balcão da loja física (Vendedor, Caixa, Estoque e NFC-e).
+* [sanitizacao_lgpd_anonimizacao.puml](/docs/workflows/activity_diagrams/sanitizacao_lgpd_anonimizacao.puml): Governança de dados, direito ao esquecimento e sanitização via `LgpdSanitizer` sob o Art. 18 da LGPD.
 
 ---
 

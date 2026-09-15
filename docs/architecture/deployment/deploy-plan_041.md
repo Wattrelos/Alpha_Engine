@@ -53,37 +53,37 @@ public_html/css/
 
 ### 1. Dependências e Scripts de Compilação
 
-#### [MODIFY] [composer.json](file:///var/www/html/agsonhos/composer.json)
+#### [MODIFY] [composer.json](/composer.json)
 * Adicionar dependência de `scssphp/scssphp`.
 * Adicionar script `"build-css": "php scratch/compile-scss.php"` em `"scripts"`.
 
-#### [NEW] [compile-scss.php](file:///var/www/html/agsonhos/scratch/compile-scss.php)
+#### [NEW] [compile-scss.php](/scratch/compile-scss.php)
 * Script PHP que lê `public_html/css/custom/new-stylesheet.scss`, compila usando `ScssPhp\ScssPhp\Compiler` e salva em `public_html/css/custom/new-stylesheet.css`.
 
 ### 2. Arquivos de Estilos (SCSS)
 
-#### [NEW] [new-stylesheet.scss](file:///var/www/html/agsonhos/public_html/css/custom/new-stylesheet.scss)
+#### [NEW] [new-stylesheet.scss](/public_html/css/custom/new-stylesheet.scss)
 * Consolidação de todas as importações SCSS.
 
-#### [NEW] [_header.scss](file:///var/www/html/agsonhos/public_html/css/base/organisms/_header.scss)
+#### [NEW] [_header.scss](/public_html/css/base/organisms/_header.scss)
 * Extração dos estilos de cabeçalho do `new-stylesheet.css`.
 
-#### [NEW] [_search-bar.scss](file:///var/www/html/agsonhos/public_html/css/base/molecules/_search-bar.scss)
+#### [NEW] [_search-bar.scss](/public_html/css/base/molecules/_search-bar.scss)
 * Extração dos estilos da barra de pesquisa.
 
-#### [NEW] [_login.scss](file:///var/www/html/agsonhos/public_html/css/base/pages/_login.scss)
+#### [NEW] [_login.scss](/public_html/css/base/pages/_login.scss)
 * Extração dos estilos de login (Login Hero, Login Grid, Login Card).
 
-#### [NEW] [_register.scss](file:///var/www/html/agsonhos/public_html/css/base/pages/_register.scss)
+#### [NEW] [_register.scss](/public_html/css/base/pages/_register.scss)
 * Extração dos estilos da página de cadastro.
 
-#### [NEW] [_cart.scss](file:///var/www/html/agsonhos/public_html/css/base/pages/_cart.scss)
+#### [NEW] [_cart.scss](/public_html/css/base/pages/_cart.scss)
 * Extração dos estilos do carrinho de compras.
 
-#### [NEW] [_category.scss](file:///var/www/html/agsonhos/public_html/css/base/pages/_category.scss)
+#### [NEW] [_category.scss](/public_html/css/base/pages/_category.scss)
 * Extração dos estilos da página de categorias e da grade de produtos.
 
-#### [NEW] [_product.scss](file:///var/www/html/agsonhos/public_html/css/base/pages/_product.scss)
+#### [NEW] [_product.scss](/public_html/css/base/pages/_product.scss)
 * Extração dos estilos da página interna de produto.
 
 ## Verification Plan
@@ -125,23 +125,23 @@ Realizamos com sucesso a modularização do arquivo CSS principal da loja, estru
    - Vinculado ao Composer através do comando `composer build-css`.
 
 3. **Extração das Folhas de Estilo Modulares:**
-   - [_utilities.scss](file:///var/www/html/agsonhos/public_html/css/base/_utilities.scss): Utilitários e classes de grid base.
-   - [_breadcrumbs.scss](file:///var/www/html/agsonhos/public_html/css/base/molecules/_breadcrumbs.scss): Estilos para trilhas de navegação.
-   - [_forms-premium.scss](file:///var/www/html/agsonhos/public_html/css/base/molecules/_forms-premium.scss): Controles de formulário premium reutilizáveis.
-   - [_login.scss](file:///var/www/html/agsonhos/public_html/css/base/pages/_login.scss): Página de login e seus cartões/campos.
-   - [_register.scss](file:///var/www/html/agsonhos/public_html/css/base/pages/_register.scss): Página de registro principal.
-   - [_cart.scss](file:///var/www/html/agsonhos/public_html/css/base/pages/_cart.scss): Estilos do carrinho de compras.
-   - [_category.scss](file:///var/www/html/agsonhos/public_html/css/base/pages/_category.scss): Visual de páginas de categorias, filtros e cards de produtos.
-   - [_product.scss](file:///var/www/html/agsonhos/public_html/css/base/pages/_product.scss): Interna do produto (galeria, abas, frete, etc.).
-   - [_checkout.scss](file:///var/www/html/agsonhos/public_html/css/base/pages/_checkout.scss): Visual do checkout de compra e opções de pagamento.
-   - [_sitemap.scss](file:///var/www/html/agsonhos/public_html/css/base/pages/_sitemap.scss): Estilos do mapa do site.
-   - [_home.scss](file:///var/www/html/agsonhos/public_html/css/base/pages/_home.scss): Visual da página inicial.
-   - [_wishlist.scss](file:///var/www/html/agsonhos/public_html/css/base/pages/_wishlist.scss): Lista de desejos.
-   - [_account.scss](file:///var/www/html/agsonhos/public_html/css/base/pages/_account.scss): Painel e páginas internas da conta do cliente.
-   - [_orders.scss](file:///var/www/html/agsonhos/public_html/css/base/pages/_orders.scss): Histórico e detalhes de pedidos.
+   - [_utilities.scss](/public_html/css/base/_utilities.scss): Utilitários e classes de grid base.
+   - [_breadcrumbs.scss](/public_html/css/base/molecules/_breadcrumbs.scss): Estilos para trilhas de navegação.
+   - [_forms-premium.scss](/public_html/css/base/molecules/_forms-premium.scss): Controles de formulário premium reutilizáveis.
+   - [_login.scss](/public_html/css/base/pages/_login.scss): Página de login e seus cartões/campos.
+   - [_register.scss](/public_html/css/base/pages/_register.scss): Página de registro principal.
+   - [_cart.scss](/public_html/css/base/pages/_cart.scss): Estilos do carrinho de compras.
+   - [_category.scss](/public_html/css/base/pages/_category.scss): Visual de páginas de categorias, filtros e cards de produtos.
+   - [_product.scss](/public_html/css/base/pages/_product.scss): Interna do produto (galeria, abas, frete, etc.).
+   - [_checkout.scss](/public_html/css/base/pages/_checkout.scss): Visual do checkout de compra e opções de pagamento.
+   - [_sitemap.scss](/public_html/css/base/pages/_sitemap.scss): Estilos do mapa do site.
+   - [_home.scss](/public_html/css/base/pages/_home.scss): Visual da página inicial.
+   - [_wishlist.scss](/public_html/css/base/pages/_wishlist.scss): Lista de desejos.
+   - [_account.scss](/public_html/css/base/pages/_account.scss): Painel e páginas internas da conta do cliente.
+   - [_orders.scss](/public_html/css/base/pages/_orders.scss): Histórico e detalhes de pedidos.
 
 4. **Entrada Principal:**
-   - [new-stylesheet.scss](file:///var/www/html/agsonhos/public_html/css/custom/new-stylesheet.scss): Arquivo consolidador que importa todos os parciais acima.
+   - [new-stylesheet.scss](/public_html/css/custom/new-stylesheet.scss): Arquivo consolidador que importa todos os parciais acima.
 
 ## Como Executar a Compilação:
 Sempre que fizer alterações nos arquivos `.scss`, basta rodar o comando abaixo no terminal da raiz do projeto:

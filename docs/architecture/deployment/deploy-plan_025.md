@@ -30,14 +30,14 @@ Adicionaremos as seguintes classes utilitárias e estilos ao `components.css` pa
 - `.mt-2` e `.mt-4`: Margens superiores utilitárias (`0.5rem` e `1rem`).
 - `@keyframes bounce`: Animação de pulo do emoji, movida da view para o CSS global.
 
-No layout base [base_auth.html.twig](file:///var/www/html/agsonhos/resources/views/admin/layouts/base_auth.html.twig), adicionaremos um bloco `container_class` para que as páginas (como a de setup) possam ampliar o container de autenticação sem estilos inline:
+No layout base [base_auth.html.twig](/resources/views/admin/layouts/base_auth.html.twig), adicionaremos um bloco `container_class` para que as páginas (como a de setup) possam ampliar o container de autenticação sem estilos inline:
 ```html
 <div class="auth-container {% block container_class %}{% endblock %}">
 ```
 
 ### 2. Mapeamento no Middleware de Idiomas
 
-Mapearemos as rotas de autenticação administrativa em [AdminLanguageMiddleware.php](file:///var/www/html/agsonhos/core/Auth/Middleware/AdminLanguageMiddleware.php) para carregar o namespace `admin/auth`:
+Mapearemos as rotas de autenticação administrativa em [AdminLanguageMiddleware.php](/core/Auth/Middleware/AdminLanguageMiddleware.php) para carregar o namespace `admin/auth`:
 ```php
 'admin.login.form'   => 'admin/auth',
 'admin.login.submit' => 'admin/auth',
@@ -48,9 +48,9 @@ Mapearemos as rotas de autenticação administrativa em [AdminLanguageMiddleware
 ### 3. Criação de Arquivos de Idiomas (JSON)
 
 Criaremos os arquivos JSON correspondentes ao namespace `admin/auth`:
-- **Português**: [pt-br.admin.auth.json](file:///var/www/html/agsonhos/Locales/pt-br/pt-br.admin.auth.json)
-- **Inglês**: [en-gb.admin.auth.json](file:///var/www/html/agsonhos/Locales/en-gb/en-gb.admin.auth.json)
-- **Francês**: [fr-fr.admin.auth.json](file:///var/www/html/agsonhos/Locales/fr-fr/fr-fr.admin.auth.json)
+- **Português**: [pt-br.admin.auth.json](/Locales/pt-br/pt-br.admin.auth.json)
+- **Inglês**: [en-gb.admin.auth.json](/Locales/en-gb/en-gb.admin.auth.json)
+- **Francês**: [fr-fr.admin.auth.json](/Locales/fr-fr/fr-fr.admin.auth.json)
 
 As chaves cobrirão as três telas:
 - **Instalação (Setup)**: Título, cabeçalho, subtítulo, campos de formulário (Nome, Sobrenome, E-mail, Usuário, Senha, Confirmar Senha) com placeholders, e botão de finalizar.
@@ -60,9 +60,9 @@ As chaves cobrirão as três telas:
 ### 4. Substituição nas Views Twig
 
 Refatoraremos as views para utilizar classes CSS globais e traduzir todas as strings estáticas:
-- [setup.html.twig](file:///var/www/html/agsonhos/resources/views/admin/auth/setup.html.twig)
-- [error.html.twig](file:///var/www/html/agsonhos/resources/views/admin/auth/error.html.twig)
-- [login.html.twig](file:///var/www/html/agsonhos/resources/views/admin/auth/login.html.twig)
+- [setup.html.twig](/resources/views/admin/auth/setup.html.twig)
+- [error.html.twig](/resources/views/admin/auth/error.html.twig)
+- [login.html.twig](/resources/views/admin/auth/login.html.twig)
 
 ---
 
@@ -109,7 +109,7 @@ Concluímos com sucesso a remoção de todos os estilos CSS inline e a internaci
 ## Alterações Realizadas
 
 ### 1. Refatoração de Estilos (CSS)
-- **Folha de Estilos**: Integramos e reutilizamos novas classes no arquivo global [components.css](file:///var/www/html/agsonhos/public_html/css/admin/components.css) para remover os estilos inline:
+- **Folha de Estilos**: Integramos e reutilizamos novas classes no arquivo global [components.css](/public_html/css/admin/components.css) para remover os estilos inline:
   - `.is-invalid`: Borda de erro nos inputs.
   - `.align-start`: Alinhamento flex-start.
   - `.flex-column` e `.gap-3`: Layouts flex organizados.
@@ -128,13 +128,13 @@ Concluímos com sucesso a remoção de todos os estilos CSS inline e a internaci
   - `.auth-btn`: Botão em bloco com padding e fonte aumentados.
   - `.auth-error-icon`: Alinhamento para o ícone de aviso de segurança.
   - `.text-danger`: Vermelho padrão do tema (`#ef4444`).
-- **Views Twig**: Todos os atributos inline `style="..."` foram removidos e substituídos pelas classes CSS correspondentes em todas as views. No arquivo de layout [base_auth.html.twig](file:///var/www/html/agsonhos/resources/views/admin/layouts/base_auth.html.twig), adicionamos o bloco `container_class` para permitir o redimensionamento dinâmico sem estilos inline.
+- **Views Twig**: Todos os atributos inline `style="..."` foram removidos e substituídos pelas classes CSS correspondentes em todas as views. No arquivo de layout [base_auth.html.twig](/resources/views/admin/layouts/base_auth.html.twig), adicionamos o bloco `container_class` para permitir o redimensionamento dinâmico sem estilos inline.
 
 ### 2. Internacionalização (i18n)
-- **Middleware**: Mapeamos todas as rotas do cliente, endereços e rotas de autenticação (login/setup) no middleware de idiomas [AdminLanguageMiddleware.php](file:///var/www/html/agsonhos/core/Auth/Middleware/AdminLanguageMiddleware.php), vinculando-as aos namespaces de tradução `admin/customer` e `admin/auth`.
+- **Middleware**: Mapeamos todas as rotas do cliente, endereços e rotas de autenticação (login/setup) no middleware de idiomas [AdminLanguageMiddleware.php](/core/Auth/Middleware/AdminLanguageMiddleware.php), vinculando-as aos namespaces de tradução `admin/customer` e `admin/auth`.
 - **Arquivos JSON de Tradução**: Criamos e populamos arquivos JSON estruturados nos três idiomas oficiais da loja:
-  - **Clientes / Endereços**: [pt-br.admin.customer.json](file:///var/www/html/agsonhos/Locales/pt-br/pt-br.admin.customer.json), [en-gb.admin.customer.json](file:///var/www/html/agsonhos/Locales/en-gb/en-gb.admin.customer.json) e [fr-fr.admin.customer.json](file:///var/www/html/agsonhos/Locales/fr-fr/fr-fr.admin.customer.json).
-  - **Autenticação Admin**: [pt-br.admin.auth.json](file:///var/www/html/agsonhos/Locales/pt-br/pt-br.admin.auth.json), [en-gb.admin.auth.json](file:///var/www/html/agsonhos/Locales/en-gb/en-gb.admin.auth.json) e [fr-fr.admin.auth.json](file:///var/www/html/agsonhos/Locales/fr-fr/fr-fr.admin.auth.json).
+  - **Clientes / Endereços**: [pt-br.admin.customer.json](/Locales/pt-br/pt-br.admin.customer.json), [en-gb.admin.customer.json](/Locales/en-gb/en-gb.admin.customer.json) e [fr-fr.admin.customer.json](/Locales/fr-fr/fr-fr.admin.customer.json).
+  - **Autenticação Admin**: [pt-br.admin.auth.json](/Locales/pt-br/pt-br.admin.auth.json), [en-gb.admin.auth.json](/Locales/en-gb/en-gb.admin.auth.json) e [fr-fr.admin.auth.json](/Locales/fr-fr/fr-fr.admin.auth.json).
 - **Views Twig**: Substituímos os textos hardcoded de todas as páginas por referências ao objeto dinâmico `AdminLang` com fallbacks amigáveis. Nos avisos dinâmicos da página de erro de login, utilizamos os filtros `|format` e `|raw` do Twig para injetar os valores traduzidos mantendo a estilização.
 
 ---

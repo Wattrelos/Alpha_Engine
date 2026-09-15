@@ -20,13 +20,13 @@ A pasta **`features/security/`** foi completamente modularizada em arquivos `.fe
 
 | Arquivo Feature | Foco Técnico / Requisito | Mecanismo Backend | Cenários |
 | :--- | :--- | :--- | :---: |
-| [cabecalhos_owasp.feature](file:///var/www/html/agsonhos/features/security/cabecalhos_owasp.feature) | Cabeçalhos HTTP defensivos (`CSP`, `HSTS`, `X-Frame-Options`, `X-Content-Type-Options`) | `SecurityHeadersMiddleware` | 2 |
-| [rate_limiting_brute_force.feature](file:///var/www/html/agsonhos/features/security/rate_limiting_brute_force.feature) | Bloqueio de IP após tentativas inválidas (`429`) e rate limit de recuperação de senha | `RateLimitMiddleware` | 2 |
-| [controle_acesso_rbac.feature](file:///var/www/html/agsonhos/features/security/controle_acesso_rbac.feature) | Redirecionamento de não autenticados (`302`) e bloqueio de papéis sem privilégio (`403`) | `AdminSessionMiddleware` | 3 |
-| [protecao_csrf.feature](file:///var/www/html/agsonhos/features/security/protecao_csrf.feature) | Geração de tokens de formulário e rejeição de requisições forjadas | `CsrfGuardMiddleware` | 3 |
-| [prevencao_sqli_xss.feature](file:///var/www/html/agsonhos/features/security/prevencao_sqli_xss.feature) | Sanitização de HTML/XSS em avaliações e Prepared Statements (PDO) em buscas | `TwigEnvironment` / Repositórios | 2 |
-| [gestao_sessoes_cookies.feature](file:///var/www/html/agsonhos/features/security/gestao_sessoes_cookies.feature) | Regeneração de ID de sessão pós-login (Anti-Fixation) e flags seguras de cookies | `SessionManager` & `Redis` | 2 |
-| [prevencao_idor_acesso.feature](file:///var/www/html/agsonhos/features/security/prevencao_idor_acesso.feature) | Validação de propriedade de pedidos e endereços (`403`/`404`) contra acesso cruzado | `OrderRepository` & Policies | 2 |
+| [cabecalhos_owasp.feature](/features/security/cabecalhos_owasp.feature) | Cabeçalhos HTTP defensivos (`CSP`, `HSTS`, `X-Frame-Options`, `X-Content-Type-Options`) | `SecurityHeadersMiddleware` | 2 |
+| [rate_limiting_brute_force.feature](/features/security/rate_limiting_brute_force.feature) | Bloqueio de IP após tentativas inválidas (`429`) e rate limit de recuperação de senha | `RateLimitMiddleware` | 2 |
+| [controle_acesso_rbac.feature](/features/security/controle_acesso_rbac.feature) | Redirecionamento de não autenticados (`302`) e bloqueio de papéis sem privilégio (`403`) | `AdminSessionMiddleware` | 3 |
+| [protecao_csrf.feature](/features/security/protecao_csrf.feature) | Geração de tokens de formulário e rejeição de requisições forjadas | `CsrfGuardMiddleware` | 3 |
+| [prevencao_sqli_xss.feature](/features/security/prevencao_sqli_xss.feature) | Sanitização de HTML/XSS em avaliações e Prepared Statements (PDO) em buscas | `TwigEnvironment` / Repositórios | 2 |
+| [gestao_sessoes_cookies.feature](/features/security/gestao_sessoes_cookies.feature) | Regeneração de ID de sessão pós-login (Anti-Fixation) e flags seguras de cookies | `SessionManager` & `Redis` | 2 |
+| [prevencao_idor_acesso.feature](/features/security/prevencao_idor_acesso.feature) | Validação de propriedade de pedidos e endereços (`403`/`404`) contra acesso cruzado | `OrderRepository` & Policies | 2 |
 
 ---
 

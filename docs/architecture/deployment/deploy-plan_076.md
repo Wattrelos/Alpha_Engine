@@ -31,7 +31,7 @@ Ajuste do assistente de primeira instalação para criar o diretório e atalho d
 
 ### 1. Backend Core Setup Action
 
-#### [MODIFY] [ProcessInstallationAction.php](file:///var/www/html/agsonhos/backend/core/Controller/Actions/Setup/ProcessInstallationAction.php)
+#### [MODIFY] [ProcessInstallationAction.php](/backend/core/Controller/Actions/Setup/ProcessInstallationAction.php)
 
 - **Correção de caminho do `public_html`**:
   Ajustar o cálculo de `$publicHtmlDir` no passo 6 da ação de instalação. Atualmente o código usava `__DIR__ . '/../../../../public_html'`, o que apontava para `backend/public_html`. O caminho correto sobe 5 níveis a partir de `backend/core/Controller/Actions/Setup` até a raiz da hospedagem e entra em `public_html/`.
@@ -74,7 +74,7 @@ O mecanismo de primeira instalação (Setup Wizard) foi ajustado para que o dire
 
 ## 🛠️ Alterações Realizadas
 
-### [ProcessInstallationAction.php](file:///var/www/html/agsonhos/backend/core/Controller/Actions/Setup/ProcessInstallationAction.php)
+### [ProcessInstallationAction.php](/backend/core/Controller/Actions/Setup/ProcessInstallationAction.php)
 
 1. **Ajuste na Resolução da `public_html/`**:
    - Atualizado o cálculo do diretório público para subir 5 níveis a partir da action `Setup`:
@@ -110,7 +110,7 @@ Criamos o documento de especificação e o script de diagnóstico automatizado p
 ---
 
 ### 1. Documento de Requisitos Criado
-📄 **[docs/instalation/requirements.md](file:///var/www/html/agsonhos/docs/instalation/requirements.md)**
+📄 **[docs/instalation/requirements.md](/docs/instalation/requirements.md)**
 * **Tabela de Compatibilidade:** Versões mínimas e recomendadas de PHP ($\ge 8.1$), MariaDB/MySQL, Composer e Servidor Web.
 * **Matriz de Extensões do PHP:** Detalhamento do propósito de cada uma (10 obrigatórias e 4 recomendadas).
 * **Configuração de Servidor Web:** Instruções para Apache (`mod_rewrite`) e Nginx (`try_files`).
@@ -119,7 +119,7 @@ Criamos o documento de especificação e o script de diagnóstico automatizado p
 ---
 
 ### 2. Script de Pré-Checagem Criado (Terminal CLI)
-🛠️ **[scripts/check_requirements.sh](file:///var/www/html/agsonhos/scripts/check_requirements.sh)**
+🛠️ **[scripts/check_requirements.sh](/scripts/check_requirements.sh)**
 
 Você pode rodar esse script a qualquer momento no terminal para validar se o ambiente do servidor está pronto antes de abrir o navegador:
 

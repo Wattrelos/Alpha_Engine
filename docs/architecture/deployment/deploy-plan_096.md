@@ -45,11 +45,11 @@ Atualmente, a Alpha Engine possui o parâmetro `config_checkout_guest` previsto 
 
 ### Backend & Configuração da Loja (Admin)
 
-#### [MODIFY] [UpdateStoreSettingAction.php](file:///var/www/html/agsonhos/backend/core/Admin/Controllers/Actions/Setting/StoreSetting/UpdateStoreSettingAction.php)
+#### [MODIFY] [UpdateStoreSettingAction.php](/backend/core/Admin/Controllers/Actions/Setting/StoreSetting/UpdateStoreSettingAction.php)
 - Capturar `config_checkout_guest` do formulário (valor `1` ou `0`).
 - Salvar o valor em `$newSettings['config_checkout_guest']`.
 
-#### [MODIFY] [edit.html.twig](file:///var/www/html/agsonhos/backend/resources/views/admin/setting/store_setting/edit.html.twig)
+#### [MODIFY] [edit.html.twig](/backend/resources/views/admin/setting/store_setting/edit.html.twig)
 - Adicionar botão de aba `Opções de Compra` (`tab-btn-options`) no cabeçalho de abas.
 - Adicionar o painel da aba `tab-content-options` com layout moderno e elegante:
   - Card estilizado para opções de checkout.
@@ -60,28 +60,28 @@ Atualmente, a Alpha Engine possui o parâmetro `config_checkout_guest` previsto 
 
 ### Backend & Frontend de Checkout (Loja Virtual)
 
-#### [MODIFY] [StoreSettings.php](file:///var/www/html/agsonhos/backend/core/Support/StoreSettings.php)
+#### [MODIFY] [StoreSettings.php](/backend/core/Support/StoreSettings.php)
 - Adicionar mapeamento da chave `checkoutGuest` no array transformado para consumo em templates e helpers.
 
-#### [MODIFY] [Checkout.php](file:///var/www/html/agsonhos/backend/core/Controller/Actions/Cart/Checkout.php)
+#### [MODIFY] [Checkout.php](/backend/core/Controller/Actions/Cart/Checkout.php)
 - Obter `$allowGuestCheckout = (bool)($configSettings['config_checkout_guest'] ?? 1);`.
 - Passar a variável `allow_guest_checkout` para a visualização Twig.
 
-#### [MODIFY] [checkout.twig](file:///var/www/html/agsonhos/backend/resources/views/pages/cart/checkout.twig)
+#### [MODIFY] [checkout.twig](/backend/resources/views/pages/cart/checkout.twig)
 - Condicionar a exibição do botão `Comprar como visitante` à variável `allow_guest_checkout`.
 - Caso `allow_guest_checkout` seja falso e o usuário não esteja logado, exibir alerta explicativo e abrir automaticamente a opção de login ou cadastro.
 
-#### [MODIFY] [checkout.js](file:///var/www/html/agsonhos/public_html/js/cart/checkout.js)
+#### [MODIFY] [checkout.js](/public_html/js/cart/checkout.js)
 - Ajustar comportamento da Etapa 1 para respeitar a ausência do botão visitante e selecionar a primeira opção disponível caso não esteja logado.
 
-#### [MODIFY] [SubmitCheckoutAction.php](file:///var/www/html/agsonhos/backend/core/Controller/Actions/Cart/SubmitCheckoutAction.php)
+#### [MODIFY] [SubmitCheckoutAction.php](/backend/core/Controller/Actions/Cart/SubmitCheckoutAction.php)
 - Adicionar trava de segurança no backend: se `customer_id <= 0` e `config_checkout_guest == '0'`, bloquear a finalização do pedido e retornar mensagem de erro para o cliente.
 
 ---
 
 ### Idiomas & Mensagens
 
-#### [MODIFY] [pt-br.checkout.checkout.json](file:///var/www/html/agsonhos/backend/Locales/pt-br/pt-br.checkout.checkout.json)
+#### [MODIFY] [pt-br.checkout.checkout.json](/backend/Locales/pt-br/pt-br.checkout.checkout.json)
 - Adicionar mensagens de feedback para compra de visitante desabilitada.
 
 ---
@@ -119,31 +119,31 @@ Implementamos a funcionalidade completa para gerenciar e restringir compras de u
 ## 🎯 O que foi feito
 
 ### 1. Painel Administrativo (`/admin/configuracoes`)
-- **Aba "Opções de Compra"**: Criada nova aba dedicada na tela de configurações da loja ([`edit.html.twig`](file:///var/www/html/agsonhos/backend/resources/views/admin/setting/store_setting/edit.html.twig)).
+- **Aba "Opções de Compra"**: Criada nova aba dedicada na tela de configurações da loja ([`edit.html.twig`](/backend/resources/views/admin/setting/store_setting/edit.html.twig)).
 - **Controle Segmentado (*Segmented Control*)**: Adicionado controle visual moderno para a chave `config_checkout_guest`:
   - **Permitir (Sim)**: `config_checkout_guest = 1`
   - **Exigir Cadastro (Não)**: `config_checkout_guest = 0`
-- **Persistência de Dados**: Atualizada a ação de backend [`UpdateStoreSettingAction.php`](file:///var/www/html/agsonhos/backend/core/Admin/Controllers/Actions/Setting/StoreSetting/UpdateStoreSettingAction.php) para validar e salvar o parâmetro na tabela `setting`.
+- **Persistência de Dados**: Atualizada a ação de backend [`UpdateStoreSettingAction.php`](/backend/core/Admin/Controllers/Actions/Setting/StoreSetting/UpdateStoreSettingAction.php) para validar e salvar o parâmetro na tabela `setting`.
 
 ### 2. Frontend do Checkout (`/checkout`)
-- **Controlador de Checkout**: No arquivo [`Checkout.php`](file:///var/www/html/agsonhos/backend/core/Controller/Actions/Cart/Checkout.php), a flag `allow_guest_checkout` é injetada no template Twig a partir das configurações ativas.
-- **Visualização de Identificação**: Em [`checkout.twig`](file:///var/www/html/agsonhos/backend/resources/views/pages/cart/checkout.twig), o botão *"Comprar como visitante"* é condicionado à flag `allow_guest_checkout`.
+- **Controlador de Checkout**: No arquivo [`Checkout.php`](/backend/core/Controller/Actions/Cart/Checkout.php), a flag `allow_guest_checkout` é injetada no template Twig a partir das configurações ativas.
+- **Visualização de Identificação**: Em [`checkout.twig`](/backend/resources/views/pages/cart/checkout.twig), o botão *"Comprar como visitante"* é condicionado à flag `allow_guest_checkout`.
   - Quando desabilitado, um aviso amigável orienta o comprador a fazer login ou criar uma conta.
-- **Validação de Fluxo no JS**: No script [`checkout.js`](file:///var/www/html/agsonhos/public_html/js/cart/checkout.js), a transição entre etapas bloqueia tentativas de avançar como visitante quando a funcionalidade estiver desligada.
+- **Validação de Fluxo no JS**: No script [`checkout.js`](/public_html/js/cart/checkout.js), a transição entre etapas bloqueia tentativas de avançar como visitante quando a funcionalidade estiver desligada.
 
 ### 3. Trava de Segurança no Fechamento do Pedido (`POST /checkout`)
-- Em [`SubmitCheckoutAction.php`](file:///var/www/html/agsonhos/backend/core/Controller/Actions/Cart/SubmitCheckoutAction.php), adicionamos validação no backend que rejeita compras anônimas (`customer_id == 0`) caso `config_checkout_guest == 0`, retornando status `403` com erro `GUEST_CHECKOUT_DISABLED` (ou redirecionando com mensagem de erro na sessão).
+- Em [`SubmitCheckoutAction.php`](/backend/core/Controller/Actions/Cart/SubmitCheckoutAction.php), adicionamos validação no backend que rejeita compras anônimas (`customer_id == 0`) caso `config_checkout_guest == 0`, retornando status `403` com erro `GUEST_CHECKOUT_DISABLED` (ou redirecionando com mensagem de erro na sessão).
 
 ### 4. Helper e Internacionalização
-- Atualizado [`StoreSettings.php`](file:///var/www/html/agsonhos/backend/core/Support/StoreSettings.php) para mapear `$store['checkoutGuest']`.
-- Atualizados os arquivos de tradução em Português ([`pt-br.admin.setting.json`](file:///var/www/html/agsonhos/backend/Locales/pt-br/pt-br.admin.setting.json), [`pt-br.checkout.json`](file:///var/www/html/agsonhos/backend/Locales/pt-br/pt-br.checkout.json)) e Inglês ([`en-gb.admin.setting.json`](file:///var/www/html/agsonhos/backend/Locales/en-gb/en-gb.admin.setting.json), [`en-gb.checkout.json`](file:///var/www/html/agsonhos/backend/Locales/en-gb/en-gb.checkout.json)).
+- Atualizado [`StoreSettings.php`](/backend/core/Support/StoreSettings.php) para mapear `$store['checkoutGuest']`.
+- Atualizados os arquivos de tradução em Português ([`pt-br.admin.setting.json`](/backend/Locales/pt-br/pt-br.admin.setting.json), [`pt-br.checkout.json`](/backend/Locales/pt-br/pt-br.checkout.json)) e Inglês ([`en-gb.admin.setting.json`](/backend/Locales/en-gb/en-gb.admin.setting.json), [`en-gb.checkout.json`](/backend/Locales/en-gb/en-gb.checkout.json)).
 
 ---
 
 ## 🧪 Verificação & Testes
 
 ### 1. Testes Unitários e de Integração (PHPUnit)
-Criado o arquivo de testes [`GuestCheckoutSettingTest.php`](file:///var/www/html/agsonhos/tests/Validation/GuestCheckoutSettingTest.php) cobrindo:
+Criado o arquivo de testes [`GuestCheckoutSettingTest.php`](/tests/Validation/GuestCheckoutSettingTest.php) cobrindo:
 - Mapeamento correto da chave no helper `StoreSettings`.
 - Bloqueio de pedido anônimo quando `config_checkout_guest = 0`.
 - Liberação de checkout para cliente logado quando `config_checkout_guest = 0`.

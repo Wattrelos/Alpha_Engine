@@ -27,32 +27,32 @@ _A instalação e configuração do **Playwright** foram concluídas com sucesso
 ### 📦 Pacotes Instalados & Configurações Realizadas
 
 1. **Pacotes NPM Adicionados:**
-   - [`@axe-core/playwright`](file:///var/www/html/agsonhos/package.json): Varredura e validação automatizada de acessibilidade (WCAG 2.1 AA).
-   - [`dotenv`](file:///var/www/html/agsonhos/package.json): Injeção automática das variáveis de ambiente (`BASE_URL`, banco e credenciais).
-   - [`typescript`](file:///var/www/html/agsonhos/package.json): Tipagem estática completa para Page Objects e fixtures.
+   - [`@axe-core/playwright`](/package.json): Varredura e validação automatizada de acessibilidade (WCAG 2.1 AA).
+   - [`dotenv`](/package.json): Injeção automática das variáveis de ambiente (`BASE_URL`, banco e credenciais).
+   - [`typescript`](/package.json): Tipagem estática completa para Page Objects e fixtures.
 
-2. **Ajustes no [`playwright.config.ts`](file:///var/www/html/agsonhos/playwright.config.ts):**
+2. **Ajustes no [`playwright.config.ts`](/playwright.config.ts):**
    - Configuração de `baseURL` dinâmica apontando para `http://localhost`.
    - Projetos configurados para **Desktop Chrome**, **Desktop Firefox**, **Desktop Safari (WebKit)**, **Mobile Chrome (Pixel 5)** e **Mobile Safari (iPhone 12)**.
    - Captura automática de **Screenshots** e gravação de **Vídeos** em caso de falhas.
    - Relatórios em **HTML interativo** (`playwright-report/`) e **JSON** (`test-results/`).
 
 3. **Arquitetura Page Object Model (POM):**
-   - [`e2e/pages/BasePage.ts`](file:///var/www/html/agsonhos/e2e/pages/BasePage.ts): Métodos base de navegação com i18n (`/pt-br/`), captura de tokens CSRF, cabeçalhos de segurança e detecção de erros de console JS.
-   - [`e2e/pages/HomePage.ts`](file:///var/www/html/agsonhos/e2e/pages/HomePage.ts): Elementos de topo, logo, busca e navegação.
-   - [`e2e/pages/LoginPage.ts`](file:///var/www/html/agsonhos/e2e/pages/LoginPage.ts): Formulário de autenticação, CSRF e validações.
-   - [`e2e/pages/SearchPage.ts`](file:///var/www/html/agsonhos/e2e/pages/SearchPage.ts): Catálogo de produtos, filtros e ordenação.
-   - [`e2e/pages/ProductDetailPage.ts`](file:///var/www/html/agsonhos/e2e/pages/ProductDetailPage.ts): Detalhe do produto (PDP), variantes, quantidade e compra.
-   - [`e2e/pages/CartPage.ts`](file:///var/www/html/agsonhos/e2e/pages/CartPage.ts): Carrinho de compras, cálculo de frete, cupom e checkout.
-   - [`e2e/fixtures/test-fixtures.ts`](file:///var/www/html/agsonhos/e2e/fixtures/test-fixtures.ts): Fixture que disponibiliza os Page Objects e a engine do Axe em todos os testes.
+   - [`e2e/pages/BasePage.ts`](/e2e/pages/BasePage.ts): Métodos base de navegação com i18n (`/pt-br/`), captura de tokens CSRF, cabeçalhos de segurança e detecção de erros de console JS.
+   - [`e2e/pages/HomePage.ts`](/e2e/pages/HomePage.ts): Elementos de topo, logo, busca e navegação.
+   - [`e2e/pages/LoginPage.ts`](/e2e/pages/LoginPage.ts): Formulário de autenticação, CSRF e validações.
+   - [`e2e/pages/SearchPage.ts`](/e2e/pages/SearchPage.ts): Catálogo de produtos, filtros e ordenação.
+   - [`e2e/pages/ProductDetailPage.ts`](/e2e/pages/ProductDetailPage.ts): Detalhe do produto (PDP), variantes, quantidade e compra.
+   - [`e2e/pages/CartPage.ts`](/e2e/pages/CartPage.ts): Carrinho de compras, cálculo de frete, cupom e checkout.
+   - [`e2e/fixtures/test-fixtures.ts`](/e2e/fixtures/test-fixtures.ts): Fixture que disponibiliza os Page Objects e a engine do Axe em todos os testes.
 
 4. **Especificações E2E Criadas:**
-   - [`e2e/specs/frontend/home.spec.ts`](file:///var/www/html/agsonhos/e2e/specs/frontend/home.spec.ts): Validação de layout da Home, SEO, tokens CSRF e Acessibilidade (Axe WCAG).
-   - [`e2e/specs/auth/login.spec.ts`](file:///var/www/html/agsonhos/e2e/specs/auth/login.spec.ts): Renderização, proteção CSRF e tratamento de credenciais inválidas.
-   - [`e2e/specs/frontend/search.spec.ts`](file:///var/www/html/agsonhos/e2e/specs/frontend/search.spec.ts): Fluxo de busca global e feedback para termos sem resultados.
-   - [`e2e/specs/cart/cart-flow.spec.ts`](file:///var/www/html/agsonhos/e2e/specs/cart/cart-flow.spec.ts): Estado de carrinho vazio e navegação até PDP.
-   - [`e2e/specs/security/security-headers.spec.ts`](file:///var/www/html/agsonhos/e2e/specs/security/security-headers.spec.ts): Cabeçalhos OWASP no browser real (CSP, X-Frame-Options, cookies HttpOnly).
-   - [`e2e/specs/responsive/mobile-view.spec.ts`](file:///var/www/html/agsonhos/e2e/specs/responsive/mobile-view.spec.ts): Comportamento responsivo em dispositivos móveis.
+   - [`e2e/specs/frontend/home.spec.ts`](/e2e/specs/frontend/home.spec.ts): Validação de layout da Home, SEO, tokens CSRF e Acessibilidade (Axe WCAG).
+   - [`e2e/specs/auth/login.spec.ts`](/e2e/specs/auth/login.spec.ts): Renderização, proteção CSRF e tratamento de credenciais inválidas.
+   - [`e2e/specs/frontend/search.spec.ts`](/e2e/specs/frontend/search.spec.ts): Fluxo de busca global e feedback para termos sem resultados.
+   - [`e2e/specs/cart/cart-flow.spec.ts`](/e2e/specs/cart/cart-flow.spec.ts): Estado de carrinho vazio e navegação até PDP.
+   - [`e2e/specs/security/security-headers.spec.ts`](/e2e/specs/security/security-headers.spec.ts): Cabeçalhos OWASP no browser real (CSP, X-Frame-Options, cookies HttpOnly).
+   - [`e2e/specs/responsive/mobile-view.spec.ts`](/e2e/specs/responsive/mobile-view.spec.ts): Comportamento responsivo em dispositivos móveis.
 
 ---
 
@@ -88,5 +88,5 @@ composer test:all
 
 1. **Visual Regression Testing**: Utilizar o `expect(page).toHaveScreenshot()` do Playwright para capturar snapshots visuais dos componentes principais (Header, Cards de Produto, Rodapé) e detectar quebras de CSS automaticamente.
 2. **Mocking de APIs de Terceiros**: Utilizar `page.route()` do Playwright para interceptar requisições externas (como a consulta ao ViaCEP ou Gateways de Pagamento) e simular cenários de timeout, recusa ou sucesso sem depender de rede externa.
-3. **Continuous Integration (CI/CD)**: O arquivo de workflow [`.github/workflows/playwright.yml`](file:///var/www/html/agsonhos/.github/workflows/playwright.yml) gerado pode executar `composer test:all` em cada Pull Request para garantir 100% de confiabilidade antes de qualquer deploy.
+3. **Continuous Integration (CI/CD)**: O arquivo de workflow [`.github/workflows/playwright.yml`](/.github/workflows/playwright.yml) gerado pode executar `composer test:all` em cada Pull Request para garantir 100% de confiabilidade antes de qualquer deploy.
 

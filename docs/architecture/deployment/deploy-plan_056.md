@@ -12,7 +12,7 @@
 
 # Plano de Implementação - Proteção dos Diretórios de Uploads (public_html/image e storage/)
 
-Este plano descreve o endurecimento de segurança (*Hardening*) dos diretórios de arquivos da **Alpha Engine** ([public_html/image](file:///var/www/html/agsonhos/public_html/image) e [storage](file:///var/www/html/agsonhos/storage)), prevenindo a execução remota de código (RCE - *Remote Code Execution*) via upload de scripts maliciosos e o acesso direto a dados sensíveis de auditoria.
+Este plano descreve o endurecimento de segurança (*Hardening*) dos diretórios de arquivos da **Alpha Engine** ([public_html/image](/public_html/image) e [storage](/storage)), prevenindo a execução remota de código (RCE - *Remote Code Execution*) via upload de scripts maliciosos e o acesso direto a dados sensíveis de auditoria.
 
 ## User Review Required
 
@@ -31,7 +31,7 @@ Este plano descreve o endurecimento de segurança (*Hardening*) dos diretórios 
 
 ### Endurecimento por Servidor Web (.htaccess & Proteções)
 
-#### [NEW] [storage/.htaccess](file:///var/www/html/agsonhos/storage/.htaccess)
+#### [NEW] [storage/.htaccess](/storage/.htaccess)
 - Criar a regra `.htaccess` bloqueando todo o tráfego HTTP direto para qualquer subdiretório do `storage/`:
   ```apache
   <IfModule mod_authz_core.c>
@@ -43,7 +43,7 @@ Este plano descreve o endurecimento de segurança (*Hardening*) dos diretórios 
   </IfModule>
   ```
 
-#### [NEW] [public_html/image/.htaccess](file:///var/www/html/agsonhos/public_html/image/.htaccess)
+#### [NEW] [public_html/image/.htaccess](/public_html/image/.htaccess)
 - Criar a regra `.htaccess` com mitigação contra RCE no diretório público de mídias:
   1. Desativar a listagem de arquivos de diretório (`Options -Indexes`).
   2. Negação explícita de execução para extensões de script (`.php`, `.phtml`, `.php5`, `.phar`, `.inc`, `.sh`, `.cgi`, etc.).
@@ -53,7 +53,7 @@ Este plano descreve o endurecimento de segurança (*Hardening*) dos diretórios 
 
 ### Sanitização e Validação no Código PHP
 
-#### [NEW] [UploadSecurityHelper.php](file:///var/www/html/agsonhos/core/Support/UploadSecurityHelper.php)
+#### [NEW] [UploadSecurityHelper.php](/core/Support/UploadSecurityHelper.php)
 - Criar a classe utilitária `UploadSecurityHelper` com métodos estáticos para:
   - Validar o MIME type real via `finfo_file()` (garantindo que o arquivo enviado é verdadeiramente uma imagem e não um script disfarçado).
   - Sanitizar nomes de arquivos enviados para prevenir o ataque *Path Traversal* (`../`).
@@ -84,42 +84,42 @@ Este plano descreve o endurecimento de segurança (*Hardening*) dos diretórios 
 # Walkthrough - Implementação de Segurança (CSRF, Security Headers, Secure Cookies, Rate Limiting, Debug Mode, Isolamento de Tenants & Proteção de Uploads)
 
 ## 🔒 1. Proteção Anti-CSRF
-- **[CsrfGuardMiddleware.php](file:///var/www/html/agsonhos/core/Auth/Middleware/CsrfGuardMiddleware.php)**: Proteção anti-CSRF com inicialização preguiçosa (*lazy initialization*) para evitar erros de sessão prematura e handler de erro JSON/HTML.
+- **[CsrfGuardMiddleware.php](/core/Auth/Middleware/CsrfGuardMiddleware.php)**: Proteção anti-CSRF com inicialização preguiçosa (*lazy initialization*) para evitar erros de sessão prematura e handler de erro JSON/HTML.
 
 ---
 
 ## 🛡️ 2. Cabeçalhos de Segurança HTTP (Security Headers)
-- **[SecurityHeadersMiddleware.php](file:///var/www/html/agsonhos/core/Auth/Middleware/SecurityHeadersMiddleware.php)**: Cabeçalhos defensivos `X-Frame-Options`, `nosniff`, `XSS-Protection`, `Referrer-Policy`, `Permissions-Policy`, `CSP` e `HSTS` (HTTPS).
+- **[SecurityHeadersMiddleware.php](/core/Auth/Middleware/SecurityHeadersMiddleware.php)**: Cabeçalhos defensivos `X-Frame-Options`, `nosniff`, `XSS-Protection`, `Referrer-Policy`, `Permissions-Policy`, `CSP` e `HSTS` (HTTPS).
 
 ---
 
 ## 🍪 3. Flag `; Secure` Condicional em Cookies de Sessão
-- **[CookieHelper.php](file:///var/www/html/agsonhos/core/Support/CookieHelper.php)**: Utilitário para formatar cookies HTTP anexando `; Secure` sob conexões HTTPS.
+- **[CookieHelper.php](/core/Support/CookieHelper.php)**: Utilitário para formatar cookies HTTP anexando `; Secure` sob conexões HTTPS.
 
 ---
 
 ## ⚡ 4. Limitação de Taxa por IP (Rate Limiting com Redis & Fallback em Arquivo)
-- **[RateLimitMiddleware.php](file:///var/www/html/agsonhos/core/Auth/Middleware/RateLimitMiddleware.php)**: Cota estrita (10 req/min) para autenticação e cota ampla (60 req/min) para APIs `/api/*`, com fallback local em arquivo para desenvolvimento.
+- **[RateLimitMiddleware.php](/core/Auth/Middleware/RateLimitMiddleware.php)**: Cota estrita (10 req/min) para autenticação e cota ampla (60 req/min) para APIs `/api/*`, com fallback local em arquivo para desenvolvimento.
 
 ---
 
 ## 🛠️ 5. Desativação do Modo de Depuração em Produção & Handler 500
-- **[public_html/index.php](file:///var/www/html/agsonhos/public_html/index.php)** & **[public_html/LPDHED2dC7Gjrg2b/index.php](file:///var/www/html/agsonhos/public_html/LPDHED2dC7Gjrg2b/index.php)**: Configuração dinâmica de Twig debug e Slim ErrorMiddleware via `.env` (`APP_ENV` / `APP_DEBUG`), com páginas e handlers de erro 500 amigáveis sem vazamento de stack traces em produção.
+- **[public_html/index.php](/public_html/index.php)** & **[public_html/LPDHED2dC7Gjrg2b/index.php](/public_html/LPDHED2dC7Gjrg2b/index.php)**: Configuração dinâmica de Twig debug e Slim ErrorMiddleware via `.env` (`APP_ENV` / `APP_DEBUG`), com páginas e handlers de erro 500 amigáveis sem vazamento de stack traces em produção.
 
 ---
 
 ## 🏢 6. Isolamento Rígido de Tenants (`store_id`)
-- **[AbstractRepository.php](file:///var/www/html/agsonhos/core/Model/Domain/Repositories/AbstractRepository.php)**, **[CustomerRepository.php](file:///var/www/html/agsonhos/core/Model/Domain/Repositories/CustomerRepository.php)** & **[OrderRepository.php](file:///var/www/html/agsonhos/core/Model/Domain/Repositories/OrderRepository.php)**: Validação estrita de `store_id` para evitar vazamento de dados entre lojas (*cross-tenant data leakage*).
+- **[AbstractRepository.php](/core/Model/Domain/Repositories/AbstractRepository.php)**, **[CustomerRepository.php](/core/Model/Domain/Repositories/CustomerRepository.php)** & **[OrderRepository.php](/core/Model/Domain/Repositories/OrderRepository.php)**: Validação estrita de `store_id` para evitar vazamento de dados entre lojas (*cross-tenant data leakage*).
 
 ---
 
 ## 📁 7. Proteção do Diretório de Uploads (`public_html/image` e `storage/`)
 
-- **[storage/.htaccess](file:///var/www/html/agsonhos/storage/.htaccess)** (`NEW`): Negação total de acesso HTTP público (`Require all denied` / `Deny from all`) ao diretório de logs, sessões e arquivos de cache.
-- **[public_html/image/.htaccess](file:///var/www/html/agsonhos/public_html/image/.htaccess)** (`NEW`):
+- **[storage/.htaccess](/storage/.htaccess)** (`NEW`): Negação total de acesso HTTP público (`Require all denied` / `Deny from all`) ao diretório de logs, sessões e arquivos de cache.
+- **[public_html/image/.htaccess](/public_html/image/.htaccess)** (`NEW`):
   - Bloqueio explícito de execução para extensões de script (`.php`, `.phtml`, `.phar`, `.inc`, `.sh`, `.cgi`, etc.).
   - Desativação do motor PHP (`php_flag engine off`) e da listagem de arquivos de diretórios (`Options -Indexes`).
-- **[UploadSecurityHelper.php](file:///var/www/html/agsonhos/core/Support/UploadSecurityHelper.php)** (`NEW`):
+- **[UploadSecurityHelper.php](/core/Support/UploadSecurityHelper.php)** (`NEW`):
   - Utilitário para inspecionar o MIME-type real via `finfo_file` (Magic Bytes).
   - Sanitização rigorosa contra *Path Traversal* (`../`) e *Null Byte Injection* (`\0`).
   - Bloqueio de ataques de dupla extensão (`exploit.php.jpg`).

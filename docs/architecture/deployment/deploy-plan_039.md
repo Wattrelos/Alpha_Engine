@@ -32,54 +32,54 @@ Este plano descreve o processo de modularização dos estilos consolidados no e-
 
 ### 1. Extensão de Layout
 
-#### [MODIFY] [base.html.twig](file:///var/www/html/agsonhos/resources/views/base.html.twig)
+#### [MODIFY] [base.html.twig](/resources/views/base.html.twig)
 * Adicionar `{% block stylesheets %}{% endblock %}` após a inclusão de `new-stylesheet.css`.
 
 ### 2. Estilos CSS (Global e Módulos)
 
-#### [MODIFY] [personalizada.css](file:///var/www/html/agsonhos/public_html/css/custom/personalizada.css)
+#### [MODIFY] [personalizada.css](/public_html/css/custom/personalizada.css)
 * Atualizar o bloco `:root` no topo do arquivo para incluir todas as variáveis semânticas do tema Premium UI.
 * Remover todos os estilos específicos adicionados a partir do comentário `/* ADDRESSES AREA ... */` até o fim do arquivo (linhas 1440 a 3041).
 
-#### [NEW] [addresses.css](file:///var/www/html/agsonhos/public_html/css/custom/addresses.css)
+#### [NEW] [addresses.css](/public_html/css/custom/addresses.css)
 * Criar a folha de estilos contendo as regras unificadas de Endereços, utilizando as variáveis CSS declaradas no `:root`.
 
-#### [NEW] [orders.css](file:///var/www/html/agsonhos/public_html/css/custom/orders.css)
+#### [NEW] [orders.css](/public_html/css/custom/orders.css)
 * Criar a folha de estilos contendo as regras unificadas de Pedidos e Histórico, utilizando as variáveis CSS declaradas no `:root`.
 
-#### [NEW] [returns-institutional.css](file:///var/www/html/agsonhos/public_html/css/custom/returns-institutional.css)
+#### [NEW] [returns-institutional.css](/public_html/css/custom/returns-institutional.css)
 * Criar a folha de estilos contendo as regras unificadas de Devoluções, Contato e Institucional, utilizando as variáveis CSS declaradas no `:root`.
 
 ### 3. Templates Twig (Carregamento dos Módulos)
 
-#### [MODIFY] [create.twig](file:///var/www/html/agsonhos/resources/views/pages/users/addresses/create.twig)
+#### [MODIFY] [create.twig](/resources/views/pages/users/addresses/create.twig)
 * Adicionar o bloco de estilos carregando `addresses.css`.
 
-#### [MODIFY] [edit.twig](file:///var/www/html/agsonhos/resources/views/pages/users/addresses/edit.twig)
+#### [MODIFY] [edit.twig](/resources/views/pages/users/addresses/edit.twig)
 * Adicionar o bloco de estilos carregando `addresses.css`.
 
-#### [MODIFY] [index.twig](file:///var/www/html/agsonhos/resources/views/pages/users/addresses/index.twig)
+#### [MODIFY] [index.twig](/resources/views/pages/users/addresses/index.twig)
 * Adicionar o bloco de estilos carregando `addresses.css`.
 
-#### [MODIFY] [orders.twig](file:///var/www/html/agsonhos/resources/views/pages/users/accounts/orders.twig)
+#### [MODIFY] [orders.twig](/resources/views/pages/users/accounts/orders.twig)
 * Adicionar o bloco de estilos carregando `orders.css`.
 
-#### [MODIFY] [order-history.twig](file:///var/www/html/agsonhos/resources/views/pages/users/accounts/order-history.twig)
+#### [MODIFY] [order-history.twig](/resources/views/pages/users/accounts/order-history.twig)
 * Adicionar o bloco de estilos carregando `orders.css`.
 
-#### [MODIFY] [return.twig](file:///var/www/html/agsonhos/resources/views/pages/users/return.twig)
+#### [MODIFY] [return.twig](/resources/views/pages/users/return.twig)
 * Adicionar o bloco de estilos carregando `returns-institutional.css`.
 
-#### [MODIFY] [return-info.html.twig](file:///var/www/html/agsonhos/resources/views/pages/users/return-info.html.twig)
+#### [MODIFY] [return-info.html.twig](/resources/views/pages/users/return-info.html.twig)
 * Adicionar o bloco de estilos carregando `returns-institutional.css`.
 
-#### [MODIFY] [product-returns.html.twig](file:///var/www/html/agsonhos/resources/views/pages/product/product-returns.html.twig)
+#### [MODIFY] [product-returns.html.twig](/resources/views/pages/product/product-returns.html.twig)
 * Adicionar o bloco de estilos carregando `returns-institutional.css`.
 
-#### [MODIFY] [contact.twig](file:///var/www/html/agsonhos/resources/views/pages/information/contact.twig)
+#### [MODIFY] [contact.twig](/resources/views/pages/information/contact.twig)
 * Adicionar o bloco de estilos carregando `returns-institutional.css`.
 
-#### [MODIFY] [show.html.twig](file:///var/www/html/agsonhos/resources/views/pages/information/show.html.twig)
+#### [MODIFY] [show.html.twig](/resources/views/pages/information/show.html.twig)
 * Adicionar o bloco de estilos carregando `returns-institutional.css`.
 
 ---
@@ -120,12 +120,12 @@ Este plano descreve o processo de modularização dos estilos consolidados no e-
 
 # Tarefas — Fase 4 (Otimização Arquitetural e Modularização CSS)
 
-- `[x]` Estender o layout base em [base.html.twig](file:///var/www/html/agsonhos/resources/views/base.html.twig)
-- `[x]` Inserir as variáveis CSS de tema no [personalizada.css](file:///var/www/html/agsonhos/public_html/css/custom/personalizada.css)
-- `[x]` Criar o arquivo [addresses.css](file:///var/www/html/agsonhos/public_html/css/custom/addresses.css) com variáveis
-- `[x]` Criar o arquivo [orders.css](file:///var/www/html/agsonhos/public_html/css/custom/orders.css) com variáveis
-- `[x]` Criar o arquivo [returns-institutional.css](file:///var/www/html/agsonhos/public_html/css/custom/returns-institutional.css) com variáveis
-- `[x]` Remover os blocos específicos de [personalizada.css](file:///var/www/html/agsonhos/public_html/css/custom/personalizada.css) (linhas 1440+)
+- `[x]` Estender o layout base em [base.html.twig](/resources/views/base.html.twig)
+- `[x]` Inserir as variáveis CSS de tema no [personalizada.css](/public_html/css/custom/personalizada.css)
+- `[x]` Criar o arquivo [addresses.css](/public_html/css/custom/addresses.css) com variáveis
+- `[x]` Criar o arquivo [orders.css](/public_html/css/custom/orders.css) com variáveis
+- `[x]` Criar o arquivo [returns-institutional.css](/public_html/css/custom/returns-institutional.css) com variáveis
+- `[x]` Remover os blocos específicos de [personalizada.css](/public_html/css/custom/personalizada.css) (linhas 1440+)
 - `[x]` Incluir as folhas de estilo sob demanda nos templates Twig
 - `[x]` Validar layout final e carregamento sob demanda
 
@@ -140,21 +140,21 @@ Concluímos com sucesso a execução de todas as fases de consolidação e otimi
 Na Fase 4, implementamos as 4 melhorias recomendadas para aprimorar o desempenho, carregamento e manutenção do design do site.
 
 ### 1. Variáveis CSS (Tema Dinâmico)
-* **[personalizada.css](file:///var/www/html/agsonhos/public_html/css/custom/personalizada.css)**:
+* **[personalizada.css](/public_html/css/custom/personalizada.css)**:
   * Inserimos no bloco `:root` todas as variáveis semânticas de cores, bordas, sombras e fontes da Premium UI (`--premium-bg-page`, `--premium-bg-card`, `--premium-text-primary`, `--premium-color-primary`, `--premium-border-card`, etc.).
   * Com isso, o tema visual do e-commerce pode ser alterado dinamicamente modificando apenas estes tokens no arquivo global.
 
 ### 2. Criação de Folhas de Estilo sob Demanda (Módulos)
 Extraímos os estilos consolidados anteriormente das Fases 1, 2 e 3 de `personalizada.css` e os dividimos em arquivos modulares menores:
-* 📄 **[addresses.css](file:///var/www/html/agsonhos/public_html/css/custom/addresses.css)**: Estilos da área de endereços reescritos usando variáveis CSS.
-* 📄 **[orders.css](file:///var/www/html/agsonhos/public_html/css/custom/orders.css)**: Estilos da listagem e detalhes de pedidos reescritos usando variáveis CSS.
-* 📄 **[returns-institutional.css](file:///var/www/html/agsonhos/public_html/css/custom/returns-institutional.css)**: Estilos unificados de formulário de devolução, timeline, lista de devoluções, página de contato e páginas institucionais reescritos usando variáveis CSS.
+* 📄 **[addresses.css](/public_html/css/custom/addresses.css)**: Estilos da área de endereços reescritos usando variáveis CSS.
+* 📄 **[orders.css](/public_html/css/custom/orders.css)**: Estilos da listagem e detalhes de pedidos reescritos usando variáveis CSS.
+* 📄 **[returns-institutional.css](/public_html/css/custom/returns-institutional.css)**: Estilos unificados de formulário de devolução, timeline, lista de devoluções, página de contato e páginas institucionais reescritos usando variáveis CSS.
 
 ### 3. Limpeza Geral de `personalizada.css`
 * Removemos mais de **1.600 linhas** de código de estilos específicos agregados nas fases passadas, fazendo o arquivo global `personalizada.css` retornar ao seu propósito inicial (estilos de cabeçalho, rodapé, menu e utilitários globais).
 
 ### 4. Carregamento sob Demanda via Twig
-* **[base.html.twig](file:///var/www/html/agsonhos/resources/views/base.html.twig)**:
+* **[base.html.twig](/resources/views/base.html.twig)**:
   * Adicionamos a extensão de blocos `{% block stylesheets %}{% endblock %}` na tag `<head>` para permitir a injeção condicional de folhas de estilo específicas de cada página.
 * **Atualização dos Templates Twig**:
   * Adicionamos a injeção do arquivo respectivo através de seu bloco em 10 templates customizados:

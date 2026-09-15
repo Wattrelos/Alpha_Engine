@@ -25,7 +25,7 @@ Este plano descreve a criação da classe utilitária `CookieHelper` e o ajuste 
 
 ### Utilitários e Suporte (Core Support)
 
-#### [NEW] [CookieHelper.php](file:///var/www/html/agsonhos/core/Support/CookieHelper.php)
+#### [NEW] [CookieHelper.php](/core/Support/CookieHelper.php)
 - Criar a classe `CookieHelper` no namespace `Alpha\Support`.
 - Implementar o método `isHttps(ServerRequestInterface $request): bool` para detectar conexões seguras inspecionando o esquema da URI PSR-7, a variável `$_SERVER['HTTPS']` e o cabeçalho `X-Forwarded-Proto`.
 - Implementar o método `makeCookieHeader(...)` para formatar a string do cabeçalho `Set-Cookie` aplicando `Path=/`, `HttpOnly`, `SameSite=Lax` e acrescentando `; Secure` quando `isHttps()` for verdadeiro.
@@ -34,16 +34,16 @@ Este plano descreve a criação da classe utilitária `CookieHelper` e o ajuste 
 
 ### Ações de Autenticação (Storefront & Admin)
 
-#### [MODIFY] [LoginAction.php (Customer)](file:///var/www/html/agsonhos/core/Controller/Actions/Customer/Auth/LoginAction.php)
+#### [MODIFY] [LoginAction.php (Customer)](/core/Controller/Actions/Customer/Auth/LoginAction.php)
 - Atualizar a definição do cookie `session_id` no login de cliente utilizando `CookieHelper::makeCookieHeader($request, 'session_id', $sessionId, 7200)`.
 
-#### [MODIFY] [LogoutAction.php (Customer)](file:///var/www/html/agsonhos/core/Controller/Actions/Customer/Auth/LogoutAction.php)
+#### [MODIFY] [LogoutAction.php (Customer)](/core/Controller/Actions/Customer/Auth/LogoutAction.php)
 - Atualizar a expiração do cookie `session_id` no logout de cliente utilizando `CookieHelper::makeCookieHeader($request, 'session_id', '', -1)`.
 
-#### [MODIFY] [LoginAction.php (Admin)](file:///var/www/html/agsonhos/core/Admin/Controllers/Actions/Auth/LoginAction.php)
+#### [MODIFY] [LoginAction.php (Admin)](/core/Admin/Controllers/Actions/Auth/LoginAction.php)
 - Atualizar a definição do cookie `admin_session_id` no login administrativo utilizando `CookieHelper::makeCookieHeader($request, 'admin_session_id', $sessionId, 7200)`.
 
-#### [MODIFY] [LogoutAction.php (Admin)](file:///var/www/html/agsonhos/core/Admin/Controllers/Actions/Auth/LogoutAction.php)
+#### [MODIFY] [LogoutAction.php (Admin)](/core/Admin/Controllers/Actions/Auth/LogoutAction.php)
 - Atualizar a expiração do cookie `admin_session_id` no logout administrativo utilizando `CookieHelper::makeCookieHeader($request, 'admin_session_id', '', -1)`.
 
 ---
@@ -70,26 +70,26 @@ Este plano descreve a criação da classe utilitária `CookieHelper` e o ajuste 
 
 ## 🔒 1. Proteção Anti-CSRF
 
-- **[composer.json](file:///var/www/html/agsonhos/composer.json)**: Instalada a biblioteca [`slim/csrf`](file:///var/www/html/agsonhos/vendor/slim/csrf).
-- **[CsrfGuardMiddleware.php](file:///var/www/html/agsonhos/core/Auth/Middleware/CsrfGuardMiddleware.php)**: Middleware PSR-15 com modo persistente e handler de falhas (JSON 400 para AJAX, HTML 400 para navegadores).
-- **[public_html/index.php](file:///var/www/html/agsonhos/public_html/index.php)** e **[public_html/LPDHED2dC7Gjrg2b/index.php](file:///var/www/html/agsonhos/public_html/LPDHED2dC7Gjrg2b/index.php)**: Registrado o middleware nos bootstraps público e administrativo.
-- **[form-validator.js](file:///var/www/html/agsonhos/public_html/js/custom/form-validator.js)**: Injeção automática dos tokens CSRF em submissões AJAX.
+- **[composer.json](/composer.json)**: Instalada a biblioteca [`slim/csrf`](/vendor/slim/csrf).
+- **[CsrfGuardMiddleware.php](/core/Auth/Middleware/CsrfGuardMiddleware.php)**: Middleware PSR-15 com modo persistente e handler de falhas (JSON 400 para AJAX, HTML 400 para navegadores).
+- **[public_html/index.php](/public_html/index.php)** e **[public_html/LPDHED2dC7Gjrg2b/index.php](/public_html/LPDHED2dC7Gjrg2b/index.php)**: Registrado o middleware nos bootstraps público e administrativo.
+- **[form-validator.js](/public_html/js/custom/form-validator.js)**: Injeção automática dos tokens CSRF em submissões AJAX.
 
 ---
 
 ## 🛡️ 2. Cabeçalhos de Segurança HTTP (Security Headers)
 
-- **[SecurityHeadersMiddleware.php](file:///var/www/html/agsonhos/core/Auth/Middleware/SecurityHeadersMiddleware.php)**: Injeta os cabeçalhos defensivos `X-Frame-Options: SAMEORIGIN`, `X-Content-Type-Options: nosniff`, `X-XSS-Protection`, `Referrer-Policy`, `Permissions-Policy`, `Content-Security-Policy` e `HSTS` (sob HTTPS).
+- **[SecurityHeadersMiddleware.php](/core/Auth/Middleware/SecurityHeadersMiddleware.php)**: Injeta os cabeçalhos defensivos `X-Frame-Options: SAMEORIGIN`, `X-Content-Type-Options: nosniff`, `X-XSS-Protection`, `Referrer-Policy`, `Permissions-Policy`, `Content-Security-Policy` e `HSTS` (sob HTTPS).
 
 ---
 
 ## 🍪 3. Flag `; Secure` Condicional em Cookies de Sessão
 
-- **[CookieHelper.php](file:///var/www/html/agsonhos/core/Support/CookieHelper.php)** (`NEW`):
+- **[CookieHelper.php](/core/Support/CookieHelper.php)** (`NEW`):
   - Utilitário centralizado para formatar o cabeçalho `Set-Cookie` com as diretivas de segurança `Path=/`, `HttpOnly`, `SameSite=Lax` e anexo condicional de `; Secure` quando a requisição for realizada sob conexão HTTPS.
 - **Ações de Login & Logout Ajustadas**:
-  - **[Customer LoginAction.php](file:///var/www/html/agsonhos/core/Controller/Actions/Customer/Auth/LoginAction.php)** e **[LogoutAction.php](file:///var/www/html/agsonhos/core/Controller/Actions/Customer/Auth/LogoutAction.php)**.
-  - **[Admin LoginAction.php](file:///var/www/html/agsonhos/core/Admin/Controllers/Actions/Auth/LoginAction.php)** e **[LogoutAction.php](file:///var/www/html/agsonhos/core/Admin/Controllers/Actions/Auth/LogoutAction.php)**.
+  - **[Customer LoginAction.php](/core/Controller/Actions/Customer/Auth/LoginAction.php)** e **[LogoutAction.php](/core/Controller/Actions/Customer/Auth/LogoutAction.php)**.
+  - **[Admin LoginAction.php](/core/Admin/Controllers/Actions/Auth/LoginAction.php)** e **[LogoutAction.php](/core/Admin/Controllers/Actions/Auth/LogoutAction.php)**.
 
 ---
 

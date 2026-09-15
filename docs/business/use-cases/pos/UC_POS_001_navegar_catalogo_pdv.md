@@ -11,7 +11,7 @@
 | **Atores Secundários** | Sistema Alpha Engine POS |
 | **Tipo** | Condução / Operacional de Loja |
 | **Frequência de Uso** | Contínua / Muito Alta |
-| **Rastreabilidade** | **RF:** [RF001](file:///var/www/html/agsonhos/docs/requirements/functional/functional_requirements.yaml) (Catálogo), [RF002](file:///var/www/html/agsonhos/docs/requirements/functional/functional_requirements.yaml) (Especificações), [RF006](file:///var/www/html/agsonhos/docs/requirements/functional/functional_requirements.yaml) (Consulta de saldo de estoque)<br>**RN:** [RN003](file:///var/www/html/agsonhos/docs/requirements/business_rules/business_rules.yaml) (Informações técnicas), [RN005](file:///var/www/html/agsonhos/docs/requirements/business_rules/business_rules.yaml) (Controle de estoque em tempo real)<br>**RNF:** [RNF001](file:///var/www/html/agsonhos/docs/requirements/non_functional/non_functional_requirements.yaml) (Interface de alta densidade otimizada para teclado e leitor de código de barras) |
+| **Rastreabilidade** | **RF:** [RF001](/docs/requirements/functional/functional_requirements.yaml) (Catálogo), [RF002](/docs/requirements/functional/functional_requirements.yaml) (Especificações), [RF006](/docs/requirements/functional/functional_requirements.yaml) (Consulta de saldo de estoque)<br>**RN:** [RN003](/docs/requirements/business_rules/business_rules.yaml) (Informações técnicas), [RN005](/docs/requirements/business_rules/business_rules.yaml) (Controle de estoque em tempo real)<br>**RNF:** [RNF001](/docs/requirements/non_functional/non_functional_requirements.yaml) (Interface de alta densidade otimizada para teclado e leitor de código de barras) |
 
 ---
 

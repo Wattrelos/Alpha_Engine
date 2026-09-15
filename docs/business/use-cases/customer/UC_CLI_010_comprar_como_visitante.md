@@ -11,7 +11,7 @@
 | **Atores Secundários** | Sistema Alpha Engine |
 | **Tipo** | Extensão de `UC_CLI_009` (`<<extend>>`) |
 | **Frequência de Uso** | Alta |
-| **Rastreabilidade** | **RF:** [RF014](file:///var/www/html/agsonhos/docs/requirements/functional/functional_requirements.yaml) (Cadastro/Identificação), [RF018](file:///var/www/html/agsonhos/docs/requirements/functional/functional_requirements.yaml) (Checkout multi-meios)<br>**RNF:** [RNF001](file:///var/www/html/agsonhos/docs/requirements/non_functional/non_functional_requirements.yaml) (Fricção mínima de compra), [RNF003](file:///var/www/html/agsonhos/docs/requirements/non_functional/non_functional_requirements.yaml) (Conformidade LGPD) |
+| **Rastreabilidade** | **RF:** [RF014](/docs/requirements/functional/functional_requirements.yaml) (Cadastro/Identificação), [RF018](/docs/requirements/functional/functional_requirements.yaml) (Checkout multi-meios)<br>**RNF:** [RNF001](/docs/requirements/non_functional/non_functional_requirements.yaml) (Fricção mínima de compra), [RNF003](/docs/requirements/non_functional/non_functional_requirements.yaml) (Conformidade LGPD) |
 
 ---
 

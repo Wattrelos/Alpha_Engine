@@ -12,7 +12,7 @@
 
 # Plano de Refatoração de Botões (buttons.css) e Reaproveitamento de Variáveis
 
-Este plano descreve o processo de consolidação e higienização do arquivo [buttons.css](file:///var/www/html/agsonhos/public_html/css/base/atoms/buttons.css) para reutilizar os tokens de design do arquivo central [\_variables.css](file:///var/www/html/agsonhos/public_html/css/custom/_variables.css), eliminando definições duplicadas, redefinições com `!important` e aproximando as cores semelhantes por variáveis do tema.
+Este plano descreve o processo de consolidação e higienização do arquivo [buttons.css](/public_html/css/base/atoms/buttons.css) para reutilizar os tokens de design do arquivo central [\_variables.css](/public_html/css/custom/_variables.css), eliminando definições duplicadas, redefinições com `!important` e aproximando as cores semelhantes por variáveis do tema.
 
 ---
 
@@ -26,7 +26,7 @@ Este plano descreve o processo de consolidação e higienização do arquivo [bu
 
 ## 🛠️ Alterações Propostas
 
-### [MODIFY] [buttons.css](file:///var/www/html/agsonhos/public_html/css/base/atoms/buttons.css)
+### [MODIFY] [buttons.css](/public_html/css/base/atoms/buttons.css)
 
 * **Botão Primário (`.egen-btn-primary`)**:
   * Unificar as múltiplas definições (linhas 1, 19, 217, 409).
@@ -58,14 +58,14 @@ Este plano descreve o processo de consolidação e higienização do arquivo [bu
 2. **Carregamento de Variáveis**:
    * Confirmar se o `_variables.css` é importado e os botões herdam as cores corretas do tema centralizado.
 3. **Consistência CSS**:
-   * Validar se o tamanho de [buttons.css](file:///var/www/html/agsonhos/public_html/css/base/atoms/buttons.css) foi reduzido significativamente sem perda de funcionalidade.
+   * Validar se o tamanho de [buttons.css](/public_html/css/base/atoms/buttons.css) foi reduzido significativamente sem perda de funcionalidade.
 
 # Tarefas — Refatoração e Consolidação de Botões (buttons.css)
 
-- `[x]` Alinhar e mapear as variáveis semânticas de botões em [_variables.css](file:///var/www/html/agsonhos/public_html/css/custom/_variables.css)
-- `[x]` Consolidar as múltiplas definições duplicadas do botão primário (`.egen-btn-primary`) em [buttons.css](file:///var/www/html/agsonhos/public_html/css/base/atoms/buttons.css)
-- `[x]` Consolidar as múltiplas definições duplicadas do botão secundário (`.egen-btn-secondary`) em [buttons.css](file:///var/www/html/agsonhos/public_html/css/base/atoms/buttons.css)
-- `[x]` Unificar botões auxiliares, ícones, controles de quantidade e remoção em [buttons.css](file:///var/www/html/agsonhos/public_html/css/base/atoms/buttons.css)
+- `[x]` Alinhar e mapear as variáveis semânticas de botões em [_variables.css](/public_html/css/custom/_variables.css)
+- `[x]` Consolidar as múltiplas definições duplicadas do botão primário (`.egen-btn-primary`) em [buttons.css](/public_html/css/base/atoms/buttons.css)
+- `[x]` Consolidar as múltiplas definições duplicadas do botão secundário (`.egen-btn-secondary`) em [buttons.css](/public_html/css/base/atoms/buttons.css)
+- `[x]` Unificar botões auxiliares, ícones, controles de quantidade e remoção em [buttons.css](/public_html/css/base/atoms/buttons.css)
 - `[x]` Remover regras redundantes e fixas, substituindo-as por variáveis semânticas do tema
 - `[x]` Realizar a verificação visual e validar o carregamento
 
@@ -77,7 +77,7 @@ Concluímos com sucesso a consolidação e a refatoração do sistema de estilos
 
 ## 🛠️ Refatoração de Botões (buttons.css)
 
-Reestruturamos por completo o arquivo [buttons.css](file:///var/www/html/agsonhos/public_html/css/base/atoms/buttons.css) para remover duplicidades e aproveitar as definições centrais de [\_variables.css](file:///var/www/html/agsonhos/public_html/css/custom/_variables.css).
+Reestruturamos por completo o arquivo [buttons.css](/public_html/css/base/atoms/buttons.css) para remover duplicidades e aproveitar as definições centrais de [\_variables.css](/public_html/css/custom/_variables.css).
 
 ### O que foi feito:
 

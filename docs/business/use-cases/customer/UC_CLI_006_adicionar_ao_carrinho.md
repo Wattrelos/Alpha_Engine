@@ -11,7 +11,7 @@
 | **Atores Secundários** | Sistema Alpha Engine |
 | **Tipo** | Condução / Operacional |
 | **Frequência de Uso** | Muito Alta |
-| **Rastreabilidade** | **RF:** [RF004](file:///var/www/html/agsonhos/docs/requirements/functional/functional_requirements.yaml) (Venda fracionada), [RF009](file:///var/www/html/agsonhos/docs/requirements/functional/functional_requirements.yaml) (Carrinho persistente)<br>**RN:** [RN001](file:///var/www/html/agsonhos/docs/requirements/business_rules/business_rules.yaml) (Cálculo m²/caixa), [RN005](file:///var/www/html/agsonhos/docs/requirements/business_rules/business_rules.yaml) (Controle de estoque em tempo real), [RN015](file:///var/www/html/agsonhos/docs/requirements/business_rules/business_rules.yaml) (Desconto por volume)<br>**RNF:** [RNF001](file:///var/www/html/agsonhos/docs/requirements/non_functional/non_functional_requirements.yaml) (Interatividade) |
+| **Rastreabilidade** | **RF:** [RF004](/docs/requirements/functional/functional_requirements.yaml) (Venda fracionada), [RF009](/docs/requirements/functional/functional_requirements.yaml) (Carrinho persistente)<br>**RN:** [RN001](/docs/requirements/business_rules/business_rules.yaml) (Cálculo m²/caixa), [RN005](/docs/requirements/business_rules/business_rules.yaml) (Controle de estoque em tempo real), [RN015](/docs/requirements/business_rules/business_rules.yaml) (Desconto por volume)<br>**RNF:** [RNF001](/docs/requirements/non_functional/non_functional_requirements.yaml) (Interatividade) |
 
 ---
 

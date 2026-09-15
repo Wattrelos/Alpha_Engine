@@ -12,7 +12,7 @@
 
 # Plano de Implementação - Suíte Completa de Testes E2E & Visuais do Fluxo de Compras
 
-Este plano transforma as etapas descritas no documento de rascunho [rascunho_teste_fluxo_compras.md](file:///var/www/html/agsonhos/e2e/rascunho_teste_fluxo_compras.md) em uma suíte completa de testes automatizados com **Playwright**, englobando tanto **testes funcionais E2E** quanto **testes de regressão visual (VRT)** com Page Objects dedicados e mocks de rede resilientes (ViaCEP).
+Este plano transforma as etapas descritas no documento de rascunho [rascunho_teste_fluxo_compras.md](/e2e/rascunho_teste_fluxo_compras.md) em uma suíte completa de testes automatizados com **Playwright**, englobando tanto **testes funcionais E2E** quanto **testes de regressão visual (VRT)** com Page Objects dedicados e mocks de rede resilientes (ViaCEP).
 
 ---
 
@@ -52,10 +52,10 @@ e2e/
 
 ### 1. Page Objects (`e2e/pages/`)
 
-#### [MODIFY] [SearchPage.ts](file:///var/www/html/agsonhos/e2e/pages/SearchPage.ts)
+#### [MODIFY] [SearchPage.ts](/e2e/pages/SearchPage.ts)
 - Adicionar helper `addProductToCart(index: number = 0)` para interagir diretamente com o botão de compra rápida no card do produto (`.egen-prod-btn-cart`).
 
-#### [MODIFY] [CartPage.ts](file:///var/www/html/agsonhos/e2e/pages/CartPage.ts)
+#### [MODIFY] [CartPage.ts](/e2e/pages/CartPage.ts)
 - Adicionar locators:
   - `shippingCepInput: Locator` (`#shipping-cep`)
   - `shippingCalculateBtn: Locator` (`#btn-calculate-shipping`)
@@ -65,7 +65,7 @@ e2e/
   - `calculateShipping(cep: string): Promise<void>`
   - `proceedToCheckout(): Promise<void>`
 
-#### [NEW] [CheckoutPage.ts](file:///var/www/html/agsonhos/e2e/pages/CheckoutPage.ts)
+#### [NEW] [CheckoutPage.ts](/e2e/pages/CheckoutPage.ts)
 - Modelar todas as etapas do checkout multi-step:
   - **Etapa 1 (Identificação)**:
     - Seleção de tipo: `chooseIdentityOption('register' | 'guest' | 'login')`
@@ -81,7 +81,7 @@ e2e/
     - Observações: `fillNotes(note)`
     - Submissão: `submitOrder()`
 
-#### [NEW] [OrderSuccessPage.ts](file:///var/www/html/agsonhos/e2e/pages/OrderSuccessPage.ts)
+#### [NEW] [OrderSuccessPage.ts](/e2e/pages/OrderSuccessPage.ts)
 - Modelar elementos da tela `/checkout/sucesso`:
   - `successCard: Locator` (`.cart-success-box`)
   - `successTitle: Locator` (`.cart-success-title`)
@@ -93,20 +93,20 @@ e2e/
 
 ### 2. Fixtures do Playwright (`e2e/fixtures/`)
 
-#### [MODIFY] [test-fixtures.ts](file:///var/www/html/agsonhos/e2e/fixtures/test-fixtures.ts)
+#### [MODIFY] [test-fixtures.ts](/e2e/fixtures/test-fixtures.ts)
 - Estender o tipo `CustomFixtures` adicionando `checkoutPage: CheckoutPage` e `orderSuccessPage: OrderSuccessPage`.
 
 ---
 
 ### 3. Especificações de Testes (`e2e/specs/`)
 
-#### [NEW] [checkout-flow.spec.ts](file:///var/www/html/agsonhos/e2e/specs/cart/checkout-flow.spec.ts)
+#### [NEW] [checkout-flow.spec.ts](/e2e/specs/cart/checkout-flow.spec.ts)
 - Implementar o teste funcional E2E com:
   - Interceptação e mock da API ViaCEP para garantir estabilidade e rapidez.
   - Validação de estados do DOM em cada transição de etapa.
   - Verificação de sucesso na criação do pedido e redirecionamento.
 
-#### [NEW] [checkout-flow-visual.spec.ts](file:///var/www/html/agsonhos/e2e/specs/visual/checkout-flow-visual.spec.ts)
+#### [NEW] [checkout-flow-visual.spec.ts](/e2e/specs/visual/checkout-flow-visual.spec.ts)
 - Implementar testes visuais VRT com `expect(locator/page).toHaveScreenshot()` nos pontos-chave:
   1. `checkout-01-search-results.png`: Listagem de produtos filtrados.
   2. `checkout-02-cart-with-shipping.png`: Carrinho com itens e frete calculado.
@@ -119,7 +119,7 @@ e2e/
 
 ### 4. Documentação
 
-#### [MODIFY] [README.md](file:///var/www/html/agsonhos/e2e/README.md)
+#### [MODIFY] [README.md](/e2e/README.md)
 - Atualizar a árvore de diretórios e adicionar a descrição das novas specs no README do E2E.
 
 ---
@@ -141,29 +141,29 @@ e2e/
 
 # Walkthrough - Implementação da Suíte Completa de Testes E2E e Visuais do Fluxo de Compras
 
-Transformamos com sucesso o rascunho de fluxo de compras ([rascunho_teste_fluxo_compras.md](file:///var/www/html/agsonhos/e2e/rascunho_teste_fluxo_compras.md)) em uma suíte robusta e completa de testes automatizados com **Playwright** e **TypeScript**, cobrindo tanto testes funcionais ponta a ponta quanto testes de regressão visual (VRT).
+Transformamos com sucesso o rascunho de fluxo de compras ([rascunho_teste_fluxo_compras.md](/e2e/rascunho_teste_fluxo_compras.md)) em uma suíte robusta e completa de testes automatizados com **Playwright** e **TypeScript**, cobrindo tanto testes funcionais ponta a ponta quanto testes de regressão visual (VRT).
 
 ---
 
 ## 📦 O que foi Implementado
 
 ### 1. Page Object Model (POM)
-- **[SearchPage.ts](file:///var/www/html/agsonhos/e2e/pages/SearchPage.ts)**: Adicionado o método `addProductToCart(index)` para interação direta com os cards de produto da listagem.
-- **[CartPage.ts](file:///var/www/html/agsonhos/e2e/pages/CartPage.ts)**: Adicionados locators e métodos para o simulador de frete (`calculateShipping(cep)`) e avanço para checkout (`proceedToCheckout()`).
-- **[CheckoutPage.ts](file:///var/www/html/agsonhos/e2e/pages/CheckoutPage.ts)**: Novo Page Object modelando todas as 4 etapas do checkout multi-step:
+- **[SearchPage.ts](/e2e/pages/SearchPage.ts)**: Adicionado o método `addProductToCart(index)` para interação direta com os cards de produto da listagem.
+- **[CartPage.ts](/e2e/pages/CartPage.ts)**: Adicionados locators e métodos para o simulador de frete (`calculateShipping(cep)`) e avanço para checkout (`proceedToCheckout()`).
+- **[CheckoutPage.ts](/e2e/pages/CheckoutPage.ts)**: Novo Page Object modelando todas as 4 etapas do checkout multi-step:
   - Etapa 1: Opções de identificação (*"Quero me cadastrar"*), formulário de registro e validação de senhas.
   - Etapa 2: Endereço de cobrança e entrega com autocomplete de CEP (ViaCEP).
   - Etapa 4: Seleção do método de pagamento e finalização com proteção de idempotência.
-- **[OrderSuccessPage.ts](file:///var/www/html/agsonhos/e2e/pages/OrderSuccessPage.ts)**: Novo Page Object para a tela de confirmação (`/checkout/sucesso`) e retorno à home.
-- **[test-fixtures.ts](file:///var/www/html/agsonhos/e2e/fixtures/test-fixtures.ts)**: Injeção tipada de `checkoutPage` e `orderSuccessPage` nas fixtures do Playwright.
+- **[OrderSuccessPage.ts](/e2e/pages/OrderSuccessPage.ts)**: Novo Page Object para a tela de confirmação (`/checkout/sucesso`) e retorno à home.
+- **[test-fixtures.ts](/e2e/fixtures/test-fixtures.ts)**: Injeção tipada de `checkoutPage` e `orderSuccessPage` nas fixtures do Playwright.
 
 ### 2. Suíte de Testes Funcionais E2E
-- **[checkout-flow.spec.ts](file:///var/www/html/agsonhos/e2e/specs/cart/checkout-flow.spec.ts)**:
+- **[checkout-flow.spec.ts](/e2e/specs/cart/checkout-flow.spec.ts)**:
   - Executa a jornada completa do cliente: Home $\rightarrow$ Busca por `"ceramica"` $\rightarrow$ Adição de múltiplos produtos $\rightarrow$ Visualização do Carrinho e cálculo de CEP $\rightarrow$ Cadastro $\rightarrow$ Endereço $\rightarrow$ Pagamento $\rightarrow$ Tela de Sucesso.
   - Mocks de rede do ViaCEP integrados para estabilidade absoluta e rapidez.
 
 ### 3. Suíte de Testes de Regressão Visual (VRT)
-- **[checkout-flow-visual.spec.ts](file:///var/www/html/agsonhos/e2e/specs/visual/checkout-flow-visual.spec.ts)**:
+- **[checkout-flow-visual.spec.ts](/e2e/specs/visual/checkout-flow-visual.spec.ts)**:
   - 6 snapshots visuais de alta fidelidade cobrindo os estados críticos do funil:
     1. `checkout-01-search-product-card.png`: Card de produto na pesquisa.
     2. `checkout-02-cart-summary-with-shipping.png`: Resumo do carrinho com frete calculado.

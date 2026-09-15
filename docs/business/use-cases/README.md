@@ -100,82 +100,82 @@ docs/business/use-cases/
 ## 📋 3. Índice Geral dos 53 Casos de Uso
 
 ### 🛒 Módulo 1: Loja Virtual & Portal do Cliente (`customer/`)
-*Baseado no diagrama:* [`general_customer_use.puml`](file:///var/www/html/agsonhos/docs/business/use-cases/general_customer_use.puml)  
+*Baseado no diagrama:* [`general_customer_use.puml`](/docs/business/use-cases/general_customer_use.puml)  
 *Atores:* **Visitante (Guest)**, **Cliente Logado (Customer)**, **Sistema / Gateways**
 
 | ID | Caso de Uso | Pacote / Subdomínio | Relacionamento | Especificação |
 | :--- | :--- | :--- | :--- | :--- |
-| `UC_CLI_001` | Navegar no Catálogo & Categorias | Catálogo, Busca & Mídia | Direto (Guest/Customer) | [Visualizar](file:///var/www/html/agsonhos/docs/business/use-cases/customer/UC_CLI_001_navegar_catalogo.md) |
-| `UC_CLI_002` | Buscar Produtos com Filtros | Catálogo, Busca & Mídia | Direto (Guest/Customer) | [Visualizar](file:///var/www/html/agsonhos/docs/business/use-cases/customer/UC_CLI_002_buscar_produtos_filtros.md) |
-| `UC_CLI_003` | Visualizar Detalhes do Produto (PDP) | Catálogo, Busca & Mídia | Direto (Guest/Customer) | [Visualizar](file:///var/www/html/agsonhos/docs/business/use-cases/customer/UC_CLI_003_visualizar_detalhes_produto.md) |
-| `UC_CLI_004` | Selecionar Variantes & Opções | Catálogo, Busca & Mídia | `<<extend>>` UC_CLI_003 | [Visualizar](file:///var/www/html/agsonhos/docs/business/use-cases/customer/UC_CLI_004_selecionar_variantes_opcoes.md) |
-| `UC_CLI_005` | Carregar Mídia & Cache On-Demand | Catálogo, Busca & Mídia | `<<include>>` UC_CLI_003 / Sistema | [Visualizar](file:///var/www/html/agsonhos/docs/business/use-cases/customer/UC_CLI_005_carregar_midia_cache.md) |
-| `UC_CLI_006` | Adicionar ao Carrinho & Gerenciar Itens | Carrinho & Compras | Direto (Guest/Customer) | [Visualizar](file:///var/www/html/agsonhos/docs/business/use-cases/customer/UC_CLI_006_adicionar_ao_carrinho.md) |
-| `UC_CLI_007` | Calcular Frete por CEP | Carrinho & Compras | `<<extend>>` UC_CLI_006 | [Visualizar](file:///var/www/html/agsonhos/docs/business/use-cases/customer/UC_CLI_007_calcular_frete_cep.md) |
-| `UC_CLI_008` | Aplicar Cupom de Desconto | Carrinho & Compras | `<<extend>>` UC_CLI_009 | [Visualizar](file:///var/www/html/agsonhos/docs/business/use-cases/customer/UC_CLI_008_aplicar_cupom_desconto.md) |
-| `UC_CLI_009` | Realizar Checkout | Carrinho & Compras | Direto (Guest/Customer) | [Visualizar](file:///var/www/html/agsonhos/docs/business/use-cases/customer/UC_CLI_009_realizar_checkout.md) |
-| `UC_CLI_010` | Comprar como Visitante (*Guest Checkout*) | Carrinho & Compras | `<<extend>>` UC_CLI_009 | [Visualizar](file:///var/www/html/agsonhos/docs/business/use-cases/customer/UC_CLI_010_comprar_como_visitante.md) |
-| `UC_CLI_011` | Processar Pagamento Online | Carrinho & Compras | `<<include>>` UC_CLI_009 / Sistema | [Visualizar](file:///var/www/html/agsonhos/docs/business/use-cases/customer/UC_CLI_011_processar_pagamento.md) |
-| `UC_CLI_012` | Cadastrar Nova Conta (*Sign-up* PF/PJ) | Autenticação & Sessão | Direto (Guest) | [Visualizar](file:///var/www/html/agsonhos/docs/business/use-cases/customer/UC_CLI_012_cadastrar_nova_conta.md) |
-| `UC_CLI_013` | Autenticar-se (Login / Logout) | Autenticação & Sessão | Direto (Guest/Customer) | [Visualizar](file:///var/www/html/agsonhos/docs/business/use-cases/customer/UC_CLI_013_autenticar_login_logout.md) |
-| `UC_CLI_014` | Recuperar Senha por E-mail | Autenticação & Sessão | Direto (Guest) | [Visualizar](file:///var/www/html/agsonhos/docs/business/use-cases/customer/UC_CLI_014_recuperar_senha_email.md) |
-| `UC_CLI_015` | Sincronizar Sessão Redis & Carrinho | Autenticação & Sessão | `<<include>>` UC_CLI_013 / Sistema | [Visualizar](file:///var/www/html/agsonhos/docs/business/use-cases/customer/UC_CLI_015_sincronizar_sessao_redis_carrinho.md) |
-| `UC_CLI_016` | Acessar Painel do Cliente | Minha Conta | Direto (Customer) | [Visualizar](file:///var/www/html/agsonhos/docs/business/use-cases/customer/UC_CLI_016_acessar_painel_cliente.md) |
-| `UC_CLI_017` | Gerenciar Dados Cadastrais (`/account/edit`) | Minha Conta | Direto (Customer) | [Visualizar](file:///var/www/html/agsonhos/docs/business/use-cases/customer/UC_CLI_017_gerenciar_dados_cadastrais.md) |
-| `UC_CLI_018` | Alterar Senha Logado (`/account/password`) | Minha Conta | Direto (Customer) | [Visualizar](file:///var/www/html/agsonhos/docs/business/use-cases/customer/UC_CLI_018_alterar_senha_logado.md) |
-| `UC_CLI_019` | Gerenciar Livro de Endereços (`/account/addresses`) | Minha Conta | Direto (Customer) | [Visualizar](file:///var/www/html/agsonhos/docs/business/use-cases/customer/UC_CLI_019_gerenciar_livro_enderecos.md) |
-| `UC_CLI_020` | Gerenciar Lista de Desejos (`/account/wishlist`) | Minha Conta | Direto (Customer) | [Visualizar](file:///var/www/html/agsonhos/docs/business/use-cases/customer/UC_CLI_020_gerenciar_lista_desejos.md) |
-| `UC_CLI_021` | Consultar Pedidos & Histórico (`/account/orders`) | Minha Conta | Direto (Customer) | [Visualizar](file:///var/www/html/agsonhos/docs/business/use-cases/customer/UC_CLI_021_consultar_pedidos_historico.md) |
-| `UC_CLI_022` | Consultar Extrato & Transações (`/account/transaction`) | Minha Conta | Direto (Customer) | [Visualizar](file:///var/www/html/agsonhos/docs/business/use-cases/customer/UC_CLI_022_consultar_extrato_transacoes.md) |
-| `UC_CLI_023` | Solicitar Devolução / RMA (`/account/return`) | Minha Conta | Direto (Customer) | [Visualizar](file:///var/www/html/agsonhos/docs/business/use-cases/customer/UC_CLI_023_solicitar_devolucao_rma.md) |
-| `UC_CLI_024` | Gerenciar Inscrição na Newsletter | Minha Conta | Direto (Customer/Guest) | [Visualizar](file:///var/www/html/agsonhos/docs/business/use-cases/customer/UC_CLI_024_gerenciar_inscricao_newsletter.md) |
-| `UC_CLI_025` | Criar Solicitação de Orçamento (RFQ) (`/projetos/novo`) | Cotações & BoQ | Direto (Customer) | [Visualizar](file:///var/www/html/agsonhos/docs/business/use-cases/customer/UC_CLI_025_criar_solicitacao_orcamento_rfq.md) |
-| `UC_CLI_026` | Acompanhar Meus Projetos (`/account/projetos`) | Cotações & BoQ | Direto (Customer) | [Visualizar](file:///var/www/html/agsonhos/docs/business/use-cases/customer/UC_CLI_026_acompanhar_meus_projetos.md) |
-| `UC_CLI_027` | Comparar Propostas Recebidas (`/propostas`) | Cotações & BoQ | `<<extend>>` UC_CLI_026 | [Visualizar](file:///var/www/html/agsonhos/docs/business/use-cases/customer/UC_CLI_027_comparar_propostas_recebidas.md) |
-| `UC_CLI_028` | Aceitar Proposta de Prestador (`/aceitar`) | Cotações & BoQ | `<<extend>>` UC_CLI_027 | [Visualizar](file:///var/www/html/agsonhos/docs/business/use-cases/customer/UC_CLI_028_aceitar_proposta_prestador.md) |
-| `UC_CLI_029` | Aprovar BoQ & Enviar ao Carrinho (`/boq`) | Cotações & BoQ | `<<extend>>` UC_CLI_026 + `<<include>>` UC_CLI_006 | [Visualizar](file:///var/www/html/agsonhos/docs/business/use-cases/customer/UC_CLI_029_aprovar_boq_enviar_carrinho.md) |
+| `UC_CLI_001` | Navegar no Catálogo & Categorias | Catálogo, Busca & Mídia | Direto (Guest/Customer) | [Visualizar](/docs/business/use-cases/customer/UC_CLI_001_navegar_catalogo.md) |
+| `UC_CLI_002` | Buscar Produtos com Filtros | Catálogo, Busca & Mídia | Direto (Guest/Customer) | [Visualizar](/docs/business/use-cases/customer/UC_CLI_002_buscar_produtos_filtros.md) |
+| `UC_CLI_003` | Visualizar Detalhes do Produto (PDP) | Catálogo, Busca & Mídia | Direto (Guest/Customer) | [Visualizar](/docs/business/use-cases/customer/UC_CLI_003_visualizar_detalhes_produto.md) |
+| `UC_CLI_004` | Selecionar Variantes & Opções | Catálogo, Busca & Mídia | `<<extend>>` UC_CLI_003 | [Visualizar](/docs/business/use-cases/customer/UC_CLI_004_selecionar_variantes_opcoes.md) |
+| `UC_CLI_005` | Carregar Mídia & Cache On-Demand | Catálogo, Busca & Mídia | `<<include>>` UC_CLI_003 / Sistema | [Visualizar](/docs/business/use-cases/customer/UC_CLI_005_carregar_midia_cache.md) |
+| `UC_CLI_006` | Adicionar ao Carrinho & Gerenciar Itens | Carrinho & Compras | Direto (Guest/Customer) | [Visualizar](/docs/business/use-cases/customer/UC_CLI_006_adicionar_ao_carrinho.md) |
+| `UC_CLI_007` | Calcular Frete por CEP | Carrinho & Compras | `<<extend>>` UC_CLI_006 | [Visualizar](/docs/business/use-cases/customer/UC_CLI_007_calcular_frete_cep.md) |
+| `UC_CLI_008` | Aplicar Cupom de Desconto | Carrinho & Compras | `<<extend>>` UC_CLI_009 | [Visualizar](/docs/business/use-cases/customer/UC_CLI_008_aplicar_cupom_desconto.md) |
+| `UC_CLI_009` | Realizar Checkout | Carrinho & Compras | Direto (Guest/Customer) | [Visualizar](/docs/business/use-cases/customer/UC_CLI_009_realizar_checkout.md) |
+| `UC_CLI_010` | Comprar como Visitante (*Guest Checkout*) | Carrinho & Compras | `<<extend>>` UC_CLI_009 | [Visualizar](/docs/business/use-cases/customer/UC_CLI_010_comprar_como_visitante.md) |
+| `UC_CLI_011` | Processar Pagamento Online | Carrinho & Compras | `<<include>>` UC_CLI_009 / Sistema | [Visualizar](/docs/business/use-cases/customer/UC_CLI_011_processar_pagamento.md) |
+| `UC_CLI_012` | Cadastrar Nova Conta (*Sign-up* PF/PJ) | Autenticação & Sessão | Direto (Guest) | [Visualizar](/docs/business/use-cases/customer/UC_CLI_012_cadastrar_nova_conta.md) |
+| `UC_CLI_013` | Autenticar-se (Login / Logout) | Autenticação & Sessão | Direto (Guest/Customer) | [Visualizar](/docs/business/use-cases/customer/UC_CLI_013_autenticar_login_logout.md) |
+| `UC_CLI_014` | Recuperar Senha por E-mail | Autenticação & Sessão | Direto (Guest) | [Visualizar](/docs/business/use-cases/customer/UC_CLI_014_recuperar_senha_email.md) |
+| `UC_CLI_015` | Sincronizar Sessão Redis & Carrinho | Autenticação & Sessão | `<<include>>` UC_CLI_013 / Sistema | [Visualizar](/docs/business/use-cases/customer/UC_CLI_015_sincronizar_sessao_redis_carrinho.md) |
+| `UC_CLI_016` | Acessar Painel do Cliente | Minha Conta | Direto (Customer) | [Visualizar](/docs/business/use-cases/customer/UC_CLI_016_acessar_painel_cliente.md) |
+| `UC_CLI_017` | Gerenciar Dados Cadastrais (`/account/edit`) | Minha Conta | Direto (Customer) | [Visualizar](/docs/business/use-cases/customer/UC_CLI_017_gerenciar_dados_cadastrais.md) |
+| `UC_CLI_018` | Alterar Senha Logado (`/account/password`) | Minha Conta | Direto (Customer) | [Visualizar](/docs/business/use-cases/customer/UC_CLI_018_alterar_senha_logado.md) |
+| `UC_CLI_019` | Gerenciar Livro de Endereços (`/account/addresses`) | Minha Conta | Direto (Customer) | [Visualizar](/docs/business/use-cases/customer/UC_CLI_019_gerenciar_livro_enderecos.md) |
+| `UC_CLI_020` | Gerenciar Lista de Desejos (`/account/wishlist`) | Minha Conta | Direto (Customer) | [Visualizar](/docs/business/use-cases/customer/UC_CLI_020_gerenciar_lista_desejos.md) |
+| `UC_CLI_021` | Consultar Pedidos & Histórico (`/account/orders`) | Minha Conta | Direto (Customer) | [Visualizar](/docs/business/use-cases/customer/UC_CLI_021_consultar_pedidos_historico.md) |
+| `UC_CLI_022` | Consultar Extrato & Transações (`/account/transaction`) | Minha Conta | Direto (Customer) | [Visualizar](/docs/business/use-cases/customer/UC_CLI_022_consultar_extrato_transacoes.md) |
+| `UC_CLI_023` | Solicitar Devolução / RMA (`/account/return`) | Minha Conta | Direto (Customer) | [Visualizar](/docs/business/use-cases/customer/UC_CLI_023_solicitar_devolucao_rma.md) |
+| `UC_CLI_024` | Gerenciar Inscrição na Newsletter | Minha Conta | Direto (Customer/Guest) | [Visualizar](/docs/business/use-cases/customer/UC_CLI_024_gerenciar_inscricao_newsletter.md) |
+| `UC_CLI_025` | Criar Solicitação de Orçamento (RFQ) (`/projetos/novo`) | Cotações & BoQ | Direto (Customer) | [Visualizar](/docs/business/use-cases/customer/UC_CLI_025_criar_solicitacao_orcamento_rfq.md) |
+| `UC_CLI_026` | Acompanhar Meus Projetos (`/account/projetos`) | Cotações & BoQ | Direto (Customer) | [Visualizar](/docs/business/use-cases/customer/UC_CLI_026_acompanhar_meus_projetos.md) |
+| `UC_CLI_027` | Comparar Propostas Recebidas (`/propostas`) | Cotações & BoQ | `<<extend>>` UC_CLI_026 | [Visualizar](/docs/business/use-cases/customer/UC_CLI_027_comparar_propostas_recebidas.md) |
+| `UC_CLI_028` | Aceitar Proposta de Prestador (`/aceitar`) | Cotações & BoQ | `<<extend>>` UC_CLI_027 | [Visualizar](/docs/business/use-cases/customer/UC_CLI_028_aceitar_proposta_prestador.md) |
+| `UC_CLI_029` | Aprovar BoQ & Enviar ao Carrinho (`/boq`) | Cotações & BoQ | `<<extend>>` UC_CLI_026 + `<<include>>` UC_CLI_006 | [Visualizar](/docs/business/use-cases/customer/UC_CLI_029_aprovar_boq_enviar_carrinho.md) |
 
 ---
 
 ### 🏪 Módulo 2: Ponto de Venda / PDV (`pos/`)
-*Baseado no diagrama:* [`general_seller.puml`](file:///var/www/html/agsonhos/docs/business/use-cases/general_seller.puml)  
+*Baseado no diagrama:* [`general_seller.puml`](/docs/business/use-cases/general_seller.puml)  
 *Atores:* **Vendedor de Balcão (Sales Representative)**, **Operador de Caixa (Cashier)**, **Cliente Presencial (Customer)**
 
 | ID | Caso de Uso | Módulo / Perfil | Relacionamento | Especificação |
 | :--- | :--- | :--- | :--- | :--- |
-| `UC_POS_001` | Navegar no Catálogo de Produtos | Vendedor de Balcão | Direto (SalesRep) | [Visualizar](file:///var/www/html/agsonhos/docs/business/use-cases/pos/UC_POS_001_navegar_catalogo_pdv.md) |
-| `UC_POS_002` | Selecionar Variações do Produto | Vendedor de Balcão | `<<extend>>` UC_POS_001 | [Visualizar](file:///var/www/html/agsonhos/docs/business/use-cases/pos/UC_POS_002_selecionar_variacoes_pdv.md) |
-| `UC_POS_003` | Verificar Disponibilidade de Estoque | Vendedor de Balcão | `<<include>>` UC_POS_001 | [Visualizar](file:///var/www/html/agsonhos/docs/business/use-cases/pos/UC_POS_003_verificar_estoque_pdv.md) |
-| `UC_POS_004` | Identificar / Cadastrar Cliente no Balcão | Vendedor de Balcão | Direto (SalesRep & Customer) | [Visualizar](file:///var/www/html/agsonhos/docs/business/use-cases/pos/UC_POS_004_identificar_cadastrar_cliente_pdv.md) |
-| `UC_POS_005` | Criar Pré-Venda no Balcão | Vendedor de Balcão | Direto (SalesRep) | [Visualizar](file:///var/www/html/agsonhos/docs/business/use-cases/pos/UC_POS_005_criar_pre_venda_pdv.md) |
-| `UC_POS_006` | Adicionar Itens ao Carrinho do Balcão | Vendedor de Balcão | `<<include>>` UC_POS_005 | [Visualizar](file:///var/www/html/agsonhos/docs/business/use-cases/pos/UC_POS_006_adicionar_itens_carrinho_pdv.md) |
-| `UC_POS_007` | Salvar Pré-Venda Pendente | Vendedor de Balcão | `<<include>>` UC_POS_005 | [Visualizar](file:///var/www/html/agsonhos/docs/business/use-cases/pos/UC_POS_007_salvar_pre_venda_pendente.md) |
-| `UC_POS_008` | Gerar e Imprimir Ticket de Pré-Venda | Vendedor de Balcão | `<<include>>` UC_POS_007 / Customer | [Visualizar](file:///var/www/html/agsonhos/docs/business/use-cases/pos/UC_POS_008_gerar_ticket_pre_venda.md) |
-| `UC_POS_009` | Localizar Pré-Venda por Ticket | Operador de Caixa | Direto (Cashier & Customer) | [Visualizar](file:///var/www/html/agsonhos/docs/business/use-cases/pos/UC_POS_009_localizar_pre_venda_ticket.md) |
-| `UC_POS_010` | Processar Pagamento no Caixa | Operador de Caixa | Direto (Cashier & Customer) | [Visualizar](file:///var/www/html/agsonhos/docs/business/use-cases/pos/UC_POS_010_processar_pagamento_caixa.md) |
-| `UC_POS_011` | Pagar com Pix via QR Code Dinâmico | Operador de Caixa | Generalização de UC_POS_010 | [Visualizar](file:///var/www/html/agsonhos/docs/business/use-cases/pos/UC_POS_011_pagar_com_pix_qrcode.md) |
-| `UC_POS_012` | Pagar com Cartão via TEF | Operador de Caixa | Generalização de UC_POS_010 | [Visualizar](file:///var/www/html/agsonhos/docs/business/use-cases/pos/UC_POS_012_pagar_com_cartao_tef.md) |
-| `UC_POS_013` | Pagar com Dinheiro com Cálculo de Troco | Operador de Caixa | Generalização de UC_POS_010 | [Visualizar](file:///var/www/html/agsonhos/docs/business/use-cases/pos/UC_POS_013_pagar_com_dinheiro_troco.md) |
-| `UC_POS_014` | Finalizar Pagamento e Venda | Operador de Caixa | Direto (Cashier) | [Visualizar](file:///var/www/html/agsonhos/docs/business/use-cases/pos/UC_POS_014_finalizar_recebimento_venda.md) |
-| `UC_POS_015` | Imprimir Recibo e Cupom Fiscal NFC-e | Operador de Caixa | `<<include>>` UC_POS_014 | [Visualizar](file:///var/www/html/agsonhos/docs/business/use-cases/pos/UC_POS_015_imprimir_recibo_nfce.md) |
+| `UC_POS_001` | Navegar no Catálogo de Produtos | Vendedor de Balcão | Direto (SalesRep) | [Visualizar](/docs/business/use-cases/pos/UC_POS_001_navegar_catalogo_pdv.md) |
+| `UC_POS_002` | Selecionar Variações do Produto | Vendedor de Balcão | `<<extend>>` UC_POS_001 | [Visualizar](/docs/business/use-cases/pos/UC_POS_002_selecionar_variacoes_pdv.md) |
+| `UC_POS_003` | Verificar Disponibilidade de Estoque | Vendedor de Balcão | `<<include>>` UC_POS_001 | [Visualizar](/docs/business/use-cases/pos/UC_POS_003_verificar_estoque_pdv.md) |
+| `UC_POS_004` | Identificar / Cadastrar Cliente no Balcão | Vendedor de Balcão | Direto (SalesRep & Customer) | [Visualizar](/docs/business/use-cases/pos/UC_POS_004_identificar_cadastrar_cliente_pdv.md) |
+| `UC_POS_005` | Criar Pré-Venda no Balcão | Vendedor de Balcão | Direto (SalesRep) | [Visualizar](/docs/business/use-cases/pos/UC_POS_005_criar_pre_venda_pdv.md) |
+| `UC_POS_006` | Adicionar Itens ao Carrinho do Balcão | Vendedor de Balcão | `<<include>>` UC_POS_005 | [Visualizar](/docs/business/use-cases/pos/UC_POS_006_adicionar_itens_carrinho_pdv.md) |
+| `UC_POS_007` | Salvar Pré-Venda Pendente | Vendedor de Balcão | `<<include>>` UC_POS_005 | [Visualizar](/docs/business/use-cases/pos/UC_POS_007_salvar_pre_venda_pendente.md) |
+| `UC_POS_008` | Gerar e Imprimir Ticket de Pré-Venda | Vendedor de Balcão | `<<include>>` UC_POS_007 / Customer | [Visualizar](/docs/business/use-cases/pos/UC_POS_008_gerar_ticket_pre_venda.md) |
+| `UC_POS_009` | Localizar Pré-Venda por Ticket | Operador de Caixa | Direto (Cashier & Customer) | [Visualizar](/docs/business/use-cases/pos/UC_POS_009_localizar_pre_venda_ticket.md) |
+| `UC_POS_010` | Processar Pagamento no Caixa | Operador de Caixa | Direto (Cashier & Customer) | [Visualizar](/docs/business/use-cases/pos/UC_POS_010_processar_pagamento_caixa.md) |
+| `UC_POS_011` | Pagar com Pix via QR Code Dinâmico | Operador de Caixa | Generalização de UC_POS_010 | [Visualizar](/docs/business/use-cases/pos/UC_POS_011_pagar_com_pix_qrcode.md) |
+| `UC_POS_012` | Pagar com Cartão via TEF | Operador de Caixa | Generalização de UC_POS_010 | [Visualizar](/docs/business/use-cases/pos/UC_POS_012_pagar_com_cartao_tef.md) |
+| `UC_POS_013` | Pagar com Dinheiro com Cálculo de Troco | Operador de Caixa | Generalização de UC_POS_010 | [Visualizar](/docs/business/use-cases/pos/UC_POS_013_pagar_com_dinheiro_troco.md) |
+| `UC_POS_014` | Finalizar Pagamento e Venda | Operador de Caixa | Direto (Cashier) | [Visualizar](/docs/business/use-cases/pos/UC_POS_014_finalizar_recebimento_venda.md) |
+| `UC_POS_015` | Imprimir Recibo e Cupom Fiscal NFC-e | Operador de Caixa | `<<include>>` UC_POS_014 | [Visualizar](/docs/business/use-cases/pos/UC_POS_015_imprimir_recibo_nfce.md) |
 
 ---
 
 ### ⚙️ Módulo 3: Painel Administrativo / Dashboard (`dashboard/`)
-*Baseado no diagrama:* [`general_dashboard.puml`](file:///var/www/html/agsonhos/docs/business/use-cases/general_dashboard.puml)  
+*Baseado no diagrama:* [`general_dashboard.puml`](/docs/business/use-cases/general_dashboard.puml)  
 *Atores:* **Operador do Painel (Operator)**, **Administrador Geral (Admin)**
 
 | ID | Caso de Uso | Domínio de Operação | Nível de Permissão | Especificação |
 | :--- | :--- | :--- | :--- | :--- |
-| `UC_ADM_001` | Gerenciar Catálogo (Produtos, Categorias, Opções) | Negócio & Catálogo | Operador & Admin | [Visualizar](file:///var/www/html/agsonhos/docs/business/use-cases/dashboard/UC_ADM_001_gerenciar_catalogo_produtos.md) |
-| `UC_ADM_002` | Gerenciar Clientes & Grupos de Clientes B2B | Negócio & Comercial | Operador & Admin | [Visualizar](file:///var/www/html/agsonhos/docs/business/use-cases/dashboard/UC_ADM_002_gerenciar_clientes_aprovacoes.md) |
-| `UC_ADM_003` | Gerenciar Pedidos, Expedição & Faturamento | Negócio & Vendas | Operador & Admin | [Visualizar](file:///var/www/html/agsonhos/docs/business/use-cases/dashboard/UC_ADM_003_gerenciar_pedidos_faturamento.md) |
-| `UC_ADM_004` | Gerenciar Devoluções, Trocas & Logística Reversa | Negócio & SAC (RMA) | Operador & Admin | [Visualizar](file:///var/www/html/agsonhos/docs/business/use-cases/dashboard/UC_ADM_004_gerenciar_devolucoes_trocas.md) |
-| `UC_ADM_005` | Visualizar Relatórios & Estatísticas (Analytics) | Negócio & BI | Operador & Admin | [Visualizar](file:///var/www/html/agsonhos/docs/business/use-cases/dashboard/UC_ADM_005_visualizar_relatorios_estatisticas.md) |
-| `UC_ADM_006` | Configurar Lojas & Parâmetros do Motor | Sistema & Multi-Loja | Exclusivo Admin | [Visualizar](file:///var/www/html/agsonhos/docs/business/use-cases/dashboard/UC_ADM_006_configurar_lojas_parametros.md) |
-| `UC_ADM_007` | Gerenciar Usuários & Grupos de Permissões (RBAC) | Sistema & Segurança | Exclusivo Admin | [Visualizar](file:///var/www/html/agsonhos/docs/business/use-cases/dashboard/UC_ADM_007_gerenciar_usuarios_permissoes_rbac.md) |
-| `UC_ADM_008` | Gerenciar Planos de Assinatura & Recorrência | Sistema & Monetização | Exclusivo Admin | [Visualizar](file:///var/www/html/agsonhos/docs/business/use-cases/dashboard/UC_ADM_008_gerenciar_planos_assinatura.md) |
-| `UC_ADM_009` | Gerenciar Localização, Moedas & Impostos | Sistema & Fiscal | Exclusivo Admin | [Visualizar](file:///var/www/html/agsonhos/docs/business/use-cases/dashboard/UC_ADM_009_gerenciar_localizacao_moedas_impostos.md) |
+| `UC_ADM_001` | Gerenciar Catálogo (Produtos, Categorias, Opções) | Negócio & Catálogo | Operador & Admin | [Visualizar](/docs/business/use-cases/dashboard/UC_ADM_001_gerenciar_catalogo_produtos.md) |
+| `UC_ADM_002` | Gerenciar Clientes & Grupos de Clientes B2B | Negócio & Comercial | Operador & Admin | [Visualizar](/docs/business/use-cases/dashboard/UC_ADM_002_gerenciar_clientes_aprovacoes.md) |
+| `UC_ADM_003` | Gerenciar Pedidos, Expedição & Faturamento | Negócio & Vendas | Operador & Admin | [Visualizar](/docs/business/use-cases/dashboard/UC_ADM_003_gerenciar_pedidos_faturamento.md) |
+| `UC_ADM_004` | Gerenciar Devoluções, Trocas & Logística Reversa | Negócio & SAC (RMA) | Operador & Admin | [Visualizar](/docs/business/use-cases/dashboard/UC_ADM_004_gerenciar_devolucoes_trocas.md) |
+| `UC_ADM_005` | Visualizar Relatórios & Estatísticas (Analytics) | Negócio & BI | Operador & Admin | [Visualizar](/docs/business/use-cases/dashboard/UC_ADM_005_visualizar_relatorios_estatisticas.md) |
+| `UC_ADM_006` | Configurar Lojas & Parâmetros do Motor | Sistema & Multi-Loja | Exclusivo Admin | [Visualizar](/docs/business/use-cases/dashboard/UC_ADM_006_configurar_lojas_parametros.md) |
+| `UC_ADM_007` | Gerenciar Usuários & Grupos de Permissões (RBAC) | Sistema & Segurança | Exclusivo Admin | [Visualizar](/docs/business/use-cases/dashboard/UC_ADM_007_gerenciar_usuarios_permissoes_rbac.md) |
+| `UC_ADM_008` | Gerenciar Planos de Assinatura & Recorrência | Sistema & Monetização | Exclusivo Admin | [Visualizar](/docs/business/use-cases/dashboard/UC_ADM_008_gerenciar_planos_assinatura.md) |
+| `UC_ADM_009` | Gerenciar Localização, Moedas & Impostos | Sistema & Fiscal | Exclusivo Admin | [Visualizar](/docs/business/use-cases/dashboard/UC_ADM_009_gerenciar_localizacao_moedas_impostos.md) |
 
 ---
 

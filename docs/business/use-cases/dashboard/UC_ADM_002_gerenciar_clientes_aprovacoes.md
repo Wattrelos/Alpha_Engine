@@ -11,7 +11,7 @@
 | **Atores Secundários** | Sistema Alpha Engine |
 | **Tipo** | Condução / Gestão de Clientes |
 | **Frequência de Uso** | Média |
-| **Rastreabilidade** | **RF:** [RF014](file:///var/www/html/agsonhos/docs/requirements/functional/functional_requirements.yaml) (Cadastro de clientes), [RF017](file:///var/www/html/agsonhos/docs/requirements/functional/functional_requirements.yaml) (Múltiplos Shiptos), [RF023](file:///var/www/html/agsonhos/docs/requirements/functional/functional_requirements.yaml) (Precificação segmentada)<br>**RN:** [RN017](file:///var/www/html/agsonhos/docs/requirements/business_rules/business_rules.yaml) (Diferenciação de preço atacado B2B vs. varejo)<br>**RNF:** [RNF003](file:///var/www/html/agsonhos/docs/requirements/non_functional/non_functional_requirements.yaml) (Conformidade LGPD e anonimização de dados) |
+| **Rastreabilidade** | **RF:** [RF014](/docs/requirements/functional/functional_requirements.yaml) (Cadastro de clientes), [RF017](/docs/requirements/functional/functional_requirements.yaml) (Múltiplos Shiptos), [RF023](/docs/requirements/functional/functional_requirements.yaml) (Precificação segmentada)<br>**RN:** [RN017](/docs/requirements/business_rules/business_rules.yaml) (Diferenciação de preço atacado B2B vs. varejo)<br>**RNF:** [RNF003](/docs/requirements/non_functional/non_functional_requirements.yaml) (Conformidade LGPD e anonimização de dados) |
 
 ---
 

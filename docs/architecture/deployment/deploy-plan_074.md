@@ -20,7 +20,7 @@ Este plano detalha a reorganização da estrutura do projeto **AgSonhos (Alpha E
 > **Mudança Estrutural Relevante**
 > - Todos os módulos do sistema (ex: `core/`, `Containers/`, `Config/`, `resources/`, `storage/`, `vendor/`, `.env`, `config.php`) serão movidos para dentro da pasta `backend/`.
 > - A pasta `public_html/` permanecerá na raiz do repositório.
-> - O arquivo [public_html/index.php](file:///var/www/html/agsonhos/public_html/index.php) e o painel administrativo em [public_html/LPDHED2dC7Gjrg2b/index.php](file:///var/www/html/agsonhos/public_html/LPDHED2dC7Gjrg2b/index.php) serão atualizados para buscar os scripts do autoload, views, rotas e `.env` a partir de `../backend/` e `../../backend/`.
+> - O arquivo [public_html/index.php](/public_html/index.php) e o painel administrativo em [public_html/LPDHED2dC7Gjrg2b/index.php](/public_html/LPDHED2dC7Gjrg2b/index.php) serão atualizados para buscar os scripts do autoload, views, rotas e `.env` a partir de `../backend/` e `../../backend/`.
 
 ## Estrutura Alvo do Repositório
 
@@ -83,14 +83,14 @@ Nenhuma pergunta pendente neste momento. Caso deseje incluir ou manter algum arq
 
 ### 1. Reorganização dos Diretórios e Arquivos
 
-#### [NEW] [backend/](file:///var/www/html/agsonhos/backend)
+#### [NEW] [backend/](/backend)
 - Criar diretório `backend/` e mover todas as pastas e arquivos de runtime, dependências e configurações para o seu interior.
 
 ---
 
 ### 2. Atualização dos Entry Points Públicos
 
-#### [MODIFY] [public_html/index.php](file:///var/www/html/agsonhos/public_html/index.php)
+#### [MODIFY] [public_html/index.php](/public_html/index.php)
 - Atualizar caminhos relativos de `__DIR__ . '/../'` para `__DIR__ . '/../backend/'`:
   - Autoload do Composer: `__DIR__ . '/../backend/vendor/autoload.php'`
   - Arquivo `.env`: `__DIR__ . '/../backend/'` e `__DIR__ . '/../backend/.env'`
@@ -98,7 +98,7 @@ Nenhuma pergunta pendente neste momento. Caso deseje incluir ou manter algum arq
   - Cache e views Twig: `__DIR__ . '/../backend/storage/cache/...'` e `__DIR__ . '/../backend/resources/views'`
   - Rotas Slim: `__DIR__ . '/../backend/Config/Routes.php'`
 
-#### [MODIFY] [public_html/LPDHED2dC7Gjrg2b/index.php](file:///var/www/html/agsonhos/public_html/LPDHED2dC7Gjrg2b/index.php)
+#### [MODIFY] [public_html/LPDHED2dC7Gjrg2b/index.php](/public_html/LPDHED2dC7Gjrg2b/index.php)
 - Atualizar caminhos relativos de `__DIR__ . '/../../'` para `__DIR__ . '/../../backend/'`:
   - Autoload do Composer: `__DIR__ . '/../../backend/vendor/autoload.php'`
   - Arquivo `.env`: `__DIR__ . '/../../backend/'`
@@ -110,11 +110,11 @@ Nenhuma pergunta pendente neste momento. Caso deseje incluir ou manter algum arq
 
 ### 3. Ajustes de Configuração Interna
 
-#### [MODIFY] [backend/config.php](file:///var/www/html/agsonhos/config.php)
+#### [MODIFY] [backend/config.php](/config.php)
 - Atualizar a constante `DIR_IMAGE` para buscar `public_html` um nível acima da pasta `backend/`:
   - `define('DIR_IMAGE', realpath(__DIR__ . '/../public_html') . '/');`
 
-#### [MODIFY] [backend/scripts/build-release.php](file:///var/www/html/agsonhos/scripts/build-release.php)
+#### [MODIFY] [backend/scripts/build-release.php](/scripts/build-release.php)
 - Ajustar script de geração de release para reconhecer a nova estrutura em `backend/`.
 
 ---
@@ -158,27 +158,27 @@ Concluímos com sucesso a reorganização da estrutura do projeto **AgSonhos (Al
 ## Resumo das Alterações Realizadas
 
 ### 1. Reorganização dos Diretórios e Arquivos
-- **Criado:** Diretório [backend/](file:///var/www/html/agsonhos/backend).
+- **Criado:** Diretório [backend/](/backend).
 - **Movidos para `backend/`:** `core/`, `Containers/`, `Config/`, `resources/`, `storage/`, `vendor/`, `tests/`, `scripts/`, `dist/`, `docs/`, `Locales/`, `BusinessKnowledgeBase/`, `LogsPersonalizados/`, `changelog/`, `scratch/`, `.env`, `.env.example`, `config.php`, `composer.json`, `composer.lock`, `clean_twig_cache.php`, `error.html`, `php.ini`, `phpstan.neon`, `phpstan-baseline.neon`, `phpunit.xml`, `README.md`, `LICENSE.md`, `AUTHORS.md`, `.phpunit.cache` e `.reports`.
 - **Mantidos na raiz:** `public_html/`, `backend/`, `.git/`, `.gitignore`, `.agents/`, `.antigravityrc`, `.aiexclude` e `.gemini/`.
 
 ### 2. Atualização dos Pontos de Entrada Públicos
-- **[public_html/index.php](file:///var/www/html/agsonhos/public_html/index.php):**
+- **[public_html/index.php](/public_html/index.php):**
   - Autoload do Composer atualizado para `__DIR__ . '/../backend/vendor/autoload.php'`.
   - Leitura do `.env` atualizada para `__DIR__ . '/../backend/'` e `__DIR__ . '/../backend/.env'`.
   - Inclusão do arquivo de configuração atualizada para `__DIR__ . '/../backend/config.php'`.
   - Diretórios de cache e views Twig direcionados para `__DIR__ . '/../backend/storage/cache/...'` e `__DIR__ . '/../backend/resources/views'`.
   - Carregamento de rotas Slim direcionado para `__DIR__ . '/../backend/Config/Routes.php'`.
-- **[public_html/LPDHED2dC7Gjrg2b/index.php](file:///var/www/html/agsonhos/public_html/LPDHED2dC7Gjrg2b/index.php):**
+- **[public_html/LPDHED2dC7Gjrg2b/index.php](/public_html/LPDHED2dC7Gjrg2b/index.php):**
   - Autoload, `.env`, `config.php`, Twig e rotas atualizados com o prefixo `../../backend/`.
 
 ### 3. Ajustes de Configuração Interna
-- **[backend/config.php](file:///var/www/html/agsonhos/backend/config.php):**
+- **[backend/config.php](/backend/config.php):**
   - Atualizada a constante `DIR_IMAGE` para mapear dinamicamente a pasta pública no nível acima:
     `define('DIR_IMAGE', (realpath(DIR_ROOT . '../public_html') ?: (DIR_ROOT . '../public_html')) . '/');`
-- **[backend/core/Support/Language.php](file:///var/www/html/agsonhos/backend/core/Support/Language.php):**
+- **[backend/core/Support/Language.php](/backend/core/Support/Language.php):**
   - Removido caminho absoluto hardcoded e atualizado cálculo dinâmico da pasta `Locales/`.
-- **[backend/scripts/build-release.php](file:///var/www/html/agsonhos/backend/scripts/build-release.php):**
+- **[backend/scripts/build-release.php](/backend/scripts/build-release.php):**
   - Atualizada a rotina de empacotamento para obter `public_html` a partir da raiz externa.
 
 ---

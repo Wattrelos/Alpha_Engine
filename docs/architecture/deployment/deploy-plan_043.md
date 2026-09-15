@@ -24,10 +24,10 @@ O objetivo é converter o arquivo `addresses.css` para SCSS (`addresses.scss`), 
 
 ### 1. Estilos Modulares (SCSS)
 
-#### [NEW] [addresses.scss](file:///var/www/html/agsonhos/public_html/css/custom/addresses.scss)
+#### [NEW] [addresses.scss](/public_html/css/custom/addresses.scss)
 * Novo arquivo de entrada principal SCSS para a área de endereços que importará os tokens, mixins e o parcial específico.
 
-#### [NEW] [_addresses.scss](file:///var/www/html/agsonhos/public_html/css/base/pages/_addresses.scss)
+#### [NEW] [_addresses.scss](/public_html/css/base/pages/_addresses.scss)
 * Parcial SCSS contendo todas as regras específicas da tela de endereços (criação, edição, listagem de cartões, toggle switch de endereço padrão, spinner de busca de CEP, etc.), herdando estilos comuns.
 
 ## Verification Plan
@@ -61,14 +61,14 @@ Realizamos com sucesso a modularização das três folhas de estilo principais d
 ## O que mudou:
 
 ### 1. Ferramenta de Compilação Dinâmica
-- O script [compile-scss.php](file:///var/www/html/agsonhos/scratch/compile-scss.php) compila dinamicamente **qualquer** arquivo `.scss` principal encontrado na pasta `public_html/css/custom/` (ignorando arquivos com underline, que são parciais).
+- O script [compile-scss.php](/scratch/compile-scss.php) compila dinamicamente **qualquer** arquivo `.scss` principal encontrado na pasta `public_html/css/custom/` (ignorando arquivos com underline, que são parciais).
 - Roda no Composer por meio de:
   ```bash
   composer build-css
   ```
 
 ### 2. Estilos Compartilhados e Reusabilidade
-- Criamos o arquivo [_shared-mixins.scss](file:///var/www/html/agsonhos/public_html/css/base/_shared-mixins.scss) contendo seletores placeholders do Sass para reaproveitar os visuais premium comuns:
+- Criamos o arquivo [_shared-mixins.scss](/public_html/css/base/_shared-mixins.scss) contendo seletores placeholders do Sass para reaproveitar os visuais premium comuns:
   - `%premium-hero`: Seções de topo com gradiente e borda brilhante.
   - `%premium-breadcrumb`: Navegação breadcrumbs padrão.
   - `%premium-button`: Botões gradientes com sombras premium.
@@ -76,16 +76,16 @@ Realizamos com sucesso a modularização das três folhas de estilo principais d
   - `%premium-input`: Campos de texto premium com efeitos de foco.
 
 ### 3. Extração e Modularização de `addresses.css`
-- Convertido para [addresses.scss](file:///var/www/html/agsonhos/public_html/css/custom/addresses.scss), herdando variáveis e mixins compartilhados.
+- Convertido para [addresses.scss](/public_html/css/custom/addresses.scss), herdando variáveis e mixins compartilhados.
 - Criamos os arquivos parciais:
-  - [_addresses.scss](file:///var/www/html/agsonhos/public_html/css/base/pages/_addresses.scss): Controles, cartões e páginas de criação, edição e listagem de endereços.
+  - [_addresses.scss](/public_html/css/base/pages/_addresses.scss): Controles, cartões e páginas de criação, edição e listagem de endereços.
 
 ### 4. Extração e Modularização de `returns-institutional.css`
-- Convertido para [returns-institutional.scss](file:///var/www/html/agsonhos/public_html/css/custom/returns-institutional.scss).
+- Convertido para [returns-institutional.scss](/public_html/css/custom/returns-institutional.scss).
 - Criamos os arquivos parciais:
-  - [_returns.scss](file:///var/www/html/agsonhos/public_html/css/base/pages/_returns.scss): Telas de trocas e devoluções.
-  - [_contact.scss](file:///var/www/html/agsonhos/public_html/css/base/pages/_contact.scss): Tela de contato com a loja.
-  - [_info.scss](file:///var/www/html/agsonhos/public_html/css/base/pages/_info.scss): Páginas de conteúdo institucional.
+  - [_returns.scss](/public_html/css/base/pages/_returns.scss): Telas de trocas e devoluções.
+  - [_contact.scss](/public_html/css/base/pages/_contact.scss): Tela de contato com a loja.
+  - [_info.scss](/public_html/css/base/pages/_info.scss): Páginas de conteúdo institucional.
 
 ---
 

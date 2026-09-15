@@ -11,7 +11,7 @@
 | **Atores Secundários** | Sistema Alpha Engine |
 | **Tipo** | Condução / Segurança e Acessos |
 | **Frequência de Uso** | Baixa |
-| **Rastreabilidade** | **RF:** [RF023](file:///var/www/html/agsonhos/docs/requirements/functional/functional_requirements.yaml) (Gestão administrativa)<br>**RNF:** [RNF003](file:///var/www/html/agsonhos/docs/requirements/non_functional/non_functional_requirements.yaml) (Controle de acesso granular RBAC - Role-Based Access Control) |
+| **Rastreabilidade** | **RF:** [RF023](/docs/requirements/functional/functional_requirements.yaml) (Gestão administrativa)<br>**RNF:** [RNF003](/docs/requirements/non_functional/non_functional_requirements.yaml) (Controle de acesso granular RBAC - Role-Based Access Control) |
 
 ---
 

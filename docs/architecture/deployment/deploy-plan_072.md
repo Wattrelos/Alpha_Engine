@@ -36,13 +36,13 @@ Este plano contempla a adição da aba **"Informações"** na página de Configu
 
 ### 1. Camada de Persistência e Repositórios
 
-#### [MODIFY] [InformationMapper.php](file:///var/www/html/agsonhos/core/Mappers/EntityMappers/InformationMapper.php)
+#### [MODIFY] [InformationMapper.php](/core/Mappers/EntityMappers/InformationMapper.php)
 - Implementar método `createInformation(array $data, int $languageId, int $storeId): int` para criar nova página em `agsc_information`, `agsc_information_description` e `agsc_information_to_store`.
 - Implementar método `updateInformation(int $informationId, int $languageId, int $storeId, array $data): bool`.
 - Implementar método `deleteInformation(int $informationId): bool` para remoção segura de páginas institucionais personalizadas.
 - Adicionar o binding de `seo_url` para gerar automaticamente o slug amigável da página (ex: `/pt-br/pagina/politica-de-troca`).
 
-#### [MODIFY] [InformationRepository.php](file:///var/www/html/agsonhos/core/Model/Domain/Repositories/InformationRepository.php)
+#### [MODIFY] [InformationRepository.php](/core/Model/Domain/Repositories/InformationRepository.php)
 - Adicionar métodos `getAllInformationsAdmin(int $languageId, int $storeId): array` para listar todas as páginas ativas e inativas no painel.
 - Adicionar método `saveInformationPage(int $informationId, array $data): int`.
 - Adicionar método `deleteInformationPage(int $informationId): bool`.
@@ -51,24 +51,24 @@ Este plano contempla a adição da aba **"Informações"** na página de Configu
 
 ### 2. Controladores do Painel Administrativo
 
-#### [MODIFY] [EditStoreSettingAction.php](file:///var/www/html/agsonhos/core/Admin/Controllers/Actions/Setting/StoreSetting/EditStoreSettingAction.php)
+#### [MODIFY] [EditStoreSettingAction.php](/core/Admin/Controllers/Actions/Setting/StoreSetting/EditStoreSettingAction.php)
 - Carregar todas as páginas institucionais via `InformationRepository`.
 - Recuperar os slugs SEO associados a cada página via `SeoUrlRepository`.
 - Injetar no Twig a lista de páginas e os dados de tradução/metadados.
 
-#### [MODIFY] [UpdateStoreSettingAction.php](file:///var/www/html/agsonhos/core/Admin/Controllers/Actions/Setting/StoreSetting/UpdateStoreSettingAction.php)
+#### [MODIFY] [UpdateStoreSettingAction.php](/core/Admin/Controllers/Actions/Setting/StoreSetting/UpdateStoreSettingAction.php)
 - Processar atualizações de páginas institucionais existentes.
 - Processar submissão de novas páginas institucionais (`new_information` se preenchido).
 - Validar títulos e conteúdos.
 
-#### [NEW] [DeleteInformationAction.php](file:///var/www/html/agsonhos/core/Admin/Controllers/Actions/Setting/StoreSetting/DeleteInformationAction.php)
+#### [NEW] [DeleteInformationAction.php](/core/Admin/Controllers/Actions/Setting/StoreSetting/DeleteInformationAction.php)
 - Action dedicada para excluir páginas institucionais personalizadas via AJAX ou requisição POST, impedindo a exclusão acidental das 4 páginas de sistema (IDs 1, 2, 3 e 4).
 
 ---
 
 ### 3. Interface do Usuário (Twig, CSS e JavaScript)
 
-#### [MODIFY] [edit.html.twig](file:///var/www/html/agsonhos/resources/views/admin/setting/store_setting/edit.html.twig)
+#### [MODIFY] [edit.html.twig](/resources/views/admin/setting/store_setting/edit.html.twig)
 - Adicionar a aba **Informações** na navegação principal por abas.
 - Criar a sub-navegação em botões/pílulas (Pills) para alternar entre as páginas.
 - Adicionar cabeçalho com o botão **"+ Nova Página Institutional"** que abre um modal ou revela formulário de adição.
@@ -124,13 +124,13 @@ A nova aba **"Informações"** foi adicionada à página de **Configurações da
 
 ## 🛠️ Arquivos Modificados e Criados
 
-- [InformationMapper.php](file:///var/www/html/agsonhos/core/Mappers/EntityMappers/InformationMapper.php): Adicionados métodos `getAllInformationsAdmin()`, `getInformationForAdmin()`, `createInformation()`, `updateInformation()`, `deleteInformation()` e `saveSeoUrl()`.
-- [InformationRepository.php](file:///var/www/html/agsonhos/core/Model/Domain/Repositories/InformationRepository.php): Expostos os métodos de administração e controle de páginas institucionais.
-- [EditStoreSettingAction.php](file:///var/www/html/agsonhos/core/Admin/Controllers/Actions/Setting/StoreSetting/EditStoreSettingAction.php): Injetada a coleção de páginas institucionais no Twig.
-- [UpdateStoreSettingAction.php](file:///var/www/html/agsonhos/core/Admin/Controllers/Actions/Setting/StoreSetting/UpdateStoreSettingAction.php): Adicionada lógica de processamento e persistência das edições e novas páginas.
-- [DeleteInformationAction.php](file:///var/www/html/agsonhos/core/Admin/Controllers/Actions/Setting/StoreSetting/DeleteInformationAction.php): Nova Action para remover páginas institucionais personalizadas.
-- [Routes.php](file:///var/www/html/agsonhos/Config/Routes.php): Registrada a rota `admin.setting.information.delete`.
-- [edit.html.twig](file:///var/www/html/agsonhos/resources/views/admin/setting/store_setting/edit.html.twig): Interface com a quinta aba **Informações**, navegação por pílulas (sub-tabs), editor Live Preview e estilos CSS.
+- [InformationMapper.php](/core/Mappers/EntityMappers/InformationMapper.php): Adicionados métodos `getAllInformationsAdmin()`, `getInformationForAdmin()`, `createInformation()`, `updateInformation()`, `deleteInformation()` e `saveSeoUrl()`.
+- [InformationRepository.php](/core/Model/Domain/Repositories/InformationRepository.php): Expostos os métodos de administração e controle de páginas institucionais.
+- [EditStoreSettingAction.php](/core/Admin/Controllers/Actions/Setting/StoreSetting/EditStoreSettingAction.php): Injetada a coleção de páginas institucionais no Twig.
+- [UpdateStoreSettingAction.php](/core/Admin/Controllers/Actions/Setting/StoreSetting/UpdateStoreSettingAction.php): Adicionada lógica de processamento e persistência das edições e novas páginas.
+- [DeleteInformationAction.php](/core/Admin/Controllers/Actions/Setting/StoreSetting/DeleteInformationAction.php): Nova Action para remover páginas institucionais personalizadas.
+- [Routes.php](/Config/Routes.php): Registrada a rota `admin.setting.information.delete`.
+- [edit.html.twig](/resources/views/admin/setting/store_setting/edit.html.twig): Interface com a quinta aba **Informações**, navegação por pílulas (sub-tabs), editor Live Preview e estilos CSS.
 
 ---
 

@@ -28,7 +28,7 @@ Este plano descreve a criação e integração do `SecurityHeadersMiddleware` pa
 
 ### Middleware & Infraestrutura
 
-#### [NEW] [SecurityHeadersMiddleware.php](file:///var/www/html/agsonhos/core/Auth/Middleware/SecurityHeadersMiddleware.php)
+#### [NEW] [SecurityHeadersMiddleware.php](/core/Auth/Middleware/SecurityHeadersMiddleware.php)
 - Criar a classe `SecurityHeadersMiddleware` implementando `Psr\Http\Server\MiddlewareInterface`.
 - Injetar na resposta PSR-7 os seguintes cabeçalhos de segurança:
   - `X-Frame-Options: SAMEORIGIN`: Impede o carregamento da loja dentro de `<iframe>` de domínios externos (mitigação contra Clickjacking).
@@ -39,10 +39,10 @@ Este plano descreve a criação e integração do `SecurityHeadersMiddleware` pa
   - `Content-Security-Policy`: Define fontes permitidas para scripts, estilos (`Google Fonts`, `FontAwesome`), imagens e conexões.
   - `Strict-Transport-Security`: Adiciona `max-age=31536000; includeSubDomains` se a requisição utilizar HTTPS.
 
-#### [MODIFY] [index.php (Public Catalog)](file:///var/www/html/agsonhos/public_html/index.php)
+#### [MODIFY] [index.php (Public Catalog)](/public_html/index.php)
 - Importar e registrar `SecurityHeadersMiddleware` na pilha global do Slim.
 
-#### [MODIFY] [index.php (Admin)](file:///var/www/html/agsonhos/public_html/LPDHED2dC7Gjrg2b/index.php)
+#### [MODIFY] [index.php (Admin)](/public_html/LPDHED2dC7Gjrg2b/index.php)
 - Importar e registrar `SecurityHeadersMiddleware` na pilha global do Slim do painel administrativo.
 
 ---
@@ -71,11 +71,11 @@ Este plano descreve a criação e integração do `SecurityHeadersMiddleware` pa
 A proteção contra **Cross-Site Request Forgery (CSRF)** foi implementada no ecossistema **Alpha Engine** (Slim 4 + Twig + Redis).
 
 ### Alterações Realizadas
-- **[composer.json](file:///var/www/html/agsonhos/composer.json)**: Instalada a biblioteca [`slim/csrf`](file:///var/www/html/agsonhos/vendor/slim/csrf).
-- **[CsrfGuardMiddleware.php](file:///var/www/html/agsonhos/core/Auth/Middleware/CsrfGuardMiddleware.php)**: Middleware PSR-15 com modo persistente e handler de falhas (JSON 400 para AJAX, HTML 400 para navegadores).
-- **[public_html/index.php](file:///var/www/html/agsonhos/public_html/index.php)** e **[public_html/LPDHED2dC7Gjrg2b/index.php](file:///var/www/html/agsonhos/public_html/LPDHED2dC7Gjrg2b/index.php)**: Registrado o middleware nos bootstraps público e administrativo.
-- **[base.html.twig](file:///var/www/html/agsonhos/resources/views/base.html.twig)** e **[admin/layouts/base.html.twig](file:///var/www/html/agsonhos/resources/views/admin/layouts/base.html.twig)**: Adicionadas meta-tags globais de CSRF.
-- **[form-validator.js](file:///var/www/html/agsonhos/public_html/js/custom/form-validator.js)**: Injeção automática dos tokens CSRF das meta-tags em submissões AJAX.
+- **[composer.json](/composer.json)**: Instalada a biblioteca [`slim/csrf`](/vendor/slim/csrf).
+- **[CsrfGuardMiddleware.php](/core/Auth/Middleware/CsrfGuardMiddleware.php)**: Middleware PSR-15 com modo persistente e handler de falhas (JSON 400 para AJAX, HTML 400 para navegadores).
+- **[public_html/index.php](/public_html/index.php)** e **[public_html/LPDHED2dC7Gjrg2b/index.php](/public_html/LPDHED2dC7Gjrg2b/index.php)**: Registrado o middleware nos bootstraps público e administrativo.
+- **[base.html.twig](/resources/views/base.html.twig)** e **[admin/layouts/base.html.twig](/resources/views/admin/layouts/base.html.twig)**: Adicionadas meta-tags globais de CSRF.
+- **[form-validator.js](/public_html/js/custom/form-validator.js)**: Injeção automática dos tokens CSRF das meta-tags em submissões AJAX.
 
 ---
 
@@ -84,7 +84,7 @@ A proteção contra **Cross-Site Request Forgery (CSRF)** foi implementada no ec
 Implementado o middleware de injeção automática de cabeçalhos defensivos segundo os padrões OWASP.
 
 ### Alterações Realizadas
-- **[SecurityHeadersMiddleware.php](file:///var/www/html/agsonhos/core/Auth/Middleware/SecurityHeadersMiddleware.php)** (`NEW`):
+- **[SecurityHeadersMiddleware.php](/core/Auth/Middleware/SecurityHeadersMiddleware.php)** (`NEW`):
   - Injeta os seguintes cabeçalhos em todas as respostas PSR-7 emitidas pela Alpha Engine:
     - `X-Frame-Options: SAMEORIGIN` (mitigação contra Clickjacking).
     - `X-Content-Type-Options: nosniff` (mitigação contra MIME Sniffing).

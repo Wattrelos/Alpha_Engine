@@ -11,7 +11,7 @@
 | **Atores Secundários** | Fornecedor / Parceiro Vencedor, Sistema Alpha Engine |
 | **Tipo** | Extensão de `UC_CLI_027` (`<<extend>>`) |
 | **Frequência de Uso** | Média |
-| **Rastreabilidade** | **RF:** [RF018](file:///var/www/html/agsonhos/docs/requirements/functional/functional_requirements.yaml) (Checkout), [RF020](file:///var/www/html/agsonhos/docs/requirements/functional/functional_requirements.yaml) (Faturamento)<br>**RN:** [RN005](file:///var/www/html/agsonhos/docs/requirements/business_rules/business_rules.yaml) (Estoque), [RN015](file:///var/www/html/agsonhos/docs/requirements/business_rules/business_rules.yaml) (Preços negociados)<br>**RNF:** [RNF003](file:///var/www/html/agsonhos/docs/requirements/non_functional/non_functional_requirements.yaml) (Auditoria contratual) |
+| **Rastreabilidade** | **RF:** [RF018](/docs/requirements/functional/functional_requirements.yaml) (Checkout), [RF020](/docs/requirements/functional/functional_requirements.yaml) (Faturamento)<br>**RN:** [RN005](/docs/requirements/business_rules/business_rules.yaml) (Estoque), [RN015](/docs/requirements/business_rules/business_rules.yaml) (Preços negociados)<br>**RNF:** [RNF003](/docs/requirements/non_functional/non_functional_requirements.yaml) (Auditoria contratual) |
 
 ---
 

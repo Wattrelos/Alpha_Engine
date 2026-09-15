@@ -11,7 +11,7 @@
 | **Atores Secundários** | Vendedor de Balcão (*Sales Representative*) |
 | **Tipo** | Inclusão de `UC_POS_005` (`<<include>>`) / Persistência e Reserva |
 | **Frequência de Uso** | Contínua / Muito Alta |
-| **Rastreabilidade** | **RF:** [RF006](file:///var/www/html/agsonhos/docs/requirements/functional/functional_requirements.yaml) (Gestão automática de inventário), [RF020](file:///var/www/html/agsonhos/docs/requirements/functional/functional_requirements.yaml) (Faturamento)<br>**RN:** [RN005](file:///var/www/html/agsonhos/docs/requirements/business_rules/business_rules.yaml) (Controle de estoque em tempo real), [RN016](file:///var/www/html/agsonhos/docs/requirements/business_rules/business_rules.yaml) (Cálculo prévio de desconto à vista)<br>**RNF:** [RNF007](file:///var/www/html/agsonhos/docs/requirements/non_functional/non_functional_requirements.yaml) (Idempotência no fechamento da comanda) |
+| **Rastreabilidade** | **RF:** [RF006](/docs/requirements/functional/functional_requirements.yaml) (Gestão automática de inventário), [RF020](/docs/requirements/functional/functional_requirements.yaml) (Faturamento)<br>**RN:** [RN005](/docs/requirements/business_rules/business_rules.yaml) (Controle de estoque em tempo real), [RN016](/docs/requirements/business_rules/business_rules.yaml) (Cálculo prévio de desconto à vista)<br>**RNF:** [RNF007](/docs/requirements/non_functional/non_functional_requirements.yaml) (Idempotência no fechamento da comanda) |
 
 ---
 

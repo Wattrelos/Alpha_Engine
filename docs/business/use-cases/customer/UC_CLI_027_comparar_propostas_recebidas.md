@@ -11,7 +11,7 @@
 | **Atores Secundários** | Sistema Alpha Engine |
 | **Tipo** | Extensão de `UC_CLI_026` (`<<extend>>`) |
 | **Frequência de Uso** | Média |
-| **Rastreabilidade** | **RF:** [RF004](file:///var/www/html/agsonhos/docs/requirements/functional/functional_requirements.yaml) (Unidades/Itens), [RF010](file:///var/www/html/agsonhos/docs/requirements/functional/functional_requirements.yaml) (Frete)<br>**RN:** [RN015](file:///var/www/html/agsonhos/docs/requirements/business_rules/business_rules.yaml) (Descontos por volume)<br>**RNF:** [RNF001](file:///var/www/html/agsonhos/docs/requirements/non_functional/non_functional_requirements.yaml) (Quadro comparativo lado a lado) |
+| **Rastreabilidade** | **RF:** [RF004](/docs/requirements/functional/functional_requirements.yaml) (Unidades/Itens), [RF010](/docs/requirements/functional/functional_requirements.yaml) (Frete)<br>**RN:** [RN015](/docs/requirements/business_rules/business_rules.yaml) (Descontos por volume)<br>**RNF:** [RNF001](/docs/requirements/non_functional/non_functional_requirements.yaml) (Quadro comparativo lado a lado) |
 
 ---
 

@@ -11,7 +11,7 @@
 | **Atores Secundários** | Sistema Alpha Engine |
 | **Tipo** | Condução / Segurança |
 | **Frequência de Uso** | Baixa |
-| **Rastreabilidade** | **RF:** [RF014](file:///var/www/html/agsonhos/docs/requirements/functional/functional_requirements.yaml) (Auth), [RF015](file:///var/www/html/agsonhos/docs/requirements/functional/functional_requirements.yaml) (Redefinição de senha)<br>**RNF:** [RNF003](file:///var/www/html/agsonhos/docs/requirements/non_functional/non_functional_requirements.yaml) (Hash seguro Argon2id) |
+| **Rastreabilidade** | **RF:** [RF014](/docs/requirements/functional/functional_requirements.yaml) (Auth), [RF015](/docs/requirements/functional/functional_requirements.yaml) (Redefinição de senha)<br>**RNF:** [RNF003](/docs/requirements/non_functional/non_functional_requirements.yaml) (Hash seguro Argon2id) |
 
 ---
 

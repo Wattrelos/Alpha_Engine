@@ -25,7 +25,7 @@ Este plano detalha a criação da interface do Vendedor (Sales Rep) e das APIs n
 
 ### Roteamento
 
-#### [MODIFY] [Routes.php](file:///var/www/html/agsonhos/Config/Routes.php)
+#### [MODIFY] [Routes.php](/Config/Routes.php)
 - Adicionar o grupo de rotas do PDV no bloco administrativo (`APPLICATION === 'admin'`) sob proteção do `AdminSessionMiddleware`:
   - `GET /pos/vendedor` -> `ShowSalesRepDashboardAction` (nome: `admin.pos.sales_rep`)
   - `GET /pos/vendedor/checkout` -> `ShowSalesRepCheckoutAction` (nome: `admin.pos.sales_rep.checkout`)
@@ -35,40 +35,40 @@ Este plano detalha a criação da interface do Vendedor (Sales Rep) e das APIs n
 
 ### Actions (Controllers)
 
-#### [NEW] [ShowSalesRepDashboardAction.php](file:///var/www/html/agsonhos/core/Admin/Controllers/Actions/POS/ShowSalesRepDashboardAction.php)
+#### [NEW] [ShowSalesRepDashboardAction.php](/core/Admin/Controllers/Actions/POS/ShowSalesRepDashboardAction.php)
 - Action administrativa invocável que estende `BaseController`.
 - Carrega e renderiza o template ` pos/sales-rep/register-control.twig` passando dados básicos da loja e do vendedor logado.
 
-#### [NEW] [ShowSalesRepCheckoutAction.php](file:///var/www/html/agsonhos/core/Admin/Controllers/Actions/POS/ShowSalesRepCheckoutAction.php)
+#### [NEW] [ShowSalesRepCheckoutAction.php](/core/Admin/Controllers/Actions/POS/ShowSalesRepCheckoutAction.php)
 - Action administrativa invocável que estende `BaseController`.
 - Renderiza a tela de finalização de pré-venda ` pos/sales-rep/checkout.twig`.
 
-#### [NEW] [SearchProductAction.php](file:///var/www/html/agsonhos/core/Admin/Controllers/Actions/POS/SearchProductAction.php)
+#### [NEW] [SearchProductAction.php](/core/Admin/Controllers/Actions/POS/SearchProductAction.php)
 - Action administrativa que busca produtos via `ProductRepository->getProducts()`.
 - Retorna uma resposta JSON contendo os produtos com nome, preço, imagem, código (EAN/ISBN) e estoque.
 
-#### [NEW] [SearchCustomerAction.php](file:///var/www/html/agsonhos/core/Admin/Controllers/Actions/POS/SearchCustomerAction.php)
+#### [NEW] [SearchCustomerAction.php](/core/Admin/Controllers/Actions/POS/SearchCustomerAction.php)
 - Action administrativa que busca clientes ativos via `CustomerRepository->findBy()`.
 - Filtra por nome, e-mail ou documento (CPF/CNPJ) e retorna resposta JSON.
 
-#### [NEW] [CreatePreOrderAction.php](file:///var/www/html/agsonhos/core/Admin/Controllers/Actions/POS/CreatePreOrderAction.php)
+#### [NEW] [CreatePreOrderAction.php](/core/Admin/Controllers/Actions/POS/CreatePreOrderAction.php)
 - Action administrativa que valida idempotência via Redis e salva uma nova pré-venda (pedido com status = `pending`).
 - Utiliza `UnitOfWork` para garantir consistência ao gravar os itens do pedido e realizar a reserva do estoque.
 
 ### Camada de Apresentação (Twig & CSS)
 
-#### [MODIFY] [layout.twig](file:///var/www/html/agsonhos/resources/views/%20pos/layout.twig)
+#### [MODIFY] [layout.twig](/resources/views/%20pos/layout.twig)
 - Desenhar a estrutura base para a interface de tela inteira do terminal do PDV.
 - Estilo premium via CSS Vanilla (cores vibrantes baseadas em HSL, bordas arredondadas, painel de controle escuro/moderno, micro-interações táteis).
 
-#### [MODIFY] [register-control.twig](file:///var/www/html/agsonhos/resources/views/%20pos/sales-rep/register-control.twig)
+#### [MODIFY] [register-control.twig](/resources/views/%20pos/sales-rep/register-control.twig)
 - Desenhar o catálogo tátil e de busca rápida do vendedor:
   - Barra de busca dinâmica de produtos e clientes.
   - Grade de produtos com cards de exibição (foto, preço, estoque, botão de adicionar).
   - Carrinho de pré-venda lateral com cálculo em tempo real e identificação do cliente selecionado.
   - Integração Javascript (Vanilla) assíncrona com os endpoints do back-end para busca instantânea e fechamento da pré-venda (com envio de idempotency key).
 
-#### [MODIFY] [checkout.twig](file:///var/www/html/agsonhos/resources/views/%20pos/sales-rep/checkout.twig)
+#### [MODIFY] [checkout.twig](/resources/views/%20pos/sales-rep/checkout.twig)
 - Desenhar a tela final de pré-venda gerada (exibindo o número do ticket grande e código de barras simulado para o cliente levar ao caixa).
 
 ## Verification Plan
@@ -100,7 +100,7 @@ Foi implementada com sucesso a tela do Vendedor (Sales Rep) para o PDV da loja, 
 ## O que foi Feito
 
 ### 1. Roteamento do Slim
-No arquivo [Routes.php](file:///var/www/html/agsonhos/Config/Routes.php), adicionamos o seguinte conjunto de rotas sob o grupo administrativo que usa o [AdminSessionMiddleware](file:///var/www/html/agsonhos/core/Auth/Middleware/AdminSessionMiddleware.php):
+No arquivo [Routes.php](/Config/Routes.php), adicionamos o seguinte conjunto de rotas sob o grupo administrativo que usa o [AdminSessionMiddleware](/core/Auth/Middleware/AdminSessionMiddleware.php):
 - `GET /pos/vendedor`: Renderiza o painel do vendedor.
 - `GET /pos/vendedor/checkout`: Renderiza o ticket de confirmação da pré-venda.
 - `GET /pos/produtos/buscar`: Endpoint da API para busca de produtos por nome ou código.
@@ -109,23 +109,23 @@ No arquivo [Routes.php](file:///var/www/html/agsonhos/Config/Routes.php), adicio
 
 ### 2. Single Action Controllers (Actions)
 Criamos as seguintes Actions invocáveis no namespace `Alpha\Admin\Controllers\Actions\POS`:
-* [ShowSalesRepDashboardAction.php](file:///var/www/html/agsonhos/core/Admin/Controllers/Actions/POS/ShowSalesRepDashboardAction.php): Inicializa e exibe o painel principal do PDV.
-* [ShowSalesRepCheckoutAction.php](file:///var/www/html/agsonhos/core/Admin/Controllers/Actions/POS/ShowSalesRepCheckoutAction.php): Carrega os detalhes do pedido e exibe o ticket final de pré-venda.
-* [SearchProductAction.php](file:///var/www/html/agsonhos/core/Admin/Controllers/Actions/POS/SearchProductAction.php): Executa consultas parametrizadas ao catálogo por meio de `ProductRepository`.
-* [SearchCustomerAction.php](file:///var/www/html/agsonhos/core/Admin/Controllers/Actions/POS/SearchCustomerAction.php): Realiza a busca no banco de dados por clientes ativos que correspondam ao nome, e-mail ou telefone informados.
-* [CreatePreOrderAction.php](file:///var/www/html/agsonhos/core/Admin/Controllers/Actions/POS/CreatePreOrderAction.php): Centraliza o fechamento da venda. Implementa verificação de idempotência (via Redis com fallback para `$_SESSION`) e utiliza a atomicidade do `UnitOfWork` para gravar o pedido e deduzir a quantidade correspondente de estoque.
+* [ShowSalesRepDashboardAction.php](/core/Admin/Controllers/Actions/POS/ShowSalesRepDashboardAction.php): Inicializa e exibe o painel principal do PDV.
+* [ShowSalesRepCheckoutAction.php](/core/Admin/Controllers/Actions/POS/ShowSalesRepCheckoutAction.php): Carrega os detalhes do pedido e exibe o ticket final de pré-venda.
+* [SearchProductAction.php](/core/Admin/Controllers/Actions/POS/SearchProductAction.php): Executa consultas parametrizadas ao catálogo por meio de `ProductRepository`.
+* [SearchCustomerAction.php](/core/Admin/Controllers/Actions/POS/SearchCustomerAction.php): Realiza a busca no banco de dados por clientes ativos que correspondam ao nome, e-mail ou telefone informados.
+* [CreatePreOrderAction.php](/core/Admin/Controllers/Actions/POS/CreatePreOrderAction.php): Centraliza o fechamento da venda. Implementa verificação de idempotência (via Redis com fallback para `$_SESSION`) e utiliza a atomicidade do `UnitOfWork` para gravar o pedido e deduzir a quantidade correspondente de estoque.
 
 ### 3. Camada de Apresentação (Twig & CSS)
 Desenvolvemos uma interface escura (Dark Mode) premium sob a pasta de recursos `resources/views/ pos/`:
-* [layout.twig](file:///var/www/html/agsonhos/resources/views/%20pos/layout.twig): Layout base de tela inteira com design fluído de terminal, fontes modernas do Google (Outfit e Inter) e glassmorphism.
-* [register-control.twig](file:///var/www/html/agsonhos/resources/views/%20pos/sales-rep/register-control.twig): O dashboard tátil de vendas com pesquisa assíncrona instantânea de produtos e clientes, montagem de carrinho e fechamento de ticket com prevenção de duplo clique.
-* [checkout.twig](file:///var/www/html/agsonhos/resources/views/%20pos/sales-rep/checkout.twig): A tela de sucesso mostrando o número do ticket em destaque para o caixa e um código de barras simulado em CSS puro.
+* [layout.twig](/resources/views/%20pos/layout.twig): Layout base de tela inteira com design fluído de terminal, fontes modernas do Google (Outfit e Inter) e glassmorphism.
+* [register-control.twig](/resources/views/%20pos/sales-rep/register-control.twig): O dashboard tátil de vendas com pesquisa assíncrona instantânea de produtos e clientes, montagem de carrinho e fechamento de ticket com prevenção de duplo clique.
+* [checkout.twig](/resources/views/%20pos/sales-rep/checkout.twig): A tela de sucesso mostrando o número do ticket em destaque para o caixa e um código de barras simulado em CSS puro.
 
 ---
 
 ## Validação e Testes
 
-Criamos um script de testes de integração em [TestPOSPreOrder.php](file:///var/www/html/agsonhos/tests/TestPOSPreOrder.php) que valida todo o fluxo:
+Criamos um script de testes de integração em [TestPOSPreOrder.php](/tests/TestPOSPreOrder.php) que valida todo o fluxo:
 1. **Compilação:** Confirma que todos os novos controladores foram compilados e carregados corretamente pelo autoloader.
 2. **Consultas de Domínio:** Executa queries de produtos e clientes ativos.
 3. **Escrita Transacional:** Cria uma pré-venda com itens e valida se a reserva de estoque ocorreu (deduzindo a quantidade correta).

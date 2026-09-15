@@ -27,7 +27,7 @@ Este plano descreve as adaptações necessárias no diagrama de sequência de ve
 
 ### Documentação e Arquitetura
 
-#### [MODIFY] [fluxo_venda_pos.puml](file:///var/www/html/agsonhos/docs/architecture/fluxo_venda_pos.puml)
+#### [MODIFY] [fluxo_venda_pos.puml](/docs/architecture/fluxo_venda_pos.puml)
 - Atualizar a definição dos participantes (`actor`, `boundary`, `control`, `database`) para representar as camadas reais.
 - Mapear a rota passando por `AdminSessionMiddleware`.
 - Mapear a resolução de dependências e a chamada de Actions correspondentes:
@@ -56,7 +56,7 @@ Foi adaptado o diagrama de sequência do PDV (Point of Sale / Ponto de Venda) pa
 ## Alterações Realizadas
 
 ### Documentação de Arquitetura
-#### [fluxo_venda_pos.puml](file:///var/www/html/agsonhos/docs/architecture/fluxo_venda_pos.puml)
+#### [fluxo_venda_pos.puml](/docs/architecture/fluxo_venda_pos.puml)
 - **Atores e Fronteiras:** Preservados os atores (`Customer`, `Sales Rep`, `Cashier`) e telas (`SalesScreen`, `CashierScreen`).
 - **Rotas e Middlewares:** Introduzido o `Router` do Slim 4 e o middleware `AdminSessionMiddleware` para proteção e autenticação da sessão (verificando os papéis no cache Redis).
 - **Single Action Controllers:** Removido o controlador monolítico genérico (`OrderController.php`) e introduzidos os Single Action Controllers (Actions invocações de classe única) apropriados:

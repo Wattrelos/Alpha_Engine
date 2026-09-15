@@ -31,7 +31,7 @@ Nenhuma alteração é necessária na tabela do carrinho de compras do banco de 
 
 ### Domain Logic (Repository)
 
-#### [MODIFY] [CartRepository.php](file:///var/www/html/agsonhos/core/Model/Domain/Repositories/CartRepository.php)
+#### [MODIFY] [CartRepository.php](/core/Model/Domain/Repositories/CartRepository.php)
 - Atualizar o método `getProducts()` para suportar o carregamento em lote dos produtos pai das variações presentes no carrinho:
   1. Identificar se algum produto carregado no carrinho possui `master_id > 0` (indicando que é uma variação).
   2. Coletar os IDs de todos os produtos pai (`master_id`) e carregá-los em lote (`getProductsByIds`) em uma única consulta, prevenindo o problema de queries N+1.
@@ -47,7 +47,7 @@ Nenhuma alteração é necessária na tabela do carrinho de compras do banco de 
   3. Validar se uma variação com imagem personalizada exibe a foto específica, enquanto uma sem imagem herda a foto do pai.
   4. Executar os testes automatizados existentes (`TestCreateProduct.php`) para garantir a estabilidade do sistema.
 
-- [x] Refactor product loading in [CartRepository.php](file:///var/www/html/agsonhos/core/Model/Domain/Repositories/CartRepository.php)
+- [x] Refactor product loading in [CartRepository.php](/core/Model/Domain/Repositories/CartRepository.php)
   - [x] Identify variations (`master_id > 0`) in the cart items list
   - [x] Batch-load parent products to avoid N+1 query loops
   - [x] Implement fallbacks for variation attributes (price, special, tax_class_id, weight, image, reward points, subtract, minimum, shipping)
@@ -66,7 +66,7 @@ Neste ciclo de desenvolvimento, implementamos suporte completo a variações de 
 ## Parte 1: Edição de Imagem em Variações de Produto
 
 ### 1. Interface Administrativa
-- **Arquivo modificado:** [edit.html.twig](file:///var/www/html/agsonhos/resources/views/admin/pages/products/edit.html.twig)
+- **Arquivo modificado:** [edit.html.twig](/resources/views/admin/pages/products/edit.html.twig)
 - **Modificações:**
   - Adicionada a coluna **Imagem** na tabela de variações.
   - Exibição de miniatura arredondada (`50x50px`) da imagem atual da variação (com ícone padrão se não houver).
@@ -78,7 +78,7 @@ Neste ciclo de desenvolvimento, implementamos suporte completo a variações de 
   - Suporte completo a novas linhas criadas dinamicamente ao clicar em "Adicionar Variação".
 
 ### 2. Lógica de Upload (Servidor)
-- **Arquivo modificado:** [UpdateProductAction.php](file:///var/www/html/agsonhos/core/Admin/Controllers/Actions/Catalog/Product/UpdateProductAction.php)
+- **Arquivo modificado:** [UpdateProductAction.php](/core/Admin/Controllers/Actions/Catalog/Product/UpdateProductAction.php)
 - **Modificações:**
   - Captura dinâmica dos arquivos de imagem associados aos índices das variações através de `$request->getUploadedFiles()`.
   - Tratamento de exclusão: caso a flag `remove_image` esteja presente, o caminho da imagem é limpo.
@@ -90,7 +90,7 @@ Neste ciclo de desenvolvimento, implementamos suporte completo a variações de 
 ## Parte 2: Refatoração do Carrinho de Compras
 
 ### 1. Lógica do Carrinho (Domínio)
-- **Arquivo modificado:** [CartRepository.php](file:///var/www/html/agsonhos/core/Model/Domain/Repositories/CartRepository.php)
+- **Arquivo modificado:** [CartRepository.php](/core/Model/Domain/Repositories/CartRepository.php)
 - **Modificações:**
   - Refatorado o método central `getProducts()` do carrinho para que, ao carregar os itens, identifique se algum item inserido trata-se de uma variação (`master_id > 0`).
   - Implementado **carregamento em lote (Batch Loading)** dos produtos pai das variações correspondentes em uma única consulta, respeitando as regras estritas da Alpha Engine de evitar consultas N+1 no banco de dados.

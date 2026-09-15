@@ -25,7 +25,7 @@ Este plano descreve a criação da interface do Caixa (Cashier) e das APIs neces
 
 ### Roteamento
 
-#### [MODIFY] [Routes.php](file:///var/www/html/agsonhos/Config/Routes.php)
+#### [MODIFY] [Routes.php](/Config/Routes.php)
 - Adicionar no grupo de rotas administrativas do PDV as seguintes rotas:
   - `GET /pos/caixa` -> `ShowCashierDashboardAction` (nome: `admin.pos.cashier`)
   - `GET /pos/pedidos/{id:[0-9]+}` -> `GetPreOrderAction` (nome: `admin.pos.orders.get`)
@@ -33,21 +33,21 @@ Este plano descreve a criação da interface do Caixa (Cashier) e das APIs neces
 
 ### Actions (Controllers)
 
-#### [NEW] [ShowCashierDashboardAction.php](file:///var/www/html/agsonhos/core/Admin/Controllers/Actions/POS/ShowCashierDashboardAction.php)
+#### [NEW] [ShowCashierDashboardAction.php](/core/Admin/Controllers/Actions/POS/ShowCashierDashboardAction.php)
 - Action administrativa invocável que estende `BaseController`.
 - Carrega e renderiza o template ` pos/cashier/layout.twig` com as informações básicas do caixa logado.
 
-#### [NEW] [GetPreOrderAction.php](file:///var/www/html/agsonhos/core/Admin/Controllers/Actions/POS/GetPreOrderAction.php)
+#### [NEW] [GetPreOrderAction.php](/core/Admin/Controllers/Actions/POS/GetPreOrderAction.php)
 - Action administrativa invocável que recebe um ID de pedido e verifica se ele está ativo e com status pendente (ID de status = 1).
 - Retorna um JSON detalhado com os produtos, quantidades, preços e totais.
 
-#### [NEW] [PayOrderAction.php](file:///var/www/html/agsonhos/core/Admin/Controllers/Actions/POS/PayOrderAction.php)
+#### [NEW] [PayOrderAction.php](/core/Admin/Controllers/Actions/POS/PayOrderAction.php)
 - Action administrativa invocável que recebe o pagamento (Pix, Cartão, Dinheiro) e altera o status do pedido para "Completo" (ou correspondente pago).
 - Usa `UnitOfWork` e chama `OrderRepository->confirm()` para registrar o pagamento e registrar o histórico.
 
 ### Camada de Apresentação (Twig & CSS)
 
-#### [MODIFY] [layout.twig](file:///var/www/html/agsonhos/resources/views/%20pos/cashier/layout.twig)
+#### [MODIFY] [layout.twig](/resources/views/%20pos/cashier/layout.twig)
 - Desenhar a interface do caixa de alta fidelidade:
   - Painel de consulta de Ticket (digitação de ID e busca dinâmica).
   - Listagem dos itens da pré-venda com totais destacados.
@@ -80,26 +80,26 @@ Foi implementada com sucesso a tela do Caixa (Cashier) para o PDV da loja, conte
 ## O que foi Feito
 
 ### 1. Roteamento do Slim
-No arquivo [Routes.php](file:///var/www/html/agsonhos/Config/Routes.php), adicionamos o seguinte conjunto de rotas sob o grupo administrativo protegido por [AdminSessionMiddleware](file:///var/www/html/agsonhos/core/Auth/Middleware/AdminSessionMiddleware.php):
+No arquivo [Routes.php](/Config/Routes.php), adicionamos o seguinte conjunto de rotas sob o grupo administrativo protegido por [AdminSessionMiddleware](/core/Auth/Middleware/AdminSessionMiddleware.php):
 - `GET /pos/caixa`: Renderiza o painel do caixa.
 - `GET /pos/pedidos/{id:[0-9]+}`: Endpoint da API para busca de detalhes da pré-venda (itens, cliente e totais) por ID de ticket.
 - `POST /pos/pedidos/{id:[0-9]+}/pagar`: Endpoint da API para processar o pagamento, mudando o status para completo (pago) de forma definitiva.
 
 ### 2. Single Action Controllers (Actions)
 Criamos as seguintes Actions invocáveis no namespace `Alpha\Admin\Controllers\Actions\POS`:
-* [ShowCashierDashboardAction.php](file:///var/www/html/agsonhos/core/Admin/Controllers/Actions/POS/ShowCashierDashboardAction.php): Renderiza a interface do caixa (` pos/cashier/layout.twig`).
-* [GetPreOrderAction.php](file:///var/www/html/agsonhos/core/Admin/Controllers/Actions/POS/GetPreOrderAction.php): Consulta o banco e retorna detalhes estruturados da pré-venda em JSON.
-* [PayOrderAction.php](file:///var/www/html/agsonhos/core/Admin/Controllers/Actions/POS/PayOrderAction.php): Finaliza a venda transicionando o status do pedido para "Completo" (status ID 5) de forma atômica utilizando o `UnitOfWork`.
+* [ShowCashierDashboardAction.php](/core/Admin/Controllers/Actions/POS/ShowCashierDashboardAction.php): Renderiza a interface do caixa (` pos/cashier/layout.twig`).
+* [GetPreOrderAction.php](/core/Admin/Controllers/Actions/POS/GetPreOrderAction.php): Consulta o banco e retorna detalhes estruturados da pré-venda em JSON.
+* [PayOrderAction.php](/core/Admin/Controllers/Actions/POS/PayOrderAction.php): Finaliza a venda transicionando o status do pedido para "Completo" (status ID 5) de forma atômica utilizando o `UnitOfWork`.
 
 ### 3. Camada de Apresentação (Twig & CSS)
 Desenvolvemos uma interface escura (Dark Mode) premium sob a pasta de recursos `resources/views/ pos/`:
-* [layout.twig](file:///var/www/html/agsonhos/resources/views/%20pos/cashier/layout.twig): Implementação completa do terminal do caixa com pesquisa dinâmica por ID de ticket, detalhamento de itens, aba de pagamentos (Pix com simulação de QR Code, cartão e dinheiro físico com cálculo de troco) e impressão automática do comprovante.
+* [layout.twig](/resources/views/%20pos/cashier/layout.twig): Implementação completa do terminal do caixa com pesquisa dinâmica por ID de ticket, detalhamento de itens, aba de pagamentos (Pix com simulação de QR Code, cartão e dinheiro físico com cálculo de troco) e impressão automática do comprovante.
 
 ---
 
 ## Validação e Testes
 
-Criamos um script de testes de integração em [TestPOSCashier.php](file:///var/www/html/agsonhos/tests/TestPOSCashier.php) que valida todo o fluxo do caixa:
+Criamos um script de testes de integração em [TestPOSCashier.php](/tests/TestPOSCashier.php) que valida todo o fluxo do caixa:
 1. **Compilação:** Confirma que todos os novos controladores do caixa foram carregados no autoloader.
 2. **Criação de Teste:** Salva um pedido com status pendente (1) e deduz o estoque em 1 unidade (simulando a pré-venda).
 3. **Consulta de Ticket:** Valida a recuperação das informações da pré-venda.

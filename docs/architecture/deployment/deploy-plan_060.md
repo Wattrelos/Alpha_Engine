@@ -50,13 +50,13 @@ graph TD
 
 ### 1. Camada de Domínio & Persistência (Repositories e Mappers)
 
-#### [MODIFY] [UserRepository.php](file:///var/www/html/agsonhos/core/Model/Domain/Repositories/UserRepository.php) & [UserMapper.php](file:///var/www/html/agsonhos/core/Mappers/EntityMappers/UserMapper.php)
+#### [MODIFY] [UserRepository.php](/core/Model/Domain/Repositories/UserRepository.php) & [UserMapper.php](/core/Mappers/EntityMappers/UserMapper.php)
 - Implementar métodos de persistência e validação:
   - `save(User $user): ?int`: Salva ou atualiza um usuário administrativo gerando hash de senha caso informada.
   - `delete(int $id): bool`: Remove um usuário do banco.
   - `getPaginatedUsers(array $filters, int $page, int $limit)`: Busca filtrada e paginada de funcionários com o relacionamento hidratado do `UserGroup`.
 
-#### [MODIFY] [UserGroupRepository.php](file:///var/www/html/agsonhos/core/Model/Domain/Repositories/UserGroupRepository.php) & [UserGroupMapper.php](file:///var/www/html/agsonhos/core/Mappers/EntityMappers/UserGroupMapper.php)
+#### [MODIFY] [UserGroupRepository.php](/core/Model/Domain/Repositories/UserGroupRepository.php) & [UserGroupMapper.php](/core/Mappers/EntityMappers/UserGroupMapper.php)
 - Implementar métodos de gestão de perfis:
   - `save(UserGroup $userGroup): ?int`: Salva o grupo serializando o array de permissões (`access` e `modify`) em JSON.
   - `delete(int $id): bool`: Remove um grupo garantindo a verificação prévia de que nenhum usuário esteja vinculado.
@@ -67,33 +67,33 @@ graph TD
 ### 2. Camada de Controle Administrativo (Actions Slim)
 
 #### [NEW] Actions de Gestão de Funcionários (`Alpha\Admin\Controllers\Actions\User\User\`)
-- **`ListUsersAction`** ([`core/Admin/Controllers/Actions/User/User/ListUsersAction.php`](file:///var/www/html/agsonhos/core/Admin/Controllers/Actions/User/User/ListUsersAction.php)):
+- **`ListUsersAction`** ([`core/Admin/Controllers/Actions/User/User/ListUsersAction.php`](/core/Admin/Controllers/Actions/User/User/ListUsersAction.php)):
   - Exibe a lista paginada de funcionários cadastrados com filtros por nome, e-mail, grupo e status.
-- **`CreateUserAction`** ([`core/Admin/Controllers/Actions/User/User/CreateUserAction.php`](file:///var/www/html/agsonhos/core/Admin/Controllers/Actions/User/User/CreateUserAction.php)):
+- **`CreateUserAction`** ([`core/Admin/Controllers/Actions/User/User/CreateUserAction.php`](/core/Admin/Controllers/Actions/User/User/CreateUserAction.php)):
   - `GET`: Renderiza o formulário de cadastro de funcionário com o seletor de grupos (`UserGroup`).
   - `POST`: Valida dados (unicidade de username/email, tamanho de senha, obrigatoriedade de grupo) e salva a entidade `User`.
-- **`EditUserAction`** ([`core/Admin/Controllers/Actions/User/User/EditUserAction.php`](file:///var/www/html/agsonhos/core/Admin/Controllers/Actions/User/User/EditUserAction.php)):
+- **`EditUserAction`** ([`core/Admin/Controllers/Actions/User/User/EditUserAction.php`](/core/Admin/Controllers/Actions/User/User/EditUserAction.php)):
   - `GET`: Carrega dados do funcionário.
   - `POST`: Atualiza o perfil do funcionário (com alteração opcional de senha e status).
-- **`DeleteUserAction`** ([`core/Admin/Controllers/Actions/User/User/DeleteUserAction.php`](file:///var/www/html/agsonhos/core/Admin/Controllers/Actions/User/User/DeleteUserAction.php)):
+- **`DeleteUserAction`** ([`core/Admin/Controllers/Actions/User/User/DeleteUserAction.php`](/core/Admin/Controllers/Actions/User/User/DeleteUserAction.php)):
   - Processa a exclusão protegida do funcionário (bloqueando autoexclusão do usuário logado).
 
 #### [NEW] Actions de Gestão de Papéis/Grupos (`Alpha\Admin\Controllers\Actions\User\UserGroup\`)
-- **`ListUserGroupsAction`** ([`core/Admin/Controllers/Actions/User/UserGroup/ListUserGroupsAction.php`](file:///var/www/html/agsonhos/core/Admin/Controllers/Actions/User/UserGroup/ListUserGroupsAction.php)):
+- **`ListUserGroupsAction`** ([`core/Admin/Controllers/Actions/User/UserGroup/ListUserGroupsAction.php`](/core/Admin/Controllers/Actions/User/UserGroup/ListUserGroupsAction.php)):
   - Exibe a lista de papéis/grupos com a contagem de funcionários associados.
-- **`CreateUserGroupAction`** ([`core/Admin/Controllers/Actions/User/UserGroup/CreateUserGroupAction.php`](file:///var/www/html/agsonhos/core/Admin/Controllers/Actions/User/UserGroup/CreateUserGroupAction.php)):
+- **`CreateUserGroupAction`** ([`core/Admin/Controllers/Actions/User/UserGroup/CreateUserGroupAction.php`](/core/Admin/Controllers/Actions/User/UserGroup/CreateUserGroupAction.php)):
   - `GET`: Renderiza o formulário de papel exibindo a matriz de permissões das rotas do painel (Visualizar / Modificar).
   - `POST`: Salva o nome do papel e a matriz de permissões serializada.
-- **`EditUserGroupAction`** ([`core/Admin/Controllers/Actions/User/UserGroup/EditUserGroupAction.php`](file:///var/www/html/agsonhos/core/Admin/Controllers/Actions/User/UserGroup/EditUserGroupAction.php)):
+- **`EditUserGroupAction`** ([`core/Admin/Controllers/Actions/User/UserGroup/EditUserGroupAction.php`](/core/Admin/Controllers/Actions/User/UserGroup/EditUserGroupAction.php)):
   - `GET`/`POST`: Edita nome e permissões do papel.
-- **`DeleteUserGroupAction`** ([`core/Admin/Controllers/Actions/User/UserGroup/DeleteUserGroupAction.php`](file:///var/www/html/agsonhos/core/Admin/Controllers/Actions/User/UserGroup/DeleteUserGroupAction.php)):
+- **`DeleteUserGroupAction`** ([`core/Admin/Controllers/Actions/User/UserGroup/DeleteUserGroupAction.php`](/core/Admin/Controllers/Actions/User/UserGroup/DeleteUserGroupAction.php)):
   - Remove o papel caso não haja funcionários vinculados.
 
 ---
 
 ### 3. Rotas Administrativas (`Config/Routes.php`)
 
-#### [MODIFY] [Config/Routes.php](file:///var/www/html/agsonhos/Config/Routes.php)
+#### [MODIFY] [Config/Routes.php](/Config/Routes.php)
 Adicionar os grupos de rotas no pipeline protegido do admin:
 
 ```php
@@ -127,7 +127,7 @@ $group->get('/papeis/{id:[0-9]+}/excluir', \Alpha\Admin\Controllers\Actions\User
 ## Verification Plan
 
 ### Automated Tests
-- Criar script de teste em [`tests/security_tests/teste_user_management.php`](file:///var/www/html/agsonhos/tests/security_tests/teste_user_management.php) para validar:
+- Criar script de teste em [`tests/security_tests/teste_user_management.php`](/tests/security_tests/teste_user_management.php) para validar:
   1. Criação de funcionário com hash de senha seguro.
   2. Proteção contra remoção do superuser ativo.
   3. Validação de salvamento e decodificação das permissões em `UserGroup`.
@@ -156,38 +156,38 @@ Concluímos a implementação completa do módulo de **Gestão de Funcionários 
 ## Alterações Realizadas
 
 ### 1. Camada de Domínio & Persistência
-- **[UserGroupMapper.php](file:///var/www/html/agsonhos/core/Mappers/EntityMappers/UserGroupMapper.php)** & **[UserGroupRepository.php](file:///var/www/html/agsonhos/core/Model/Domain/Repositories/UserGroupRepository.php)**:
+- **[UserGroupMapper.php](/core/Mappers/EntityMappers/UserGroupMapper.php)** & **[UserGroupRepository.php](/core/Model/Domain/Repositories/UserGroupRepository.php)**:
   - Adicionados métodos `save()`, `delete()` e `countUsersInGroup()`.
-  - Atualizada a entidade [`UserGroup.php`](file:///var/www/html/agsonhos/core/Model/Domain/Entities/UserGroup.php) com a propriedade `$description` e suporte à decodificação das permissões em JSON (`getPermissionArray()`).
-- **[UserMapper.php](file:///var/www/html/agsonhos/core/Mappers/EntityMappers/UserMapper.php)** & **[UserRepository.php](file:///var/www/html/agsonhos/core/Model/Domain/Repositories/UserRepository.php)**:
+  - Atualizada a entidade [`UserGroup.php`](/core/Model/Domain/Entities/UserGroup.php) com a propriedade `$description` e suporte à decodificação das permissões em JSON (`getPermissionArray()`).
+- **[UserMapper.php](/core/Mappers/EntityMappers/UserMapper.php)** & **[UserRepository.php](/core/Model/Domain/Repositories/UserRepository.php)**:
   - Adicionados métodos `save()`, `delete()` e `getPaginatedUsers()`.
 
 ### 2. Actions do Painel Administrativo
 - **Gestão de Papéis e Permissões (`UserGroup`)**:
-  - [`ListUserGroupsAction.php`](file:///var/www/html/agsonhos/core/Admin/Controllers/Actions/User/UserGroup/ListUserGroupsAction.php): Lista os papéis e contagem de funcionários.
-  - [`CreateUserGroupAction.php`](file:///var/www/html/agsonhos/core/Admin/Controllers/Actions/User/UserGroup/CreateUserGroupAction.php): Formulário e salvamento de novos papéis com permissões granulares por módulo (`access` / `modify`).
-  - [`EditUserGroupAction.php`](file:///var/www/html/agsonhos/core/Admin/Controllers/Actions/User/UserGroup/EditUserGroupAction.php): Edição de papéis e matriz de permissões.
-  - [`DeleteUserGroupAction.php`](file:///var/www/html/agsonhos/core/Admin/Controllers/Actions/User/UserGroup/DeleteUserGroupAction.php): Exclusão protegida (bloqueio de exclusão do grupo 1 e de grupos com funcionários vinculados).
+  - [`ListUserGroupsAction.php`](/core/Admin/Controllers/Actions/User/UserGroup/ListUserGroupsAction.php): Lista os papéis e contagem de funcionários.
+  - [`CreateUserGroupAction.php`](/core/Admin/Controllers/Actions/User/UserGroup/CreateUserGroupAction.php): Formulário e salvamento de novos papéis com permissões granulares por módulo (`access` / `modify`).
+  - [`EditUserGroupAction.php`](/core/Admin/Controllers/Actions/User/UserGroup/EditUserGroupAction.php): Edição de papéis e matriz de permissões.
+  - [`DeleteUserGroupAction.php`](/core/Admin/Controllers/Actions/User/UserGroup/DeleteUserGroupAction.php): Exclusão protegida (bloqueio de exclusão do grupo 1 e de grupos com funcionários vinculados).
 - **Gestão de Funcionários (`User`)**:
-  - [`ListUsersAction.php`](file:///var/www/html/agsonhos/core/Admin/Controllers/Actions/User/User/ListUsersAction.php): Tabela paginada com busca e filtros por nome, username, papel e status.
-  - [`CreateUserAction.php`](file:///var/www/html/agsonhos/core/Admin/Controllers/Actions/User/User/CreateUserAction.php): Formulário de cadastro de funcionário com validação e `password_hash`.
-  - [`EditUserAction.php`](file:///var/www/html/agsonhos/core/Admin/Controllers/Actions/User/User/EditUserAction.php): Edição de perfis e alteração opcional de senha/status.
-  - [`DeleteUserAction.php`](file:///var/www/html/agsonhos/core/Admin/Controllers/Actions/User/User/DeleteUserAction.php): Exclusão segura com proteção contra autoexclusão do superuser logado.
+  - [`ListUsersAction.php`](/core/Admin/Controllers/Actions/User/User/ListUsersAction.php): Tabela paginada com busca e filtros por nome, username, papel e status.
+  - [`CreateUserAction.php`](/core/Admin/Controllers/Actions/User/User/CreateUserAction.php): Formulário de cadastro de funcionário com validação e `password_hash`.
+  - [`EditUserAction.php`](/core/Admin/Controllers/Actions/User/User/EditUserAction.php): Edição de perfis e alteração opcional de senha/status.
+  - [`DeleteUserAction.php`](/core/Admin/Controllers/Actions/User/User/DeleteUserAction.php): Exclusão segura com proteção contra autoexclusão do superuser logado.
 
 ### 3. Rotas Administrativas & Views Twig
-- **[Config/Routes.php](file:///var/www/html/agsonhos/Config/Routes.php)**: Mapeadas as rotas `/usuarios` e `/papeis` sob o grupo protegido por `AdminSessionMiddleware`.
+- **[Config/Routes.php](/Config/Routes.php)**: Mapeadas as rotas `/usuarios` e `/papeis` sob o grupo protegido por `AdminSessionMiddleware`.
 - **Views Twig**:
-  - [`resources/views/admin/user_group/user_group_list.html.twig`](file:///var/www/html/agsonhos/resources/views/admin/user_group/user_group_list.html.twig)
-  - [`resources/views/admin/user_group/user_group_form.html.twig`](file:///var/www/html/agsonhos/resources/views/admin/user_group/user_group_form.html.twig)
-  - [`resources/views/admin/user/user_list.html.twig`](file:///var/www/html/agsonhos/resources/views/admin/user/user_list.html.twig)
-  - [`resources/views/admin/user/user_form.html.twig`](file:///var/www/html/agsonhos/resources/views/admin/user/user_form.html.twig)
+  - [`resources/views/admin/user_group/user_group_list.html.twig`](/resources/views/admin/user_group/user_group_list.html.twig)
+  - [`resources/views/admin/user_group/user_group_form.html.twig`](/resources/views/admin/user_group/user_group_form.html.twig)
+  - [`resources/views/admin/user/user_list.html.twig`](/resources/views/admin/user/user_list.html.twig)
+  - [`resources/views/admin/user/user_form.html.twig`](/resources/views/admin/user/user_form.html.twig)
 
 ---
 
 ## Verificação e Testes Executados
 
 ### Script de Testes Automatizados (`teste_user_management.php`)
-Executado o script [`tests/security_tests/teste_user_management.php`](file:///var/www/html/agsonhos/tests/security_tests/teste_user_management.php):
+Executado o script [`tests/security_tests/teste_user_management.php`](/tests/security_tests/teste_user_management.php):
 ```bash
 php tests/security_tests/teste_user_management.php
 ```

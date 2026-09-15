@@ -28,14 +28,14 @@ No seu projeto, o **BDD (Behavior-Driven Development / Desenvolvimento Guiado po
 ```
 
 #### 1. O Roteiro em Português (O que você vê na tela)
-No arquivo [processamento_pagamentos.feature](file:///var/www/html/agsonhos/features/checkout/processamento_pagamentos.feature), escrevemos o comportamento esperado em linguagem humana:
+No arquivo [processamento_pagamentos.feature](/features/checkout/processamento_pagamentos.feature), escrevemos o comportamento esperado em linguagem humana:
 > **Dado** que a regra de negócio concede "5%" de desconto para pagamento à vista via PIX  
 > **Quando** o cliente seleciona a opção de pagamento "PIX"  
 > **Então** o valor do pedido com desconto deve ser recalculado para "R$ 570,00"  
 
 Qualquer pessoa — desde o dono da loja até o gerente de marketing — consegue ler e entender.
 
-#### 2. O "Tradutor / Atuador" ([CheckoutContext.php](file:///var/www/html/agsonhos/features/bootstrap/CheckoutContext.php))
+#### 2. O "Tradutor / Atuador" ([CheckoutContext.php](/features/bootstrap/CheckoutContext.php))
 Para cada frase em português, existe uma função de código PHP ligada a ela. Quando o Behat lê a frase *"Quando o cliente seleciona a opção de pagamento PIX"*, ele chama um método PHP correspondente.
 
 #### 3. A Execução Real no Sistema

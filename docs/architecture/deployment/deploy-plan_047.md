@@ -17,17 +17,17 @@ Este plano propõe melhorias organizacionais, correções de inconsistências de
 ## Alterações Propostas
 
 ### 1. Correções de Nomes e Padronização de Arquivos de Requisitos
-*   Renomear [`RF001_kits.yaml`](file:///var/www/html/agsonhos/docs/requirements/functional/RF001_kits.yaml) para `functional_requirements.yaml`.
+*   Renomear [`RF001_kits.yaml`](/docs/requirements/functional/RF001_kits.yaml) para `functional_requirements.yaml`.
     > [!NOTE]
     > O arquivo atual contém todos os 25 requisitos funcionais do sistema, e não apenas o de kits. A mudança alinha o nome ao seu conteúdo real e resolve a referência a `functional_requirements.yaml` em `traceability-rules.yaml`.
-*   Renomear [`RNF001_performance.yaml`](file:///var/www/html/agsonhos/docs/requirements/non_functional/RNF001_performance.yaml) para `non_functional_requirements.yaml`.
+*   Renomear [`RNF001_performance.yaml`](/docs/requirements/non_functional/RNF001_performance.yaml) para `non_functional_requirements.yaml`.
     > [!NOTE]
     > O arquivo atual contém todos os 8 requisitos não-funcionais do sistema. A alteração padroniza a nomenclatura junto ao arquivo de requisitos funcionais.
 
 ---
 
 ### 2. Correção de Typos e Árvores no Diagrama de Pastas
-#### [MODIFY] [diagrama_de_pastas_so-pastas.puml](file:///var/www/html/agsonhos/docs/diagrama_de_pastas_so-pastas.puml)
+#### [MODIFY] [diagrama_de_pastas_so-pastas.puml](/docs/diagrama_de_pastas_so-pastas.puml)
 *   Corrigir grafia do diretório `businness/` para `business/` (linhas 89 e 101).
 *   Corrigir grafia do diretório `requeriments/` para `requirements/` (linha 96).
 *   Padronizar caracteres de indentação de árvore (trocar pipes avulsos `|` por caracteres estruturais `│` ou `└──`).
@@ -35,7 +35,7 @@ Este plano propõe melhorias organizacionais, correções de inconsistências de
 ---
 
 ### 3. Criação de Documento de Glossário de Regras de Negócio
-#### [NEW] [glossary.md](file:///var/www/html/agsonhos/docs/requirements/business_rules/glossary.md)
+#### [NEW] [glossary.md](/docs/requirements/business_rules/glossary.md)
 Preenchimento do arquivo de glossário que estava vazio com as definições de termos de negócio do domínio de materiais de construção, incluindo:
 *   **Venda Fracionada (Pisos/Azulejos):** Lógica de conversão entre peça, m² e caixas.
 *   **Kits/Combos de Produtos:** Definição técnica e comercial de agrupamentos de venda.
@@ -47,11 +47,11 @@ Preenchimento do arquivo de glossário que estava vazio com as definições de t
 
 ### 4. Resolução de Pastas Vazias
 Criação de arquivos `README.md` explicativos para direcionar o propósito de diretórios atualmente vazios:
-*   #### [NEW] [README.md](file:///var/www/html/agsonhos/docs/business/glossary/README.md)
+*   #### [NEW] [README.md](/docs/business/glossary/README.md)
     Aponta a centralização de termos técnicos no glossário de agentes e o de regras de negócio.
-*   #### [NEW] [README.md](file:///var/www/html/agsonhos/docs/business/use-cases/README.md)
+*   #### [NEW] [README.md](/docs/business/use-cases/README.md)
     Orienta onde estão documentados os diagramas e requisitos funcionais.
-*   #### [NEW] [README.md](file:///var/www/html/agsonhos/docs/workflows/activity_diagrams/README.md)
+*   #### [NEW] [README.md](/docs/workflows/activity_diagrams/README.md)
     Explica a utilidade da pasta para diagramas de atividade futuros (PlantUML/Mermaid).
 
 ---
@@ -79,14 +79,14 @@ Concluímos com sucesso as melhorias, padronizações e correções nos diretór
 
 ### 1. Renomeação e Alinhamento de Arquivos de Requisitos
 *   **Arquivos Renomeados:**
-    *   [`RF001_kits.yaml`](file:///var/www/html/agsonhos/docs/requirements/functional/RF001_kits.yaml) ➔ [`functional_requirements.yaml`](file:///var/www/html/agsonhos/docs/requirements/functional/functional_requirements.yaml)
-    *   [`RNF001_performance.yaml`](file:///var/www/html/agsonhos/docs/requirements/non_functional/RNF001_performance.yaml) ➔ [`non_functional_requirements.yaml`](file:///var/www/html/agsonhos/docs/requirements/non_functional/non_functional_requirements.yaml)
+    *   [`RF001_kits.yaml`](/docs/requirements/functional/RF001_kits.yaml) ➔ [`functional_requirements.yaml`](/docs/requirements/functional/functional_requirements.yaml)
+    *   [`RNF001_performance.yaml`](/docs/requirements/non_functional/RNF001_performance.yaml) ➔ [`non_functional_requirements.yaml`](/docs/requirements/non_functional/non_functional_requirements.yaml)
 *   **Motivação:** Os arquivos continham a listagem integral de todos os requisitos do sistema (RF001 a RF025 e RNF001 a RNF008), tornando a nomenclatura original restrita/imprecisa. O arquivo `traceability-rules.yaml` já referia-se a `functional_requirements.yaml`, o que causava uma inconsistência.
 
 ---
 
 ### 2. Correção de Typos e Árvores no Diagrama de Pastas
-*   **Arquivo Modificado:** [`diagrama_de_pastas_so-pastas.puml`](file:///var/www/html/agsonhos/docs/diagrama_de_pastas_so-pastas.puml)
+*   **Arquivo Modificado:** [`diagrama_de_pastas_so-pastas.puml`](/docs/diagrama_de_pastas_so-pastas.puml)
 *   **Melhorias:**
     *   Correção de grafia dos caminhos `businness/` para `business/` e `requeriments/` para `requirements/`.
     *   Remoção do diretório inexistente `data_base_new_schema/`.
@@ -98,7 +98,7 @@ Concluímos com sucesso as melhorias, padronizações e correções nos diretór
 ---
 
 ### 3. Preenchimento de Arquivo Vazio de Glossário de Regras
-*   **Arquivo Modificado:** [`glossary.md`](file:///var/www/html/agsonhos/docs/requirements/business_rules/glossary.md)
+*   **Arquivo Modificado:** [`glossary.md`](/docs/requirements/business_rules/glossary.md)
 *   **Conteúdo Adicionado:** Um glossário de negócios rico detalhando regras cruciais do domínio de comércio eletrônico de materiais de construção, tais como:
     *   *Venda Fracionada (RN001):* Cálculo de peças por metro quadrado (`m²`) e caixas.
     *   *Especificações por Categoria (RN003):* Campos técnicos obrigatórios (ex: voltagem para ferramentas, secagem para cimento).
@@ -109,15 +109,15 @@ Concluímos com sucesso as melhorias, padronizações e correções nos diretór
 
 ### 4. Organização e Explicação de Diretórios Vazios
 Criados arquivos `README.md` que contextualizam e explicam o propósito de pastas que anteriormente estavam vazias no repositório:
-*   [`docs/business/glossary/README.md`](file:///var/www/html/agsonhos/docs/business/glossary/README.md) - Explica a divisão do glossário técnico (para agentes de IA) e do glossário operacional de domínio (para humanos/desenvolvedores).
-*   [`docs/business/use-cases/README.md`](file:///var/www/html/agsonhos/docs/business/use-cases/README.md) - Mapeia a localização de requisitos e diagramas de processos de negócio.
-*   [`docs/workflows/activity_diagrams/README.md`](file:///var/www/html/agsonhos/docs/workflows/activity_diagrams/README.md) - Orienta o propósito de uso de futuros diagramas de atividade.
+*   [`docs/business/glossary/README.md`](/docs/business/glossary/README.md) - Explica a divisão do glossário técnico (para agentes de IA) e do glossário operacional de domínio (para humanos/desenvolvedores).
+*   [`docs/business/use-cases/README.md`](/docs/business/use-cases/README.md) - Mapeia a localização de requisitos e diagramas de processos de negócio.
+*   [`docs/workflows/activity_diagrams/README.md`](/docs/workflows/activity_diagrams/README.md) - Orienta o propósito de uso de futuros diagramas de atividade.
 
 ---
 
 ## 🔍 Resultados da Validação
 
-*   **Verificação de Rastreabilidade:** A correspondência de arquivos em [`traceability-rules.yaml`](file:///var/www/html/agsonhos/docs/business/traceability-rules.yaml) agora está 100% consistente, apontando para o arquivo [`functional_requirements.yaml`](file:///var/www/html/agsonhos/docs/requirements/functional/functional_requirements.yaml) renomeado.
+*   **Verificação de Rastreabilidade:** A correspondência de arquivos em [`traceability-rules.yaml`](/docs/business/traceability-rules.yaml) agora está 100% consistente, apontando para o arquivo [`functional_requirements.yaml`](/docs/requirements/functional/functional_requirements.yaml) renomeado.
 *   **Status do Git:** Todas as modificações, renomeações de arquivo via `git mv` e adições foram devidamente indexadas e organizadas no stage da área de preparação:
     ```bash
     Changes to be committed:

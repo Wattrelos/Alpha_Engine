@@ -54,7 +54,7 @@ Para tornar a solução robusta em produção, propomos as seguintes adaptaçõe
 
 ### Database Layer
 
-#### [NEW] [add_fulltext_index_product_description.sql](file:///var/www/html/agsonhos/tests/newTables/add_fulltext_index_product_description.sql)
+#### [NEW] [add_fulltext_index_product_description.sql](/tests/newTables/add_fulltext_index_product_description.sql)
 Criar script de alteração de tabela para adicionar o índice `FULLTEXT` na tabela de descrições de produtos.
 
 ```sql
@@ -66,7 +66,7 @@ ADD FULLTEXT INDEX `idx_ft_product_search` (`name`, `description`, `tag`);
 
 ### Persistence Layer (Data Mapper)
 
-#### [MODIFY] [ProductMapper.php](file:///var/www/html/agsonhos/core/Mappers/EntityMappers/ProductMapper.php)
+#### [MODIFY] [ProductMapper.php](/core/Mappers/EntityMappers/ProductMapper.php)
 
 - Implementar helper `prepareFullTextSearchQuery(string $searchTerm): string` para higienizar a entrada do usuário e adicionar operadores booleanos (ex: `+termo1* +termo2*`).
 - Atualizar o método `getProducts()`:
@@ -79,7 +79,7 @@ ADD FULLTEXT INDEX `idx_ft_product_search` (`name`, `description`, `tag`);
 
 ### Diagramas & Documentação
 
-#### [MODIFY] [product_search.puml](file:///var/www/html/agsonhos/docs/workflows/sequence_diagrams/product_search.puml)
+#### [MODIFY] [product_search.puml](/docs/workflows/sequence_diagrams/product_search.puml)
 
 - Atualizar as anotações do diagrama de sequência para refletir com exatidão a chamada de `MATCH(name, description, tag) AGAINST(:term IN BOOLEAN MODE)` no QueryBuilder e Mapper.
 
@@ -116,11 +116,11 @@ Substituição com sucesso da busca por `LIKE '%...%'` pelo recurso nativo de **
 ## Alterações Realizadas
 
 ### 1. Migração do Banco de Dados
-- **Script SQL**: [add_fulltext_index_product_description.sql](file:///var/www/html/agsonhos/tests/newTables/add_fulltext_index_product_description.sql)
+- **Script SQL**: [add_fulltext_index_product_description.sql](/tests/newTables/add_fulltext_index_product_description.sql)
 - Criado o índice `FULLTEXT` composto `idx_ft_product_search` nas colunas `(`name`, `description`, `tag`)` da tabela `agsc_product_description`.
 
 ### 2. Camada de Persistência (Data Mapper)
-- **Arquivo**: [ProductMapper.php](file:///var/www/html/agsonhos/core/Mappers/EntityMappers/ProductMapper.php)
+- **Arquivo**: [ProductMapper.php](/core/Mappers/EntityMappers/ProductMapper.php)
 - Implementado o método helper `prepareFullTextQuery(string $searchTerm)` para remover caracteres de sintaxe booleana reservadores e formatar a string com operadores `+` e wildcard `*` (ex: `"smart tv"` $\rightarrow$ `"+smart* +tv*"`).
 - Atualizado `getProducts()` e `getTotalProducts()` para aplicar a cláusula:
   ```sql
@@ -129,14 +129,14 @@ Substituição com sucesso da busca por `LIKE '%...%'` pelo recurso nativo de **
 - Implementado fallback automático para `pd.name LIKE ? OR pd.tag LIKE ? OR p.model LIKE ?` caso o termo de busca possua menos de 3 caracteres.
 
 ### 3. Documentação & Diagrama de Sequência
-- **Arquivo**: [product_search.puml](file:///var/www/html/agsonhos/docs/workflows/sequence_diagrams/product_search.puml)
+- **Arquivo**: [product_search.puml](/docs/workflows/sequence_diagrams/product_search.puml)
 - Atualizado o diagrama de sequência com os métodos `getProducts` e `prepareFullTextQuery` refletindo o fluxo exato de consulta ao MySQL.
 
 ---
 
 ## Resultados da Verificação Automatizada
 
-- **Script de Testes**: [test_fulltext_search.php](file:///var/www/html/agsonhos/tests/test_fulltext_search.php)
+- **Script de Testes**: [test_fulltext_search.php](/tests/test_fulltext_search.php)
 
 Resultados da execução do teste em ambiente real:
 ```text

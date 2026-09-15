@@ -11,7 +11,7 @@
 | **Atores Secundários** | PinPad Físico / Gerenciador TEF (SiTef/Stone), Adquirente |
 | **Tipo** | Especialização de `UC_POS_010` (Generalização de Pagamento) |
 | **Frequência de Uso** | Muito Alta |
-| **Rastreabilidade** | **RF:** [RF018](file:///var/www/html/agsonhos/docs/requirements/functional/functional_requirements.yaml) (Multi-meios de pagamento), [RF019](file:///var/www/html/agsonhos/docs/requirements/functional/functional_requirements.yaml) (Integração de pagamento seguro)<br>**RNF:** [RNF003](file:///var/www/html/agsonhos/docs/requirements/non_functional/non_functional_requirements.yaml) (Criptografia de ponta a ponta e normas PCI-DSS) |
+| **Rastreabilidade** | **RF:** [RF018](/docs/requirements/functional/functional_requirements.yaml) (Multi-meios de pagamento), [RF019](/docs/requirements/functional/functional_requirements.yaml) (Integração de pagamento seguro)<br>**RNF:** [RNF003](/docs/requirements/non_functional/non_functional_requirements.yaml) (Criptografia de ponta a ponta e normas PCI-DSS) |
 
 ---
 

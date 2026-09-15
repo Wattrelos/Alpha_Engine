@@ -31,7 +31,7 @@ Este plano descreve o projeto e a integração da camada de **Rate Limiting por 
 
 ### Middleware & Serviços (Core Auth)
 
-#### [NEW] [RateLimitMiddleware.php](file:///var/www/html/agsonhos/core/Auth/Middleware/RateLimitMiddleware.php)
+#### [NEW] [RateLimitMiddleware.php](/core/Auth/Middleware/RateLimitMiddleware.php)
 - Criar a classe `RateLimitMiddleware` implementando `Psr\Http\Server\MiddlewareInterface`.
 - Parâmetros de construtor:
   - `int $maxRequests`: Cota máxima de requisições por janela (ex: 10 ou 60).
@@ -54,7 +54,7 @@ Este plano descreve o projeto e a integração da camada de **Rate Limiting por 
 
 ### Configuração e Registro no Roteamento
 
-#### [MODIFY] [Routes.php](file:///var/www/html/agsonhos/Config/Routes.php)
+#### [MODIFY] [Routes.php](/Config/Routes.php)
 - Instanciar a conexão Redis (reaproveitando a configuração existente no `.env`).
 - Aplicar a proteção estrita `RateLimitMiddleware(10, 60, 'auth')` especificamente nos grupos de rotas de Login, Cadastro, Recuperação de Senha e Setup Administrativo.
 - Aplicar o `RateLimitMiddleware(60, 60, 'api')` no grupo de rotas de API `/api/*`.
@@ -85,29 +85,29 @@ Este plano descreve o projeto e a integração da camada de **Rate Limiting por 
 
 ## 🔒 1. Proteção Anti-CSRF
 
-- **[composer.json](file:///var/www/html/agsonhos/composer.json)**: Instalada a biblioteca [`slim/csrf`](file:///var/www/html/agsonhos/vendor/slim/csrf).
-- **[CsrfGuardMiddleware.php](file:///var/www/html/agsonhos/core/Auth/Middleware/CsrfGuardMiddleware.php)**: Middleware PSR-15 com modo persistente, inicialização preguiçosa (*lazy initialization*) e handler de falhas (JSON 400 para AJAX, HTML 400 para navegadores).
-- **[public_html/index.php](file:///var/www/html/agsonhos/public_html/index.php)** e **[public_html/LPDHED2dC7Gjrg2b/index.php](file:///var/www/html/agsonhos/public_html/LPDHED2dC7Gjrg2b/index.php)**: Registrado o middleware nos bootstraps público e administrativo.
-- **[form-validator.js](file:///var/www/html/agsonhos/public_html/js/custom/form-validator.js)**: Injeção automática dos tokens CSRF em submissões AJAX.
+- **[composer.json](/composer.json)**: Instalada a biblioteca [`slim/csrf`](/vendor/slim/csrf).
+- **[CsrfGuardMiddleware.php](/core/Auth/Middleware/CsrfGuardMiddleware.php)**: Middleware PSR-15 com modo persistente, inicialização preguiçosa (*lazy initialization*) e handler de falhas (JSON 400 para AJAX, HTML 400 para navegadores).
+- **[public_html/index.php](/public_html/index.php)** e **[public_html/LPDHED2dC7Gjrg2b/index.php](/public_html/LPDHED2dC7Gjrg2b/index.php)**: Registrado o middleware nos bootstraps público e administrativo.
+- **[form-validator.js](/public_html/js/custom/form-validator.js)**: Injeção automática dos tokens CSRF em submissões AJAX.
 
 ---
 
 ## 🛡️ 2. Cabeçalhos de Segurança HTTP (Security Headers)
 
-- **[SecurityHeadersMiddleware.php](file:///var/www/html/agsonhos/core/Auth/Middleware/SecurityHeadersMiddleware.php)**: Injeta os cabeçalhos defensivos `X-Frame-Options: SAMEORIGIN`, `X-Content-Type-Options: nosniff`, `X-XSS-Protection`, `Referrer-Policy`, `Permissions-Policy`, `Content-Security-Policy` e `HSTS` (sob HTTPS).
+- **[SecurityHeadersMiddleware.php](/core/Auth/Middleware/SecurityHeadersMiddleware.php)**: Injeta os cabeçalhos defensivos `X-Frame-Options: SAMEORIGIN`, `X-Content-Type-Options: nosniff`, `X-XSS-Protection`, `Referrer-Policy`, `Permissions-Policy`, `Content-Security-Policy` e `HSTS` (sob HTTPS).
 
 ---
 
 ## 🍪 3. Flag `; Secure` Condicional em Cookies de Sessão
 
-- **[CookieHelper.php](file:///var/www/html/agsonhos/core/Support/CookieHelper.php)**: Utilitário centralizado para formatar o cabeçalho `Set-Cookie` com `Path=/`, `HttpOnly`, `SameSite=Lax` e anexo condicional de `; Secure` sob conexões HTTPS.
+- **[CookieHelper.php](/core/Support/CookieHelper.php)**: Utilitário centralizado para formatar o cabeçalho `Set-Cookie` com `Path=/`, `HttpOnly`, `SameSite=Lax` e anexo condicional de `; Secure` sob conexões HTTPS.
 - **Ações de Login & Logout Ajustadas**: `Customer\Auth\LoginAction`, `LogoutAction`, `Admin\Auth\LoginAction` e `LogoutAction`.
 
 ---
 
 ## ⚡ 4. Limitação de Taxa por IP (Rate Limiting com Redis & Fallback em Arquivo)
 
-- **[RateLimitMiddleware.php](file:///var/www/html/agsonhos/core/Auth/Middleware/RateLimitMiddleware.php)** (`NEW`):
+- **[RateLimitMiddleware.php](/core/Auth/Middleware/RateLimitMiddleware.php)** (`NEW`):
   - Injeta limitação de taxa por endereço IP (`REMOTE_ADDR` e `X-Forwarded-For`) utilizando a velocidade do Redis (operações atômicas `INCR` e `EXPIRE`).
   - **Fallback Resiliente de Arquivos**: Se o servidor Redis estiver inacessível (ex: ambiente local), alterna automaticamente para persistência em arquivo local (`storage/cache/rate_limit/`), garantindo resiliência total sem interromper a execução do site.
   - Injeta os cabeçalhos estatísticos PSR-7:
@@ -115,7 +115,7 @@ Este plano descreve o projeto e a integração da camada de **Rate Limiting por 
     - `X-RateLimit-Remaining`: Requisições restantes na janela atual.
     - `Retry-After`: Tempo de espera necessário (em segundos) quando a cota for ultrapassada.
   - Retorna `HTTP 429 Too Many Requests` estruturado em JSON para chamadas AJAX e página HTML amigável para navegadores.
-- **[Config/Routes.php](file:///var/www/html/agsonhos/Config/Routes.php)**:
+- **[Config/Routes.php](/Config/Routes.php)**:
   - Aplicada cota estrita (10 req/min) para rotas sensíveis: `POST /login` (Admin/Cliente), `POST /cadastro`, `POST /recuperar-senha`.
   - Aplicada cota ampla (60 req/min) para o grupo de rotas de API `/api/*`.
 

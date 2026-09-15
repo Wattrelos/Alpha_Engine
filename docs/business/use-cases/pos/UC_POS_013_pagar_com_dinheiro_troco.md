@@ -11,7 +11,7 @@
 | **Atores Secundários** | Gaveta de Dinheiro Eletrônica (Acionamento RJ11) |
 | **Tipo** | Especialização de `UC_POS_010` (Generalização de Pagamento) |
 | **Frequência de Uso** | Muito Alta |
-| **Rastreabilidade** | **RF:** [RF018](file:///var/www/html/agsonhos/docs/requirements/functional/functional_requirements.yaml) (Meios de pagamento)<br>**RN:** [RN016](file:///var/www/html/agsonhos/docs/requirements/business_rules/business_rules.yaml) (Desconto em espécie à vista)<br>**RNF:** [RNF001](file:///var/www/html/agsonhos/docs/requirements/non_functional/non_functional_requirements.yaml) (Cálculo automático de troco em tela grande de alto contraste) |
+| **Rastreabilidade** | **RF:** [RF018](/docs/requirements/functional/functional_requirements.yaml) (Meios de pagamento)<br>**RN:** [RN016](/docs/requirements/business_rules/business_rules.yaml) (Desconto em espécie à vista)<br>**RNF:** [RNF001](/docs/requirements/non_functional/non_functional_requirements.yaml) (Cálculo automático de troco em tela grande de alto contraste) |
 
 ---
 

@@ -24,10 +24,10 @@ O objetivo é mudar o arquivo `orders.css` para SCSS (`orders.scss`), reaproveit
 
 ### 1. Estilos Modulares (SCSS)
 
-#### [NEW] [orders.scss](file:///var/www/html/agsonhos/public_html/css/custom/orders.scss)
+#### [NEW] [orders.scss](/public_html/css/custom/orders.scss)
 * Novo arquivo de entrada principal SCSS para a área de pedidos que importará os tokens, mixins e o parcial específico.
 
-#### [NEW] [_orders-page.scss](file:///var/www/html/agsonhos/public_html/css/base/pages/_orders-page.scss)
+#### [NEW] [_orders-page.scss](/public_html/css/base/pages/_orders-page.scss)
 * Parcial SCSS contendo todas as regras específicas da tela de pedidos (histórico, detalhes, tabela de itens, timeline de status, badges, estatísticas rápidas, etc.), reaproveitando estilos e media-queries.
 
 ## Verification Plan
@@ -58,14 +58,14 @@ Realizamos com sucesso a modularização das quatro folhas de estilo principais 
 ## O que mudou:
 
 ### 1. Ferramenta de Compilação Dinâmica
-- O script [compile-scss.php](file:///var/www/html/agsonhos/scratch/compile-scss.php) compila dinamicamente **qualquer** arquivo `.scss` principal encontrado na pasta `public_html/css/custom/` (ignorando arquivos com underline, que são parciais).
+- O script [compile-scss.php](/scratch/compile-scss.php) compila dinamicamente **qualquer** arquivo `.scss` principal encontrado na pasta `public_html/css/custom/` (ignorando arquivos com underline, que são parciais).
 - Roda no Composer por meio de:
   ```bash
   composer build-css
   ```
 
 ### 2. Estilos Compartilhados e Reusabilidade
-- Criamos o arquivo [_shared-mixins.scss](file:///var/www/html/agsonhos/public_html/css/base/_shared-mixins.scss) contendo seletores placeholders do Sass para reaproveitar os visuais premium comuns:
+- Criamos o arquivo [_shared-mixins.scss](/public_html/css/base/_shared-mixins.scss) contendo seletores placeholders do Sass para reaproveitar os visuais premium comuns:
   - `%premium-hero`: Seções de topo com gradiente e borda brilhante.
   - `%premium-breadcrumb`: Navegação breadcrumbs padrão.
   - `%premium-button`: Botões gradientes com sombras premium.
@@ -73,21 +73,21 @@ Realizamos com sucesso a modularização das quatro folhas de estilo principais 
   - `%premium-input`: Campos de texto premium com efeitos de foco.
 
 ### 3. Extração e Modularização de `orders.css`
-- Convertido para [orders.scss](file:///var/www/html/agsonhos/public_html/css/custom/orders.scss), herdando variáveis e mixins compartilhados.
+- Convertido para [orders.scss](/public_html/css/custom/orders.scss), herdando variáveis e mixins compartilhados.
 - Criamos os arquivos parciais:
-  - [_orders-page.scss](file:///var/www/html/agsonhos/public_html/css/base/pages/_orders-page.scss): Detalhes, tabelas, chips de status, timeline de rastreamento do pedido, paginação e visualização geral de pedidos.
+  - [_orders-page.scss](/public_html/css/base/pages/_orders-page.scss): Detalhes, tabelas, chips de status, timeline de rastreamento do pedido, paginação e visualização geral de pedidos.
 
 ### 4. Extração e Modularização de `addresses.css`
-- Convertido para [addresses.scss](file:///var/www/html/agsonhos/public_html/css/custom/addresses.scss).
+- Convertido para [addresses.scss](/public_html/css/custom/addresses.scss).
 - Criamos os arquivos parciais:
-  - [_addresses.scss](file:///var/www/html/agsonhos/public_html/css/base/pages/_addresses.scss): Listagem de endereços, cartões, formulários e o toggle switch para endereço padrão.
+  - [_addresses.scss](/public_html/css/base/pages/_addresses.scss): Listagem de endereços, cartões, formulários e o toggle switch para endereço padrão.
 
 ### 5. Extração e Modularização de `returns-institutional.css`
-- Convertido para [returns-institutional.scss](file:///var/www/html/agsonhos/public_html/css/custom/returns-institutional.scss).
+- Convertido para [returns-institutional.scss](/public_html/css/custom/returns-institutional.scss).
 - Criamos os arquivos parciais:
-  - [_returns.scss](file:///var/www/html/agsonhos/public_html/css/base/pages/_returns.scss): Formulário e histórico de trocas e devoluções.
-  - [_contact.scss](file:///var/www/html/agsonhos/public_html/css/base/pages/_contact.scss): Tela de contato com formulário premium.
-  - [_info.scss](file:///var/www/html/agsonhos/public_html/css/base/pages/_info.scss): Páginas institucionais e sitemap.
+  - [_returns.scss](/public_html/css/base/pages/_returns.scss): Formulário e histórico de trocas e devoluções.
+  - [_contact.scss](/public_html/css/base/pages/_contact.scss): Tela de contato com formulário premium.
+  - [_info.scss](/public_html/css/base/pages/_info.scss): Páginas institucionais e sitemap.
 
 ---
 

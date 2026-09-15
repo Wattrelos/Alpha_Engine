@@ -11,7 +11,7 @@
 | **Atores Secundários** | Servidor Redis / Provedor OAuth2, Sistema Alpha Engine |
 | **Tipo** | Condução / Segurança |
 | **Frequência de Uso** | Muito Alta |
-| **Rastreabilidade** | **RF:** [RF014](file:///var/www/html/agsonhos/docs/requirements/functional/functional_requirements.yaml) (Autenticação Email/Senha e Social Auth)<br>**RNF:** [RNF003](file:///var/www/html/agsonhos/docs/requirements/non_functional/non_functional_requirements.yaml) (Proteção de sessão, Argon2id, Anti-CSRF e Cookies HttpOnly; Secure) |
+| **Rastreabilidade** | **RF:** [RF014](/docs/requirements/functional/functional_requirements.yaml) (Autenticação Email/Senha e Social Auth)<br>**RNF:** [RNF003](/docs/requirements/non_functional/non_functional_requirements.yaml) (Proteção de sessão, Argon2id, Anti-CSRF e Cookies HttpOnly; Secure) |
 
 ---
 

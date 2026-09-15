@@ -11,7 +11,7 @@
 | **Atores Secundários** | API ViaCEP, Sistema Alpha Engine |
 | **Tipo** | Condução / CRUD de Endereços |
 | **Frequência de Uso** | Média |
-| **Rastreabilidade** | **RF:** [RF017](file:///var/www/html/agsonhos/docs/requirements/functional/functional_requirements.yaml) (Múltiplos Shiptos / Endereços de entrega)<br>**RN:** [RN002](file:///var/www/html/agsonhos/docs/requirements/business_rules/business_rules.yaml) (Cálculo de frete por CEP de destino)<br>**RNF:** [RNF001](file:///var/www/html/agsonhos/docs/requirements/non_functional/non_functional_requirements.yaml) (Ergonomia e facilidade) |
+| **Rastreabilidade** | **RF:** [RF017](/docs/requirements/functional/functional_requirements.yaml) (Múltiplos Shiptos / Endereços de entrega)<br>**RN:** [RN002](/docs/requirements/business_rules/business_rules.yaml) (Cálculo de frete por CEP de destino)<br>**RNF:** [RNF001](/docs/requirements/non_functional/non_functional_requirements.yaml) (Ergonomia e facilidade) |
 
 ---
 

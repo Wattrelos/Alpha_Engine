@@ -44,9 +44,9 @@ A Alpha Engine divide suas responsabilidades em camadas bem delineadas:
 *   Utilizam **Atributos Nativos PHP** (como `#[ManyToOne]`, `#[OneToMany]`) para mapear relações.
 *   São totalmente agnósticos à infraestrutura de banco de dados, sem instruções SQL em seu corpo.
 *   Organizadas em subdiretórios específicos para melhor gerenciamento de domínios complexos:
-    *   [`Customer/`](file:///var/www/html/agsonhos/core/Model/Domain/Entities/Customer): Agrupa entidades ligadas a Clientes (ex: `Customer`, `CustomerApproval`, `CustomerHistory`, `CustomerLogin`, `CustomerOnline`, `CustomerReward`, `CustomerTransaction`).
-    *   [`Supplier/`](file:///var/www/html/agsonhos/core/Model/Domain/Entities/Supplier): Contém a entidade `Supplier` para gerenciamento de compras e fornecedores.
-    *   [`Geo/`](file:///var/www/html/agsonhos/core/Model/Domain/Entities/Geo): Agrupa entidades geográficas (`Country`, `Zone`, `City` e `Address`Format).
+    *   [`Customer/`](/core/Model/Domain/Entities/Customer): Agrupa entidades ligadas a Clientes (ex: `Customer`, `CustomerApproval`, `CustomerHistory`, `CustomerLogin`, `CustomerOnline`, `CustomerReward`, `CustomerTransaction`).
+    *   [`Supplier/`](/core/Model/Domain/Entities/Supplier): Contém a entidade `Supplier` para gerenciamento de compras e fornecedores.
+    *   [`Geo/`](/core/Model/Domain/Entities/Geo): Agrupa entidades geográficas (`Country`, `Zone`, `City` e `Address`Format).
 
 ### 🎮 Controladores - BaseController (`core/Controller/`):
 *   Substituem completamente os controladores procedurais antigos, aplicando o conceito de *Skinny Controllers*.

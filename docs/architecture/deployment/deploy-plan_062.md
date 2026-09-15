@@ -20,17 +20,17 @@ Este plano descreve as etapas necessárias para integrar a nova tabela `agsc_use
 
 ### 1. Camada de Domínio & Persistência (Model / Mappers)
 
-#### [MODIFY] [UserGroup.php](file:///var/www/html/agsonhos/core/Model/Domain/Entities/UserGroup.php)
+#### [MODIFY] [UserGroup.php](/core/Model/Domain/Entities/UserGroup.php)
 - Adicionar suporte a descrições por idioma (`$descriptions = []`), onde a chave é o `language_id` e o valor é o nome traduzido.
 - Manter `getName()` fornecendo fallback seguro (ex: nome no idioma atual ou nome legado).
 - Adicionar métodos `getDescriptions()`, `setDescriptions(array $descriptions)` e `getNameByLanguage(int $languageId)`.
 
-#### [MODIFY] [UserGroupMapper.php](file:///var/www/html/agsonhos/core/Mappers/EntityMappers/UserGroupMapper.php)
+#### [MODIFY] [UserGroupMapper.php](/core/Mappers/EntityMappers/UserGroupMapper.php)
 - Atualizar o método de busca (`find` e `findAll`) para realizar `LEFT JOIN agsc_user_group_description` com base no `language_id` informado.
 - Adicionar método `findDescriptions(int $userGroupId): array` para carregar todas as traduções de um papel (útil na edição).
 - Implementar a gravação/atualização em `agsc_user_group_description` no método `save()` para todos os idiomas ativos.
 
-#### [MODIFY] [UserGroupRepository.php](file:///var/www/html/agsonhos/core/Model/Domain/Repositories/UserGroupRepository.php)
+#### [MODIFY] [UserGroupRepository.php](/core/Model/Domain/Repositories/UserGroupRepository.php)
 - Adicionar métodos para busca multilíngue (`findWithLanguage(int $id, int $languageId)` e `findAllWithLanguage(int $languageId)`).
 - Adicionar método `saveWithDescriptions(UserGroup $userGroup, array $namesByLanguage)`.
 
@@ -38,27 +38,27 @@ Este plano descreve as etapas necessárias para integrar a nova tabela `agsc_use
 
 ### 2. Ações do Painel Administrativo (Actions)
 
-#### [MODIFY] [ListUserGroupsAction.php](file:///var/www/html/agsonhos/core/Admin/Controllers/Actions/User/UserGroup/ListUserGroupsAction.php)
+#### [MODIFY] [ListUserGroupsAction.php](/core/Admin/Controllers/Actions/User/UserGroup/ListUserGroupsAction.php)
 - Obter o ID do idioma ativo na sessão/request.
 - Buscar a lista de papéis trazendo o nome traduzido correspondente ao idioma atual.
 
-#### [MODIFY] [CreateUserGroupAction.php](file:///var/www/html/agsonhos/core/Admin/Controllers/Actions/User/UserGroup/CreateUserGroupAction.php)
+#### [MODIFY] [CreateUserGroupAction.php](/core/Admin/Controllers/Actions/User/UserGroup/CreateUserGroupAction.php)
 - Carregar os idiomas ativos do sistema via `LanguageRepository`.
 - Processar o payload contendo o nome traduzido para cada idioma (ex: `name[language_id]`).
 - Persistir as entradas na tabela `agsc_user_group_description`.
 
-#### [MODIFY] [EditUserGroupAction.php](file:///var/www/html/agsonhos/core/Admin/Controllers/Actions/User/UserGroup/EditUserGroupAction.php)
+#### [MODIFY] [EditUserGroupAction.php](/core/Admin/Controllers/Actions/User/UserGroup/EditUserGroupAction.php)
 - Carregar as descrições existentes de todas as linguagens ativas para exibir no formulário.
 - Atualizar os registros em `agsc_user_group_description` no envio do formulário.
 
-#### [MODIFY] [DeleteUserGroupAction.php](file:///var/www/html/agsonhos/core/Admin/Controllers/Actions/User/UserGroup/DeleteUserGroupAction.php)
+#### [MODIFY] [DeleteUserGroupAction.php](/core/Admin/Controllers/Actions/User/UserGroup/DeleteUserGroupAction.php)
 - Garantir a exclusão em cascata dos registros na `agsc_user_group_description` ao remover um grupo.
 
 ---
 
 ### 3. Camada de Apresentação (Twig Views)
 
-#### [MODIFY] [user_group_form.html.twig](file:///var/www/html/agsonhos/resources/views/admin/user_group/user_group_form.html.twig)
+#### [MODIFY] [user_group_form.html.twig](/resources/views/admin/user_group/user_group_form.html.twig)
 - Adicionar suporte a abas de idiomas ou campos por idioma para a entrada do **Nome do Papel / Perfil**, identificando cada campo com a bandeira/código do idioma.
 - Manter validação de token Anti-CSRF intacta.
 
@@ -104,32 +104,32 @@ Implementamos com sucesso o suporte multilíngue para os nomes de papéis de usu
 
 ### 1. Camada de Domínio & Persistência
 
-#### [UserGroup.php](file:///var/www/html/agsonhos/core/Model/Domain/Entities/UserGroup.php)
+#### [UserGroup.php](/core/Model/Domain/Entities/UserGroup.php)
 - Adicionado atributo `$descriptions` (`[language_id => name]`).
 - Adicionados métodos `getDescriptions()`, `setDescriptions(array $descriptions)` e `getNameByLanguage(int $languageId)`.
 
-#### [UserGroupMapper.php](file:///var/www/html/agsonhos/core/Mappers/EntityMappers/UserGroupMapper.php)
+#### [UserGroupMapper.php](/core/Mappers/EntityMappers/UserGroupMapper.php)
 - Implementado `findWithLanguage(int $id, int $languageId)` e `findAllWithLanguage(int $languageId)` realizando `LEFT JOIN agsc_user_group_description` com fallback seguro (`COALESCE(ugd.name, ug.name)`).
 - Implementado `findDescriptions(int $userGroupId)` para recuperar todas as traduções de um grupo.
 - Implementado `saveDescriptions(int $userGroupId, array $namesByLanguage)` e `deleteDescriptions(int $userGroupId)` operando com *prepared statements* via PDO `ConnectionDB`.
 
-#### [UserGroupRepository.php](file:///var/www/html/agsonhos/core/Model/Domain/Repositories/UserGroupRepository.php)
+#### [UserGroupRepository.php](/core/Model/Domain/Repositories/UserGroupRepository.php)
 - Métodos `find()` e `findAll()` ajustados para ler automaticamente as descrições no idioma ativo da sessão.
 - Adicionado `saveWithDescriptions(UserGroup $userGroup, array $namesByLanguage)`.
 - Método `delete($id)` atualizado para limpar descrições vinculadas.
 
-#### [AbstractRepository.php](file:///var/www/html/agsonhos/core/Model/Domain/Repositories/AbstractRepository.php)
+#### [AbstractRepository.php](/core/Model/Domain/Repositories/AbstractRepository.php)
 - Adicionado método `clearIdentityMap()` para possibilitar limpeza de cache do IdentityMap quando necessário em operações de lote.
 
 ---
 
 ### 2. Ações do Painel Administrativo (Controllers)
 
-#### [CreateUserGroupAction.php](file:///var/www/html/agsonhos/core/Admin/Controllers/Actions/User/UserGroup/CreateUserGroupAction.php)
+#### [CreateUserGroupAction.php](/core/Admin/Controllers/Actions/User/UserGroup/CreateUserGroupAction.php)
 - Carrega os idiomas ativos do sistema via `LanguageRepository`.
 - Processa o array `name[language_id]` no envio do formulário `POST` e persiste as descrições multilíngues na tabela `agsc_user_group_description`.
 
-#### [EditUserGroupAction.php](file:///var/www/html/agsonhos/core/Admin/Controllers/Actions/User/UserGroup/EditUserGroupAction.php)
+#### [EditUserGroupAction.php](/core/Admin/Controllers/Actions/User/UserGroup/EditUserGroupAction.php)
 - Carrega as descrições de todas as linguagens ativas e envia para a view Twig.
 - Atualiza as entradas na `agsc_user_group_description` ao submeter o formulário.
 
@@ -137,7 +137,7 @@ Implementamos com sucesso o suporte multilíngue para os nomes de papéis de usu
 
 ### 3. Camada de Apresentação (Twig Views)
 
-#### [user_group_form.html.twig](file:///var/www/html/agsonhos/resources/views/admin/user_group/user_group_form.html.twig)
+#### [user_group_form.html.twig](/resources/views/admin/user_group/user_group_form.html.twig)
 - Atualizado para renderizar campos de entrada individuais para cada idioma ativo com a identificação do idioma e bandeiras correspondentes, preenchendo automaticamente os valores salvos.
 - Mantida injeção de tokens Anti-CSRF.
 

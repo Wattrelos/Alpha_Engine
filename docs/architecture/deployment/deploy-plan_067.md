@@ -25,48 +25,48 @@ Criação de uma suíte completa de testes automatizados com PHPUnit 13 para a d
 
 Criação dos 11 arquivos de teste em PHPUnit 13 cobrindo a especificação funcional e de segurança:
 
-#### [NEW] [AdminSessionMiddlewareTest.php](file:///var/www/html/agsonhos/tests/Validation/AdminSessionMiddlewareTest.php)
+#### [NEW] [AdminSessionMiddlewareTest.php](/tests/Validation/AdminSessionMiddlewareTest.php)
 - Testes para verificar o acesso a rotas administrativas protegidas sem sessão ativa.
 - Asserta redirecionamento ou bloqueio HTTP 401/403/302 na ausência de cookie/sessão válida.
 
-#### [NEW] [TenantIsolationTest.php](file:///var/www/html/agsonhos/tests/Validation/TenantIsolationTest.php)
+#### [NEW] [TenantIsolationTest.php](/tests/Validation/TenantIsolationTest.php)
 - Testes de isolamento Multi-tenant (filtro por `store_id`).
 - Valida que requisições/consultas da Loja 1 não acessam e não vazam dados de clientes, pedidos ou carrinhos da Loja 2.
 
-#### [NEW] [AuthenticationBruteForceTest.php](file:///var/www/html/agsonhos/tests/Validation/AuthenticationBruteForceTest.php)
+#### [NEW] [AuthenticationBruteForceTest.php](/tests/Validation/AuthenticationBruteForceTest.php)
 - Teste automatizado de proteção contra Brute Force (Rate Limit).
 - Dispara 5 requisições de login com falha seguidas e valida se a 6ª tentativa é bloqueada com status `HTTP 429 Too Many Requests` e cabeçalho `Retry-After`.
 
-#### [NEW] [SessionRegenerationTest.php](file:///var/www/html/agsonhos/tests/Validation/SessionRegenerationTest.php)
+#### [NEW] [SessionRegenerationTest.php](/tests/Validation/SessionRegenerationTest.php)
 - Teste de integração do ciclo de autenticação.
 - Valida que o identificador de sessão antigo é invalidado e regenerado (`session_regenerate_id`) após a autenticação bem-sucedida.
 
-#### [NEW] [MimeTypeUploadTest.php](file:///var/www/html/agsonhos/tests/Validation/MimeTypeUploadTest.php)
+#### [NEW] [MimeTypeUploadTest.php](/tests/Validation/MimeTypeUploadTest.php)
 - Teste de validação de segurança na gravação e upload de arquivos.
 - Envia arquivo PHP disfarçado com extensão `.jpg` e com dupla extensão (`shell.php.jpg`) e asserta que a verificação de bytes mágicos (`UploadSecurityHelper`) rejeita o arquivo.
 
-#### [NEW] [MassAssignmentTest.php](file:///var/www/html/agsonhos/tests/Validation/MassAssignmentTest.php)
+#### [NEW] [MassAssignmentTest.php](/tests/Validation/MassAssignmentTest.php)
 - Teste de proteção contra injeção de propriedades extras (Mass Assignment / Data Mapping).
 - Injeta campos privilegiados (ex: `is_admin => true`, `user_group_id => 1`) em payload de entidade/registro e asserta que a `BaseEntity` ignora propriedades não declaradas/protegidas.
 
-#### [NEW] [ApiTransformerTest.php](file:///var/www/html/agsonhos/tests/Validation/ApiTransformerTest.php)
+#### [NEW] [ApiTransformerTest.php](/tests/Validation/ApiTransformerTest.php)
 - Teste de serializadores e formatadores de resposta de API (Transformers / LGPD Sanitizer).
 - Valida que respostas em JSON para endpoints de API e logs não vazam chaves sensíveis como `password`, `password_hash`, `access_token`, `credit_card` e dados confidenciais.
 
-#### [NEW] [WebhookSignatureTest.php](file:///var/www/html/agsonhos/tests/Validation/WebhookSignatureTest.php)
+#### [NEW] [WebhookSignatureTest.php](/tests/Validation/WebhookSignatureTest.php)
 - Teste de validação de assinaturas de Webhook (`SignatureMiddleware`).
 - Envia payloads de integração com cabeçalhos `X-Signature` HMAC-SHA256 inválidos/ausentes e valida a rejeição imediata com `HTTP 401 Unauthorized`.
 
-#### [NEW] [CouponLogicTest.php](file:///var/www/html/agsonhos/tests/Validation/CouponLogicTest.php)
+#### [NEW] [CouponLogicTest.php](/tests/Validation/CouponLogicTest.php)
 - Teste da lógica de regras de negócio de cupons de desconto (`CouponRepository`).
 - Valida cupons expirados, valor mínimo não atingido, cupons inativos, limite total de uso excedido e tentativa de reuso pelo mesmo cliente.
 
-#### [NEW] [RbacAccessControlTest.php](file:///var/www/html/agsonhos/tests/Validation/RbacAccessControlTest.php)
+#### [NEW] [RbacAccessControlTest.php](/tests/Validation/RbacAccessControlTest.php)
 - Testes de Controle de Acesso Baseado em Papéis (RBAC) e Regras de Exclusão.
 - Autentica como grupo comum (`UserGroup` sem privilégio `modify`) e tenta alterar recursos protegidos, esperando `HTTP 403 Forbidden`.
 - Testa regra de integridade impedindo que um administrador comum remova o Superuser (ID 1).
 
-#### [NEW] [SecurityHeadersAndCsrfTest.php](file:///var/www/html/agsonhos/tests/Validation/SecurityHeadersAndCsrfTest.php)
+#### [NEW] [SecurityHeadersAndCsrfTest.php](/tests/Validation/SecurityHeadersAndCsrfTest.php)
 - *(Sugestão / Ampliação de Teste de Software)*
 - Valida cabeçalhos de proteção OWASP (`X-Frame-Options`, `X-Content-Type-Options`, `X-XSS-Protection`), mitigação de CSRF e sanitização contra ataques XSS.
 
@@ -103,17 +103,17 @@ Uma suíte completa de **28 testes automatizados (66 asserções)** foi implemen
 
 | Categoria | Arquivo do Teste | Testes | Asserções | Status |
 | :--- | :--- | :---: | :---: | :---: |
-| **1. Middleware & Rotas Admin** | [AdminSessionMiddlewareTest.php](file:///var/www/html/agsonhos/tests/Validation/AdminSessionMiddlewareTest.php) | 2 | 4 | PASSED |
-| **2. Multi-tenant (store_id)** | [TenantIsolationTest.php](file:///var/www/html/agsonhos/tests/Validation/TenantIsolationTest.php) | 3 | 4 | PASSED |
-| **3. Bloqueio Brute Force** | [AuthenticationBruteForceTest.php](file:///var/www/html/agsonhos/tests/Validation/AuthenticationBruteForceTest.php) | 2 | 16 | PASSED |
-| **4. Regeneração de Sessão** | [SessionRegenerationTest.php](file:///var/www/html/agsonhos/tests/Validation/SessionRegenerationTest.php) | 2 | 5 | PASSED |
-| **5. Validação de MIME-Type Real** | [MimeTypeUploadTest.php](file:///var/www/html/agsonhos/tests/Validation/MimeTypeUploadTest.php) | 4 | 5 | PASSED |
-| **6. Mass Assignment** | [MassAssignmentTest.php](file:///var/www/html/agsonhos/tests/Validation/MassAssignmentTest.php) | 2 | 5 | PASSED |
-| **7. API Transformers / LGPD** | [ApiTransformerTest.php](file:///var/www/html/agsonhos/tests/Validation/ApiTransformerTest.php) | 2 | 7 | PASSED |
-| **8. Webhooks & HMAC** | [WebhookSignatureTest.php](file:///var/www/html/agsonhos/tests/Validation/WebhookSignatureTest.php) | 3 | 5 | PASSED |
-| **9. Lógica de Cupons** | [CouponLogicTest.php](file:///var/www/html/agsonhos/tests/Validation/CouponLogicTest.php) | 4 | 6 | PASSED |
-| **10. RBAC & Exclusões** | [RbacAccessControlTest.php](file:///var/www/html/agsonhos/tests/Validation/RbacAccessControlTest.php) | 2 | 3 | PASSED |
-| **11. OWASP Headers / XSS / CSRF** *(Bônus)* | [SecurityHeadersAndCsrfTest.php](file:///var/www/html/agsonhos/tests/Validation/SecurityHeadersAndCsrfTest.php) | 2 | 6 | PASSED |
+| **1. Middleware & Rotas Admin** | [AdminSessionMiddlewareTest.php](/tests/Validation/AdminSessionMiddlewareTest.php) | 2 | 4 | PASSED |
+| **2. Multi-tenant (store_id)** | [TenantIsolationTest.php](/tests/Validation/TenantIsolationTest.php) | 3 | 4 | PASSED |
+| **3. Bloqueio Brute Force** | [AuthenticationBruteForceTest.php](/tests/Validation/AuthenticationBruteForceTest.php) | 2 | 16 | PASSED |
+| **4. Regeneração de Sessão** | [SessionRegenerationTest.php](/tests/Validation/SessionRegenerationTest.php) | 2 | 5 | PASSED |
+| **5. Validação de MIME-Type Real** | [MimeTypeUploadTest.php](/tests/Validation/MimeTypeUploadTest.php) | 4 | 5 | PASSED |
+| **6. Mass Assignment** | [MassAssignmentTest.php](/tests/Validation/MassAssignmentTest.php) | 2 | 5 | PASSED |
+| **7. API Transformers / LGPD** | [ApiTransformerTest.php](/tests/Validation/ApiTransformerTest.php) | 2 | 7 | PASSED |
+| **8. Webhooks & HMAC** | [WebhookSignatureTest.php](/tests/Validation/WebhookSignatureTest.php) | 3 | 5 | PASSED |
+| **9. Lógica de Cupons** | [CouponLogicTest.php](/tests/Validation/CouponLogicTest.php) | 4 | 6 | PASSED |
+| **10. RBAC & Exclusões** | [RbacAccessControlTest.php](/tests/Validation/RbacAccessControlTest.php) | 2 | 3 | PASSED |
+| **11. OWASP Headers / XSS / CSRF** *(Bônus)* | [SecurityHeadersAndCsrfTest.php](/tests/Validation/SecurityHeadersAndCsrfTest.php) | 2 | 6 | PASSED |
 | **TOTAL** | **11 Suítes em `tests/Validation/`** | **28** | **66** | **100% SUCESSO** |
 
 ---

@@ -226,9 +226,9 @@ docs/business/use-cases/
 
 | Módulo / Domínio | Diagrama PlantUML de Origem | Qtd. de Casos de Uso | Atores Mapeados |
 | :--- | :--- | :---: | :--- |
-| **Loja Virtual / Cliente** | [`general_customer_use.puml`](file:///var/www/html/agsonhos/docs/business/use-cases/general_customer_use.puml) | **29** | Visitante (*Guest*), Cliente Logado (*Customer*), Gateways |
-| **Ponto de Venda (PDV)** | [`general_seller.puml`](file:///var/www/html/agsonhos/docs/business/use-cases/general_seller.puml) | **15** | Vendedor de Balcão (*SalesRep*), Caixa (*Cashier*), Cliente (*Customer*) |
-| **Painel Administrativo** | [`general_dashboard.puml`](file:///var/www/html/agsonhos/docs/business/use-cases/general_dashboard.puml) | **9** | Operador do Painel (*Operator*), Administrador Geral (*Admin*) |
+| **Loja Virtual / Cliente** | [`general_customer_use.puml`](/docs/business/use-cases/general_customer_use.puml) | **29** | Visitante (*Guest*), Cliente Logado (*Customer*), Gateways |
+| **Ponto de Venda (PDV)** | [`general_seller.puml`](/docs/business/use-cases/general_seller.puml) | **15** | Vendedor de Balcão (*SalesRep*), Caixa (*Cashier*), Cliente (*Customer*) |
+| **Painel Administrativo** | [`general_dashboard.puml`](/docs/business/use-cases/general_dashboard.puml) | **9** | Operador do Painel (*Operator*), Administrador Geral (*Admin*) |
 | **Total do Sistema** | **3 Diagramas** | **53 Casos de Uso** | **7 Perfis de Atores** |
 
 ---
@@ -251,6 +251,6 @@ Cada um dos 53 arquivos de caso de uso possui:
 
 ## 🎓 Atualização dos Documentos da Faculdade
 
-- **Checklist Atualizado:** [`Requisitos_para_a_matéria_de_Laboratório_de_Engenharia_de_Software.md`](file:///var/www/html/agsonhos/docs/documentos_para_a_faculdade/Requisitos_para_a_matéria_de_Laboratório_de_Engenharia_de_Software.md) marcado com `- [x] Especificação do caso de uso` e links corrigidos para os 3 diagramas.
-- **Documento Consolidado:** [`4. Casos de Uso.doc.md`](file:///var/www/html/agsonhos/docs/documentos_para_a_faculdade/4. Casos de Uso.doc.md) ajustado com as referências PlantUML atualizadas.
+- **Checklist Atualizado:** [`Requisitos_para_a_matéria_de_Laboratório_de_Engenharia_de_Software.md`](/docs/documentos_para_a_faculdade/Requisitos_para_a_matéria_de_Laboratório_de_Engenharia_de_Software.md) marcado com `- [x] Especificação do caso de uso` e links corrigidos para os 3 diagramas.
+- **Documento Consolidado:** [`4. Casos de Uso.doc.md`](/docs/documentos_para_a_faculdade/4. Casos de Uso.doc.md) ajustado com as referências PlantUML atualizadas.
 

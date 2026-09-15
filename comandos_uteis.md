@@ -29,7 +29,7 @@ Searched for "video"
 Viewed playwright.config.ts:1-113
 Viewed SearchPage.ts:30-56
 
-O motivo de apenas um cenário ter gerado vídeo no relatório é a configuração atual do Playwright em [playwright.config.ts](file:///var/www/html/agsonhos/playwright.config.ts#L62):
+O motivo de apenas um cenário ter gerado vídeo no relatório é a configuração atual do Playwright em [playwright.config.ts](/playwright.config.ts#L62):
 
 ```typescript
 // playwright.config.ts
@@ -61,7 +61,7 @@ npx playwright test e2e/specs/cart/checkout-flow.spec.ts --video=on
 ---
 
 #### 2. Configurar gravação de vídeo fixa apenas no Firefox
-Se quiser que o projeto Firefox **sempre** gere vídeo no relatório, edite o bloco do Firefox em [playwright.config.ts](file:///var/www/html/agsonhos/playwright.config.ts#L84-L90):
+Se quiser que o projeto Firefox **sempre** gere vídeo no relatório, edite o bloco do Firefox em [playwright.config.ts](/playwright.config.ts#L84-L90):
 
 ```typescript
 {
@@ -77,7 +77,7 @@ Se quiser que o projeto Firefox **sempre** gere vídeo no relatório, edite o bl
 ---
 
 #### 3. Configurar globalmente para todos os projetos
-Para manter o vídeo de todos os testes (sucesso e falha) em todos os navegadores, altere a linha 62 de [playwright.config.ts](file:///var/www/html/agsonhos/playwright.config.ts#L62):
+Para manter o vídeo de todos os testes (sucesso e falha) em todos os navegadores, altere a linha 62 de [playwright.config.ts](/playwright.config.ts#L62):
 
 ```typescript
 use: {
@@ -99,4 +99,4 @@ use: {
 ---
 
 > **Dica sobre a falha no `mobile-chrome`:** 
-> O erro ocorreu em [SearchPage.ts:53](file:///var/www/html/agsonhos/e2e/pages/SearchPage.ts#L53) porque em tela mobile o elemento `<aside class="egen-aside-filters">` interceptou o clique no botão do carrinho. Se quiser ajustar, podemos aplicar `await addBtn.click({ force: true })` ou fazer scroll explícito antes do clique.
+> O erro ocorreu em [SearchPage.ts:53](/e2e/pages/SearchPage.ts#L53) porque em tela mobile o elemento `<aside class="egen-aside-filters">` interceptou o clique no botão do carrinho. Se quiser ajustar, podemos aplicar `await addBtn.click({ force: true })` ou fazer scroll explícito antes do clique.

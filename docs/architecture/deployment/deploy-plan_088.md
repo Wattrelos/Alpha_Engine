@@ -12,7 +12,7 @@
 
 # Plano de Implementação - Calculadora de Materiais de Construção (Pisos e Revestimentos)
 
-Este plano detalha a implementação da calculadora de área e conversão para caixas comerciais de pisos e revestimentos cerâmicos na Página de Detalhes do Produto (PDP), baseada nos requisitos funcionais de [`construction_materials_calculator.yaml`](file:///var/www/html/agsonhos/docs/requirements/functional/construction_materials_calculator.yaml).
+Este plano detalha a implementação da calculadora de área e conversão para caixas comerciais de pisos e revestimentos cerâmicos na Página de Detalhes do Produto (PDP), baseada nos requisitos funcionais de [`construction_materials_calculator.yaml`](/docs/requirements/functional/construction_materials_calculator.yaml).
 
 Na Fase 1, o cliente terá campos intuitivos para inserir as dimensões do cômodo, aberturas (portas/janelas), margem de perda (padrão 10%) e o rendimento comercial ($m^2/\text{caixa}$).
 
@@ -29,7 +29,7 @@ Na Fase 1, o cliente terá campos intuitivos para inserir as dimensões do cômo
 
 ### 1. Documentação e Modelagem de Workflow
 
-#### [MODIFY] [area_calculation_for_ceramic_flooring_and_wall_tiles.puml](file:///var/www/html/agsonhos/docs/workflows/sequence_diagrams/area_calculation_for_ceramic_flooring_and_wall_tiles.puml)
+#### [MODIFY] [area_calculation_for_ceramic_flooring_and_wall_tiles.puml](/docs/workflows/sequence_diagrams/area_calculation_for_ceramic_flooring_and_wall_tiles.puml)
 - Documentar o fluxo de interação completo em formato PlantUML:
   - Cliente acessa a PDP de pisos/revestimentos e clica em "Calcular Material".
   - Abertura do modal da calculadora com seleção do tipo de aplicação (Parede ou Piso).
@@ -41,7 +41,7 @@ Na Fase 1, o cliente terá campos intuitivos para inserir as dimensões do cômo
 
 ### 2. Frontend & Interface do Usuário (PDP)
 
-#### [NEW] [materials-calculator.twig](file:///var/www/html/agsonhos/backend/resources/views/components/molecules/materials-calculator.twig)
+#### [NEW] [materials-calculator.twig](/backend/resources/views/components/molecules/materials-calculator.twig)
 - Criação do componente reutilizável do modal da calculadora:
   - **Aba de Seleção de Tipo**: "Revestimento de Parede" vs "Piso / Pavimento".
   - **Seção de Dimensões do Ambiente**:
@@ -67,7 +67,7 @@ Na Fase 1, o cliente terá campos intuitivos para inserir as dimensões do cômo
     - Botão "Aplicar Quantidade ao Pedido" (atualiza o `#input-quantity` da PDP e fecha o modal).
     - Botão "Adicionar e ir para o Carrinho" (aplica a quantidade e submete o formulário `#form-product-purchase`).
 
-#### [MODIFY] [show.html.twig](file:///var/www/html/agsonhos/backend/resources/views/pages/product/show.html.twig)
+#### [MODIFY] [show.html.twig](/backend/resources/views/pages/product/show.html.twig)
 - Inclusão do botão de acionamento da calculadora (`.egen-btn-calculator`) próximo ao controle de quantidade da PDP.
 - Inclusão do partial `components/molecules/materials-calculator.twig`.
 - Inclusão dos scripts e estilos da calculadora.
@@ -76,14 +76,14 @@ Na Fase 1, o cliente terá campos intuitivos para inserir as dimensões do cômo
 
 ### 3. Estilos e Interatividade (Vanilla CSS & JS)
 
-#### [NEW] [materials-calculator.css](file:///var/www/html/agsonhos/public_html/css/custom/materials-calculator.css)
+#### [NEW] [materials-calculator.css](/public_html/css/custom/materials-calculator.css)
 - Estilos modernos com base no design system `egen-*`:
   - Backdrop blur e animação suave de abertura do modal.
   - Layout em grid com cards de resumo de resultados com destaque em cores da marca.
   - Design responsivo otimizado para celulares e desktops.
   - Alerta de disclaimer com visual informativo suave.
 
-#### [NEW] [materials-calculator.js](file:///var/www/html/agsonhos/public_html/js/custom/materials-calculator.js)
+#### [NEW] [materials-calculator.js](/public_html/js/custom/materials-calculator.js)
 - Motor de cálculo reativo no cliente:
   - Cálculo de área de parede: $\text{Área Bruta} = 2 \times (\text{comp} \times \text{alt}) + 2 \times (\text{larg} \times \text{alt})$.
   - Deduções de aberturas: $\sum(\text{larg} \times \text{alt} \times \text{qtd})$.
@@ -97,8 +97,8 @@ Na Fase 1, o cliente terá campos intuitivos para inserir as dimensões do cômo
 
 ### 4. Testes e Validação de Conformidade
 
-#### [NEW] [MaterialsCalculatorTest.php](file:///var/www/html/agsonhos/tests/Validation/MaterialsCalculatorTest.php)
-- Testes unitários para validação dos cenários exatos descritos em [`construction_materials_calculator.yaml`](file:///var/www/html/agsonhos/docs/requirements/functional/construction_materials_calculator.yaml):
+#### [NEW] [MaterialsCalculatorTest.php](/tests/Validation/MaterialsCalculatorTest.php)
+- Testes unitários para validação dos cenários exatos descritos em [`construction_materials_calculator.yaml`](/docs/requirements/functional/construction_materials_calculator.yaml):
   - **Cenário Parede**: Cômodo $4.0 \times 3.0 \times 2.8\text{m}$, 2 portas ($0.8 \times 2.1\text{m}$), 2 janelas ($1.2 \times 1.0\text{m}$), perda $10\%$, rendimento $1.95\text{m}^2/\text{cx}$ $\rightarrow$ **19 caixas**.
   - **Cenário Piso**: Cômodo $4.0 \times 3.0\text{m}$, perda $10\%$, rendimento $2.28\text{m}^2/\text{cx}$ $\rightarrow$ **6 caixas**.
   - **Casos de borda**: Aberturas maiores que a parede, valores zero, arredondamento estrito para cima (`ceil`).
@@ -122,35 +122,35 @@ Na Fase 1, o cliente terá campos intuitivos para inserir as dimensões do cômo
 
 # Walkthrough - Implementação da Calculadora de Materiais de Construção
 
-Implementamos com sucesso a **Calculadora de Materiais de Construção (Pisos e Revestimentos)** na Página de Detalhes do Produto (PDP), atendendo integralmente aos requisitos funcionais descritos em [`construction_materials_calculator.yaml`](file:///var/www/html/agsonhos/docs/requirements/functional/construction_materials_calculator.yaml) (RF026 a RF032).
+Implementamos com sucesso a **Calculadora de Materiais de Construção (Pisos e Revestimentos)** na Página de Detalhes do Produto (PDP), atendendo integralmente aos requisitos funcionais descritos em [`construction_materials_calculator.yaml`](/docs/requirements/functional/construction_materials_calculator.yaml) (RF026 a RF032).
 
 ---
 
 ## 🚀 O que foi Implementado
 
 ### 1. Documentação e Workflow
-- **Diagrama de Sequência PlantUML**: [`area_calculation_for_ceramic_flooring_and_wall_tiles.puml`](file:///var/www/html/agsonhos/docs/workflows/sequence_diagrams/area_calculation_for_ceramic_flooring_and_wall_tiles.puml)
+- **Diagrama de Sequência PlantUML**: [`area_calculation_for_ceramic_flooring_and_wall_tiles.puml`](/docs/workflows/sequence_diagrams/area_calculation_for_ceramic_flooring_and_wall_tiles.puml)
   - Mapeamento completo da jornada do cliente: abertura do modal na PDP, alternância entre Parede e Piso, dedução dinâmica de vãos (portas/janelas), aplicação da margem de perda ($10\%$, $15\%$, $20\%$), cálculo de caixas (`CEIL`) e transferência para o formulário de compra/carrinho.
 
 ### 2. Motor de Cálculo no Backend & Testes Automatizados
-- **Classe de Suporte**: [`MaterialsCalculator.php`](file:///var/www/html/agsonhos/backend/core/Support/MaterialsCalculator.php)
+- **Classe de Suporte**: [`MaterialsCalculator.php`](/backend/core/Support/MaterialsCalculator.php)
   - Métodos estáticos `calculateWallCoating()` e `calculateFloorCoating()` com conformidade estrita de tipagem e PHPStan (Nível 0 erros).
-- **Testes Unitários (PHPUnit)**: [`MaterialsCalculatorTest.php`](file:///var/www/html/agsonhos/tests/Validation/MaterialsCalculatorTest.php)
+- **Testes Unitários (PHPUnit)**: [`MaterialsCalculatorTest.php`](/tests/Validation/MaterialsCalculatorTest.php)
   - Validou os cenários de simulação exatos do documento YAML:
     - **Cenário Parede ($4\times3\times2.8\text{m}$, 2 portas, 2 janelas, $10\%$ perda, $1.95\text{m}^2/\text{cx}$)** $\rightarrow$ **19 caixas** (Área bruta: $39.20\text{m}^2$, deduções: $5.76\text{m}^2$, líquida: $33.44\text{m}^2$, total c/ perda: $36.78\text{m}^2$).
     - **Cenário Piso ($4\times3\text{m}$, $10\%$ perda, $2.28\text{m}^2/\text{cx}$)** $\rightarrow$ **6 caixas** (Área bruta: $12.00\text{m}^2$, total c/ perda: $13.20\text{m}^2$).
     - Casos de borda: vãos maiores que a parede, valores zero e divisão protegida.
 
 ### 3. Interface do Usuário e Estilização (PDP)
-- **Componente Twig**: [`materials-calculator.twig`](file:///var/www/html/agsonhos/backend/resources/views/components/molecules/materials-calculator.twig)
+- **Componente Twig**: [`materials-calculator.twig`](/backend/resources/views/components/molecules/materials-calculator.twig)
   - Modal com efeito glassmorphism, abas de seleção ("Revestimento de Parede" e "Piso / Pavimento"), grid responsivo de dimensões, gerenciador dinâmico de portas/janelas, chips de margem de perda e card com resumo de métricas.
   - Alerta com **Disclaimer Técnico (RF032)** informando o caráter estimativo.
-- **Folha de Estilos**: [`materials-calculator.css`](file:///var/www/html/agsonhos/public_html/css/custom/materials-calculator.css)
+- **Folha de Estilos**: [`materials-calculator.css`](/public_html/css/custom/materials-calculator.css)
   - Visual moderno e integrado à identidade visual da loja (`#fc9003`).
-- **Motor Client-Side em Vanilla JS**: [`materials-calculator.js`](file:///var/www/html/agsonhos/public_html/js/custom/materials-calculator.js)
+- **Motor Client-Side em Vanilla JS**: [`materials-calculator.js`](/public_html/js/custom/materials-calculator.js)
   - Recálculo instantâneo a cada digitação (`input` event).
   - Transferência direta do número de caixas calculadas para o campo `#input-quantity` da PDP com feedback de animação ao aplicar.
-- **Página de Produto (PDP)**: [`show.html.twig`](file:///var/www/html/agsonhos/backend/resources/views/pages/product/show.html.twig)
+- **Página de Produto (PDP)**: [`show.html.twig`](/backend/resources/views/pages/product/show.html.twig)
   - Inclusão do botão de acionamento `Calcular Quantidade de Caixas (m²)` e vinculação dos scripts e estilos.
 
 ---

@@ -11,7 +11,7 @@
 | **Atores Secundários** | Sistema Alpha Engine |
 | **Tipo** | Condução / Navegação |
 | **Frequência de Uso** | Muito Alta |
-| **Rastreabilidade** | **RF:** [RF003](file:///var/www/html/agsonhos/docs/requirements/functional/functional_requirements.yaml) (Categorização produtos), [RF011](file:///var/www/html/agsonhos/docs/requirements/functional/functional_requirements.yaml) (Busca e filtros)<br>**RN:** [RN003](file:///var/www/html/agsonhos/docs/requirements/business_rules/business_rules.yaml) (Especificações técnicas por categoria)<br>**RNF:** [RNF001](file:///var/www/html/agsonhos/docs/requirements/non_functional/non_functional_requirements.yaml) (Interface intuitiva), [RNF002](file:///var/www/html/agsonhos/docs/requirements/non_functional/non_functional_requirements.yaml) (Desempenho e velocidade) |
+| **Rastreabilidade** | **RF:** [RF003](/docs/requirements/functional/functional_requirements.yaml) (Categorização produtos), [RF011](/docs/requirements/functional/functional_requirements.yaml) (Busca e filtros)<br>**RN:** [RN003](/docs/requirements/business_rules/business_rules.yaml) (Especificações técnicas por categoria)<br>**RNF:** [RNF001](/docs/requirements/non_functional/non_functional_requirements.yaml) (Interface intuitiva), [RNF002](/docs/requirements/non_functional/non_functional_requirements.yaml) (Desempenho e velocidade) |
 
 ---
 

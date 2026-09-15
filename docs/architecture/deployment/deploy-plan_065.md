@@ -28,16 +28,16 @@ Este plano estabelece as alterações necessárias para que, durante a instalaç
 
 ### Setup & Installer
 
-#### [MODIFY] [ShowSetupAction.php](file:///var/www/html/agsonhos/core/Controller/Actions/Setup/ShowSetupAction.php)
+#### [MODIFY] [ShowSetupAction.php](/core/Controller/Actions/Setup/ShowSetupAction.php)
 - Padronizar o prefixo padrão como `agsc_` caso não exista no `.env`.
 - Passar a variável `default_admin_dir` (do `.env` ou gerada) para a view Twig do instalador.
 
-#### [MODIFY] [installer.html.twig](file:///var/www/html/agsonhos/resources/views/setup/installer.html.twig)
+#### [MODIFY] [installer.html.twig](/resources/views/setup/installer.html.twig)
 - Adicionar o campo "Caminho/Pasta do Dashboard (Mascaramento)" na Etapa 3 do assistente de instalação.
 - Adicionar botão "🎲 Gerar Aleatório" com função JavaScript que gera uma string alfanumérica aleatória segura de 16 caracteres.
 - Enviar o parâmetro `admin_dir` na requisição `POST /setup/process`.
 
-#### [MODIFY] [ProcessInstallationAction.php](file:///var/www/html/agsonhos/core/Controller/Actions/Setup/ProcessInstallationAction.php)
+#### [MODIFY] [ProcessInstallationAction.php](/core/Controller/Actions/Setup/ProcessInstallationAction.php)
 - Capturar e sanitizar os parâmetros `db_prefix` e `admin_dir`.
 - Caso `admin_dir` esteja em branco, gerar uma string aleatória de mascaramento.
 - Salvar `DB_PREFIX` e `ADMIN_DIR` no arquivo `.env` via `EnvironmentManager`.
@@ -49,24 +49,24 @@ Este plano estabelece as alterações necessárias para que, durante a instalaç
 
 ### Core Configuration & Bootstrapping
 
-#### [MODIFY] [config.php](file:///var/www/html/agsonhos/config.php)
+#### [MODIFY] [config.php](/config.php)
 - Definir a constante `ADMIN_DIR` a partir de `$_ENV['ADMIN_DIR'] ?? 'LPDHED2dC7Gjrg2b'`.
 - Definir a constante `ADMIN_PATH` a partir de `'/' . ADMIN_DIR`.
 
-#### [MODIFY] [.env.example](file:///var/www/html/agsonhos/.env.example)
+#### [MODIFY] [.env.example](/.env.example)
 - Incluir a variável `ADMIN_DIR=LPDHED2dC7Gjrg2b` no arquivo de exemplo de ambiente.
 
-#### [MODIFY] [index.php (Front-end)](file:///var/www/html/agsonhos/public_html/index.php)
+#### [MODIFY] [index.php (Front-end)](/public_html/index.php)
 - Substituir ocorrências hardcoded de `LPDHED2dC7Gjrg2b` pelas constantes `ADMIN_DIR` / `ADMIN_PATH`.
 
-#### [MODIFY] [index.php (Admin)](file:///var/www/html/agsonhos/public_html/LPDHED2dC7Gjrg2b/index.php)
+#### [MODIFY] [index.php (Admin)](/public_html/LPDHED2dC7Gjrg2b/index.php)
 - Atualizar a configuração `$app->setBasePath('/' . ADMIN_DIR)` utilizando `ADMIN_DIR` ou `basename(__DIR__)`.
 
 ---
 
 ### Middlewares & Controllers Refactoring
 
-#### [MODIFY] [InstallationCheckMiddleware.php](file:///var/www/html/agsonhos/core/Auth/Middleware/InstallationCheckMiddleware.php)
+#### [MODIFY] [InstallationCheckMiddleware.php](/core/Auth/Middleware/InstallationCheckMiddleware.php)
 - Substituir o link hardcoded `/LPDHED2dC7Gjrg2b` pela constante `ADMIN_PATH`.
 
 #### [MODIFY] Controllers de Ações Administrativas (Catalog, Sales, Procurement, Customer, User, Setting, Common)
@@ -121,18 +121,18 @@ Implementamos as opções para que, durante uma nova instalação através do as
 ## 🛠️ Modificações Realizadas
 
 ### 1. Configurações Globais & Variáveis de Ambiente
-- **[.env.example](file:///var/www/html/agsonhos/.env.example)**: Adicionada a variável `ADMIN_DIR=LPDHED2dC7Gjrg2b`.
-- **[config.php](file:///var/www/html/agsonhos/config.php)**: Definidas as constantes globais `ADMIN_DIR` e `ADMIN_PATH` (`/` + `ADMIN_DIR`) a partir de `$_ENV['ADMIN_DIR']`.
+- **[.env.example](/.env.example)**: Adicionada a variável `ADMIN_DIR=LPDHED2dC7Gjrg2b`.
+- **[config.php](/config.php)**: Definidas as constantes globais `ADMIN_DIR` e `ADMIN_PATH` (`/` + `ADMIN_DIR`) a partir de `$_ENV['ADMIN_DIR']`.
 
 ### 2. Assistente de Instalação (`/setup`)
-- **[ShowSetupAction.php](file:///var/www/html/agsonhos/core/Controller/Actions/Setup/ShowSetupAction.php)**:
+- **[ShowSetupAction.php](/core/Controller/Actions/Setup/ShowSetupAction.php)**:
   - Padronizado o prefixo de tabela padrão `agsc_` (alinhado com o `install.sql`).
   - Adicionado o valor `default_admin_dir` enviado à view Twig.
-- **[installer.html.twig](file:///var/www/html/agsonhos/resources/views/setup/installer.html.twig)**:
+- **[installer.html.twig](/resources/views/setup/installer.html.twig)**:
   - Adicionado o campo "Caminho/Pasta do Dashboard (Mascaramento de Segurança)" na Etapa 3 (Loja & Admin).
   - Incluído o botão **"🎲 Gerar Aleatório"** que gera dinamicamente uma hash segura (ex: `adm_a8f9c2d7e1b4`) via `crypto.getRandomValues`.
   - Adicionado o preview em tempo real do endereço do painel.
-- **[ProcessInstallationAction.php](file:///var/www/html/agsonhos/core/Controller/Actions/Setup/ProcessInstallationAction.php)**:
+- **[ProcessInstallationAction.php](/core/Controller/Actions/Setup/ProcessInstallationAction.php)**:
   - Sanitização e validação dos parâmetros `db_prefix` e `admin_dir`.
   - Importação do esquema `install.sql` aplicando a substituição dinâmica do prefixo `agsc_` -> `$prefix`.
   - Gravação das configurações `config_db_prefix` e `config_admin_dir` na tabela `{$prefix}setting`.
@@ -141,23 +141,23 @@ Implementamos as opções para que, durante uma nova instalação através do as
   - Redirecionamento dinâmico no final da instalação para `/' . $adminDir`.
 
 ### 3. Roteamento, Middlewares e Templates
-- **[InstallationCheckMiddleware.php](file:///var/www/html/agsonhos/core/Auth/Middleware/InstallationCheckMiddleware.php)**: Atualizado a mensagem de bloqueio 403 para usar o link dinâmico da constante `ADMIN_PATH`.
-- **[public_html/index.php](file:///var/www/html/agsonhos/public_html/index.php)**:
+- **[InstallationCheckMiddleware.php](/core/Auth/Middleware/InstallationCheckMiddleware.php)**: Atualizado a mensagem de bloqueio 403 para usar o link dinâmico da constante `ADMIN_PATH`.
+- **[public_html/index.php](/public_html/index.php)**:
   - Redirecionamento de idiomas e checagem de aplicação parametrizados com `ADMIN_DIR`.
   - Injeção das variáveis globais `admin_dir` e `admin_path` no Twig.
   - `setBasePath` dinâmico para o contexto do admin.
-- **[public_html/LPDHED2dC7Gjrg2b/index.php](file:///var/www/html/agsonhos/public_html/LPDHED2dC7Gjrg2b/index.php)**: Configuração de `setBasePath` dinâmica utilizando `ADMIN_DIR` ou `basename(__DIR__)`.
+- **[public_html/LPDHED2dC7Gjrg2b/index.php](/public_html/LPDHED2dC7Gjrg2b/index.php)**: Configuração de `setBasePath` dinâmica utilizando `ADMIN_DIR` ou `basename(__DIR__)`.
 - **Controllers & Templates Twig**:
   - Todos os redirecionamentos HTTP em Controllers da área administrativa (Catalog, Procurement, Sales, Customer, User, Setting, Common) agora utilizam a constante `ADMIN_PATH`.
   - Todas as views em `resources/views/admin/` e `resources/views/pos/` agora utilizam a variável Twig `{{ admin_path }}` para links, formulários e requisições AJAX.
 
 ### 4. Roteamento, Middlewares e Templates
-- **[InstallationCheckMiddleware.php](file:///var/www/html/agsonhos/core/Auth/Middleware/InstallationCheckMiddleware.php)**: Atualizado a mensagem de bloqueio 403 para usar o link dinâmico da constante `ADMIN_PATH`.
-- **[public_html/index.php](file:///var/www/html/agsonhos/public_html/index.php)**:
+- **[InstallationCheckMiddleware.php](/core/Auth/Middleware/InstallationCheckMiddleware.php)**: Atualizado a mensagem de bloqueio 403 para usar o link dinâmico da constante `ADMIN_PATH`.
+- **[public_html/index.php](/public_html/index.php)**:
   - Redirecionamento de idiomas e checagem de aplicação parametrizados com `ADMIN_DIR`.
   - Injeção das variáveis globais `admin_dir` e `admin_path` no Twig.
   - `setBasePath` dinâmico para o contexto do admin.
-- **[public_html/LPDHED2dC7Gjrg2b/index.php](file:///var/www/html/agsonhos/public_html/LPDHED2dC7Gjrg2b/index.php)**: Configuração de `setBasePath` dinâmica utilizando `ADMIN_DIR` ou `basename(__DIR__)`.
+- **[public_html/LPDHED2dC7Gjrg2b/index.php](/public_html/LPDHED2dC7Gjrg2b/index.php)**: Configuração de `setBasePath` dinâmica utilizando `ADMIN_DIR` ou `basename(__DIR__)`.
 - **Controllers & Templates Twig**:
   - Todos os redirecionamentos HTTP em Controllers da área administrativa agora utilizam a constante `ADMIN_PATH`.
   - Todas as views em `resources/views/admin/` e `resources/views/pos/` agora utilizam a variável Twig `{{ admin_path }}`.
@@ -167,7 +167,7 @@ Implementamos as opções para que, durante uma nova instalação através do as
 ## 🧪 Verificação & Testes
 
 1. **Sintaxe PHP**: Verificado através do linter `php -l` em todos os arquivos modificados (0 erros encontrados).
-2. **Suíte de Testes**: Executado o script [test_tenant_provisioning.php](file:///var/www/html/agsonhos/tests/test_tenant_provisioning.php), validando a leitura/escrita atômica do `.env` e a ação do `InstallationCheckMiddleware` (100% de sucesso).
+2. **Suíte de Testes**: Executado o script [test_tenant_provisioning.php](/tests/test_tenant_provisioning.php), validando a leitura/escrita atômica do `.env` e a ação do `InstallationCheckMiddleware` (100% de sucesso).
 
 🔍 Causa do Erro
 No arquivo Config/Routes.php, as rotas do assistente de instalação (GET /setup, POST /setup/test-db, POST /setup/process) estavam sendo registradas de forma global para a aplicação.

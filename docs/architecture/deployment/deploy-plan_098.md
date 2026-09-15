@@ -20,9 +20,9 @@
 
 ### 🧩 O que já temos na arquitetura e como podemos implementar
 
-O backend já conta com a base do [`AuditLoggerService.php`](file:///var/www/html/agsonhos/backend/core/Services/Audit/AuditLoggerService.php), que já possui:
+O backend já conta com a base do [`AuditLoggerService.php`](/backend/core/Services/Audit/AuditLoggerService.php), que já possui:
 - Persistência na tabela `tbkk_audit_logs` (MySQL) com suporte a mensageria assíncrona (RabbitMQ) e fallback para arquivo local;
-- Higienização de dados pessoais sensíveis via [`LgpdSanitizer.php`](file:///var/www/html/agsonhos/backend/core/Support/LgpdSanitizer.php);
+- Higienização de dados pessoais sensíveis via [`LgpdSanitizer.php`](/backend/core/Support/LgpdSanitizer.php);
 - Campos prontos para `ip`, `user_agent`, `username`, `event` e `payload`.
 
 #### Plano de Implementação Sugerido:
@@ -62,7 +62,7 @@ Este plano detalha a criação da funcionalidade completa de **Auditoria e Monit
 
 ### 1. Backend Core & Middleware
 
-#### [NEW] [RequestAuditMiddleware.php](file:///var/www/html/agsonhos/backend/core/Auth/Middleware/RequestAuditMiddleware.php)
+#### [NEW] [RequestAuditMiddleware.php](/backend/core/Auth/Middleware/RequestAuditMiddleware.php)
 - Intercepta requisições HTTP tanto na loja quanto no painel administrativo.
 - Extrai IP real (considerando cabeçalhos `CF-Connecting-IP`, `X-Forwarded-For`, `REMOTE_ADDR`).
 - Realiza o parsing de User-Agent (identificando Navegador: Chrome, Firefox, Safari, Edge, Opera, Bots; Sistema Operacional e tipo de dispositivo: Desktop, Mobile).
@@ -70,7 +70,7 @@ Este plano detalha a criação da funcionalidade completa de **Auditoria e Monit
 - Captura tempo de resposta da requisição, código de status HTTP (200, 302, 404, 500), método HTTP e URI.
 - Envia os dados para persistência através do `AuditLoggerService`.
 
-#### [MODIFY] [AuditLoggerService.php](file:///var/www/html/agsonhos/backend/core/Services/Audit/AuditLoggerService.php)
+#### [MODIFY] [AuditLoggerService.php](/backend/core/Services/Audit/AuditLoggerService.php)
 - Adicionar suporte a consultas paginadas com filtros (por IP, usuário, evento, data inicial e data final).
 - Adicionar método `getAuditStats(int $storeId = 1): array` para retornar métricas consolidadas (Total de requisições hoje, IPs únicos, distribuição de navegadores e status codes).
 - Adicionar método `getAuditLogById(int $id, int $storeId = 1): ?array` para visualização detalhada de uma requisição específica.
@@ -79,26 +79,26 @@ Este plano detalha a criação da funcionalidade completa de **Auditoria e Monit
 
 ### 2. Controle de Acesso e Permissões (RBAC)
 
-#### [MODIFY] [AdminSessionMiddleware.php](file:///var/www/html/agsonhos/backend/core/Auth/Middleware/AdminSessionMiddleware.php)
+#### [MODIFY] [AdminSessionMiddleware.php](/backend/core/Auth/Middleware/AdminSessionMiddleware.php)
 - Mapear as rotas de auditoria no `ROUTE_PERMISSION_MAP`:
   - `'admin.audit.list' => 'system/audit'`
   - `'admin.audit.view' => 'system/audit'`
 
-#### [MODIFY] [CreateUserGroupAction.php](file:///var/www/html/agsonhos/backend/core/Admin/Controllers/Actions/User/UserGroup/CreateUserGroupAction.php)
-#### [MODIFY] [EditUserGroupAction.php](file:///var/www/html/agsonhos/backend/core/Admin/Controllers/Actions/User/UserGroup/EditUserGroupAction.php)
+#### [MODIFY] [CreateUserGroupAction.php](/backend/core/Admin/Controllers/Actions/User/UserGroup/CreateUserGroupAction.php)
+#### [MODIFY] [EditUserGroupAction.php](/backend/core/Admin/Controllers/Actions/User/UserGroup/EditUserGroupAction.php)
 - Adicionar `'system/audit' => 'Auditoria & Logs de Acesso'` na lista de módulos disponíveis para concessão de permissões.
 
 ---
 
 ### 3. Controllers Administrativos & Rotas
 
-#### [NEW] [ListAuditLogsAction.php](file:///var/www/html/agsonhos/backend/core/Admin/Controllers/Actions/Audit/ListAuditLogsAction.php)
+#### [NEW] [ListAuditLogsAction.php](/backend/core/Admin/Controllers/Actions/Audit/ListAuditLogsAction.php)
 - Controller responsável por carregar os logs filtrados, paginação e resumo de estatísticas para a tela de auditoria.
 
-#### [NEW] [ViewAuditLogDetailAction.php](file:///var/www/html/agsonhos/backend/core/Admin/Controllers/Actions/Audit/ViewAuditLogDetailAction.php)
+#### [NEW] [ViewAuditLogDetailAction.php](/backend/core/Admin/Controllers/Actions/Audit/ViewAuditLogDetailAction.php)
 - Endpoint para carregar os detalhes completos do payload em formato JSON formatado para visualização em modal/detalhe.
 
-#### [MODIFY] [Routes.php](file:///var/www/html/agsonhos/backend/Config/Routes.php)
+#### [MODIFY] [Routes.php](/backend/Config/Routes.php)
 - Registrar as rotas administrativas protegidas:
   - `GET /auditoria` -> `ListAuditLogsAction`
   - `GET /auditoria/{id:[0-9]+}` -> `ViewAuditLogDetailAction`
@@ -107,7 +107,7 @@ Este plano detalha a criação da funcionalidade completa de **Auditoria e Monit
 
 ### 4. Interface e Visualização (Views & Locales)
 
-#### [NEW] [index.html.twig (Audit View)](file:///var/www/html/agsonhos/backend/resources/views/admin/pages/audit/index.html.twig)
+#### [NEW] [index.html.twig (Audit View)](/backend/resources/views/admin/pages/audit/index.html.twig)
 - **Cards de Métricas:** Total de acessos hoje, visitantes únicos (IPs), navegadores predominantes e taxa de status/erros.
 - **Barra de Filtros:** Busca textual (IP, usuário, rota), filtro por tipo de evento e filtro de datas.
 - **Tabela de Auditoria Moderna:**
@@ -119,18 +119,18 @@ Este plano detalha a criação da funcionalidade completa de **Auditoria e Monit
   - Botão "Ver Detalhes" para abrir modal com payload sanitizado (LGPD).
 - **Paginação integrada.**
 
-#### [MODIFY] [index.html.twig (Dashboard)](file:///var/www/html/agsonhos/backend/resources/views/admin/pages/dashboard/index.html.twig)
+#### [MODIFY] [index.html.twig (Dashboard)](/backend/resources/views/admin/pages/dashboard/index.html.twig)
 - Adicionar o card de atalho rápido na seção **"Atalhos Rápidos do Sistema"**, exibido condicionalmente para Super Admins ou usuários com permissão `'system/audit'`:
   - Ícone de escudo/segurança (`fas fa-shield-alt`);
   - Título "Auditoria & Logs";
   - Subtítulo "Visitantes & Requisições".
 
-#### [MODIFY] [base.html.twig](file:///var/www/html/agsonhos/backend/resources/views/admin/layouts/base.html.twig)
+#### [MODIFY] [base.html.twig](/backend/resources/views/admin/layouts/base.html.twig)
 - Adicionar o item **"Auditoria & Logs"** no menu lateral (Sidebar), exibido condicionalmente para quem possui a permissão de acesso.
 
-#### [MODIFY] [pt-br.admin.common.json](file:///var/www/html/agsonhos/backend/Locales/pt-br/pt-br.admin.common.json)
-#### [MODIFY] [en-gb.admin.common.json](file:///var/www/html/agsonhos/backend/Locales/en-gb/en-gb.admin.common.json)
-#### [MODIFY] [fr-fr.admin.common.json](file:///var/www/html/agsonhos/backend/Locales/fr-fr/fr-fr.admin.common.json)
+#### [MODIFY] [pt-br.admin.common.json](/backend/Locales/pt-br/pt-br.admin.common.json)
+#### [MODIFY] [en-gb.admin.common.json](/backend/Locales/en-gb/en-gb.admin.common.json)
+#### [MODIFY] [fr-fr.admin.common.json](/backend/Locales/fr-fr/fr-fr.admin.common.json)
 - Adicionar traduções para o item de menu "Auditoria & Logs".
 
 ---
@@ -168,7 +168,7 @@ A funcionalidade de **Auditoria e Logs de Acesso** foi implementada com sucesso 
 ## 🛠️ Modificações Realizadas
 
 ### 1. Middleware de Rastreamento de Requisições & Visitantes
-- **[`RequestAuditMiddleware.php`](file:///var/www/html/agsonhos/backend/core/Auth/Middleware/RequestAuditMiddleware.php)**:
+- **[`RequestAuditMiddleware.php`](/backend/core/Auth/Middleware/RequestAuditMiddleware.php)**:
   - Captura transparente de IP real (com suporte a Cloudflare, Proxies e Nginx via `CF-Connecting-IP`, `X-Forwarded-For`, `X-Real-IP`);
   - Parser inteligente de User-Agent: identifica navegadores (*Chrome, Edge, Safari, Firefox, Opera, Bots*), versões, sistemas operacionais (*Windows, macOS, Linux, Android, iOS*) e tipos de dispositivos (*Desktop, Mobile, Tablet, Bot*);
   - Identificação de usuários autenticados (`ADMIN: <username>`, `CLIENTE: <email>` ou `VISITANTE`);
@@ -176,34 +176,34 @@ A funcionalidade de **Auditoria e Logs de Acesso** foi implementada com sucesso 
   - Filtro para ignorar requisições de arquivos estáticos (`.css`, `.js`, imagens, fontes).
 
 ### 2. Serviço de Auditoria & Persistência (LGPD Compliant)
-- **[`AuditLoggerService.php`](file:///var/www/html/agsonhos/backend/core/Services/Audit/AuditLoggerService.php)**:
+- **[`AuditLoggerService.php`](/backend/core/Services/Audit/AuditLoggerService.php)**:
   - Adicionados métodos de consulta paginada com filtros (`getFilteredAuditLogs`);
   - Adicionado cálculo de contagem com filtros (`getTotalAuditLogsCount`);
   - Adicionado compilador de métricas e estatísticas (`getAuditStats` - total de requisições hoje, histórico geral, visitantes únicos em 24h e divisão por navegadores);
   - Adicionado método para buscar payload detalhado por ID (`getAuditLogById`).
 
 ### 3. Controle de Acesso e Permissões (RBAC)
-- **[`AdminSessionMiddleware.php`](file:///var/www/html/agsonhos/backend/core/Auth/Middleware/AdminSessionMiddleware.php)**:
+- **[`AdminSessionMiddleware.php`](/backend/core/Auth/Middleware/AdminSessionMiddleware.php)**:
   - Mapeadas as rotas `admin.audit.list` e `admin.audit.view` para a permissão `system/audit`.
   - Bloqueio automático com **403 Forbidden** para colaboradores sem a permissão `system/audit`, e acesso liberado (200 OK) para Super Administrators (ID 1) e usuários autorizados.
-- **[`CreateUserGroupAction.php`](file:///var/www/html/agsonhos/backend/core/Admin/Controllers/Actions/User/UserGroup/CreateUserGroupAction.php)** & **[`EditUserGroupAction.php`](file:///var/www/html/agsonhos/backend/core/Admin/Controllers/Actions/User/UserGroup/EditUserGroupAction.php)**:
+- **[`CreateUserGroupAction.php`](/backend/core/Admin/Controllers/Actions/User/UserGroup/CreateUserGroupAction.php)** & **[`EditUserGroupAction.php`](/backend/core/Admin/Controllers/Actions/User/UserGroup/EditUserGroupAction.php)**:
   - Registrado o módulo `'system/audit' => 'Auditoria & Logs de Acesso'` para concessão de privilégios nos perfis de colaboradores.
 
 ### 4. Controllers e Rotas do Painel Administrativo
-- **[`ListAuditLogsAction.php`](file:///var/www/html/agsonhos/backend/core/Admin/Controllers/Actions/Audit/ListAuditLogsAction.php)**: Controller principal da tela de auditoria.
-- **[`ViewAuditLogDetailAction.php`](file:///var/www/html/agsonhos/backend/core/Admin/Controllers/Actions/Audit/ViewAuditLogDetailAction.php)**: Endpoint para obtenção dos dados do payload higienizado.
-- **[`Routes.php`](file:///var/www/html/agsonhos/backend/Config/Routes.php)**: Rotas `/auditoria` e `/auditoria/{id}` registradas no grupo protegido.
+- **[`ListAuditLogsAction.php`](/backend/core/Admin/Controllers/Actions/Audit/ListAuditLogsAction.php)**: Controller principal da tela de auditoria.
+- **[`ViewAuditLogDetailAction.php`](/backend/core/Admin/Controllers/Actions/Audit/ViewAuditLogDetailAction.php)**: Endpoint para obtenção dos dados do payload higienizado.
+- **[`Routes.php`](/backend/Config/Routes.php)**: Rotas `/auditoria` e `/auditoria/{id}` registradas no grupo protegido.
 
 ### 5. Interface Visual (UI) & Atalhos Condicionais
-- **Página Dedicada de Auditoria:** **[`admin/pages/audit/index.html.twig`](file:///var/www/html/agsonhos/backend/resources/views/admin/pages/audit/index.html.twig)**
+- **Página Dedicada de Auditoria:** **[`admin/pages/audit/index.html.twig`](/backend/resources/views/admin/pages/audit/index.html.twig)**
   - 4 Cards de Estatísticas com contadores dinâmicos;
   - Formulário com filtros por busca textual (IP, usuário, rota), tipo de evento e intervalo de datas;
   - Tabela moderna com badges visuais de métodos HTTP (GET, POST, PUT, DELETE), status codes (2xx, 4xx, 5xx), ícones dos navegadores e SOs;
   - Modal interativo com visualização formatada do JSON de cada requisição;
   - Paginação completa.
-- **Atalho Rápido no Dashboard:** **[`admin/pages/dashboard/index.html.twig`](file:///var/www/html/agsonhos/backend/resources/views/admin/pages/dashboard/index.html.twig)**
+- **Atalho Rápido no Dashboard:** **[`admin/pages/dashboard/index.html.twig`](/backend/resources/views/admin/pages/dashboard/index.html.twig)**
   - Adicionado o card *"Auditoria & Logs (Visitantes & Requisições)"* exibido apenas para quem possui permissão.
-- **Menu Lateral (Sidebar):** **[`admin/layouts/base.html.twig`](file:///var/www/html/agsonhos/backend/resources/views/admin/layouts/base.html.twig)**
+- **Menu Lateral (Sidebar):** **[`admin/layouts/base.html.twig`](/backend/resources/views/admin/layouts/base.html.twig)**
   - Adicionado link direto com ícone de escudo para a página de auditoria.
 - **Internacionalização (Locales):** Adicionadas as traduções para o item nos arquivos `pt-br`, `en-gb` e `fr-fr`.
 
@@ -212,7 +212,7 @@ A funcionalidade de **Auditoria e Logs de Acesso** foi implementada com sucesso 
 ## 🧪 Validação & Testes
 
 ### 1. Testes Unitários e de Integração
-- **[`tests/Validation/AuditLogValidationTest.php`](file:///var/www/html/agsonhos/tests/Validation/AuditLogValidationTest.php)**:
+- **[`tests/Validation/AuditLogValidationTest.php`](/tests/Validation/AuditLogValidationTest.php)**:
   - ✅ Validação da interceptação do middleware e extração de IP e metadados de User-Agent.
   - ✅ Validação de exclusão de arquivos estáticos.
   - ✅ Validação de filtragem, paginação e estatísticas do serviço.

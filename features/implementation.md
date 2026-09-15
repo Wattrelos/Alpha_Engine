@@ -1,6 +1,6 @@
 # Guia de Execução & Apresentação da Suíte BDD
 
-Consulte as especificações detalhadas do módulo em [README.md](file:///var/www/html/agsonhos/features/frontend/README.md).
+Consulte as especificações detalhadas do módulo em [README.md](/features/frontend/README.md).
 
 ---
 

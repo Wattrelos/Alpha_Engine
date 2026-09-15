@@ -12,7 +12,7 @@
 
 # Plano de Implementação: Módulo de Cotação de Projetos e Prestadores de Serviço (RFQ, BoQ e Material Takeoff)
 
-Implementação do módulo de **Cotação de Serviços e Insumos** da Alpha Engine, cobrindo os requisitos funcionais **RF033 a RF037** conforme especificado em [products_quotation.yaml](file:///var/www/html/agsonhos/docs/requirements/functional/products_quotation.yaml). O sistema integrará a publicação de projetos pelo cliente, matching geoespacial de prestadores em raio $X$ km, comparação de propostas (*Bid Comparison*), levantamento técnico de materiais (*Material Takeoff / Bill of Quantities - BoQ*) e conversão direta para compras no e-commerce (*Add to Quote*).
+Implementação do módulo de **Cotação de Serviços e Insumos** da Alpha Engine, cobrindo os requisitos funcionais **RF033 a RF037** conforme especificado em [products_quotation.yaml](/docs/requirements/functional/products_quotation.yaml). O sistema integrará a publicação de projetos pelo cliente, matching geoespacial de prestadores em raio $X$ km, comparação de propostas (*Bid Comparison*), levantamento técnico de materiais (*Material Takeoff / Bill of Quantities - BoQ*) e conversão direta para compras no e-commerce (*Add to Quote*).
 
 ---
 
@@ -45,7 +45,7 @@ Implementação do módulo de **Cotação de Serviços e Insumos** da Alpha Engi
 
 Criação das tabelas relacionais necessárias no banco de dados da Alpha Engine.
 
-#### [NEW] [rfq_service_provider_tables.sql](file:///var/www/html/agsonhos/backend/resources/schema/rfq_service_provider_tables.sql)
+#### [NEW] [rfq_service_provider_tables.sql](/backend/resources/schema/rfq_service_provider_tables.sql)
 - `agsc_service_provider_profile`: Perfil do prestador (especialidades, raio de atendimento em km, latitude, longitude, avaliação média).
 - `agsc_project_rfq`: Solicitação de orçamento emitida pelo cliente (título, descrição, endereço da obra, CEP, coordenadas, data limite, status).
 - `agsc_project_bid`: Propostas de serviço dos prestadores (mão de obra, prazo estimado em dias, detalhes técnicos, status).
@@ -58,26 +58,26 @@ Criação das tabelas relacionais necessárias no banco de dados da Alpha Engine
 
 Criação das entidades, DTOs e Repositórios seguindo o padrão de arquitetura da Alpha Engine.
 
-#### [NEW] [ProjectRfq.php](file:///var/www/html/agsonhos/backend/core/Model/Domain/Entities/Quotation/ProjectRfq.php)
-#### [NEW] [ProjectBid.php](file:///var/www/html/agsonhos/backend/core/Model/Domain/Entities/Quotation/ProjectBid.php)
-#### [NEW] [ProjectBoq.php](file:///var/www/html/agsonhos/backend/core/Model/Domain/Entities/Quotation/ProjectBoq.php)
-#### [NEW] [ProjectBoqItem.php](file:///var/www/html/agsonhos/backend/core/Model/Domain/Entities/Quotation/ProjectBoqItem.php)
-#### [NEW] [ServiceProviderProfile.php](file:///var/www/html/agsonhos/backend/core/Model/Domain/Entities/Quotation/ServiceProviderProfile.php)
+#### [NEW] [ProjectRfq.php](/backend/core/Model/Domain/Entities/Quotation/ProjectRfq.php)
+#### [NEW] [ProjectBid.php](/backend/core/Model/Domain/Entities/Quotation/ProjectBid.php)
+#### [NEW] [ProjectBoq.php](/backend/core/Model/Domain/Entities/Quotation/ProjectBoq.php)
+#### [NEW] [ProjectBoqItem.php](/backend/core/Model/Domain/Entities/Quotation/ProjectBoqItem.php)
+#### [NEW] [ServiceProviderProfile.php](/backend/core/Model/Domain/Entities/Quotation/ServiceProviderProfile.php)
 
-#### [NEW] [ProjectRfqRepository.php](file:///var/www/html/agsonhos/backend/core/Model/Domain/Repositories/ProjectRfqRepository.php)
-#### [NEW] [ProjectBidRepository.php](file:///var/www/html/agsonhos/backend/core/Model/Domain/Repositories/ProjectBidRepository.php)
-#### [NEW] [ProjectBoqRepository.php](file:///var/www/html/agsonhos/backend/core/Model/Domain/Repositories/ProjectBoqRepository.php)
-#### [NEW] [ServiceProviderProfileRepository.php](file:///var/www/html/agsonhos/backend/core/Model/Domain/Repositories/ServiceProviderProfileRepository.php)
+#### [NEW] [ProjectRfqRepository.php](/backend/core/Model/Domain/Repositories/ProjectRfqRepository.php)
+#### [NEW] [ProjectBidRepository.php](/backend/core/Model/Domain/Repositories/ProjectBidRepository.php)
+#### [NEW] [ProjectBoqRepository.php](/backend/core/Model/Domain/Repositories/ProjectBoqRepository.php)
+#### [NEW] [ServiceProviderProfileRepository.php](/backend/core/Model/Domain/Repositories/ServiceProviderProfileRepository.php)
 
 ---
 
 ### 3. Camada de Serviços de Negócio (Services)
 
-#### [NEW] [GeoMatchingService.php](file:///var/www/html/agsonhos/backend/core/Services/Quotation/GeoMatchingService.php)
+#### [NEW] [GeoMatchingService.php](/backend/core/Services/Quotation/GeoMatchingService.php)
 - Implementação da fórmula de Haversine para filtrar prestadores com raio de cobertura compatível com o CEP/local da obra.
 - Despacho de notificações/eventos de novas oportunidades para os prestadores da região.
 
-#### [NEW] [BoqToCartConverterService.php](file:///var/www/html/agsonhos/backend/core/Services/Quotation/BoqToCartConverterService.php)
+#### [NEW] [BoqToCartConverterService.php](/backend/core/Services/Quotation/BoqToCartConverterService.php)
 - Conversão automatizada de itens do BoQ em itens de carrinho (`agsc_cart`) ou pedido de cotação formal (`Add to Quote`).
 - Aplicação das regras de negócio de precificação progressiva por volume (RN015) e tipo de cliente (RN017).
 
@@ -85,37 +85,37 @@ Criação das entidades, DTOs e Repositórios seguindo o padrão de arquitetura 
 
 ### 4. Controladores e Ações Web/API (Controllers & Actions)
 
-#### [NEW] [CustomerRfqActions](file:///var/www/html/agsonhos/backend/core/Controller/Actions/Quotation/Customer/)
+#### [NEW] [CustomerRfqActions](/backend/core/Controller/Actions/Quotation/Customer/)
 - `CreateProjectRfqAction.php`: Formulário e processamento de criação do projeto (RFQ).
 - `ListCustomerProjectsAction.php`: Painel do cliente para acompanhar projetos em andamento.
 - `ShowBidComparisonAction.php`: Painel comparativo de propostas (*Bid Comparison*).
 - `AcceptBidAction.php`: Seleção e contratação do profissional.
 - `ApproveBoqAndAddToCartAction.php`: Validação do BoQ e envio ao carrinho de compras.
 
-#### [NEW] [ProviderRfqActions](file:///var/www/html/agsonhos/backend/core/Controller/Actions/Quotation/Provider/)
+#### [NEW] [ProviderRfqActions](/backend/core/Controller/Actions/Quotation/Provider/)
 - `ListOpportunitiesAction.php`: Feed de projetos disponíveis dentro do raio de atendimento do prestador.
 - `SubmitBidAction.php`: Envio de orçamento de mão de obra.
 - `MaterialTakeoffAction.php`: Ferramenta do prestador (*Takeoff Tool*) para montar a lista de materiais (BoQ).
 - `SearchCatalogItemsAction.php`: Endpoint JSON para busca e seleção rápida de SKUs na montagem do BoQ.
 
-#### [MODIFY] [Routes.php](file:///var/www/html/agsonhos/backend/Config/Routes.php)
+#### [MODIFY] [Routes.php](/backend/Config/Routes.php)
 - Registro das rotas internacionalizadas sob `/{lang}/projetos` e `/{lang}/prestador`.
 
 ---
 
 ### 5. Frontend & Componentes de Interface (Twig, CSS, JS)
 
-#### [NEW] [project-rfq-form.twig](file:///var/www/html/agsonhos/backend/resources/views/pages/quotation/project-rfq-form.twig)
+#### [NEW] [project-rfq-form.twig](/backend/resources/views/pages/quotation/project-rfq-form.twig)
 - Formulário intuitivo para postagem de obra com especificação técnica, upload de fotos/plantas e endereço.
 
-#### [NEW] [bid-comparison.twig](file:///var/www/html/agsonhos/backend/resources/views/pages/quotation/bid-comparison.twig)
+#### [NEW] [bid-comparison.twig](/backend/resources/views/pages/quotation/bid-comparison.twig)
 - Interface de comparação lado a lado de propostas de profissionais (preço, prazo, avaliação).
 
-#### [NEW] [takeoff-tool.twig](file:///var/www/html/agsonhos/backend/resources/views/pages/quotation/takeoff-tool.twig)
+#### [NEW] [takeoff-tool.twig](/backend/resources/views/pages/quotation/takeoff-tool.twig)
 - Interface rica para o prestador montar o *Bill of Quantities*, pesquisando produtos do catálogo, definindo quantidades e visualizando o valor total estimado.
 
-#### [NEW] [quotation.css](file:///var/www/html/agsonhos/public_html/css/custom/quotation.css)
-#### [NEW] [quotation.js](file:///var/www/html/agsonhos/public_html/js/custom/quotation.js)
+#### [NEW] [quotation.css](/public_html/css/custom/quotation.css)
+#### [NEW] [quotation.js](/public_html/js/custom/quotation.js)
 
 ---
 
@@ -160,24 +160,24 @@ Implementação completa dos requisitos funcionais **RF033 a RF037** na platafor
 ## 1. O que foi Implementado
 
 ### 1.1. Importação em Lote de Planilhas (CSV / TSV / Excel) — RF036
-- [BoqSpreadsheetImportService.php](file:///var/www/html/agsonhos/backend/core/Services/Quotation/BoqSpreadsheetImportService.php):
+- [BoqSpreadsheetImportService.php](/backend/core/Services/Quotation/BoqSpreadsheetImportService.php):
   - Detecção automática e tolerante de delimitadores (vírgula, ponto e vírgula, tabulação).
   - Reconhecimento inteligente de cabeçalhos em português e inglês (`Nome do Item`, `Unidade`, `Quantidade`, `Preço Unitário`, `SKU`, `Observações`).
   - Normalização de encodings (UTF-8, ISO-8859-1, Windows-1252) e tratamento numérico resiliente.
   - Inserção em lote na tabela `agsc_project_boq_item` e recálculo automático do valor consolidado do BoQ.
 
 ### 1.2. Desconto Progressivo por Volume — RN015 / RF037
-- [BoqToCartConverterService.php](file:///var/www/html/agsonhos/backend/core/Services/Quotation/BoqToCartConverterService.php):
+- [BoqToCartConverterService.php](/backend/core/Services/Quotation/BoqToCartConverterService.php):
   - Tiers progressivos de desconto por quantidade no BoQ:
     - **10+ unidades**: 5% de desconto
     - **50+ unidades**: 10% de desconto
     - **100+ unidades**: 15% de desconto
     - **250+ unidades**: 20% de desconto
-  - Integração com descontos cadastrados no banco via [ProductDiscountRepository](file:///var/www/html/agsonhos/backend/core/Model/Domain/Repositories/ProductDiscountRepository.php).
+  - Integração com descontos cadastrados no banco via [ProductDiscountRepository](/backend/core/Model/Domain/Repositories/ProductDiscountRepository.php).
   - Cálculo de economia total (*savings*), percentual global de desconto e preços unitários efetivos.
 
 ### 1.3. Esquema de Banco de Dados & Migração
-- [rfq_service_provider_tables.sql](file:///var/www/html/agsonhos/backend/resources/schema/rfq_service_provider_tables.sql):
+- [rfq_service_provider_tables.sql](/backend/resources/schema/rfq_service_provider_tables.sql):
   - `agsc_service_provider_profile`: Perfil profissional, especialidades, raio de cobertura em km e geolocalização.
   - `agsc_project_rfq`: Solicitações de orçamento de projetos emitidas por clientes (RF033).
   - `agsc_project_bid`: Propostas comerciais de mão de obra enviadas pelos prestadores (RF035).
@@ -185,23 +185,23 @@ Implementação completa dos requisitos funcionais **RF033 a RF037** na platafor
   - `agsc_project_boq_item`: Itens e insumos individuais vinculados ao catálogo ou customizados.
 
 ### 1.4. Camada de Domínio & Repositórios
-- **Entidades**: [ProjectRfq](file:///var/www/html/agsonhos/backend/core/Model/Domain/Entities/Quotation/ProjectRfq.php), [ProjectBid](file:///var/www/html/agsonhos/backend/core/Model/Domain/Entities/Quotation/ProjectBid.php), [ProjectBoq](file:///var/www/html/agsonhos/backend/core/Model/Domain/Entities/Quotation/ProjectBoq.php), [ProjectBoqItem](file:///var/www/html/agsonhos/backend/core/Model/Domain/Entities/Quotation/ProjectBoqItem.php) e [ServiceProviderProfile](file:///var/www/html/agsonhos/backend/core/Model/Domain/Entities/Quotation/ServiceProviderProfile.php).
-- **Repositórios**: [ProjectRfqRepository](file:///var/www/html/agsonhos/backend/core/Model/Domain/Repositories/ProjectRfqRepository.php), [ProjectBidRepository](file:///var/www/html/agsonhos/backend/core/Model/Domain/Repositories/ProjectBidRepository.php), [ProjectBoqRepository](file:///var/www/html/agsonhos/backend/core/Model/Domain/Repositories/ProjectBoqRepository.php) e [ServiceProviderProfileRepository](file:///var/www/html/agsonhos/backend/core/Model/Domain/Repositories/ServiceProviderProfileRepository.php).
+- **Entidades**: [ProjectRfq](/backend/core/Model/Domain/Entities/Quotation/ProjectRfq.php), [ProjectBid](/backend/core/Model/Domain/Entities/Quotation/ProjectBid.php), [ProjectBoq](/backend/core/Model/Domain/Entities/Quotation/ProjectBoq.php), [ProjectBoqItem](/backend/core/Model/Domain/Entities/Quotation/ProjectBoqItem.php) e [ServiceProviderProfile](/backend/core/Model/Domain/Entities/Quotation/ServiceProviderProfile.php).
+- **Repositórios**: [ProjectRfqRepository](/backend/core/Model/Domain/Repositories/ProjectRfqRepository.php), [ProjectBidRepository](/backend/core/Model/Domain/Repositories/ProjectBidRepository.php), [ProjectBoqRepository](/backend/core/Model/Domain/Repositories/ProjectBoqRepository.php) e [ServiceProviderProfileRepository](/backend/core/Model/Domain/Repositories/ServiceProviderProfileRepository.php).
 
 ### 1.5. Interface e Componentes Visuais (Twig, CSS, JS)
-- [takeoff-tool.twig](file:///var/www/html/agsonhos/backend/resources/views/pages/quotation/takeoff-tool.twig): Área de upload de arquivos CSV/TSV com feedback em tempo real e autocomplete de SKUs.
-- [customer-boq-view.twig](file:///var/www/html/agsonhos/backend/resources/views/pages/quotation/customer-boq-view.twig): Banner de economia com cálculo detalhado dos descontos progressivos por volume (RN015) e conversão para o carrinho (*Add to Quote*).
-- [project-rfq-form.twig](file:///var/www/html/agsonhos/backend/resources/views/pages/quotation/project-rfq-form.twig): Cadastro de projeto com CEP e endereço para geolocalização.
-- [bid-comparison.twig](file:///var/www/html/agsonhos/backend/resources/views/pages/quotation/bid-comparison.twig): Comparação analítica de orçamentos de mão de obra.
-- [provider-opportunities.twig](file:///var/www/html/agsonhos/backend/resources/views/pages/quotation/provider-opportunities.twig): Feed de oportunidades filtrado por raio de atendimento em km (RF034).
-- [quotation.css](file:///var/www/html/agsonhos/public_html/css/custom/quotation.css) e [quotation.js](file:///var/www/html/agsonhos/public_html/js/custom/quotation.js): Estilização e scripts de reatividade AJAX.
+- [takeoff-tool.twig](/backend/resources/views/pages/quotation/takeoff-tool.twig): Área de upload de arquivos CSV/TSV com feedback em tempo real e autocomplete de SKUs.
+- [customer-boq-view.twig](/backend/resources/views/pages/quotation/customer-boq-view.twig): Banner de economia com cálculo detalhado dos descontos progressivos por volume (RN015) e conversão para o carrinho (*Add to Quote*).
+- [project-rfq-form.twig](/backend/resources/views/pages/quotation/project-rfq-form.twig): Cadastro de projeto com CEP e endereço para geolocalização.
+- [bid-comparison.twig](/backend/resources/views/pages/quotation/bid-comparison.twig): Comparação analítica de orçamentos de mão de obra.
+- [provider-opportunities.twig](/backend/resources/views/pages/quotation/provider-opportunities.twig): Feed de oportunidades filtrado por raio de atendimento em km (RF034).
+- [quotation.css](/public_html/css/custom/quotation.css) e [quotation.js](/public_html/js/custom/quotation.js): Estilização e scripts de reatividade AJAX.
 
 ---
 
 ## 2. Validação e Testes Automatizados
 
 ### 2.1. Testes Unitários Automatizados (PHPUnit)
-Arquivo: [QuotationAndTakeoffValidationTest.php](file:///var/www/html/agsonhos/tests/Validation/QuotationAndTakeoffValidationTest.php)
+Arquivo: [QuotationAndTakeoffValidationTest.php](/tests/Validation/QuotationAndTakeoffValidationTest.php)
 
 Cenários cobertos:
 1. `testHaversineDistanceCalculation`: Validação de cálculo geodésico Haversine.
@@ -235,8 +235,8 @@ Implementação completa dos requisitos funcionais **RF033 a RF037** na platafor
   - Ao gerar sessões criptograficamente seguras com `bin2hex(random_bytes(32))` (64 caracteres) ou hashes modernos de sessão, o MySQL em strict mode (`STRICT_TRANS_TABLES`) bloqueava a inserção disparando o erro: `SQLSTATE[22001]: String data, right truncated: 1406 Data too long for column 'session_id'`.
 - **Correções Aplicadas**:
   - **Banco de Dados**: Alterado o tipo da coluna `session_id` na tabela `agsc_cart` para `VARCHAR(255) NULL DEFAULT NULL`.
-  - [install.sql](file:///var/www/html/agsonhos/backend/resources/schema/install.sql): Atualizado o DDL da tabela `agsc_cart` com `session_id varchar(255)` e índice composto otimizado `KEY cart_id (customer_id, session_id(191), product_id, subscription_plan_id)`.
-  - [CartMapper.php](file:///var/www/html/agsonhos/backend/core/Mappers/EntityMappers/CartMapper.php): Inserida proteção defensiva `substr($sessionId, 0, 255)`.
+  - [install.sql](/backend/resources/schema/install.sql): Atualizado o DDL da tabela `agsc_cart` com `session_id varchar(255)` e índice composto otimizado `KEY cart_id (customer_id, session_id(191), product_id, subscription_plan_id)`.
+  - [CartMapper.php](/backend/core/Mappers/EntityMappers/CartMapper.php): Inserida proteção defensiva `substr($sessionId, 0, 255)`.
 
 ---
 

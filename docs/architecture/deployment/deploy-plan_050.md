@@ -28,14 +28,14 @@ Este plano detalha as etapas necessárias para integrar a proteção anti-CSRF n
 
 ### Dependências (Composer)
 
-#### [MODIFY] [composer.json](file:///var/www/html/agsonhos/composer.json)
+#### [MODIFY] [composer.json](/composer.json)
 - Adicionar a dependência `"slim/csrf": "^1.4"` via comando `composer require slim/csrf`.
 
 ---
 
 ### Middleware & Serviços Backend
 
-#### [NEW] [CsrfGuardMiddleware.php](file:///var/www/html/agsonhos/core/Auth/Middleware/CsrfGuardMiddleware.php)
+#### [NEW] [CsrfGuardMiddleware.php](/core/Auth/Middleware/CsrfGuardMiddleware.php)
 - Criar a classe utilitária de middleware em `core/Auth/Middleware/CsrfGuardMiddleware.php`.
 - Encapsular a instância do `Slim\Csrf\Guard` com fábrica de resposta PSR-7.
 - Definir um **Failure Handler customizado**:
@@ -43,17 +43,17 @@ Este plano detalha as etapas necessárias para integrar a proteção anti-CSRF n
   - Se a requisição for formulário padrão HTTP POST: Renderiza ou retorna página 400 Bad Request com aviso de expiração de sessão/token.
 - Registrar os tokens gerados (`csrf_name`, `csrf_value`, `csrf_keys`) no objeto `Twig\Environment` global para disponibilização automática em todas as views Twig.
 
-#### [MODIFY] [index.php (Public Catalog)](file:///var/www/html/agsonhos/public_html/index.php)
+#### [MODIFY] [index.php (Public Catalog)](/public_html/index.php)
 - Instanciar e adicionar o `CsrfGuardMiddleware` à pilha do Slim App (`$app->add(...)`).
 
-#### [MODIFY] [index.php (Admin)](file:///var/www/html/agsonhos/public_html/LPDHED2dC7Gjrg2b/index.php)
+#### [MODIFY] [index.php (Admin)](/public_html/LPDHED2dC7Gjrg2b/index.php)
 - Registrar o `CsrfGuardMiddleware` para o escopo do painel administrativo.
 
 ---
 
 ### Camada de Apresentação (Twig Views & Metatags)
 
-#### [MODIFY] [base.html.twig](file:///var/www/html/agsonhos/resources/views/layouts/base.html.twig)
+#### [MODIFY] [base.html.twig](/resources/views/layouts/base.html.twig)
 - Adicionar meta-tags globais no `<head>`:
   ```html
   <meta name="csrf-name" content="{{ csrf.name }}">
@@ -62,22 +62,22 @@ Este plano detalha as etapas necessárias para integrar a proteção anti-CSRF n
 
 #### [MODIFY] Formulários de Usuário (Storefront)
 Adicionar os campos oculta no topo de cada `<form method="POST">`:
-- [login.twig](file:///var/www/html/agsonhos/resources/views/pages/users/login.twig)
-- [register.twig](file:///var/www/html/agsonhos/resources/views/pages/users/register.twig)
-- [checkout.twig](file:///var/www/html/agsonhos/resources/views/pages/cart/checkout.twig)
-- [account/edit.twig](file:///var/www/html/agsonhos/resources/views/pages/users/accounts/edit.twig)
-- [account/password.twig](file:///var/www/html/agsonhos/resources/views/pages/users/accounts/password.twig)
-- [account/address_form.twig](file:///var/www/html/agsonhos/resources/views/pages/users/accounts/address_form.twig)
+- [login.twig](/resources/views/pages/users/login.twig)
+- [register.twig](/resources/views/pages/users/register.twig)
+- [checkout.twig](/resources/views/pages/cart/checkout.twig)
+- [account/edit.twig](/resources/views/pages/users/accounts/edit.twig)
+- [account/password.twig](/resources/views/pages/users/accounts/password.twig)
+- [account/address_form.twig](/resources/views/pages/users/accounts/address_form.twig)
 
 #### [MODIFY] Formulários do Painel Administrativo
-- [admin/auth/login.html.twig](file:///var/www/html/agsonhos/resources/views/admin/auth/login.html.twig)
+- [admin/auth/login.html.twig](/resources/views/admin/auth/login.html.twig)
 - Formulários de cadastro/edição de produtos, categorias, fornecedores e clientes no Admin.
 
 ---
 
 ### Scripts JavaScript Client-Side
 
-#### [MODIFY] [form-validator.js](file:///var/www/html/agsonhos/public_html/js/custom/form-validator.js)
+#### [MODIFY] [form-validator.js](/public_html/js/custom/form-validator.js)
 - Atualizar a interceptação de envios AJAX para verificar se o formulário possui os campos `csrf_name` e `csrf_value`.
 - Se o formulário não possuir as entradas `<input>`, injetá-las dinamicamente a partir das `<meta>` tags globais antes do envio com `FormData`.
 - Caso o servidor retorne status `400` por CSRF inválido, exibir o alerta de warning e sugerir a atualização da página.
@@ -121,10 +121,10 @@ A proteção contra ataques de **Cross-Site Request Forgery (CSRF)** foi impleme
 ## 🔒 Alterações Realizadas
 
 ### 1. Dependências do Projeto
-- **[composer.json](file:///var/www/html/agsonhos/composer.json)**: Instalada a biblioteca [`slim/csrf`](file:///var/www/html/agsonhos/vendor/slim/csrf) e atualizado o autoload de classes com `composer dump-autoload`.
+- **[composer.json](/composer.json)**: Instalada a biblioteca [`slim/csrf`](/vendor/slim/csrf) e atualizado o autoload de classes com `composer dump-autoload`.
 
 ### 2. Middleware & Tratamento de Erros
-- **[CsrfGuardMiddleware.php](file:///var/www/html/agsonhos/core/Auth/Middleware/CsrfGuardMiddleware.php)** (`NEW`):
+- **[CsrfGuardMiddleware.php](/core/Auth/Middleware/CsrfGuardMiddleware.php)** (`NEW`):
   - Encapsula a classe `Slim\Csrf\Guard` com modo de token persistente para suporte fluido a requisições AJAX e navegação em múltiplas abas.
   - Implementado **Handler de Falha Customizado**:
     - **Requisições AJAX (`XMLHttpRequest` / `JSON`)**: Retorna status `400 Bad Request` com payload JSON estruturado:
@@ -139,19 +139,19 @@ A proteção contra ataques de **Cross-Site Request Forgery (CSRF)** foi impleme
   - Injeta os tokens `csrf.name`, `csrf.value`, `csrf.keys.name` e `csrf.keys.value` automaticamente como variáveis globais no ambiente do `Twig`.
 
 ### 3. Registro no Bootstrap da Aplicação
-- **[public_html/index.php](file:///var/www/html/agsonhos/public_html/index.php)**: Registrado o `CsrfGuardMiddleware` para o catálogo/loja pública.
-- **[public_html/LPDHED2dC7Gjrg2b/index.php](file:///var/www/html/agsonhos/public_html/LPDHED2dC7Gjrg2b/index.php)**: Registrado o `CsrfGuardMiddleware` para o painel administrativo.
+- **[public_html/index.php](/public_html/index.php)**: Registrado o `CsrfGuardMiddleware` para o catálogo/loja pública.
+- **[public_html/LPDHED2dC7Gjrg2b/index.php](/public_html/LPDHED2dC7Gjrg2b/index.php)**: Registrado o `CsrfGuardMiddleware` para o painel administrativo.
 
 ### 4. Camada de Apresentação (Twig Meta-Tags & Forms)
-- **[base.html.twig](file:///var/www/html/agsonhos/resources/views/base.html.twig)** e **[admin/layouts/base.html.twig](file:///var/www/html/agsonhos/resources/views/admin/layouts/base.html.twig)**: Adicionadas as `<meta>` tags globais no `<head>` com os valores dos tokens e os nomes das chaves esperadas.
+- **[base.html.twig](/resources/views/base.html.twig)** e **[admin/layouts/base.html.twig](/resources/views/admin/layouts/base.html.twig)**: Adicionadas as `<meta>` tags globais no `<head>` com os valores dos tokens e os nomes das chaves esperadas.
 - Injetados os campos `<input type="hidden">` de validação nos formulários principais:
-  - **[form-login.twig](file:///var/www/html/agsonhos/resources/views/components/organisms/form-login.twig)**
-  - **[register.twig](file:///var/www/html/agsonhos/resources/views/pages/users/register.twig)**
-  - **[admin/auth/login.html.twig](file:///var/www/html/agsonhos/resources/views/admin/auth/login.html.twig)**
-  - Formulário de troca de idioma no topo do admin em **[admin/layouts/base.html.twig](file:///var/www/html/agsonhos/resources/views/admin/layouts/base.html.twig)**.
+  - **[form-login.twig](/resources/views/components/organisms/form-login.twig)**
+  - **[register.twig](/resources/views/pages/users/register.twig)**
+  - **[admin/auth/login.html.twig](/resources/views/admin/auth/login.html.twig)**
+  - Formulário de troca de idioma no topo do admin em **[admin/layouts/base.html.twig](/resources/views/admin/layouts/base.html.twig)**.
 
 ### 5. Client-Side AJAX Automático
-- **[form-validator.js](file:///var/www/html/agsonhos/public_html/js/custom/form-validator.js)**:
+- **[form-validator.js](/public_html/js/custom/form-validator.js)**:
   - Atualizada a função de submissão de formulários `data-oc-toggle="ajax"` para verificar e anexar os tokens CSRF das meta-tags automaticamente ao payload `FormData` caso o formulário não contenha os campos ocultos.
   - Garantida a propagação dos tokens na sincronização do carrinho de visitante pós-login (`/api/carrinho/sincronizar`).
 
@@ -172,7 +172,7 @@ Executamos testes funcionais integrados via script automatizado com os seguintes
 
 ## 📈 Próximos Passos Recomendados
 
-As próximas etapas de segurança registradas no [Guia Técnico de Recomendações e Diretrizes de Segurança](file:///var/www/html/agsonhos/docs/architecture/security_recommendations.md) podem ser agendadas em sprints futuras:
+As próximas etapas de segurança registradas no [Guia Técnico de Recomendações e Diretrizes de Segurança](/docs/architecture/security_recommendations.md) podem ser agendadas em sprints futuras:
 1. **Adição de HTTP Security Headers** via `SecurityHeadersMiddleware`.
 2. **Flag `Secure` Dinâmica nos Cookies de Sessão** e regeneração de ID pós-autenticação.
 3. **Rate Limiting baseado em Redis** por IP para proteção de APIs e formulários de autenticação.

@@ -11,7 +11,7 @@
 | **Atores Secundários** | Sistema Alpha Engine |
 | **Tipo** | Condução / Parametrização Fiscal & Local |
 | **Frequência de Uso** | Baixa |
-| **Rastreabilidade** | **RF:** [RF020](file:///var/www/html/agsonhos/docs/requirements/functional/functional_requirements.yaml) (Faturamento/NF-e e tributação), [RF023](file:///var/www/html/agsonhos/docs/requirements/functional/functional_requirements.yaml) (Gestão administrativa)<br>**RN:** [RN002](file:///var/www/html/agsonhos/docs/requirements/business_rules/business_rules.yaml) (Unidades de peso/medida para frete), [RN012](file:///var/www/html/agsonhos/docs/requirements/business_rules/business_rules.yaml) (Emissão fiscal)<br>**RNF:** [RNF003](file:///var/www/html/agsonhos/docs/requirements/non_functional/non_functional_requirements.yaml) (Conformidade tributária) |
+| **Rastreabilidade** | **RF:** [RF020](/docs/requirements/functional/functional_requirements.yaml) (Faturamento/NF-e e tributação), [RF023](/docs/requirements/functional/functional_requirements.yaml) (Gestão administrativa)<br>**RN:** [RN002](/docs/requirements/business_rules/business_rules.yaml) (Unidades de peso/medida para frete), [RN012](/docs/requirements/business_rules/business_rules.yaml) (Emissão fiscal)<br>**RNF:** [RNF003](/docs/requirements/non_functional/non_functional_requirements.yaml) (Conformidade tributária) |
 
 ---
 

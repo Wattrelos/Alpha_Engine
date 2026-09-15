@@ -11,7 +11,7 @@
 | **Atores Secundários** | Sistema Alpha Engine |
 | **Tipo** | Condução / Favoritos |
 | **Frequência de Uso** | Média |
-| **Rastreabilidade** | **RF:** [RF009](file:///var/www/html/agsonhos/docs/requirements/functional/functional_requirements.yaml) (Carrinho e seleção), [RF012](file:///var/www/html/agsonhos/docs/requirements/functional/functional_requirements.yaml) (PDP)<br>**RNF:** [RNF001](file:///var/www/html/agsonhos/docs/requirements/non_functional/non_functional_requirements.yaml) (Interatividade e feedback instantâneo) |
+| **Rastreabilidade** | **RF:** [RF009](/docs/requirements/functional/functional_requirements.yaml) (Carrinho e seleção), [RF012](/docs/requirements/functional/functional_requirements.yaml) (PDP)<br>**RNF:** [RNF001](/docs/requirements/non_functional/non_functional_requirements.yaml) (Interatividade e feedback instantâneo) |
 
 ---
 

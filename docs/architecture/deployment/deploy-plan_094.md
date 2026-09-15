@@ -32,7 +32,7 @@ Este plano descreve a implementação das 3 frentes de evolução técnica para 
    - Interceptar simulações de frete e regras de cálculo dinâmico.
 
 3. **Automação de CI/CD com GitHub Actions**:
-   - Modernizar o workflow [`.github/workflows/playwright.yml`](file:///var/www/html/agsonhos/.github/workflows/playwright.yml).
+   - Modernizar o workflow [`.github/workflows/playwright.yml`](/.github/workflows/playwright.yml).
    - Configurar pipeline com passos para:
      - Validação estática / PHPUnit (backend)
      - Validação BDD Gherkin / Behat (regras de negócio)
@@ -67,7 +67,7 @@ e2e/
 ## 🛠️ Detalhamento das Alterações Propostas
 
 ### 1. Helpers de Interceptação de Rede (`e2e/helpers/mock-routes.ts`)
-#### [NEW] [`e2e/helpers/mock-routes.ts`](file:///var/www/html/agsonhos/e2e/helpers/mock-routes.ts)
+#### [NEW] [`e2e/helpers/mock-routes.ts`](/e2e/helpers/mock-routes.ts)
 - Funções utilitárias:
   - `mockViaCepSuccess(page, cep, data)`: Retorna payload padrão (Logradouro, Bairro, Cidade, UF) instantaneamente.
   - `mockViaCepNotFound(page, cep)`: Retorna `{ erro: "true" }`.
@@ -76,7 +76,7 @@ e2e/
 ---
 
 ### 2. Especificações de Testes de Rede & Resiliência
-#### [NEW] [`e2e/specs/network/viacep-mock.spec.ts`](file:///var/www/html/agsonhos/e2e/specs/network/viacep-mock.spec.ts)
+#### [NEW] [`e2e/specs/network/viacep-mock.spec.ts`](/e2e/specs/network/viacep-mock.spec.ts)
 - Testa o simulador de frete / formulários de endereço:
   - Preenchimento automático com CEP válido mockado.
   - Exibição de toast / feedback amigável para CEP inexistente.
@@ -85,7 +85,7 @@ e2e/
 ---
 
 ### 3. Especificações de Regressão Visual (VRT)
-#### [NEW] [`e2e/specs/visual/home-visual.spec.ts`](file:///var/www/html/agsonhos/e2e/specs/visual/home-visual.spec.ts)
+#### [NEW] [`e2e/specs/visual/home-visual.spec.ts`](/e2e/specs/visual/home-visual.spec.ts)
 - Validação visual com `toHaveScreenshot()`:
   - Snapshot do Header e Barra de Navegação.
   - Snapshot do Rodapé Institucional.
@@ -95,11 +95,11 @@ e2e/
 ---
 
 ### 4. Scripts e Configurações
-#### [MODIFY] [`playwright.config.ts`](file:///var/www/html/agsonhos/playwright.config.ts)
+#### [MODIFY] [`playwright.config.ts`](/playwright.config.ts)
 - Configurar diretório de snapshots visuais (`snapshotPathTemplate`).
 - Configurar tolerância padrão para testes visuais (`maxDiffPixelRatio: 0.05`).
 
-#### [MODIFY] [`package.json`](file:///var/www/html/agsonhos/package.json)
+#### [MODIFY] [`package.json`](/package.json)
 - Adicionar scripts específicos:
   - `"test:e2e:visual"`: `playwright test e2e/specs/visual`
   - `"test:e2e:visual:update"`: `playwright test e2e/specs/visual --update-snapshots`
@@ -108,7 +108,7 @@ e2e/
 ---
 
 ### 5. Pipeline GitHub Actions
-#### [MODIFY] [`.github/workflows/playwright.yml`](file:///var/www/html/agsonhos/.github/workflows/playwright.yml)
+#### [MODIFY] [`.github/workflows/playwright.yml`](/.github/workflows/playwright.yml)
 - Adicionar etapas de build, setup de dependências Node.js, execução de testes E2E e geração de artefatos de CI.
 
 ---
@@ -143,23 +143,23 @@ Implementação e validação completa das 3 frentes de evolução técnica para
 
 ### 1. Testes de Regressão Visual (Visual Regression Testing - VRT)
 - **Snapshots Comparativos**: Implementados testes que validam a consistência de pixels com `expect(locator).toHaveScreenshot()` para:
-  - [`e2e/specs/visual/home-visual.spec.ts`](file:///var/www/html/agsonhos/e2e/specs/visual/home-visual.spec.ts): Header/Barra de Navegação e Rodapé Institucional.
-  - [`e2e/specs/visual/components-visual.spec.ts`](file:///var/www/html/agsonhos/e2e/specs/visual/components-visual.spec.ts): Formulário de Login e Card de Produto no Catálogo.
-- **Configuração de Tolerância**: Em [`playwright.config.ts`](file:///var/www/html/agsonhos/playwright.config.ts), configurado `maxDiffPixelRatio: 0.05` e `animations: 'disabled'`.
+  - [`e2e/specs/visual/home-visual.spec.ts`](/e2e/specs/visual/home-visual.spec.ts): Header/Barra de Navegação e Rodapé Institucional.
+  - [`e2e/specs/visual/components-visual.spec.ts`](/e2e/specs/visual/components-visual.spec.ts): Formulário de Login e Card de Produto no Catálogo.
+- **Configuração de Tolerância**: Em [`playwright.config.ts`](/playwright.config.ts), configurado `maxDiffPixelRatio: 0.05` e `animations: 'disabled'`.
 - **Scripts NPM**:
   - `npm run test:e2e:visual`: Executa a suíte de regressão visual.
   - `npm run test:e2e:visual:update`: Atualiza os snapshots de referência visual.
 
 ### 2. Mocking & Interceptação de Rede (Network Resiliency)
-- **Utilitários de Mock**: Criado [`e2e/helpers/mock-routes.ts`](file:///var/www/html/agsonhos/e2e/helpers/mock-routes.ts) com funções para interceptar chamadas ao ViaCEP:
+- **Utilitários de Mock**: Criado [`e2e/helpers/mock-routes.ts`](/e2e/helpers/mock-routes.ts) com funções para interceptar chamadas ao ViaCEP:
   - `mockViaCepSuccess`: Retorna payload válido imediatamente sem latência de rede externa.
   - `mockViaCepNotFound`: Retorna `{ erro: "true" }`.
   - `mockViaCepFailure`: Simula queda de conexão ou erro de servidor.
-- **Testes de Resiliência**: Criado [`e2e/specs/network/viacep-mock.spec.ts`](file:///var/www/html/agsonhos/e2e/specs/network/viacep-mock.spec.ts) validando o cálculo de frete por CEP na página de produto (PDP) para casos de sucesso, CEP inexistente e fallback gracioso em queda de conexão.
+- **Testes de Resiliência**: Criado [`e2e/specs/network/viacep-mock.spec.ts`](/e2e/specs/network/viacep-mock.spec.ts) validando o cálculo de frete por CEP na página de produto (PDP) para casos de sucesso, CEP inexistente e fallback gracioso em queda de conexão.
 - **Script NPM**: `npm run test:e2e:network`.
 
 ### 3. Pipeline de Integração Contínua (GitHub Actions)
-- **Workflow Otimizado**: [`..github/workflows/playwright.yml`](file:///var/www/html/agsonhos/.github/workflows/playwright.yml) configurado com cache do Node.js, instalação de dependências de sistema do Chromium, execução de testes e upload de relatórios HTML e traces como artefatos de build.
+- **Workflow Otimizado**: [`..github/workflows/playwright.yml`](/.github/workflows/playwright.yml) configurado com cache do Node.js, instalação de dependências de sistema do Chromium, execução de testes e upload de relatórios HTML e traces como artefatos de build.
 
 ---
 

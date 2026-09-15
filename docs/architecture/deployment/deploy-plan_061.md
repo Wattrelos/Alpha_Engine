@@ -45,7 +45,7 @@ graph TD
 
 ### 1. Middleware & Context Ingestion
 
-#### [MODIFY] [AdminSessionMiddleware.php](file:///var/www/html/agsonhos/core/Auth/Middleware/AdminSessionMiddleware.php)
+#### [MODIFY] [AdminSessionMiddleware.php](/core/Auth/Middleware/AdminSessionMiddleware.php)
 - Atualizar `ROUTE_PERMISSION_MAP` para incluir os mapeamentos das novas rotas:
   - `'admin.user.list' => 'user/user'`
   - `'admin.user.create' => 'user/user'`
@@ -63,10 +63,10 @@ graph TD
 
 ### 2. Dashboard Action & Template
 
-#### [MODIFY] [ViewDashboardAction.php](file:///var/www/html/agsonhos/core/Admin/Controllers/Actions/Dashboard/ViewDashboardAction.php)
+#### [MODIFY] [ViewDashboardAction.php](/core/Admin/Controllers/Actions/Dashboard/ViewDashboardAction.php)
 - Garantir a passagem das permissões e contexto do usuário logado para a renderização do template do dashboard.
 
-#### [MODIFY] [index.html.twig](file:///var/www/html/agsonhos/resources/views/admin/pages/dashboard/index.html.twig)
+#### [MODIFY] [index.html.twig](/resources/views/admin/pages/dashboard/index.html.twig)
 - Adicionar a seção de **Atalhos Rápidos do Sistema** com grid responsivo de cartões interativos.
 - Aplicar condicionais Twig `{% if logged_admin.user_group_id == 1 or 'modulo' in logged_admin_permissions.access %}` em cada atalho:
   - 👥 **Funcionários**: `/admin/usuarios` (`user/user`)
@@ -83,7 +83,7 @@ graph TD
 ## Verification Plan
 
 ### Automated Tests
-- Atualizar e executar o script de testes [`teste_user_management.php`](file:///var/www/html/agsonhos/tests/security_tests/teste_user_management.php) para validar a resolução de permissões por grupo e rotas admin.
+- Atualizar e executar o script de testes [`teste_user_management.php`](/tests/security_tests/teste_user_management.php) para validar a resolução de permissões por grupo e rotas admin.
 
 ### Manual Verification
 - Acessar `/admin/dashboard` com perfil **Super Administrator** e verificar se todos os atalhos são renderizados.
@@ -98,18 +98,18 @@ graph TD
 
 # Walkthrough - Atalhos Rápidos no Dashboard Condicionados ao Papel (`UserGroup`)
 
-Concluímos a inclusão da seção de **Atalhos Rápidos do Sistema (Quick Actions Grid)** no Dashboard Administrativo ([`index.html.twig`](file:///var/www/html/agsonhos/resources/views/admin/pages/dashboard/index.html.twig)), com condicionamento dinâmico baseado no papel (`UserGroup`) do colaborador logado.
+Concluímos a inclusão da seção de **Atalhos Rápidos do Sistema (Quick Actions Grid)** no Dashboard Administrativo ([`index.html.twig`](/resources/views/admin/pages/dashboard/index.html.twig)), com condicionamento dinâmico baseado no papel (`UserGroup`) do colaborador logado.
 
 ## Alterações Realizadas
 
 ### 1. Injeção de Contexto & Segurança Middleware
-- **[AdminSessionMiddleware.php](file:///var/www/html/agsonhos/core/Auth/Middleware/AdminSessionMiddleware.php)**:
+- **[AdminSessionMiddleware.php](/core/Auth/Middleware/AdminSessionMiddleware.php)**:
   - Adicionado o mapeamento de permissões para as rotas de usuários (`user/user`) e papéis (`user/user_group`).
   - Injetada a variável global `logged_admin_permissions` no Twig com o mapa de permissões de leitura (`access`) e escrita (`modify`).
   - Aplicado o bypass de superuser para o grupo `user_group_id = 1` (Super Administrator).
 
 ### 2. Grid de Atalhos Rápidos no Dashboard
-- **[index.html.twig](file:///var/www/html/agsonhos/resources/views/admin/pages/dashboard/index.html.twig)**:
+- **[index.html.twig](/resources/views/admin/pages/dashboard/index.html.twig)**:
   - Adicionado o grid de atalhos logo abaixo do painel de métricas.
   - Aplicadas validações Twig contextuais para exibição dinâmica:
     - 👥 **Funcionários** (`/admin/usuarios`): `user/user`
@@ -123,6 +123,6 @@ Concluímos a inclusão da seção de **Atalhos Rápidos do Sistema (Quick Actio
 ---
 
 ## Verificação e Resultado
-- Executado o script [`teste_user_management.php`](file:///var/www/html/agsonhos/tests/security_tests/teste_user_management.php) e a suíte de segurança completa.
+- Executado o script [`teste_user_management.php`](/tests/security_tests/teste_user_management.php) e a suíte de segurança completa.
 - Verificado o comportamento responsivo e a ocultação automática de cartões de ação para perfis sem permissão de acesso.
 

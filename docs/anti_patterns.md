@@ -40,7 +40,7 @@ Com a introdução do novo `BaseController` e do `TranslationRepository`, o sist
 
 ### O Problema Original:
 No código legado, o `store_id = 1` é usado como identificador da **loja principal** (default), porém **nunca existe um registro correspondente com `id = 0` na tabela `tbkk_store`**. Isso cria um estado inconsistente:
-- A tabela `tbkk_setting` usa `store_id = 1` para configurações globais/padrão (confirmado em [`SettingMapper`](file:///var/www/html/agsonhos/core/Mappers/EntityMappers/SettingMapper.php#L24)).
+- A tabela `tbkk_setting` usa `store_id = 1` para configurações globais/padrão (confirmado em [`SettingMapper`](/core/Mappers/EntityMappers/SettingMapper.php#L24)).
 - Toda a cadeia de repositories (`AbstractRepository`, `CartRepository`, `CustomerRepository`, etc.) faz fallback para `?? 0`, assumindo que `0` representa "a loja principal" sem que esse `0` exista como entidade real.
 - Não é possível criar uma `FOREIGN KEY` de `tbkk_setting.store_id → tbkk_store.id` sem violar a integridade referencial, já que nenhuma linha com `id = 0` existe (ou pode existir, pois é `AUTO_INCREMENT`).
 - O `SettingMapper::findByStoreId()` faz `WHERE store_id = 1 OR store_id = ?`, ou seja, hardcoda a inexistência de `id=0` como loja global — isso é um vazamento do legado para dentro da Alpha Engine.
@@ -64,14 +64,14 @@ A abordagem correta — e adotada — é **manter ao menos um registro válido e
 2. ✅ **`tbkk_setting` migrado**: Registros de configurações associados a `store_id = 1`. FK `fk_setting_store` criada: `tbkk_setting.store_id → tbkk_store.id ON UPDATE CASCADE`.
 3. ✅ **`SettingMapper::findByStoreId()`** simplificado: `WHERE store_id = ?`.
 4. ✅ **Resolução unificada de `store_id`**: Centralizada em `AbstractRepository::getStoreId()` com fallback estrito para a loja principal `1`:
-   - [`AbstractRepository.php`](file:///var/www/html/agsonhos/core/Model/Domain/Repositories/AbstractRepository.php)
-   - [`WishlistRepository.php`](file:///var/www/html/agsonhos/core/Model/Domain/Repositories/WishlistRepository.php)
-   - [`CartRepository.php`](file:///var/www/html/agsonhos/core/Model/Domain/Repositories/CartRepository.php)
-   - [`SettingRepository.php`](file:///var/www/html/agsonhos/core/Model/Domain/Repositories/SettingRepository.php)
-   - [`BaseController.php`](file:///var/www/html/agsonhos/core/Controller/BaseController.php)
-   - [`ThemeMapper.php`](file:///var/www/html/agsonhos/core/Mappers/EntityMappers/ThemeMapper.php)
-   - [`SubmitCheckoutAction.php`](file:///var/www/html/agsonhos/core/Controller/Actions/Cart/SubmitCheckoutAction.php)
-5. ✅ **Saneamento de `store_id = 0` residual**: Corrigida a carga do bootstrap em [`AppBootstrap.php`](file:///var/www/html/agsonhos/Containers/AppBootstrap.php), menu institucional em [`index.php`](file:///var/www/html/agsonhos/public_html/index.php) e resolvedor de SEO em [`ShowInformationAction.php`](file:///var/www/html/agsonhos/core/Controller/Actions/Information/ShowInformationAction.php) para referenciar a loja principal real `store_id = 1`.
+   - [`AbstractRepository.php`](/core/Model/Domain/Repositories/AbstractRepository.php)
+   - [`WishlistRepository.php`](/core/Model/Domain/Repositories/WishlistRepository.php)
+   - [`CartRepository.php`](/core/Model/Domain/Repositories/CartRepository.php)
+   - [`SettingRepository.php`](/core/Model/Domain/Repositories/SettingRepository.php)
+   - [`BaseController.php`](/core/Controller/BaseController.php)
+   - [`ThemeMapper.php`](/core/Mappers/EntityMappers/ThemeMapper.php)
+   - [`SubmitCheckoutAction.php`](/core/Controller/Actions/Cart/SubmitCheckoutAction.php)
+5. ✅ **Saneamento de `store_id = 0` residual**: Corrigida a carga do bootstrap em [`AppBootstrap.php`](/Containers/AppBootstrap.php), menu institucional em [`index.php`](/public_html/index.php) e resolvedor de SEO em [`ShowInformationAction.php`](/core/Controller/Actions/Information/ShowInformationAction.php) para referenciar a loja principal real `store_id = 1`.
 
 ---
 - Agora, quando o cliente instala o software, terá que cadastrar, ao menos, uma loja (store_id=1 ou outra, mas pelo menos 1).
@@ -97,12 +97,12 @@ As novas tabelas geográficas (`tbkk_geo_country`, `tbkk_geo_zone` e `tbkk_geo_c
 
 ### Classes e Repositórios Mortos (NÃO UTILIZAR):
 Os arquivos antigos foram renomeados com o sufixo `Deprecated.txt`. Eles representam **código morto** e não devem ser utilizados em nenhuma hipótese:
-* `core/Model/Domain/Entities/CountryDeprecated.txt` (Substituído por [`Country.php`](file:///var/www/html/agsonhos/core/Model/Domain/Entities/Geo/Country.php))
+* `core/Model/Domain/Entities/CountryDeprecated.txt` (Substituído por [`Country.php`](/core/Model/Domain/Entities/Geo/Country.php))
 * `core/Model/Domain/Entities/CountryDescriptionDeprecated.txt` (Descontinuado)
-* `core/Model/Domain/Repositories/AddressRepositoryDeprecated.txt` (Substituído por [`CustomerAddressesRepository.php`](file:///var/www/html/agsonhos/core/Model/Domain/Repositories/CustomerAddressesRepository.php))
-* `core/Model/Domain/Repositories/ZoneRepositoryDeprecated.txt` (Substituído por [`GeoZoneRepository.php`](file:///var/www/html/agsonhos/core/Model/Domain/Repositories/GeoZoneRepository.php))
-* `core/Model/Domain/Repositories/CountryRepositoryDeprecated.txt` (Substituído por [`GeoCountryMapper.php`](file:///var/www/html/agsonhos/core/Mappers/EntityMappers/GeoCountryMapper.php))
-* `core/Mappers/EntityMappers/CountryMapperDeprecated.txt` (Substituído por [`GeoCountryMapper.php`](file:///var/www/html/agsonhos/core/Mappers/EntityMappers/GeoCountryMapper.php))
+* `core/Model/Domain/Repositories/AddressRepositoryDeprecated.txt` (Substituído por [`CustomerAddressesRepository.php`](/core/Model/Domain/Repositories/CustomerAddressesRepository.php))
+* `core/Model/Domain/Repositories/ZoneRepositoryDeprecated.txt` (Substituído por [`GeoZoneRepository.php`](/core/Model/Domain/Repositories/GeoZoneRepository.php))
+* `core/Model/Domain/Repositories/CountryRepositoryDeprecated.txt` (Substituído por [`GeoCountryMapper.php`](/core/Mappers/EntityMappers/GeoCountryMapper.php))
+* `core/Mappers/EntityMappers/CountryMapperDeprecated.txt` (Substituído por [`GeoCountryMapper.php`](/core/Mappers/EntityMappers/GeoCountryMapper.php))
 
 ---
 

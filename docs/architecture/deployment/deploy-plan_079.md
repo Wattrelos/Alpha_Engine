@@ -40,11 +40,11 @@ Este plano descreve a estratégia para implementar testes de aceitação e compo
 
 ### 1. Configuração da Infraestrutura do Behat
 
-#### [MODIFY] [behat.yml](file:///var/www/html/agsonhos/behat.yml)
+#### [MODIFY] [behat.yml](/behat.yml)
 - Expandir a configuração para organizar os cenários em *Suites* temáticas (ex: `security`, `checkout`, `cart`, `api`).
 - Configurar os contextos necessários (`FeatureContext`, `SecurityContext`, `CheckoutContext`, `ApiContext`).
 
-#### [MODIFY] [composer.json](file:///var/www/html/agsonhos/composer.json)
+#### [MODIFY] [composer.json](/composer.json)
 - Adicionar scripts unificados de automação para facilidade de execução acadêmica:
   - `composer test:behat` (`./vendor/bin/behat`)
   - `composer test:phpunit` (`./vendor/bin/phpunit -c backend/phpunit.xml`)
@@ -54,27 +54,27 @@ Este plano descreve a estratégia para implementar testes de aceitação e compo
 
 ### 2. Implementação das Feature Files (Gherkin)
 
-#### [NEW] [checkoutCsrfIntegration.feature](file:///var/www/html/agsonhos/features/checkoutCsrfIntegration.feature)
-- Preencher o arquivo atualmente vazio com cenários Gherkin em português cobrindo geração de token CSRF, submissão de checkout válida e rejeição por CSRF inválido/ausente (mapeado de [CheckoutCsrfIntegrationTest.php](file:///var/www/html/agsonhos/backend/tests/Validation/CheckoutCsrfIntegrationTest.php)).
+#### [NEW] [checkoutCsrfIntegration.feature](/features/checkoutCsrfIntegration.feature)
+- Preencher o arquivo atualmente vazio com cenários Gherkin em português cobrindo geração de token CSRF, submissão de checkout válida e rejeição por CSRF inválido/ausente (mapeado de [CheckoutCsrfIntegrationTest.php](/backend/tests/Validation/CheckoutCsrfIntegrationTest.php)).
 
-#### [NEW] [autenticacaoSeguranca.feature](file:///var/www/html/agsonhos/features/autenticacaoSeguranca.feature)
+#### [NEW] [autenticacaoSeguranca.feature](/features/autenticacaoSeguranca.feature)
 - Criar cenários cobrindo proteção contra força bruta, autenticação de sessão e controle de acesso RBAC (mapeados dos testes de validação em `backend/tests/Validation/`).
 
 ---
 
 ### 3. Implementação dos Step Definitions (Contextos Behat Reaproveitando PHPUnit)
 
-#### [NEW] [SecurityContext.php](file:///var/www/html/agsonhos/features/bootstrap/SecurityContext.php)
+#### [NEW] [SecurityContext.php](/features/bootstrap/SecurityContext.php)
 - Implementar passos `@Given`, `@When`, `@Then` reaproveitando os middlewares Slim (`CsrfGuardMiddleware`, `AdminSessionMiddleware`) e asserções PHPUnit.
 
-#### [NEW] [CheckoutContext.php](file:///var/www/html/agsonhos/features/bootstrap/CheckoutContext.php)
+#### [NEW] [CheckoutContext.php](/features/bootstrap/CheckoutContext.php)
 - Implementar passos do fluxo de checkout e idempotência Redis/MySQL invocando os serviços reais do sistema (`IdempotencyService`, `CheckoutAction`).
 
 ---
 
 ### 4. Documentação para Entrega Acadêmica
 
-#### [MODIFY] [features/reame.md](file:///var/www/html/agsonhos/features/reame.md)
+#### [MODIFY] [features/reame.md](/features/reame.md)
 - Atualizar com o guia completo de submissão acadêmica, mapa de rastreabilidade entre Casos de Uso $\rightarrow$ Testes Gherkin $\rightarrow$ Classes de Testes Backend, e instruções passo a passo para os professores/avaliadores executarem os testes.
 
 ---
@@ -136,7 +136,7 @@ Criamos um gerador de relatório visual interativo em HTML/CSS (Glassmorphism & 
   ```bash
   composer test:report
   ```
-- **Localização do Arquivo:** [docs/relatorio_behat_academic.html](file:///var/www/html/agsonhos/docs/relatorio_behat_academic.html)
+- **Localização do Arquivo:** [docs/relatorio_behat_academic.html](/docs/relatorio_behat_academic.html)
 - **Destaques Visuais:**
   - Cards de Métricas: 26 Cenários, 161 Passos, 100% Taxa de Sucesso e 100% Reaproveitamento PHPUnit.
   - Badges coloridas indicando o status de cada suíte (`PASSED`).
@@ -158,7 +158,7 @@ Para demonstrações ao vivo durante a aula, o Behat imprime a execução passo 
 ### 3. Matriz de Rastreabilidade Acadêmica (Anexo / Artigo)
 Documentamos o vínculo direto entre os Casos de Uso, a sintaxe Gherkin humana e os testes técnicos em PHPUnit:
 
-- **Localização:** [features/reame.md](file:///var/www/html/agsonhos/features/reame.md)
+- **Localização:** [features/reame.md](/features/reame.md)
 
 ---
 

@@ -11,7 +11,7 @@
 | **Atores Secundários** | Servidor da SEFAZ (Emissão NFC-e), Estoque Físico |
 | **Tipo** | Condução / Fechamento Fiscal & Estoque |
 | **Frequência de Uso** | Contínua / Muito Alta |
-| **Rastreabilidade** | **RF:** [RF006](file:///var/www/html/agsonhos/docs/requirements/functional/functional_requirements.yaml) (Baixa definitiva de inventário), [RF020](file:///var/www/html/agsonhos/docs/requirements/functional/functional_requirements.yaml) (Faturamento/NFC-e)<br>**RN:** [RN005](file:///var/www/html/agsonhos/docs/requirements/business_rules/business_rules.yaml) (Baixa definitiva de estoque), [RN012](file:///var/www/html/agsonhos/docs/requirements/business_rules/business_rules.yaml) (Emissão de documento fiscal obrigatório)<br>**RNF:** [RNF007](file:///var/www/html/agsonhos/docs/requirements/non_functional/non_functional_requirements.yaml) (Consistência transacional ACID) |
+| **Rastreabilidade** | **RF:** [RF006](/docs/requirements/functional/functional_requirements.yaml) (Baixa definitiva de inventário), [RF020](/docs/requirements/functional/functional_requirements.yaml) (Faturamento/NFC-e)<br>**RN:** [RN005](/docs/requirements/business_rules/business_rules.yaml) (Baixa definitiva de estoque), [RN012](/docs/requirements/business_rules/business_rules.yaml) (Emissão de documento fiscal obrigatório)<br>**RNF:** [RNF007](/docs/requirements/non_functional/non_functional_requirements.yaml) (Consistência transacional ACID) |
 
 ---
 

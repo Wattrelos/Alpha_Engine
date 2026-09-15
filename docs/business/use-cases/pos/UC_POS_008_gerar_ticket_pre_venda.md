@@ -11,7 +11,7 @@
 | **Atores Secundários** | Vendedor de Balcão, Cliente Presencial (*Customer*), Impressora Térmica ESC/POS |
 | **Tipo** | Inclusão de `UC_POS_007` (`<<include>>`) / Impressão Física |
 | **Frequência de Uso** | Contínua / Muito Alta |
-| **Rastreabilidade** | **RF:** [RF006](file:///var/www/html/agsonhos/docs/requirements/functional/functional_requirements.yaml) (Inventário), [RF021](file:///var/www/html/agsonhos/docs/requirements/functional/functional_requirements.yaml) (Modalidades de entrega)<br>**RN:** [RN016](file:///var/www/html/agsonhos/docs/requirements/business_rules/business_rules.yaml) (Destaque de desconto no PIX)<br>**RNF:** [RNF001](file:///var/www/html/agsonhos/docs/requirements/non_functional/non_functional_requirements.yaml) (Impressão térmica ESC/POS rápida < 2s) |
+| **Rastreabilidade** | **RF:** [RF006](/docs/requirements/functional/functional_requirements.yaml) (Inventário), [RF021](/docs/requirements/functional/functional_requirements.yaml) (Modalidades de entrega)<br>**RN:** [RN016](/docs/requirements/business_rules/business_rules.yaml) (Destaque de desconto no PIX)<br>**RNF:** [RNF001](/docs/requirements/non_functional/non_functional_requirements.yaml) (Impressão térmica ESC/POS rápida < 2s) |
 
 ---
 

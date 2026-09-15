@@ -12,9 +12,9 @@
 
 # Plano de Implementação - Ajuste de Isolamento Multi-tenant (`store_id = 1`)
 
-Conforme documentado em [`docs/anti_patterns.md`](file:///var/www/html/agsonhos/docs/anti_patterns.md), a Alpha Engine eliminou o anti-pattern da "loja 0" do legado OpenCart (que violava a integridade referencial com a tabela `tbkk_store`). Na Alpha Engine, a loja principal possui obrigatoriamente **`store_id = 1`**.
+Conforme documentado em [`docs/anti_patterns.md`](/docs/anti_patterns.md), a Alpha Engine eliminou o anti-pattern da "loja 0" do legado OpenCart (que violava a integridade referencial com a tabela `tbkk_store`). Na Alpha Engine, a loja principal possui obrigatoriamente **`store_id = 1`**.
 
-O objetivo desta tarefa é alinhar o [`CartRepository.php`](file:///var/www/html/agsonhos/core/Model/Domain/Repositories/CartRepository.php) e os mappers/repositórios correlatos para utilizar o padrão `store_id = 1`, garantindo a proteção contra acesso cross-tenant e corrigindo divergências no método `getStoreId()`.
+O objetivo desta tarefa é alinhar o [`CartRepository.php`](/core/Model/Domain/Repositories/CartRepository.php) e os mappers/repositórios correlatos para utilizar o padrão `store_id = 1`, garantindo a proteção contra acesso cross-tenant e corrigindo divergências no método `getStoreId()`.
 
 ## Core Architectural Rules (Padrão Alpha Engine)
 
@@ -28,7 +28,7 @@ O objetivo desta tarefa é alinhar o [`CartRepository.php`](file:///var/www/html
 
 ### Core Repository & Mapper Layer
 
-#### [MODIFY] [AbstractRepository.php](file:///var/www/html/agsonhos/core/Model/Domain/Repositories/AbstractRepository.php)
+#### [MODIFY] [AbstractRepository.php](/core/Model/Domain/Repositories/AbstractRepository.php)
 - Atualizar a resolução mágica de `store_id` para:
   1. Verificar `$this->container->get('storeId')`.
   2. Verificar `$this->container->get('configSettings')['config_store_id']`.
@@ -36,36 +36,36 @@ O objetivo desta tarefa é alinhar o [`CartRepository.php`](file:///var/www/html
   4. Verificar `$_SERVER['HTTP_X_STORE_ID']`.
   5. Retornar `1` (Loja Principal) como fallback padrão.
 
-#### [MODIFY] [CartRepository.php](file:///var/www/html/agsonhos/core/Model/Domain/Repositories/CartRepository.php)
+#### [MODIFY] [CartRepository.php](/core/Model/Domain/Repositories/CartRepository.php)
 - Remover o método privado conflitante `private function getStoreId(): int` (linhas 59-66) para que o `CartRepository` herde e utilize publicamente o `AbstractRepository::getStoreId()`.
 - Atualizar `update()` e `remove()` para repassar o `$this->getStoreId()` ao mapper.
 
-#### [MODIFY] [CartMapper.php](file:///var/www/html/agsonhos/core/Mappers/EntityMappers/CartMapper.php)
+#### [MODIFY] [CartMapper.php](/core/Mappers/EntityMappers/CartMapper.php)
 - Adicionar o parâmetro `$storeId` e a cláusula `->where('store_id = ?', [$storeId])` nos métodos `updateItem()` e `removeItem()`.
 
-#### [MODIFY] [CustomerRepository.php](file:///var/www/html/agsonhos/core/Model/Domain/Repositories/CustomerRepository.php)
+#### [MODIFY] [CustomerRepository.php](/core/Model/Domain/Repositories/CustomerRepository.php)
 - No método `registerCustomer()`, utilizar `$this->getStoreId()` para obter o ID da loja ativa.
 
-#### [MODIFY] [SettingRepository.php](file:///var/www/html/agsonhos/core/Model/Domain/Repositories/SettingRepository.php)
+#### [MODIFY] [SettingRepository.php](/core/Model/Domain/Repositories/SettingRepository.php)
 - Ajustar os fallbacks de `getSettings()`, `getSetting()` e `getValue()` para usar `$this->getStoreId()` (loja 1 padrão).
 
-#### [MODIFY] [LayoutRepository.php](file:///var/www/html/agsonhos/core/Model/Domain/Repositories/LayoutRepository.php) & [SitemapRepository.php](file:///var/www/html/agsonhos/core/Model/Domain/Repositories/SitemapRepository.php)
+#### [MODIFY] [LayoutRepository.php](/core/Model/Domain/Repositories/LayoutRepository.php) & [SitemapRepository.php](/core/Model/Domain/Repositories/SitemapRepository.php)
 - Substituir acessos diretos `$this->config->get('config_store_id')` por `$this->getStoreId()`.
 
-#### [MODIFY] [ThemeRepository.php](file:///var/www/html/agsonhos/core/Model/Domain/Repositories/ThemeRepository.php) & [ThemeMapper.php](file:///var/www/html/agsonhos/core/Mappers/EntityMappers/ThemeMapper.php)
+#### [MODIFY] [ThemeRepository.php](/core/Model/Domain/Repositories/ThemeRepository.php) & [ThemeMapper.php](/core/Mappers/EntityMappers/ThemeMapper.php)
 - Passar `$this->getStoreId()` de `ThemeRepository` para `ThemeMapper::getTheme()`.
 
 ### Controllers & Actions
 
-#### [MODIFY] [BaseController.php](file:///var/www/html/agsonhos/core/Controller/BaseController.php)
+#### [MODIFY] [BaseController.php](/core/Controller/BaseController.php)
 - Garantir que `$this->storeId` seja inicializado via `$settings['config_store_id'] ?? 1`.
 
-#### [MODIFY] [SubmitCheckoutAction.php](file:///var/www/html/agsonhos/core/Controller/Actions/Cart/SubmitCheckoutAction.php)
+#### [MODIFY] [SubmitCheckoutAction.php](/core/Controller/Actions/Cart/SubmitCheckoutAction.php)
 - Garantir que `orderData['store_id']` seja resolvido com fallback `1`.
 
 ### Verification & Tests
 
-#### [MODIFY] [teste_tenant_isolation.php](file:///var/www/html/agsonhos/tests/security_tests/teste_tenant_isolation.php)
+#### [MODIFY] [teste_tenant_isolation.php](/tests/security_tests/teste_tenant_isolation.php)
 - Adicionar testes automatizados para verificar:
   - Resolução de `store_id = 1` como loja padrão.
   - Bloqueio de mutação cross-tenant em `CartMapper` (impedir que Loja 1 altere/remova item da Loja 2).
@@ -102,38 +102,38 @@ O objetivo desta tarefa é alinhar o [`CartRepository.php`](file:///var/www/html
 
 # Walkthrough - Alinhamento do Isolamento Multi-tenant (`store_id = 1`)
 
-Concluímos com sucesso o alinhamento da proteção de **Isolamento Multi-tenant (`store_id = 1`)** no [CartRepository.php](file:///var/www/html/agsonhos/core/Model/Domain/Repositories/CartRepository.php) e na arquitetura geral de repositórios e mappers da **Alpha Engine**.
+Concluímos com sucesso o alinhamento da proteção de **Isolamento Multi-tenant (`store_id = 1`)** no [CartRepository.php](/core/Model/Domain/Repositories/CartRepository.php) e na arquitetura geral de repositórios e mappers da **Alpha Engine**.
 
 ## Alterações Realizadas
 
 ### 1. Camada Base & Resolução Única de Loja
-- **[AbstractRepository.php](file:///var/www/html/agsonhos/core/Model/Domain/Repositories/AbstractRepository.php)**:
+- **[AbstractRepository.php](/core/Model/Domain/Repositories/AbstractRepository.php)**:
   - Atualizado `__get('store_id')` e `getStoreId()` para buscar o ID da loja dinamicamente no container PSR-11 (`storeId`, `configSettings`, `config` ou header `HTTP_X_STORE_ID`).
   - Definido `1` (loja principal ancorada em `tbkk_store`) como fallback padrão de resolução.
 
 ### 2. CartRepository & CartMapper
-- **[CartRepository.php](file:///var/www/html/agsonhos/core/Model/Domain/Repositories/CartRepository.php)**:
+- **[CartRepository.php](/core/Model/Domain/Repositories/CartRepository.php)**:
   - Removido o método privado duplicado `private function getStoreId(): int` (linhas 59-66) para que o repositório herde o método público `AbstractRepository::getStoreId()`.
   - Atualizadas as chamadas em `update()` e `remove()` para enviar `$this->getStoreId()` ao mapper.
-- **[CartMapper.php](file:///var/www/html/agsonhos/core/Mappers/EntityMappers/CartMapper.php)**:
+- **[CartMapper.php](/core/Mappers/EntityMappers/CartMapper.php)**:
   - Adicionada a cláusula `store_id = ?` e parâmetro `$storeId` nos métodos `updateItem()` e `removeItem()`, bloqueando tentativas de modificação ou exclusão de itens de carrinho cross-tenant.
 
 ### 3. Repositórios e Mappers Correlatos
-- **[CustomerRepository.php](file:///var/www/html/agsonhos/core/Model/Domain/Repositories/CustomerRepository.php)**: `registerCustomer()` ajustado para ler `$this->getStoreId()`.
-- **[SettingRepository.php](file:///var/www/html/agsonhos/core/Model/Domain/Repositories/SettingRepository.php)**: `$loadedStoreId` inicializado em `-1` para permitir recarga limpa da loja 1; métodos `getSettings()`, `getSetting()`, `getValue()` e `editSetting()` utilizando `$this->getStoreId()`.
-- **[LayoutRepository.php](file:///var/www/html/agsonhos/core/Model/Domain/Repositories/LayoutRepository.php)** & **[SitemapRepository.php](file:///var/www/html/agsonhos/core/Model/Domain/Repositories/SitemapRepository.php)**: Acessos diretos de `config_store_id` substituídos por `$this->getStoreId()`.
-- **[ThemeRepository.php](file:///var/www/html/agsonhos/core/Model/Domain/Repositories/ThemeRepository.php)** & **[ThemeMapper.php](file:///var/www/html/agsonhos/core/Mappers/EntityMappers/ThemeMapper.php)**: Repasse explícito de `$this->getStoreId()` para `ThemeMapper::getTheme()`.
+- **[CustomerRepository.php](/core/Model/Domain/Repositories/CustomerRepository.php)**: `registerCustomer()` ajustado para ler `$this->getStoreId()`.
+- **[SettingRepository.php](/core/Model/Domain/Repositories/SettingRepository.php)**: `$loadedStoreId` inicializado em `-1` para permitir recarga limpa da loja 1; métodos `getSettings()`, `getSetting()`, `getValue()` e `editSetting()` utilizando `$this->getStoreId()`.
+- **[LayoutRepository.php](/core/Model/Domain/Repositories/LayoutRepository.php)** & **[SitemapRepository.php](/core/Model/Domain/Repositories/SitemapRepository.php)**: Acessos diretos de `config_store_id` substituídos por `$this->getStoreId()`.
+- **[ThemeRepository.php](/core/Model/Domain/Repositories/ThemeRepository.php)** & **[ThemeMapper.php](/core/Mappers/EntityMappers/ThemeMapper.php)**: Repasse explícito de `$this->getStoreId()` para `ThemeMapper::getTheme()`.
 
 ### 4. Controllers & Actions
-- **[BaseController.php](file:///var/www/html/agsonhos/core/Controller/BaseController.php)**: `$this->storeId` resolvido via `$container->get('storeId') ?? $settings['config_store_id'] ?? 1`.
-- **[SubmitCheckoutAction.php](file:///var/www/html/agsonhos/core/Controller/Actions/Cart/SubmitCheckoutAction.php)**: `orderData['store_id']` resolvido via container com fallback `1`.
+- **[BaseController.php](/core/Controller/BaseController.php)**: `$this->storeId` resolvido via `$container->get('storeId') ?? $settings['config_store_id'] ?? 1`.
+- **[SubmitCheckoutAction.php](/core/Controller/Actions/Cart/SubmitCheckoutAction.php)**: `orderData['store_id']` resolvido via container com fallback `1`.
 
 ---
 
 ## Verificação e Testes Executados
 
 ### 1. Suíte de Isolamento Multi-tenant
-Executado o script [`teste_tenant_isolation.php`](file:///var/www/html/agsonhos/tests/security_tests/teste_tenant_isolation.php):
+Executado o script [`teste_tenant_isolation.php`](/tests/security_tests/teste_tenant_isolation.php):
 ```bash
 php tests/security_tests/teste_tenant_isolation.php
 ```
@@ -144,7 +144,7 @@ php tests/security_tests/teste_tenant_isolation.php
 - ✅ `CartMapper::updateItem` repassa o parâmetro `store_id = 1` para impedir atualizações em lojas paralelas.
 
 ### 2. Teste de Registro de Clientes
-Executado o script [`test_customer_registration.php`](file:///var/www/html/agsonhos/tests/scripts_uteis/test_customer_registration.php):
+Executado o script [`test_customer_registration.php`](/tests/scripts_uteis/test_customer_registration.php):
 ```bash
 php tests/scripts_uteis/test_customer_registration.php
 ```

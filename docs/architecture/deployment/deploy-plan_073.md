@@ -34,47 +34,47 @@ O objetivo é migrar/consolidar todas as asserções e rotinas de validação pa
 
 Agrupamento das suítes de testes em classes PHPUnit padronizadas sob o namespace `Tests\Validation`:
 
-#### [NEW] [AdminLanguageValidationTest.php](file:///var/www/html/agsonhos/tests/Validation/AdminLanguageValidationTest.php)
+#### [NEW] [AdminLanguageValidationTest.php](/tests/Validation/AdminLanguageValidationTest.php)
 - Consolida as validações de `tests/TestAdminLanguage.php` e `tests/test_translation_loading.php`.
 - Testas carregamento de traduções (pt-br, en-gb, fr-fr), troca de idioma via cookie/header, fallback DRY e chaves legadas.
 
-#### [NEW] [ProductValidationTest.php](file:///var/www/html/agsonhos/tests/Validation/ProductValidationTest.php)
+#### [NEW] [ProductValidationTest.php](/tests/Validation/ProductValidationTest.php)
 - Consolida `tests/TestCreateProduct.php` e `tests/TestStockStatusHiding.php`.
 - Valida formulário GET de criação de produto, validação de payload inválido, persistência completa no banco (produto, loja, categoria, descrição) e regras de exibição/ocultação por status de estoque (out-of-stock hiding).
 
-#### [NEW] [PosCashierValidationTest.php](file:///var/www/html/agsonhos/tests/Validation/PosCashierValidationTest.php)
+#### [NEW] [PosCashierValidationTest.php](/tests/Validation/PosCashierValidationTest.php)
 - Consolida `tests/TestPOSCashier.php` e `tests/TestPOSPreOrder.php`.
 - Valida o fluxo de Caixa PDV: existência de Actions, criação de pré-pedido com reserva de estoque, transição de status (1 - Pendente para 5 - Concluído) e integridade de estoque (prevenção de dupla dedução).
 
-#### [NEW] [ReturnProductValidationTest.php](file:///var/www/html/agsonhos/tests/Validation/ReturnProductValidationTest.php)
+#### [NEW] [ReturnProductValidationTest.php](/tests/Validation/ReturnProductValidationTest.php)
 - Consolida `tests/TestReturnProducts.php` e `tests/TestReturnProductRepository.php`.
 - Valida o fluxo de solicitações de devolução de produtos pelo cliente e consultas via repositório.
 
-#### [NEW] [SupplierContactValidationTest.php](file:///var/www/html/agsonhos/tests/Validation/SupplierContactValidationTest.php)
+#### [NEW] [SupplierContactValidationTest.php](/tests/Validation/SupplierContactValidationTest.php)
 - Consolida `tests/TestSupplierContacts.php`.
 - Valida CRUD de contatos de fornecedores e suas associações com fabricantes/marcas.
 
-#### [NEW] [LoggingValidationTest.php](file:///var/www/html/agsonhos/tests/Validation/LoggingValidationTest.php)
+#### [NEW] [LoggingValidationTest.php](/tests/Validation/LoggingValidationTest.php)
 - Consolida `tests/TestLogging.php`.
 - Valida gravação de logs de auditoria em tentativas frustradas de autenticação.
 
-#### [NEW] [TenantProvisioningValidationTest.php](file:///var/www/html/agsonhos/tests/Validation/TenantProvisioningValidationTest.php)
+#### [NEW] [TenantProvisioningValidationTest.php](/tests/Validation/TenantProvisioningValidationTest.php)
 - Consolida `tests/TestOOBE.php` e `tests/test_tenant_provisioning.php`.
 - Valida provisionamento inicial de lojas (OOBE - Out of Box Experience) e isolamento multi-tenant de domínios/lojas.
 
-#### [NEW] [OrderStatusValidationTest.php](file:///var/www/html/agsonhos/tests/Validation/OrderStatusValidationTest.php)
+#### [NEW] [OrderStatusValidationTest.php](/tests/Validation/OrderStatusValidationTest.php)
 - Consolida `tests/TestOrderStatus1.php`.
 - Valida criação, atualização e ciclo de vida dos status de pedido.
 
-#### [NEW] [CustomerAddressValidationTest.php](file:///var/www/html/agsonhos/tests/Validation/CustomerAddressValidationTest.php)
+#### [NEW] [CustomerAddressValidationTest.php](/tests/Validation/CustomerAddressValidationTest.php)
 - Consolida `tests/test_customer_addresses.php` e `tests/test_order_addresses.php`.
 - Valida associação de múltiplos endereços de clientes e mapeamento de endereços de cobrança/entrega nos pedidos.
 
-#### [NEW] [FulltextSearchValidationTest.php](file:///var/www/html/agsonhos/tests/Validation/FulltextSearchValidationTest.php)
+#### [NEW] [FulltextSearchValidationTest.php](/tests/Validation/FulltextSearchValidationTest.php)
 - Consolida `tests/test_fulltext_search.php`.
 - Valida busca textual completa no catálogo de produtos.
 
-#### [NEW] [ExtendedSecurityValidationTest.php](file:///var/www/html/agsonhos/tests/Validation/ExtendedSecurityValidationTest.php)
+#### [NEW] [ExtendedSecurityValidationTest.php](/tests/Validation/ExtendedSecurityValidationTest.php)
 - Consolida verificações de segurança remanescentes de `tests/security_tests/` (`teste_debug_mode.php`, `teste_lgpd_sanitizer.php`, `teste_secure_cookie.php`, `teste_user_management.php`, `test_user_group_i18n.php`).
 
 ---
@@ -82,22 +82,22 @@ Agrupamento das suítes de testes em classes PHPUnit padronizadas sob o namespac
 ### Limpeza de Arquivos Redundantes e Legados
 
 #### [DELETE] Scripts na Raiz de `tests/`
-- [DELETE] [TestAdminLanguage.php](file:///var/www/html/agsonhos/tests/TestAdminLanguage.php)
-- [DELETE] [TestCreateProduct.php](file:///var/www/html/agsonhos/tests/TestCreateProduct.php)
-- [DELETE] [TestLogging.php](file:///var/www/html/agsonhos/tests/TestLogging.php)
-- [DELETE] [TestOOBE.php](file:///var/www/html/agsonhos/tests/TestOOBE.php)
-- [DELETE] [TestOrderStatus1.php](file:///var/www/html/agsonhos/tests/TestOrderStatus1.php)
-- [DELETE] [TestPOSCashier.php](file:///var/www/html/agsonhos/tests/TestPOSCashier.php)
-- [DELETE] [TestPOSPreOrder.php](file:///var/www/html/agsonhos/tests/TestPOSPreOrder.php)
-- [DELETE] [TestReturnProductRepository.php](file:///var/www/html/agsonhos/tests/TestReturnProductRepository.php)
-- [DELETE] [TestReturnProducts.php](file:///var/www/html/agsonhos/tests/TestReturnProducts.php)
-- [DELETE] [TestStockStatusHiding.php](file:///var/www/html/agsonhos/tests/TestStockStatusHiding.php)
-- [DELETE] [TestSupplierContacts.php](file:///var/www/html/agsonhos/tests/TestSupplierContacts.php)
-- [DELETE] [test_customer_addresses.php](file:///var/www/html/agsonhos/tests/test_customer_addresses.php)
-- [DELETE] [test_fulltext_search.php](file:///var/www/html/agsonhos/tests/test_fulltext_search.php)
-- [DELETE] [test_order_addresses.php](file:///var/www/html/agsonhos/tests/test_order_addresses.php)
-- [DELETE] [test_tenant_provisioning.php](file:///var/www/html/agsonhos/tests/test_tenant_provisioning.php)
-- [DELETE] [test_translation_loading.php](file:///var/www/html/agsonhos/tests/test_translation_loading.php)
+- [DELETE] [TestAdminLanguage.php](/tests/TestAdminLanguage.php)
+- [DELETE] [TestCreateProduct.php](/tests/TestCreateProduct.php)
+- [DELETE] [TestLogging.php](/tests/TestLogging.php)
+- [DELETE] [TestOOBE.php](/tests/TestOOBE.php)
+- [DELETE] [TestOrderStatus1.php](/tests/TestOrderStatus1.php)
+- [DELETE] [TestPOSCashier.php](/tests/TestPOSCashier.php)
+- [DELETE] [TestPOSPreOrder.php](/tests/TestPOSPreOrder.php)
+- [DELETE] [TestReturnProductRepository.php](/tests/TestReturnProductRepository.php)
+- [DELETE] [TestReturnProducts.php](/tests/TestReturnProducts.php)
+- [DELETE] [TestStockStatusHiding.php](/tests/TestStockStatusHiding.php)
+- [DELETE] [TestSupplierContacts.php](/tests/TestSupplierContacts.php)
+- [DELETE] [test_customer_addresses.php](/tests/test_customer_addresses.php)
+- [DELETE] [test_fulltext_search.php](/tests/test_fulltext_search.php)
+- [DELETE] [test_order_addresses.php](/tests/test_order_addresses.php)
+- [DELETE] [test_tenant_provisioning.php](/tests/test_tenant_provisioning.php)
+- [DELETE] [test_translation_loading.php](/tests/test_translation_loading.php)
 
 #### [DELETE] Diretório `tests/security_tests/`
 - [DELETE] `tests/security_tests/` (10 scripts procedurais integrados/substituídos por `tests/Validation/`).
@@ -106,7 +106,7 @@ Agrupamento das suítes de testes em classes PHPUnit padronizadas sob o namespac
 
 ### Configuração do PHPUnit (`phpunit.xml`)
 
-#### [MODIFY] [phpunit.xml](file:///var/www/html/agsonhos/phpunit.xml)
+#### [MODIFY] [phpunit.xml](/phpunit.xml)
 - Atualizar a tag `<directory>` para apontar especificamente para `tests/Validation` (ou manter `tests` direcionado para `Validation`).
 
 ---
@@ -145,7 +145,7 @@ Agrupamento das suítes de testes em classes PHPUnit padronizadas sob o namespac
 
 # Resumo das Alterações - Consolidação de Testes em `tests/Validation/`
 
-Todos os testes procedurais soltos e redundantes foram migrados e consolidados com sucesso para a suíte padronizada do **PHPUnit** em [tests/Validation/](file:///var/www/html/agsonhos/tests/Validation/).
+Todos os testes procedurais soltos e redundantes foram migrados e consolidados com sucesso para a suíte padronizada do **PHPUnit** em [tests/Validation/](/tests/Validation/).
 
 ---
 
@@ -156,17 +156,17 @@ Todos os testes procedurais soltos e redundantes foram migrados e consolidados c
    - Total de **58 suítes de testes** e **161 asserções** validadas com **0 falhas e 0 erros**.
 
 2. **Novas Suítes de Testes PHPUnit Criadas**:
-   - [AdminLanguageValidationTest.php](file:///var/www/html/agsonhos/tests/Validation/AdminLanguageValidationTest.php): Validação de troca de idioma (pt-br, en-gb, fr-fr), cookies e carregamento DRY/legado.
-   - [ProductValidationTest.php](file:///var/www/html/agsonhos/tests/Validation/ProductValidationTest.php): Cadastro completo de produto, persistência e regra de exibição/ocultação por estoque (`stock_status_id`).
-   - [PosCashierValidationTest.php](file:///var/www/html/agsonhos/tests/Validation/PosCashierValidationTest.php): Ações do Caixa PDV, criação de pré-pedido, transição de status (1 -> 5) e integridade de estoque sem dupla dedução.
-   - [ReturnProductValidationTest.php](file:///var/www/html/agsonhos/tests/Validation/ReturnProductValidationTest.php): Resolução de Actions de devolução para clientes e painel admin.
-   - [SupplierContactValidationTest.php](file:///var/www/html/agsonhos/tests/Validation/SupplierContactValidationTest.php): CRUD de contatos de fornecedores, relacionamentos pivot e limpeza de orfãos (orphan cleanup).
-   - [LoggingValidationTest.php](file:///var/www/html/agsonhos/tests/Validation/LoggingValidationTest.php): Auditoria de tentativas de login inválidas.
-   - [TenantProvisioningValidationTest.php](file:///var/www/html/agsonhos/tests/Validation/TenantProvisioningValidationTest.php): Wizard de instalação (OOBE), leitor atômico `.env` e middleware de bloqueio/redirecionamento `/setup`.
-   - [OrderStatusValidationTest.php](file:///var/www/html/agsonhos/tests/Validation/OrderStatusValidationTest.php): Repositório e ciclo de vida de status de pedidos.
-   - [CustomerAddressValidationTest.php](file:///var/www/html/agsonhos/tests/Validation/CustomerAddressValidationTest.php): CRUD de endereços de clientes e mapeamento em pedidos.
-   - [FulltextSearchValidationTest.php](file:///var/www/html/agsonhos/tests/Validation/FulltextSearchValidationTest.php): Sanitização de operadores booleanos e execução de busca FULLTEXT no banco.
-   - [ExtendedSecurityValidationTest.php](file:///var/www/html/agsonhos/tests/Validation/ExtendedSecurityValidationTest.php): Sanitização LGPD, flags de debug, cookies de sessão e permissões de grupo.
+   - [AdminLanguageValidationTest.php](/tests/Validation/AdminLanguageValidationTest.php): Validação de troca de idioma (pt-br, en-gb, fr-fr), cookies e carregamento DRY/legado.
+   - [ProductValidationTest.php](/tests/Validation/ProductValidationTest.php): Cadastro completo de produto, persistência e regra de exibição/ocultação por estoque (`stock_status_id`).
+   - [PosCashierValidationTest.php](/tests/Validation/PosCashierValidationTest.php): Ações do Caixa PDV, criação de pré-pedido, transição de status (1 -> 5) e integridade de estoque sem dupla dedução.
+   - [ReturnProductValidationTest.php](/tests/Validation/ReturnProductValidationTest.php): Resolução de Actions de devolução para clientes e painel admin.
+   - [SupplierContactValidationTest.php](/tests/Validation/SupplierContactValidationTest.php): CRUD de contatos de fornecedores, relacionamentos pivot e limpeza de orfãos (orphan cleanup).
+   - [LoggingValidationTest.php](/tests/Validation/LoggingValidationTest.php): Auditoria de tentativas de login inválidas.
+   - [TenantProvisioningValidationTest.php](/tests/Validation/TenantProvisioningValidationTest.php): Wizard de instalação (OOBE), leitor atômico `.env` e middleware de bloqueio/redirecionamento `/setup`.
+   - [OrderStatusValidationTest.php](/tests/Validation/OrderStatusValidationTest.php): Repositório e ciclo de vida de status de pedidos.
+   - [CustomerAddressValidationTest.php](/tests/Validation/CustomerAddressValidationTest.php): CRUD de endereços de clientes e mapeamento em pedidos.
+   - [FulltextSearchValidationTest.php](/tests/Validation/FulltextSearchValidationTest.php): Sanitização de operadores booleanos e execução de busca FULLTEXT no banco.
+   - [ExtendedSecurityValidationTest.php](/tests/Validation/ExtendedSecurityValidationTest.php): Sanitização LGPD, flags de debug, cookies de sessão e permissões de grupo.
 
 3. **Remoção de Arquivos Soltos e Duplicados**:
    - Eliminados 16 scripts soltos na raiz da pasta `tests/` (`Test*.php` e `test_*.php`).

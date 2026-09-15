@@ -11,7 +11,7 @@
 | **Atores Secundários** | Mecanismo de Busca MySQL Full-Text / Redis |
 | **Tipo** | Condução / Pesquisa |
 | **Frequência de Uso** | Muito Alta |
-| **Rastreabilidade** | **RF:** [RF011](file:///var/www/html/agsonhos/docs/requirements/functional/functional_requirements.yaml) (Busca e filtros avançados)<br>**RN:** [RN003](file:///var/www/html/agsonhos/docs/requirements/business_rules/business_rules.yaml) (Especificações técnicas por categoria)<br>**RNF:** [RNF002](file:///var/www/html/agsonhos/docs/requirements/non_functional/non_functional_requirements.yaml) (Tempo de resposta < 500ms) |
+| **Rastreabilidade** | **RF:** [RF011](/docs/requirements/functional/functional_requirements.yaml) (Busca e filtros avançados)<br>**RN:** [RN003](/docs/requirements/business_rules/business_rules.yaml) (Especificações técnicas por categoria)<br>**RNF:** [RNF002](/docs/requirements/non_functional/non_functional_requirements.yaml) (Tempo de resposta < 500ms) |
 
 ---
 

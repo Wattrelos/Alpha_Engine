@@ -11,7 +11,7 @@
 | **Atores Secundários** | Gateway de Recorrência, Sistema Alpha Engine |
 | **Tipo** | Condução / Gestão de Cobrança Recorrente |
 | **Frequência de Uso** | Baixa |
-| **Rastreabilidade** | **RF:** [RF018](file:///var/www/html/agsonhos/docs/requirements/functional/functional_requirements.yaml) (Checkout/Pagamentos), [RF023](file:///var/www/html/agsonhos/docs/requirements/functional/functional_requirements.yaml) (Gestão administrativa)<br>**RN:** [RN017](file:///var/www/html/agsonhos/docs/requirements/business_rules/business_rules.yaml) (Preços e assinaturas corporativas)<br>**RNF:** [RNF003](file:///var/www/html/agsonhos/docs/requirements/non_functional/non_functional_requirements.yaml) (Segurança e conciliação financeira de assinaturas) |
+| **Rastreabilidade** | **RF:** [RF018](/docs/requirements/functional/functional_requirements.yaml) (Checkout/Pagamentos), [RF023](/docs/requirements/functional/functional_requirements.yaml) (Gestão administrativa)<br>**RN:** [RN017](/docs/requirements/business_rules/business_rules.yaml) (Preços e assinaturas corporativas)<br>**RNF:** [RNF003](/docs/requirements/non_functional/non_functional_requirements.yaml) (Segurança e conciliação financeira de assinaturas) |
 
 ---
 

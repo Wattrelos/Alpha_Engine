@@ -11,7 +11,7 @@
 | **Atores Secundários** | Sistema Alpha Engine |
 | **Tipo** | Condução / Configuração do Sistema |
 | **Frequência de Uso** | Baixa |
-| **Rastreabilidade** | **RF:** [RF023](file:///var/www/html/agsonhos/docs/requirements/functional/functional_requirements.yaml) (Gestão administrativa global)<br>**RNF:** [RNF003](file:///var/www/html/agsonhos/docs/requirements/non_functional/non_functional_requirements.yaml) (Segurança e isolamento multi-tenant), [RNF004](file:///var/www/html/agsonhos/docs/requirements/non_functional/non_functional_requirements.yaml) (Alta disponibilidade) |
+| **Rastreabilidade** | **RF:** [RF023](/docs/requirements/functional/functional_requirements.yaml) (Gestão administrativa global)<br>**RNF:** [RNF003](/docs/requirements/non_functional/non_functional_requirements.yaml) (Segurança e isolamento multi-tenant), [RNF004](/docs/requirements/non_functional/non_functional_requirements.yaml) (Alta disponibilidade) |
 
 ---
 

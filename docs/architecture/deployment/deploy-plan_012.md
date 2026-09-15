@@ -28,29 +28,29 @@ Este documento planeja a implementação e viabilidade de variações de produto
 
 ### Backend: Ajustes nas Consultas, Mappers e Repositórios
 
-#### [MODIFY] [ProductMapper.php](file:///var/www/html/agsonhos/core/Mappers/EntityMappers/ProductMapper.php)
+#### [MODIFY] [ProductMapper.php](/core/Mappers/EntityMappers/ProductMapper.php)
 - **`getProducts()`**: Adicionar o filtro `p.master_id = 0` para retornar apenas produtos principais no catálogo público.
 - **`getTotalProducts()`**: Adicionar o filtro `p.master_id = 0` na contagem.
 - **`getProductVariants(int $productId)`**: Criar esse novo método que retorna todos os produtos filhos associados ao produto pai (onde `master_id = $productId` e `status = 1`).
 
-#### [MODIFY] [ProductRepository.php](file:///var/www/html/agsonhos/core/Model/Domain/Repositories/ProductRepository.php)
+#### [MODIFY] [ProductRepository.php](/core/Model/Domain/Repositories/ProductRepository.php)
 - Criar o método `getProductVariants(int $productId)` que delega a consulta para o `ProductMapper` e retorna a lista de variações do produto.
 
 ---
 
 ### Dashboard Administrativo: Edição e Gravação de Variações em Lote
 
-#### [MODIFY] [ListProductsAction.php](file:///var/www/html/agsonhos/core/Admin/Controllers/Actions/Catalog/Product/ListProductsAction.php)
+#### [MODIFY] [ListProductsAction.php](/core/Admin/Controllers/Actions/Catalog/Product/ListProductsAction.php)
 - Filtrar a listagem principal do admin para exibir apenas produtos pai (`p.master_id = 0`).
 
-#### [MODIFY] [EditProductAction.php](file:///var/www/html/agsonhos/core/Admin/Controllers/Actions/Catalog/Product/EditProductAction.php)
+#### [MODIFY] [EditProductAction.php](/core/Admin/Controllers/Actions/Catalog/Product/EditProductAction.php)
 - Buscar as variações cadastradas do produto pai:
 ```php
 $variants = $productRepo->getProductVariants($productId);
 ```
 - Passar a lista `$variants` para o template.
 
-#### [MODIFY] [UpdateProductAction.php](file:///var/www/html/agsonhos/core/Admin/Controllers/Actions/Catalog/Product/UpdateProductAction.php)
+#### [MODIFY] [UpdateProductAction.php](/core/Admin/Controllers/Actions/Catalog/Product/UpdateProductAction.php)
 - Processar o envio das variações na aba correspondente do formulário de edição do produto.
 - Lógica de gravação das variações (em lote):
   1. Identificar variações enviadas (cada variação contém ID, nome da variação, SKU, preço adicional/diferenciado, quantidade no estoque, imagem específica e status).
@@ -59,7 +59,7 @@ $variants = $productRepo->getProductVariants($productId);
   4. Excluir variações selecionadas para remoção.
   5. Sincronizar em lote os dados do produto pai (Nome base, Descrição, Categoria, Fabricante) para todos os filhos na tabela `product_description` e `product_to_category`.
 
-#### [MODIFY] [edit.html.twig](file:///var/www/html/agsonhos/resources/views/admin/pages/products/edit.html.twig)
+#### [MODIFY] [edit.html.twig](/resources/views/admin/pages/products/edit.html.twig)
 - Adicionar abas na tela de edição do produto (Aba 1: **Dados Gerais**, Aba 2: **Variações**).
 - Na aba **Variações**, construir uma tabela interativa que lista as variações do produto e permite a edição rápida dos campos (SKU, Nome da Variação, Preço, Quantidade no Estoque, Status) diretamente em lote.
 - Adicionar um botão de "Adicionar Variação" para inserir dinamicamente linhas na tabela de variação.
@@ -68,7 +68,7 @@ $variants = $productRepo->getProductVariants($productId);
 
 ### Frontend da Loja Pública: Seleção de Variação na Página de Detalhe
 
-#### [MODIFY] [ShowProductAction.php](file:///var/www/html/agsonhos/core/Controller/Actions/Product/ShowProductAction.php)
+#### [MODIFY] [ShowProductAction.php](/core/Controller/Actions/Product/ShowProductAction.php)
 - Carregar as variações filhas do produto:
 ```php
 $variants = $this->productRepository->getProductVariants($productId);
@@ -76,7 +76,7 @@ $variants = $this->productRepository->getProductVariants($productId);
 - Formatar o preço e imagens de cada variação usando `tax` e `ImagePresenter`.
 - Passar as variações no array de variáveis enviado para a view `show.html.twig`.
 
-#### [MODIFY] [show.html.twig](file:///var/www/html/agsonhos/resources/views/pages/product/show.html.twig)
+#### [MODIFY] [show.html.twig](/resources/views/pages/product/show.html.twig)
 - Adicionar seletores dinâmicos de variações (cores, tamanhos ou seletor de lista genérico) baseados nas variantes filhas.
 - Injetar código JavaScript na página para monitorar a seleção da variação. Quando o usuário clica em uma variação:
   1. Atualizar o ID no formulário de compra: `<input type="hidden" name="product_id" value="[ID_DO_FILHO]">`.
@@ -110,28 +110,28 @@ Implementamos com sucesso a arquitetura e interface de gerenciamento de **Varia�
 ## Mudanças Realizadas
 
 ### 1. Camada de Dados (Mappers & Repositórios)
-- [ProductMapper.php](file:///var/www/html/agsonhos/core/Mappers/EntityMappers/ProductMapper.php):
+- [ProductMapper.php](/core/Mappers/EntityMappers/ProductMapper.php):
   - Adicionamos a cláusula `p.master_id = 0` nos métodos `getProducts()` e `getTotalProducts()` para evitar que variações apareçam repetidas nas listagens gerais e buscas do catálogo de frontend.
   - Criamos o método `getProductVariants(int $productId)` que retorna todos os SKUs filhos daquele produto pai.
-- [ProductRepository.php](file:///var/www/html/agsonhos/core/Model/Domain/Repositories/ProductRepository.php):
+- [ProductRepository.php](/core/Model/Domain/Repositories/ProductRepository.php):
   - Criamos o método `getProductVariants(int $productId)` para expor a lista de variações para as Actions.
 
 ### 2. Painel Administrativo (Dashboard)
-- [ListProductsAction.php](file:///var/www/html/agsonhos/core/Admin/Controllers/Actions/Catalog/Product/ListProductsAction.php):
+- [ListProductsAction.php](/core/Admin/Controllers/Actions/Catalog/Product/ListProductsAction.php):
   - Filtramos a listagem de produtos do admin (`master_id = 0`) para exibir apenas os produtos principais na lista.
-- [EditProductAction.php](file:///var/www/html/agsonhos/core/Admin/Controllers/Actions/Catalog/Product/EditProductAction.php):
+- [EditProductAction.php](/core/Admin/Controllers/Actions/Catalog/Product/EditProductAction.php):
   - Carregamos as variações do produto pai e as enviamos para a visualização Twig.
-- [UpdateProductAction.php](file:///var/www/html/agsonhos/core/Admin/Controllers/Actions/Catalog/Product/UpdateProductAction.php):
+- [UpdateProductAction.php](/core/Admin/Controllers/Actions/Catalog/Product/UpdateProductAction.php):
   - Desenvolvemos a lógica de gravação em lote: cria, atualiza ou exclui variações filhas de acordo com o formulário enviado.
   - Sincronizamos em lote os campos comuns (como categorias, fabricante e descrição) do produto pai para os filhos a cada atualização do pai.
-- [edit.html.twig](file:///var/www/html/agsonhos/resources/views/admin/pages/products/edit.html.twig):
+- [edit.html.twig](/resources/views/admin/pages/products/edit.html.twig):
   - Criamos abas modernas no formulário de edição (Aba **Geral** e Aba **Variações**).
   - Na aba **Variações**, implementamos a tabela interativa para gerenciar variações em lote (SKU, preço diferenciado, quantidade em estoque, status), com adição dinâmica por JavaScript e remoção visual que envia o status de exclusão para o backend.
 
 ### 3. Loja Pública (Frontend)
-- [ShowProductAction.php](file:///var/www/html/agsonhos/core/Controller/Actions/Product/ShowProductAction.php):
+- [ShowProductAction.php](/core/Controller/Actions/Product/ShowProductAction.php):
   - Carregamos e formatamos os preços e miniaturas de imagem de cada variação (aplicando as regras fiscais do e-commerce) e enviamos no contexto Twig.
-- [show.html.twig](file:///var/www/html/agsonhos/resources/views/pages/product/show.html.twig):
+- [show.html.twig](/resources/views/pages/product/show.html.twig):
   - Adicionamos os botões de seleção para as variações logo acima das opções tradicionais.
   - Criamos um script que altera dinamicamente no DOM o preço, estoque, imagem principal e o ID do produto a ser enviado ao carrinho (`product_id`) com base na variação ativa clicada pelo cliente.
 

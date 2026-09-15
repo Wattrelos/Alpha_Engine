@@ -20,7 +20,7 @@ Este plano descreve a substituição de textos fixos (hard-coded) na view de con
 
 Mapearemos a rota de configurações no middleware de idiomas do painel para carregar o namespace `admin/setting`.
 
-- No arquivo [AdminLanguageMiddleware.php](file:///var/www/html/agsonhos/core/Auth/Middleware/AdminLanguageMiddleware.php), adicionaremos no `ROUTE_NAMESPACE_MAP`:
+- No arquivo [AdminLanguageMiddleware.php](/core/Auth/Middleware/AdminLanguageMiddleware.php), adicionaremos no `ROUTE_NAMESPACE_MAP`:
   ```php
   'admin.setting.edit'    => 'admin/setting',
   'admin.setting.update'  => 'admin/setting',
@@ -30,13 +30,13 @@ Mapearemos a rota de configurações no middleware de idiomas do painel para car
 
 Criaremos os seguintes arquivos contendo as chaves de tradução:
 
-- **Português (pt-br)**: [pt-br.admin.setting.json](file:///var/www/html/agsonhos/Locales/pt-br/pt-br.admin.setting.json)
-- **Inglês (en-gb)**: [en-gb.admin.setting.json](file:///var/www/html/agsonhos/Locales/en-gb/en-gb.admin.setting.json)
-- **Francês (fr-fr)**: [fr-fr.admin.setting.json](file:///var/www/html/agsonhos/Locales/fr-fr/fr-fr.admin.setting.json)
+- **Português (pt-br)**: [pt-br.admin.setting.json](/Locales/pt-br/pt-br.admin.setting.json)
+- **Inglês (en-gb)**: [en-gb.admin.setting.json](/Locales/en-gb/en-gb.admin.setting.json)
+- **Francês (fr-fr)**: [fr-fr.admin.setting.json](/Locales/fr-fr/fr-fr.admin.setting.json)
 
 ### 3. Substituição de Textos Hard-coded na View
 
-No arquivo [edit.html.twig](file:///var/www/html/agsonhos/resources/views/admin/setting/store_setting/edit.html.twig), substituiremos os textos fixos por tags Twig que leem do objeto `AdminLang`, com fallbacks seguros em português para o caso de alguma chave não estar carregada.
+No arquivo [edit.html.twig](/resources/views/admin/setting/store_setting/edit.html.twig), substituiremos os textos fixos por tags Twig que leem do objeto `AdminLang`, com fallbacks seguros em português para o caso de alguma chave não estar carregada.
 
 Exemplos:
 - `<h2>Configurações da Loja</h2>` -> `<h2>{{ AdminLang.heading_title|default('Configurações da Loja') }}</h2>`
@@ -47,23 +47,23 @@ Exemplos:
 
 ## Detalhes das Alterações por Arquivo
 
-### [MODIFY] [AdminLanguageMiddleware.php](file:///var/www/html/agsonhos/core/Auth/Middleware/AdminLanguageMiddleware.php)
+### [MODIFY] [AdminLanguageMiddleware.php](/core/Auth/Middleware/AdminLanguageMiddleware.php)
 Adicionar mapeamento no array `ROUTE_NAMESPACE_MAP`:
 ```php
         'admin.setting.edit'    => 'admin/setting',
         'admin.setting.update'  => 'admin/setting',
 ```
 
-### [NEW] [pt-br.admin.setting.json](file:///var/www/html/agsonhos/Locales/pt-br/pt-br.admin.setting.json)
+### [NEW] [pt-br.admin.setting.json](/Locales/pt-br/pt-br.admin.setting.json)
 Arquivo com traduções em português.
 
-### [NEW] [en-gb.admin.setting.json](file:///var/www/html/agsonhos/Locales/en-gb/en-gb.admin.setting.json)
+### [NEW] [en-gb.admin.setting.json](/Locales/en-gb/en-gb.admin.setting.json)
 Arquivo com traduções em inglês.
 
-### [NEW] [fr-fr.admin.setting.json](file:///var/www/html/agsonhos/Locales/fr-fr/fr-fr.admin.setting.json)
+### [NEW] [fr-fr.admin.setting.json](/Locales/fr-fr/fr-fr.admin.setting.json)
 Arquivo com traduções em francês.
 
-### [MODIFY] [edit.html.twig](file:///var/www/html/agsonhos/resources/views/admin/setting/store_setting/edit.html.twig)
+### [MODIFY] [edit.html.twig](/resources/views/admin/setting/store_setting/edit.html.twig)
 Substituir todas as strings em português por referências a `AdminLang.key|default('Fallback PT')`.
 
 ---
@@ -90,17 +90,17 @@ Realizamos com sucesso a transferência de estilos inline e a internacionalizaç
 ## Alterações Realizadas
 
 ### 1. Refatoração de Estilos (CSS)
-- **Folha de Estilos**: Adicionamos classes em [components.css](file:///var/www/html/agsonhos/public_html/css/admin/components.css) para abas (`.tab-nav`, `.tab-button.active`), cabeçalhos (`.section-title`), layout de imagens (`.grid-images`, `.image-upload-card`, etc.), input groups de redes sociais (`.input-group`, `.input-group-addon`, `.input-group-control`) e utilitários de margem/exibição.
-- **View Twig**: Todos os atributos inline `style="..."` foram removidos em [edit.html.twig](file:///var/www/html/agsonhos/resources/views/admin/setting/store_setting/edit.html.twig) e as respectivas classes CSS foram aplicadas.
+- **Folha de Estilos**: Adicionamos classes em [components.css](/public_html/css/admin/components.css) para abas (`.tab-nav`, `.tab-button.active`), cabeçalhos (`.section-title`), layout de imagens (`.grid-images`, `.image-upload-card`, etc.), input groups de redes sociais (`.input-group`, `.input-group-addon`, `.input-group-control`) e utilitários de margem/exibição.
+- **View Twig**: Todos os atributos inline `style="..."` foram removidos em [edit.html.twig](/resources/views/admin/setting/store_setting/edit.html.twig) e as respectivas classes CSS foram aplicadas.
 - **JavaScript**: A função JS `switchTab()` agora gerencia os estados dos botões por meio da adição/remoção da classe `.active`, em vez de injetar propriedades CSS via DOM.
 
 ### 2. Internacionalização (i18n)
-- **Middleware**: Mapeamos a rota das configurações (`admin.setting.edit` e `admin.setting.update`) no middleware de idioma [AdminLanguageMiddleware.php](file:///var/www/html/agsonhos/core/Auth/Middleware/AdminLanguageMiddleware.php), fazendo com que carregue o namespace `admin/setting`.
+- **Middleware**: Mapeamos a rota das configurações (`admin.setting.edit` e `admin.setting.update`) no middleware de idioma [AdminLanguageMiddleware.php](/core/Auth/Middleware/AdminLanguageMiddleware.php), fazendo com que carregue o namespace `admin/setting`.
 - **Arquivos JSON de Tradução**: Criamos os seguintes arquivos contendo todas as strings traduzidas:
-  - [pt-br.admin.setting.json](file:///var/www/html/agsonhos/Locales/pt-br/pt-br.admin.setting.json) (Português)
-  - [en-gb.admin.setting.json](file:///var/www/html/agsonhos/Locales/en-gb/en-gb.admin.setting.json) (Inglês)
-  - [fr-fr.admin.setting.json](file:///var/www/html/agsonhos/Locales/fr-fr/fr-fr.admin.setting.json) (Francês)
-- **View Twig**: Substituímos todos os textos estáticos em [edit.html.twig](file:///var/www/html/agsonhos/resources/views/admin/setting/store_setting/edit.html.twig) por referências ao objeto dinâmico `AdminLang` com fallbacks amigáveis (ex: `{{ AdminLang.heading_title|default('Configurações da Loja') }}`).
+  - [pt-br.admin.setting.json](/Locales/pt-br/pt-br.admin.setting.json) (Português)
+  - [en-gb.admin.setting.json](/Locales/en-gb/en-gb.admin.setting.json) (Inglês)
+  - [fr-fr.admin.setting.json](/Locales/fr-fr/fr-fr.admin.setting.json) (Francês)
+- **View Twig**: Substituímos todos os textos estáticos em [edit.html.twig](/resources/views/admin/setting/store_setting/edit.html.twig) por referências ao objeto dinâmico `AdminLang` com fallbacks amigáveis (ex: `{{ AdminLang.heading_title|default('Configurações da Loja') }}`).
 
 ---
 

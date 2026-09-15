@@ -40,7 +40,7 @@ Adicionaremos as seguintes classes e utilitários para remover estilos inline na
 
 ### 2. Mapeamento no Middleware de Idiomas
 
-Mapearemos a rota de clientes em [AdminLanguageMiddleware.php](file:///var/www/html/agsonhos/core/Auth/Middleware/AdminLanguageMiddleware.php) para carregar o namespace `admin/customer`.
+Mapearemos a rota de clientes em [AdminLanguageMiddleware.php](/core/Auth/Middleware/AdminLanguageMiddleware.php) para carregar o namespace `admin/customer`.
 ```php
 'admin.customer.list'   => 'admin/customer',
 'admin.customer.create' => 'admin/customer',
@@ -51,36 +51,36 @@ Mapearemos a rota de clientes em [AdminLanguageMiddleware.php](file:///var/www/h
 ### 3. Criação de Arquivos de Idiomas (JSON)
 
 Criaremos os arquivos JSON com as strings de tradução nos três idiomas suportados:
-- **Português**: [pt-br.admin.customer.json](file:///var/www/html/agsonhos/Locales/pt-br/pt-br.admin.customer.json)
-- **Inglês**: [en-gb.admin.customer.json](file:///var/www/html/agsonhos/Locales/en-gb/en-gb.admin.customer.json)
-- **Francês**: [fr-fr.admin.customer.json](file:///var/www/html/agsonhos/Locales/fr-fr/fr-fr.admin.customer.json)
+- **Português**: [pt-br.admin.customer.json](/Locales/pt-br/pt-br.admin.customer.json)
+- **Inglês**: [en-gb.admin.customer.json](/Locales/en-gb/en-gb.admin.customer.json)
+- **Francês**: [fr-fr.admin.customer.json](/Locales/fr-fr/fr-fr.admin.customer.json)
 
 ### 4. Substituição de Estilos e Textos nas Views Twig
 
 Substituiremos os estilos inline pelas classes criadas e utilizaremos variáveis `AdminLang` para todas as strings de exibição (com fallbacks) nos seguintes arquivos:
-- [index.html.twig](file:///var/www/html/agsonhos/resources/views/admin/customer/customer/index.html.twig)
-- [create.html.twig](file:///var/www/html/agsonhos/resources/views/admin/customer/customer/create.html.twig)
-- [edit.html.twig](file:///var/www/html/agsonhos/resources/views/admin/customer/customer/edit.html.twig)
-- [show.html.twig](file:///var/www/html/agsonhos/resources/views/admin/customer/customer/show.html.twig)
-- [_form.html.twig](file:///var/www/html/agsonhos/resources/views/admin/customer/customer/_form.html.twig)
+- [index.html.twig](/resources/views/admin/customer/customer/index.html.twig)
+- [create.html.twig](/resources/views/admin/customer/customer/create.html.twig)
+- [edit.html.twig](/resources/views/admin/customer/customer/edit.html.twig)
+- [show.html.twig](/resources/views/admin/customer/customer/show.html.twig)
+- [_form.html.twig](/resources/views/admin/customer/customer/_form.html.twig)
 
 ---
 
 ## Detalhes das Alterações por Arquivo
 
-### [MODIFY] [components.css](file:///var/www/html/agsonhos/public_html/css/admin/components.css)
+### [MODIFY] [components.css](/public_html/css/admin/components.css)
 Adicionar as novas regras de estilo e utilitários.
 
-### [MODIFY] [AdminLanguageMiddleware.php](file:///var/www/html/agsonhos/core/Auth/Middleware/AdminLanguageMiddleware.php)
+### [MODIFY] [AdminLanguageMiddleware.php](/core/Auth/Middleware/AdminLanguageMiddleware.php)
 Mapear as 4 rotas de clientes para o namespace `admin/customer`.
 
-### [NEW] [pt-br.admin.customer.json](file:///var/www/html/agsonhos/Locales/pt-br/pt-br.admin.customer.json)
+### [NEW] [pt-br.admin.customer.json](/Locales/pt-br/pt-br.admin.customer.json)
 Traduções em Português do módulo de clientes.
 
-### [NEW] [en-gb.admin.customer.json](file:///var/www/html/agsonhos/Locales/en-gb/en-gb.admin.customer.json)
+### [NEW] [en-gb.admin.customer.json](/Locales/en-gb/en-gb.admin.customer.json)
 Traduções em Inglês do módulo de clientes.
 
-### [NEW] [fr-fr.admin.customer.json](file:///var/www/html/agsonhos/Locales/fr-fr/fr-fr.admin.customer.json)
+### [NEW] [fr-fr.admin.customer.json](/Locales/fr-fr/fr-fr.admin.customer.json)
 Traduções em Francês do módulo de clientes.
 
 ### [MODIFY] Views de Clientes (`index`, `create`, `edit`, `show`, `_form`)
@@ -115,7 +115,7 @@ Concluímos com sucesso a remoção de todos os estilos CSS inline e a internaci
 ## Alterações Realizadas
 
 ### 1. Refatoração de Estilos (CSS)
-- **Folha de Estilos**: Reutilizamos e integramos novas classes no arquivo global [components.css](file:///var/www/html/agsonhos/public_html/css/admin/components.css) para remover completamente qualquer estilo inline:
+- **Folha de Estilos**: Reutilizamos e integramos novas classes no arquivo global [components.css](/public_html/css/admin/components.css) para remover completamente qualquer estilo inline:
   - `.is-invalid`: Borda de erro nos inputs.
   - `.align-start`: Alinhamento flex-start.
   - `.flex-column` e `.gap-3`: Layouts flex organizados.
@@ -127,11 +127,11 @@ Concluímos com sucesso a remoção de todos os estilos CSS inline e a internaci
 - **Views Twig**: Todos os atributos inline `style="..."` foram removidos e substituídos pelas classes CSS utilitárias correspondentes em todas as views do cliente. No template `edit.html.twig`, removemos tags `</div>` sobressalentes que quebravam o fechamento correto do HTML.
 
 ### 2. Internacionalização (i18n)
-- **Middleware**: Mapeamos a rota `admin.customer.*` em [AdminLanguageMiddleware.php](file:///var/www/html/agsonhos/core/Auth/Middleware/AdminLanguageMiddleware.php) para carregar o namespace de tradução `admin/customer`.
+- **Middleware**: Mapeamos a rota `admin.customer.*` em [AdminLanguageMiddleware.php](/core/Auth/Middleware/AdminLanguageMiddleware.php) para carregar o namespace de tradução `admin/customer`.
 - **Arquivos JSON de Tradução**: Criamos e populamos chaves de internacionalização nos três arquivos de idiomas oficiais da loja:
-  - [pt-br.admin.customer.json](file:///var/www/html/agsonhos/Locales/pt-br/pt-br.admin.customer.json) (Português)
-  - [en-gb.admin.customer.json](file:///var/www/html/agsonhos/Locales/en-gb/en-gb.admin.customer.json) (Inglês)
-  - [fr-fr.admin.customer.json](file:///var/www/html/agsonhos/Locales/fr-fr/fr-fr.admin.customer.json) (Francês)
+  - [pt-br.admin.customer.json](/Locales/pt-br/pt-br.admin.customer.json) (Português)
+  - [en-gb.admin.customer.json](/Locales/en-gb/en-gb.admin.customer.json) (Inglês)
+  - [fr-fr.admin.customer.json](/Locales/fr-fr/fr-fr.admin.customer.json) (Francês)
   Adicionamos também as chaves `"button_edit_profile"`, `"text_active"` e `"text_inactive"` para contemplar as ações da ficha do cliente e a listagem.
 - **Views Twig**: Substituímos os textos hardcoded de todas as páginas por referências ao objeto dinâmico `AdminLang` com fallbacks amigáveis (ex: `{{ AdminLang.text_show_title|default('Ficha do Cliente') }}`).
 

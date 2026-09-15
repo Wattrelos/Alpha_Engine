@@ -24,7 +24,7 @@ Este plano descreve as etapas necessárias para adequar as dependências e confi
 
 ### Backend Dependencies
 
-#### [MODIFY] [backend/composer.json](file:///var/www/html/agsonhos/backend/composer.json)
+#### [MODIFY] [backend/composer.json](/backend/composer.json)
 - Adicionar `"php": ">=8.2"` em `"require"`
 - Adicionar `"platform": { "php": "8.2.0" }` dentro de `"config"`
 - Ajustar versões de dependências incompatíveis com 8.2:
@@ -37,7 +37,7 @@ Este plano descreve as etapas necessárias para adequar as dependências e confi
 
 ### Root Dev Dependencies
 
-#### [MODIFY] [composer.json](file:///var/www/html/agsonhos/composer.json)
+#### [MODIFY] [composer.json](/composer.json)
 - Adicionar `"config": { "platform": { "php": "8.2.0" } }`
 - Ajustar `"symfony/http-client"`: de `^8.1` para `^7.2`
 
@@ -77,7 +77,7 @@ Todas as configurações e dependências foram ajustadas com sucesso para garant
 ## Alterações Realizadas
 
 ### 1. Configurações do Composer no Backend
-No arquivo [backend/composer.json](file:///var/www/html/agsonhos/backend/composer.json):
+No arquivo [backend/composer.json](/backend/composer.json):
 * Adicionada a restrição `"php": ">=8.2"` em `"require"`.
 * Configurado `"platform": { "php": "8.2.0" }` em `"config"`, garantindo que atualizações futuras executadas em hosts com PHP mais recente (ex: PHP 8.4) continuem gerando código e lockfiles compatíveis com PHP 8.2.
 * Ajustadas as dependências para versões compatíveis com PHP 8.2+:
@@ -87,12 +87,12 @@ No arquivo [backend/composer.json](file:///var/www/html/agsonhos/backend/compose
   * `phpunit/phpunit`: `^11.5`
 
 ### 2. Configuração do Composer na Raiz
-No arquivo [composer.json](file:///var/www/html/agsonhos/composer.json):
+No arquivo [composer.json](/composer.json):
 * Configurado `"platform": { "php": "8.2.0" }`.
 * Ajustado `symfony/http-client` de `^8.1` para `^7.2`.
 
 ### 3. Ajuste do Esquema do PHPUnit
-No arquivo [backend/phpunit.xml](file:///var/www/html/agsonhos/backend/phpunit.xml):
+No arquivo [backend/phpunit.xml](/backend/phpunit.xml):
 * Removido o atributo `warnWhenPhpIsNotConfiguredForDevelopment` para total conformidade com o schema do PHPUnit 11.
 
 ---
@@ -108,7 +108,7 @@ There is no installed package depending on "php" in versions not matching 8.2.0
 > **Status:** 0 pacotes conflitantes encontrados.
 
 ### 2. Checagem do `platform_check.php`
-O arquivo gerado em [backend/vendor/composer/platform_check.php](file:///var/www/html/agsonhos/backend/vendor/composer/platform_check.php#L7) agora valida:
+O arquivo gerado em [backend/vendor/composer/platform_check.php](/backend/vendor/composer/platform_check.php#L7) agora valida:
 ```php
 if (!(PHP_VERSION_ID >= 80200)) {
     $issues[] = 'Your Composer dependencies require a PHP version ">= 8.2.0"...';

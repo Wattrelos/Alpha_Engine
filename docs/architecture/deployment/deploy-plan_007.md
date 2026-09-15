@@ -168,7 +168,7 @@ Finalizei com sucesso a implementação do suporte a Markdown nas descrições d
 
 Aqui está o resumo do que foi feito:
 
-* Integração do `Parsedown` no [ProductRepository.php](file:///var/www/html/agsonhos/core/Model/Domain/Repositories/ProductRepository.php) (métodos `getProduct`, `getProducts` e `getRelatedProducts`).
+* Integração do `Parsedown` no [ProductRepository.php](/core/Model/Domain/Repositories/ProductRepository.php) (métodos `getProduct`, `getProducts` e `getRelatedProducts`).
 
 * Limpeza completa do cache de dados (`storage/cache/`) para que a nova formatação seja renderizada imediatamente.
 

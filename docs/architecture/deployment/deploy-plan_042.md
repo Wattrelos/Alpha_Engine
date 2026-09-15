@@ -24,21 +24,21 @@ O objetivo é converter o arquivo `returns-institutional.css` para SCSS (`return
 
 ### 1. Compilador Dinâmico
 
-#### [MODIFY] [compile-scss.php](file:///var/www/html/agsonhos/scratch/compile-scss.php)
+#### [MODIFY] [compile-scss.php](/scratch/compile-scss.php)
 * Modificar o script para ler todos os arquivos `.scss` que não iniciem com underscore (`_`) dentro de `public_html/css/custom/` e gerar os respectivos `.css` correspondentes.
 
 ### 2. Estilos Modulares (SCSS)
 
-#### [NEW] [returns-institutional.scss](file:///var/www/html/agsonhos/public_html/css/custom/returns-institutional.scss)
+#### [NEW] [returns-institutional.scss](/public_html/css/custom/returns-institutional.scss)
 * Novo arquivo de entrada SCSS que importará os tokens/variáveis e conterá as declarações do módulo `returns-institutional`, utilizando heranças (como os estilos de botões e breadcrumbs já definidos no sistema) para evitar repetição de código.
 
-#### [NEW] [_returns.scss](file:///var/www/html/agsonhos/public_html/css/base/pages/_returns.scss)
+#### [NEW] [_returns.scss](/public_html/css/base/pages/_returns.scss)
 * Extração dos estilos específicos de devolução (formulário, detalhes, histórico).
 
-#### [NEW] [_contact.scss](file:///var/www/html/agsonhos/public_html/css/base/pages/_contact.scss)
+#### [NEW] [_contact.scss](/public_html/css/base/pages/_contact.scss)
 * Extração dos estilos específicos da página de contato.
 
-#### [NEW] [_info.scss](file:///var/www/html/agsonhos/public_html/css/base/pages/_info.scss)
+#### [NEW] [_info.scss](/public_html/css/base/pages/_info.scss)
 * Extração dos estilos da página institucional.
 
 ## Verification Plan
@@ -76,21 +76,21 @@ O objetivo é converter o arquivo `returns-institutional.css` para SCSS (`return
 
 ### 1. Compilador Dinâmico
 
-#### [MODIFY] [compile-scss.php](file:///var/www/html/agsonhos/scratch/compile-scss.php)
+#### [MODIFY] [compile-scss.php](/scratch/compile-scss.php)
 * Modificar o script para ler todos os arquivos `.scss` que não iniciem com underscore (`_`) dentro de `public_html/css/custom/` e gerar os respectivos `.css` correspondentes.
 
 ### 2. Estilos Modulares (SCSS)
 
-#### [NEW] [returns-institutional.scss](file:///var/www/html/agsonhos/public_html/css/custom/returns-institutional.scss)
+#### [NEW] [returns-institutional.scss](/public_html/css/custom/returns-institutional.scss)
 * Novo arquivo de entrada SCSS que importará os tokens/variáveis e conterá as declarações do módulo `returns-institutional`, utilizando heranças (como os estilos de botões e breadcrumbs já definidos no sistema) para evitar repetição de código.
 
-#### [NEW] [_returns.scss](file:///var/www/html/agsonhos/public_html/css/base/pages/_returns.scss)
+#### [NEW] [_returns.scss](/public_html/css/base/pages/_returns.scss)
 * Extração dos estilos específicos de devolução (formulário, detalhes, histórico).
 
-#### [NEW] [_contact.scss](file:///var/www/html/agsonhos/public_html/css/base/pages/_contact.scss)
+#### [NEW] [_contact.scss](/public_html/css/base/pages/_contact.scss)
 * Extração dos estilos específicos da página de contato.
 
-#### [NEW] [_info.scss](file:///var/www/html/agsonhos/public_html/css/base/pages/_info.scss)
+#### [NEW] [_info.scss](/public_html/css/base/pages/_info.scss)
 * Extração dos estilos da página institucional.
 
 ## Verification Plan

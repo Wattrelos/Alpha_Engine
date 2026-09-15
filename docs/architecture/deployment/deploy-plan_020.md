@@ -27,7 +27,7 @@ None. The requested changes directly extend the dynamic translation system using
 
 ### Core & Middleware
 
-#### [MODIFY] [AdminLanguageMiddleware.php](file:///var/www/html/agsonhos/core/Auth/Middleware/AdminLanguageMiddleware.php)
+#### [MODIFY] [AdminLanguageMiddleware.php](/core/Auth/Middleware/AdminLanguageMiddleware.php)
 - Define a `ROUTE_NAMESPACE_MAP` class constant mapping supplier routes to the `admin/supplier` translation namespace.
 - Extract the route name from `RouteContext` safely within a try-catch block.
 - Load page-specific translations if a route name mapping exists.
@@ -35,29 +35,29 @@ None. The requested changes directly extend the dynamic translation system using
 
 ### Translations
 
-#### [MODIFY] [pt-br.admin.supplier.json](file:///var/www/html/agsonhos/Locales/pt-br/pt-br.admin.supplier.json)
+#### [MODIFY] [pt-br.admin.supplier.json](/Locales/pt-br/pt-br.admin.supplier.json)
 - Add missing translation keys for the creation/editing subtitles, placeholders, alert texts, and selection options.
 
-#### [MODIFY] [en-gb.admin.supplier.json](file:///var/www/html/agsonhos/Locales/en-gb/en-gb.admin.supplier.json)
+#### [MODIFY] [en-gb.admin.supplier.json](/Locales/en-gb/en-gb.admin.supplier.json)
 - Add the corresponding English translation keys.
 
-#### [MODIFY] [fr-fr.admin.supplier.json](file:///var/www/html/agsonhos/Locales/fr-fr/fr-fr.admin.supplier.json)
+#### [MODIFY] [fr-fr.admin.supplier.json](/Locales/fr-fr/fr-fr.admin.supplier.json)
 - Add the corresponding French translation keys.
 
 ### Twig Views
 
-#### [MODIFY] [index.html.twig](file:///var/www/html/agsonhos/resources/views/admin/catalog/supplier/index.html.twig)
+#### [MODIFY] [index.html.twig](/resources/views/admin/catalog/supplier/index.html.twig)
 - Replace all hardcoded strings with Twig variables inside the `AdminLang` structure using fallback default values.
 
-#### [MODIFY] [create.html.twig](file:///var/www/html/agsonhos/resources/views/admin/catalog/supplier/create.html.twig)
+#### [MODIFY] [create.html.twig](/resources/views/admin/catalog/supplier/create.html.twig)
 - Replace hardcoded fields, placeholders, labels, and JavaScript alerts/selection helper options with the corresponding `AdminLang` values.
 
-#### [MODIFY] [edit.html.twig](file:///var/www/html/agsonhos/resources/views/admin/catalog/supplier/edit.html.twig)
+#### [MODIFY] [edit.html.twig](/resources/views/admin/catalog/supplier/edit.html.twig)
 - Apply the same dynamic translations to edit fields, titles, buttons, and contact grid fields.
 
 ### Verification & Tests
 
-#### [MODIFY] [TestAdminLanguage.php](file:///var/www/html/agsonhos/tests/TestAdminLanguage.php)
+#### [MODIFY] [TestAdminLanguage.php](/tests/TestAdminLanguage.php)
 - Add mock route for supplier listing (`/test-supplier-list`) under `AdminLanguageMiddleware`.
 - Assert that supplier listing header texts change dynamically based on the chosen locale (Portuguese, English, French).
 
@@ -98,16 +98,16 @@ We have successfully implemented:
 ### Changes Implemented
 
 #### Controllers
-- **[CreateProductAction.php](file:///var/www/html/agsonhos/core/Admin/Controllers/Actions/Catalog/Product/CreateProductAction.php)**: Queries all available categories and passes them to the template on GET. Added request-body parsing for category IDs and logic to store them in `product_to_category` within the transaction on POST.
-- **[EditProductAction.php](file:///var/www/html/agsonhos/core/Admin/Controllers/Actions/Catalog/Product/EditProductAction.php)**: Queried all categories and current categories associated with the product to pass to Twig view.
-- **[UpdateProductAction.php](file:///var/www/html/agsonhos/core/Admin/Controllers/Actions/Catalog/Product/UpdateProductAction.php)**: Added category ID parsing from POST. Integrated transaction logic to delete old category relations and insert updated ones.
+- **[CreateProductAction.php](/core/Admin/Controllers/Actions/Catalog/Product/CreateProductAction.php)**: Queries all available categories and passes them to the template on GET. Added request-body parsing for category IDs and logic to store them in `product_to_category` within the transaction on POST.
+- **[EditProductAction.php](/core/Admin/Controllers/Actions/Catalog/Product/EditProductAction.php)**: Queried all categories and current categories associated with the product to pass to Twig view.
+- **[UpdateProductAction.php](/core/Admin/Controllers/Actions/Catalog/Product/UpdateProductAction.php)**: Added category ID parsing from POST. Integrated transaction logic to delete old category relations and insert updated ones.
 
 #### Templates
-- **[create.html.twig](file:///var/www/html/agsonhos/resources/views/admin/pages/products/create.html.twig)**: Added a premium, scrollable grid checkbox UI for selecting product categories.
-- **[edit.html.twig](file:///var/www/html/agsonhos/resources/views/admin/pages/products/edit.html.twig)**: Added the same grid checkbox UI under the General tab, with pre-selected categories for existing product records.
+- **[create.html.twig](/resources/views/admin/pages/products/create.html.twig)**: Added a premium, scrollable grid checkbox UI for selecting product categories.
+- **[edit.html.twig](/resources/views/admin/pages/products/edit.html.twig)**: Added the same grid checkbox UI under the General tab, with pre-selected categories for existing product records.
 
 #### Tests
-- **[TestCreateProduct.php](file:///var/www/html/agsonhos/tests/TestCreateProduct.php)**: Enhanced the mock payload to include categories, asserted proper DB persistence and relation cleanup.
+- **[TestCreateProduct.php](/tests/TestCreateProduct.php)**: Enhanced the mock payload to include categories, asserted proper DB persistence and relation cleanup.
 
 ---
 
@@ -116,16 +116,16 @@ We have successfully implemented:
 ### Changes Implemented
 
 #### Storefront Mappers
-- **[ProductMapper.php](file:///var/www/html/agsonhos/core/Mappers/EntityMappers/ProductMapper.php)**:
+- **[ProductMapper.php](/core/Mappers/EntityMappers/ProductMapper.php)**:
   - Replaced hardcoded `p.quantity > 0` checks with `NOT (p.quantity <= 0 AND p.stock_status_id = 5)` across all storefront queries (`getProduct`, `getProducts`, `getProductsByIds`, `getTotalProducts`, `getRelated`).
   - Added `AND NOT (pv.quantity <= 0 AND pv.stock_status_id = 5)` to the subqueries calculating variant min/max price, name, and image so out-of-stock variants with status ID 5 are correctly ignored.
-- **[ManufacturerMapper.php](file:///var/www/html/agsonhos/core/Mappers/EntityMappers/ManufacturerMapper.php)**: Updated `getManufacturersByCategory` to replace the `p.quantity > 0` condition with `NOT (p.quantity <= 0 AND p.stock_status_id = 5)`.
+- **[ManufacturerMapper.php](/core/Mappers/EntityMappers/ManufacturerMapper.php)**: Updated `getManufacturersByCategory` to replace the `p.quantity > 0` condition with `NOT (p.quantity <= 0 AND p.stock_status_id = 5)`.
 
 #### Storefront Controllers
-- **[ShowProductAction.php](file:///var/www/html/agsonhos/core/Controller/Actions/Product/ShowProductAction.php)**: Filtered out any variation whose quantity is <= 0 and stock_status_id is 5 in the variation loop for storefront rendering.
+- **[ShowProductAction.php](/core/Controller/Actions/Product/ShowProductAction.php)**: Filtered out any variation whose quantity is <= 0 and stock_status_id is 5 in the variation loop for storefront rendering.
 
 #### Tests
-- **[TestStockStatusHiding.php](file:///var/www/html/agsonhos/tests/TestStockStatusHiding.php)**: Created a new integration test script to verify that products are hidden/visible depending on their stock status ID and quantity.
+- **[TestStockStatusHiding.php](/tests/TestStockStatusHiding.php)**: Created a new integration test script to verify that products are hidden/visible depending on their stock status ID and quantity.
 
 ---
 
@@ -134,26 +134,26 @@ We have successfully implemented:
 ### Changes Implemented
 
 #### Domain Entities & Repositories
-- **[Supplier.php](file:///var/www/html/agsonhos/core/Model/Domain/Entities/Supplier/Supplier.php)**: Added `$contacts` array property with getter and setter to aggregate contact details within the Supplier entity.
-- **[SupplierRepository.php](file:///var/www/html/agsonhos/core/Model/Domain/Repositories/SupplierRepository.php)**:
+- **[Supplier.php](/core/Model/Domain/Entities/Supplier/Supplier.php)**: Added `$contacts` array property with getter and setter to aggregate contact details within the Supplier entity.
+- **[SupplierRepository.php](/core/Model/Domain/Repositories/SupplierRepository.php)**:
   - **`find(int $id)`**: Queries contacts associated with the supplier from the `agsc_contact` table via the `agsc_supplier_contact_manufacturer` pivot table and populates the entity.
   - **`save(Supplier $supplier)`**: Manually saves/updates contacts, updates pivot records, and performs orphan contact cleanup inside a database transaction.
   - **`delete(int $id)`**: Retrieves all associated contacts and deletes them from the contacts table to maintain DB integrity.
 
 #### Framework Core (Bug Fix)
-- **[DataAccessObject.php](file:///var/www/html/agsonhos/core/Model/DataAccessObject/DataAccessObject.php)**: Fixed a critical bug in the core `delete()` method which was unconditionally beginning and committing database transactions. It now correctly checks if a transaction is already active using `!$conn->inTransaction()`, preventing nested transaction collisions when deleting dependent objects.
+- **[DataAccessObject.php](/core/Model/DataAccessObject/DataAccessObject.php)**: Fixed a critical bug in the core `delete()` method which was unconditionally beginning and committing database transactions. It now correctly checks if a transaction is already active using `!$conn->inTransaction()`, preventing nested transaction collisions when deleting dependent objects.
 
 #### Dashboard Controllers
-- **[CreateSupplierAction.php](file:///var/www/html/agsonhos/core/Admin/Controllers/Actions/Procurement/Supplier/CreateSupplierAction.php)**: Fetches and binds `manufacturers` to the creation view.
-- **[EditSupplierAction.php](file:///var/www/html/agsonhos/core/Admin/Controllers/Actions/Procurement/Supplier/EditSupplierAction.php)**: Fetches and binds `manufacturers` to the editing view.
-- **[StoreSupplierAction.php](file:///var/www/html/agsonhos/core/Admin/Controllers/Actions/Procurement/Supplier/StoreSupplierAction.php)**: Parses contacts from the POST body, assigns them to the supplier entity, and retrieves manufacturers on validation errors or exceptions.
-- **[UpdateSupplierAction.php](file:///var/www/html/agsonhos/core/Admin/Controllers/Actions/Procurement/Supplier/UpdateSupplierAction.php)**: Handles contact parsing and saving on update, and returns the manufacturer list on validation errors.
+- **[CreateSupplierAction.php](/core/Admin/Controllers/Actions/Procurement/Supplier/CreateSupplierAction.php)**: Fetches and binds `manufacturers` to the creation view.
+- **[EditSupplierAction.php](/core/Admin/Controllers/Actions/Procurement/Supplier/EditSupplierAction.php)**: Fetches and binds `manufacturers` to the editing view.
+- **[StoreSupplierAction.php](/core/Admin/Controllers/Actions/Procurement/Supplier/StoreSupplierAction.php)**: Parses contacts from the POST body, assigns them to the supplier entity, and retrieves manufacturers on validation errors or exceptions.
+- **[UpdateSupplierAction.php](/core/Admin/Controllers/Actions/Procurement/Supplier/UpdateSupplierAction.php)**: Handles contact parsing and saving on update, and returns the manufacturer list on validation errors.
 
 #### UI Views
-- **[create.html.twig](file:///var/www/html/agsonhos/resources/views/admin/catalog/supplier/create.html.twig)** and **[edit.html.twig](file:///var/www/html/agsonhos/resources/views/admin/catalog/supplier/edit.html.twig)**: Added a premium, dynamic contacts management table. The table supports adding/removing rows (with micro-transitions and hover states) and binds all inputs (Name, Email, Phone, Position, Manufacturer represented, and Status) directly to the submission payload.
+- **[create.html.twig](/resources/views/admin/catalog/supplier/create.html.twig)** and **[edit.html.twig](/resources/views/admin/catalog/supplier/edit.html.twig)**: Added a premium, dynamic contacts management table. The table supports adding/removing rows (with micro-transitions and hover states) and binds all inputs (Name, Email, Phone, Position, Manufacturer represented, and Status) directly to the submission payload.
 
 #### Tests
-- **[TestSupplierContacts.php](file:///var/www/html/agsonhos/tests/TestSupplierContacts.php)**: Added a comprehensive integration test checking database state transitions (supplier creation, contact queries, modifying values, deleting orphans, and cascading deletion).
+- **[TestSupplierContacts.php](/tests/TestSupplierContacts.php)**: Added a comprehensive integration test checking database state transitions (supplier creation, contact queries, modifying values, deleting orphans, and cascading deletion).
 
 ---
 
@@ -162,27 +162,27 @@ We have successfully implemented:
 ### Changes Implemented
 
 #### Middleware
-- **[AdminLanguageMiddleware.php](file:///var/www/html/agsonhos/core/Auth/Middleware/AdminLanguageMiddleware.php)**: Resolves the active language from the `admin_language` cookie, maps the db code (e.g. `'fr'` to `'fr-fr'` directories), configures the container translator, retrieves all active languages from the DB, and passes `languages` list and translated navigation strings (`AdminLang`) globally to Twig.
+- **[AdminLanguageMiddleware.php](/core/Auth/Middleware/AdminLanguageMiddleware.php)**: Resolves the active language from the `admin_language` cookie, maps the db code (e.g. `'fr'` to `'fr-fr'` directories), configures the container translator, retrieves all active languages from the DB, and passes `languages` list and translated navigation strings (`AdminLang`) globally to Twig.
 
 #### Controllers
-- **[SwitchAdminLanguageAction.php](file:///var/www/html/agsonhos/core/Admin/Controllers/Actions/Common/SwitchAdminLanguageAction.php)**: Receives the language change POST request, sets the `admin_language` cookie (persisted for 30 days), and redirects the administrator back to their referer URL.
+- **[SwitchAdminLanguageAction.php](/core/Admin/Controllers/Actions/Common/SwitchAdminLanguageAction.php)**: Receives the language change POST request, sets the `admin_language` cookie (persisted for 30 days), and redirects the administrator back to their referer URL.
 
 #### Routes Configuration
-- **[Routes.php](file:///var/www/html/agsonhos/Config/Routes.php)**: Registered the `/idioma` route in the admin route group and added the `AdminLanguageMiddleware` to apply language mapping and translations dynamically on all admin pages.
+- **[Routes.php](/Config/Routes.php)**: Registered the `/idioma` route in the admin route group and added the `AdminLanguageMiddleware` to apply language mapping and translations dynamically on all admin pages.
 
 #### Translations
 - Added layout translations under `Locales/`:
-  - **[pt-br.admin.common.json](file:///var/www/html/agsonhos/Locales/pt-br/pt-br.admin.common.json)**
-  - **[en-gb.admin.common.json](file:///var/www/html/agsonhos/Locales/en-gb/en-gb.admin.common.json)**
-  - **[fr-fr.admin.common.json](file:///var/www/html/agsonhos/Locales/fr-fr/fr-fr.admin.common.json)**
+  - **[pt-br.admin.common.json](/Locales/pt-br/pt-br.admin.common.json)**
+  - **[en-gb.admin.common.json](/Locales/en-gb/en-gb.admin.common.json)**
+  - **[fr-fr.admin.common.json](/Locales/fr-fr/fr-fr.admin.common.json)**
 
 #### Layouts
-- **[base.html.twig](file:///var/www/html/agsonhos/resources/views/admin/layouts/base.html.twig)**:
+- **[base.html.twig](/resources/views/admin/layouts/base.html.twig)**:
   - Replaced hardcoded text in the sidebar navigation and header elements with the dynamic `AdminLang` variables.
   - Added a premium, seamless language switcher dropdown in the header that automatically submits and updates the admin's locale instantly.
 
 #### Tests
-- **[TestAdminLanguage.php](file:///var/www/html/agsonhos/tests/TestAdminLanguage.php)**: Integration test simulating dashboard calls, switching languages, and verifying that the layout correctly loads translated values for Portuguese, English, and French.
+- **[TestAdminLanguage.php](/tests/TestAdminLanguage.php)**: Integration test simulating dashboard calls, switching languages, and verifying that the layout correctly loads translated values for Portuguese, English, and French.
 
 ---
 
@@ -191,21 +191,21 @@ We have successfully implemented:
 ### Changes Implemented
 
 #### Route Namespace Map inside Middleware
-- **[AdminLanguageMiddleware.php](file:///var/www/html/agsonhos/core/Auth/Middleware/AdminLanguageMiddleware.php)**: Added a class constant `ROUTE_NAMESPACE_MAP` mapping route names (e.g. `admin.supplier.list`, `admin.supplier.edit`) to their translation namespace (`admin/supplier`). Added logic to extract the route name from `RouteContext` and load/merge the namespace dictionary directly into `AdminLang`.
+- **[AdminLanguageMiddleware.php](/core/Auth/Middleware/AdminLanguageMiddleware.php)**: Added a class constant `ROUTE_NAMESPACE_MAP` mapping route names (e.g. `admin.supplier.list`, `admin.supplier.edit`) to their translation namespace (`admin/supplier`). Added logic to extract the route name from `RouteContext` and load/merge the namespace dictionary directly into `AdminLang`.
 
 #### Enhanced Translation files
 - Added extra translation keys (page headings, placeholders, dropdown items, error and ViaCEP search states) to:
-  - **[pt-br.admin.supplier.json](file:///var/www/html/agsonhos/Locales/pt-br/pt-br.admin.supplier.json)**
-  - **[en-gb.admin.supplier.json](file:///var/www/html/agsonhos/Locales/en-gb/en-gb.admin.supplier.json)**
-  - **[fr-fr.admin.supplier.json](file:///var/www/html/agsonhos/Locales/fr-fr/fr-fr.admin.supplier.json)**
+  - **[pt-br.admin.supplier.json](/Locales/pt-br/pt-br.admin.supplier.json)**
+  - **[en-gb.admin.supplier.json](/Locales/en-gb/en-gb.admin.supplier.json)**
+  - **[fr-fr.admin.supplier.json](/Locales/fr-fr/fr-fr.admin.supplier.json)**
 
 #### View Updates
-- **[index.html.twig](file:///var/www/html/agsonhos/resources/views/admin/catalog/supplier/index.html.twig)**: Substituted list titles, filters, labels, columns, and empty state strings with their dynamic translated counterparts inside `AdminLang` with fallbacks.
-- **[create.html.twig](file:///var/www/html/agsonhos/resources/views/admin/catalog/supplier/create.html.twig)**: Substituted form fields, placeholders, section headers, select inputs, and JavaScript alerts with corresponding `AdminLang` values.
-- **[edit.html.twig](file:///var/www/html/agsonhos/resources/views/admin/catalog/supplier/edit.html.twig)**: Refactored edit view fields, subtitles, address selectors, contact list rows, and labels to use dynamic translated properties.
+- **[index.html.twig](/resources/views/admin/catalog/supplier/index.html.twig)**: Substituted list titles, filters, labels, columns, and empty state strings with their dynamic translated counterparts inside `AdminLang` with fallbacks.
+- **[create.html.twig](/resources/views/admin/catalog/supplier/create.html.twig)**: Substituted form fields, placeholders, section headers, select inputs, and JavaScript alerts with corresponding `AdminLang` values.
+- **[edit.html.twig](/resources/views/admin/catalog/supplier/edit.html.twig)**: Refactored edit view fields, subtitles, address selectors, contact list rows, and labels to use dynamic translated properties.
 
 #### Expanded Test Coverage
-- **[TestAdminLanguage.php](file:///var/www/html/agsonhos/tests/TestAdminLanguage.php)**: Registered a mock `/test-supplier-list` endpoint named `admin.supplier.list` and wrote dynamic assertions for Portuguese, English, and French translations.
+- **[TestAdminLanguage.php](/tests/TestAdminLanguage.php)**: Registered a mock `/test-supplier-list` endpoint named `admin.supplier.list` and wrote dynamic assertions for Portuguese, English, and French translations.
 
 ---
 

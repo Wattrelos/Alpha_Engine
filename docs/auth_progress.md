@@ -7,8 +7,8 @@ Este documento registra o avanço na reestruturação e desacoplamento do módul
 ### 1. Camada de Apresentação e Componentização Visual (Twig & Atomic Design)
 - **Componentização baseada em Atomic Design**: Substituição da função legada fictícia `component()` pelo uso nativo de `{% include %}` com passagem explícita de variáveis nas views.
 - **Páginas de Apresentação**:
-  - [login.twig](file:///var/www/html/agsonhos/resources/views/pages/users/login.twig): Interface refinada estendendo o layout base e injetando estados/erros do controlador de forma dinâmica.
-  - [register.twig](file:///var/www/html/agsonhos/resources/views/pages/users/register.twig): Formulário completo de cadastro, aplicando o filtro `|raw` no contrato e formatando inputs dinamicamente (incluindo CPF/CNPJ e campos customizados).
+  - [login.twig](/resources/views/pages/users/login.twig): Interface refinada estendendo o layout base e injetando estados/erros do controlador de forma dinâmica.
+  - [register.twig](/resources/views/pages/users/register.twig): Formulário completo de cadastro, aplicando o filtro `|raw` no contrato e formatando inputs dinamicamente (incluindo CPF/CNPJ e campos customizados).
 - **Tradução Automática**: Renderização hidratada de idiomas a partir do arquivo físico local de translations.
 
 ### 2. Controladores e Ações Standalone (Actions Slim)
@@ -48,14 +48,14 @@ Este documento registra o avanço na reestruturação e desacoplamento do módul
   - Criação da biblioteca `form-validator.js` (`public_html/js/custom/form-validator.js`) para gerenciar máscaras em tempo real para CPF/CNPJ e Telefone, verificação de compatibilidade de senhas e submissões genéricas via AJAX (`data-oc-toggle="ajax"`).
   - A biblioteca foi integrada ao layout global (`layouts/base.html.twig`) e o arquivo órfão `verifica-formulario-cadastro-cliente.js` foi deletado.
 - **Implementação e Correção da Rota de Minha Conta (Account)**:
-  - Correção do namespace de [AccountAction.php](file:///var/www/html/agsonhos/core/Controller/Actions/Customer/Auth/AccountAction.php) para `Alpha\Controller\Actions\Customer\Auth`.
-  - Refatoração completa da action para renderizar dinamicamente a view Twig de conta [account.twig](file:///var/www/html/agsonhos/resources/views/pages/users/accounts/account.twig), definindo todas as traduções e links de rotas necessárias em pt-br.
-  - Registro da rota `/account` no bootstrap [index.php](file:///var/www/html/agsonhos/public_html/index.php) associada à `SessionMiddleware` para proteção automática de autenticação.
+  - Correção do namespace de [AccountAction.php](/core/Controller/Actions/Customer/Auth/AccountAction.php) para `Alpha\Controller\Actions\Customer\Auth`.
+  - Refatoração completa da action para renderizar dinamicamente a view Twig de conta [account.twig](/resources/views/pages/users/accounts/account.twig), definindo todas as traduções e links de rotas necessárias em pt-br.
+  - Registro da rota `/account` no bootstrap [index.php](/public_html/index.php) associada à `SessionMiddleware` para proteção automática de autenticação.
   - Adição de redirecionamento de compatibilidade de `/account` para a versão com idioma `/pt-br/account`.
 - **Implementação e Correção da Rota de Meus Pedidos (Orders)**:
-  - Correção do namespace de [OrdersAction.php](file:///var/www/html/agsonhos/core/Controller/Actions/Customer/Auth/OrdersAction.php) para `Alpha\Controller\Actions\Customer\Auth`.
-  - Refatoração completa da action para buscar os pedidos do cliente, obter a quantidade de itens por pedido, formatar os valores monetários e datas, e renderizar a view [orders.twig](file:///var/www/html/agsonhos/resources/views/pages/users/accounts/orders.twig).
-  - Registro da rota `/account/orders` no bootstrap [index.php](file:///var/www/html/agsonhos/public_html/index.php) associada à `SessionMiddleware` para proteção automática de autenticação.
+  - Correção do namespace de [OrdersAction.php](/core/Controller/Actions/Customer/Auth/OrdersAction.php) para `Alpha\Controller\Actions\Customer\Auth`.
+  - Refatoração completa da action para buscar os pedidos do cliente, obter a quantidade de itens por pedido, formatar os valores monetários e datas, e renderizar a view [orders.twig](/resources/views/pages/users/accounts/orders.twig).
+  - Registro da rota `/account/orders` no bootstrap [index.php](/public_html/index.php) associada à `SessionMiddleware` para proteção automática de autenticação.
   - Adição de redirecionamento de compatibilidade de `/account/orders` para a versão com idioma `/pt-br/account/orders`.
 
 ### 5. Abstração e Especialização de Serviços de Autenticação (Alpha Engine)
@@ -64,40 +64,40 @@ Este documento registra o avanço na reestruturação e desacoplamento do módul
 - **Especialização do Escopo de Sessões (`CustomerAuthService` & `AdminAuthService`)**:
   - Separação de namespaces, prefixos de chaves do Redis e cookies de sessão (`session_id` para clientes e `admin_session_id` para administradores).
 - **Segurança Dinâmica no Backoffice (Admin Login & Logout)**:
-  - Eliminação de credenciais estáticas hardcoded no controlador administrativo [LoginAction.php](file:///var/www/html/agsonhos/core/Admin/Controllers/Actions/Auth/LoginAction.php), integrando a verificação de credenciais no banco de dados via [UserRepository](file:///var/www/html/agsonhos/core/Model/Domain/Repositories/UserRepository.php) com validação de status de atividade do administrador.
+  - Eliminação de credenciais estáticas hardcoded no controlador administrativo [LoginAction.php](/core/Admin/Controllers/Actions/Auth/LoginAction.php), integrando a verificação de credenciais no banco de dados via [UserRepository](/core/Model/Domain/Repositories/UserRepository.php) com validação de status de atividade do administrador.
   - Implementação da `LogoutAction` de admin para encerramento completo da sessão.
 - **Bloqueio de Brute-Force Administrativo**:
   - Recriação da tabela `tbkk_user_login` equivalente à de clientes (`customer_login`) e adição de métodos de controle de tentativas no `UserMapper` e `UserRepository`. O `AdminAuthService` bloqueia acessos caso ocorram mais de 5 tentativas consecutivas na última hora.
-  - O login malsucedido calcula tentativas restantes e exibe a nova tela dedicada de segurança [error.html.twig](file:///var/www/html/agsonhos/resources/views/admin/auth/error.html.twig) com contagem regressiva e redirecionamento.
+  - O login malsucedido calcula tentativas restantes e exibe a nova tela dedicada de segurança [error.html.twig](/resources/views/admin/auth/error.html.twig) com contagem regressiva e redirecionamento.
 - **Proteção de Rotas com `AdminSessionMiddleware`**:
   - Middleware desenvolvido para validar acessos restritos do backoffice.
   - Correção de erro 404 nas rotas do painel via criação de arquivo de reescrita local `.htaccess` no diretório administrativo.
 
 ### 6. Estabilização e Alinhamento de Segurança do Login de Clientes
 - **Bloqueio de Brute-Force e Verificação de Status**:
-  - Refatoração da autenticação em [CustomerAuthService.php](file:///var/www/html/agsonhos/core/Auth/Services/CustomerAuthService.php) para alinhar-se à arquitetura do painel de administração.
+  - Refatoração da autenticação em [CustomerAuthService.php](/core/Auth/Services/CustomerAuthService.php) para alinhar-se à arquitetura do painel de administração.
   - O login de clientes agora valida se a conta está temporariamente bloqueada por excesso de tentativas (`isLockedOut` limitando a 5 tentativas).
   - Adicionada a validação do status ativo (`isStatus()`) da entidade cliente.
   - Integrada a contagem falha (`addLoginAttempt`) e a limpeza das tentativas (`resetLoginAttempts`) na persistência do banco após login bem-sucedido.
 
 ### 7. Gestão de Funcionários, Papéis & Permissões (RBAC) e Atalhos do Dashboard
 - **Módulo de Papéis & Permissões (`UserGroup`)**:
-  - Implementação de repositório e mappers em [UserGroupRepository.php](file:///var/www/html/agsonhos/core/Model/Domain/Repositories/UserGroupRepository.php) e [UserGroupMapper.php](file:///var/www/html/agsonhos/core/Mappers/EntityMappers/UserGroupMapper.php).
+  - Implementação de repositório e mappers em [UserGroupRepository.php](/core/Model/Domain/Repositories/UserGroupRepository.php) e [UserGroupMapper.php](/core/Mappers/EntityMappers/UserGroupMapper.php).
   - Métodos de persistência `save()`, `delete()` e `countUsersInGroup()`.
-  - Matriz visual de permissões por módulo no painel administrativo ([user_group_form.html.twig](file:///var/www/html/agsonhos/resources/views/admin/user_group/user_group_form.html.twig)) com autorizações granulares para leitura (`access`) e modificação (`modify`).
+  - Matriz visual de permissões por módulo no painel administrativo ([user_group_form.html.twig](/resources/views/admin/user_group/user_group_form.html.twig)) com autorizações granulares para leitura (`access`) e modificação (`modify`).
   - Proteção de integridade: bloqueio de exclusão do grupo `Super Administrator` (ID 1) e de papéis com colaboradores ativos vinculados.
 - **Módulo de Funcionários / Colaboradores (`User`)**:
-  - Implementação de repositório e mappers em [UserRepository.php](file:///var/www/html/agsonhos/core/Model/Domain/Repositories/UserRepository.php) e [UserMapper.php](file:///var/www/html/agsonhos/core/Mappers/EntityMappers/UserMapper.php).
-  - Tabela paginada com filtros e formulário completo de cadastro e edição ([user_list.html.twig](file:///var/www/html/agsonhos/resources/views/admin/user/user_list.html.twig) e [user_form.html.twig](file:///var/www/html/agsonhos/resources/views/admin/user/user_form.html.twig)).
+  - Implementação de repositório e mappers em [UserRepository.php](/core/Model/Domain/Repositories/UserRepository.php) e [UserMapper.php](/core/Mappers/EntityMappers/UserMapper.php).
+  - Tabela paginada com filtros e formulário completo de cadastro e edição ([user_list.html.twig](/resources/views/admin/user/user_list.html.twig) e [user_form.html.twig](/resources/views/admin/user/user_form.html.twig)).
   - Hashing de senhas via `password_hash()` e verificação `password_verify()`.
   - Proteção de segurança: bloqueio automático contra autoexclusão da própria conta do administrador logado.
 - **Atalhos Dinâmicos no Dashboard Condicionados ao Papel**:
-  - Criação do grid de **Atalhos Rápidos do Sistema** em [index.html.twig](file:///var/www/html/agsonhos/resources/views/admin/pages/dashboard/index.html.twig).
-  - O [AdminSessionMiddleware.php](file:///var/www/html/agsonhos/core/Auth/Middleware/AdminSessionMiddleware.php) injeta `logged_admin_permissions` globalmente no Twig. Os botões de atalho (Funcionários, Papéis, PDV Vendedor, PDV Caixa, Produtos, Fornecedores, Configurações) são exibidos condicionalmente às permissões ativas do perfil logado.
+  - Criação do grid de **Atalhos Rápidos do Sistema** em [index.html.twig](/resources/views/admin/pages/dashboard/index.html.twig).
+  - O [AdminSessionMiddleware.php](/core/Auth/Middleware/AdminSessionMiddleware.php) injeta `logged_admin_permissions` globalmente no Twig. Os botões de atalho (Funcionários, Papéis, PDV Vendedor, PDV Caixa, Produtos, Fornecedores, Configurações) são exibidos condicionalmente às permissões ativas do perfil logado.
 - **Infraestrutura & Mapeamento de Rotas Mascaradas**:
   - Mapeamento das rotas `/usuarios` e `/papeis` sob o prefixo seguro `/LPDHED2dC7Gjrg2b/`.
   - Execução de `composer dump-autoload` para atualização do mapa de classes autoritativo (`"classmap-authoritative": true`).
-  - Utilitário de limpeza de cache de templates [clean_cache.php](file:///var/www/html/agsonhos/public_html/clean_cache.php) e tratamento defensivo `setCache(false)` em [ViewDashboardAction.php](file:///var/www/html/agsonhos/core/Admin/Controllers/Actions/Dashboard/ViewDashboardAction.php).
+  - Utilitário de limpeza de cache de templates [clean_cache.php](/public_html/clean_cache.php) e tratamento defensivo `setCache(false)` em [ViewDashboardAction.php](/core/Admin/Controllers/Actions/Dashboard/ViewDashboardAction.php).
 
 
 

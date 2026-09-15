@@ -31,26 +31,26 @@ Este plano descreve o reforço da camada de **Isolamento Multi-tenant (`store_id
 
 ### Camada de Repositórios & Repositório Base (Core Domain)
 
-#### [MODIFY] [AbstractRepository.php](file:///var/www/html/agsonhos/core/Model/Domain/Repositories/AbstractRepository.php)
+#### [MODIFY] [AbstractRepository.php](/core/Model/Domain/Repositories/AbstractRepository.php)
 - Reforçar o getter magico `__get('store_id')` para garantir resolução consistente do `config_store_id` a partir do container ou das configurações globais, com sanitização para tipo `int`.
 
-#### [MODIFY] [CustomerRepository.php](file:///var/www/html/agsonhos/core/Model/Domain/Repositories/CustomerRepository.php)
+#### [MODIFY] [CustomerRepository.php](/core/Model/Domain/Repositories/CustomerRepository.php)
 - Garantir que buscas de clientes por ID, e-mail ou autenticação filtrem explicitamente por `store_id`.
 
-#### [MODIFY] [OrderRepository.php](file:///var/www/html/agsonhos/core/Model/Domain/Repositories/OrderRepository.php)
+#### [MODIFY] [OrderRepository.php](/core/Model/Domain/Repositories/OrderRepository.php)
 - Reforçar que a recuperação e alteração de histórico de pedidos exijam `store_id`.
 
 ---
 
 ### Camada de Mappers (Data Mappers SQL)
 
-#### [MODIFY] [OrderMapper.php](file:///var/www/html/agsonhos/core/Mappers/EntityMappers/OrderMapper.php)
+#### [MODIFY] [OrderMapper.php](/core/Mappers/EntityMappers/OrderMapper.php)
 - Garantir a junção e o filtro `o.store_id = :store_id` em consultas de pedidos e relatórios.
 
-#### [MODIFY] [CustomerMapper.php](file:///var/www/html/agsonhos/core/Mappers/EntityMappers/CustomerMapper.php)
+#### [MODIFY] [CustomerMapper.php](/core/Mappers/EntityMappers/CustomerMapper.php)
 - Adicionar/reforçar a cláusula `store_id = :store_id` no resgate e atualização de clientes.
 
-#### [MODIFY] [CategoryMapper.php](file:///var/www/html/agsonhos/core/Mappers/EntityMappers/CategoryMapper.php)
+#### [MODIFY] [CategoryMapper.php](/core/Mappers/EntityMappers/CategoryMapper.php)
 - Garantir a cláusula `c2s.store_id = :store_id` no resgate e busca de categorias por ID.
 
 ---
@@ -78,37 +78,37 @@ Este plano descreve o reforço da camada de **Isolamento Multi-tenant (`store_id
 # Walkthrough - Implementação de Segurança (CSRF, Security Headers, Secure Cookies, Rate Limiting, Debug Mode & Isolamento de Tenants)
 
 ## 🔒 1. Proteção Anti-CSRF
-- **[CsrfGuardMiddleware.php](file:///var/www/html/agsonhos/core/Auth/Middleware/CsrfGuardMiddleware.php)**: Proteção anti-CSRF com inicialização preguiçosa (*lazy initialization*) para evitar erros de sessão prematura e handler de erro JSON/HTML.
+- **[CsrfGuardMiddleware.php](/core/Auth/Middleware/CsrfGuardMiddleware.php)**: Proteção anti-CSRF com inicialização preguiçosa (*lazy initialization*) para evitar erros de sessão prematura e handler de erro JSON/HTML.
 
 ---
 
 ## 🛡️ 2. Cabeçalhos de Segurança HTTP (Security Headers)
-- **[SecurityHeadersMiddleware.php](file:///var/www/html/agsonhos/core/Auth/Middleware/SecurityHeadersMiddleware.php)**: Cabeçalhos defensivos `X-Frame-Options`, `nosniff`, `XSS-Protection`, `Referrer-Policy`, `Permissions-Policy`, `CSP` e `HSTS` (HTTPS).
+- **[SecurityHeadersMiddleware.php](/core/Auth/Middleware/SecurityHeadersMiddleware.php)**: Cabeçalhos defensivos `X-Frame-Options`, `nosniff`, `XSS-Protection`, `Referrer-Policy`, `Permissions-Policy`, `CSP` e `HSTS` (HTTPS).
 
 ---
 
 ## 🍪 3. Flag `; Secure` Condicional em Cookies de Sessão
-- **[CookieHelper.php](file:///var/www/html/agsonhos/core/Support/CookieHelper.php)**: Utilitário para formatar cookies HTTP anexando `; Secure` sob conexões HTTPS.
+- **[CookieHelper.php](/core/Support/CookieHelper.php)**: Utilitário para formatar cookies HTTP anexando `; Secure` sob conexões HTTPS.
 
 ---
 
 ## ⚡ 4. Limitação de Taxa por IP (Rate Limiting com Redis & Fallback em Arquivo)
-- **[RateLimitMiddleware.php](file:///var/www/html/agsonhos/core/Auth/Middleware/RateLimitMiddleware.php)**: Cota estrita (10 req/min) para autenticação e cota ampla (60 req/min) para APIs `/api/*`, com fallback local em arquivo para desenvolvimento.
+- **[RateLimitMiddleware.php](/core/Auth/Middleware/RateLimitMiddleware.php)**: Cota estrita (10 req/min) para autenticação e cota ampla (60 req/min) para APIs `/api/*`, com fallback local em arquivo para desenvolvimento.
 
 ---
 
 ## 🛠️ 5. Desativação do Modo de Depuração em Produção & Handler 500
-- **[public_html/index.php](file:///var/www/html/agsonhos/public_html/index.php)** & **[public_html/LPDHED2dC7Gjrg2b/index.php](file:///var/www/html/agsonhos/public_html/LPDHED2dC7Gjrg2b/index.php)**: Configuração dinâmica de Twig debug e Slim ErrorMiddleware via `.env` (`APP_ENV` / `APP_DEBUG`), com páginas e handlers de erro 500 amigáveis sem vazamento de stack traces em produção.
+- **[public_html/index.php](/public_html/index.php)** & **[public_html/LPDHED2dC7Gjrg2b/index.php](/public_html/LPDHED2dC7Gjrg2b/index.php)**: Configuração dinâmica de Twig debug e Slim ErrorMiddleware via `.env` (`APP_ENV` / `APP_DEBUG`), com páginas e handlers de erro 500 amigáveis sem vazamento de stack traces em produção.
 
 ---
 
 ## 🏢 6. Isolamento Rígido de Tenants (`store_id`)
 
-- **[AbstractRepository.php](file:///var/www/html/agsonhos/core/Model/Domain/Repositories/AbstractRepository.php)**: Reforçada a resolução magica e adicionado o método `getStoreId()`, garantindo resgate estrito do `store_id` a partir do container ou cabeçalho HTTP `X-Store-ID`.
-- **[CustomerRepository.php](file:///var/www/html/agsonhos/core/Model/Domain/Repositories/CustomerRepository.php)** & **[CustomerMapper.php](file:///var/www/html/agsonhos/core/Mappers/EntityMappers/CustomerMapper.php)**:
+- **[AbstractRepository.php](/core/Model/Domain/Repositories/AbstractRepository.php)**: Reforçada a resolução magica e adicionado o método `getStoreId()`, garantindo resgate estrito do `store_id` a partir do container ou cabeçalho HTTP `X-Store-ID`.
+- **[CustomerRepository.php](/core/Model/Domain/Repositories/CustomerRepository.php)** & **[CustomerMapper.php](/core/Mappers/EntityMappers/CustomerMapper.php)**:
   - `find($id)` e `findByEmail($email)` passam a validar obrigatoriamente se a conta do cliente pertence ao `store_id` da loja ativa.
   - Tentativas de acesso cross-tenant (acessar cliente de outra loja) retornam `null` para prevenir vazamento de PII.
-- **[OrderRepository.php](file:///var/www/html/agsonhos/core/Model/Domain/Repositories/OrderRepository.php)** & **[OrderMapper.php](file:///var/www/html/agsonhos/core/Mappers/EntityMappers/OrderMapper.php)**:
+- **[OrderRepository.php](/core/Model/Domain/Repositories/OrderRepository.php)** & **[OrderMapper.php](/core/Mappers/EntityMappers/OrderMapper.php)**:
   - `getOrder($orderId, $customerId)` passa a incluir a verificação obrigatória de `store_id = :store_id` na consulta SQL.
 
 ---

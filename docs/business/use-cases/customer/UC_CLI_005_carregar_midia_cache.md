@@ -11,7 +11,7 @@
 | **Atores Secundários** | Visitante (*Guest*), Cliente Logado (*Customer*) |
 | **Tipo** | Inclusão de `UC_CLI_003` (`<<include>>`) / Processamento em Background |
 | **Frequência de Uso** | Contínua / Muito Alta |
-| **Rastreabilidade** | **RF:** [RF001](file:///var/www/html/agsonhos/docs/requirements/functional/functional_requirements.yaml) (Imagens HD)<br>**RNF:** [RNF002](file:///var/www/html/agsonhos/docs/requirements/non_functional/non_functional_requirements.yaml) (Desempenho, compressão WebP e TTFB < 200ms) |
+| **Rastreabilidade** | **RF:** [RF001](/docs/requirements/functional/functional_requirements.yaml) (Imagens HD)<br>**RNF:** [RNF002](/docs/requirements/non_functional/non_functional_requirements.yaml) (Desempenho, compressão WebP e TTFB < 200ms) |
 
 ---
 

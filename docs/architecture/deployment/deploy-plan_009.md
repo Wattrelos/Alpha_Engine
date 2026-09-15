@@ -84,9 +84,9 @@ Edited walkthrough.md
 Ran command: `rm -f /aa7809a7-cd2d-4100-87c5-7b9c9a1bdd2a/scratch/test_show_cart_action.php`
 I have successfully completed the tasks. Below is a summary of the changes:
 
-1\. **Injected Repository:** Imported and injected the [CustomerAddressesRepository](file:///var/www/html/agsonhos/core/Model/Domain/Repositories/CustomerAddressesRepository.php) into the [ShowCartAction](file:///var/www/html/agsonhos/core/Controller/Actions/Cart/ShowCartAction.php) constructor.
+1\. **Injected Repository:** Imported and injected the [CustomerAddressesRepository](/core/Model/Domain/Repositories/CustomerAddressesRepository.php) into the [ShowCartAction](/core/Controller/Actions/Cart/ShowCartAction.php) constructor.
 
-2\. **Updated CEP Retrieval:** Replaced the simple session lookup in [ShowCartAction](file:///var/www/html/agsonhos/core/Controller/Actions/Cart/ShowCartAction.php) with the multi-step fallback checks matching `ShowProductAction`'s logic:
+2\. **Updated CEP Retrieval:** Replaced the simple session lookup in [ShowCartAction](/core/Controller/Actions/Cart/ShowCartAction.php) with the multi-step fallback checks matching `ShowProductAction`'s logic:
 
 - First, checks the session `shipping_cep`.
 - Second, if the customer is logged in, checks and uses their default address postal code.

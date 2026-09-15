@@ -11,7 +11,7 @@
 | **Atores Secundários** | Sistema Alpha Engine |
 | **Tipo** | Extensão de `UC_CLI_003` (`<<extend>>`) |
 | **Frequência de Uso** | Alta |
-| **Rastreabilidade** | **RF:** [RF004](file:///var/www/html/agsonhos/docs/requirements/functional/functional_requirements.yaml) (Venda múltiplas unidades), [RF012](file:///var/www/html/agsonhos/docs/requirements/functional/functional_requirements.yaml) (PDP com variações)<br>**RN:** [RN001](file:///var/www/html/agsonhos/docs/requirements/business_rules/business_rules.yaml) (Variações de unidades m²/cx/peça), [RN003](file:///var/www/html/agsonhos/docs/requirements/business_rules/business_rules.yaml) (Voltagem e atributos)<br>**RNF:** [RNF001](file:///var/www/html/agsonhos/docs/requirements/non_functional/non_functional_requirements.yaml) (Usabilidade) |
+| **Rastreabilidade** | **RF:** [RF004](/docs/requirements/functional/functional_requirements.yaml) (Venda múltiplas unidades), [RF012](/docs/requirements/functional/functional_requirements.yaml) (PDP com variações)<br>**RN:** [RN001](/docs/requirements/business_rules/business_rules.yaml) (Variações de unidades m²/cx/peça), [RN003](/docs/requirements/business_rules/business_rules.yaml) (Voltagem e atributos)<br>**RNF:** [RNF001](/docs/requirements/non_functional/non_functional_requirements.yaml) (Usabilidade) |
 
 ---
 

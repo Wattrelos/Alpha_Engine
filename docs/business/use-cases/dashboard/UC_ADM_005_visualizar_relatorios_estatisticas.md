@@ -11,7 +11,7 @@
 | **Atores Secundários** | Sistema Alpha Engine |
 | **Tipo** | Condução / Relatórios & Business Intelligence |
 | **Frequência de Uso** | Alta |
-| **Rastreabilidade** | **RF:** [RF024](file:///var/www/html/agsonhos/docs/requirements/functional/functional_requirements.yaml) (Alerta de ruptura de estoque), [RF025](file:///var/www/html/agsonhos/docs/requirements/functional/functional_requirements.yaml) (Analytics e relatórios gerenciais)<br>**RN:** [RN006](file:///var/www/html/agsonhos/docs/requirements/business_rules/business_rules.yaml) (Alerta proativo de estoque mínimo), [RN015](file:///var/www/html/agsonhos/docs/requirements/business_rules/business_rules.yaml) (Desempenho de vendas por categoria)<br>**RNF:** [RNF002](file:///var/www/html/agsonhos/docs/requirements/non_functional/non_functional_requirements.yaml) (Geração rápida com caching e exportação CSV/PDF) |
+| **Rastreabilidade** | **RF:** [RF024](/docs/requirements/functional/functional_requirements.yaml) (Alerta de ruptura de estoque), [RF025](/docs/requirements/functional/functional_requirements.yaml) (Analytics e relatórios gerenciais)<br>**RN:** [RN006](/docs/requirements/business_rules/business_rules.yaml) (Alerta proativo de estoque mínimo), [RN015](/docs/requirements/business_rules/business_rules.yaml) (Desempenho de vendas por categoria)<br>**RNF:** [RNF002](/docs/requirements/non_functional/non_functional_requirements.yaml) (Geração rápida com caching e exportação CSV/PDF) |
 
 ---
 

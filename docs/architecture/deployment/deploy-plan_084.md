@@ -12,7 +12,7 @@
 
 # Plano de Estruturação e Preenchimento do Documento de Atividades do Negócio
 
-Consolidação formal de todas as rotinas operacionais, comerciais e de infraestrutura do sistema **Alpha Engine (E-commerce On-Premise de Materiais de Construção)** no arquivo [`Alpha. Atividades do Negócio.doc.md`](file:///var/www/html/agsonhos/docs/documentos_para_a_faculdade/Alpha.%20Atividades%20do%20Neg%C3%B3cio.doc.md).
+Consolidação formal de todas as rotinas operacionais, comerciais e de infraestrutura do sistema **Alpha Engine (E-commerce On-Premise de Materiais de Construção)** no arquivo [`Alpha. Atividades do Negócio.doc.md`](/docs/documentos_para_a_faculdade/Alpha.%20Atividades%20do%20Neg%C3%B3cio.doc.md).
 
 ---
 
@@ -81,8 +81,8 @@ Detalhamento dos mecanismos técnicos que sustentam a resiliência da aplicaçã
 
 Ambos os documentos acadêmicos do projeto **Alpha Engine (E-commerce On-Premise de Materiais de Construção)** foram totalmente estruturados, preenchidos e validados:
 
-1. [`Alpha. Requisitos do Sistema.doc.md`](file:///var/www/html/agsonhos/docs/documentos_para_a_faculdade/Alpha.%20Requisitos%20do%20Sistema.doc.md)
-2. [`Alpha. Atividades do Negócio.doc.md`](file:///var/www/html/agsonhos/docs/documentos_para_a_faculdade/Alpha.%20Atividades%20do%20Neg%C3%B3cio.doc.md)
+1. [`Alpha. Requisitos do Sistema.doc.md`](/docs/documentos_para_a_faculdade/Alpha.%20Requisitos%20do%20Sistema.doc.md)
+2. [`Alpha. Atividades do Negócio.doc.md`](/docs/documentos_para_a_faculdade/Alpha.%20Atividades%20do%20Neg%C3%B3cio.doc.md)
 
 ---
 
@@ -136,6 +136,6 @@ Ambos os documentos acadêmicos do projeto **Alpha Engine (E-commerce On-Premise
 
 ## Verificação de Entregas
 
-- [`Alpha. Requisitos do Sistema.doc.md`](file:///var/www/html/agsonhos/docs/documentos_para_a_faculdade/Alpha.%20Requisitos%20do%20Sistema.doc.md): 605 linhas, sumário completo, tabelas padronizadas de RF/RNF, 18 regras de negócio e matrizes de rastreabilidade.
-- [`Alpha. Atividades do Negócio.doc.md`](file:///var/www/html/agsonhos/docs/documentos_para_a_faculdade/Alpha.%20Atividades%20do%20Neg%C3%B3cio.doc.md): 278 linhas, sumário navegável, 10 atividades detalhadas passo a passo com referências aos diagramas PlantUML (`.puml`).
+- [`Alpha. Requisitos do Sistema.doc.md`](/docs/documentos_para_a_faculdade/Alpha.%20Requisitos%20do%20Sistema.doc.md): 605 linhas, sumário completo, tabelas padronizadas de RF/RNF, 18 regras de negócio e matrizes de rastreabilidade.
+- [`Alpha. Atividades do Negócio.doc.md`](/docs/documentos_para_a_faculdade/Alpha.%20Atividades%20do%20Neg%C3%B3cio.doc.md): 278 linhas, sumário navegável, 10 atividades detalhadas passo a passo com referências aos diagramas PlantUML (`.puml`).
 

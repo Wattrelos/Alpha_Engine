@@ -11,7 +11,7 @@
 | **Atores Secundários** | Sistema Alpha Engine POS |
 | **Tipo** | Extensão de `UC_POS_001` (`<<extend>>`) |
 | **Frequência de Uso** | Alta |
-| **Rastreabilidade** | **RF:** [RF004](file:///var/www/html/agsonhos/docs/requirements/functional/functional_requirements.yaml) (Venda múltiplas unidades), [RF012](file:///var/www/html/agsonhos/docs/requirements/functional/functional_requirements.yaml) (Opções)<br>**RN:** [RN001](file:///var/www/html/agsonhos/docs/requirements/business_rules/business_rules.yaml) (Cálculo de m² e conversão de caixas fechadas), [RN003](file:///var/www/html/agsonhos/docs/requirements/business_rules/business_rules.yaml) (Voltagem e opções)<br>**RNF:** [RNF001](file:///var/www/html/agsonhos/docs/requirements/non_functional/non_functional_requirements.yaml) (Atalhos de teclado rápidos F1-F12) |
+| **Rastreabilidade** | **RF:** [RF004](/docs/requirements/functional/functional_requirements.yaml) (Venda múltiplas unidades), [RF012](/docs/requirements/functional/functional_requirements.yaml) (Opções)<br>**RN:** [RN001](/docs/requirements/business_rules/business_rules.yaml) (Cálculo de m² e conversão de caixas fechadas), [RN003](/docs/requirements/business_rules/business_rules.yaml) (Voltagem e opções)<br>**RNF:** [RNF001](/docs/requirements/non_functional/non_functional_requirements.yaml) (Atalhos de teclado rápidos F1-F12) |
 
 ---
 

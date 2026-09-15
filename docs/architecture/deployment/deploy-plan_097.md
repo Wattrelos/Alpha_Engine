@@ -18,7 +18,7 @@ Implementar o início automático de sessão (Auto-Login) no momento em que um n
 
 ### Backend (Alpha Engine Auth & Controller)
 
-#### [MODIFY] [RegisterAction.php](file:///var/www/html/agsonhos/backend/core/Controller/Actions/Customer/Auth/RegisterAction.php)
+#### [MODIFY] [RegisterAction.php](/backend/core/Controller/Actions/Customer/Auth/RegisterAction.php)
 - Injetar `CustomerAuthService` no construtor via `AppContainer`.
 - Após `CustomerRepository->registerCustomer($params)` criar o cliente com sucesso:
   - Recuperar os dados do cliente criado (`id`, `name`, `email`, `telephone`, `customer_group_id`, `role`).
@@ -31,7 +31,7 @@ Implementar o início automático de sessão (Auto-Login) no momento em que um n
 
 ### Frontend (Checkout & Formulários)
 
-#### [MODIFY] [checkout.js](file:///var/www/html/agsonhos/public_html/js/cart/checkout.js)
+#### [MODIFY] [checkout.js](/public_html/js/cart/checkout.js)
 - Na função assíncrona `validateStepAsync(1)`:
   - Quando a opção for `register`:
     - Coletar dados do formulário `#checkout-register-form`.
@@ -44,22 +44,22 @@ Implementar o início automático de sessão (Auto-Login) no momento em que um n
 
 ### Testes Automatizados (E2E & Unitários)
 
-#### [NEW] [RegisterPage.ts](file:///var/www/html/agsonhos/e2e/pages/RegisterPage.ts)
+#### [NEW] [RegisterPage.ts](/e2e/pages/RegisterPage.ts)
 - Criar Page Object para a tela de cadastro (`/{lang}/cadastro`).
 
-#### [NEW] [register.spec.ts](file:///var/www/html/agsonhos/e2e/specs/auth/register.spec.ts)
+#### [NEW] [register.spec.ts](/e2e/specs/auth/register.spec.ts)
 - Testes E2E para o fluxo de cadastro:
   - Renderização do formulário e validações.
   - Cadastro de novo usuário com verificação de **auto-login imediato** (sessão ativa e redirecionamento para Minha Conta sem passar pela tela de login).
   - Teste de e-mail duplicado.
 
-#### [MODIFY] [test-fixtures.ts](file:///var/www/html/agsonhos/e2e/fixtures/test-fixtures.ts)
+#### [MODIFY] [test-fixtures.ts](/e2e/fixtures/test-fixtures.ts)
 - Adicionar a fixture `registerPage` ao `test-fixtures.ts`.
 
-#### [MODIFY] [checkout-flow.spec.ts](file:///var/www/html/agsonhos/e2e/specs/cart/checkout-flow.spec.ts)
+#### [MODIFY] [checkout-flow.spec.ts](/e2e/specs/cart/checkout-flow.spec.ts)
 - Assegurar que o teste de checkout de ponta a ponta valide o cadastro com auto-login e confirme que o pedido final é gerado com ID de cliente autenticado.
 
-#### [NEW] [CustomerAutoLoginRegisterTest.php](file:///var/www/html/agsonhos/tests/Validation/CustomerAutoLoginRegisterTest.php)
+#### [NEW] [CustomerAutoLoginRegisterTest.php](/tests/Validation/CustomerAutoLoginRegisterTest.php)
 - Teste unitário/integração PHPUnit validando que `RegisterAction` emite cookie de sessão, inicia `$_SESSION['customer_id']` e retorna a resposta de redirecionamento esperada.
 
 ## Verification Plan
@@ -85,37 +85,37 @@ Implementamos com sucesso a solução de **Auto-Login no Cadastro de Clientes**,
 ## Resumo das Alterações Realizadas
 
 ### 1. Backend (Alpha Engine Auth & Controller)
-- **[`RegisterAction.php`](file:///var/www/html/agsonhos/backend/core/Controller/Actions/Customer/Auth/RegisterAction.php)**:
-  - Injetamos [`CustomerAuthService`](file:///var/www/html/agsonhos/backend/core/Auth/Services/CustomerAuthService.php) na Action via injeção de dependências do [`AppContainer`](file:///var/www/html/agsonhos/backend/Containers/AppContainer.php).
-  - Após persistir o cadastro com [`CustomerRepository::registerCustomer`](file:///var/www/html/agsonhos/backend/core/Model/Domain/Repositories/CustomerRepository.php), a sessão é iniciada imediatamente via `$this->authService->createSession($userData)`.
+- **[`RegisterAction.php`](/backend/core/Controller/Actions/Customer/Auth/RegisterAction.php)**:
+  - Injetamos [`CustomerAuthService`](/backend/core/Auth/Services/CustomerAuthService.php) na Action via injeção de dependências do [`AppContainer`](/backend/Containers/AppContainer.php).
+  - Após persistir o cadastro com [`CustomerRepository::registerCustomer`](/backend/core/Model/Domain/Repositories/CustomerRepository.php), a sessão é iniciada imediatamente via `$this->authService->createSession($userData)`.
   - O cabeçalho `Set-Cookie` com cookie seguro `session_id` (`HttpOnly`, `SameSite`) é emitido com sucesso.
   - A resposta JSON retorna `success: true`, `customer_id`, `redirect` e os tokens `csrf` atualizados.
-- **[`CustomerAuthService.php`](file:///var/www/html/agsonhos/backend/core/Auth/Services/CustomerAuthService.php)**:
+- **[`CustomerAuthService.php`](/backend/core/Auth/Services/CustomerAuthService.php)**:
   - Atualizado para preservar dados pré-existentes na sessão PHP (tokens CSRF, itens temporários do carrinho) e sincronizar as chaves `email` e `telephone` em `$_SESSION`.
-- **[`SubmitCheckoutAction.php`](file:///var/www/html/agsonhos/backend/core/Controller/Actions/Cart/SubmitCheckoutAction.php)**:
+- **[`SubmitCheckoutAction.php`](/backend/core/Controller/Actions/Cart/SubmitCheckoutAction.php)**:
   - Robustecida a resolução de `email`, `telephone`, `firstname` e `lastname` a partir das chaves legadas e novas de sessão do cliente autenticado.
 
 ### 2. Frontend (Fluxo de Checkout)
-- **[`checkout.js`](file:///var/www/html/agsonhos/public_html/js/cart/checkout.js)**:
+- **[`checkout.js`](/public_html/js/cart/checkout.js)**:
   - Ao selecionar "Quero me cadastrar" na Etapa 1 do checkout e clicar em "Avançar", o checkout submete os dados de cadastro via AJAX para `/{lang}/cadastro` incluindo `agree: '1'`.
   - Com o retorno de sucesso e a sessão iniciada no cookie/backend, a página atualiza seu estado (`data-logged="true"`), sincroniza os produtos do carrinho local com `/api/carrinho/sincronizar`, atualiza os tokens CSRF e avança suavemente para a **Etapa 2 (Endereço)** sem exigir login ou recarregar a tela.
 
 ### 3. Testes Automatizados
 
 #### Testes Unitários e de Integração (PHPUnit)
-- **[`CustomerAutoLoginRegisterTest.php`](file:///var/www/html/agsonhos/tests/Validation/CustomerAutoLoginRegisterTest.php)**:
+- **[`CustomerAutoLoginRegisterTest.php`](/tests/Validation/CustomerAutoLoginRegisterTest.php)**:
   - `testRegisterActionPerformsAutoLoginAndEmitsSessionCookie`: Valida criação de conta, emissão de cookie `Set-Cookie` e inicialização de `$_SESSION['customer_id']`.
   - `testRegisterActionSupportsCustomRedirect`: Valida suporte a redirecionamento customizado (ex: `/pt-br/checkout`).
   - `testRegisterActionFailsWithValidationErrors`: Valida tratamento de erros sem emissão indevida de sessão.
 
 #### Testes de Ponta a Ponta (Playwright E2E)
-- **[`RegisterPage.ts`](file:///var/www/html/agsonhos/e2e/pages/RegisterPage.ts)**: Novo Page Object para `/cadastro`.
-- **[`test-fixtures.ts`](file:///var/www/html/agsonhos/e2e/fixtures/test-fixtures.ts)**: Registrada fixture `registerPage`.
-- **[`register.spec.ts`](file:///var/www/html/agsonhos/e2e/specs/auth/register.spec.ts)**:
+- **[`RegisterPage.ts`](/e2e/pages/RegisterPage.ts)**: Novo Page Object para `/cadastro`.
+- **[`test-fixtures.ts`](/e2e/fixtures/test-fixtures.ts)**: Registrada fixture `registerPage`.
+- **[`register.spec.ts`](/e2e/specs/auth/register.spec.ts)**:
   - Renderização do formulário com tokens CSRF.
   - Cadastro de novo usuário com auto-login e redirecionamento direto para a Minha Conta (`/account`).
   - Validação de erros em tempo real com senhas divergentes.
-- **[`checkout-flow.spec.ts`](file:///var/www/html/agsonhos/e2e/specs/cart/checkout-flow.spec.ts)**:
+- **[`checkout-flow.spec.ts`](/e2e/specs/cart/checkout-flow.spec.ts)**:
   - Jornada completa: busca ➔ adicionar 2 produtos ao carrinho ➔ cálculo de frete ➔ ir para checkout ➔ cadastro com auto-login na Etapa 1 ➔ preenchimento de endereço na Etapa 2 ➔ seleção de pagamento na Etapa 4 ➔ finalização com sucesso e confirmação do pedido!
 
 ---

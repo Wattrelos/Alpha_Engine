@@ -11,7 +11,7 @@
 | **Atores Secundários** | WebServices dos Correios / Transportadoras de Carga Pesada |
 | **Tipo** | Extensão de `UC_CLI_006` (`<<extend>>`) |
 | **Frequência de Uso** | Alta |
-| **Rastreabilidade** | **RF:** [RF010](file:///var/www/html/agsonhos/docs/requirements/functional/functional_requirements.yaml) (Cálculo frete dinâmico), [RF021](file:///var/www/html/agsonhos/docs/requirements/functional/functional_requirements.yaml) (BOPIS/Retirada)<br>**RN:** [RN002](file:///var/www/html/agsonhos/docs/requirements/business_rules/business_rules.yaml) (Cubagem e peso), [RN007](file:///var/www/html/agsonhos/docs/requirements/business_rules/business_rules.yaml) (Múltiplas opções de frete), [RN008](file:///var/www/html/agsonhos/docs/requirements/business_rules/business_rules.yaml) (Frete grátis e retirada em loja) |
+| **Rastreabilidade** | **RF:** [RF010](/docs/requirements/functional/functional_requirements.yaml) (Cálculo frete dinâmico), [RF021](/docs/requirements/functional/functional_requirements.yaml) (BOPIS/Retirada)<br>**RN:** [RN002](/docs/requirements/business_rules/business_rules.yaml) (Cubagem e peso), [RN007](/docs/requirements/business_rules/business_rules.yaml) (Múltiplas opções de frete), [RN008](/docs/requirements/business_rules/business_rules.yaml) (Frete grátis e retirada em loja) |
 
 ---
 

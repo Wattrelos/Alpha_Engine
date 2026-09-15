@@ -17,7 +17,7 @@ Este plano descreve as melhorias que serão aplicadas à documentação da **Alp
 ## Alterações Propostas
 
 ### 1. Otimização do README da Arquitetura
-#### [MODIFY] [README.md](file:///var/www/html/agsonhos/docs/architecture/README.md)
+#### [MODIFY] [README.md](/docs/architecture/README.md)
 Refatoração completa do documento de visão arquitetural, integrando a documentação rica de stakeholders com as diretrizes técnicas:
 * **Metadados (Front-matter)** expandidos com tags de arquitetura, padrões, namespaces e regras de prioridade.
 * **Mapeamento de Diretórios de Domínio** com links clicáveis em markdown (`file://`) para fácil navegação do agente.
@@ -30,7 +30,7 @@ Refatoração completa do documento de visão arquitetural, integrando a documen
 ---
 
 ### 2. Otimização do Glossário de Termos
-#### [MODIFY] [prompt-glossary.json](file:///var/www/html/agsonhos/docs/architecture/agents/prompt-glossary.json)
+#### [MODIFY] [prompt-glossary.json](/docs/architecture/agents/prompt-glossary.json)
 Reorganização e enriquecimento do dicionário de termos:
 * Classificação em seções semânticas: `priority_levels`, `functional_prefixes`, `domain_abbreviations` e `architectural_concepts`.
 * Adição de novos termos técnicos da Alpha Engine (ex: `UoW`, `DAO`, `POPO`, `DTO`, `Skinny Controllers`, `WSOD`, `Atomic Design`).
@@ -56,7 +56,7 @@ Concluímos com sucesso as otimizações na documentação e no dicionário de t
 ## Alterações Realizadas
 
 ### 1. README de Visão Arquitetural
-*   **Arquivo modificado:** [`README.md`](file:///var/www/html/agsonhos/docs/architecture/README.md)
+*   **Arquivo modificado:** [`README.md`](/docs/architecture/README.md)
 *   **Otimizações:**
     *   Adicionado cabeçalho YAML (Front-matter) estruturado contendo a stack tecnológica, padrões, namespaces e as diretrizes básicas de execução do agente.
     *   Mapeamento completo dos caminhos e namespaces críticos no workspace usando links markdown clicáveis (`file://`).
@@ -69,7 +69,7 @@ Concluímos com sucesso as otimizações na documentação e no dicionário de t
 ---
 
 ### 2. Glossário Otimizado para Agentes
-*   **Arquivo modificado:** [`prompt-glossary.json`](file:///var/www/html/agsonhos/docs/architecture/agents/prompt-glossary.json)
+*   **Arquivo modificado:** [`prompt-glossary.json`](/docs/architecture/agents/prompt-glossary.json)
 *   **Otimizações:**
     *   Reestruturação do JSON com metadados da versão.
     *   Classificação semântica dos termos em: `priorities` (H, M, L), `requirement_prefixes` (SYS_PERMIT, SYS_EXEC, etc. com casos de uso definidos), `domain_abbreviations` (PDP, PLP, BOPIS, SHIPTOS, POS) e `architectural_concepts` (DDD, POPO, DAO, UoW, Identity Map, Proxy Pattern, Skinny Controller, Atomic Design, WSOD).
@@ -79,9 +79,9 @@ Concluímos com sucesso as otimizações na documentação e no dicionário de t
 
 ## Resultados da Validação
 
-1.  **Sintaxe JSON:** A integridade sintática de [`prompt-glossary.json`](file:///var/www/html/agsonhos/docs/architecture/agents/prompt-glossary.json) foi verificada e validada via script PHP:
+1.  **Sintaxe JSON:** A integridade sintática de [`prompt-glossary.json`](/docs/architecture/agents/prompt-glossary.json) foi verificada e validada via script PHP:
     ```bash
     JSON syntax is valid!
     ```
-2.  **Consistência dos Links:** Todos os diretórios e arquivos referenciados no [`README.md`](file:///var/www/html/agsonhos/docs/architecture/README.md) foram verificados manualmente no workspace e estão acessíveis e corretivos.
+2.  **Consistência dos Links:** Todos os diretórios e arquivos referenciados no [`README.md`](/docs/architecture/README.md) foram verificados manualmente no workspace e estão acessíveis e corretivos.
 

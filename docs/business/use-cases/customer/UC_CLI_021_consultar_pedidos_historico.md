@@ -11,7 +11,7 @@
 | **Atores Secundários** | Sistema Alpha Engine |
 | **Tipo** | Condução / Consulta |
 | **Frequência de Uso** | Alta |
-| **Rastreabilidade** | **RF:** [RF016](file:///var/www/html/agsonhos/docs/requirements/functional/functional_requirements.yaml) (Histórico de pedidos), [RF020](file:///var/www/html/agsonhos/docs/requirements/functional/functional_requirements.yaml) (Faturamento/NF-e), [RF022](file:///var/www/html/agsonhos/docs/requirements/functional/functional_requirements.yaml) (Last-mile tracking)<br>**RN:** [RN012](file:///var/www/html/agsonhos/docs/requirements/business_rules/business_rules.yaml) (Documentação fiscal e DANFE), [RN013](file:///var/www/html/agsonhos/docs/requirements/business_rules/business_rules.yaml) (Rastreamento e comunicação)<br>**RNF:** [RNF001](file:///var/www/html/agsonhos/docs/requirements/non_functional/non_functional_requirements.yaml) (Clareza visual) |
+| **Rastreabilidade** | **RF:** [RF016](/docs/requirements/functional/functional_requirements.yaml) (Histórico de pedidos), [RF020](/docs/requirements/functional/functional_requirements.yaml) (Faturamento/NF-e), [RF022](/docs/requirements/functional/functional_requirements.yaml) (Last-mile tracking)<br>**RN:** [RN012](/docs/requirements/business_rules/business_rules.yaml) (Documentação fiscal e DANFE), [RN013](/docs/requirements/business_rules/business_rules.yaml) (Rastreamento e comunicação)<br>**RNF:** [RNF001](/docs/requirements/non_functional/non_functional_requirements.yaml) (Clareza visual) |
 
 ---
 

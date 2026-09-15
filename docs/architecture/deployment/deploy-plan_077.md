@@ -12,7 +12,7 @@
 
 # Plano de Implementação - Reforço e Validação de Segurança & Auditoria (Alpha Engine)
 
-Este plano descreve o roteiro de execução para validar, integrar e aprimorar os requisitos descritos em [`security-and-audit-architecture.md`](file:///var/www/html/agsonhos/backend/docs/architecture/security-and-audit-architecture.md) no On-Premise **Alpha Engine**.
+Este plano descreve o roteiro de execução para validar, integrar e aprimorar os requisitos descritos em [`security-and-audit-architecture.md`](/backend/docs/architecture/security-and-audit-architecture.md) no On-Premise **Alpha Engine**.
 
 ---
 
@@ -39,11 +39,11 @@ Este plano descreve o roteiro de execução para validar, integrar e aprimorar o
 
 ### 1. Camada de Middlewares & Roteamento
 
-#### [MODIFY] [`index.php`](file:///var/www/html/agsonhos/public_html/index.php)
+#### [MODIFY] [`index.php`](/public_html/index.php)
 - Garantir que a ordem de execução no Slim PSR-15 atenda à hierarquia de segurança (`SecurityHeadersMiddleware` -> `RateLimitMiddleware` -> `CsrfGuardMiddleware` -> `RoutingMiddleware`).
 - Integrar `LgpdSanitizer` ao manipulador global de erros 500 para evitar o vazamento de dados sensíveis e PII em traces de exceção.
 
-#### [MODIFY] [`Routes.php`](file:///var/www/html/agsonhos/backend/Config/Routes.php)
+#### [MODIFY] [`Routes.php`](/backend/Config/Routes.php)
 - Validar a aplicação do `authRateLimiter` (10 req/min) em rotas críticas (login, cadastro, recuperar senha).
 - Aplicar `SignatureMiddleware` explicitamente no grupo de APIs/Webhooks sensíveis (`/api/*`).
 
@@ -51,20 +51,20 @@ Este plano descreve o roteiro de execução para validar, integrar e aprimorar o
 
 ### 2. Camada de Privacidade & Auditoria LGPD
 
-#### [MODIFY] [`AdminAuthService.php`](file:///var/www/html/agsonhos/backend/core/Auth/Services/AdminAuthService.php)
+#### [MODIFY] [`AdminAuthService.php`](/backend/core/Auth/Services/AdminAuthService.php)
 - Reforçar o mascaramento de logs de login mal-sucedido e bloqueio (`LOCKED_OUT`) com `LgpdSanitizer::sanitizeLogMessage()`.
 
-#### [NEW] [`AuditQueueWorker.php`](file:///var/www/html/agsonhos/backend/scripts/audit_queue_worker.php)
+#### [NEW] [`AuditQueueWorker.php`](/backend/scripts/audit_queue_worker.php)
 - Criar script worker CLI em background para consumir mensagens da fila de auditoria no RabbitMQ (`audit_events`) e gravar os logs em `storage/logs/audit.log` sanitizados.
 
 ---
 
 ### 3. Validação de Isolamento Multi-Tenant & Hardening de Uploads
 
-#### [MODIFY] [`AbstractRepository.php`](file:///var/www/html/agsonhos/backend/core/Model/Domain/Repositories/AbstractRepository.php)
+#### [MODIFY] [`AbstractRepository.php`](/backend/core/Model/Domain/Repositories/AbstractRepository.php)
 - Garantir a checagem rigorosa de `store_id` em consultas e buscas de agregados para prevenir *cross-tenant data leakage*.
 
-#### [MODIFY] [`UploadSecurityHelper.php`](file:///var/www/html/agsonhos/backend/core/Support/UploadSecurityHelper.php)
+#### [MODIFY] [`UploadSecurityHelper.php`](/backend/core/Support/UploadSecurityHelper.php)
 - Validar sanitização anti-*path traversal* (`../`) e Magic Bytes (`finfo_file`) para evitar upload de scripts maliciosos.
 
 ---
@@ -106,20 +106,20 @@ Concluímos a integração, adaptação de documentos e validação das especifi
 ## 🎯 O que foi Realizado
 
 ### 1. Documento de Arquitetura de Segurança Atualizado
-- Modificado o arquivo [`security-and-audit-architecture.md`](file:///var/www/html/agsonhos/backend/docs/architecture/security-and-audit-architecture.md) para refletir rigorosamente o ecossistema real da **Alpha Engine** (Slim 4, PHP 8.4, Twig 3.x, Redis, RabbitMQ, MySQL 8.0).
+- Modificado o arquivo [`security-and-audit-architecture.md`](/backend/docs/architecture/security-and-audit-architecture.md) para refletir rigorosamente o ecossistema real da **Alpha Engine** (Slim 4, PHP 8.4, Twig 3.x, Redis, RabbitMQ, MySQL 8.0).
 
 ### 2. Ajuste Fino no Pipeline PSR-15 & Roteamento HMAC
-- Em [`Config/Routes.php`](file:///var/www/html/agsonhos/backend/Config/Routes.php), adicionamos o grupo de rotas `/api/webhook/{provider}` sob o [`SignatureMiddleware`](file:///var/www/html/agsonhos/backend/core/Auth/Middleware/SignatureMiddleware.php) com validação de HMAC-SHA256 (`X-Signature`).
-- Em [`public_html/index.php`](file:///var/www/html/agsonhos/public_html/index.php), estruturamos a ordem do pipeline PSR-15 e integramos a higienização de logs no manipulador de exceções.
+- Em [`Config/Routes.php`](/backend/Config/Routes.php), adicionamos o grupo de rotas `/api/webhook/{provider}` sob o [`SignatureMiddleware`](/backend/core/Auth/Middleware/SignatureMiddleware.php) com validação de HMAC-SHA256 (`X-Signature`).
+- Em [`public_html/index.php`](/public_html/index.php), estruturamos a ordem do pipeline PSR-15 e integramos a higienização de logs no manipulador de exceções.
 
 ### 3. Sanitização LGPD nos Tratadores Globais de Erro
-- Integrado o [`LgpdSanitizer`](file:///var/www/html/agsonhos/backend/core/Support/LgpdSanitizer.php) ao manipulador de exceções 500 em [`public_html/index.php`](file:///var/www/html/agsonhos/public_html/index.php), garantindo que dados sensíveis (senhas, tokens, CPFs, e-mails e cartões) sejam omitidos/mascarados antes de gravar em `error_log`.
+- Integrado o [`LgpdSanitizer`](/backend/core/Support/LgpdSanitizer.php) ao manipulador de exceções 500 em [`public_html/index.php`](/public_html/index.php), garantindo que dados sensíveis (senhas, tokens, CPFs, e-mails e cartões) sejam omitidos/mascarados antes de gravar em `error_log`.
 
 ### 4. Worker CLI de Mensageria para Auditoria Assíncrona
-- Criado o script CLI [`scripts/audit_queue_worker.php`](file:///var/www/html/agsonhos/backend/scripts/audit_queue_worker.php) para consumir mensagens da fila `audit_events` do RabbitMQ, aplicar sanitização LGPD em background e registrar logs auditáveis em `storage/logs/audit.log`.
+- Criado o script CLI [`scripts/audit_queue_worker.php`](/backend/scripts/audit_queue_worker.php) para consumir mensagens da fila `audit_events` do RabbitMQ, aplicar sanitização LGPD em background e registrar logs auditáveis em `storage/logs/audit.log`.
 
 ### 5. Ajuste na Suíte de Testes
-- Atualizado o [`phpunit.xml`](file:///var/www/html/agsonhos/backend/phpunit.xml) para limitar a varredura da testsuite ao diretório `tests/Validation`, eliminando warnings de varredura em scripts utilitários.
+- Atualizado o [`phpunit.xml`](/backend/phpunit.xml) para limitar a varredura da testsuite ao diretório `tests/Validation`, eliminando warnings de varredura em scripts utilitários.
 
 ---
 

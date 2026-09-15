@@ -150,21 +150,21 @@ A primeira etapa de **generalização e especialização do sistema de autentica
 
 1\. **Interface e Abstração Comum:**
 
-* [AuthServiceInterface.php](file:///var/www/html/agsonhos/core/Auth/Services/AuthServiceInterface.php): Contrato de login e ciclo de vida de sessões.
+* [AuthServiceInterface.php](/core/Auth/Services/AuthServiceInterface.php): Contrato de login e ciclo de vida de sessões.
 
-* [AbstractAuthService.php](file:///var/www/html/agsonhos/core/Auth/Services/AbstractAuthService.php): Lógica comum de sessões com Redis e fallback automático para PHP Native `$_SESSION`.
+* [AbstractAuthService.php](/core/Auth/Services/AbstractAuthService.php): Lógica comum de sessões com Redis e fallback automático para PHP Native `$_SESSION`.
 
 2\. **Serviços Especializados:**
 
-* [CustomerAuthService.php](file:///var/www/html/agsonhos/core/Auth/Services/CustomerAuthService.php): Especialização para clientes com cookie `session_id` e prefixo `sessao:`.
+* [CustomerAuthService.php](/core/Auth/Services/CustomerAuthService.php): Especialização para clientes com cookie `session_id` e prefixo `sessao:`.
 
-* [AdminAuthService.php](file:///var/www/html/agsonhos/core/Auth/Services/AdminAuthService.php): Especialização para administradores com cookie `admin_session_id` e prefixo `sessao:admin:`.
+* [AdminAuthService.php](/core/Auth/Services/AdminAuthService.php): Especialização para administradores com cookie `admin_session_id` e prefixo `sessao:admin:`.
 
 3\. **Remoção de Débitos Técnicos:**
 
-* O painel administrativo ([LoginAction.php](file:///var/www/html/agsonhos/core/Admin/Controllers/Actions/Auth/LoginAction.php)) agora autentica dinamicamente contra o [UserRepository](file:///var/www/html/agsonhos/core/Model/Domain/Repositories/UserRepository.php) no banco com `password_verify` em vez de credenciais estáticas `admin/admin`.
+* O painel administrativo ([LoginAction.php](/core/Admin/Controllers/Actions/Auth/LoginAction.php)) agora autentica dinamicamente contra o [UserRepository](/core/Model/Domain/Repositories/UserRepository.php) no banco com `password_verify` em vez de credenciais estáticas `admin/admin`.
 
-* O [UserMapper](file:///var/www/html/agsonhos/core/Mappers/EntityMappers/UserMapper.php) foi atualizado para utilizar o atributo moderno `$tableName`.
+* O [UserMapper](/core/Mappers/EntityMappers/UserMapper.php) foi atualizado para utilizar o atributo moderno `$tableName`.
 
 * O `AppBootstrap` foi configurado e a resolução de dependências no `AppContainer` foi validada com sucesso via CLI.
 
@@ -174,7 +174,7 @@ A documentação detalhada da execução e as notas técnicas criadas de forma a
 
 * [walkthrough.md](file:///home/kiruma/.gemini/antigravity-ide/brain/5c41fd4f-8bcc-4a55-9e90-146132fdcb4c/walkthrough.md) (Resumo técnico do walkthrough)
 
-* [nota_20260531_221040.md](file:///var/www/html/agsonhos/nota_20260531_221040.md) (Nota técnica da refatoração do Workspace)
+* [nota_20260531_221040.md](/nota_20260531_221040.md) (Nota técnica da refatoração do Workspace)
 
 Tudo pronto! Como deseja prosseguir para a próxima etapa?
 
@@ -242,11 +242,11 @@ Edited walkthrough.md
 
 1\. **Estrutura de Banco de Dados:** Recriamos com autonomia a tabela `tbkk_user_login` com a mesma estrutura de controle de tentativas de `customer_login` (`username`, `ip`, `total`, `date_added`, `date_modified`).
 
-2\. **Camada de Persistência (UserMapper):** Implementação dos métodos de controle de tentativas `addLoginAttempt`, `getLoginAttempts` e `deleteLoginAttempts` em [UserMapper.php](file:///var/www/html/agsonhos/core/Mappers/EntityMappers/UserMapper.php).
+2\. **Camada de Persistência (UserMapper):** Implementação dos métodos de controle de tentativas `addLoginAttempt`, `getLoginAttempts` e `deleteLoginAttempts` em [UserMapper.php](/core/Mappers/EntityMappers/UserMapper.php).
 
-3\. **Regra de Negócio (UserRepository):** Exposição dos métodos delegados e da lógica de bloqueio por limite de tentativas `isLockedOut` em [UserRepository.php](file:///var/www/html/agsonhos/core/Model/Domain/Repositories/UserRepository.php).
+3\. **Regra de Negócio (UserRepository):** Exposição dos métodos delegados e da lógica de bloqueio por limite de tentativas `isLockedOut` em [UserRepository.php](/core/Model/Domain/Repositories/UserRepository.php).
 
-4\. **Segurança no Fluxo (AdminAuthService):** Atualização do serviço de autenticação [AdminAuthService.php](file:///var/www/html/agsonhos/core/Auth/Services/AdminAuthService.php) para barrar acessos se a conta estiver sob lockout temporário (limite de 5 tentativas em 1 hora), registrar falhas e resetar o contador em caso de login bem-sucedido.
+4\. **Segurança no Fluxo (AdminAuthService):** Atualização do serviço de autenticação [AdminAuthService.php](/core/Auth/Services/AdminAuthService.php) para barrar acessos se a conta estiver sob lockout temporário (limite de 5 tentativas em 1 hora), registrar falhas e resetar o contador em caso de login bem-sucedido.
 
 5\. **Captura de IP (LoginAction):** Modificação da Action de login administrativo para extrair o IP do request HTTP e encaminhá-lo para a auditoria de tentativas.
 
@@ -254,7 +254,7 @@ As notas técnicas e documentações atualizadas do projeto encontram-se em:
 
 * [walkthrough.md](file:///home/kiruma/.gemini/antigravity-ide/brain/5c41fd4f-8bcc-4a55-9e90-146132fdcb4c/walkthrough.md) (Checklist de progresso)
 
-* [nota_20260531_221837.md](file:///var/www/html/agsonhos/nota_20260531_221837.md) (Nota técnica desta etapa no Workspace)
+* [nota_20260531_221837.md](/nota_20260531_221837.md) (Nota técnica desta etapa no Workspace)
 
 Todos os arquivos foram verificados e estão sem erros de sintaxe. Como gostaria de prosseguir?
 

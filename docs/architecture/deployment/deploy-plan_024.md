@@ -25,7 +25,7 @@ Adicionaremos as seguintes classes utilitárias para substituir os estilos inlin
 
 ### 2. Mapeamento no Middleware de Idiomas
 
-Mapearemos as rotas de endereços de clientes em [AdminLanguageMiddleware.php](file:///var/www/html/agsonhos/core/Auth/Middleware/AdminLanguageMiddleware.php) para carregar o namespace `admin/customer`.
+Mapearemos as rotas de endereços de clientes em [AdminLanguageMiddleware.php](/core/Auth/Middleware/AdminLanguageMiddleware.php) para carregar o namespace `admin/customer`.
 ```php
 'admin.customer.address.create' => 'admin/customer',
 'admin.customer.address.edit'   => 'admin/customer',
@@ -35,9 +35,9 @@ Mapearemos as rotas de endereços de clientes em [AdminLanguageMiddleware.php](f
 ### 3. Extensão dos Arquivos de Idiomas (JSON)
 
 Adicionaremos as seguintes chaves de tradução nos três arquivos de idiomas existentes para suportar o formulário de endereços:
-- **Português**: [pt-br.admin.customer.json](file:///var/www/html/agsonhos/Locales/pt-br/pt-br.admin.customer.json)
-- **Inglês**: [en-gb.admin.customer.json](file:///var/www/html/agsonhos/Locales/en-gb/en-gb.admin.customer.json)
-- **Francês**: [fr-fr.admin.customer.json](file:///var/www/html/agsonhos/Locales/fr-fr/fr-fr.admin.customer.json)
+- **Português**: [pt-br.admin.customer.json](/Locales/pt-br/pt-br.admin.customer.json)
+- **Inglês**: [en-gb.admin.customer.json](/Locales/en-gb/en-gb.admin.customer.json)
+- **Francês**: [fr-fr.admin.customer.json](/Locales/fr-fr/fr-fr.admin.customer.json)
 
 Novas chaves:
 - `text_address_edit_title`: Título do formulário de edição ("Editar Endereço" / "Edit Address" / "Modifier l'Adresse").
@@ -59,26 +59,26 @@ Novas chaves:
 ### 4. Substituição de Estilos e Textos nas Views Twig
 
 Refatoraremos os seguintes arquivos substituindo os estilos inline pelas classes globais do `components.css` e os textos hardcoded pelas variáveis do `AdminLang`:
-- [create.html.twig](file:///var/www/html/agsonhos/resources/views/admin/customer/Address/create.html.twig)
-- [edit.html.twig](file:///var/www/html/agsonhos/resources/views/admin/customer/Address/edit.html.twig)
+- [create.html.twig](/resources/views/admin/customer/Address/create.html.twig)
+- [edit.html.twig](/resources/views/admin/customer/Address/edit.html.twig)
 
 ---
 
 ## Detalhes das Alterações por Arquivo
 
-### [MODIFY] [components.css](file:///var/www/html/agsonhos/public_html/css/admin/components.css)
+### [MODIFY] [components.css](/public_html/css/admin/components.css)
 Adicionar `.max-w-50`, `.form-checkbox` e `.form-checkbox-label`.
 
-### [MODIFY] [AdminLanguageMiddleware.php](file:///var/www/html/agsonhos/core/Auth/Middleware/AdminLanguageMiddleware.php)
+### [MODIFY] [AdminLanguageMiddleware.php](/core/Auth/Middleware/AdminLanguageMiddleware.php)
 Mapear as rotas de endereços de cliente para o namespace `admin/customer`.
 
 ### [MODIFY] JSON Locales de Clientes
 Adicionar as chaves de tradução do formulário de endereço.
 
-### [MODIFY] [create.html.twig](file:///var/www/html/agsonhos/resources/views/admin/customer/Address/create.html.twig)
+### [MODIFY] [create.html.twig](/resources/views/admin/customer/Address/create.html.twig)
 Substituir estilos inline por classes utilitárias e textos estáticos por `AdminLang` com fallbacks.
 
-### [MODIFY] [edit.html.twig](file:///var/www/html/agsonhos/resources/views/admin/customer/Address/edit.html.twig)
+### [MODIFY] [edit.html.twig](/resources/views/admin/customer/Address/edit.html.twig)
 Substituir estilos inline por classes utilitárias e textos estáticos por `AdminLang` com fallbacks.
 
 ---
@@ -115,7 +115,7 @@ Concluímos com sucesso a remoção de todos os estilos CSS inline e a internaci
 ## Alterações Realizadas
 
 ### 1. Refatoração de Estilos (CSS)
-- **Folha de Estilos**: Reutilizamos e integramos novas classes no arquivo global [components.css](file:///var/www/html/agsonhos/public_html/css/admin/components.css) para remover completamente qualquer estilo inline:
+- **Folha de Estilos**: Reutilizamos e integramos novas classes no arquivo global [components.css](/public_html/css/admin/components.css) para remover completamente qualquer estilo inline:
   - `.is-invalid`: Borda de erro nos inputs.
   - `.align-start`: Alinhamento flex-start.
   - `.flex-column` e `.gap-3`: Layouts flex organizados.
@@ -129,11 +129,11 @@ Concluímos com sucesso a remoção de todos os estilos CSS inline e a internaci
 - **Views Twig**: Todos os atributos inline `style="..."` foram removidos e substituídos pelas classes CSS correspondentes em todas as views. Múltiplos formulários e seções agora usam o sistema de grid e flex do CSS global.
 
 ### 2. Internacionalização (i18n)
-- **Middleware**: Mapeamos as rotas de clientes e também as rotas de endereços de clientes (`admin.customer.*` e `admin.customer.address.*`) em [AdminLanguageMiddleware.php](file:///var/www/html/agsonhos/core/Auth/Middleware/AdminLanguageMiddleware.php) para carregar o namespace de tradução `admin/customer`.
+- **Middleware**: Mapeamos as rotas de clientes e também as rotas de endereços de clientes (`admin.customer.*` e `admin.customer.address.*`) em [AdminLanguageMiddleware.php](/core/Auth/Middleware/AdminLanguageMiddleware.php) para carregar o namespace de tradução `admin/customer`.
 - **Arquivos JSON de Tradução**: Criamos e populamos chaves de internacionalização nos três arquivos de idiomas oficiais da loja:
-  - [pt-br.admin.customer.json](file:///var/www/html/agsonhos/Locales/pt-br/pt-br.admin.customer.json) (Português)
-  - [en-gb.admin.customer.json](file:///var/www/html/agsonhos/Locales/en-gb/en-gb.admin.customer.json) (Inglês)
-  - [fr-fr.admin.customer.json](file:///var/www/html/agsonhos/Locales/fr-fr/fr-fr.admin.customer.json) (Francês)
+  - [pt-br.admin.customer.json](/Locales/pt-br/pt-br.admin.customer.json) (Português)
+  - [en-gb.admin.customer.json](/Locales/en-gb/en-gb.admin.customer.json) (Inglês)
+  - [fr-fr.admin.customer.json](/Locales/fr-fr/fr-fr.admin.customer.json) (Francês)
   
   Adicionamos chaves específicas para a ficha do cliente, listagem de clientes e todos os campos dos formulários de criação/edição de endereços (ex: `entry_postcode`, `entry_street`, `entry_number`, `entry_default_address`, `button_save_address`, `button_update_address`, etc.).
 - **Views Twig**: Substituímos os textos hardcoded de todas as páginas por referências ao objeto dinâmico `AdminLang` com fallbacks amigáveis (ex: `{{ AdminLang.text_address_create|default('Adicionar Endereço') }}`).

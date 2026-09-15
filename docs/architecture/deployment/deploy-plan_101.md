@@ -12,7 +12,7 @@
 
 # Plano de Implementação - Detalhes do Produto no PD
 
-Adição de uma área contextual de **Detalhes do Produto** no Terminal de Vendas (**PDV / POS**) da **Alpha Engine** ([register-control.twig](file:///var/www/html/agsonhos/backend/resources/views/pos/sales-rep/register-control.twig)), permitindo ao vendedor e operador consultar especificações técnicas completas (dimensões, peso, código de barras/EAN, estoque, categoria e descrição) em tempo real sem sair do fluxo de venda.
+Adição de uma área contextual de **Detalhes do Produto** no Terminal de Vendas (**PDV / POS**) da **Alpha Engine** ([register-control.twig](/backend/resources/views/pos/sales-rep/register-control.twig)), permitindo ao vendedor e operador consultar especificações técnicas completas (dimensões, peso, código de barras/EAN, estoque, categoria e descrição) em tempo real sem sair do fluxo de venda.
 
 ---
 
@@ -27,7 +27,7 @@ Adição de uma área contextual de **Detalhes do Produto** no Terminal de Venda
 
 > [!NOTE]
 > **Latência Zero via Payload Enriquecido**:
-> O endpoint `/pos/produtos/buscar` ([SearchProductAction.php](file:///var/www/html/agsonhos/backend/core/Admin/Controllers/Actions/POS/SearchProductAction.php)) já executa `SELECT p.*`. Vamos enriquecer o retorno JSON com os atributos técnicos já disponíveis no banco (`ean`, `sku`, `weight`, `length`, `width`, `height`, `manufacturer`, `description`), garantindo renderização client-side instantânea ao focar no produto, sem overhead de novas requisições HTTP a cada clique.
+> O endpoint `/pos/produtos/buscar` ([SearchProductAction.php](/backend/core/Admin/Controllers/Actions/POS/SearchProductAction.php)) já executa `SELECT p.*`. Vamos enriquecer o retorno JSON com os atributos técnicos já disponíveis no banco (`ean`, `sku`, `weight`, `length`, `width`, `height`, `manufacturer`, `description`), garantindo renderização client-side instantânea ao focar no produto, sem overhead de novas requisições HTTP a cada clique.
 
 ---
 
@@ -35,7 +35,7 @@ Adição de uma área contextual de **Detalhes do Produto** no Terminal de Venda
 
 ### 1. Backend API (Slim / Controllers)
 
-#### [MODIFY] [SearchProductAction.php](file:///var/www/html/agsonhos/backend/core/Admin/Controllers/Actions/POS/SearchProductAction.php)
+#### [MODIFY] [SearchProductAction.php](/backend/core/Admin/Controllers/Actions/POS/SearchProductAction.php)
 - Enriquecer o array `$products[]` com os campos adicionais de domínio:
   - `sku`: Código SKU do produto.
   - `ean`: Código de barras / EAN / GTIN.
@@ -50,11 +50,11 @@ Adição de uma área contextual de **Detalhes do Produto** no Terminal de Venda
 
 ### 2. Estilos & Design System do PDV (CSS)
 
-#### [MODIFY] [layout.css](file:///var/www/html/agsonhos/public_html/css/pov/layout.css)
+#### [MODIFY] [layout.css](/public_html/css/pov/layout.css)
 - Ajustar `.pos-workspace` para acomodar a terceira coluna contextual (`.product-detail-panel`).
 - Configurar transições suaves e layout flexível / CSS Grid com breakpoints responsivos.
 
-#### [MODIFY] [components.css](file:///var/www/html/agsonhos/public_html/css/pov/components.css)
+#### [MODIFY] [components.css](/public_html/css/pov/components.css)
 - Criar a estilização de `.product-detail-panel`:
   - Efeito *glassmorphism* com `background: rgba(19, 27, 46, 0.75)` e `backdrop-filter: blur(12px)`.
   - Imagem ampliada do produto com efeito de zoom suave ao hover.
@@ -69,7 +69,7 @@ Adição de uma área contextual de **Detalhes do Produto** no Terminal de Venda
 
 ### 3. Camada de Apresentação e Interação (Twig & JavaScript)
 
-#### [MODIFY] [register-control.twig](file:///var/www/html/agsonhos/backend/resources/views/pos/sales-rep/register-control.twig)
+#### [MODIFY] [register-control.twig](/backend/resources/views/pos/sales-rep/register-control.twig)
 - **Estrutura HTML**:
   - Inserir o container `<aside id="product_detail_panel" class="product-detail-panel">` entre a grade de catálogo e o painel de carrinho.
 - **Lógica JavaScript**:
@@ -111,14 +111,14 @@ Adição de uma área contextual de **Detalhes do Produto** no Terminal de Venda
 
 # Walkthrough - Implementação de Detalhes do Produto no PDV (Feature #85)
 
-Implementação concluída com sucesso para a especificação [[FEATURE #85] Implementar Detalhes do Produto no PDV](file:///var/www/html/agsonhos/docs/issues/85_implementar_detalhes_do_produto_no_pdv.md).
+Implementação concluída com sucesso para a especificação [[FEATURE #85] Implementar Detalhes do Produto no PDV](/docs/issues/85_implementar_detalhes_do_produto_no_pdv.md).
 
 ---
 
 ## Modificações Realizadas
 
 ### 1. Backend & API de Busca do PDV
-- **Arquivo**: [SearchProductAction.php](file:///var/www/html/agsonhos/backend/core/Admin/Controllers/Actions/POS/SearchProductAction.php)
+- **Arquivo**: [SearchProductAction.php](/backend/core/Admin/Controllers/Actions/POS/SearchProductAction.php)
 - **Alterações**:
   - Enriquecimento do array JSON com os campos: `sku`, `ean`, `manufacturer`, `length`, `width`, `height`, `weight`, `description` (higienizada/sem tags) e `stock_status`.
   - Enriquecimento das variações filhas (`variants`) com dimensões, peso, estoque e status.
@@ -153,8 +153,8 @@ $products[] = [
 
 ### 2. Estilos & Layout (Design System POV)
 - **Arquivos**:
-  - [layout.css](file:///var/www/html/agsonhos/public_html/css/pov/layout.css): Estruturação do `.pos-workspace` em 3 colunas fluidas (`.catalog-panel` | `.product-detail-panel` | `.cart-panel`) com breakpoints responsivos.
-  - [components.css](file:///var/www/html/agsonhos/public_html/css/pov/components.css):
+  - [layout.css](/public_html/css/pov/layout.css): Estruturação do `.pos-workspace` em 3 colunas fluidas (`.catalog-panel` | `.product-detail-panel` | `.cart-panel`) com breakpoints responsivos.
+  - [components.css](/public_html/css/pov/components.css):
     - Estilo do card ativo `.product-card.is-active` com borda iluminada (`--accent`).
     - Componente `.product-detail-panel` com glassmorphism, visualização de imagem com zoom hover, badges de disponibilidade/estoque, grid de especificações técnicas (EAN, SKU, CxLxA, Peso Líquido) e caixa de descrição.
     - Seletor numérico de quantidade e botão de inserção direta no carrinho de pré-venda.
@@ -163,7 +163,7 @@ $products[] = [
 ---
 
 ### 3. Apresentação e Interatividade no PDV
-- **Arquivo**: [register-control.twig](file:///var/www/html/agsonhos/backend/resources/views/pos/sales-rep/register-control.twig)
+- **Arquivo**: [register-control.twig](/backend/resources/views/pos/sales-rep/register-control.twig)
 - **Alterações**:
   - Inclusão do container `<aside id="product_detail_panel" class="product-detail-panel">`.
   - Funções reativas em JavaScript:

@@ -11,7 +11,7 @@
 | **Atores Secundários** | Sistema Alpha Engine |
 | **Tipo** | Condução / Cadastral |
 | **Frequência de Uso** | Baixa a Média |
-| **Rastreabilidade** | **RF:** [RF014](file:///var/www/html/agsonhos/docs/requirements/functional/functional_requirements.yaml) (Cadastro e perfil)<br>**RNF:** [RNF003](file:///var/www/html/agsonhos/docs/requirements/non_functional/non_functional_requirements.yaml) (Proteção de dados/LGPD e validação de integridade) |
+| **Rastreabilidade** | **RF:** [RF014](/docs/requirements/functional/functional_requirements.yaml) (Cadastro e perfil)<br>**RNF:** [RNF003](/docs/requirements/non_functional/non_functional_requirements.yaml) (Proteção de dados/LGPD e validação de integridade) |
 
 ---
 

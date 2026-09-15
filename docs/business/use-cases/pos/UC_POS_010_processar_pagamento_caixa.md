@@ -11,7 +11,7 @@
 | **Atores Secundários** | Sistema Alpha Engine POS |
 | **Tipo** | Condução / Generalização de Pagamentos |
 | **Frequência de Uso** | Contínua / Muito Alta |
-| **Rastreabilidade** | **RF:** [RF018](file:///var/www/html/agsonhos/docs/requirements/functional/functional_requirements.yaml) (Multi-meios de pagamento), [RF019](file:///var/www/html/agsonhos/docs/requirements/functional/functional_requirements.yaml) (Integrações financeiras), [RF020](file:///var/www/html/agsonhos/docs/requirements/functional/functional_requirements.yaml) (Faturamento)<br>**RN:** [RN016](file:///var/www/html/agsonhos/docs/requirements/business_rules/business_rules.yaml) (Desconto PIX/Dinheiro à vista)<br>**RNF:** [RNF003](file:///var/www/html/agsonhos/docs/requirements/non_functional/non_functional_requirements.yaml) (Segurança financeira) |
+| **Rastreabilidade** | **RF:** [RF018](/docs/requirements/functional/functional_requirements.yaml) (Multi-meios de pagamento), [RF019](/docs/requirements/functional/functional_requirements.yaml) (Integrações financeiras), [RF020](/docs/requirements/functional/functional_requirements.yaml) (Faturamento)<br>**RN:** [RN016](/docs/requirements/business_rules/business_rules.yaml) (Desconto PIX/Dinheiro à vista)<br>**RNF:** [RNF003](/docs/requirements/non_functional/non_functional_requirements.yaml) (Segurança financeira) |
 
 ---
 

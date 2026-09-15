@@ -12,13 +12,13 @@
 
 # Plano de Implementação: Adicionar Testes BDD de Autenticação (`login.feature`)
 
-Adição da especificação de testes BDD em sintaxe Gherkin no arquivo [login.feature](file:///var/www/html/agsonhos/features/auth/login.feature) (atualmente vazio / 0 bytes), acompanhada da criação do contexto de execução [AuthContext.php](file:///var/www/html/agsonhos/features/bootstrap/AuthContext.php), atualização da suíte no [behat.yml](file:///var/www/html/agsonhos/behat.yml) e atualização da documentação de rastreabilidade em [reame.md](file:///var/www/html/agsonhos/features/reame.md).
+Adição da especificação de testes BDD em sintaxe Gherkin no arquivo [login.feature](/features/auth/login.feature) (atualmente vazio / 0 bytes), acompanhada da criação do contexto de execução [AuthContext.php](/features/bootstrap/AuthContext.php), atualização da suíte no [behat.yml](/behat.yml) e atualização da documentação de rastreabilidade em [reame.md](/features/reame.md).
 
 ---
 
 ## Cenários Propostos para `login.feature`
 
-O arquivo Gherkin [login.feature](file:///var/www/html/agsonhos/features/auth/login.feature) cobrirá os seguintes fluxos e regras de negócio:
+O arquivo Gherkin [login.feature](/features/auth/login.feature) cobrirá os seguintes fluxos e regras de negócio:
 
 1. **`@sucesso @login_valido`**: Login com credenciais válidas -> Geração de sessão segura, emissão de cookie `session_id` e redirecionamento para `/conta`.
 2. **`@falha @credenciais_invalidas`**: Tentativa de login com senha incorreta -> Bloqueio de autenticação e retorno da mensagem de erro amigável.
@@ -32,20 +32,20 @@ O arquivo Gherkin [login.feature](file:///var/www/html/agsonhos/features/auth/lo
 ## Modificações Propostas
 
 ### 1. Especificação de Teste Gherkin
-#### [MODIFY] [login.feature](file:///var/www/html/agsonhos/features/auth/login.feature)
+#### [MODIFY] [login.feature](/features/auth/login.feature)
 - Implementar a funcionalidade em português (`# language: pt`), com tags `@auth @login @cliente @autenticacao @UC05 @RF014 @RN008`, contexto e todos os cenários descritos.
 
 ### 2. Contexto Behat
-#### [NEW] [AuthContext.php](file:///var/www/html/agsonhos/features/bootstrap/AuthContext.php)
+#### [NEW] [AuthContext.php](/features/bootstrap/AuthContext.php)
 - Implementar as definições de passos (`Given`, `When`, `Then`) do módulo de autenticação.
 - Integrar com `CustomerAuthService`, `LoginAction`, `LogoutAction`, `SessionManager` e asserções estáticas do PHPUnit.
 
 ### 3. Configuração Behat
-#### [MODIFY] [behat.yml](file:///var/www/html/agsonhos/behat.yml)
+#### [MODIFY] [behat.yml](/behat.yml)
 - Registrar `AuthContext` na lista de contextos da suíte padrão.
 
 ### 4. Documentação Acadêmica
-#### [MODIFY] [reame.md](file:///var/www/html/agsonhos/features/reame.md)
+#### [MODIFY] [reame.md](/features/reame.md)
 - Incluir o módulo `features/auth/login.feature` e o contexto `AuthContext` na tabela de rastreabilidade e na árvore de diretórios.
 
 ---
@@ -66,7 +66,7 @@ Adição da especificação de testes BDD em sintaxe Gherkin para o fluxo de aut
 ## 🎯 Alterações Realizadas
 
 ### 1. Especificação Gherkin de Autenticação
-- **Arquivo**: [login.feature](file:///var/www/html/agsonhos/features/auth/login.feature)
+- **Arquivo**: [login.feature](/features/auth/login.feature)
 - Foram implementados **6 cenários completos** em português cobrindo:
   - **Login Válido (`@sucesso @login_valido`)**: Validação de credenciais de cliente, criação de sessão no Redis/PHP, cabeçalho de cookie seguro `session_id` (`HttpOnly`) e retorno de redirecionamento para `/conta`.
   - **Senha Incorreta (`@falha @credenciais_invalidas`)**: Rejeição de login com retorno da mensagem amigável de erro `"Aviso: Seu endereço de e-mail e/ou senha não coincidem."`.
@@ -78,7 +78,7 @@ Adição da especificação de testes BDD em sintaxe Gherkin para o fluxo de aut
 ---
 
 ### 2. Contexto Behat (Step Definitions)
-- **Arquivo**: [AuthContext.php](file:///var/www/html/agsonhos/features/bootstrap/AuthContext.php)
+- **Arquivo**: [AuthContext.php](/features/bootstrap/AuthContext.php)
 - Implementa todas as etapas (`Given`, `When`, `Then`) do módulo de autenticação:
   - Integração com `CustomerAuthService`, `CustomerRepository`, `LoginAction` e `LogoutAction`.
   - Simulação de requisições PSR-7 (`ServerRequestFactory`, `Response`) e roteamento Slim (`RouteContext`, `RouteParserInterface`).
@@ -87,8 +87,8 @@ Adição da especificação de testes BDD em sintaxe Gherkin para o fluxo de aut
 ---
 
 ### 3. Configurações e Documentação
-- **[behat.yml](file:///var/www/html/agsonhos/behat.yml)**: `AuthContext` registrado na suíte de testes padrão.
-- **[reame.md](file:///var/www/html/agsonhos/features/reame.md)**: Atualizada a tabela de rastreabilidade de requisitos e árvore de diretórios dos testes.
+- **[behat.yml](/behat.yml)**: `AuthContext` registrado na suíte de testes padrão.
+- **[reame.md](/features/reame.md)**: Atualizada a tabela de rastreabilidade de requisitos e árvore de diretórios dos testes.
 
 ---
 
@@ -115,14 +115,14 @@ composer test:behat
 ```
 # Walkthrough: Teste BDD de Autenticação com Persistência no Banco de Dados MySQL
 
-Atualização da suíte de testes BDD de autenticação em [login.feature](file:///var/www/html/agsonhos/features/auth/login.feature) e [AuthContext.php](file:///var/www/html/agsonhos/features/bootstrap/AuthContext.php) para **persistir, consultar e validar diretamente no banco de dados real MySQL (`agsc_customer`)** com limpeza automatizada por hooks.
+Atualização da suíte de testes BDD de autenticação em [login.feature](/features/auth/login.feature) e [AuthContext.php](/features/bootstrap/AuthContext.php) para **persistir, consultar e validar diretamente no banco de dados real MySQL (`agsc_customer`)** com limpeza automatizada por hooks.
 
 ---
 
 ## 🛠️ O que foi implementado
 
-### 1. Persistência e Consulta Real no MySQL ([AuthContext.php](file:///var/www/html/agsonhos/features/bootstrap/AuthContext.php))
-- **Inicialização Real do Backend**: Inicializa o `AppBootstrap::boot()` da aplicação, obtém o repositório de clientes real ([CustomerRepository](file:///var/www/html/agsonhos/backend/core/Model/Domain/Repositories/CustomerRepository.php)) a partir do `RepositoryFactory` e conecta diretamente com o MySQL via `ConnectionDB`.
+### 1. Persistência e Consulta Real no MySQL ([AuthContext.php](/features/bootstrap/AuthContext.php))
+- **Inicialização Real do Backend**: Inicializa o `AppBootstrap::boot()` da aplicação, obtém o repositório de clientes real ([CustomerRepository](/backend/core/Model/Domain/Repositories/CustomerRepository.php)) a partir do `RepositoryFactory` e conecta diretamente com o MySQL via `ConnectionDB`.
 - **Cadastro Simulado com Hash de Senha**: No passo `Dado que existe um cliente cadastrado...`, o cliente é inserido fisicamente na tabela `agsc_customer` com a senha criptografada via `password_hash($password, PASSWORD_DEFAULT)`.
 - **Autenticação Real**: A `LoginAction` aciona o `CustomerAuthService`, que executa a query SQL real `findByEmail()` e a validação nativa `password_verify()` contra o hash gravado no banco de dados.
 - **Contas Inativas e Usuários Inexistentes**: Usuários desativados (`status = 0`) ou não cadastrados no MySQL são devidamente validados e rejeitados pela camada de domínio.
