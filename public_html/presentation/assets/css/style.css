@@ -1,5 +1,5 @@
 /* ==========================================================================
-   ALPHA ENGINE - DESIGN SYSTEM DA APRESENTAÇÃO ACADÊMICA FATEC-FV
+   Beta Engine - DESIGN SYSTEM DA APRESENTAÇÃO ACADÊMICA FATEC-FV
    Laboratório de Engenharia de Software | Centro Paula Souza
    ========================================================================== */
 
@@ -754,6 +754,12 @@ body {
   border: 1px solid rgba(245, 158, 11, 0.3);
 }
 
+.badge-purple {
+  background: rgba(139, 92, 246, 0.15);
+  color: var(--accent-purple);
+  border: 1px solid rgba(139, 92, 246, 0.3);
+}
+
 /* --------------------------------------------------------------------------
    ALERT BOXES (CALLOUTS)
    -------------------------------------------------------------------------- */
@@ -1069,3 +1075,217 @@ body.presentation-mode .stat-value {
     display: none;
   }
 }
+
+/* --------------------------------------------------------------------------
+   MODAL DE DETALHES DE CASOS DE USO (SPEC DRAWER/MODAL)
+   -------------------------------------------------------------------------- */
+.uc-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.82);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  z-index: 2100;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  padding: 1.5rem;
+  opacity: 0;
+  transition: opacity 0.25s ease;
+}
+
+.uc-modal-overlay.active {
+  display: flex;
+  opacity: 1;
+}
+
+.uc-modal-container {
+  background: var(--bg-surface);
+  border: 1px solid var(--border-strong);
+  border-radius: var(--border-radius-md);
+  box-shadow: var(--elevated-shadow);
+  width: 100%;
+  max-width: 980px;
+  max-height: 90vh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  animation: ucModalIn 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes ucModalIn {
+  from {
+    opacity: 0;
+    transform: scale(0.96) translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+.uc-modal-header {
+  padding: 1.25rem 1.75rem;
+  background: var(--bg-surface-elevated);
+  border-bottom: 1px solid var(--border-subtle);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.uc-modal-title-box {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.uc-modal-badges {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.25rem;
+}
+
+.uc-modal-title {
+  font-family: var(--font-display);
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--text-main);
+  line-height: 1.3;
+}
+
+.uc-modal-subtitle {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+}
+
+.uc-modal-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+.uc-modal-body {
+  padding: 2rem 2.25rem;
+  overflow-y: auto;
+  flex: 1;
+  color: var(--text-main);
+}
+
+.uc-rendered-content {
+  line-height: 1.7;
+}
+
+.uc-rendered-content h1 {
+  display: none; /* Já exibido no header do modal */
+}
+
+.uc-rendered-content h2.uc-section-title {
+  font-family: var(--font-display);
+  font-size: 1.25rem;
+  color: var(--fatec-red-light);
+  margin-top: 2rem;
+  margin-bottom: 0.85rem;
+  padding-bottom: 0.35rem;
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+.uc-rendered-content h2:first-of-type {
+  margin-top: 0;
+}
+
+.uc-rendered-content h3.uc-subsection-title {
+  font-family: var(--font-display);
+  font-size: 1.05rem;
+  color: var(--accent-cyan);
+  margin-top: 1.25rem;
+  margin-bottom: 0.5rem;
+}
+
+.uc-rendered-content p {
+  margin-bottom: 1rem;
+  color: var(--text-muted);
+  font-size: 0.95rem;
+}
+
+.uc-rendered-content ul, .uc-rendered-content ol {
+  margin-bottom: 1.25rem;
+  padding-left: 1.5rem;
+  color: var(--text-muted);
+}
+
+.uc-rendered-content li {
+  margin-bottom: 0.5rem;
+  font-size: 0.92rem;
+}
+
+.uc-rendered-content hr {
+  border: 0;
+  border-top: 1px solid var(--border-subtle);
+  margin: 1.75rem 0;
+}
+
+.uc-rendered-content code {
+  font-family: var(--font-mono);
+  background: var(--code-bg);
+  padding: 0.15rem 0.45rem;
+  border-radius: 4px;
+  font-size: 0.85em;
+  color: var(--accent-cyan);
+  border: 1px solid var(--border-subtle);
+}
+
+.uc-raw-content {
+  background: var(--code-bg);
+  padding: 1.5rem;
+  border-radius: var(--border-radius-sm);
+  border: 1px solid var(--border-subtle);
+  font-family: var(--font-mono);
+  font-size: 0.85rem;
+  line-height: 1.6;
+  white-space: pre-wrap;
+  word-break: break-word;
+  color: var(--text-main);
+  max-height: 65vh;
+  overflow-y: auto;
+}
+
+.uc-modal-footer {
+  padding: 1rem 1.75rem;
+  background: var(--bg-surface-elevated);
+  border-top: 1px solid var(--border-subtle);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.uc-modal-nav {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.uc-row {
+  cursor: pointer;
+  transition: background-color 0.15s ease, transform 0.1s ease;
+}
+
+.uc-row:hover td {
+  background: var(--table-hover) !important;
+}
+
+.uc-action-btn {
+  opacity: 0.85;
+  transition: var(--transition-fast);
+}
+
+.uc-row:hover .uc-action-btn {
+  opacity: 1;
+  background: var(--fatec-red);
+  color: #ffffff;
+  border-color: var(--fatec-red);
+}
+

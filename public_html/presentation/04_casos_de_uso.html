@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>04. Casos de Uso do Sistema | Alpha Engine - FATEC-FV</title>
+  <title>04. Casos de Uso do Sistema | Beta Engine - FATEC-FV</title>
   <meta name="description" content="Especificação formal de Casos de Uso, Atores e Diagramas Gerais para Laboratório de Engenharia de Software - FATEC Ferraz de Vasconcelos.">
   <link rel="stylesheet" href="assets/css/style.css">
   <link rel="stylesheet" href="assets/css/print.css" media="print">
@@ -25,7 +25,7 @@
           <img src="assets/img/logos/sp.jpg" alt="Governo do Estado de São Paulo" />
         </div>
         <div class="brand-text">
-          <span class="brand-title">Alpha Engine</span>
+          <span class="brand-title">Beta Engine</span>
           <span class="brand-subtitle">04. Casos de Uso do Sistema</span>
         </div>
       </a>
@@ -71,7 +71,7 @@
         </a>
         <a href="04_casos_de_uso.html" class="nav-item active">
           <div class="nav-item-title"><span class="nav-num">04</span><span>Casos de Uso do Sistema</span></div>
-          <span class="nav-badge">10 UCs</span>
+          <span class="nav-badge">53 UCs</span>
         </a>
         <a href="05_matriz_rastreabilidade.html" class="nav-item">
           <div class="nav-item-title"><span class="nav-num">05</span><span>Matriz de Rastreabilidade</span></div>
@@ -103,7 +103,7 @@
         <div class="page-category">Módulo 04 • Engenharia de Software</div>
         <h1 class="page-title">Casos de Uso do Sistema e Especificações</h1>
         <p class="page-subtitle">
-          Mapeamento dos 7 Atores do ecossistema, 3 Diagramas Gerais de Casos de Uso em SVG e 10 Especificações Modulares Detalhadas com fluxos alternativos e de exceção.
+          Mapeamento dos 7 Atores do ecossistema, 3 Diagramas Gerais de Casos de Uso em SVG, catálogo completo dos 53 Casos de Uso distribuídos nos 3 cenários operacionais (Storefront, PDV e Dashboard) e especificações dos 10 Casos de Uso Core com fluxos de exceção.
         </p>
       </header>
 
@@ -229,83 +229,902 @@
         </div>
       </section>
 
-      <!-- 3. ESPECIFICAÇÃO DOS 10 CASOS DE USO CORE -->
+      <!-- 3. CATÁLOGO GERAL DOS 53 CASOS DE USO POR CENÁRIO OPERACIONAL -->
       <section style="margin-bottom: 4rem;">
-        <h2 style="font-family: var(--font-display); font-size: 1.6rem; margin-bottom: 1.25rem;">3. Especificações Detalhadas dos Casos de Uso Core</h2>
+        <div style="display: flex; justify-content: space-between; align-items: flex-end; flex-wrap: wrap; gap: 1rem; margin-bottom: 1.5rem;">
+          <div>
+            <h2 style="font-family: var(--font-display); font-size: 1.6rem; color: var(--fatec-red-light); margin-bottom: 0.25rem;">
+              3. Catálogo Geral dos 53 Casos de Uso por Cenário
+            </h2>
+            <p style="font-size: 0.95rem; color: var(--text-muted);">
+              Inventário completo das 53 especificações formais do ecossistema, abrangendo a jornada do cliente, vendas presenciais e governança administrativa.
+            </p>
+          </div>
+          <div style="display: flex; gap: 0.5rem; font-size: 0.8rem; font-family: var(--font-mono);">
+            <span class="badge badge-blue">🛒 29 Storefront</span>
+            <span class="badge badge-red">🏪 15 POS</span>
+            <span class="badge badge-amber">⚙️ 9 Dashboard</span>
+          </div>
+        </div>
 
+        <!-- Cards de Estatísticas por Cenário -->
+        <div class="grid-cards-3" style="margin-bottom: 2rem;">
+          <div class="stat-card" style="border-top: 3px solid var(--accent-cyan);">
+            <div class="stat-value" style="color: var(--accent-cyan);">29</div>
+            <div class="stat-label">Loja Virtual & Área do Cliente</div>
+            <div style="font-size: 0.78rem; color: var(--text-dim); margin-top: 0.35rem;">
+              Catálogo facetado, PDP com m², carrinho persistente, checkout multi-meios, painel da conta e cotações BoQ.
+            </div>
+          </div>
+
+          <div class="stat-card" style="border-top: 3px solid var(--fatec-red-light);">
+            <div class="stat-value" style="color: var(--fatec-red-light);">15</div>
+            <div class="stat-label">Ponto de Venda (Balcão & Caixa)</div>
+            <div style="font-size: 0.78rem; color: var(--text-dim); margin-top: 0.35rem;">
+              Atendimento técnico, pré-venda com comanda/ticket, verificação de estoque físico, TEF, PIX e NFC-e.
+            </div>
+          </div>
+
+          <div class="stat-card" style="border-top: 3px solid var(--accent-amber);">
+            <div class="stat-value" style="color: var(--accent-amber);">9</div>
+            <div class="stat-label">Painel Administrativo On-Premise</div>
+            <div style="font-size: 0.78rem; color: var(--text-dim); margin-top: 0.35rem;">
+              Gestão de SKUs, tabela varejo/atacado B2B, expedição, RMA, regras tributárias (ICMS/DIFAL) e RBAC.
+            </div>
+          </div>
+        </div>
+
+        <!-- Barra de Busca e Filtro de Cenários -->
+        <div class="card" style="margin-bottom: 2rem; padding: 1.25rem;">
+          <div style="display: flex; gap: 1rem; flex-wrap: wrap; align-items: center;">
+            <input type="text" id="ucSearchInput" placeholder="🔍 Filtrar casos de uso (ex: carrinho, checkout, PIX, UC_POS, estoque, devolução, RF004)..." 
+                   style="flex: 1; min-width: 260px; padding: 0.65rem 1rem; border-radius: var(--border-radius-sm); border: 1px solid var(--border-subtle); background: var(--bg-surface); color: var(--text-main); font-family: inherit; font-size: 0.9rem;" />
+            <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+              <button class="filter-btn active" data-filter="all" style="padding: 0.45rem 0.85rem; border-radius: 6px; border: 1px solid var(--border-subtle); background: var(--fatec-red); color: white; cursor: pointer; font-size: 0.82rem; font-weight: 600;">Todos (53)</button>
+              <button class="filter-btn" data-filter="customer" style="padding: 0.45rem 0.85rem; border-radius: 6px; border: 1px solid var(--border-subtle); background: var(--bg-surface); color: var(--text-main); cursor: pointer; font-size: 0.82rem; font-weight: 600;">🛒 Loja Virtual (29)</button>
+              <button class="filter-btn" data-filter="pos" style="padding: 0.45rem 0.85rem; border-radius: 6px; border: 1px solid var(--border-subtle); background: var(--bg-surface); color: var(--text-main); cursor: pointer; font-size: 0.82rem; font-weight: 600;">🏪 PDV / Balcão & Caixa (15)</button>
+              <button class="filter-btn" data-filter="dashboard" style="padding: 0.45rem 0.85rem; border-radius: 6px; border: 1px solid var(--border-subtle); background: var(--bg-surface); color: var(--text-main); cursor: pointer; font-size: 0.82rem; font-weight: 600;">⚙️ Painel Admin (9)</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Dica de Interatividade -->
+        <div class="callout callout-note" style="margin-bottom: 1.5rem;">
+          <div class="callout-icon">💡</div>
+          <div class="callout-content">
+            <div class="callout-title">Visualização Interativa de Especificações</div>
+            <div class="callout-text">
+              Clique em qualquer linha da tabela ou no botão <strong>Detalhes</strong> para abrir o modal com a especificação formal completa do Caso de Uso escolhido (atores, caminho feliz passo a passo, regras de negócio e fluxos de exceção).
+            </div>
+          </div>
+        </div>
+
+        <!-- Tabela Completa dos 53 Casos de Uso -->
         <div class="table-wrapper">
-          <table class="data-table">
+          <table class="data-table" id="ucDataTable">
             <thead>
               <tr>
+                <th style="width: 110px;">ID</th>
                 <th>Caso de Uso</th>
+                <th>Cenário / Domínio</th>
                 <th>Atores Primários</th>
+                <th>Relacionamento UML</th>
                 <th>Requisitos Atendidos</th>
-                <th>Resumo do Fluxo Principal & Exceções</th>
+                <th style="width: 110px; text-align: right;">Detalhes</th>
               </tr>
             </thead>
             <tbody>
-              <tr>
-                <td class="cell-bold">UC001: Navegar no Catálogo & PDP</td>
+              <!-- 🛒 LOJA VIRTUAL / STOREFRONT (29) -->
+              <tr class="uc-row" data-category="customer" data-uc-id="UC_CLI_001">
+                <td><span class="badge badge-blue">UC_CLI_001</span></td>
+                <td class="cell-bold">Navegar no Catálogo & Categorias</td>
+                <td><span class="badge badge-blue">Loja Virtual</span><br><small style="color:var(--text-dim)">Catálogo & Busca</small></td>
                 <td>Visitante, Cliente</td>
-                <td>RF001, RF002, RF011, RF012</td>
-                <td>O usuário pesquisa produtos com filtros facetados, acessa a PDP com calculadora de pisos em m² e simula frete. <em>Exceção:</em> Produto esgotado é sinalizado com aviso de "Avise-me".</td>
+                <td><code>Direto</code></td>
+                <td><span class="badge badge-red">RF001</span> <span class="badge badge-red">RF003</span> <span class="badge badge-red">RF011</span></td>
+              
+                <td style="text-align: right;"><button type="button" class="btn-icon uc-action-btn" data-uc-id="UC_CLI_001" title="Ver Especificação Completa">👁️ Detalhes</button></td>
               </tr>
-              <tr>
-                <td class="cell-bold">UC002: Gestão CRUD de SKUs</td>
-                <td>Administrador</td>
-                <td>RF001, RF003, RF005</td>
-                <td>Cadastro completo com fotos HD, peso, dimensões, NCM e variações. <em>Exceção:</em> Bloqueio de gravação caso dimensões de cubagem ou NCM estejam vazios (RN002, RN003).</td>
-              </tr>
-              <tr>
-                <td class="cell-bold">UC003: Autenticação & Cadastro</td>
+              <tr class="uc-row" data-category="customer" data-uc-id="UC_CLI_002">
+                <td><span class="badge badge-blue">UC_CLI_002</span></td>
+                <td class="cell-bold">Buscar Produtos com Filtros</td>
+                <td><span class="badge badge-blue">Loja Virtual</span><br><small style="color:var(--text-dim)">Catálogo & Busca</small></td>
                 <td>Visitante, Cliente</td>
-                <td>RF014, RF015</td>
-                <td>Cadastro dual com validação de CPF ou CNPJ com Inscrição Estadual ativa. Recuperação de senha com token de 15 min. <em>Exceção:</em> IE inválida rejeita o cadastro PJ com mensagem orientativa.</td>
+                <td><code>Direto</code></td>
+                <td><span class="badge badge-red">RF011</span></td>
+              
+                <td style="text-align: right;"><button type="button" class="btn-icon uc-action-btn" data-uc-id="UC_CLI_002" title="Ver Especificação Completa">👁️ Detalhes</button></td>
               </tr>
-              <tr>
-                <td class="cell-bold">UC004: Gerenciar Carrinho de Compras</td>
+              <tr class="uc-row" data-category="customer" data-uc-id="UC_CLI_003">
+                <td><span class="badge badge-blue">UC_CLI_003</span></td>
+                <td class="cell-bold">Visualizar Detalhes do Produto (PDP)</td>
+                <td><span class="badge badge-blue">Loja Virtual</span><br><small style="color:var(--text-dim)">Catálogo & Busca</small></td>
                 <td>Visitante, Cliente</td>
-                <td>RF004, RF009</td>
-                <td>Inserção de itens com conversão automática de m² em caixas completas. Ao efetuar login, o carrinho de sessão é mesclado ao banco. <em>Exceção:</em> Quantidade solicitada acima do estoque emite alerta imediato.</td>
+                <td><code>Direto</code></td>
+                <td><span class="badge badge-red">RF001</span> <span class="badge badge-red">RF002</span> <span class="badge badge-red">RF012</span> <span class="badge badge-red">RF013</span></td>
+              
+                <td style="text-align: right;"><button type="button" class="btn-icon uc-action-btn" data-uc-id="UC_CLI_003" title="Ver Especificação Completa">👁️ Detalhes</button></td>
               </tr>
-              <tr>
-                <td class="cell-bold">UC005: Checkout E-Commerce</td>
+              <tr class="uc-row" data-category="customer" data-uc-id="UC_CLI_004">
+                <td><span class="badge badge-blue">UC_CLI_004</span></td>
+                <td class="cell-bold">Selecionar Variantes & Opções</td>
+                <td><span class="badge badge-blue">Loja Virtual</span><br><small style="color:var(--text-dim)">Catálogo & Busca</small></td>
+                <td>Visitante, Cliente</td>
+                <td><span style="font-family:var(--font-mono); font-size:0.8rem; color:var(--accent-amber);">&lt;&lt;extend&gt;&gt;</span> UC_CLI_003</td>
+                <td><span class="badge badge-red">RF004</span> <span class="badge badge-red">RF012</span></td>
+              
+                <td style="text-align: right;"><button type="button" class="btn-icon uc-action-btn" data-uc-id="UC_CLI_004" title="Ver Especificação Completa">👁️ Detalhes</button></td>
+              </tr>
+              <tr class="uc-row" data-category="customer" data-uc-id="UC_CLI_005">
+                <td><span class="badge badge-blue">UC_CLI_005</span></td>
+                <td class="cell-bold">Carregar Mídia & Cache On-Demand</td>
+                <td><span class="badge badge-blue">Loja Virtual</span><br><small style="color:var(--text-dim)">Catálogo & Mídia</small></td>
+                <td>Visitante, Sistema</td>
+                <td><span style="font-family:var(--font-mono); font-size:0.8rem; color:var(--accent-cyan);">&lt;&lt;include&gt;&gt;</span> UC_CLI_003</td>
+                <td><span class="badge badge-red">RF001</span> <span class="badge badge-green">RNF002</span></td>
+              
+                <td style="text-align: right;"><button type="button" class="btn-icon uc-action-btn" data-uc-id="UC_CLI_005" title="Ver Especificação Completa">👁️ Detalhes</button></td>
+              </tr>
+              <tr class="uc-row" data-category="customer" data-uc-id="UC_CLI_006">
+                <td><span class="badge badge-blue">UC_CLI_006</span></td>
+                <td class="cell-bold">Adicionar ao Carrinho & Gerenciar Itens</td>
+                <td><span class="badge badge-blue">Loja Virtual</span><br><small style="color:var(--text-dim)">Carrinho & Compras</small></td>
+                <td>Visitante, Cliente</td>
+                <td><code>Direto</code></td>
+                <td><span class="badge badge-red">RF004</span> <span class="badge badge-red">RF009</span></td>
+              
+                <td style="text-align: right;"><button type="button" class="btn-icon uc-action-btn" data-uc-id="UC_CLI_006" title="Ver Especificação Completa">👁️ Detalhes</button></td>
+              </tr>
+              <tr class="uc-row" data-category="customer" data-uc-id="UC_CLI_007">
+                <td><span class="badge badge-blue">UC_CLI_007</span></td>
+                <td class="cell-bold">Calcular Frete por CEP</td>
+                <td><span class="badge badge-blue">Loja Virtual</span><br><small style="color:var(--text-dim)">Carrinho & Compras</small></td>
+                <td>Visitante, Cliente</td>
+                <td><span style="font-family:var(--font-mono); font-size:0.8rem; color:var(--accent-amber);">&lt;&lt;extend&gt;&gt;</span> UC_CLI_006</td>
+                <td><span class="badge badge-red">RF010</span> <span class="badge badge-red">RF021</span></td>
+              
+                <td style="text-align: right;"><button type="button" class="btn-icon uc-action-btn" data-uc-id="UC_CLI_007" title="Ver Especificação Completa">👁️ Detalhes</button></td>
+              </tr>
+              <tr class="uc-row" data-category="customer" data-uc-id="UC_CLI_008">
+                <td><span class="badge badge-blue">UC_CLI_008</span></td>
+                <td class="cell-bold">Aplicar Cupom de Desconto</td>
+                <td><span class="badge badge-blue">Loja Virtual</span><br><small style="color:var(--text-dim)">Carrinho & Compras</small></td>
+                <td>Visitante, Cliente</td>
+                <td><span style="font-family:var(--font-mono); font-size:0.8rem; color:var(--accent-amber);">&lt;&lt;extend&gt;&gt;</span> UC_CLI_009</td>
+                <td><span class="badge badge-red">RF009</span> <span class="badge badge-red">RF018</span></td>
+              
+                <td style="text-align: right;"><button type="button" class="btn-icon uc-action-btn" data-uc-id="UC_CLI_008" title="Ver Especificação Completa">👁️ Detalhes</button></td>
+              </tr>
+              <tr class="uc-row" data-category="customer" data-uc-id="UC_CLI_009">
+                <td><span class="badge badge-blue">UC_CLI_009</span></td>
+                <td class="cell-bold">Realizar Checkout</td>
+                <td><span class="badge badge-blue">Loja Virtual</span><br><small style="color:var(--text-dim)">Carrinho & Compras</small></td>
+                <td>Cliente Logado</td>
+                <td><code>Direto</code></td>
+                <td><span class="badge badge-red">RF010</span> <span class="badge badge-red">RF017</span> <span class="badge badge-red">RF018</span> <span class="badge badge-red">RF020</span></td>
+              
+                <td style="text-align: right;"><button type="button" class="btn-icon uc-action-btn" data-uc-id="UC_CLI_009" title="Ver Especificação Completa">👁️ Detalhes</button></td>
+              </tr>
+              <tr class="uc-row" data-category="customer" data-uc-id="UC_CLI_010">
+                <td><span class="badge badge-blue">UC_CLI_010</span></td>
+                <td class="cell-bold">Comprar como Visitante (Guest Checkout)</td>
+                <td><span class="badge badge-blue">Loja Virtual</span><br><small style="color:var(--text-dim)">Carrinho & Compras</small></td>
+                <td>Visitante</td>
+                <td><span style="font-family:var(--font-mono); font-size:0.8rem; color:var(--accent-amber);">&lt;&lt;extend&gt;&gt;</span> UC_CLI_009</td>
+                <td><span class="badge badge-red">RF014</span> <span class="badge badge-red">RF018</span></td>
+              
+                <td style="text-align: right;"><button type="button" class="btn-icon uc-action-btn" data-uc-id="UC_CLI_010" title="Ver Especificação Completa">👁️ Detalhes</button></td>
+              </tr>
+              <tr class="uc-row" data-category="customer" data-uc-id="UC_CLI_011">
+                <td><span class="badge badge-blue">UC_CLI_011</span></td>
+                <td class="cell-bold">Processar Pagamento Online</td>
+                <td><span class="badge badge-blue">Loja Virtual</span><br><small style="color:var(--text-dim)">Carrinho & Compras</small></td>
                 <td>Cliente, Gateways</td>
-                <td>RF010, RF018, RF019, RF020</td>
-                <td>Seleção de endereço de entrega (shipto), cálculo de ICMS-ST/DIFAL, escolha do meio de pagamento (PIX, Cartão ou Boleto) e fechamento seguro. <em>Exceção:</em> Falha na autorização do cartão permite tentar outro meio.</td>
+                <td><span style="font-family:var(--font-mono); font-size:0.8rem; color:var(--accent-cyan);">&lt;&lt;include&gt;&gt;</span> UC_CLI_009</td>
+                <td><span class="badge badge-red">RF018</span> <span class="badge badge-red">RF019</span> <span class="badge badge-red">RF020</span></td>
+              
+                <td style="text-align: right;"><button type="button" class="btn-icon uc-action-btn" data-uc-id="UC_CLI_011" title="Ver Especificação Completa">👁️ Detalhes</button></td>
               </tr>
-              <tr>
-                <td class="cell-bold">UC006: Pré-Venda no PDV Balcão</td>
+              <tr class="uc-row" data-category="customer" data-uc-id="UC_CLI_012">
+                <td><span class="badge badge-blue">UC_CLI_012</span></td>
+                <td class="cell-bold">Cadastrar Nova Conta (Sign-up PF/PJ)</td>
+                <td><span class="badge badge-blue">Loja Virtual</span><br><small style="color:var(--text-dim)">Autenticação & Sessão</small></td>
+                <td>Visitante</td>
+                <td><code>Direto</code></td>
+                <td><span class="badge badge-red">RF014</span> <span class="badge badge-red">RF017</span></td>
+              
+                <td style="text-align: right;"><button type="button" class="btn-icon uc-action-btn" data-uc-id="UC_CLI_012" title="Ver Especificação Completa">👁️ Detalhes</button></td>
+              </tr>
+              <tr class="uc-row" data-category="customer" data-uc-id="UC_CLI_013">
+                <td><span class="badge badge-blue">UC_CLI_013</span></td>
+                <td class="cell-bold">Autenticar-se (Login / Logout)</td>
+                <td><span class="badge badge-blue">Loja Virtual</span><br><small style="color:var(--text-dim)">Autenticação & Sessão</small></td>
+                <td>Visitante, Cliente</td>
+                <td><code>Direto</code></td>
+                <td><span class="badge badge-red">RF014</span></td>
+              
+                <td style="text-align: right;"><button type="button" class="btn-icon uc-action-btn" data-uc-id="UC_CLI_013" title="Ver Especificação Completa">👁️ Detalhes</button></td>
+              </tr>
+              <tr class="uc-row" data-category="customer" data-uc-id="UC_CLI_014">
+                <td><span class="badge badge-blue">UC_CLI_014</span></td>
+                <td class="cell-bold">Recuperar Senha por E-mail</td>
+                <td><span class="badge badge-blue">Loja Virtual</span><br><small style="color:var(--text-dim)">Autenticação & Sessão</small></td>
+                <td>Visitante, Cliente</td>
+                <td><code>Direto</code></td>
+                <td><span class="badge badge-red">RF015</span> <span class="badge badge-green">RNF003</span></td>
+              
+                <td style="text-align: right;"><button type="button" class="btn-icon uc-action-btn" data-uc-id="UC_CLI_014" title="Ver Especificação Completa">👁️ Detalhes</button></td>
+              </tr>
+              <tr class="uc-row" data-category="customer" data-uc-id="UC_CLI_015">
+                <td><span class="badge badge-blue">UC_CLI_015</span></td>
+                <td class="cell-bold">Sincronizar Sessão Redis & Carrinho</td>
+                <td><span class="badge badge-blue">Loja Virtual</span><br><small style="color:var(--text-dim)">Autenticação & Sessão</small></td>
+                <td>Sistema, Cliente</td>
+                <td><span style="font-family:var(--font-mono); font-size:0.8rem; color:var(--accent-cyan);">&lt;&lt;include&gt;&gt;</span> UC_CLI_013</td>
+                <td><span class="badge badge-red">RF009</span> <span class="badge badge-amber">RN005</span></td>
+              
+                <td style="text-align: right;"><button type="button" class="btn-icon uc-action-btn" data-uc-id="UC_CLI_015" title="Ver Especificação Completa">👁️ Detalhes</button></td>
+              </tr>
+              <tr class="uc-row" data-category="customer" data-uc-id="UC_CLI_016">
+                <td><span class="badge badge-blue">UC_CLI_016</span></td>
+                <td class="cell-bold">Acessar Painel do Cliente</td>
+                <td><span class="badge badge-blue">Loja Virtual</span><br><small style="color:var(--text-dim)">Minha Conta</small></td>
+                <td>Cliente Logado</td>
+                <td><code>Direto</code></td>
+                <td><span class="badge badge-red">RF014</span> <span class="badge badge-red">RF016</span></td>
+              
+                <td style="text-align: right;"><button type="button" class="btn-icon uc-action-btn" data-uc-id="UC_CLI_016" title="Ver Especificação Completa">👁️ Detalhes</button></td>
+              </tr>
+              <tr class="uc-row" data-category="customer" data-uc-id="UC_CLI_017">
+                <td><span class="badge badge-blue">UC_CLI_017</span></td>
+                <td class="cell-bold">Gerenciar Dados Cadastrais (/account/edit)</td>
+                <td><span class="badge badge-blue">Loja Virtual</span><br><small style="color:var(--text-dim)">Minha Conta</small></td>
+                <td>Cliente Logado</td>
+                <td><code>Direto</code></td>
+                <td><span class="badge badge-red">RF014</span> <span class="badge badge-amber">RN017</span></td>
+              
+                <td style="text-align: right;"><button type="button" class="btn-icon uc-action-btn" data-uc-id="UC_CLI_017" title="Ver Especificação Completa">👁️ Detalhes</button></td>
+              </tr>
+              <tr class="uc-row" data-category="customer" data-uc-id="UC_CLI_018">
+                <td><span class="badge badge-blue">UC_CLI_018</span></td>
+                <td class="cell-bold">Alterar Senha Logado (/account/password)</td>
+                <td><span class="badge badge-blue">Loja Virtual</span><br><small style="color:var(--text-dim)">Minha Conta</small></td>
+                <td>Cliente Logado</td>
+                <td><code>Direto</code></td>
+                <td><span class="badge badge-red">RF015</span> <span class="badge badge-green">RNF003</span></td>
+              
+                <td style="text-align: right;"><button type="button" class="btn-icon uc-action-btn" data-uc-id="UC_CLI_018" title="Ver Especificação Completa">👁️ Detalhes</button></td>
+              </tr>
+              <tr class="uc-row" data-category="customer" data-uc-id="UC_CLI_019">
+                <td><span class="badge badge-blue">UC_CLI_019</span></td>
+                <td class="cell-bold">Gerenciar Livro de Endereços (/account/addresses)</td>
+                <td><span class="badge badge-blue">Loja Virtual</span><br><small style="color:var(--text-dim)">Minha Conta</small></td>
+                <td>Cliente Logado</td>
+                <td><code>Direto</code></td>
+                <td><span class="badge badge-red">RF017</span> <span class="badge badge-amber">RN002</span></td>
+              
+                <td style="text-align: right;"><button type="button" class="btn-icon uc-action-btn" data-uc-id="UC_CLI_019" title="Ver Especificação Completa">👁️ Detalhes</button></td>
+              </tr>
+              <tr class="uc-row" data-category="customer" data-uc-id="UC_CLI_020">
+                <td><span class="badge badge-blue">UC_CLI_020</span></td>
+                <td class="cell-bold">Gerenciar Lista de Desejos (/account/wishlist)</td>
+                <td><span class="badge badge-blue">Loja Virtual</span><br><small style="color:var(--text-dim)">Minha Conta</small></td>
+                <td>Cliente Logado</td>
+                <td><code>Direto</code></td>
+                <td><span class="badge badge-red">RF009</span></td>
+              
+                <td style="text-align: right;"><button type="button" class="btn-icon uc-action-btn" data-uc-id="UC_CLI_020" title="Ver Especificação Completa">👁️ Detalhes</button></td>
+              </tr>
+              <tr class="uc-row" data-category="customer" data-uc-id="UC_CLI_021">
+                <td><span class="badge badge-blue">UC_CLI_021</span></td>
+                <td class="cell-bold">Consultar Pedidos & Histórico (/account/orders)</td>
+                <td><span class="badge badge-blue">Loja Virtual</span><br><small style="color:var(--text-dim)">Minha Conta</small></td>
+                <td>Cliente Logado</td>
+                <td><code>Direto</code></td>
+                <td><span class="badge badge-red">RF016</span> <span class="badge badge-red">RF020</span> <span class="badge badge-red">RF022</span></td>
+              
+                <td style="text-align: right;"><button type="button" class="btn-icon uc-action-btn" data-uc-id="UC_CLI_021" title="Ver Especificação Completa">👁️ Detalhes</button></td>
+              </tr>
+              <tr class="uc-row" data-category="customer" data-uc-id="UC_CLI_022">
+                <td><span class="badge badge-blue">UC_CLI_022</span></td>
+                <td class="cell-bold">Consultar Extrato & Transações (/account/transaction)</td>
+                <td><span class="badge badge-blue">Loja Virtual</span><br><small style="color:var(--text-dim)">Minha Conta</small></td>
+                <td>Cliente Logado</td>
+                <td><code>Direto</code></td>
+                <td><span class="badge badge-red">RF016</span> <span class="badge badge-red">RF018</span></td>
+              
+                <td style="text-align: right;"><button type="button" class="btn-icon uc-action-btn" data-uc-id="UC_CLI_022" title="Ver Especificação Completa">👁️ Detalhes</button></td>
+              </tr>
+              <tr class="uc-row" data-category="customer" data-uc-id="UC_CLI_023">
+                <td><span class="badge badge-blue">UC_CLI_023</span></td>
+                <td class="cell-bold">Solicitar Devolução / RMA (/account/return)</td>
+                <td><span class="badge badge-blue">Loja Virtual</span><br><small style="color:var(--text-dim)">Minha Conta</small></td>
+                <td>Cliente Logado, SAC</td>
+                <td><code>Direto</code></td>
+                <td><span class="badge badge-red">RF016</span> <span class="badge badge-red">RF020</span> <span class="badge badge-amber">RN011</span></td>
+              
+                <td style="text-align: right;"><button type="button" class="btn-icon uc-action-btn" data-uc-id="UC_CLI_023" title="Ver Especificação Completa">👁️ Detalhes</button></td>
+              </tr>
+              <tr class="uc-row" data-category="customer" data-uc-id="UC_CLI_024">
+                <td><span class="badge badge-blue">UC_CLI_024</span></td>
+                <td class="cell-bold">Gerenciar Inscrição na Newsletter</td>
+                <td><span class="badge badge-blue">Loja Virtual</span><br><small style="color:var(--text-dim)">Minha Conta</small></td>
+                <td>Visitante, Cliente</td>
+                <td><code>Direto</code></td>
+                <td><span class="badge badge-red">RF014</span></td>
+              
+                <td style="text-align: right;"><button type="button" class="btn-icon uc-action-btn" data-uc-id="UC_CLI_024" title="Ver Especificação Completa">👁️ Detalhes</button></td>
+              </tr>
+              <tr class="uc-row" data-category="customer" data-uc-id="UC_CLI_025">
+                <td><span class="badge badge-blue">UC_CLI_025</span></td>
+                <td class="cell-bold">Criar Solicitação de Orçamento (RFQ) (/projetos/novo)</td>
+                <td><span class="badge badge-blue">Loja Virtual</span><br><small style="color:var(--text-dim)">Cotações & BoQ</small></td>
+                <td>Cliente Logado</td>
+                <td><code>Direto</code></td>
+                <td><span class="badge badge-red">RF004</span> <span class="badge badge-red">RF014</span></td>
+              
+                <td style="text-align: right;"><button type="button" class="btn-icon uc-action-btn" data-uc-id="UC_CLI_025" title="Ver Especificação Completa">👁️ Detalhes</button></td>
+              </tr>
+              <tr class="uc-row" data-category="customer" data-uc-id="UC_CLI_026">
+                <td><span class="badge badge-blue">UC_CLI_026</span></td>
+                <td class="cell-bold">Acompanhar Meus Projetos (/account/projetos)</td>
+                <td><span class="badge badge-blue">Loja Virtual</span><br><small style="color:var(--text-dim)">Cotações & BoQ</small></td>
+                <td>Cliente Logado</td>
+                <td><code>Direto</code></td>
+                <td><span class="badge badge-red">RF014</span> <span class="badge badge-red">RF016</span></td>
+              
+                <td style="text-align: right;"><button type="button" class="btn-icon uc-action-btn" data-uc-id="UC_CLI_026" title="Ver Especificação Completa">👁️ Detalhes</button></td>
+              </tr>
+              <tr class="uc-row" data-category="customer" data-uc-id="UC_CLI_027">
+                <td><span class="badge badge-blue">UC_CLI_027</span></td>
+                <td class="cell-bold">Comparar Propostas Recebidas (/propostas)</td>
+                <td><span class="badge badge-blue">Loja Virtual</span><br><small style="color:var(--text-dim)">Cotações & BoQ</small></td>
+                <td>Cliente Logado</td>
+                <td><span style="font-family:var(--font-mono); font-size:0.8rem; color:var(--accent-amber);">&lt;&lt;extend&gt;&gt;</span> UC_CLI_026</td>
+                <td><span class="badge badge-red">RF010</span> <span class="badge badge-amber">RN007</span></td>
+              
+                <td style="text-align: right;"><button type="button" class="btn-icon uc-action-btn" data-uc-id="UC_CLI_027" title="Ver Especificação Completa">👁️ Detalhes</button></td>
+              </tr>
+              <tr class="uc-row" data-category="customer" data-uc-id="UC_CLI_028">
+                <td><span class="badge badge-blue">UC_CLI_028</span></td>
+                <td class="cell-bold">Aceitar Proposta de Prestador (/aceitar)</td>
+                <td><span class="badge badge-blue">Loja Virtual</span><br><small style="color:var(--text-dim)">Cotações & BoQ</small></td>
+                <td>Cliente Logado</td>
+                <td><span style="font-family:var(--font-mono); font-size:0.8rem; color:var(--accent-amber);">&lt;&lt;extend&gt;&gt;</span> UC_CLI_027</td>
+                <td><span class="badge badge-red">RF018</span> <span class="badge badge-amber">RN016</span></td>
+              
+                <td style="text-align: right;"><button type="button" class="btn-icon uc-action-btn" data-uc-id="UC_CLI_028" title="Ver Especificação Completa">👁️ Detalhes</button></td>
+              </tr>
+              <tr class="uc-row" data-category="customer" data-uc-id="UC_CLI_029">
+                <td><span class="badge badge-blue">UC_CLI_029</span></td>
+                <td class="cell-bold">Aprovar BoQ & Enviar ao Carrinho (/boq)</td>
+                <td><span class="badge badge-blue">Loja Virtual</span><br><small style="color:var(--text-dim)">Cotações & BoQ</small></td>
+                <td>Cliente Logado</td>
+                <td><span style="font-family:var(--font-mono); font-size:0.8rem; color:var(--accent-amber);">&lt;&lt;extend&gt;&gt;</span> UC_CLI_026 + <span style="font-family:var(--font-mono); font-size:0.8rem; color:var(--accent-cyan);">&lt;&lt;include&gt;&gt;</span> UC_CLI_006</td>
+                <td><span class="badge badge-red">RF004</span> <span class="badge badge-red">RF009</span></td>
+              
+                <td style="text-align: right;"><button type="button" class="btn-icon uc-action-btn" data-uc-id="UC_CLI_029" title="Ver Especificação Completa">👁️ Detalhes</button></td>
+              </tr>
+
+              <!-- 🏪 PONTO DE VENDA / POS (15) -->
+              <tr class="uc-row" data-category="pos" data-uc-id="UC_POS_001">
+                <td><span class="badge badge-red">UC_POS_001</span></td>
+                <td class="cell-bold">Navegar no Catálogo de Produtos (POS Balcão)</td>
+                <td><span class="badge badge-red">Ponto de Venda</span><br><small style="color:var(--text-dim)">Vendedor Balcão</small></td>
+                <td>Vendedor POS</td>
+                <td><code>Direto</code></td>
+                <td><span class="badge badge-red">RF001</span> <span class="badge badge-red">RF002</span> <span class="badge badge-red">RF006</span></td>
+              
+                <td style="text-align: right;"><button type="button" class="btn-icon uc-action-btn" data-uc-id="UC_POS_001" title="Ver Especificação Completa">👁️ Detalhes</button></td>
+              </tr>
+              <tr class="uc-row" data-category="pos" data-uc-id="UC_POS_002">
+                <td><span class="badge badge-red">UC_POS_002</span></td>
+                <td class="cell-bold">Selecionar Variações do Produto</td>
+                <td><span class="badge badge-red">Ponto de Venda</span><br><small style="color:var(--text-dim)">Vendedor Balcão</small></td>
+                <td>Vendedor POS</td>
+                <td><span style="font-family:var(--font-mono); font-size:0.8rem; color:var(--accent-amber);">&lt;&lt;extend&gt;&gt;</span> UC_POS_001</td>
+                <td><span class="badge badge-red">RF004</span> <span class="badge badge-red">RF012</span></td>
+              
+                <td style="text-align: right;"><button type="button" class="btn-icon uc-action-btn" data-uc-id="UC_POS_002" title="Ver Especificação Completa">👁️ Detalhes</button></td>
+              </tr>
+              <tr class="uc-row" data-category="pos" data-uc-id="UC_POS_003">
+                <td><span class="badge badge-red">UC_POS_003</span></td>
+                <td class="cell-bold">Verificar Disponibilidade de Estoque</td>
+                <td><span class="badge badge-red">Ponto de Venda</span><br><small style="color:var(--text-dim)">Vendedor Balcão</small></td>
+                <td>Vendedor POS, Sistema</td>
+                <td><span style="font-family:var(--font-mono); font-size:0.8rem; color:var(--accent-cyan);">&lt;&lt;include&gt;&gt;</span> UC_POS_001</td>
+                <td><span class="badge badge-red">RF006</span> <span class="badge badge-amber">RN005</span></td>
+              
+                <td style="text-align: right;"><button type="button" class="btn-icon uc-action-btn" data-uc-id="UC_POS_003" title="Ver Especificação Completa">👁️ Detalhes</button></td>
+              </tr>
+              <tr class="uc-row" data-category="pos" data-uc-id="UC_POS_004">
+                <td><span class="badge badge-red">UC_POS_004</span></td>
+                <td class="cell-bold">Identificar / Cadastrar Cliente no Balcão</td>
+                <td><span class="badge badge-red">Ponto de Venda</span><br><small style="color:var(--text-dim)">Vendedor Balcão</small></td>
                 <td>Vendedor POS, Cliente</td>
-                <td>RF004, RF006, RF021</td>
-                <td>Vendedor realiza cotação técnica com reserva de estoque temporária e gera o comprovante de pré-venda com código de barras para o caixa. <em>Exceção:</em> Falta de estoque físico impede a emissão da pré-venda.</td>
+                <td><code>Direto</code></td>
+                <td><span class="badge badge-red">RF014</span> <span class="badge badge-amber">RN017</span></td>
+              
+                <td style="text-align: right;"><button type="button" class="btn-icon uc-action-btn" data-uc-id="UC_POS_004" title="Ver Especificação Completa">👁️ Detalhes</button></td>
               </tr>
-              <tr>
-                <td class="cell-bold">UC007: Fechamento de Venda no Caixa</td>
+              <tr class="uc-row" data-category="pos" data-uc-id="UC_POS_005">
+                <td><span class="badge badge-red">UC_POS_005</span></td>
+                <td class="cell-bold">Criar Pré-Venda no Balcão</td>
+                <td><span class="badge badge-red">Ponto de Venda</span><br><small style="color:var(--text-dim)">Vendedor Balcão</small></td>
+                <td>Vendedor POS</td>
+                <td><code>Direto</code></td>
+                <td><span class="badge badge-red">RF004</span> <span class="badge badge-red">RF009</span> <span class="badge badge-red">RF021</span></td>
+              
+                <td style="text-align: right;"><button type="button" class="btn-icon uc-action-btn" data-uc-id="UC_POS_005" title="Ver Especificação Completa">👁️ Detalhes</button></td>
+              </tr>
+              <tr class="uc-row" data-category="pos" data-uc-id="UC_POS_006">
+                <td><span class="badge badge-red">UC_POS_006</span></td>
+                <td class="cell-bold">Adicionar Itens ao Carrinho do Balcão</td>
+                <td><span class="badge badge-red">Ponto de Venda</span><br><small style="color:var(--text-dim)">Vendedor Balcão</small></td>
+                <td>Vendedor POS</td>
+                <td><span style="font-family:var(--font-mono); font-size:0.8rem; color:var(--accent-cyan);">&lt;&lt;include&gt;&gt;</span> UC_POS_005</td>
+                <td><span class="badge badge-red">RF004</span> <span class="badge badge-red">RF006</span></td>
+              
+                <td style="text-align: right;"><button type="button" class="btn-icon uc-action-btn" data-uc-id="UC_POS_006" title="Ver Especificação Completa">👁️ Detalhes</button></td>
+              </tr>
+              <tr class="uc-row" data-category="pos" data-uc-id="UC_POS_007">
+                <td><span class="badge badge-red">UC_POS_007</span></td>
+                <td class="cell-bold">Salvar Pré-Venda Pendente</td>
+                <td><span class="badge badge-red">Ponto de Venda</span><br><small style="color:var(--text-dim)">Vendedor Balcão</small></td>
+                <td>Vendedor POS</td>
+                <td><span style="font-family:var(--font-mono); font-size:0.8rem; color:var(--accent-cyan);">&lt;&lt;include&gt;&gt;</span> UC_POS_005</td>
+                <td><span class="badge badge-red">RF006</span> <span class="badge badge-amber">RN005</span></td>
+              
+                <td style="text-align: right;"><button type="button" class="btn-icon uc-action-btn" data-uc-id="UC_POS_007" title="Ver Especificação Completa">👁️ Detalhes</button></td>
+              </tr>
+              <tr class="uc-row" data-category="pos" data-uc-id="UC_POS_008">
+                <td><span class="badge badge-red">UC_POS_008</span></td>
+                <td class="cell-bold">Gerar e Imprimir Ticket de Pré-Venda</td>
+                <td><span class="badge badge-red">Ponto de Venda</span><br><small style="color:var(--text-dim)">Vendedor Balcão</small></td>
+                <td>Vendedor POS, Cliente</td>
+                <td><span style="font-family:var(--font-mono); font-size:0.8rem; color:var(--accent-cyan);">&lt;&lt;include&gt;&gt;</span> UC_POS_007</td>
+                <td><span class="badge badge-red">RF021</span> <span class="badge badge-amber">RN008</span></td>
+              
+                <td style="text-align: right;"><button type="button" class="btn-icon uc-action-btn" data-uc-id="UC_POS_008" title="Ver Especificação Completa">👁️ Detalhes</button></td>
+              </tr>
+              <tr class="uc-row" data-category="pos" data-uc-id="UC_POS_009">
+                <td><span class="badge badge-red">UC_POS_009</span></td>
+                <td class="cell-bold">Localizar Pré-Venda por Ticket</td>
+                <td><span class="badge badge-red">Ponto de Venda</span><br><small style="color:var(--text-dim)">Operador de Caixa</small></td>
+                <td>Operador Caixa, Cliente</td>
+                <td><code>Direto</code></td>
+                <td><span class="badge badge-red">RF018</span> <span class="badge badge-amber">RN016</span></td>
+              
+                <td style="text-align: right;"><button type="button" class="btn-icon uc-action-btn" data-uc-id="UC_POS_009" title="Ver Especificação Completa">👁️ Detalhes</button></td>
+              </tr>
+              <tr class="uc-row" data-category="pos" data-uc-id="UC_POS_010">
+                <td><span class="badge badge-red">UC_POS_010</span></td>
+                <td class="cell-bold">Processar Pagamento no Caixa</td>
+                <td><span class="badge badge-red">Ponto de Venda</span><br><small style="color:var(--text-dim)">Operador de Caixa</small></td>
+                <td>Operador Caixa, Gateways</td>
+                <td><code>Direto</code></td>
+                <td><span class="badge badge-red">RF018</span> <span class="badge badge-red">RF019</span></td>
+              
+                <td style="text-align: right;"><button type="button" class="btn-icon uc-action-btn" data-uc-id="UC_POS_010" title="Ver Especificação Completa">👁️ Detalhes</button></td>
+              </tr>
+              <tr class="uc-row" data-category="pos" data-uc-id="UC_POS_011">
+                <td><span class="badge badge-red">UC_POS_011</span></td>
+                <td class="cell-bold">Pagar com Pix via QR Code Dinâmico</td>
+                <td><span class="badge badge-red">Ponto de Venda</span><br><small style="color:var(--text-dim)">Operador de Caixa</small></td>
+                <td>Operador Caixa, Gateway PIX</td>
+                <td><span style="font-family:var(--font-mono); font-size:0.8rem; color:var(--accent-purple);">Generalização</span> UC_POS_010</td>
+                <td><span class="badge badge-red">RF018</span> <span class="badge badge-red">RF019</span></td>
+              
+                <td style="text-align: right;"><button type="button" class="btn-icon uc-action-btn" data-uc-id="UC_POS_011" title="Ver Especificação Completa">👁️ Detalhes</button></td>
+              </tr>
+              <tr class="uc-row" data-category="pos" data-uc-id="UC_POS_012">
+                <td><span class="badge badge-red">UC_POS_012</span></td>
+                <td class="cell-bold">Pagar com Cartão via TEF</td>
+                <td><span class="badge badge-red">Ponto de Venda</span><br><small style="color:var(--text-dim)">Operador de Caixa</small></td>
+                <td>Operador Caixa, Gateway TEF</td>
+                <td><span style="font-family:var(--font-mono); font-size:0.8rem; color:var(--accent-purple);">Generalização</span> UC_POS_010</td>
+                <td><span class="badge badge-red">RF018</span> <span class="badge badge-red">RF019</span></td>
+              
+                <td style="text-align: right;"><button type="button" class="btn-icon uc-action-btn" data-uc-id="UC_POS_012" title="Ver Especificação Completa">👁️ Detalhes</button></td>
+              </tr>
+              <tr class="uc-row" data-category="pos" data-uc-id="UC_POS_013">
+                <td><span class="badge badge-red">UC_POS_013</span></td>
+                <td class="cell-bold">Pagar com Dinheiro com Cálculo de Troco</td>
+                <td><span class="badge badge-red">Ponto de Venda</span><br><small style="color:var(--text-dim)">Operador de Caixa</small></td>
+                <td>Operador Caixa</td>
+                <td><span style="font-family:var(--font-mono); font-size:0.8rem; color:var(--accent-purple);">Generalização</span> UC_POS_010</td>
+                <td><span class="badge badge-red">RF018</span> <span class="badge badge-amber">RN016</span></td>
+              
+                <td style="text-align: right;"><button type="button" class="btn-icon uc-action-btn" data-uc-id="UC_POS_013" title="Ver Especificação Completa">👁️ Detalhes</button></td>
+              </tr>
+              <tr class="uc-row" data-category="pos" data-uc-id="UC_POS_014">
+                <td><span class="badge badge-red">UC_POS_014</span></td>
+                <td class="cell-bold">Finalizar Pagamento e Venda</td>
+                <td><span class="badge badge-red">Ponto de Venda</span><br><small style="color:var(--text-dim)">Operador de Caixa</small></td>
                 <td>Operador Caixa, SEFAZ</td>
-                <td>RF006, RF018, RF020</td>
-                <td>Caixa bipeia o código da pré-venda, recebe o pagamento (dinheiro, PIX ou TEF) e emite a NFC-e diretamente no fisco, com baixa no estoque físico. <em>Exceção:</em> Rejeição do TEF permite retentativa ou pagamento alternativo.</td>
+                <td><code>Direto</code></td>
+                <td><span class="badge badge-red">RF006</span> <span class="badge badge-red">RF020</span></td>
+              
+                <td style="text-align: right;"><button type="button" class="btn-icon uc-action-btn" data-uc-id="UC_POS_014" title="Ver Especificação Completa">👁️ Detalhes</button></td>
               </tr>
-              <tr>
-                <td class="cell-bold">UC008: Solicitar Devolução (RMA)</td>
-                <td>Cliente, SAC</td>
-                <td>RF016, RF022</td>
-                <td>Cliente abre pedido de logística reversa pelo painel dentro do prazo de 7 dias do CDC. O sistema gera a autorização de postagem reversa. <em>Exceção:</em> Pedido fora do prazo de garantia/arrependimento tem abertura bloqueada.</td>
+              <tr class="uc-row" data-category="pos" data-uc-id="UC_POS_015">
+                <td><span class="badge badge-red">UC_POS_015</span></td>
+                <td class="cell-bold">Imprimir Recibo e Cupom Fiscal NFC-e</td>
+                <td><span class="badge badge-red">Ponto de Venda</span><br><small style="color:var(--text-dim)">Operador de Caixa</small></td>
+                <td>Operador Caixa, SEFAZ</td>
+                <td><span style="font-family:var(--font-mono); font-size:0.8rem; color:var(--accent-cyan);">&lt;&lt;include&gt;&gt;</span> UC_POS_014</td>
+                <td><span class="badge badge-red">RF020</span> <span class="badge badge-amber">RN012</span></td>
+              
+                <td style="text-align: right;"><button type="button" class="btn-icon uc-action-btn" data-uc-id="UC_POS_015" title="Ver Especificação Completa">👁️ Detalhes</button></td>
               </tr>
-              <tr>
-                <td class="cell-bold">UC009: Gestão de Devoluções no Painel</td>
-                <td>Operador do Painel</td>
-                <td>RF022, RF025</td>
-                <td>Inspeção do produto recebido no centro de distribuição, aprovação do estorno bancário e reintegração automática ao saldo do estoque. <em>Exceção:</em> Produto avariado por mau uso tem a devolução reprovada com laudo fotográfico.</td>
+
+              <!-- ⚙️ PAINEL ADMINISTRATIVO / DASHBOARD (9) -->
+              <tr class="uc-row" data-category="dashboard" data-uc-id="UC_ADM_001">
+                <td><span class="badge badge-amber">UC_ADM_001</span></td>
+                <td class="cell-bold">Gerenciar Catálogo (Produtos, Categorias, Opções)</td>
+                <td><span class="badge badge-amber">Dashboard</span><br><small style="color:var(--text-dim)">Negócio & Catálogo</small></td>
+                <td>Operador, Admin</td>
+                <td><code>Direto</code></td>
+                <td><span class="badge badge-red">RF001</span> <span class="badge badge-red">RF002</span> <span class="badge badge-red">RF003</span> <span class="badge badge-red">RF004</span> <span class="badge badge-red">RF005</span> <span class="badge badge-red">RF023</span></td>
+              
+                <td style="text-align: right;"><button type="button" class="btn-icon uc-action-btn" data-uc-id="UC_ADM_001" title="Ver Especificação Completa">👁️ Detalhes</button></td>
               </tr>
-              <tr>
-                <td class="cell-bold">UC010: Monitoramento de Ruptura</td>
-                <td>Administrador</td>
-                <td>RF006, RF024</td>
-                <td>Painel analítico exibe curva ABC de estoque e itens que atingiram o limite mínimo de ressuprimento, sugerindo ordens de compra ao fornecedor. <em>Exceção:</em> Ruptura iminente envia notificação de alta prioridade por e-mail.</td>
+              <tr class="uc-row" data-category="dashboard" data-uc-id="UC_ADM_002">
+                <td><span class="badge badge-amber">UC_ADM_002</span></td>
+                <td class="cell-bold">Gerenciar Clientes & Grupos B2B</td>
+                <td><span class="badge badge-amber">Dashboard</span><br><small style="color:var(--text-dim)">Negócio & Comercial</small></td>
+                <td>Operador, Admin</td>
+                <td><code>Direto</code></td>
+                <td><span class="badge badge-red">RF014</span> <span class="badge badge-red">RF017</span> <span class="badge badge-red">RF023</span></td>
+              
+                <td style="text-align: right;"><button type="button" class="btn-icon uc-action-btn" data-uc-id="UC_ADM_002" title="Ver Especificação Completa">👁️ Detalhes</button></td>
+              </tr>
+              <tr class="uc-row" data-category="dashboard" data-uc-id="UC_ADM_003">
+                <td><span class="badge badge-amber">UC_ADM_003</span></td>
+                <td class="cell-bold">Gerenciar Pedidos, Expedição & Faturamento</td>
+                <td><span class="badge badge-amber">Dashboard</span><br><small style="color:var(--text-dim)">Negócio & Vendas</small></td>
+                <td>Operador, Admin</td>
+                <td><code>Direto</code></td>
+                <td><span class="badge badge-red">RF016</span> <span class="badge badge-red">RF020</span> <span class="badge badge-red">RF022</span> <span class="badge badge-red">RF023</span></td>
+              
+                <td style="text-align: right;"><button type="button" class="btn-icon uc-action-btn" data-uc-id="UC_ADM_003" title="Ver Especificação Completa">👁️ Detalhes</button></td>
+              </tr>
+              <tr class="uc-row" data-category="dashboard" data-uc-id="UC_ADM_004">
+                <td><span class="badge badge-amber">UC_ADM_004</span></td>
+                <td class="cell-bold">Gerenciar Devoluções, Trocas & Logística Reversa</td>
+                <td><span class="badge badge-amber">Dashboard</span><br><small style="color:var(--text-dim)">Negócio & SAC (RMA)</small></td>
+                <td>Operador, Admin</td>
+                <td><code>Direto</code></td>
+                <td><span class="badge badge-red">RF020</span> <span class="badge badge-red">RF023</span> <span class="badge badge-amber">RN011</span></td>
+              
+                <td style="text-align: right;"><button type="button" class="btn-icon uc-action-btn" data-uc-id="UC_ADM_004" title="Ver Especificação Completa">👁️ Detalhes</button></td>
+              </tr>
+              <tr class="uc-row" data-category="dashboard" data-uc-id="UC_ADM_005">
+                <td><span class="badge badge-amber">UC_ADM_005</span></td>
+                <td class="cell-bold">Visualizar Relatórios & Estatísticas (Analytics)</td>
+                <td><span class="badge badge-amber">Dashboard</span><br><small style="color:var(--text-dim)">Negócio & BI</small></td>
+                <td>Operador, Admin</td>
+                <td><code>Direto</code></td>
+                <td><span class="badge badge-red">RF006</span> <span class="badge badge-red">RF024</span> <span class="badge badge-red">RF025</span></td>
+              
+                <td style="text-align: right;"><button type="button" class="btn-icon uc-action-btn" data-uc-id="UC_ADM_005" title="Ver Especificação Completa">👁️ Detalhes</button></td>
+              </tr>
+              <tr class="uc-row" data-category="dashboard" data-uc-id="UC_ADM_006">
+                <td><span class="badge badge-amber">UC_ADM_006</span></td>
+                <td class="cell-bold">Configurar Lojas & Parâmetros do Motor</td>
+                <td><span class="badge badge-amber">Dashboard</span><br><small style="color:var(--text-dim)">Sistema & Multi-Loja</small></td>
+                <td>Administrador Geral</td>
+                <td><code>Direto</code></td>
+                <td><span class="badge badge-red">RF023</span> <span class="badge badge-amber">RN018</span></td>
+              
+                <td style="text-align: right;"><button type="button" class="btn-icon uc-action-btn" data-uc-id="UC_ADM_006" title="Ver Especificação Completa">👁️ Detalhes</button></td>
+              </tr>
+              <tr class="uc-row" data-category="dashboard" data-uc-id="UC_ADM_007">
+                <td><span class="badge badge-amber">UC_ADM_007</span></td>
+                <td class="cell-bold">Gerenciar Usuários & Permissões (RBAC)</td>
+                <td><span class="badge badge-amber">Dashboard</span><br><small style="color:var(--text-dim)">Sistema & Segurança</small></td>
+                <td>Administrador Geral</td>
+                <td><code>Direto</code></td>
+                <td><span class="badge badge-red">RF023</span> <span class="badge badge-green">RNF003</span> <span class="badge badge-green">RNF005</span></td>
+              
+                <td style="text-align: right;"><button type="button" class="btn-icon uc-action-btn" data-uc-id="UC_ADM_007" title="Ver Especificação Completa">👁️ Detalhes</button></td>
+              </tr>
+              <tr class="uc-row" data-category="dashboard" data-uc-id="UC_ADM_008">
+                <td><span class="badge badge-amber">UC_ADM_008</span></td>
+                <td class="cell-bold">Gerenciar Planos de Assinatura & Recorrência</td>
+                <td><span class="badge badge-amber">Dashboard</span><br><small style="color:var(--text-dim)">Sistema & Monetização</small></td>
+                <td>Administrador Geral</td>
+                <td><code>Direto</code></td>
+                <td><span class="badge badge-red">RF018</span> <span class="badge badge-red">RF023</span> <span class="badge badge-amber">RN016</span></td>
+              
+                <td style="text-align: right;"><button type="button" class="btn-icon uc-action-btn" data-uc-id="UC_ADM_008" title="Ver Especificação Completa">👁️ Detalhes</button></td>
+              </tr>
+              <tr class="uc-row" data-category="dashboard" data-uc-id="UC_ADM_009">
+                <td><span class="badge badge-amber">UC_ADM_009</span></td>
+                <td class="cell-bold">Gerenciar Localização, Moedas & Impostos</td>
+                <td><span class="badge badge-amber">Dashboard</span><br><small style="color:var(--text-dim)">Sistema & Fiscal</small></td>
+                <td>Administrador Geral</td>
+                <td><code>Direto</code></td>
+                <td><span class="badge badge-red">RF020</span> <span class="badge badge-red">RF023</span> <span class="badge badge-amber">RN012</span></td>
+              
+                <td style="text-align: right;"><button type="button" class="btn-icon uc-action-btn" data-uc-id="UC_ADM_009" title="Ver Especificação Completa">👁️ Detalhes</button></td>
               </tr>
             </tbody>
           </table>
+        </div>
+      </section>
+
+      <!-- 4. ESPECIFICAÇÃO DOS 10 CASOS DE USO CORE -->
+      <section style="margin-bottom: 4rem;">
+        <div style="display: flex; justify-content: space-between; align-items: flex-end; flex-wrap: wrap; gap: 1rem; margin-bottom: 1.25rem;">
+          <div>
+            <h2 style="font-family: var(--font-display); font-size: 1.6rem; color: var(--fatec-red-light); margin-bottom: 0.25rem;">
+              4. Especificações Detalhadas dos Casos de Uso Core
+            </h2>
+            <p style="font-size: 0.95rem; color: var(--text-muted);">
+              Os 10 fluxos estruturantes do ecossistema Alpha Engine. Clique em qualquer card ou no botão <strong>👁️ Ver Especificação</strong> para abrir o modal com o caminho feliz passo a passo, fluxos alternativos, exceções e regras de negócio.
+            </p>
+          </div>
+          <span class="badge badge-purple" style="font-size: 0.82rem; padding: 0.4rem 0.8rem;">🌟 10 Casos Core</span>
+        </div>
+
+        <div class="grid-cards-3" id="coreCardsGrid">
+          <!-- Card UC_CORE_001 -->
+          <div class="card uc-card" data-uc-id="UC_CORE_001" style="cursor: pointer; display: flex; flex-direction: column; justify-content: space-between; border-top: 3px solid var(--accent-cyan); transition: var(--transition-normal);">
+            <div>
+              <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.75rem;">
+                <span class="badge badge-purple">UC_CORE_001</span>
+                <span class="badge badge-blue">Storefront & PDP</span>
+              </div>
+              <h4 class="card-title" style="font-size: 1.15rem; margin-bottom: 0.5rem;">Navegar no Catálogo & PDP</h4>
+              <p class="card-desc" style="font-size: 0.88rem; margin-bottom: 1rem;">
+                Exploração de catálogo com filtros facetados, galeria HD, calculadora técnica de pisos (m² para caixas completas) e simulação de frete.
+              </p>
+              <div style="margin-bottom: 0.75rem; font-size: 0.78rem; color: var(--text-dim);">
+                <strong>Atores:</strong> Visitante, Cliente (PF/PJ)<br>
+                <strong>Exceção:</strong> Sinalização e captura em "Avise-me quando chegar" se estoque zerado.
+              </div>
+            </div>
+            <div style="border-top: 1px solid var(--border-subtle); padding-top: 0.85rem; display: flex; justify-content: space-between; align-items: center;">
+              <div style="display: flex; gap: 0.35rem; flex-wrap: wrap;">
+                <span class="badge badge-red">RF001</span>
+                <span class="badge badge-red">RF002</span>
+                <span class="badge badge-red">RF012</span>
+              </div>
+              <button type="button" class="btn-icon uc-action-btn" data-uc-id="UC_CORE_001" style="font-size: 0.82rem;">👁️ Ver Detalhes</button>
+            </div>
+          </div>
+
+          <!-- Card UC_CORE_002 -->
+          <div class="card uc-card" data-uc-id="UC_CORE_002" style="cursor: pointer; display: flex; flex-direction: column; justify-content: space-between; border-top: 3px solid var(--accent-amber); transition: var(--transition-normal);">
+            <div>
+              <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.75rem;">
+                <span class="badge badge-purple">UC_CORE_002</span>
+                <span class="badge badge-amber">Backoffice & Catálogo</span>
+              </div>
+              <h4 class="card-title" style="font-size: 1.15rem; margin-bottom: 0.5rem;">Gestão CRUD de SKUs</h4>
+              <p class="card-desc" style="font-size: 0.88rem; margin-bottom: 1rem;">
+                Manutenção do catálogo com fotos HD, NCM, dimensões obrigatórias para cubagem, tabela de preços B2B e conversão de caixas.
+              </p>
+              <div style="margin-bottom: 0.75rem; font-size: 0.78rem; color: var(--text-dim);">
+                <strong>Atores:</strong> Administrador Geral, Operador<br>
+                <strong>Exceção:</strong> Bloqueio se peso/cubagem zerados ou NCM inválido (RN002/RN003).
+              </div>
+            </div>
+            <div style="border-top: 1px solid var(--border-subtle); padding-top: 0.85rem; display: flex; justify-content: space-between; align-items: center;">
+              <div style="display: flex; gap: 0.35rem; flex-wrap: wrap;">
+                <span class="badge badge-red">RF001</span>
+                <span class="badge badge-red">RF003</span>
+                <span class="badge badge-red">RF005</span>
+              </div>
+              <button type="button" class="btn-icon uc-action-btn" data-uc-id="UC_CORE_002" style="font-size: 0.82rem;">👁️ Ver Detalhes</button>
+            </div>
+          </div>
+
+          <!-- Card UC_CORE_003 -->
+          <div class="card uc-card" data-uc-id="UC_CORE_003" style="cursor: pointer; display: flex; flex-direction: column; justify-content: space-between; border-top: 3px solid var(--accent-emerald); transition: var(--transition-normal);">
+            <div>
+              <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.75rem;">
+                <span class="badge badge-purple">UC_CORE_003</span>
+                <span class="badge badge-green">Segurança & Identidade</span>
+              </div>
+              <h4 class="card-title" style="font-size: 1.15rem; margin-bottom: 0.5rem;">Autenticação & Cadastro</h4>
+              <p class="card-desc" style="font-size: 0.88rem; margin-bottom: 1rem;">
+                Cadastro dual PF (CPF) e PJ (CNPJ com validação de Inscrição Estadual para construtoras), login seguro e redefinição de senha com token de 15 min.
+              </p>
+              <div style="margin-bottom: 0.75rem; font-size: 0.78rem; color: var(--text-dim);">
+                <strong>Atores:</strong> Visitante, Cliente (PF/PJ)<br>
+                <strong>Exceção:</strong> Rejeição com alerta orientativo se Inscrição Estadual for inválida na SEFAZ.
+              </div>
+            </div>
+            <div style="border-top: 1px solid var(--border-subtle); padding-top: 0.85rem; display: flex; justify-content: space-between; align-items: center;">
+              <div style="display: flex; gap: 0.35rem; flex-wrap: wrap;">
+                <span class="badge badge-red">RF014</span>
+                <span class="badge badge-red">RF015</span>
+              </div>
+              <button type="button" class="btn-icon uc-action-btn" data-uc-id="UC_CORE_003" style="font-size: 0.82rem;">👁️ Ver Detalhes</button>
+            </div>
+          </div>
+
+          <!-- Card UC_CORE_004 -->
+          <div class="card uc-card" data-uc-id="UC_CORE_004" style="cursor: pointer; display: flex; flex-direction: column; justify-content: space-between; border-top: 3px solid var(--accent-cyan); transition: var(--transition-normal);">
+            <div>
+              <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.75rem;">
+                <span class="badge badge-purple">UC_CORE_004</span>
+                <span class="badge badge-blue">Carrinho & Sessão</span>
+              </div>
+              <h4 class="card-title" style="font-size: 1.15rem; margin-bottom: 0.5rem;">Gerenciar Carrinho de Compras</h4>
+              <p class="card-desc" style="font-size: 0.88rem; margin-bottom: 1rem;">
+                Inserção de materiais com conversão automática de m² em caixas fechadas, validação de saldo físico e mesclagem de carrinho ao efetuar login.
+              </p>
+              <div style="margin-bottom: 0.75rem; font-size: 0.78rem; color: var(--text-dim);">
+                <strong>Atores:</strong> Visitante, Cliente<br>
+                <strong>Exceção:</strong> Alerta sonoro e bloqueio se quantidade solicitada exceder o saldo livre.
+              </div>
+            </div>
+            <div style="border-top: 1px solid var(--border-subtle); padding-top: 0.85rem; display: flex; justify-content: space-between; align-items: center;">
+              <div style="display: flex; gap: 0.35rem; flex-wrap: wrap;">
+                <span class="badge badge-red">RF004</span>
+                <span class="badge badge-red">RF009</span>
+              </div>
+              <button type="button" class="btn-icon uc-action-btn" data-uc-id="UC_CORE_004" style="font-size: 0.82rem;">👁️ Ver Detalhes</button>
+            </div>
+          </div>
+
+          <!-- Card UC_CORE_005 -->
+          <div class="card uc-card" data-uc-id="UC_CORE_005" style="cursor: pointer; display: flex; flex-direction: column; justify-content: space-between; border-top: 3px solid var(--accent-cyan); transition: var(--transition-normal);">
+            <div>
+              <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.75rem;">
+                <span class="badge badge-purple">UC_CORE_005</span>
+                <span class="badge badge-blue">Checkout & Gateways</span>
+              </div>
+              <h4 class="card-title" style="font-size: 1.15rem; margin-bottom: 0.5rem;">Checkout E-Commerce</h4>
+              <p class="card-desc" style="font-size: 0.88rem; margin-bottom: 1rem;">
+                One-Page Checkout com seleção de endereços de obra (shiptos), cálculo de frete com Munck, BOPIS e multi-pagamento (PIX, Cartão, Boleto).
+              </p>
+              <div style="margin-bottom: 0.75rem; font-size: 0.78rem; color: var(--text-dim);">
+                <strong>Atores:</strong> Cliente, Gateways de Pagamento<br>
+                <strong>Exceção:</strong> Falha de autorização de cartão permite troca instantânea para PIX sem perder o pedido.
+              </div>
+            </div>
+            <div style="border-top: 1px solid var(--border-subtle); padding-top: 0.85rem; display: flex; justify-content: space-between; align-items: center;">
+              <div style="display: flex; gap: 0.35rem; flex-wrap: wrap;">
+                <span class="badge badge-red">RF010</span>
+                <span class="badge badge-red">RF018</span>
+                <span class="badge badge-red">RF020</span>
+              </div>
+              <button type="button" class="btn-icon uc-action-btn" data-uc-id="UC_CORE_005" style="font-size: 0.82rem;">👁️ Ver Detalhes</button>
+            </div>
+          </div>
+
+          <!-- Card UC_CORE_006 -->
+          <div class="card uc-card" data-uc-id="UC_CORE_006" style="cursor: pointer; display: flex; flex-direction: column; justify-content: space-between; border-top: 3px solid var(--fatec-red-light); transition: var(--transition-normal);">
+            <div>
+              <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.75rem;">
+                <span class="badge badge-purple">UC_CORE_006</span>
+                <span class="badge badge-red">PDV Balcão</span>
+              </div>
+              <h4 class="card-title" style="font-size: 1.15rem; margin-bottom: 0.5rem;">Pré-Venda no PDV Balcão</h4>
+              <p class="card-desc" style="font-size: 0.88rem; margin-bottom: 1rem;">
+                Atendimento presencial pelo vendedor, aplicação de descontos progressivos por volume (cimento e areia), reserva temporária e impressão de ticket.
+              </p>
+              <div style="margin-bottom: 0.75rem; font-size: 0.78rem; color: var(--text-dim);">
+                <strong>Atores:</strong> Vendedor de Balcão, Cliente<br>
+                <strong>Exceção:</strong> Falta de estoque físico livre impede abertura da comanda de pré-venda.
+              </div>
+            </div>
+            <div style="border-top: 1px solid var(--border-subtle); padding-top: 0.85rem; display: flex; justify-content: space-between; align-items: center;">
+              <div style="display: flex; gap: 0.35rem; flex-wrap: wrap;">
+                <span class="badge badge-red">RF004</span>
+                <span class="badge badge-red">RF006</span>
+                <span class="badge badge-red">RF021</span>
+              </div>
+              <button type="button" class="btn-icon uc-action-btn" data-uc-id="UC_CORE_006" style="font-size: 0.82rem;">👁️ Ver Detalhes</button>
+            </div>
+          </div>
+
+          <!-- Card UC_CORE_007 -->
+          <div class="card uc-card" data-uc-id="UC_CORE_007" style="cursor: pointer; display: flex; flex-direction: column; justify-content: space-between; border-top: 3px solid var(--fatec-red-light); transition: var(--transition-normal);">
+            <div>
+              <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.75rem;">
+                <span class="badge badge-purple">UC_CORE_007</span>
+                <span class="badge badge-red">PDV Caixa</span>
+              </div>
+              <h4 class="card-title" style="font-size: 1.15rem; margin-bottom: 0.5rem;">Fechamento de Venda no Caixa</h4>
+              <p class="card-desc" style="font-size: 0.88rem; margin-bottom: 1rem;">
+                Bipagem de ticket de balcão, recebimento multi-meios (TEF, PIX, Dinheiro com troco), baixa atômica no estoque e emissão imediata de NFC-e.
+              </p>
+              <div style="margin-bottom: 0.75rem; font-size: 0.78rem; color: var(--text-dim);">
+                <strong>Atores:</strong> Operador de Caixa, SEFAZ Estadual<br>
+                <strong>Exceção:</strong> Queda de link aciona contingência offline imediata sem travar o atendimento.
+              </div>
+            </div>
+            <div style="border-top: 1px solid var(--border-subtle); padding-top: 0.85rem; display: flex; justify-content: space-between; align-items: center;">
+              <div style="display: flex; gap: 0.35rem; flex-wrap: wrap;">
+                <span class="badge badge-red">RF006</span>
+                <span class="badge badge-red">RF018</span>
+                <span class="badge badge-red">RF020</span>
+              </div>
+              <button type="button" class="btn-icon uc-action-btn" data-uc-id="UC_CORE_007" style="font-size: 0.82rem;">👁️ Ver Detalhes</button>
+            </div>
+          </div>
+
+          <!-- Card UC_CORE_008 -->
+          <div class="card uc-card" data-uc-id="UC_CORE_008" style="cursor: pointer; display: flex; flex-direction: column; justify-content: space-between; border-top: 3px solid var(--accent-amber); transition: var(--transition-normal);">
+            <div>
+              <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.75rem;">
+                <span class="badge badge-purple">UC_CORE_008</span>
+                <span class="badge badge-amber">Pós-Venda & RMA</span>
+              </div>
+              <h4 class="card-title" style="font-size: 1.15rem; margin-bottom: 0.5rem;">Solicitar Devolução (RMA)</h4>
+              <p class="card-desc" style="font-size: 0.88rem; margin-bottom: 1rem;">
+                Abertura de logística reversa pelo cliente no portal dentro do prazo legal de 7 dias do CDC, anexo de NF-e e fotos de embalagens intactas.
+              </p>
+              <div style="margin-bottom: 0.75rem; font-size: 0.78rem; color: var(--text-dim);">
+                <strong>Atores:</strong> Cliente Logado, SAC<br>
+                <strong>Exceção:</strong> Bloqueio automático para pedidos retirados em loja (BOPIS) ou com mais de 7 dias (RN011).
+              </div>
+            </div>
+            <div style="border-top: 1px solid var(--border-subtle); padding-top: 0.85rem; display: flex; justify-content: space-between; align-items: center;">
+              <div style="display: flex; gap: 0.35rem; flex-wrap: wrap;">
+                <span class="badge badge-red">RF016</span>
+                <span class="badge badge-red">RF022</span>
+              </div>
+              <button type="button" class="btn-icon uc-action-btn" data-uc-id="UC_CORE_008" style="font-size: 0.82rem;">👁️ Ver Detalhes</button>
+            </div>
+          </div>
+
+          <!-- Card UC_CORE_009 -->
+          <div class="card uc-card" data-uc-id="UC_CORE_009" style="cursor: pointer; display: flex; flex-direction: column; justify-content: space-between; border-top: 3px solid var(--accent-amber); transition: var(--transition-normal);">
+            <div>
+              <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.75rem;">
+                <span class="badge badge-purple">UC_CORE_009</span>
+                <span class="badge badge-amber">Governança & CD</span>
+              </div>
+              <h4 class="card-title" style="font-size: 1.15rem; margin-bottom: 0.5rem;">Gestão de Devoluções no Painel</h4>
+              <p class="card-desc" style="font-size: 0.88rem; margin-bottom: 1rem;">
+                Vistoria técnica de mercadorias no Centro de Distribuição, emissão de NF-e de entrada, estorno automático via gateway e retorno ao saldo ativo.
+              </p>
+              <div style="margin-bottom: 0.75rem; font-size: 0.78rem; color: var(--text-dim);">
+                <strong>Atores:</strong> Operador de SAC, Analista do CD<br>
+                <strong>Exceção:</strong> Embalagem violada ou avaria reprova a devolução com laudo fotográfico.
+              </div>
+            </div>
+            <div style="border-top: 1px solid var(--border-subtle); padding-top: 0.85rem; display: flex; justify-content: space-between; align-items: center;">
+              <div style="display: flex; gap: 0.35rem; flex-wrap: wrap;">
+                <span class="badge badge-red">RF020</span>
+                <span class="badge badge-red">RF022</span>
+                <span class="badge badge-red">RF025</span>
+              </div>
+              <button type="button" class="btn-icon uc-action-btn" data-uc-id="UC_CORE_009" style="font-size: 0.82rem;">👁️ Ver Detalhes</button>
+            </div>
+          </div>
+
+          <!-- Card UC_CORE_010 -->
+          <div class="card uc-card" data-uc-id="UC_CORE_010" style="cursor: pointer; display: flex; flex-direction: column; justify-content: space-between; border-top: 3px solid var(--fatec-red-light); transition: var(--transition-normal);">
+            <div>
+              <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.75rem;">
+                <span class="badge badge-purple">UC_CORE_010</span>
+                <span class="badge badge-red">BI & Suprimentos</span>
+              </div>
+              <h4 class="card-title" style="font-size: 1.15rem; margin-bottom: 0.5rem;">Monitoramento de Ruptura</h4>
+              <p class="card-desc" style="font-size: 0.88rem; margin-bottom: 1rem;">
+                Auditoria periódica de inventário em background, matriz de Curva ABC, alertas de baixo estoque e sugestão automática de ordens de compra ao fornecedor.
+              </p>
+              <div style="margin-bottom: 0.75rem; font-size: 0.78rem; color: var(--text-dim);">
+                <strong>Atores:</strong> Administrador Geral, Gerente de Compras<br>
+                <strong>Exceção:</strong> Ruptura iminente no balcão dispara aviso sonoro e notificação de alta prioridade.
+              </div>
+            </div>
+            <div style="border-top: 1px solid var(--border-subtle); padding-top: 0.85rem; display: flex; justify-content: space-between; align-items: center;">
+              <div style="display: flex; gap: 0.35rem; flex-wrap: wrap;">
+                <span class="badge badge-red">RF006</span>
+                <span class="badge badge-red">RF024</span>
+                <span class="badge badge-red">RF025</span>
+              </div>
+              <button type="button" class="btn-icon uc-action-btn" data-uc-id="UC_CORE_010" style="font-size: 0.82rem;">👁️ Ver Detalhes</button>
+            </div>
+          </div>
         </div>
       </section>
 
@@ -334,7 +1153,224 @@
     </main>
   </div>
 
+  <!-- Modal de Detalhes do Caso de Uso -->
+  <div id="useCaseModal" class="uc-modal-overlay" role="dialog" aria-modal="true" aria-hidden="true" aria-labelledby="ucModalTitle">
+    <div class="uc-modal-container">
+      <div class="uc-modal-header">
+        <div class="uc-modal-title-box">
+          <div class="uc-modal-badges">
+            <span id="ucModalBadgeId" class="badge badge-blue">UC_CLI_001</span>
+            <span id="ucModalBadgeCategory" class="badge badge-green">Loja Virtual</span>
+            <span id="ucModalBadgeFile" class="badge" style="font-family: var(--font-mono); font-size: 0.72rem; color: var(--text-dim);">UC_CLI_001_navegar_catalogo.md</span>
+          </div>
+          <h3 id="ucModalTitle" class="uc-modal-title">Navegar no Catálogo & Categorias</h3>
+          <span id="ucModalSubtitle" class="uc-modal-subtitle">Especificação Detalhada do Caso de Uso</span>
+        </div>
+        <div class="uc-modal-actions">
+          <button type="button" class="btn-icon" id="ucModalRawToggleBtn" title="Alternar entre Visualização Formatada e Markdown Original">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="16 18 22 12 16 6"></polyline><polyline points="8 6 2 12 8 18"></polyline></svg>
+            <span id="rawToggleLabel">Ver Markdown</span>
+          </button>
+          <button type="button" class="btn-icon" id="ucModalCopyBtn" title="Copiar Markdown Original">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+            <span>Copiar</span>
+          </button>
+          <button type="button" class="btn-icon btn-close" id="ucModalCloseBtn" title="Fechar (Esc)" style="font-size: 1.1rem; padding: 0.4rem 0.65rem;">
+            ✕
+          </button>
+        </div>
+      </div>
+      
+      <div class="uc-modal-body" id="ucModalBody">
+        <!-- Conteúdo Formatado -->
+        <div id="ucModalContentHtml" class="uc-rendered-content"></div>
+        
+        <!-- Conteúdo Raw Markdown (oculto por padrão) -->
+        <pre id="ucModalContentRaw" class="uc-raw-content" style="display: none;"><code id="ucModalCodeBlock"></code></pre>
+      </div>
+
+      <div class="uc-modal-footer">
+        <div class="uc-modal-nav">
+          <button type="button" class="btn-icon" id="ucModalPrevBtn" title="Caso de Uso Anterior (Seta Esquerda)">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"></polyline></svg>
+            Anterior
+          </button>
+          <span id="ucModalCounter" style="font-size: 0.85rem; color: var(--text-dim); font-family: var(--font-mono);">1 / 53</span>
+          <button type="button" class="btn-icon" id="ucModalNextBtn" title="Próximo Caso de Uso (Seta Direita)">
+            Próximo
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"></polyline></svg>
+          </button>
+        </div>
+        <div>
+          <button type="button" class="btn-icon" id="ucModalCloseBtn2">Fechar Especificação</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <script src="assets/js/main.js"></script>
   <script src="assets/js/svg-viewer.js"></script>
+  <script src="assets/js/use-cases-data.js"></script>
+  <script>
+    // Filtro interativo e busca instantânea para os 53 Casos de Uso
+    document.addEventListener('DOMContentLoaded', () => {
+      const searchInput = document.getElementById('ucSearchInput');
+      const filterBtns = document.querySelectorAll('.filter-btn');
+      const rows = document.querySelectorAll('.uc-row');
+
+      function filterUseCases() {
+        const query = (searchInput?.value || '').toLowerCase().trim();
+        const activeBtn = document.querySelector('.filter-btn.active');
+        const filterType = activeBtn ? activeBtn.getAttribute('data-filter') : 'all';
+
+        rows.forEach((row) => {
+          const category = row.getAttribute('data-category');
+          const matchesCategory = filterType === 'all' || filterType === category;
+          const matchesQuery = !query || row.textContent.toLowerCase().includes(query);
+          row.style.display = (matchesCategory && matchesQuery) ? '' : 'none';
+        });
+      }
+
+      if (searchInput) searchInput.addEventListener('input', filterUseCases);
+
+      filterBtns.forEach((btn) => {
+        btn.addEventListener('click', () => {
+          filterBtns.forEach(b => {
+            b.classList.remove('active');
+            b.style.background = 'var(--bg-surface)';
+            b.style.color = 'var(--text-main)';
+          });
+          btn.classList.add('active');
+          btn.style.background = 'var(--fatec-red)';
+          btn.style.color = '#ffffff';
+          filterUseCases();
+        });
+      });
+
+      // -------------------------------------------------------------
+      // Lógica do Modal de Especificação Detalhada do Caso de Uso
+      // -------------------------------------------------------------
+      let currentUcIndex = 0;
+      let isRawMode = false;
+
+      window.openUseCaseModal = function(ucId) {
+        if (!window.USE_CASES_DATA || !window.USE_CASES_DATA[ucId]) return;
+        const uc = window.USE_CASES_DATA[ucId];
+        currentUcIndex = window.USE_CASES_ORDER.indexOf(ucId);
+
+        const modal = document.getElementById('useCaseModal');
+        const badgeId = document.getElementById('ucModalBadgeId');
+        const badgeCat = document.getElementById('ucModalBadgeCategory');
+        const badgeFile = document.getElementById('ucModalBadgeFile');
+        const title = document.getElementById('ucModalTitle');
+        const subtitle = document.getElementById('ucModalSubtitle');
+        const contentHtml = document.getElementById('ucModalContentHtml');
+        const codeBlock = document.getElementById('ucModalCodeBlock');
+        const counter = document.getElementById('ucModalCounter');
+
+        badgeId.className = 'badge ' + uc.badgeClass;
+        badgeId.textContent = uc.id;
+
+        badgeCat.className = 'badge ' + (uc.category === 'customer' ? 'badge-blue' : uc.category === 'pos' ? 'badge-red' : uc.category === 'dashboard' ? 'badge-amber' : 'badge-purple');
+        badgeCat.textContent = uc.categoryLabel;
+
+        badgeFile.textContent = uc.filename;
+        title.textContent = uc.title;
+        subtitle.textContent = `Especificação Técnica Detalhada • ${uc.categoryLabel}`;
+
+        contentHtml.innerHTML = uc.html;
+        codeBlock.textContent = uc.raw;
+
+        if (counter) {
+          counter.textContent = `${currentUcIndex + 1} / ${window.USE_CASES_ORDER.length}`;
+        }
+
+        // Reset para visão HTML formatada
+        isRawMode = false;
+        document.getElementById('ucModalContentHtml').style.display = 'block';
+        document.getElementById('ucModalContentRaw').style.display = 'none';
+        document.getElementById('rawToggleLabel').textContent = 'Ver Markdown';
+
+        // Rolagem para o topo
+        const bodyEl = document.getElementById('ucModalBody');
+        if (bodyEl) bodyEl.scrollTop = 0;
+
+        modal.classList.add('active');
+        modal.setAttribute('aria-hidden', 'false');
+        document.body.style.overflow = 'hidden';
+      };
+
+      window.closeUseCaseModal = function() {
+        const modal = document.getElementById('useCaseModal');
+        if (!modal) return;
+        modal.classList.remove('active');
+        modal.setAttribute('aria-hidden', 'true');
+        document.body.style.overflow = '';
+      };
+
+      window.navigateUseCase = function(delta) {
+        if (!window.USE_CASES_ORDER || window.USE_CASES_ORDER.length === 0) return;
+        let newIndex = currentUcIndex + delta;
+        if (newIndex < 0) newIndex = window.USE_CASES_ORDER.length - 1;
+        if (newIndex >= window.USE_CASES_ORDER.length) newIndex = 0;
+        window.openUseCaseModal(window.USE_CASES_ORDER[newIndex]);
+      };
+
+      // Vincular clique nas linhas da tabela, nos cards Core e nos botões de ação
+      document.querySelectorAll('.uc-row, .uc-card').forEach((el) => {
+        el.addEventListener('click', (e) => {
+          const ucId = el.getAttribute('data-uc-id');
+          if (ucId) window.openUseCaseModal(ucId);
+        });
+      });
+
+      document.querySelectorAll('.uc-action-btn').forEach((btn) => {
+        btn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          const ucId = btn.getAttribute('data-uc-id');
+          if (ucId) window.openUseCaseModal(ucId);
+        });
+      });
+
+      // Botões de fechar
+      document.getElementById('ucModalCloseBtn')?.addEventListener('click', window.closeUseCaseModal);
+      document.getElementById('ucModalCloseBtn2')?.addEventListener('click', window.closeUseCaseModal);
+      document.getElementById('useCaseModal')?.addEventListener('click', (e) => {
+        if (e.target.id === 'useCaseModal') window.closeUseCaseModal();
+      });
+
+      // Botões de navegação
+      document.getElementById('ucModalPrevBtn')?.addEventListener('click', () => window.navigateUseCase(-1));
+      document.getElementById('ucModalNextBtn')?.addEventListener('click', () => window.navigateUseCase(1));
+
+      // Alternar visualização Raw Markdown / Formatado
+      document.getElementById('ucModalRawToggleBtn')?.addEventListener('click', () => {
+        isRawMode = !isRawMode;
+        document.getElementById('ucModalContentHtml').style.display = isRawMode ? 'none' : 'block';
+        document.getElementById('ucModalContentRaw').style.display = isRawMode ? 'block' : 'none';
+        document.getElementById('rawToggleLabel').textContent = isRawMode ? 'Ver Formatado' : 'Ver Markdown';
+      });
+
+      // Botão Copiar Markdown
+      document.getElementById('ucModalCopyBtn')?.addEventListener('click', () => {
+        const code = document.getElementById('ucModalCodeBlock')?.textContent || '';
+        navigator.clipboard.writeText(code).then(() => {
+          const btn = document.getElementById('ucModalCopyBtn');
+          const span = btn.querySelector('span');
+          if (span) span.textContent = 'Copiado!';
+          setTimeout(() => { if (span) span.textContent = 'Copiar'; }, 2000);
+        });
+      });
+
+      // Atalhos de Teclado (Esc, Seta Esquerda, Seta Direita)
+      window.addEventListener('keydown', (e) => {
+        const modal = document.getElementById('useCaseModal');
+        if (!modal || !modal.classList.contains('active')) return;
+        if (e.key === 'Escape') window.closeUseCaseModal();
+        if (e.key === 'ArrowLeft') window.navigateUseCase(-1);
+        if (e.key === 'ArrowRight') window.navigateUseCase(1);
+      });
+    });
+  </script>
 </body>
 </html>

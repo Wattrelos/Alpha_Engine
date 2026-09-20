@@ -1,5 +1,5 @@
 /**
- * ALPHA ENGINE - VISUALIZADOR MODAL DE DIAGRAMAS SVG COM PAN & ZOOM
+ * Beta Engine - VISUALIZADOR MODAL DE DIAGRAMAS SVG COM PAN & ZOOM
  * Suporte a zoom suave por roda do mouse, arrasto (pan) e tela cheia
  */
 

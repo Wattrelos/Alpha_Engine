@@ -1,13 +1,16 @@
 <!DOCTYPE html>
 <html lang="pt-BR" data-theme="dark">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>01. Documento de Visão | Alpha Engine - FATEC-FV</title>
-  <meta name="description" content="Documento de Visão do Sistema Alpha Engine para Laboratório de Engenharia de Software - FATEC Ferraz de Vasconcelos.">
+  <title>01. Documento de Visão | Beta Engine - FATEC-FV</title>
+  <meta name="description"
+    content="Documento de Visão do Sistema Beta Engine para Laboratório de Engenharia de Software - FATEC Ferraz de Vasconcelos.">
   <link rel="stylesheet" href="assets/css/style.css">
   <link rel="stylesheet" href="assets/css/print.css" media="print">
 </head>
+
 <body>
 
   <!-- Barra de Progresso de Leitura -->
@@ -19,7 +22,11 @@
   <header class="topbar">
     <div class="topbar-left">
       <button class="menu-toggle" id="menuToggle" aria-label="Abrir Menu">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <line x1="3" y1="12" x2="21" y2="12"></line>
+          <line x1="3" y1="6" x2="21" y2="6"></line>
+          <line x1="3" y1="18" x2="21" y2="18"></line>
+        </svg>
       </button>
       <a href="index.html" class="topbar-brand">
         <div class="topbar-logos">
@@ -28,7 +35,7 @@
           <img src="assets/img/logos/sp.jpg" alt="Governo do Estado de São Paulo" />
         </div>
         <div class="brand-text">
-          <span class="brand-title">Alpha Engine</span>
+          <span class="brand-title">Beta Engine</span>
           <span class="brand-subtitle">01. Documento de Visão</span>
         </div>
       </a>
@@ -36,14 +43,21 @@
 
     <div class="topbar-right">
       <button class="nav-tool-btn" id="modeToggleBtn" title="Alternar Modo Apresentação (P)">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect><line x1="8" y1="21" x2="16" y2="21"></line><line x1="12" y1="17" x2="12" y2="21"></line></svg>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect>
+          <line x1="8" y1="21" x2="16" y2="21"></line>
+          <line x1="12" y1="17" x2="12" y2="21"></line>
+        </svg>
         <span class="mode-label">Modo Apresentação</span>
       </button>
       <button class="nav-tool-btn" id="themeToggleBtn" title="Alternar Tema (T)">
         <span class="theme-icon"></span>
       </button>
       <button class="nav-tool-btn" id="fullscreenBtn" title="Tela Cheia (F)">
-        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"></path></svg>
+        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3">
+          </path>
+        </svg>
       </button>
     </div>
   </header>
@@ -74,7 +88,7 @@
         </a>
         <a href="04_casos_de_uso.html" class="nav-item">
           <div class="nav-item-title"><span class="nav-num">04</span><span>Casos de Uso do Sistema</span></div>
-          <span class="nav-badge">10 UCs</span>
+          <span class="nav-badge">53 UCs</span>
         </a>
         <a href="05_matriz_rastreabilidade.html" class="nav-item">
           <div class="nav-item-title"><span class="nav-num">05</span><span>Matriz de Rastreabilidade</span></div>
@@ -106,95 +120,119 @@
         <div class="page-category">Módulo 01 • Engenharia de Software</div>
         <h1 class="page-title">Documento de Visão do Sistema</h1>
         <p class="page-subtitle">
-          Fundamentação estratégica, necessidades do varejo de construção civil, especificidades fiscais brasileiras, arquitetura de software desacoplada e padrões GoF.
+          Fundamentação estratégica, necessidades do varejo de construção civil, especificidades fiscais brasileiras,
+          arquitetura de software desacoplada e padrões GoF.
         </p>
       </header>
 
       <!-- 1. OBJETIVOS -->
       <section style="margin-bottom: 3.5rem;">
-        <h2 style="font-family: var(--font-display); font-size: 1.6rem; margin-bottom: 1.25rem;">1. Objetivos do Projeto</h2>
+        <h2 style="font-family: var(--font-display); font-size: 1.6rem; margin-bottom: 1.25rem;">1. Objetivos do Projeto
+        </h2>
 
         <div class="card highlight" style="margin-bottom: 2rem;">
           <h3 class="card-title">1.1. Objetivo Geral</h3>
           <p class="card-desc" style="font-size: 1.05rem;">
-            Desenvolver uma plataforma de comércio eletrônico (<em>e-commerce</em>) praticamente do zero e com suporte nativo para o mercado brasileiro, dotada de um motor (<em>engine</em>) de <em>back-end</em> desacoplado baseado nos padrões de projeto do <em>Gang of Four</em> (GoF), além de um <em>front-end</em> baseado em telas dinâmicas Twig com JavaScript, gerenciamento de sessão seguro com assinaturas de páginas e certificados digitais, utilizando ferramentas de assistência baseadas em Inteligência Artificial para viabilizar a arquitetura e garantir a conformidade (<em>compliance</em>) fiscal e logística do modelo de negócios.
+            Desenvolver uma plataforma de comércio eletrônico (<em>e-commerce</em>) praticamente do zero e com suporte
+            nativo para o mercado brasileiro, dotada de um motor (<em>engine</em>) de <em>back-end</em> desacoplado
+            baseado nos padrões de projeto do <em>Gang of Four</em> (GoF), além de um <em>front-end</em> baseado em
+            telas dinâmicas Twig com JavaScript, gerenciamento de sessão seguro com assinaturas de páginas e
+            certificados digitais, utilizando ferramentas de assistência baseadas em Inteligência Artificial para
+            viabilizar a arquitetura e garantir a conformidade (<em>compliance</em>) fiscal e logística do modelo de
+            negócios.
           </p>
         </div>
 
-        <h3 style="font-family: var(--font-display); font-size: 1.25rem; margin: 1.5rem 0 1rem 0;">1.2. Objetivos Específicos</h3>
+        <h3 style="font-family: var(--font-display); font-size: 1.25rem; margin: 1.5rem 0 1rem 0;">1.2. Objetivos
+          Específicos</h3>
         <div class="grid-cards">
           <div class="card">
             <div class="card-icon">⚡</div>
             <h4 class="card-title">Desacoplamento de Persistência</h4>
-            <p class="card-desc">Foco no desacoplamento e dinamismo de consultas SQL de operações CRUD na camada de persistência, suportando hidratação dinâmica e <em>Lazy Loading</em>.</p>
+            <p class="card-desc">Foco no desacoplamento e dinamismo de consultas SQL de operações CRUD na camada de
+              persistência, suportando hidratação dinâmica e <em>Lazy Loading</em>.</p>
           </div>
 
           <div class="card">
             <div class="card-icon">🧩</div>
             <h4 class="card-title">Motor Agnóstico GoF</h4>
-            <p class="card-desc">Implementação de padrões <em>Strategy</em> e <em>Factory</em> para que as entidades e regras de frete/impostos sejam descobertas e manipuladas em tempo de execução.</p>
+            <p class="card-desc">Implementação de padrões <em>Strategy</em> e <em>Factory</em> para que as entidades e
+              regras de frete/impostos sejam descobertas e manipuladas em tempo de execução.</p>
           </div>
 
           <div class="card">
             <div class="card-icon">🔤</div>
             <h4 class="card-title">Tradução Sintática Eficiente</h4>
-            <p class="card-desc">Mediar de forma transparente o mapeamento entre convenções <code>snake_case</code> do banco de dados, <code>PascalCase/camelCase</code> dos objetos e <code>kebab-case</code> das páginas HTML.</p>
+            <p class="card-desc">Mediar de forma transparente o mapeamento entre convenções <code>snake_case</code> do
+              banco de dados, <code>PascalCase/camelCase</code> dos objetos e <code>kebab-case</code> das páginas HTML.
+            </p>
           </div>
 
           <div class="card">
             <div class="card-icon">🤖</div>
             <h4 class="card-title">Assistência por I.A.</h4>
-            <p class="card-desc">Avaliar o impacto de assistentes de código I.A. no desenvolvimento solo, mensurando eficácia na detecção de falhas lógicas e <em>typos</em> sob restrições de tempo.</p>
+            <p class="card-desc">Avaliar o impacto de assistentes de código I.A. no desenvolvimento solo, mensurando
+              eficácia na detecção de falhas lógicas e <em>typos</em> sob restrições de tempo.</p>
           </div>
 
           <div class="card">
             <div class="card-icon">🇧🇷</div>
             <h4 class="card-title">Compliance Fiscal Nativo</h4>
-            <p class="card-desc">Incorporar nativamente ICMS, ICMS-ST, DIFAL, NCM, Inscrição Estadual, CPF/CNPJ e validação de CEP/Bairro no fechamento de pedidos (<em>checkout</em>).</p>
+            <p class="card-desc">Incorporar nativamente ICMS, ICMS-ST, DIFAL, NCM, Inscrição Estadual, CPF/CNPJ e
+              validação de CEP/Bairro no fechamento de pedidos (<em>checkout</em>).</p>
           </div>
 
           <div class="card">
             <div class="card-icon">🏬</div>
             <h4 class="card-title">Validação no Varejo Real</h4>
-            <p class="card-desc">Validar a solução em um estudo de caso aplicado a materiais de construção, unificando a loja virtual com o terminal de Ponto de Venda (PDV).</p>
+            <p class="card-desc">Validar a solução em um estudo de caso aplicado a materiais de construção, unificando a
+              loja virtual com o terminal de Ponto de Venda (PDV).</p>
           </div>
         </div>
       </section>
 
       <!-- 2. NECESSIDADE DO NEGÓCIO -->
       <section style="margin-bottom: 3.5rem;">
-        <h2 style="font-family: var(--font-display); font-size: 1.6rem; margin-bottom: 1.25rem;">2. Necessidade do Negócio e Cenário Brasileiro</h2>
-        
+        <h2 style="font-family: var(--font-display); font-size: 1.6rem; margin-bottom: 1.25rem;">2. Necessidade do
+          Negócio e Cenário Brasileiro</h2>
+
         <div class="card" style="margin-bottom: 2rem;">
           <p style="margin-bottom: 1rem; color: var(--text-muted); font-size: 0.98rem; line-height: 1.7;">
-            O setor de varejo de materiais de construção historicamente fundamentou suas operações no atendimento físico de balcão e telefone. No entanto, clientes finais, engenheiros, arquitetos e empreiteiros demandam cotações instantâneas, transparência de estoque e conveniência 24/7.
+            O setor de varejo de materiais de construção historicamente fundamentou suas operações no atendimento físico
+            de balcão e telefone. No entanto, clientes finais, engenheiros, arquitetos e empreiteiros demandam cotações
+            instantâneas, transparência de estoque e conveniência 24/7.
           </p>
           <p style="color: var(--text-muted); font-size: 0.98rem; line-height: 1.7;">
-            Softwares internacionais conceituados demandam volumosas customizações para mitigar lacunas funcionais severas no contexto brasileiro. Sob a ótica fiscal e operacional, a solução aborda gargalos críticos:
+            Softwares internacionais conceituados demandam volumosas customizações para mitigar lacunas funcionais
+            severas no contexto brasileiro. Sob a ótica fiscal e operacional, a solução aborda gargalos críticos:
           </p>
         </div>
 
         <div class="grid-cards-3">
           <div class="card">
             <h4 class="card-title" style="color: var(--fatec-red-light);">Limitação de Horário & Balcão</h4>
-            <p class="card-desc">A ausência de canal digital restringe as vendas ao horário comercial físico, perdendo compras planejadas no período noturno e finais de semana.</p>
+            <p class="card-desc">A ausência de canal digital restringe as vendas ao horário comercial físico, perdendo
+              compras planejadas no período noturno e finais de semana.</p>
           </div>
 
           <div class="card">
             <h4 class="card-title" style="color: var(--fatec-red-light);">Morosidade em Orçamentos</h4>
-            <p class="card-desc">Cotações manuais sobrecarregam atendentes, gerando lentidão e perda de clientes para redes com autoatendimento dinâmico.</p>
+            <p class="card-desc">Cotações manuais sobrecarregam atendentes, gerando lentidão e perda de clientes para
+              redes com autoatendimento dinâmico.</p>
           </div>
 
           <div class="card">
             <h4 class="card-title" style="color: var(--fatec-red-light);">Catálogo Fracionado e Cubagem</h4>
-            <p class="card-desc">Materiais de construção possuem alta diversidade de SKUs, variação extrema de peso/volume e venda fracionada por metro quadrado (m²).</p>
+            <p class="card-desc">Materiais de construção possuem alta diversidade de SKUs, variação extrema de
+              peso/volume e venda fracionada por metro quadrado (m²).</p>
           </div>
         </div>
       </section>
 
       <!-- 3. PECULIARIDADES FISCAIS E LOGÍSTICAS -->
       <section style="margin-bottom: 3.5rem;">
-        <h2 style="font-family: var(--font-display); font-size: 1.6rem; margin-bottom: 1.25rem;">3. Complexidade Tributária e Logística Nacional</h2>
+        <h2 style="font-family: var(--font-display); font-size: 1.6rem; margin-bottom: 1.25rem;">3. Complexidade
+          Tributária e Logística Nacional</h2>
 
         <div class="table-wrapper">
           <table class="data-table">
@@ -202,34 +240,44 @@
               <tr>
                 <th>Peculiaridade</th>
                 <th>Desafio Técnico no E-commerce</th>
-                <th>Solução Implementada na Alpha Engine</th>
+                <th>Solução Implementada na Beta Engine</th>
               </tr>
             </thead>
             <tbody>
               <tr>
                 <td class="cell-bold">ICMS-ST e DIFAL</td>
-                <td>Diferencial de Alíquota nas operações interestaduais e Substituição Tributária variável por estado de destino.</td>
-                <td>Padrão <code>Strategy</code> computando alíquotas de forma desacoplada conforme a UF do endereço de entrega.</td>
+                <td>Diferencial de Alíquota nas operações interestaduais e Substituição Tributária variável por estado
+                  de destino.</td>
+                <td>Padrão <code>Strategy</code> computando alíquotas de forma desacoplada conforme a UF do endereço de
+                  entrega.</td>
               </tr>
               <tr>
                 <td class="cell-bold">NCM (Mercosul)</td>
-                <td>Classificação fiscal obrigatória de 8 dígitos para cada SKU para emissão de nota e cálculo de impostos.</td>
-                <td>Validação estrita no cadastro administrativo de produtos com vinculação direta à tabela da SEFAZ.</td>
+                <td>Classificação fiscal obrigatória de 8 dígitos para cada SKU para emissão de nota e cálculo de
+                  impostos.</td>
+                <td>Validação estrita no cadastro administrativo de produtos com vinculação direta à tabela da SEFAZ.
+                </td>
               </tr>
               <tr>
                 <td class="cell-bold">Inscrição Estadual (IE)</td>
-                <td>Diferenciação entre cliente PJ Contribuinte, Não-Contribuinte e Isento para cálculo tributário correto.</td>
-                <td>Cadastro dual com validação de dígitos verificadores de IE por estado e de CPF/CNPJ via algoritmo canônico.</td>
+                <td>Diferenciação entre cliente PJ Contribuinte, Não-Contribuinte e Isento para cálculo tributário
+                  correto.</td>
+                <td>Cadastro dual com validação de dígitos verificadores de IE por estado e de CPF/CNPJ via algoritmo
+                  canônico.</td>
               </tr>
               <tr>
                 <td class="cell-bold">Emissão Fiscal (NF-e / NFC-e)</td>
-                <td>Sincronização em tempo real entre fechamento de venda física (PDV) e online com o fisco estadual.</td>
-                <td>Arquitetura orientada a eventos (<em>Observer</em>) com emissão automática de chave de acesso eletrônica.</td>
+                <td>Sincronização em tempo real entre fechamento de venda física (PDV) e online com o fisco estadual.
+                </td>
+                <td>Arquitetura orientada a eventos (<em>Observer</em>) com emissão automática de chave de acesso
+                  eletrônica.</td>
               </tr>
               <tr>
                 <td class="cell-bold">Endereçamento & CEP</td>
-                <td>Sistemas estrangeiros usam Zip Codes simples; o Brasil exige CEP 00000-000 com Bairro segregado.</td>
-                <td>Preenchimento dinâmico via API dos Correios/ViaCEP e roteamento automático de frete leve (PAC/SEDEX) e pesado (transportadoras).</td>
+                <td>Sistemas estrangeiros usam Zip Codes simples; o Brasil exige CEP 00000-000 com Bairro segregado.
+                </td>
+                <td>Preenchimento dinâmico via API dos Correios/ViaCEP e roteamento automático de frete leve (PAC/SEDEX)
+                  e pesado (transportadoras).</td>
               </tr>
             </tbody>
           </table>
@@ -240,7 +288,10 @@
           <div class="callout-content">
             <div class="callout-title">Preparação para a Reforma Tributária (IBS / CBS)</div>
             <div class="callout-text">
-              A arquitetura do motor de persistência e das estratégias de precificação foi concebida de forma extensível, permitindo que as novas regras de transição do Imposto sobre Bens e Serviços (IBS) e da Contribuição sobre Bens e Serviços (CBS) sejam acopladas via novas classes sem impactar o domínio de negócios.
+              A arquitetura do motor de persistência e das estratégias de precificação foi concebida de forma
+              extensível, permitindo que as novas regras de transição do Imposto sobre Bens e Serviços (IBS) e da
+              Contribuição sobre Bens e Serviços (CBS) sejam acopladas via novas classes sem impactar o domínio de
+              negócios.
             </div>
           </div>
         </div>
@@ -248,24 +299,31 @@
 
       <!-- 4. ESPECIFICAÇÕES TÉCNICAS E ARQUITETURA -->
       <section style="margin-bottom: 3.5rem;">
-        <h2 style="font-family: var(--font-display); font-size: 1.6rem; margin-bottom: 1.25rem;">4. Especificações Técnicas e Padrões de Projeto (GoF & PSR)</h2>
+        <h2 style="font-family: var(--font-display); font-size: 1.6rem; margin-bottom: 1.25rem;">4. Especificações
+          Técnicas e Padrões de Projeto (GoF & PSR)</h2>
 
         <!-- Diagrama C4 Componentes -->
         <div class="diagram-container">
           <div class="diagram-header">
             <div class="diagram-info">
-              <span class="diagram-title">Visão Arquitetural de Componentes C4 (Alpha Engine)</span>
+              <span class="diagram-title">Visão Arquitetural de Componentes C4 (Beta Engine)</span>
               <span class="diagram-badge">C4 Model • Slim 4 • DDD • GoF Persistence</span>
             </div>
             <div class="diagram-actions">
               <button class="btn-icon btn-zoom" title="Ampliar Diagrama">
-                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line><line x1="11" y1="8" x2="11" y2="14"></line><line x1="8" y1="11" x2="14" y2="11"></line></svg>
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <circle cx="11" cy="11" r="8"></circle>
+                  <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                  <line x1="11" y1="8" x2="11" y2="14"></line>
+                  <line x1="8" y1="11" x2="14" y2="11"></line>
+                </svg>
                 Zoom Interativo
               </button>
             </div>
           </div>
           <div class="diagram-frame">
-            <img src="assets/img/diagrams/C4 Component Architecture - Alpha Engine.svg" alt="C4 Component Architecture - Alpha Engine" />
+            <img src="assets/img/diagrams/C4 Component Architecture - Beta Engine.svg"
+              alt="C4 Component Architecture - Beta Engine" />
           </div>
           <div class="diagram-caption">
             <span>Clique no diagrama para abrir no visualizador com Pan & Zoom.</span>
@@ -277,7 +335,9 @@
           <div class="card">
             <div class="card-icon">⚙️</div>
             <h4 class="card-title">Clean / Action-Domain-Responder (ADR)</h4>
-            <p class="card-desc">Estrutura orientada a <em>Single Action Controllers</em> (invokables) integrados ao Slim Framework 4, eliminando controllers monolíticos e garantindo o princípio de responsabilidade única (SRP).</p>
+            <p class="card-desc">Estrutura orientada a <em>Single Action Controllers</em> (invokables) integrados ao
+              Slim Framework 4, eliminando controllers monolíticos e garantindo o princípio de responsabilidade única
+              (SRP).</p>
           </div>
 
           <div class="card">
@@ -318,7 +378,9 @@
       <!-- Navegação Inferior -->
       <footer class="page-nav-bar">
         <a href="index.html" class="nav-page-link">
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"></polyline></svg>
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polyline points="15 18 9 12 15 6"></polyline>
+          </svg>
           <div class="nav-page-meta">
             <span class="nav-page-direction">← Módulo Anterior</span>
             <span class="nav-page-title">00. Capa & Visão Geral</span>
@@ -329,7 +391,9 @@
             <span class="nav-page-direction">Próximo Módulo →</span>
             <span class="nav-page-title">02. Processos & Atividades</span>
           </div>
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"></polyline></svg>
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
         </a>
       </footer>
 
@@ -343,4 +407,5 @@
   <script src="assets/js/main.js"></script>
   <script src="assets/js/svg-viewer.js"></script>
 </body>
+
 </html>

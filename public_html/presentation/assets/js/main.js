@@ -1,5 +1,5 @@
 /**
- * ALPHA ENGINE - APRESENTAÇÃO ACADÊMICA FATEC-FV
+ * Beta Engine - APRESENTAÇÃO ACADÊMICA FATEC-FV
  * Script Principal de Controle e Interatividade da UI
  */
 

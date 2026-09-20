@@ -34,6 +34,18 @@ docs/business/use-cases/
 ├── general_customer_use.puml                  # Diagrama PlantUML Geral da Loja Virtual (Cliente)
 ├── general_seller.puml                        # Diagrama PlantUML Geral do Ponto de Venda (PDV)
 ├── general_dashboard.puml                     # Diagrama PlantUML Geral do Painel Administrativo
+├── core/                                       # 🌟 Casos de Uso Core da Apresentação (10 Casos de Uso)
+│   ├── README.md                              # Sumário dos Casos de Uso Core
+│   ├── UC_CORE_001_navegar_catalogo_pdp.md
+│   ├── UC_CORE_002_gestao_crud_skus.md
+│   ├── UC_CORE_003_autenticacao_cadastro.md
+│   ├── UC_CORE_004_gerenciar_carrinho_compras.md
+│   ├── UC_CORE_005_checkout_ecommerce.md
+│   ├── UC_CORE_006_pre_venda_pdv_balcao.md
+│   ├── UC_CORE_007_fechamento_venda_caixa.md
+│   ├── UC_CORE_008_solicitar_devolucao_rma.md
+│   ├── UC_CORE_009_gestao_devolucoes_painel.md
+│   └── UC_CORE_010_monitoramento_ruptura.md
 │
 ├── customer/                                  # 🛒 Loja Virtual & Área do Cliente (29 Casos de Uso)
 │   ├── UC_CLI_001_navegar_catalogo.md
