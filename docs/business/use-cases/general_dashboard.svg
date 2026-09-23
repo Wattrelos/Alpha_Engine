@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" contentScriptType="application/ecmascript" contentStyleType="text/css" height="849px" preserveAspectRatio="none" style="width:672px;height:849px;background:#FAFAFA;" version="1.1" viewBox="0 0 672 849" width="672px" zoomAndPan="magnify"><defs><filter height="300%" id="f1eamqg8xwq9up" width="300%" x="-1" y="-1"><feGaussianBlur result="blurOut" stdDeviation="2.0"/><feColorMatrix in="blurOut" result="blurOut2" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 .4 0"/><feOffset dx="4.0" dy="4.0" in="blurOut2" result="blurOut3"/><feBlend in="SourceGraphic" in2="blurOut3" mode="normal"/></filter></defs><g><!--MD5=[a5c2bf10b9436405ded9c112552bf951]
+cluster Alpha Engine - Dashboard Administrativo--><rect fill="#FFFFFF" filter="url(#f1eamqg8xwq9up)" height="814" style="stroke: #37474F; stroke-width: 1.5;" width="315" x="346" y="24"/><text fill="#000000" font-family="Helvetica Neue" font-size="13" font-weight="bold" lengthAdjust="spacingAndGlyphs" textLength="268" x="369.5" y="39.897">Alpha Engine - Dashboard Administrativo</text><ellipse cx="503.6728" cy="453.1346" fill="#E0F2F1" filter="url(#f1eamqg8xwq9up)" rx="121.1728" ry="26.6346" style="stroke: #004D40; stroke-width: 1.5;"/><text fill="#000000" font-family="Helvetica Neue" font-size="13" lengthAdjust="spacingAndGlyphs" textLength="114" x="446.6728" y="446.6371">Gerenciar Catálogo</text><text fill="#000000" font-family="Helvetica Neue" font-size="13" lengthAdjust="spacingAndGlyphs" textLength="185" x="411.1728" y="464.3432">(Produtos, Categorias, Opções)</text><ellipse cx="503.638" cy="542.0276" fill="#E0F2F1" filter="url(#f1eamqg8xwq9up)" rx="123.138" ry="27.0276" style="stroke: #004D40; stroke-width: 1.5;"/><text fill="#000000" font-family="Helvetica Neue" font-size="13" lengthAdjust="spacingAndGlyphs" textLength="107" x="450.138" y="534.72">Gerenciar Clientes</text><text fill="#000000" font-family="Helvetica Neue" font-size="13" lengthAdjust="spacingAndGlyphs" textLength="196" x="405.638" y="552.426">(Aprovações, Grupos de Clientes)</text><ellipse cx="503.7323" cy="629.1465" fill="#E0F2F1" filter="url(#f1eamqg8xwq9up)" rx="113.7323" ry="25.1465" style="stroke: #004D40; stroke-width: 1.5;"/><text fill="#000000" font-family="Helvetica Neue" font-size="13" lengthAdjust="spacingAndGlyphs" textLength="203" x="402.2323" y="634.4995">Gerenciar Pedidos &amp; Faturamento</text><ellipse cx="503.595" cy="712.919" fill="#E0F2F1" filter="url(#f1eamqg8xwq9up)" rx="105.095" ry="23.419" style="stroke: #004D40; stroke-width: 1.5;"/><text fill="#000000" font-family="Helvetica Neue" font-size="13" lengthAdjust="spacingAndGlyphs" textLength="184" x="411.595" y="718.272">Gerenciar Devoluções &amp; Trocas</text><ellipse cx="503.3164" cy="796.9633" fill="#E0F2F1" filter="url(#f1eamqg8xwq9up)" rx="112.8164" ry="24.9633" style="stroke: #004D40; stroke-width: 1.5;"/><text fill="#000000" font-family="Helvetica Neue" font-size="13" lengthAdjust="spacingAndGlyphs" textLength="201" x="402.8164" y="802.3163">Visualizar Relatórios &amp; Estatísticas</text><ellipse cx="503.2821" cy="183.9564" fill="#E0F2F1" filter="url(#f1eamqg8xwq9up)" rx="132.7821" ry="28.9564" style="stroke: #004D40; stroke-width: 1.5;"/><text fill="#000000" font-family="Helvetica Neue" font-size="13" lengthAdjust="spacingAndGlyphs" textLength="244" x="381.2821" y="189.3094">Configurar Lojas &amp; Parâmetros do Motor</text><ellipse cx="503.2765" cy="279.1553" fill="#E0F2F1" filter="url(#f1eamqg8xwq9up)" rx="141.2765" ry="30.6553" style="stroke: #004D40; stroke-width: 1.5;"/><text fill="#000000" font-family="Helvetica Neue" font-size="13" lengthAdjust="spacingAndGlyphs" textLength="262" x="372.2765" y="284.5083">Gerenciar Usuários &amp; Grupos de Permissões</text><ellipse cx="503.595" cy="367.919" fill="#E0F2F1" filter="url(#f1eamqg8xwq9up)" rx="105.095" ry="23.419" style="stroke: #004D40; stroke-width: 1.5;"/><text fill="#000000" font-family="Helvetica Neue" font-size="13" lengthAdjust="spacingAndGlyphs" textLength="184" x="411.595" y="373.272">Gerenciar Planos de Assinatura</text><ellipse cx="503.4653" cy="89.9931" fill="#E0F2F1" filter="url(#f1eamqg8xwq9up)" rx="137.9653" ry="29.9931" style="stroke: #004D40; stroke-width: 1.5;"/><text fill="#000000" font-family="Helvetica Neue" font-size="13" lengthAdjust="spacingAndGlyphs" textLength="255" x="375.9653" y="95.3461">Gerenciar Localização, Moedas &amp; Impostos</text><!--MD5=[2571bb1592dc874a255a7701a0171bbf]
+entity Operator--><ellipse cx="64" cy="550" fill="#FFE0B2" filter="url(#f1eamqg8xwq9up)" rx="8" ry="8" style="stroke: #E65100; stroke-width: 1.5;"/><path d="M64,558 L64,585 M51,566 L77,566 M64,585 L51,600 M64,585 L77,600 " fill="none" filter="url(#f1eamqg8xwq9up)" style="stroke: #E65100; stroke-width: 1.5;"/><text fill="#000000" font-family="Helvetica Neue" font-size="13" lengthAdjust="spacingAndGlyphs" textLength="116" x="6" y="619.397">Operador do Painel</text><!--MD5=[97ab183161fd5d1db7fba7485cf76add]
+entity Admin--><ellipse cx="242" cy="247" fill="#FFE0B2" filter="url(#f1eamqg8xwq9up)" rx="8" ry="8" style="stroke: #E65100; stroke-width: 1.5;"/><path d="M242,255 L242,282 M229,263 L255,263 M242,282 L229,297 M242,282 L255,297 " fill="none" filter="url(#f1eamqg8xwq9up)" style="stroke: #E65100; stroke-width: 1.5;"/><text fill="#000000" font-family="Helvetica Neue" font-size="13" lengthAdjust="spacingAndGlyphs" textLength="120" x="182" y="316.397">Administrador Geral</text><!--MD5=[3db3d2499ac1e6cbe3ec490aed02adf9]
+reverse link Operator to Admin--><path d="M99.39,522.8 C133.92,463.35 186.24,373.27 216.68,320.87 " fill="none" id="Operator&lt;-Admin" style="stroke: #263238; stroke-width: 1.0;"/><polygon fill="none" points="105.39,526.41,89.29,540.19,93.28,519.38,105.39,526.41" style="stroke: #263238; stroke-width: 1.0;"/><!--MD5=[ad8dd9040067460d2cd6b1376d77732e]
+link Operator to UC_Catalog--><path d="M122.19,561.16 C141.14,554.47 162.4,547.19 182,541 C261.5,515.89 353.35,491.09 418.29,474.25 " fill="none" id="Operator-&gt;UC_Catalog" style="stroke: #263238; stroke-width: 1.0;"/><polygon fill="#263238" points="423.31,472.95,413.5937,471.3397,418.4704,474.2063,415.6038,479.083,423.31,472.95" style="stroke: #263238; stroke-width: 1.0;"/><!--MD5=[eba21d81eeaface44f13f0f3b86a6243]
+link Operator to UC_Customers--><path d="M122.2,576.77 C188.51,570.71 299.57,560.55 384.61,552.78 " fill="none" id="Operator-&gt;UC_Customers" style="stroke: #263238; stroke-width: 1.0;"/><polygon fill="#263238" points="389.66,552.32,380.3324,549.1585,384.6809,552.7765,381.0628,557.1251,389.66,552.32" style="stroke: #263238; stroke-width: 1.0;"/><!--MD5=[92cc0ca650106c3440ed39f18f308fa6]
+link Operator to UC_Orders--><path d="M122.2,588.14 C191.46,595.59 309.55,608.27 395.8,617.54 " fill="none" id="Operator-&gt;UC_Orders" style="stroke: #263238; stroke-width: 1.0;"/><polygon fill="#263238" points="400.92,618.09,392.3933,613.1609,395.948,617.5614,391.5475,621.116,400.92,618.09" style="stroke: #263238; stroke-width: 1.0;"/><!--MD5=[28fdf7ccd4c68426fc45bef4882ad017]
+link Operator to UC_Returns--><path d="M122.18,601.85 C177.19,620.65 262.84,649.18 338,671 C366.65,679.32 398.35,687.62 426.22,694.62 " fill="none" id="Operator-&gt;UC_Returns" style="stroke: #263238; stroke-width: 1.0;"/><polygon fill="#263238" points="431.38,695.92,423.6189,689.8566,426.5293,694.7073,421.6786,697.6177,431.38,695.92" style="stroke: #263238; stroke-width: 1.0;"/><!--MD5=[5fb1585a14c3b0e90f91cff571c713a8]
+link Operator to UC_Reports--><path d="M118.44,623.54 C138.04,638.17 160.65,654.35 182,668 C248.7,710.65 264.47,724.65 338,754 C362.67,763.85 390.33,772.09 415.82,778.63 " fill="none" id="Operator-&gt;UC_Reports" style="stroke: #263238; stroke-width: 1.0;"/><polygon fill="#263238" points="420.89,779.92,413.1668,773.8083,416.0469,778.6771,411.1782,781.5572,420.89,779.92" style="stroke: #263238; stroke-width: 1.0;"/><!--MD5=[2d7780274e2107fad9cf1867510bd244]
+link Admin to UC_Settings--><path d="M302.01,247.02 C313.75,241.28 326.13,235.65 338,231 C360.85,222.06 386.09,213.99 409.79,207.17 " fill="none" id="Admin-&gt;UC_Settings" style="stroke: #263238; stroke-width: 1.0;"/><polygon fill="#263238" points="414.82,205.73,405.0637,204.3832,410.0162,207.1168,407.2826,212.0693,414.82,205.73" style="stroke: #263238; stroke-width: 1.0;"/><!--MD5=[9d4a3919c31172e5005963c184c3bf85]
+link Admin to UC_Users--><path d="M302.21,279 C318.69,279 337.34,279 356.48,279 " fill="none" id="Admin-&gt;UC_Users" style="stroke: #263238; stroke-width: 1.0;"/><polygon fill="#263238" points="361.89,279,352.89,275,356.89,279,352.89,283,361.89,279" style="stroke: #263238; stroke-width: 1.0;"/><!--MD5=[3cbecd4f69346fad43be8c90bf2d32f3]
+link Admin to UC_Subscriptions--><path d="M302.14,311.43 C313.82,317.1 326.14,322.59 338,327 C364.1,336.71 393.38,344.84 419.92,351.23 " fill="none" id="Admin-&gt;UC_Subscriptions" style="stroke: #263238; stroke-width: 1.0;"/><polygon fill="#263238" points="424.84,352.41,417.012,346.4332,419.9761,351.2513,415.158,354.2154,424.84,352.41" style="stroke: #263238; stroke-width: 1.0;"/><!--MD5=[872fff46a1d8c6fc7a5625dcb2d6c4a9]
+link Admin to UC_Locales--><path d="M261,237.33 C276.85,205.4 302.88,162.59 338,137 C353.6,125.63 371.88,117.01 390.48,110.46 " fill="none" id="Admin-&gt;UC_Locales" style="stroke: #263238; stroke-width: 1.0;"/><polygon fill="#263238" points="395.21,108.84,385.4003,107.9622,390.4781,110.4554,387.985,115.5332,395.21,108.84" style="stroke: #263238; stroke-width: 1.0;"/><!--MD5=[89136c52d29af6c32d1d6b02f5b87b95]
+@startuml
+
+skinparam backgroundColor #FAFAFA
+skinparam defaultFontName "Helvetica Neue"
+skinparam defaultFontSize 13
+skinparam ArrowColor #263238
+skinparam ActorBackgroundColor #FFE0B2
+skinparam ActorBorderColor #E65100
+skinparam ActorLineColor #E65100
+skinparam UsecaseBackgroundColor #E0F2F1
+skinparam UsecaseBorderColor #004D40
+skinparam UsecaseLineColor #004D40
+skinparam RectangleBackgroundColor #FFFFFF
+skinparam RectangleBorderColor #37474F
+skinparam RectangleLineColor #37474F
+
+left to right direction
+
+actor "Operador do Painel" as Operator
+actor "Administrador Geral" as Admin
+
+Operator <|- - Admin
+
+rectangle "Alpha Engine - Dashboard Administrativo" {
+    usecase "Gerenciar Catálogo\n(Produtos, Categorias, Opções)" as UC_Catalog
+    usecase "Gerenciar Clientes\n(Aprovações, Grupos de Clientes)" as UC_Customers
+    usecase "Gerenciar Pedidos & Faturamento" as UC_Orders
+    usecase "Gerenciar Devoluções & Trocas" as UC_Returns
+    usecase "Visualizar Relatórios & Estatísticas" as UC_Reports
+
+    usecase "Configurar Lojas & Parâmetros do Motor" as UC_Settings
+    usecase "Gerenciar Usuários & Grupos de Permissões" as UC_Users
+    usecase "Gerenciar Planos de Assinatura" as UC_Subscriptions
+    usecase "Gerenciar Localização, Moedas & Impostos" as UC_Locales
+}
+
+Operator - -> UC_Catalog
+Operator - -> UC_Customers
+Operator - -> UC_Orders
+Operator - -> UC_Returns
+Operator - -> UC_Reports
+
+Admin - -> UC_Settings
+Admin - -> UC_Users
+Admin - -> UC_Subscriptions
+Admin - -> UC_Locales
+
+@enduml
+
+PlantUML version 1.2020.02(Sun Mar 01 07:22:07 GMT-03:00 2020)
+(GPL source distribution)
+Java Runtime: OpenJDK Runtime Environment
+JVM: OpenJDK 64-Bit Server VM
+Java Version: 25.0.4+7-1-deb13u1-Debian
+Operating System: Linux
+Default Encoding: UTF-8
+Language: pt
+Country: BR
+--></g></svg>

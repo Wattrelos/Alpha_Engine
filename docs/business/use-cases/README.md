@@ -112,7 +112,7 @@ docs/business/use-cases/
 ## 📋 3. Índice Geral dos 53 Casos de Uso
 
 ### 🛒 Módulo 1: Loja Virtual & Portal do Cliente (`customer/`)
-*Baseado no diagrama:* [`general_customer_use.puml`](/docs/business/use-cases/general_customer_use.puml)  
+*Baseado no diagrama:* [SVG](/docs/business/use-cases/general_customer_use.svg) - [PlantUML](/docs/business/use-cases/general_customer_use.puml)  
 *Atores:* **Visitante (Guest)**, **Cliente Logado (Customer)**, **Sistema / Gateways**
 
 | ID | Caso de Uso | Pacote / Subdomínio | Relacionamento | Especificação |
@@ -150,7 +150,7 @@ docs/business/use-cases/
 ---
 
 ### 🏪 Módulo 2: Ponto de Venda / PDV (`pos/`)
-*Baseado no diagrama:* [`general_seller.puml`](/docs/business/use-cases/general_seller.puml)  
+*Baseado no diagrama:* [SVG](/docs/business/use-cases/general_seller.svg) - [PlantUML](/docs/business/use-cases/general_seller.puml)  
 *Atores:* **Vendedor de Balcão (Sales Representative)**, **Operador de Caixa (Cashier)**, **Cliente Presencial (Customer)**
 
 | ID | Caso de Uso | Módulo / Perfil | Relacionamento | Especificação |
@@ -174,7 +174,7 @@ docs/business/use-cases/
 ---
 
 ### ⚙️ Módulo 3: Painel Administrativo / Dashboard (`dashboard/`)
-*Baseado no diagrama:* [`general_dashboard.puml`](/docs/business/use-cases/general_dashboard.puml)  
+*Baseado no diagrama:* [SVG](/docs/business/use-cases/general_dashboard.svg) - [PlantUML](/docs/business/use-cases/general_dashboard.puml)  
 *Atores:* **Operador do Painel (Operator)**, **Administrador Geral (Admin)**
 
 | ID | Caso de Uso | Domínio de Operação | Nível de Permissão | Especificação |
@@ -222,13 +222,3 @@ docs/business/use-cases/
 | **RF025** (Painel analítico e relatórios gerenciais)| `RN015` | `UC_ADM_005` |
 
 ---
-
-## 🎓 5. Dicas para a Apresentação na Faculdade
-
-1. **Mostre a coerência:** Explique que o sistema possui 3 diagramas panorâmicos (Loja Virtual, Ponto de Venda e Painel Administrativo) e que **cada elipse do diagrama possui seu arquivo de especificação individual**, totalizando 53 casos de uso.
-2. **Destaque os diferenciais do nicho:** Enfatize para o professor as particularidades de materiais de construção documentadas nos casos de uso:
-   - Cálculo automático de metros quadrados para caixas de porcelanatos (`RN001`);
-   - Cálculo de frete pesado por cubagem de caminhão vs. correios leves (`RN002` e `RN007`);
-   - Diferenciação de preços no balcão e e-commerce para construtoras PJ (`RN017`);
-   - Regras do CDC com a exceção de retirada presencial em loja BOPIS (`RN011`);
-   - Operação de balcão físico com comanda de pré-venda e quitação no caixa com NFC-e (`UC_POS_005` a `UC_POS_015`).
