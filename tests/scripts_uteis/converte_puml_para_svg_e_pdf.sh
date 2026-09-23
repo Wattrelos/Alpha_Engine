@@ -4,9 +4,9 @@
 # Este script gera os documentos finais em PDF para a documentação do projeto para a faculdade
 set -e
 
-DIR_ORIGEM="/var/www/html/agsonhos/docs"
+DIR_ORIGEM="/docs"
 # DIR_DESTINO="${HOME:-/home/wattrelos}/Documentos/AlphaEngine/docs"
-DIR_DESTINO="/var/www/html/agsonhos/docs"
+DIR_DESTINO="/docs"
 echo "Limpando e gerando SVGs..."
 plantuml -tsvg "$DIR_ORIGEM/**.puml" || true
 

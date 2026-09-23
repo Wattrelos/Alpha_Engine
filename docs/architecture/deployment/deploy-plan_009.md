@@ -71,7 +71,7 @@ Verification Results
 Edited task.md
 Edited task.md
 Edited ShowCartAction.php
-Ran command: `php -l /var/www/html/agsonhos/core/Controller/Actions/Cart/ShowCartAction.php`
+Ran command: `php -l /core/Controller/Actions/Cart/ShowCartAction.php`
 Viewed composer.json:1-35
 Edited task.md
 Viewed test_customer_addresses.php:1-78

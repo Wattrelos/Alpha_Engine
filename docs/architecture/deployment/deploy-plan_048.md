@@ -67,7 +67,7 @@ Documento com o relatório completo de busca textual de cada tabela em todas as 
 ## Plano de Verificação
 
 ### Testes Automatizados e Mapeamento
-- Executar varredura estática de texto (`grep_search`) para cada nome de tabela em todo o diretório `/var/www/html/agsonhos/core`.
+- Executar varredura estática de texto (`grep_search`) para cada nome de tabela em todo o diretório `/core`.
 - Verificar se existe alguma classe de DAO, Repository ou Mapper que acesse a tabela.
 
 ### Verificação Manual

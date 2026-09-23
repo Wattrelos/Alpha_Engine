@@ -102,7 +102,7 @@ composer stan
 
 **Resultado Esperado:**
 ```text
-Note: Using configuration file /var/www/html/agsonhos/phpstan.neon.
+Note: Using configuration file /phpstan.neon.
  [OK] No errors
 ```
 

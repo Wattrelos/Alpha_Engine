@@ -5,9 +5,9 @@ use Alpha\Model\Domain\Repositories\UserGroupRepository;
 use Alpha\Model\Domain\Repositories\UserLoginRepository;
 use Alpha\Model\Domain\Repositories\UserAuthorizeRepository;
 
-require '/var/www/html/agsonhos/vendor/autoload.php';
+require '/vendor/autoload.php';
 define('APPLICATION', 'catalog');
-require_once '/var/www/html/agsonhos/config.php';
+require_once '/config.php';
 $bootstrap = AppBootstrap::boot();
 $container = $bootstrap->getContainer();
 /** @var \Alpha\Model\Domain\Repositories\RepositoryFactory $factory */

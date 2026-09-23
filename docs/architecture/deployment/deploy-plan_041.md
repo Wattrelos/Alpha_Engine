@@ -21,7 +21,7 @@ Para viabilizar a compilação no ambiente atual (sem Node.js/npm), utilizaremos
 > [!IMPORTANT]
 > **Estratégia de Compilação com PHP**
 > 1. Instalaremos o pacote `scssphp/scssphp` via Composer.
-> 2. Criaremos um script de compilação em `/var/www/html/agsonhos/scratch/compile-scss.php`.
+> 2. Criaremos um script de compilação em `/scratch/compile-scss.php`.
 > 3. Adicionaremos um comando personalizado ao `composer.json` (`composer build-css`) para rodar essa compilação sempre que necessário.
 > 4. O arquivo principal `public_html/css/custom/new-stylesheet.css` passará a ser gerado automaticamente a partir do arquivo SCSS de entrada.
 

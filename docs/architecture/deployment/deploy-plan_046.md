@@ -45,8 +45,8 @@ Reorganização e enriquecimento do dicionário de termos:
 2. Validação se o JSON do `prompt-glossary.json` está sintaticamente correto (`jsonlint` ou similar).
 3. Verificação do fluxo de renderização do diagrama Mermaid no README.
 
-- `[x]` Atualizar `/var/www/html/agsonhos/docs/architecture/README.md`
-- `[x]` Atualizar `/var/www/html/agsonhos/docs/architecture/agents/prompt-glossary.json`
+- `[x]` Atualizar `/docs/architecture/README.md`
+- `[x]` Atualizar `/docs/architecture/agents/prompt-glossary.json`
 - `[x]` Validar consistência dos links e sintaxe do JSON
 
 # Walkthrough - Otimização de Documentação e Glossário para Agentes de IA

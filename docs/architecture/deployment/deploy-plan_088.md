@@ -110,7 +110,7 @@ Na Fase 1, o cliente terá campos intuitivos para inserir as dimensões do cômo
 ### Automated Tests
 - Execução dos testes unitários com PHPUnit:
   ```bash
-  cd /var/www/html/agsonhos/backend && ./vendor/bin/phpunit ../tests/Validation/MaterialsCalculatorTest.php
+  cd /backend && ./vendor/bin/phpunit ../tests/Validation/MaterialsCalculatorTest.php
   ```
 
 ### Manual Verification
@@ -161,7 +161,7 @@ Implementamos com sucesso a **Calculadora de Materiais de Construção (Pisos e 
 PHPUnit 13.3.1 by Sebastian Bergmann and contributors.
 
 Runtime:       PHP 8.4.24
-Configuration: /var/www/html/agsonhos/backend/phpunit.xml
+Configuration: /backend/phpunit.xml
 
 ...                                                                 3 / 3 (100%)
 
@@ -172,7 +172,7 @@ OK (3 tests, 16 assertions)
 
 ```bash
 PHPStan analysis:
-Note: Using configuration file /var/www/html/agsonhos/backend/phpstan.neon.
+Note: Using configuration file /backend/phpstan.neon.
 
  [OK] No errors
 ```

@@ -136,7 +136,7 @@ vendor/bin/phpunit
 PHPUnit 13.3.0 by Sebastian Bergmann and contributors.
 
 Runtime:       PHP 8.4.22
-Configuration: /var/www/html/agsonhos/backend/phpunit.xml
+Configuration: /backend/phpunit.xml
 
 ...........................................................  61 / 61 (100%)
 

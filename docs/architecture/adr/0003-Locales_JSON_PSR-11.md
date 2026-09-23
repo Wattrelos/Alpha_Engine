@@ -8,11 +8,11 @@ authors:
   - Josias
 impacted_components:
   - namespace: Alpha\Support\Language
-    path: /var/www/html/agsonhos/core/Support/Language.php
+    path: /core/Support/Language.php
   - namespace: Containers\AppContainer
-    path: /var/www/html/agsonhos/Containers/AppContainer.php
+    path: /Containers/AppContainer.php
   - namespace: Alpha\Auth\Middleware\LanguageMiddleware
-    path: /var/www/html/agsonhos/core/Auth/Middleware/LanguageMiddleware.php
+    path: /core/Auth/Middleware/LanguageMiddleware.php
 rules:
   format:
     allowed: ["JSON"]

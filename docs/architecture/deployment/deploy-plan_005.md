@@ -100,7 +100,7 @@ Verification Plan
 
 ### Automated Tests
 
--   Executaremos um script CLI rápido em /var/www/html/agsonhos/core/Model/Domain/Entities/lista.txt ou na pasta de scripts para validar a instanciação dos novos serviços e o funcionamento dos namespaces via autoloader.
+-   Executaremos um script CLI rápido em /core/Model/Domain/Entities/lista.txt ou na pasta de scripts para validar a instanciação dos novos serviços e o funcionamento dos namespaces via autoloader.
 
 -   Executar composer dump-autoload -o para garantir que o autoloader detecte as novas classes.
 
@@ -111,7 +111,7 @@ Edited AbstractAuthService.php
 Edited CustomerAuthService.php
 Edited AdminAuthService.php
 
-Ran command: `rm /var/www/html/agsonhos/core/Auth/Services/AuthService.php`
+Ran command: `rm /core/Auth/Services/AuthService.php`
 
 Edited UserMapper.php
 Edited AppBootstrap.php
@@ -129,15 +129,15 @@ Ran command: `composer dump-autoload -o`
 
 Edited test_auth.php
 
-Ran command: `php /var/www/html/agsonhos/test_auth.php`
+Ran command: `php /test_auth.php`
 
 Listed directory agsonhos
 
 Edited test_auth.php
 
-Ran command: `php /var/www/html/agsonhos/test_auth.php`
+Ran command: `php /test_auth.php`
 
-Ran command: `rm /var/www/html/agsonhos/test_auth.php`
+Ran command: `rm /test_auth.php`
 
 Viewed task.md:1-13
 Edited task.md

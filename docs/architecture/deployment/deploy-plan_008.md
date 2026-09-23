@@ -56,11 +56,11 @@ NOTE
 -   Modify ShowCategoryAction.php to assign sorts and limits within $data
 -   Verify functionality
 
-.../html/agsonhos $ php -l /var/www/html/agsonhos/core/Controller/Actions/Product/SearchProductsAction.php /var/www/html/agsonhos/core/Controller/Actions/Category/ShowCategoryAction.php
+.../html/agsonhos $ php -l /core/Controller/Actions/Product/SearchProductsAction.php /core/Controller/Actions/Category/ShowCategoryAction.php
 
-No syntax errors detected in /var/www/html/agsonhos/core/Controller/Actions/Prod
+No syntax errors detected in /core/Controller/Actions/Prod
 uct/SearchProductsAction.php
-No syntax errors detected in /var/www/html/agsonhos/core/Controller/Actions/Cate
+No syntax errors detected in /core/Controller/Actions/Cate
 gory/ShowCategoryAction.php
 
 Working

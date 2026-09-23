@@ -124,11 +124,11 @@ Nenhuma pergunta pendente neste momento. Caso deseje incluir ou manter algum arq
 ### Automated Tests
 1. Executar os testes PHPUnit na pasta `backend/`:
    ```bash
-   cd /var/www/html/agsonhos/backend && vendor/bin/phpunit
+   cd /backend && vendor/bin/phpunit
    ```
 2. Executar análise estática PHPStan:
    ```bash
-   cd /var/www/html/agsonhos/backend && vendor/bin/phpstan analyse --no-progress
+   cd /backend && vendor/bin/phpstan analyse --no-progress
    ```
 
 ### Manual Verification
@@ -138,8 +138,8 @@ Nenhuma pergunta pendente neste momento. Caso deseje incluir ou manter algum arq
 # Lista de Tarefas - Migração para `backend/`
 
 - [x] Criar estrutura e mover arquivos para `backend/`
-  - [x] Criar diretório `/var/www/html/agsonhos/backend`
-  - [x] Mover diretórios e arquivos de backend para `/var/www/html/agsonhos/backend/`
+  - [x] Criar diretório `/backend`
+  - [x] Mover diretórios e arquivos de backend para `/backend/`
 - [x] Atualizar pontos de entrada em `public_html/`
   - [x] Atualizar `public_html/index.php` para referenciar `../backend/`
   - [x] Atualizar `public_html/LPDHED2dC7Gjrg2b/index.php` para referenciar `../../backend/`

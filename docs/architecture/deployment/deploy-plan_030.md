@@ -46,7 +46,7 @@ Este plano descreve as adaptações necessárias no diagrama de sequência de ve
 # Tarefas - Adaptar Diagrama do PDV (POS)
 
 - `[x]` Analisar e desenhar as interações detalhadas entre os componentes do fluxo
-- `[x]` Modificar o arquivo `/var/www/html/agsonhos/docs/architecture/fluxo_venda_pos.puml` com a nova estrutura arquitetural
+- `[x]` Modificar o arquivo `/docs/architecture/fluxo_venda_pos.puml` com a nova estrutura arquitetural
 - `[x]` Validar a sintaxe do diagrama PlantUML
 
 # Walkthrough - Adaptar Diagrama do PDV (POS)

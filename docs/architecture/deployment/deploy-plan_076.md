@@ -57,7 +57,7 @@ Ajuste do assistente de primeira instalação para criar o diretório e atalho d
 
 ### Teste de Execução do Fluxo de Instalação / Movimentação
 - Executar script de validação de caminho simulando o comportamento de `ProcessInstallationAction.php` para verificar se:
-  1. A pasta `public_html/$adminDir` é criada corretamente em `/var/www/html/agsonhos/public_html/`.
+  1. A pasta `public_html/$adminDir` é criada corretamente em `/public_html/`.
   2. O arquivo `index.php` é movido da pasta `LPDHED2dC7Gjrg2b` para a nova pasta e a pasta modelo `LPDHED2dC7Gjrg2b` é completamente removida.
 
 # Tarefas de Execução: Ajuste no Mecanismo de Implantação
@@ -81,7 +81,7 @@ O mecanismo de primeira instalação (Setup Wizard) foi ajustado para que o dire
      ```php
      $publicHtmlDir = realpath(__DIR__ . '/../../../../../public_html') ?: (dirname(__DIR__, 5) . '/public_html');
      ```
-   - Isso garante que a pasta do Dashboard seja provisionada em `/var/www/html/agsonhos/public_html/$adminDir`.
+   - Isso garante que a pasta do Dashboard seja provisionada em `/public_html/$adminDir`.
 
 2. **Movimentação do `index.php` e Limpeza da Pasta `LPDHED2dC7Gjrg2b`**:
    - O mecanismo busca por diretórios administrativos existentes na `public_html/` (incluindo a pasta modelo `LPDHED2dC7Gjrg2b`).
@@ -102,7 +102,7 @@ O mecanismo de primeira instalação (Setup Wizard) foi ajustado para que o dire
 
 - **Teste de Resolução de Caminhos**:
   Executado script de teste para validar a resolução do caminho da `public_html/` e verificar a presença da pasta modelo e seu `index.php`.
-  *Resultado*: Caminho resolvido com sucesso para `/var/www/html/agsonhos/public_html`.
+  *Resultado*: Caminho resolvido com sucesso para `/public_html`.
 
 # Extra:
 Criamos o documento de especificação e o script de diagnóstico automatizado para o terminal:

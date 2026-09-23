@@ -22,7 +22,7 @@
 
 set -eo pipefail
 
-DEFAULT_SRC="/var/www/html/agsonhos/docs"
+DEFAULT_SRC="/docs"
 SRC_DIR=""
 OUT_DIR=""
 GENERATE_PDF=false

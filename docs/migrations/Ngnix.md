@@ -10,7 +10,7 @@ server {
     server_name agsonhos.local www.agsonhos.local localhost;
 
     # Ponto de entrada do projeto (pasta pública)
-    root /var/www/html/agsonhos/public_html;
+    root /public_html;
     
     # Arquivos padrão
     index index.php index.html index.htm;

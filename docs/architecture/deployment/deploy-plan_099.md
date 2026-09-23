@@ -56,11 +56,11 @@ Este plano descreve as etapas necessárias para adequar as dependências e confi
 - Executar `composer why-not php 8.2.0` em ambos os diretórios para garantir conformidade
 - Executar análise estática do PHPStan:
   ```bash
-  cd /var/www/html/agsonhos/backend && php vendor/bin/phpstan analyse --configuration=phpstan.neon
+  cd /backend && php vendor/bin/phpstan analyse --configuration=phpstan.neon
   ```
 - Executar a suíte de testes do PHPUnit:
   ```bash
-  cd /var/www/html/agsonhos/backend && php vendor/bin/phpunit
+  cd /backend && php vendor/bin/phpunit
   ```
 
 ### Manual Verification
@@ -124,7 +124,7 @@ Executado `php vendor/bin/phpunit ../tests/Validation/ApiTransformerTest.php`:
 ```text
 PHPUnit 11.5.56 by Sebastian Bergmann and contributors.
 Runtime:       PHP 8.4.24
-Configuration: /var/www/html/agsonhos/backend/phpunit.xml
+Configuration: /backend/phpunit.xml
 ..                                                                  2 / 2 (100%)
 OK (2 tests, 7 assertions)
 ```

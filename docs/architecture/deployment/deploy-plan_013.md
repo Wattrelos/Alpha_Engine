@@ -136,7 +136,7 @@ Implementamos com sucesso a capacidade de adicionar, alterar e remover imagens d
   Saved Variation Name: Cor: Azul Editado
   Saved Variation Image Path: image/product/product_var_81677_1782143558.png
   Assertion PASSED: Variation image uploaded and saved successfully!
-  Cleaned up physical file: /var/www/html/agsonhos/public_html/image/product/product_var_81677_1782143558.png
+  Cleaned up physical file: /public_html/image/product/product_var_81677_1782143558.png
   Database changes rolled back successfully.
   === ALL TESTS PASSED! ===
   ```
