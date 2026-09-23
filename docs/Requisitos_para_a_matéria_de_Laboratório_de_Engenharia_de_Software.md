@@ -5,7 +5,7 @@
 - [x] Requisitos Funcionais, Requisitos não funcionais, regras de negócio
 - [x] Matriz de relacionamento RN x RF: [Matriz_de_Relacionamento_RN_x_RF.doc.md](/docs/documentos_para_a_faculdade/Matriz_de_Relacionamento_RN_x_RF.doc.md)
 
- - [ ] Diagrama de Entidade e Relacionamento
+ - [x] Diagrama de Entidade e Relacionamento
 
  - [x] Diagrama de Classe
 
