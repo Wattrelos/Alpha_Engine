@@ -251,6 +251,6 @@ Cada um dos 53 arquivos de caso de uso possui:
 
 ## 🎓 Atualização dos Documentos da Faculdade
 
-- **Checklist Atualizado:** [`Requisitos_para_a_matéria_de_Laboratório_de_Engenharia_de_Software.md`](/docs/documentos_para_a_faculdade/Requisitos_para_a_matéria_de_Laboratório_de_Engenharia_de_Software.md) marcado com `- [x] Especificação do caso de uso` e links corrigidos para os 3 diagramas.
-- **Documento Consolidado:** [`4. Casos de Uso.doc.md`](/docs/documentos_para_a_faculdade/4. Casos de Uso.doc.md) ajustado com as referências PlantUML atualizadas.
+- **Checklist Atualizado:** [`Requisitos_para_a_matéria_de_Laboratório_de_Engenharia_de_Software.md`](/docs/Requisitos_para_a_matéria_de_Laboratório_de_Engenharia_de_Software.md) marcado com `- [x] Especificação do caso de uso` e links corrigidos para os 3 diagramas.
+- **Documento Consolidado:** [`4. Casos de Uso.doc.md`](/docs/4.%20Casos%20de%20Uso.doc.md) ajustado com as referências PlantUML atualizadas.
 

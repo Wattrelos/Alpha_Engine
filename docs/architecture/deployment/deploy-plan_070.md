@@ -44,22 +44,22 @@ Enriquecer a documentação técnica do repositório modelando os **fluxos de de
 
 ### `docs/workflows/activity_diagrams`
 
-#### [NEW] [checkout_decision_tree.puml](/docs/workflows/activity_diagrams/checkout_decision_tree.puml)
+#### [NEW] checkout_decision_tree.puml [SVG](/docs/workflows/activity_diagrams/checkout_decision_tree.svg) - [PlantUML](/docs/workflows/activity_diagrams/checkout_decision_tree.puml)
 Modelagem completa da árvore de decisão do checkout do cliente, contemplando fluxos de sucesso e exceções de pagamento recusado ou falha de estoque.
 
-#### [NEW] [gestao_estoque_concorrente.puml](/docs/workflows/activity_diagrams/gestao_estoque_concorrente.puml)
+#### [NEW] gestao_estoque_concorrente.puml [SVG](/docs/workflows/activity_diagrams/gestao_estoque_concorrente.svg) - [PlantUML](/docs/workflows/activity_diagrams/gestao_estoque_concorrente.puml)
 Fluxograma de decisão para validação, bloqueio otimista e decretação de estoque em ambiente de altíssima concorrência.
 
-#### [NEW] [processamento_devolucao_rma.puml](/docs/workflows/activity_diagrams/processamento_devolucao_rma.puml)
+#### [NEW] processamento_devolucao_rma.puml [SVG](/docs/workflows/activity_diagrams/processamento_devolucao_rma.svg) - [PlantUML](/docs/workflows/activity_diagrams/processamento_devolucao_rma.puml)
 Diagrama de atividade para o workflow de devoluções (RMA), com raias divididas entre Cliente, Painel Administrativo e Estoque/Logística.
 
-#### [NEW] [pipeline_seguranca_middleware.puml](/docs/workflows/activity_diagrams/pipeline_seguranca_middleware.puml)
+#### [NEW] pipeline_seguranca_middleware.puml [SVG](/docs/workflows/activity_diagrams/pipeline_seguranca_middleware.svg) - [PlantUML](/docs/workflows/activity_diagrams/pipeline_seguranca_middleware.puml)
 Diagrama de esteira de execução de Middlewares HTTP do Slim Framework com interrupções de segurança (400 CSRF, 401 Unauthorized, 403 Forbidden).
 
-#### [NEW] [fluxo_venda_pos_balcao.puml](/docs/workflows/activity_diagrams/fluxo_venda_pos_balcao.puml)
+#### [NEW] fluxo_venda_pos_balcao.puml [SVG](/docs/workflows/activity_diagrams/fluxo_venda_pos_balcao.svg) - [PlantUML](/docs/workflows/activity_diagrams/fluxo_venda_pos_balcao.puml)
 Fluxograma de atendimento de venda física com divisões entre Vendedor, Operador de Caixa e Sistema de Gestão de Estoque.
 
-#### [NEW] [sanitizacao_lgpd_anonimizacao.puml](/docs/workflows/activity_diagrams/sanitizacao_lgpd_anonimizacao.puml)
+#### [NEW] sanitizacao_lgpd_anonimizacao.puml [SVG](/docs/workflows/activity_diagrams/sanitizacao_lgpd_anonimizacao.svg) - [PlantUML](/docs/workflows/activity_diagrams/sanitizacao_lgpd_anonimizacao.puml)
 Fluxo decisório do módulo de governança LGPD, cobrindo o `LgpdSanitizer` e a política de preservação de registros fiscais obrigatórios.
 
 ---

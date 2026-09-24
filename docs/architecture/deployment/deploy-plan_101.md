@@ -111,7 +111,7 @@ Adição de uma área contextual de **Detalhes do Produto** no Terminal de Venda
 
 # Walkthrough - Implementação de Detalhes do Produto no PDV (Feature #85)
 
-Implementação concluída com sucesso para a especificação [[FEATURE #85] Implementar Detalhes do Produto no PDV](/docs/issues/85_implementar_detalhes_do_produto_no_pdv.md).
+Implementação concluída com sucesso para a especificação [FEATURE #85] Implementar Detalhes do Produto no PDV.
 
 ---
 
