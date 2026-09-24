@@ -38,33 +38,33 @@ sequenceDiagram
     }
     participant MySQL as MySQL 8.0 (Relational Database)
     participant Redis as Redis 6379 (Session Store)
-    queue "RabbitMQ<br/>(Message Queue)" as RabbitMQ #FED7AA
-    cloud "Mercado Pago / PIX API<br/>(External Gateways)" as ExtPayment #E0F2FE
-    Router -->> CsrfMW : Intercepta POST
-    Router -->> AdminMW : Protege /admin
-    Router -->> UserMW : Protege /account
-    Router -->> LangMW : Global
-    AdminMW -->> AdminAuth : Valida sessão admin
-    UserMW -->> CustomerAuth : Valida sessão cliente
+    participant RabbitMQ as RabbitMQ (Message Queue)
+    participant ExtPayment as Mercado Pago / PIX API (External Gateways)
+    Router -->> CsrfMW: Intercepta POST
+    Router -->> AdminMW: Protege /admin
+    Router -->> UserMW: Protege /account
+    Router -->> LangMW: Global
+    AdminMW -->> AdminAuth: Valida sessão admin
+    UserMW -->> CustomerAuth: Valida sessão cliente
     AdminAuth --|> BaseAuth
     CustomerAuth --|> BaseAuth
-    BaseAuth -->> Redis : Grava/Lê sessões (sessao:*)
+    BaseAuth -->> Redis: Grava/Lê sessões (sessao:*)
     BaseAuth ..> MySQL : Fallback se Redis falhar
-    Router -->> SeoRepo : Resolve SEO URLs
-    SeoRepo -->> DiskCache : Leitura/Gravação de Cache em Disco
-    ProductRepo -->> MySQL : Consultas de produtos
-    CategoryRepo -->> MySQL : Mapeamento de categorias
-    CartRepo -->> MySQL : Persistência do carrinho
-    OrderRepo -->> UoW : ACID Transactions
-    OrderRepo -->> MySQL : Leitura/Gravação de pedidos
-    PaymentFactory -->> MPAdapter : Instancia MercadoPago
-    PaymentFactory -->> PixGateway : Instancia PIX
-    MPAdapter -->> ExtPayment : HTTP REST API
-    ShippingManager -->> FlatRate : Executa cotação
-    ShippingManager -->> WeightShipping : Executa cotação
-    ShippingManager -->> FreeShipping : Executa cotação
-    OrderRepo -->> EventBus : Dispara OrderCreatedEvent
-    EventBus -->> QueueService : Publica payload
-    QueueService -->> RabbitMQ : Enfilera mensagem
-    RabbitMQ -->> WorkerConsumer : Consome assincronamente
-    WorkerConsumer -->> MySQL : Processa baixa e atualizações
+    Router -->> SeoRepo: Resolve SEO URLs
+    SeoRepo -->> DiskCache: Leitura/Gravação de Cache em Disco
+    ProductRepo -->> MySQL: Consultas de produtos
+    CategoryRepo -->> MySQL: Mapeamento de categorias
+    CartRepo -->> MySQL: Persistência do carrinho
+    OrderRepo -->> UoW: ACID Transactions
+    OrderRepo -->> MySQL: Leitura/Gravação de pedidos
+    PaymentFactory -->> MPAdapter: Instancia MercadoPago
+    PaymentFactory -->> PixGateway: Instancia PIX
+    MPAdapter -->> ExtPayment: HTTP REST API
+    ShippingManager -->> FlatRate: Executa cotação
+    ShippingManager -->> WeightShipping: Executa cotação
+    ShippingManager -->> FreeShipping: Executa cotação
+    OrderRepo -->> EventBus: Dispara OrderCreatedEvent
+    EventBus -->> QueueService: Publica payload
+    QueueService -->> RabbitMQ: Enfilera mensagem
+    RabbitMQ -->> WorkerConsumer: Consome assincronamente
+    WorkerConsumer -->> MySQL: Processa baixa e atualizações

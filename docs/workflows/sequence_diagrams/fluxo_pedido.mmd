@@ -1,133 +1,133 @@
 sequenceDiagram
     autonumber
     rect rgb(245, 247, 250)
-    note over: Apresentação e Infraestrutura
+    note over Cliente, Rabbit: Apresentação e Infraestrutura
     actor Cliente as Cliente
     participant Middleware as Slim Middleware
     participant Action as Slim Action
     participant Twig as Twig Engine
-    queue "RabbitMQ" as Rabbit
+    participant Rabbit as RabbitMQ
     end
     rect rgb(245, 247, 250)
-    note over: Domínio e Aplicação
+    note over Domain, Event: Domínio e Aplicação
     participant Domain as Domain Service
     participant Repo as Repository
     participant Event as Event Dispatcher
     end
     rect rgb(245, 247, 250)
-    note over: Persistência
+    note over UoW, DB: Persistência
     participant UoW as Unit Of Work
     participant Mapper as Data Mapper
     participant QB as Query Builder
     participant DAO as Dynamic DAO
     participant DB as Database
     end
-    Cliente ->> Middleware : Requisição HTTP
+    Cliente ->> Middleware: Requisição HTTP
     activate Middleware
-    Middleware ->> Action : __invoke(Request)
+    Middleware ->> Action: __invoke(Request)
     activate Action
     alt ROTA DE LEITURA (HTTP GET /pedido/{id})
     note over Cliente, Action: GET /pedido/{id} - Leitura de detalhes do pedido
-    Action ->> Repo : findById(id)
+    Action ->> Repo: findById(id)
     activate Repo
-    Repo ->> QB : select()->where('id', id)
+    Repo ->> QB: select()->where('id', id)
     activate QB
-    QB ->> QB : buildSQL()
-    QB -->> Repo : SQL String
+    QB ->> QB: buildSQL()
+    QB -->> Repo: SQL String
     deactivate QB
-    Repo ->> DAO : query(SQL)
+    Repo ->> DAO: query(SQL)
     activate DAO
-    DAO ->> DB : SELECT * FROM pedidos ...
+    DAO ->> DB: SELECT * FROM pedidos ...
     activate DB
-    DB -->> DAO : Raw Data
+    DB -->> DAO: Raw Data
     deactivate DB
-    DAO -->> Repo : Raw Data
+    DAO -->> Repo: Raw Data
     deactivate DAO
     note over Repo, Mapper: Hydration: RawData para Domain Entity
-    Repo ->> Mapper : mapToDomain(RawData)
+    Repo ->> Mapper: mapToDomain(RawData)
     activate Mapper
-    Mapper -->> Repo : Entity
+    Mapper -->> Repo: Entity
     deactivate Mapper
-    Repo -->> Action : Entity
+    Repo -->> Action: Entity
     deactivate Repo
-    Action ->> Twig : render('detalhes.twig', Entity)
+    Action ->> Twig: render('detalhes.twig', Entity)
     activate Twig
-    Twig -->> Action : HTML / JSON Response
+    Twig -->> Action: HTML / JSON Response
     deactivate Twig
     else ROTA DE ESCRITA (HTTP POST /{lang}/checkout)
     note over Cliente, Action: POST /checkout (Escrita) - Evita duplo clique com X-Idempotency-Key
     note over Action, Domain: Idempotência: Salva token no Redis (SET NX EX)
-    Action ->> Domain : verificarIdempotencia(RequestToken)
+    Action ->> Domain: verificarIdempotencia(RequestToken)
     activate Domain
-    Domain -->> Action : Token Valido / Novo Pedido
+    Domain -->> Action: Token Valido / Novo Pedido
     deactivate Domain
     note over Action, Repo: Preparação em memória (totais/cupons) antes da transação
-    Action ->> Domain : processarRegraNegocio()
+    Action ->> Domain: processarRegraNegocio()
     activate Domain
-    Domain ->> Repo : save(Entity)
+    Domain ->> Repo: save(Entity)
     activate Repo
     note over Repo, UoW: UoW: Registra novo pedido em memória
-    Repo ->> UoW : registerNew(Entity)
+    Repo ->> UoW: registerNew(Entity)
     activate UoW
-    UoW -->> Repo : OK
+    UoW -->> Repo: OK
     deactivate UoW
-    Repo -->> Domain : OK
+    Repo -->> Domain: OK
     deactivate Repo
-    Domain -->> Action : StateUpdated
+    Domain -->> Action: StateUpdated
     deactivate Domain
     note over Action, UoW: Transação curta no MySQL no commit
-    Action ->> UoW : commit()
+    Action ->> UoW: commit()
     activate UoW
-    group Try [Persistência Física]
-    UoW ->> DB : BEGIN TRANSACTION
-    UoW ->> Mapper : mapToDatabase(Entity)
+    critical Try [Persistência Física]
+    UoW ->> DB: BEGIN TRANSACTION
+    UoW ->> Mapper: mapToDatabase(Entity)
     activate Mapper
-    Mapper ->> QB : insertInto()->values()
+    Mapper ->> QB: insertInto()->values()
     activate QB
-    QB ->> QB : buildSQL()
-    QB -->> Mapper : SQL + Bindings
+    QB ->> QB: buildSQL()
+    QB -->> Mapper: SQL + Bindings
     deactivate QB
-    Mapper ->> DAO : execute(SQL, Bindings)
+    Mapper ->> DAO: execute(SQL, Bindings)
     activate DAO
-    DAO ->> DB : INSERT INTO pedidos ...
+    DAO ->> DB: INSERT INTO pedidos ...
     activate DB
-    DB -->> DAO : DB_Success
+    DB -->> DAO: DB_Success
     deactivate DB
-    DAO -->> Mapper : Raw Data
+    DAO -->> Mapper: Raw Data
     deactivate DAO
-    Mapper -->> UoW : Mapping Done
+    Mapper -->> UoW: Mapping Done
     deactivate Mapper
-    UoW ->> DB : COMMIT
-    UoW -->> Action : Committed
+    UoW ->> DB: COMMIT
+    UoW -->> Action: Committed
     note over Action, Event: Eventos assíncronos disparados estritamente pós-commit
-    Action ->> Event : dispatch(OrderCreatedEvent)
+    Action ->> Event: dispatch(OrderCreatedEvent)
     activate Event
-    Event ->> Rabbit : Publicar evento na fila (RabbitMQ)
+    Event ->> Rabbit: Publicar evento na fila (RabbitMQ)
     activate Rabbit
-    Rabbit -->> Event : ACK
+    Rabbit -->> Event: ACK
     deactivate Rabbit
-    Event -->> Action : Evento processado
+    Event -->> Action: Evento processado
     deactivate Event
-    else Catch [Exceção / Rollback]
+    option Catch [Exceção / Rollback]
     note over UoW, DB: Falha: Transação revertida (Rollback)
-    UoW ->> DB : ROLLBACK TRANSACTION
-    UoW -->> Action : Throws Exception (Rollback)
+    UoW ->> DB: ROLLBACK TRANSACTION
+    UoW -->> Action: Throws Exception (Rollback)
     end
     deactivate UoW
     alt Fluxo de Sucesso
     note over Action, Twig: Finalização: Limpa carrinho e monta resposta
-    Action ->> Twig : render('sucesso.twig')
+    Action ->> Twig: render('sucesso.twig')
     activate Twig
-    Twig -->> Action : HTML Response
+    Twig -->> Action: HTML Response
     deactivate Twig
     else Fluxo de Falha
-    Action ->> Twig : render('erro.twig')
+    Action ->> Twig: render('erro.twig')
     activate Twig
-    Twig -->> Action : HTML Error Page
+    Twig -->> Action: HTML Error Page
     deactivate Twig
     end
     end
-    Action -->> Middleware : Response Object
+    Action -->> Middleware: Response Object
     deactivate Action
-    Middleware -->> Cliente : HTTP Response
+    Middleware -->> Cliente: HTTP Response
     deactivate Middleware

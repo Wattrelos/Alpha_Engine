@@ -698,11 +698,11 @@ sequenceDiagram
     Store "1" ||-down-|{ Session : "stores session context"
     legend right
     == Mapeamento de Tipos (Arquitetura)
-    * **Banco de Dados (DB)** ->> **PHP (64-bit)**
-    * BIGINT (8 bytes, PK/FK) ->> int (8-byte integer)
-    * INT (4 bytes) ->> int
-    * TINYINT(1) ->> bool
-    * VARCHAR / TEXT ->> string
-    * DECIMAL ->> string
-    * DATETIME / DATE ->> DateTimeInterface
+    * **Banco de Dados (DB)** -> **PHP (64-bit)**
+    * BIGINT (8 bytes, PK/FK) -> int (8-byte integer)
+    * INT (4 bytes) -> int
+    * TINYINT(1) -> bool
+    * VARCHAR / TEXT -> string
+    * DECIMAL -> string
+    * DATETIME / DATE -> DateTimeInterface
     endlegend

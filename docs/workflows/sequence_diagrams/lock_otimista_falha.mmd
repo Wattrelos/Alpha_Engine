@@ -1,75 +1,75 @@
 sequenceDiagram
     autonumber
     rect rgb(224, 242, 254)
-    note over: Frontend / Client
+    note over Admin, Front: Frontend / Client
     actor Admin as Admin B (Tela Desatualizada)
     participant Front as Frontend App (JS AJAX)
     end
     rect rgb(255, 249, 196)
-    note over: Security & Middleware Layer
+    note over Middleware, Redis: Security & Middleware Layer
     participant Middleware as AdminSessionMiddleware
     participant Redis as Redis Cache (Session & Cache)
     end
     rect rgb(243, 244, 246)
-    note over: Application & Domain Layer
+    note over Action, DB: Application & Domain Layer
     participant Action as UpdateReturnStatusAction (Slim Action)
     participant Repo as OrderReturnRepository
     participant UoW as UnitOfWork
     participant Mapper as OrderReturnMapper
     participant DB as MySQL Database
     end
-    Admin ->> Front : Clica em "Recusar Devolução"
+    Admin ->> Front: Clica em "Recusar Devolução"
     activate Front
-    Front ->> Middleware : HTTP POST /LPDHED2dC7Gjrg2b/devolucoes/102/status {version: 1, return_status_id: 5}
+    Front ->> Middleware: HTTP POST /LPDHED2dC7Gjrg2b/devolucoes/102/status {version: 1, return_status_id: 5}
     activate Middleware
-    Middleware ->> Redis : GET "sessao:admin:{sessionId}"
+    Middleware ->> Redis: GET "sessao:admin:{sessionId}"
     activate Redis
-    Redis -->> Middleware : Session Active Data (TTL 7200s extended)
+    Redis -->> Middleware: Session Active Data (TTL 7200s extended)
     deactivate Redis
-    Middleware ->> Action : __invoke(Request, Response, args)
+    Middleware ->> Action: __invoke(Request, Response, args)
     activate Action
-    Action ->> Repo : find(102)
+    Action ->> Repo: find(102)
     activate Repo
-    Repo ->> DB : SELECT * FROM agsc_product_return WHERE id = 102
+    Repo ->> DB: SELECT * FROM agsc_product_return WHERE id = 102
     activate DB
-    DB -->> Repo : OrderReturn entity (version = 1 in memory)
+    DB -->> Repo: OrderReturn entity (version = 1 in memory)
     deactivate DB
-    Repo -->> Action : OrderReturn
+    Repo -->> Action: OrderReturn
     deactivate Repo
-    Action ->> Action : setVersion(1) & setReturnStatusId(5)
-    Action ->> UoW : transaction(callback)
+    Action ->> Action: setVersion(1) & setReturnStatusId(5)
+    Action ->> UoW: transaction(callback)
     activate UoW
-    UoW ->> DB : BEGIN TRANSACTION
-    UoW ->> Mapper : save(OrderReturn)
+    UoW ->> DB: BEGIN TRANSACTION
+    UoW ->> Mapper: save(OrderReturn)
     activate Mapper
-    Mapper ->> DB : UPDATE agsc_product_return SET return_status_id=5, version=2, date_modified=NOW() WHERE id=102 AND version=1
+    Mapper ->> DB: UPDATE agsc_product_return SET return_status_id=5, version=2, date_modified=NOW() WHERE id=102 AND version=1
     activate DB
-    DB -->> Mapper : Rows Affected: 0 (Nenhum registro modificado)
+    DB -->> Mapper: Rows Affected: 0 (Nenhum registro modificado)
     deactivate DB
-    Mapper -->> UoW : throw new ConcurrencyException("Registro alterado por outro usuário")
+    Mapper -->> UoW: throw new ConcurrencyException("Registro alterado por outro usuário")
     deactivate Mapper
-    UoW ->> DB : ROLLBACK TRANSACTION
-    UoW -->> Action : Propaga ConcurrencyException
+    UoW ->> DB: ROLLBACK TRANSACTION
+    UoW -->> Action: Propaga ConcurrencyException
     deactivate UoW
-    note over Action, Redis: **Tratamento de Exceção & Invalidação de Cache:**\n1. Clears DAO Identity Map\n2. Invalidates stale Redis / Repository Cache\n3. Queries fresh data directly from MySQL DB
-    Action ->> Action : DataAccessObject::clearIdentityMap()
-    Action ->> Redis : DEL "cache:product_return:102" / CacheStrategy::delete()
+    note over Action, Redis: **Tratamento de Exceção & Invalidação de Cache:**<br/>1. Clears DAO Identity Map<br/>2. Invalidates stale Redis / Repository Cache<br/>3. Queries fresh data directly from MySQL DB
+    Action ->> Action: DataAccessObject::clearIdentityMap()
+    Action ->> Redis: DEL "cache:product_return:102" / CacheStrategy::delete()
     activate Redis
-    Redis -->> Action : OK (Cache Invalidated)
+    Redis -->> Action: OK (Cache Invalidated)
     deactivate Redis
-    Action ->> Repo : find(102) [Fresh Query]
+    Action ->> Repo: find(102) [Fresh Query]
     activate Repo
-    Repo ->> DB : SELECT * FROM agsc_product_return WHERE id = 102
+    Repo ->> DB: SELECT * FROM agsc_product_return WHERE id = 102
     activate DB
-    DB -->> Repo : Fresh OrderReturn entity (version = 2, status_id = 2 "Aprovado")
+    DB -->> Repo: Fresh OrderReturn entity (version = 2, status_id = 2 "Aprovado")
     deactivate DB
-    Repo -->> Action : Fresh OrderReturn
+    Repo -->> Action: Fresh OrderReturn
     deactivate Repo
-    Action -->> Middleware : HTTP 409 Conflict {<br/>  error: "DATA_STALE",<br/>  current_data: {<br/>    version: 2,<br/>    status_name: "Aprovado",<br/>    return_status_id: 2,<br/>    date_modified: "08/08/2026 18:30"<br/>  }<br/>}
+    Action -->> Middleware: HTTP 409 Conflict {<br/>  error: "DATA_STALE",<br/>  current_data: {<br/>    version: 2,<br/>    status_name: "Aprovado",<br/>    return_status_id: 2,<br/>    date_modified: "08/08/2026 18:30"<br/>  }<br/>}
     deactivate Action
-    Middleware -->> Front : HTTP 409 Conflict (Payload JSON)
+    Middleware -->> Front: HTTP 409 Conflict (Payload JSON)
     deactivate Middleware
-    Front ->> Front : Intercepta HTTP 409 Conflict
-    Front ->> Admin : Exibe Modal: "Dados Desatualizados. Outro usuário modificou este registro."
-    Front ->> Front : Sincroniza Estado Local (Status: Aprovado, Versão oculta atualizada para 2)
+    Front ->> Front: Intercepta HTTP 409 Conflict
+    Front ->> Admin: Exibe Modal: "Dados Desatualizados. Outro usuário modificou este registro."
+    Front ->> Front: Sincroniza Estado Local (Status: Aprovado, Versão oculta atualizada para 2)
     deactivate Front

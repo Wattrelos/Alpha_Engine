@@ -2,22 +2,22 @@ sequenceDiagram
     autonumber
     actor User as Usuário/Browser
     rect rgb(249, 249, 249)
-    note over: 0. Slim 4 Framework & Middlewares
+    note over Entrypoint, SessionMW: 0. Slim 4 Framework & Middlewares
     participant Entrypoint as public_html/index.php
     participant LangMW as LanguageMiddleware
     participant SessionMW as SessionMiddleware
     end
     rect rgb(235, 245, 251)
-    note over: 2. Application Actions
+    note over FrontAction: 2. Application Actions
     participant FrontAction as Front-end Actions
     end
     rect rgb(232, 248, 245)
-    note over: 4. Domain Layer
+    note over RepoFactory, Repos: 4. Domain Layer
     participant RepoFactory as RepositoryFactory
     participant Repos as AbstractRepository
     end
     rect rgb(254, 249, 231)
-    note over: 5. Persistence & Database
+    note over MapperFactory, MySQL: 5. Persistence & Database
     participant MapperFactory as MapperFactory
     participant Mappers as BaseMapper
     participant DAO as DataAccessObject (DAO)
@@ -25,64 +25,64 @@ sequenceDiagram
     participant MySQL as MySQL 8.0
     end
     rect rgb(251, 238, 230)
-    note over: 3. Presentation
+    note over Twig, Views: 3. Presentation
     participant Twig as TwigEnvironment
     participant Views as Twig Templates
     end
-    User ->> Entrypoint : GET /produtos?busca=smart+tv
+    User ->> Entrypoint: GET /produtos?busca=smart+tv
     activate Entrypoint
-    Entrypoint ->> LangMW : process(Request)
+    Entrypoint ->> LangMW: process(Request)
     activate LangMW
-    LangMW ->> SessionMW : process(Request)
+    LangMW ->> SessionMW: process(Request)
     activate SessionMW
-    SessionMW ->> FrontAction : __invoke(Request, Response)
+    SessionMW ->> FrontAction: __invoke(Request, Response)
     activate FrontAction
-    FrontAction ->> RepoFactory : getRepository('Product')
+    FrontAction ->> RepoFactory: getRepository('Product')
     activate RepoFactory
-    RepoFactory ->> Repos : new ProductRepository()
+    RepoFactory ->> Repos: new ProductRepository()
     activate Repos
-    Repos -->> RepoFactory : instance
-    RepoFactory -->> FrontAction : ProductRepository
+    Repos -->> RepoFactory: instance
+    RepoFactory -->> FrontAction: ProductRepository
     deactivate RepoFactory
-    FrontAction ->> Repos : searchProducts('smart tv')
-    Repos ->> MapperFactory : getMapper('Product')
+    FrontAction ->> Repos: searchProducts('smart tv')
+    Repos ->> MapperFactory: getMapper('Product')
     activate MapperFactory
-    MapperFactory ->> Mappers : new ProductMapper()
+    MapperFactory ->> Mappers: new ProductMapper()
     activate Mappers
-    Mappers -->> MapperFactory : instance
-    MapperFactory -->> Repos : ProductMapper
+    Mappers -->> MapperFactory: instance
+    MapperFactory -->> Repos: ProductMapper
     deactivate MapperFactory
-    Repos ->> Mappers : getProducts($filterData)
-    Mappers ->> Mappers : prepareFullTextQuery('smart tv')
-    Mappers ->> DAO : executeQuery($query)
+    Repos ->> Mappers: getProducts($filterData)
+    Mappers ->> Mappers: prepareFullTextQuery('smart tv')
+    Mappers ->> DAO: executeQuery($query)
     activate DAO
-    DAO ->> QB : where("MATCH(pd.name, pd.description, pd.tag) AGAINST(? IN BOOLEAN MODE) OR p.model LIKE ?")
+    DAO ->> QB: where("MATCH(pd.name, pd.description, pd.tag) AGAINST(? IN BOOLEAN MODE) OR p.model LIKE ?")
     activate QB
-    QB -->> DAO : SQL Statement + Bindings ("+smart* +tv*")
+    QB -->> DAO: SQL Statement + Bindings ("+smart* +tv*")
     deactivate QB
-    DAO ->> MySQL : Execute SQL ("+smart* +tv*")
+    DAO ->> MySQL: Execute SQL ("+smart* +tv*")
     activate MySQL
-    MySQL -->> DAO : Raw Results Array (15k context match)
+    MySQL -->> DAO: Raw Results Array (15k context match)
     deactivate MySQL
-    DAO -->> Mappers : Raw Data Array
+    DAO -->> Mappers: Raw Data Array
     deactivate DAO
-    Mappers ->> Repos : Hydrate Raw Data to ProductEntities
+    Mappers ->> Repos: Hydrate Raw Data to ProductEntities
     deactivate Mappers
-    Repos -->> FrontAction : Collection of ProductEntities
+    Repos -->> FrontAction: Collection of ProductEntities
     deactivate Repos
-    FrontAction ->> Twig : render('products/list.twig', [products])
+    FrontAction ->> Twig: render('products/list.twig', [products])
     activate Twig
-    Twig ->> Views : Compile & Inject Data
+    Twig ->> Views: Compile & Inject Data
     activate Views
-    Views -->> Twig : Raw HTML text
+    Views -->> Twig: Raw HTML text
     deactivate Views
-    Twig -->> FrontAction : Response with HTML Body
+    Twig -->> FrontAction: Response with HTML Body
     deactivate Twig
-    FrontAction -->> SessionMW : Response
+    FrontAction -->> SessionMW: Response
     deactivate FrontAction
-    SessionMW -->> LangMW : Response
+    SessionMW -->> LangMW: Response
     deactivate SessionMW
-    LangMW -->> Entrypoint : Response
+    LangMW -->> Entrypoint: Response
     deactivate LangMW
-    Entrypoint -->> User : 200 OK (HTML Page)
+    Entrypoint -->> User: 200 OK (HTML Page)
     deactivate Entrypoint

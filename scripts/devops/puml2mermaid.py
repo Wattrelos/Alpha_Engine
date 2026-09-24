@@ -6,11 +6,13 @@ Converte diagramas PlantUML (.puml / .plantuml) para o formato Mermaid (.mmd).
 
 Suporta:
 - Detecção e conversão de diagramas de sequência (Sequence Diagrams)
-- Conversão de elementos (actor, boundary, control, database, participant)
+- Conversão de elementos (actor, boundary, control, database, queue, cloud, entity, collections, participant)
 - Conversão de caixas/agrupamentos (box ... end box -> rect rgb(...) ... end)
-- Divisores e seções (== ... ==)
+  com identificação dos participantes da caixa para ancoragem válida da nota de título
+- Divisores e seções (== ... ==) ancorados nos participantes para sintaxe válida Mermaid
 - Ativação/desativação (activate, deactivate)
-- Notas (note over / note left / note right)
+- Notas de negócio (note over / left of / right of) com escape de quebras e ponto-e-vírgula (#59;)
+- Estruturas de controle (alt, else, opt, loop, par, critical)
 - Suporte a caminhos recursivos (diretórios ou arquivos únicos) via CLI
 """
 
@@ -33,22 +35,94 @@ def hex_to_rgb(hex_str):
             return f"rgb({r}, {g}, {b})"
         except ValueError:
             pass
-    return "rgb(240, 240, 240)"
+    return "rgb(245, 247, 250)"
+
+
+def escapar_caracteres_mermaid(texto):
+    """Escapa caracteres problemáticos para o parser do Mermaid."""
+    # Mermaid trata ponto-e-vírgula não escapado como terminador de comando
+    texto = texto.replace(";", "#59;")
+    # Converte quebras de linha literais \n em tags <br/>
+    texto = texto.replace(r"\n", "<br/>").replace("\n", "<br/>")
+    return texto
+
+
+PARTICIPANT_TYPES = r"(?:actor|boundary|control|database|queue|cloud|participant|entity|collections)"
+
+
+def extrair_todos_participantes(linhas):
+    """Faz uma primeira passagem para coletar a lista de alias de todos os participantes/atores."""
+    participantes = []
+    for linha in linhas:
+        l = linha.strip()
+        if not l or l.startswith("'") or l.startswith("/'"):
+            continue
+
+        # actor "Nome" as Alias ou boundary/control/database/queue/participant "Nome" as Alias
+        m_named = re.match(
+            rf"^{PARTICIPANT_TYPES}\s+\"[^\"]+\"\s+as\s+([\w\.\-]+)",
+            l,
+        )
+        if m_named:
+            participantes.append(m_named.group(1))
+            continue
+
+        # actor Alias ou participant Alias (sem aspas)
+        m_simple = re.match(
+            rf"^{PARTICIPANT_TYPES}\s+([\w\.\-]+)(?:\s+as\s+([\w\.\-]+))?",
+            l,
+        )
+        if m_simple:
+            alias = m_simple.group(2) if m_simple.group(2) else m_simple.group(1)
+            participantes.append(alias)
+            continue
+
+    return participantes
+
+
+def coletar_participantes_da_caixa(linhas, start_idx):
+    """Coleta os alias dos participantes contidos em um bloco box até o correspondente end box."""
+    box_participants = []
+    for i in range(start_idx + 1, len(linhas)):
+        l = linhas[i].strip()
+        if l == "end box" or l == "end":
+            break
+        m_named = re.match(
+            rf"^{PARTICIPANT_TYPES}\s+\"[^\"]+\"\s+as\s+([\w\.\-]+)",
+            l,
+        )
+        if m_named:
+            box_participants.append(m_named.group(1))
+            continue
+        m_simple = re.match(
+            rf"^{PARTICIPANT_TYPES}\s+([\w\.\-]+)(?:\s+as\s+([\w\.\-]+))?",
+            l,
+        )
+        if m_simple:
+            alias = m_simple.group(2) if m_simple.group(2) else m_simple.group(1)
+            box_participants.append(alias)
+            continue
+    return box_participants
 
 
 def traduzir_sequence_diagram(linhas):
     """Traduz o conteúdo de um diagrama de sequência PlantUML para Mermaid sequenceDiagram."""
+    todos_participantes = extrair_todos_participantes(linhas)
+    primeiro_participante = todos_participantes[0] if todos_participantes else "A"
+    ultimo_participante = todos_participantes[-1] if todos_participantes else primeiro_participante
+
     saida = ["sequenceDiagram"]
     in_box = False
+    bloco_stack = []
 
-    for linha in linhas:
+    for idx, linha in enumerate(linhas):
         l = linha.strip()
 
         # Ignora linhas vazias ou comentários PlantUML
         if not l or l.startswith("'") or l.startswith("/'"):
             continue
 
-        # Ignora skinparam, header, title, style, etc.
+        # Ignora skinparam, header, title, style, includes, etc.
         if (
             l.startswith("skinparam")
             or l.startswith("header")
@@ -64,20 +138,26 @@ def traduzir_sequence_diagram(linhas):
             saida.append("    autonumber")
             continue
 
-        # Box com ou sem cor: box "Nome" #HEX ou box "Nome"
-        match_box_open = re.match(r'^box\s*(?:"([^"]+)"|([^\s#]+))?\s*(#[A-Fa-f0-9]{3,8})?', l)
-        if match_box_open and not l.startswith("box "):
-            pass
-
+        # Box com ou sem cor: box "Nome" #HEX
         if l.startswith("box"):
             m = re.match(r'^box(?:\s+"([^"]+)")?(?:\s+(#[A-Fa-f0-9]{3,8}))?', l)
             box_title = m.group(1) if m and m.group(1) else ""
             box_color = m.group(2) if m and m.group(2) else ""
             rgb_color = hex_to_rgb(box_color) if box_color else "rgb(245, 247, 250)"
-            
+
+            box_parts = coletar_participantes_da_caixa(linhas, idx)
             saida.append(f"    rect {rgb_color}")
+
+            # Ancoragem válida da nota de cabeçalho do box
             if box_title:
-                saida.append(f"    note over: {box_title}")
+                title_escaped = escapar_caracteres_mermaid(box_title)
+                if len(box_parts) >= 2:
+                    saida.append(f"    note over {box_parts[0]}, {box_parts[-1]}: {title_escaped}")
+                elif len(box_parts) == 1:
+                    saida.append(f"    note over {box_parts[0]}: {title_escaped}")
+                else:
+                    saida.append(f"    note over {primeiro_participante}: {title_escaped}")
+
             in_box = True
             continue
 
@@ -90,7 +170,8 @@ def traduzir_sequence_diagram(linhas):
         match_actor = re.match(r'^actor\s+"([^"]+)"\s+as\s+([\w\.\-]+)', l)
         if match_actor:
             nome, alias = match_actor.groups()
-            saida.append(f"    actor {alias} as {nome}")
+            nome_limpo = nome.replace(r"\n", " ").replace("\n", " ")
+            saida.append(f"    actor {alias} as {nome_limpo}")
             continue
 
         match_actor_simple = re.match(r'^actor\s+([\w\.\-]+)(?:\s+as\s+([\w\.\-]+))?', l)
@@ -103,16 +184,21 @@ def traduzir_sequence_diagram(linhas):
                 saida.append(f"    actor {name1}")
             continue
 
-        # Boundary, Control, Database, Participant -> Todos mapeados para participant/actor no Mermaid
-        match_named_part = re.match(r'^(?:boundary|control|database|participant|entity|collections)\s+"([^"]+)"\s+as\s+([\w\.\-]+)', l)
+        # Boundary, Control, Database, Queue, Cloud, Participant -> Mapeados para participant no Mermaid
+        match_named_part = re.match(
+            rf"^{PARTICIPANT_TYPES}\s+\"([^\"]+)\"\s+as\s+([\w\.\-]+)",
+            l,
+        )
         if match_named_part:
             nome, alias = match_named_part.groups()
-            # Escapa quebras de linha em participantes
             nome_limpo = nome.replace(r"\n", " ").replace("\n", " ")
             saida.append(f"    participant {alias} as {nome_limpo}")
             continue
 
-        match_simple_part = re.match(r'^(?:boundary|control|database|participant|entity|collections)\s+([\w\.\-]+)(?:\s+as\s+([\w\.\-]+))?', l)
+        match_simple_part = re.match(
+            rf"^{PARTICIPANT_TYPES}\s+([\w\.\-]+)(?:\s+as\s+([\w\.\-]+))?",
+            l,
+        )
         if match_simple_part:
             name1 = match_simple_part.group(1)
             name2 = match_simple_part.group(2)
@@ -122,12 +208,19 @@ def traduzir_sequence_diagram(linhas):
                 saida.append(f"    participant {name1}")
             continue
 
-        # Divisores de fase: == Título ==
+        # Divisores de fase / seções: == Título ==
         match_divider = re.match(r"^==\s*(.*?)\s*==$", l)
         if match_divider:
             div_title = match_divider.group(1)
             if div_title:
-                saida.append(f"    note over: {div_title}")
+                div_title_escaped = escapar_caracteres_mermaid(div_title)
+                # Ancoragem válida sobre todos os participantes (ou primeiro participante)
+                if primeiro_participante != ultimo_participante:
+                    saida.append(
+                        f"    note over {primeiro_participante}, {ultimo_participante}: {div_title_escaped}"
+                    )
+                else:
+                    saida.append(f"    note over {primeiro_participante}: {div_title_escaped}")
             continue
 
         # Ativações e desativações
@@ -141,43 +234,79 @@ def traduzir_sequence_diagram(linhas):
             saida.append(f"    deactivate {match_deact.group(1)}")
             continue
 
-        # Notas: note over A, B: Texto | note left of A: Texto | note right of A: Texto
-        match_note = re.match(r"^note\s+(over|left of|right of)\s+([\w\.\-,\s]+)(?:#[A-Fa-f0-9]+)?\s*:\s*(.*)$", l)
+        # Notas: note over A, B #HEX: Texto | note left of A: Texto | note right of A: Texto
+        match_note = re.match(
+            r"^note\s+(over|left of|right of)\s+([\w\.\-,\s]+?)(?:\s+#[A-Fa-f0-9]{3,8})?\s*:\s*(.*)$",
+            l,
+        )
         if match_note:
             pos, targets, note_text = match_note.groups()
-            targets = targets.strip()
-            # Converte múltiplos alvos para formato Mermaid (A, B)
             targets_clean = ", ".join([t.strip() for t in targets.split(",") if t.strip()])
-            saida.append(f"    note {pos} {targets_clean}: {note_text}")
+            note_escaped = escapar_caracteres_mermaid(note_text)
+            saida.append(f"    note {pos} {targets_clean}: {note_escaped}")
             continue
 
-        # Estruturas de controle: alt, else, opt, loop, par, critical
-        match_block = re.match(r"^(alt|else|opt|loop|par|critical)(?:\s+(.*))?$", l)
-        if match_block:
-            kw = match_block.group(1)
-            label = match_block.group(2) or ""
-            if label:
-                saida.append(f"    {kw} {label}")
+        # Início de bloco de controle
+        match_block_open = re.match(r"^(group|alt|opt|loop|par|critical)(?:\s+(.*))?$", l)
+        if match_block_open:
+            kw = match_block_open.group(1)
+            label = match_block_open.group(2) or ""
+            label_escaped = escapar_caracteres_mermaid(label) if label else ""
+
+            # PlantUML 'group' mapeia para Mermaid 'critical'
+            mermaid_kw = "critical" if kw == "group" else kw
+            bloco_stack.append(mermaid_kw)
+
+            if label_escaped:
+                saida.append(f"    {mermaid_kw} {label_escaped}")
+            else:
+                saida.append(f"    {mermaid_kw}")
+            continue
+
+        # Ramo alternativo: else
+        match_else = re.match(r"^else(?:\s+(.*))?$", l)
+        if match_else:
+            label = match_else.group(1) or ""
+            # Remove código hex se presente em else #HEX [Label]
+            label = re.sub(r"^#[A-Fa-f0-9]{3,8}\s*", "", label).strip()
+            label_escaped = escapar_caracteres_mermaid(label) if label else ""
+
+            # Se o bloco atual na pilha for 'critical', o ramo secundário no Mermaid é 'option'
+            current_block = bloco_stack[-1] if bloco_stack else "alt"
+            kw = "option" if current_block == "critical" else "else"
+
+            if label_escaped:
+                saida.append(f"    {kw} {label_escaped}")
             else:
                 saida.append(f"    {kw}")
             continue
 
         if l == "end":
+            if bloco_stack:
+                bloco_stack.pop()
             saida.append("    end")
             continue
 
-        # Mensagens / Setas
-        # Trata quebras de linha com \n
-        l_msg = l.replace(r"\n", "<br/>")
+        # Mensagens / Setas entre participantes
+        # Exemplo: A -> B : Mensagem; ou A --> B : Mensagem
+        match_msg = re.match(r"^([\w\.\-]+)\s*(-->>|-->|->>|->|-x|--x)\s*([\w\.\-]+)\s*:\s*(.*)$", l)
+        if match_msg:
+            origem_actor, arrow, destino_actor, msg_text = match_msg.groups()
+            # Normaliza tipo de seta para Mermaid
+            if "-->" in arrow or "-->>" in arrow:
+                mermaid_arrow = "-->>"
+            elif "-x" in arrow or "--x" in arrow:
+                mermaid_arrow = "-x"
+            else:
+                mermaid_arrow = "->>"
 
-        # Conversão de setas PlantUML para Mermaid:
-        # --> ou -->> (retorno dashed) -> -->>
-        # ->> ou -> (chamada sólida síncrona) -> ->>
-        # -x ou --x (falha/perda) -> -x
-        l_msg = re.sub(r"\s+-->\s+", " -->> ", l_msg)
-        l_msg = re.sub(r"\s+->\s+", " ->> ", l_msg)
+            msg_escaped = escapar_caracteres_mermaid(msg_text)
+            saida.append(f"    {origem_actor} {mermaid_arrow} {destino_actor}: {msg_escaped}")
+            continue
 
-        saida.append(f"    {l_msg}")
+        # Linha genérica
+        l_escaped = escapar_caracteres_mermaid(l)
+        saida.append(f"    {l_escaped}")
 
     return "\n".join(saida)
 
@@ -194,16 +323,15 @@ def traduzir_plantuml_para_mermaid(conteudo_puml):
     linhas = conteudo_limpo.splitlines()
 
     # Detecta se é diagrama de sequência
-    # Se contém setas de sequência, participant, actor, etc.
     is_sequence = any(
-        re.search(r"->|-->|actor\s|participant\s|boundary\s|control\s|database\s", linha)
+        re.search(r"->|-->|actor\s|participant\s|boundary\s|control\s|database\s|queue\s", linha)
         for linha in linhas
     )
 
     if is_sequence:
         return traduzir_sequence_diagram(linhas)
 
-    # Caso geral / fallback: gera flowchart ou diagrama básico
+    # Caso geral / fallback
     linhas_saida = ["flowchart TD"]
     for linha in linhas:
         l = linha.strip()

@@ -1,8 +1,8 @@
 sequenceDiagram
     left to right direction
-    actor Guest as Visitante\n(Guest)
-    actor Customer as Cliente Logado\n(Customer)
-    actor System as Sistema / Gateway\n(Alpha Engine)
+    actor Guest as Visitante (Guest)
+    actor Customer as Cliente Logado (Customer)
+    actor System as Sistema / Gateway (Alpha Engine)
     Guest <|-- Customer : Herda permissões
     rectangle "Alpha Engine - Loja Virtual & Portal do Cliente" {
     package "Catálogo, Busca & Mídia" {
@@ -45,14 +45,14 @@ sequenceDiagram
     usecase "Aprovar BoQ & Enviar ao Carrinho<br/>(/boq)" as UC_ApproveBoq
     }
     }
-    Guest -->> UC_Nav
-    Guest -->> UC_Search
-    Guest -->> UC_ProductDetail
-    Guest -->> UC_Cart
-    Guest -->> UC_Register
-    Guest -->> UC_Login
-    Guest -->> UC_ForgotPass
-    Guest -->> UC_Checkout
+    Guest --> UC_Nav
+    Guest --> UC_Search
+    Guest --> UC_ProductDetail
+    Guest --> UC_Cart
+    Guest --> UC_Register
+    Guest --> UC_Login
+    Guest --> UC_ForgotPass
+    Guest --> UC_Checkout
     UC_ProductDetail <.. UC_Variants : <<extend>>
     UC_ProductDetail ..> UC_MediaCache : <<include>>
     UC_Cart <.. UC_Shipping : <<extend>>
@@ -60,20 +60,20 @@ sequenceDiagram
     UC_Checkout <.. UC_GuestCheckout : <<extend>>
     UC_Checkout ..> UC_Payment : <<include>>
     UC_Login ..> UC_SyncSession : <<include>>
-    Customer -->> UC_AccountDash
-    Customer -->> UC_EditAccount
-    Customer -->> UC_ChangePass
-    Customer -->> UC_Addresses
-    Customer -->> UC_Wishlist
-    Customer -->> UC_Orders
-    Customer -->> UC_Transactions
-    Customer -->> UC_Returns
-    Customer -->> UC_Newsletter
-    Customer -->> UC_CreateRfq
-    Customer -->> UC_MyProjects
+    Customer --> UC_AccountDash
+    Customer --> UC_EditAccount
+    Customer --> UC_ChangePass
+    Customer --> UC_Addresses
+    Customer --> UC_Wishlist
+    Customer --> UC_Orders
+    Customer --> UC_Transactions
+    Customer --> UC_Returns
+    Customer --> UC_Newsletter
+    Customer --> UC_CreateRfq
+    Customer --> UC_MyProjects
     UC_MyProjects <.. UC_CompareBids : <<extend>>
     UC_CompareBids <.. UC_AcceptBid : <<extend>>
     UC_MyProjects <.. UC_ApproveBoq : <<extend>>
     UC_ApproveBoq ..> UC_Cart : <<include>>
-    System -->> UC_Payment
-    System -->> UC_MediaCache
+    System --> UC_Payment
+    System --> UC_MediaCache

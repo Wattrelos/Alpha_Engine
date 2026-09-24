@@ -5,11 +5,11 @@ sequenceDiagram
     participant Engine as Motor de Cálculo JS (materials-calculator.js)
     participant CartController as Controlador de Carrinho (AddCartAction.php)
     participant CartRepo as Repositório do Carrinho (CartRepository.php)
-    note over: Abertura da Calculadora na PDP
+    note over User, CartRepo: Abertura da Calculadora na PDP
     User ->> PDP: Clica em "Calcular quantidade de caixas" (fa-calculator)
     PDP ->> Modal: Abre modal interativo de cálculo (Revestimento Parede / Piso)
     Modal -->> User: Exibe campos de dimensões, vãos e rendimento (m²/caixa)
-    note over: Entrada de Parâmetros e Cálculo em Tempo Real
+    note over User, CartRepo: Entrada de Parâmetros e Cálculo em Tempo Real
     alt Cálculo de Revestimento de Parede (RF026, RF027, RF029, RF030)
     User ->> Modal: Seleciona tipo "Parede"
     User ->> Modal: Informa comprimento, largura e pé-direito (m)
@@ -34,7 +34,7 @@ sequenceDiagram
     Engine ->> Engine: Caixas = CEIL(Área Total / Rendimento Caixa)
     Engine -->> Modal: Atualiza resumo de m² e total de caixas em tempo real
     end
-    note over: Exibição de Disclaimer e Aplicação ao Pedido
+    note over User, CartRepo: Exibição de Disclaimer e Aplicação ao Pedido
     Modal -->> User: Exibe resumo detalhado e Aviso Legal / Disclaimer (RF032)
     alt Opção 1: Aplicar Quantidade na PDP (RF031)
     User ->> Modal: Clica em "Aplicar Quantidade"

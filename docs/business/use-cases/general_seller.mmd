@@ -1,8 +1,8 @@
 sequenceDiagram
     left to right direction
-    actor SalesRep as Sales Representative\n(Vendedor)
-    actor Customer as Customer\n(Cliente)
-    actor Cashier as Cashier\n(Caixa)
+    actor SalesRep as Sales Representative (Vendedor)
+    actor Customer as Customer (Cliente)
+    actor Cashier as Cashier (Caixa)
     rectangle "AgSonhos POS System" {
     package "Sales Module<br/>(Módulo Vendedor)" {
     usecase "Browse Product Catalog<br/>(Navegar no Catálogo)" as UC_Catalog
@@ -24,23 +24,23 @@ sequenceDiagram
     usecase "Pay via Cash (Change Calc)<br/>(Pagar com Dinheiro)" as UC_PayCash
     }
     }
-    SalesRep -->> UC_Catalog
-    SalesRep -->> UC_Customer
-    SalesRep -->> UC_CreateOrder
+    SalesRep --> UC_Catalog
+    SalesRep --> UC_Customer
+    SalesRep --> UC_CreateOrder
     UC_Catalog <.. UC_Stock : <<include>>
     UC_Catalog <.. UC_Variants : <<extend>>
     UC_CreateOrder ..> UC_AddItems : <<include>>
     UC_CreateOrder ..> UC_SaveOrder : <<include>>
     UC_SaveOrder ..> UC_Ticket : <<include>>
-    Cashier -->> UC_SearchOrder
-    Cashier -->> UC_Payment
-    Cashier -->> UC_Finalize
+    Cashier --> UC_SearchOrder
+    Cashier --> UC_Payment
+    Cashier --> UC_Finalize
     UC_Payment <|-- UC_PayPix
     UC_Payment <|-- UC_PayCard
     UC_Payment <|-- UC_PayCash
     UC_Finalize ..> UC_Receipt : <<include>>
-    Customer -->> UC_Customer : Provides details
+    Customer -->> UC_Customer: Provides details
     Customer <-- UC_Ticket : Receives ticket
-    Customer -->> Cashier : Presents ticket & pays
+    Customer -->> Cashier: Presents ticket & pays
     UC_Payment <-- Customer : Interacts with payment method
     @endum

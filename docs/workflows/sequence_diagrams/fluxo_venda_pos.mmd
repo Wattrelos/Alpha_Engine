@@ -3,24 +3,24 @@ sequenceDiagram
     actor Customer as Customer
     actor SalesRep as Sales Rep
     rect rgb(224, 242, 254)
-    note over: POS Web Interface (Frontend)
+    note over SalesScreen, CashierScreen: POS Web Interface (Frontend)
     participant SalesScreen as Catalog / Create Order Screen
     participant CashierScreen as Cashier Checkout Screen
     end
     rect rgb(237, 233, 254)
-    note over: Slim 4 Entry & Middleware Stack
+    note over Router, Middleware: Slim 4 Entry & Middleware Stack
     participant Router as Router
     participant Middleware as AdminSessionMiddleware
     end
     rect rgb(255, 249, 196)
-    note over: Application Actions (Slim Actions)
+    note over SearchAction, PayOrderAction: Application Actions (Slim Actions)
     participant SearchAction as SearchProductAction
     participant CreatePreOrderAction as CreatePreOrderAction
     participant GetPreOrderAction as GetPreOrderAction
     participant PayOrderAction as PayOrderAction
     end
     rect rgb(220, 252, 231)
-    note over: Domain & Persistence Layer
+    note over ProductRepo, DAO: Domain & Persistence Layer
     participant ProductRepo as ProductRepository
     participant OrderRepo as OrderRepository
     participant UoW as UnitOfWork
@@ -29,201 +29,201 @@ sequenceDiagram
     participant DAO as DataAccessObject (DAO)
     end
     rect rgb(241, 245, 249)
-    note over: Infrastructure Support
+    note over DB, Redis: Infrastructure Support
     participant DB as MySQL Database
     participant Redis as Redis Cache (Session & Idempotency)
     end
     actor Cashier as Cashier
-    note over: Phase 1: Sales Rep Creates Pre-Order
-    Customer ->> SalesRep : Requests products
-    SalesRep ->> SalesScreen : Search product by name/code
-    SalesScreen ->> Router : GET /LPDHED2dC7Gjrg2b/pos/produtos/buscar?q=...
+    note over Customer, Cashier: Phase 1: Sales Rep Creates Pre-Order
+    Customer ->> SalesRep: Requests products
+    SalesRep ->> SalesScreen: Search product by name/code
+    SalesScreen ->> Router: GET /LPDHED2dC7Gjrg2b/pos/produtos/buscar?q=...
     activate Router
-    Router ->> Middleware : process(Request, Handler)
+    Router ->> Middleware: process(Request, Handler)
     activate Middleware
-    Middleware ->> Redis : Check session token (sessao:admin:{sessionId})
+    Middleware ->> Redis: Check session token (sessao:admin:{sessionId})
     activate Redis
-    Redis -->> Middleware : Session valid (Sales Rep role)
+    Redis -->> Middleware: Session valid (Sales Rep role)
     deactivate Redis
-    Middleware ->> SearchAction : __invoke(Request)
+    Middleware ->> SearchAction: __invoke(Request)
     activate SearchAction
-    SearchAction ->> ProductRepo : searchProducts(query)
+    SearchAction ->> ProductRepo: searchProducts(query)
     activate ProductRepo
-    ProductRepo ->> DAO : query(SQL)
+    ProductRepo ->> DAO: query(SQL)
     activate DAO
-    DAO ->> DB : SELECT * FROM oc_product ...
+    DAO ->> DB: SELECT * FROM oc_product ...
     activate DB
-    DB -->> DAO : Raw Product Data
+    DB -->> DAO: Raw Product Data
     deactivate DB
-    DAO -->> ProductRepo : Raw Product Data
+    DAO -->> ProductRepo: Raw Product Data
     deactivate DAO
-    ProductRepo ->> ProductMapper : mapToDomain(RawData)
+    ProductRepo ->> ProductMapper: mapToDomain(RawData)
     activate ProductMapper
-    ProductMapper -->> ProductRepo : Product Entities list
+    ProductMapper -->> ProductRepo: Product Entities list
     deactivate ProductMapper
-    ProductRepo -->> SearchAction : Product Entities list
+    ProductRepo -->> SearchAction: Product Entities list
     deactivate ProductRepo
-    SearchAction -->> SalesScreen : Return JSON (Product details + stock)
+    SearchAction -->> SalesScreen: Return JSON (Product details + stock)
     deactivate SearchAction
-    Middleware -->> Router : Response
+    Middleware -->> Router: Response
     deactivate Middleware
-    Router -->> SalesScreen : Response (JSON)
+    Router -->> SalesScreen: Response (JSON)
     deactivate Router
-    SalesScreen -->> SalesRep : Display products with photos & stock
-    SalesRep ->> SalesScreen : Add items to cart & Identify Customer
-    SalesRep ->> SalesScreen : Click "Save Order"
-    SalesScreen ->> Router : POST /LPDHED2dC7Gjrg2b/pos/pedidos/salvar<br/>(Cart JSON + Customer ID + Idempotency-Key)
+    SalesScreen -->> SalesRep: Display products with photos & stock
+    SalesRep ->> SalesScreen: Add items to cart & Identify Customer
+    SalesRep ->> SalesScreen: Click "Save Order"
+    SalesScreen ->> Router: POST /LPDHED2dC7Gjrg2b/pos/pedidos/salvar<br/>(Cart JSON + Customer ID + Idempotency-Key)
     activate Router
-    Router ->> Middleware : process(Request, Handler)
+    Router ->> Middleware: process(Request, Handler)
     activate Middleware
-    Middleware ->> CreatePreOrderAction : __invoke(Request)
+    Middleware ->> CreatePreOrderAction: __invoke(Request)
     activate CreatePreOrderAction
     note over CreatePreOrderAction, Redis: **Idempotency Control (Redis Lock):** Prevents duplicate pre-order creation (SETNX ttl=5min)
-    CreatePreOrderAction ->> Redis : SETNX(Idempotency-Key, "PROCESSING", expire: 5min)
+    CreatePreOrderAction ->> Redis: SETNX(Idempotency-Key, "PROCESSING", expire: 5min)
     activate Redis
-    Redis -->> CreatePreOrderAction : OK (Lock acquired)
+    Redis -->> CreatePreOrderAction: OK (Lock acquired)
     deactivate Redis
-    CreatePreOrderAction ->> UoW : transaction(callback)
+    CreatePreOrderAction ->> UoW: transaction(callback)
     activate UoW
-    UoW ->> DB : BEGIN TRANSACTION
-    CreatePreOrderAction ->> OrderRepo : save(OrderEntity)
+    UoW ->> DB: BEGIN TRANSACTION
+    CreatePreOrderAction ->> OrderRepo: save(OrderEntity)
     activate OrderRepo
-    OrderRepo ->> OrderMapper : mapToDatabase(OrderEntity)
+    OrderRepo ->> OrderMapper: mapToDatabase(OrderEntity)
     activate OrderMapper
-    OrderMapper ->> DAO : execute(INSERT INTO oc_order...)
+    OrderMapper ->> DAO: execute(INSERT INTO oc_order...)
     activate DAO
-    DAO ->> DB : INSERT INTO orders (status='pending')
+    DAO ->> DB: INSERT INTO orders (status='pending')
     activate DB
-    DB -->> DAO : Order ID (e.g. #150)
+    DB -->> DAO: Order ID (e.g. #150)
     deactivate DB
-    DAO ->> DB : INSERT INTO order_items...
+    DAO ->> DB: INSERT INTO order_items...
     activate DB
-    DB -->> DAO : Insert Success
+    DB -->> DAO: Insert Success
     deactivate DB
-    DAO -->> OrderMapper : Mapping Done
+    DAO -->> OrderMapper: Mapping Done
     deactivate DAO
-    OrderMapper -->> OrderRepo : Success
+    OrderMapper -->> OrderRepo: Success
     deactivate OrderMapper
-    OrderRepo -->> CreatePreOrderAction : Success
+    OrderRepo -->> CreatePreOrderAction: Success
     deactivate OrderRepo
-    CreatePreOrderAction ->> ProductRepo : reserveStock(items)
+    CreatePreOrderAction ->> ProductRepo: reserveStock(items)
     activate ProductRepo
-    ProductRepo ->> ProductMapper : mapToDatabase(ProductEntity)
+    ProductRepo ->> ProductMapper: mapToDatabase(ProductEntity)
     activate ProductMapper
-    ProductMapper ->> DAO : execute(UPDATE stock...)
+    ProductMapper ->> DAO: execute(UPDATE stock...)
     activate DAO
-    DAO ->> DB : UPDATE inventory (temporary block)
+    DAO ->> DB: UPDATE inventory (temporary block)
     activate DB
-    DB -->> DAO : Rows affected
+    DB -->> DAO: Rows affected
     deactivate DB
-    DAO -->> ProductMapper : Success
+    DAO -->> ProductMapper: Success
     deactivate DAO
-    ProductMapper -->> ProductRepo : Success
+    ProductMapper -->> ProductRepo: Success
     deactivate ProductMapper
-    ProductRepo -->> CreatePreOrderAction : Success
+    ProductRepo -->> CreatePreOrderAction: Success
     deactivate ProductRepo
-    UoW ->> DB : COMMIT
-    UoW -->> CreatePreOrderAction : Committed
+    UoW ->> DB: COMMIT
+    UoW -->> CreatePreOrderAction: Committed
     deactivate UoW
-    CreatePreOrderAction ->> Redis : SET(Idempotency-Key, "SUCCESS", expire: 5min)
+    CreatePreOrderAction ->> Redis: SET(Idempotency-Key, "SUCCESS", expire: 5min)
     activate Redis
-    Redis -->> CreatePreOrderAction : OK
+    Redis -->> CreatePreOrderAction: OK
     deactivate Redis
-    CreatePreOrderAction -->> SalesScreen : Return JSON (Success + Order ID #150)
+    CreatePreOrderAction -->> SalesScreen: Return JSON (Success + Order ID #150)
     deactivate CreatePreOrderAction
-    Middleware -->> Router : Response
+    Middleware -->> Router: Response
     deactivate Middleware
-    Router -->> SalesScreen : Response (JSON)
+    Router -->> SalesScreen: Response (JSON)
     deactivate Router
-    SalesScreen -->> SalesRep : Show success message & Print pre-order ticket
-    SalesRep ->> Customer : Hand over Order Ticket (#150)
-    note over: Phase 2: Cashier Processes Payment
-    Customer ->> Cashier : Presents Order Ticket (#150)
-    Cashier ->> CashierScreen : Input Order ID (#150) & press Enter
-    CashierScreen ->> Router : GET /LPDHED2dC7Gjrg2b/pos/pedidos/150
+    SalesScreen -->> SalesRep: Show success message & Print pre-order ticket
+    SalesRep ->> Customer: Hand over Order Ticket (#150)
+    note over Customer, Cashier: Phase 2: Cashier Processes Payment
+    Customer ->> Cashier: Presents Order Ticket (#150)
+    Cashier ->> CashierScreen: Input Order ID (#150) & press Enter
+    CashierScreen ->> Router: GET /LPDHED2dC7Gjrg2b/pos/pedidos/150
     activate Router
-    Router ->> Middleware : process(Request, Handler)
+    Router ->> Middleware: process(Request, Handler)
     activate Middleware
-    Middleware ->> Redis : Check session token (sessao:admin:{sessionId})
+    Middleware ->> Redis: Check session token (sessao:admin:{sessionId})
     activate Redis
-    Redis -->> Middleware : Session valid (Cashier role)
+    Redis -->> Middleware: Session valid (Cashier role)
     deactivate Redis
-    Middleware ->> GetPreOrderAction : __invoke(Request)
+    Middleware ->> GetPreOrderAction: __invoke(Request)
     activate GetPreOrderAction
-    GetPreOrderAction ->> OrderRepo : getOrder(150)
+    GetPreOrderAction ->> OrderRepo: getOrder(150)
     activate OrderRepo
-    OrderRepo ->> DAO : query(SQL)
+    OrderRepo ->> DAO: query(SQL)
     activate DAO
-    DAO ->> DB : SELECT * FROM oc_order WHERE order_id=150
+    DAO ->> DB: SELECT * FROM oc_order WHERE order_id=150
     activate DB
-    DB -->> DAO : Raw Order Data
+    DB -->> DAO: Raw Order Data
     deactivate DB
-    DAO -->> OrderRepo : Raw Order Data
+    DAO -->> OrderRepo: Raw Order Data
     deactivate DAO
-    OrderRepo ->> OrderMapper : mapToDomain(RawData)
+    OrderRepo ->> OrderMapper: mapToDomain(RawData)
     activate OrderMapper
-    OrderMapper -->> OrderRepo : Order Entity
+    OrderMapper -->> OrderRepo: Order Entity
     deactivate OrderMapper
-    OrderRepo -->> GetPreOrderAction : Order Entity
+    OrderRepo -->> GetPreOrderAction: Order Entity
     deactivate OrderRepo
-    GetPreOrderAction -->> CashierScreen : Return JSON (Order details)
+    GetPreOrderAction -->> CashierScreen: Return JSON (Order details)
     deactivate GetPreOrderAction
-    Middleware -->> Router : Response
+    Middleware -->> Router: Response
     deactivate Middleware
-    Router -->> CashierScreen : Response (JSON)
+    Router -->> CashierScreen: Response (JSON)
     deactivate Router
-    CashierScreen -->> Cashier : Display cart items, total and payment options
-    Customer ->> Cashier : Pay via Pix / Card / Cash
-    Cashier ->> CashierScreen : Select payment method & click "Complete Sale"
-    CashierScreen ->> Router : POST /LPDHED2dC7Gjrg2b/pos/pedidos/150/pagar (Payment Details)
+    CashierScreen -->> Cashier: Display cart items, total and payment options
+    Customer ->> Cashier: Pay via Pix / Card / Cash
+    Cashier ->> CashierScreen: Select payment method & click "Complete Sale"
+    CashierScreen ->> Router: POST /LPDHED2dC7Gjrg2b/pos/pedidos/150/pagar (Payment Details)
     activate Router
-    Router ->> Middleware : process(Request, Handler)
+    Router ->> Middleware: process(Request, Handler)
     activate Middleware
-    Middleware ->> PayOrderAction : __invoke(Request)
+    Middleware ->> PayOrderAction: __invoke(Request)
     activate PayOrderAction
-    PayOrderAction ->> UoW : transaction(callback)
+    PayOrderAction ->> UoW: transaction(callback)
     activate UoW
-    UoW ->> DB : BEGIN TRANSACTION
-    PayOrderAction ->> OrderRepo : confirm(150, status='completed', cashier_id)
+    UoW ->> DB: BEGIN TRANSACTION
+    PayOrderAction ->> OrderRepo: confirm(150, status='completed', cashier_id)
     activate OrderRepo
-    OrderRepo ->> OrderMapper : mapToDatabase(OrderEntity)
+    OrderRepo ->> OrderMapper: mapToDatabase(OrderEntity)
     activate OrderMapper
-    OrderMapper ->> DAO : execute(UPDATE oc_order...)
+    OrderMapper ->> DAO: execute(UPDATE oc_order...)
     activate DAO
-    DAO ->> DB : UPDATE orders (status='completed')
+    DAO ->> DB: UPDATE orders (status='completed')
     activate DB
-    DB -->> DAO : Success
+    DB -->> DAO: Success
     deactivate DB
-    DAO -->> OrderMapper : Success
+    DAO -->> OrderMapper: Success
     deactivate DAO
-    OrderMapper -->> OrderRepo : Success
+    OrderMapper -->> OrderRepo: Success
     deactivate OrderMapper
-    OrderRepo -->> PayOrderAction : Success
+    OrderRepo -->> PayOrderAction: Success
     deactivate OrderRepo
-    PayOrderAction ->> ProductRepo : deductStock(items)
+    PayOrderAction ->> ProductRepo: deductStock(items)
     activate ProductRepo
-    ProductRepo ->> ProductMapper : mapToDatabase(ProductEntity)
+    ProductRepo ->> ProductMapper: mapToDatabase(ProductEntity)
     activate ProductMapper
-    ProductMapper ->> DAO : execute(UPDATE stock...)
+    ProductMapper ->> DAO: execute(UPDATE stock...)
     activate DAO
-    DAO ->> DB : UPDATE inventory (deduct definitively)
+    DAO ->> DB: UPDATE inventory (deduct definitively)
     activate DB
-    DB -->> DAO : Rows affected
+    DB -->> DAO: Rows affected
     deactivate DB
-    DAO -->> ProductMapper : Success
+    DAO -->> ProductMapper: Success
     deactivate DAO
-    ProductMapper -->> ProductRepo : Success
+    ProductMapper -->> ProductRepo: Success
     deactivate ProductMapper
-    ProductRepo -->> PayOrderAction : Success
+    ProductRepo -->> PayOrderAction: Success
     deactivate ProductRepo
-    UoW ->> DB : COMMIT
-    UoW -->> PayOrderAction : Committed
+    UoW ->> DB: COMMIT
+    UoW -->> PayOrderAction: Committed
     deactivate UoW
-    PayOrderAction -->> CashierScreen : Return JSON (Success)
+    PayOrderAction -->> CashierScreen: Return JSON (Success)
     deactivate PayOrderAction
-    Middleware -->> Router : Response
+    Middleware -->> Router: Response
     deactivate Middleware
-    Router -->> CashierScreen : Response (JSON)
+    Router -->> CashierScreen: Response (JSON)
     deactivate Router
-    CashierScreen ->> Cashier : Trigger receipt printing
-    Cashier ->> Customer : Deliver products and printed receipt
+    CashierScreen ->> Cashier: Trigger receipt printing
+    Cashier ->> Customer: Deliver products and printed receipt

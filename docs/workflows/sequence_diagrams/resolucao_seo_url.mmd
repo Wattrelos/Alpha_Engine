@@ -1,60 +1,60 @@
 sequenceDiagram
     autonumber
     rect rgb(224, 242, 254)
-    note over: Cliente & Pipeline Middleware Slim 4
+    note over User, Middleware: Cliente & Pipeline Middleware Slim 4
     actor User as Navegador / Usuário
     participant Router as Slim 4 Router
     participant Middleware as LegacyRouteRedirectMiddleware
     end
     rect rgb(255, 249, 196)
-    note over: Módulo SEO & Camada de Cache (Alpha Engine)
+    note over SeoRepo, DiskCache: Módulo SEO & Camada de Cache (Alpha Engine)
     participant SeoRepo as SeoUrlRepository
     participant DiskCache as FilesystemCacheStrategy (storage/cache/)
     end
     rect rgb(220, 252, 231)
-    note over: Persistência SQL & Handler de Destino
+    note over DB, TargetAction: Persistência SQL & Handler de Destino
     participant DB as MySQL Database (tbkk_seo_url)
     participant TargetAction as Slim Action Target (ex: ShowProductAction)
     end
-    note over: 1. Intercepção da URL Amigável e Consulta de Cache
-    User ->> Router : HTTP GET /smartphones/iphone-15-pro
+    note over User, TargetAction: 1. Intercepção da URL Amigável e Consulta de Cache
+    User ->> Router: HTTP GET /smartphones/iphone-15-pro
     activate Router
-    Router ->> Middleware : process(Request, Handler)
+    Router ->> Middleware: process(Request, Handler)
     activate Middleware
-    Middleware ->> Middleware : Extrai keyword da URI = "smartphones/iphone-15-pro"
-    Middleware ->> SeoRepo : getSeoUrlByKeyword("smartphones/iphone-15-pro", storeId = 1, languageId = 1)
+    Middleware ->> Middleware: Extrai keyword da URI = "smartphones/iphone-15-pro"
+    Middleware ->> SeoRepo: getSeoUrlByKeyword("smartphones/iphone-15-pro", storeId = 1, languageId = 1)
     activate SeoRepo
-    SeoRepo ->> DiskCache : get("seo_url.smartphones_iphone_15_pro")
+    SeoRepo ->> DiskCache: get("seo_url.smartphones_iphone_15_pro")
     activate DiskCache
     alt Cache HIT (Rota encontrada em arquivo)
-    DiskCache -->> SeoRepo : Cached Object [key: "product_id", value: "42"]
+    DiskCache -->> SeoRepo: Cached Object [key: "product_id", value: "42"]
     else Cache MISS (Primeiro acesso à URL)
-    DiskCache -->> SeoRepo : null
-    SeoRepo ->> DB : SELECT query FROM tbkk_seo_url WHERE keyword = 'smartphones/iphone-15-pro' AND store_id = 1
+    DiskCache -->> SeoRepo: null
+    SeoRepo ->> DB: SELECT query FROM tbkk_seo_url WHERE keyword = 'smartphones/iphone-15-pro' AND store_id = 1
     activate DB
-    DB -->> SeoRepo : ResultRow [query: "product_id=42"]
+    DB -->> SeoRepo: ResultRow [query: "product_id=42"]
     deactivate DB
-    SeoRepo ->> DiskCache : set("seo_url.smartphones_iphone_15_pro", Object, TTL = 86400s)
+    SeoRepo ->> DiskCache: set("seo_url.smartphones_iphone_15_pro", Object, TTL = 86400s)
     activate DiskCache
-    DiskCache -->> SeoRepo : Sucesso ao gravar cache em disco
+    DiskCache -->> SeoRepo: Sucesso ao gravar cache em disco
     deactivate DiskCache
     end
     deactivate DiskCache
-    SeoRepo -->> Middleware : SeoUrlDTO [key: "product_id", value: 42, target: "product/product"]
+    SeoRepo -->> Middleware: SeoUrlDTO [key: "product_id", value: 42, target: "product/product"]
     deactivate SeoRepo
-    note over: 2. Mapeamento Interno de Parâmetros e Execução da Action
-    note over Middleware, TargetAction: **Reescrita Transparente:**\nO Middleware injeta 'product_id = 42' nos atributos da requisição Slim\nsem realizar redirecionamento 301/302 visível ao cliente.
-    Middleware ->> Middleware : $request = $request->withAttribute('product_id', '42')
-    Middleware ->> TargetAction : __invoke(Request, Response)
+    note over User, TargetAction: 2. Mapeamento Interno de Parâmetros e Execução da Action
+    note over Middleware, TargetAction: **Reescrita Transparente:**<br/>O Middleware injeta 'product_id = 42' nos atributos da requisição Slim<br/>sem realizar redirecionamento 301/302 visível ao cliente.
+    Middleware ->> Middleware: $request = $request->withAttribute('product_id', '42')
+    Middleware ->> TargetAction: __invoke(Request, Response)
     activate TargetAction
-    TargetAction ->> TargetAction : Obtém 'product_id' (42) dos atributos da requisição
-    TargetAction ->> DB : SELECT * FROM tbkk_product WHERE product_id = 42
+    TargetAction ->> TargetAction: Obtém 'product_id' (42) dos atributos da requisição
+    TargetAction ->> DB: SELECT * FROM tbkk_product WHERE product_id = 42
     activate DB
-    DB -->> TargetAction : Dados do Produto
+    DB -->> TargetAction: Dados do Produto
     deactivate DB
-    TargetAction -->> Middleware : Response HTTP 200 OK (HTML do Produto Renderizado)
+    TargetAction -->> Middleware: Response HTTP 200 OK (HTML do Produto Renderizado)
     deactivate TargetAction
-    Middleware -->> Router : Response Final
+    Middleware -->> Router: Response Final
     deactivate Middleware
-    Router -->> User : HTTP 200 OK (Exibe página do iPhone 15 Pro na URL amigável)
+    Router -->> User: HTTP 200 OK (Exibe página do iPhone 15 Pro na URL amigável)
     deactivate Router

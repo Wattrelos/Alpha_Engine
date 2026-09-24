@@ -7,12 +7,12 @@ sequenceDiagram
     }
     |#E0F2FE|Titular dos Dados / DPO|
     start
-    :Solicita exclusão de dados pessoais e direito ao esquecimento (/account/lgpd/forget);
+    :Solicita exclusão de dados pessoais e direito ao esquecimento (/account/lgpd/forget)#59;
     |#FFF9C4|Engine de Governança & Compliance|
-    :Valida identidade do solicitante e token de segurança de 2 fatores (2FA);
+    :Valida identidade do solicitante e token de segurança de 2 fatores (2FA)#59;
     if (Identidade Confirmada?) then (sim)
     |#DCFCE7|Persistência & Análise Legal|
-    :Verifica existência de pedidos vinculados ao customer_id nos últimos 5 anos;
+    :Verifica existência de pedidos vinculados ao customer_id nos últimos 5 anos#59;
     note right #FFFBEB
     **Exceção de Retenção Legal (Art. 16, I da LGPD):**
     Dados fiscais e históricos de compras devem ser mantidos
@@ -20,29 +20,29 @@ sequenceDiagram
     end note
     if (Possui obrigações de guarda fiscal ativa?) then (sim - retenção obrigatória)
     |Engine de Governança & Compliance|
-    :Mantém registros fiscais estritamente necessários na tabela tbkk_order;
-    :Invoca LgpdSanitizer::sanitizeCustomerRecord();
+    :Mantém registros fiscais estritamente necessários na tabela tbkk_order#59;
+    :Invoca LgpdSanitizer::sanitizeCustomerRecord()#59;
     else (não - sem histórico fiscal recente)
     |Engine de Governança & Compliance|
-    :Invoca LgpdSanitizer::anonymizeCompletely();
+    :Invoca LgpdSanitizer::anonymizeCompletely()#59;
     endif
     |Engine de Governança & Compliance|
     partition "Processo de Sanitização (LgpdSanitizer)" {
-    :Mascara Nome e Sobrenome ("João Silva" ->> "J*** S****");
-    :Mascara CPF ("123.456.789-00" ->> "***.456.789-**");
-    :Mascara E-mail ("usuario@dominio.com" ->> "u***@anon.lgpd");
-    :Limpa números de telefone e dados de navegação/IPs;
-    :Remove cartões de crédito e tokens de pagamento salvos;
-    :Invalida e remove todas as sessões ativas no Redis (sessao:cliente:*);
+    :Mascara Nome e Sobrenome ("João Silva" -> "J*** S****")#59;
+    :Mascara CPF ("123.456.789-00" -> "***.456.789-**")#59;
+    :Mascara E-mail ("usuario@dominio.com" -> "u***@anon.lgpd")#59;
+    :Limpa números de telefone e dados de navegação/IPs#59;
+    :Remove cartões de crédito e tokens de pagamento salvos#59;
+    :Invalida e remove todas as sessões ativas no Redis (sessao:cliente:*)#59;
     }
     |#DCFCE7|Persistência & Análise Legal|
-    :UPDATE tbkk_customer SET status = 0, password = 'ANONYMIZED_HASH' WHERE customer_id = X;
-    :INSERT INTO tbkk_lgpd_audit_log (protocol, action, timestamp, hash_confirmation);
+    :UPDATE tbkk_customer SET status = 0, password = 'ANONYMIZED_HASH' WHERE customer_id = X#59;
+    :INSERT INTO tbkk_lgpd_audit_log (protocol, action, timestamp, hash_confirmation)#59;
     |Titular dos Dados / DPO|
-    :Exibe tela/e-mail de confirmação com o Protocolo de Sanitização LGPD;
+    :Exibe tela/e-mail de confirmação com o Protocolo de Sanitização LGPD#59;
     stop
     else (não - falha de validação)
     |Titular dos Dados / DPO|
-    :Notifica falha de verificação de segurança;
+    :Notifica falha de verificação de segurança#59;
     stop
     endif
