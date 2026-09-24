@@ -311,6 +311,92 @@ def traduzir_sequence_diagram(linhas):
     return "\n".join(saida)
 
 
+def traduzir_er_diagram(conteudo_limpo):
+    """Converte diagramas de Entidade-Relacionamento do PlantUML para Mermaid erDiagram."""
+    linhas_saida = ["erDiagram"]
+
+    # 1. Extração dos Relacionamentos
+    # Ex: Product "1" ||-right-|{ ProductDescription : "described by"
+    # ou: Zone "1" ||-[#0000FF]right-|{ City : "contains cities"
+    rel_pattern = re.compile(
+        r'^([\w\.\-]+)\s*(?:\"[^\"]*\")?\s*'
+        r'(\|o|\|\||\}o|\|\{|o\|)\-+(?:\[[^\]]+\])?(?:up|down|left|right)?\-+(\|o|\|\||\}o|\|\{|o\|)\s*'
+        r'(?:\"[^\"]*\")?\s*([\w\.\-]+)\s*:\s*\"([^\"]*)\"',
+        re.MULTILINE
+    )
+
+    card_map = {
+        "||": "||",
+        "|o": "|o",
+        "o|": "o|",
+        "|{": "|{",
+        "}o": "}o",
+    }
+
+    relacionamentos = []
+    for match in rel_pattern.finditer(conteudo_limpo):
+        ent1 = match.group(1).strip()
+        c1 = card_map.get(match.group(2).strip(), match.group(2).strip())
+        c2 = card_map.get(match.group(3).strip(), match.group(3).strip())
+        ent2 = match.group(4).strip()
+        label = match.group(5).strip().replace('"', '')
+        relacionamentos.append(f'    {ent1} {c1}--{c2} {ent2} : "{label}"')
+
+    if relacionamentos:
+        linhas_saida.extend(relacionamentos)
+        linhas_saida.append("")
+
+    # 2. Extração das Entidades e Atributos
+    entity_regex = re.compile(r'entity\s+([\w\.\-]+)(?:\s+#[0-9a-fA-F]+)?\s*\{([^}]+)\}', re.MULTILINE)
+    for match in entity_regex.finditer(conteudo_limpo):
+        entity_name = match.group(1).strip()
+        body = match.group(2)
+        linhas_saida.append(f"    {entity_name} {{")
+
+        for raw_line in body.splitlines():
+            line = raw_line.strip()
+            if not line or line == "--" or line.startswith("'"):
+                continue
+
+            # Ex: * id : BIGINT <<PK>>
+            # ou: * product_id : int <<PK, FK>>
+            # ou: * name : varchar(255) <<FULLTEXT idx_ft_product_search>>
+            # ou: * model : varchar(64)
+            attr_match = re.match(r'^\*?\s*([\w\.\-]+)\s*:\s*([^<]+?)(?:\s*<<([^>]+)>>)?$', line)
+            if attr_match:
+                attr_name = attr_match.group(1).strip()
+                attr_type = attr_match.group(2).strip()
+                modifier_raw = attr_match.group(3)
+
+                keys = []
+                comment = ""
+                if modifier_raw:
+                    parts = [p.strip() for p in modifier_raw.split(",")]
+                    non_keys = []
+                    for p in parts:
+                        p_upper = p.upper()
+                        if "PK" in p_upper:
+                            if "PK" not in keys:
+                                keys.append("PK")
+                        if "FK" in p_upper:
+                            if "FK" not in keys:
+                                keys.append("FK")
+                        if "PK" not in p_upper and "FK" not in p_upper:
+                            non_keys.append(p)
+                    if non_keys:
+                        comment = f' "{", ".join(non_keys)}"'
+
+                key_str = f" {', '.join(keys)}" if keys else ""
+                linhas_saida.append(f"        {attr_type} {attr_name}{key_str}{comment}")
+            else:
+                linhas_saida.append(f"        {line}")
+
+        linhas_saida.append("    }")
+        linhas_saida.append("")
+
+    return "\n".join(linhas_saida).rstrip() + "\n"
+
+
 def traduzir_plantuml_para_mermaid(conteudo_puml):
     """Aplica regras de conversão de sintaxe de PlantUML para Mermaid."""
     # Remove blocos <style>...</style> inteiros antes de processar
@@ -321,6 +407,11 @@ def traduzir_plantuml_para_mermaid(conteudo_puml):
     conteudo_limpo = re.sub(r"^[ \t]*@enduml(?:[ \t]+.*)?$", "", conteudo_limpo, flags=re.MULTILINE)
 
     linhas = conteudo_limpo.splitlines()
+
+    # Detecta se é diagrama de Entidade-Relacionamento
+    is_er = any(re.search(r"\bentity\s+[\w\.\-]+", linha) for linha in linhas)
+    if is_er:
+        return traduzir_er_diagram(conteudo_limpo)
 
     # Detecta se é diagrama de sequência
     is_sequence = any(

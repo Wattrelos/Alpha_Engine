@@ -1,708 +1,678 @@
-sequenceDiagram
-    BorderColor #444444
-    ArrowColor #555555
+erDiagram
+    Product ||--|{ ProductDescription : "described by"
+    Product ||--|{ ProductImage : "has"
+    Product ||--|{ ProductToCategory : "categorized in"
+    Category ||--|{ ProductToCategory : "holds"
+    Category ||--|{ CategoryDescription : "described by"
+    Category |o--|{ Category : "parent of"
+    Manufacturer |o--|{ Product : "manufactures"
+    Option ||--|{ OptionValue : "defines values"
+    Option ||--|{ ProductOption : "offered by"
+    ProductOption ||--|{ ProductOptionValue : "variants"
+    OptionValue ||--|{ ProductOptionValue : "instantiates"
+    Product ||--|{ ProductOption : "has options"
+    Product ||--|{ ProductOptionValue : "has variant details"
+    Product ||--|{ ProductDiscount : "offered with discount"
+    Product ||--|{ ProductAttribute : "specified by"
+    Product ||--|{ ProductCode : "has codes"
+    Attribute ||--|{ ProductAttribute : "defines type"
+    AttributeGroup ||--|{ Attribute : "groups"
+    Identifier |o--|{ ProductCode : "formats code"
+    Identifier |o--|{ Product : "validates code format for"
+    CustomerGroup ||--|{ Customer : "classifies"
+    CustomerGroup ||--|{ ProductDiscount : "targets"
+    Customer ||--|{ Address : "has"
+    Customer |o--|| Address : "default address"
+    Customer ||--|{ CustomerAddresses : "has addresses"
+    Customer |o--|| CustomerAffiliate : "has affiliate profile"
+    Customer ||--|{ CustomerWishlist : "saves to"
+    Product ||--|{ CustomerWishlist : "saved on"
+    Customer ||--|{ CustomerIp : "logs IP"
+    Customer ||--|{ Review : "writes"
+    Product ||--|{ Review : "rated by"
+    Customer ||--|{ Cart : "has active items"
+    Product ||--|{ Cart : "item in cart"
+    SubscriptionPlan |o--|{ Cart : "item subscription billing plan"
+    Store ||--|{ Cart : "contains cart context"
+    Customer ||--|{ Order : "places"
+    Store ||--|{ Order : "records order in context"
+    OrderStatus ||--|{ Order : "indicates status"
+    Language ||--|{ Order : "placed using"
+    Currency ||--|{ Order : "billed in"
+    Order ||--|{ OrderProduct : "contains"
+    Product ||--|{ OrderProduct : "sold in"
+    OrderProduct ||--|{ OrderOption : "configured by"
+    Order ||--|{ OrderTotal : "tallies cost"
+    Order ||--|{ OrderHistory : "audited by"
+    OrderStatus ||--|{ OrderHistory : "stage reached"
+    SubscriptionPlan ||--|{ SubscriptionPlanDescription : "described by"
+    SubscriptionPlan ||--|{ Subscription : "bills under"
+    Customer ||--|{ Subscription : "holds subscription"
+    Order ||--|{ Subscription : "billed in order"
+    SubscriptionStatus ||--|{ Subscription : "indicates current state"
+    Language ||--|{ ProductDescription : "translation"
+    Language ||--|{ CategoryDescription : "translation"
+    Language ||--|{ ProductAttribute : "translation"
+    Language ||--|{ SubscriptionPlanDescription : "translation"
+    Country ||--|{ Zone : "contains zones"
+    Zone ||--|{ City : "contains cities"
+    Country ||--|{ Address : "address country"
+    Zone ||--|{ Address : "address state/zone"
+    TaxClass ||--|{ TaxRule : "contains rules"
+    TaxRate ||--|{ TaxRule : "applied rate"
+    TaxClass ||--|{ Product : "tax configuration"
+    Supplier ||--|| SupplierAddress : "located at"
+    Supplier ||--|{ SupplierContactManufacturer : "associated through"
+    Contact ||--|{ SupplierContactManufacturer : "linked to"
+    Manufacturer ||--|{ SupplierContactManufacturer : "represented by"
+    Country ||--|{ SupplierAddress : "address country"
+    Zone ||--|{ SupplierAddress : "address state/zone"
+    City ||--|{ SupplierAddress : "address city"
+    Extension |o--|{ Store : "configured for"
+    Store ||--|{ SeoUrl : "defines URL keywords"
+    Language ||--|{ SeoUrl : "localized keyword"
+    Store ||--|{ Setting : "configures store"
+    Store ||--|{ Session : "stores session context"
+
+    Product {
+        BIGINT id PK
+        varchar(64) model
+        varchar(64) sku
+        varchar(12) upc
+        varchar(14) ean
+        varchar(13) jan
+        varchar(13) isbn
+        varchar(64) mpn
+        varchar(128) location
+        varchar(255) variant
+        text override
+        decimal(15,4) price
+        int quantity
+        int stock_status_id FK
+        varchar(255) image
+        int manufacturer_id FK
+        tinyint(1) shipping
+        int points
+        int tax_class_id FK
+        date date_available
+        decimal(15,8) weight
+        int weight_class_id FK
+        decimal(15,8) length
+        decimal(15,8) width
+        decimal(15,8) height
+        int length_class_id FK
+        tinyint(1) subtract
+        int minimum
+        int rating
+        tinyint(1) status
+        int sort_order
+        datetime date_added
+        datetime date_modified
+        int master_id FK
     }
-    package "Catalog Module" #FFF2CC {
-    participant Product
-    * id : BIGINT <<PK>>
-    --
-    * model : varchar(64)
-    * sku : varchar(64)
-    * upc : varchar(12)
-    * ean : varchar(14)
-    * jan : varchar(13)
-    * isbn : varchar(13)
-    * mpn : varchar(64)
-    * location : varchar(128)
-    * variant : varchar(255)
-    * override : text
-    * price : decimal(15,4)
-    * quantity : int
-    * stock_status_id : int <<FK>>
-    * image : varchar(255)
-    * manufacturer_id : int <<FK>>
-    * shipping : tinyint(1)
-    * points : int
-    * tax_class_id : int <<FK>>
-    * date_available : date
-    * weight : decimal(15,8)
-    * weight_class_id : int <<FK>>
-    * length : decimal(15,8)
-    * width : decimal(15,8)
-    * height : decimal(15,8)
-    * length_class_id : int <<FK>>
-    * subtract : tinyint(1)
-    * minimum : int
-    * rating : int
-    * status : tinyint(1)
-    * sort_order : int
-    * date_added : datetime
-    * date_modified : datetime
-    * master_id : int <<FK>>
+
+    ProductDescription {
+        int product_id PK, FK
+        int language_id PK, FK
+        varchar(255) name "FULLTEXT idx_ft_product_search"
+        text description "FULLTEXT idx_ft_product_search"
+        text tag "FULLTEXT idx_ft_product_search"
+        varchar(255) meta_title
+        varchar(255) meta_description
+        varchar(255) meta_keyword
     }
-    participant ProductDescription
-    * product_id : int <<PK, FK>>
-    * language_id : int <<PK, FK>>
-    --
-    * name : varchar(255) <<FULLTEXT idx_ft_product_search>>
-    * description : text <<FULLTEXT idx_ft_product_search>>
-    * tag : text <<FULLTEXT idx_ft_product_search>>
-    * meta_title : varchar(255)
-    * meta_description : varchar(255)
-    * meta_keyword : varchar(255)
+
+    Category {
+        int id PK
+        varchar(255) image
+        int parent_id FK
+        int sort_order
+        tinyint(1) status
     }
-    participant Category
-    * id : int <<PK>>
-    --
-    * image : varchar(255)
-    * parent_id : int <<FK>>
-    * sort_order : int
-    * status : tinyint(1)
+
+    CategoryDescription {
+        int category_id PK, FK
+        int language_id PK, FK
+        varchar(255) name
+        text description
+        varchar(255) meta_title
+        varchar(255) meta_description
+        varchar(255) meta_keyword
     }
-    participant CategoryDescription
-    * category_id : int <<PK, FK>>
-    * language_id : int <<PK, FK>>
-    --
-    * name : varchar(255)
-    * description : text
-    * meta_title : varchar(255)
-    * meta_description : varchar(255)
-    * meta_keyword : varchar(255)
+
+    Manufacturer {
+        int id PK
+        varchar(64) name
+        varchar(255) image
+        int sort_order
     }
-    participant Manufacturer
-    * id : int <<PK>>
-    --
-    * name : varchar(64)
-    * image : varchar(255)
-    * sort_order : int
+
+    ProductImage {
+        int id PK
+        int product_id FK
+        varchar(255) image
+        int sort_order
     }
-    participant ProductImage
-    * id : int <<PK>>
-    --
-    * product_id : int <<FK>>
-    * image : varchar(255)
-    * sort_order : int
+
+    ProductToCategory {
+        int product_id PK, FK
+        int category_id PK, FK
     }
-    participant ProductToCategory
-    * product_id : int <<PK, FK>>
-    * category_id : int <<PK, FK>>
+
+    Option {
+        int id PK
+        varchar(32) type
+        int sort_order
     }
-    participant Option
-    * id : int <<PK>>
-    --
-    * type : varchar(32)
-    * sort_order : int
+
+    OptionValue {
+        int id PK
+        int option_id FK
+        varchar(255) image
+        int sort_order
     }
-    participant OptionValue
-    * id : int <<PK>>
-    --
-    * option_id : int <<FK>>
-    * image : varchar(255)
-    * sort_order : int
+
+    ProductOption {
+        int id PK
+        int product_id FK
+        int option_id FK
+        text value
+        tinyint(1) required
     }
-    participant ProductOption
-    * id : int <<PK>>
-    --
-    * product_id : int <<FK>>
-    * option_id : int <<FK>>
-    * value : text
-    * required : tinyint(1)
+
+    ProductOptionValue {
+        int id PK
+        int product_option_id FK
+        int product_id FK
+        int option_id FK
+        int option_value_id FK
+        int quantity
+        tinyint(1) subtract
+        decimal(15,4) price
+        varchar(1) price_prefix
+        int points
+        varchar(1) points_prefix
+        decimal(15,8) weight
+        varchar(1) weight_prefix
     }
-    participant ProductOptionValue
-    * id : int <<PK>>
-    --
-    * product_option_id : int <<FK>>
-    * product_id : int <<FK>>
-    * option_id : int <<FK>>
-    * option_value_id : int <<FK>>
-    * quantity : int
-    * subtract : tinyint(1)
-    * price : decimal(15,4)
-    * price_prefix : varchar(1)
-    * points : int
-    * points_prefix : varchar(1)
-    * weight : decimal(15,8)
-    * weight_prefix : varchar(1)
+
+    Review {
+        int id PK
+        int product_id FK
+        int customer_id FK
+        varchar(64) author
+        text text
+        int rating
+        tinyint(1) status
+        datetime date_added
+        datetime date_modified
     }
-    participant Review
-    * id : int <<PK>>
-    --
-    * product_id : int <<FK>>
-    * customer_id : int <<FK>>
-    * author : varchar(64)
-    * text : text
-    * rating : int
-    * status : tinyint(1)
-    * date_added : datetime
-    * date_modified : datetime
+
+    ProductDiscount {
+        int id PK
+        int product_id FK
+        int customer_group_id FK
+        int quantity
+        int priority
+        decimal(15,4) price
+        date date_start
+        date date_end
     }
-    participant ProductDiscount
-    * id : int <<PK>>
-    --
-    * product_id : int <<FK>>
-    * customer_group_id : int <<FK>>
-    * quantity : int
-    * priority : int
-    * price : decimal(15,4)
-    * date_start : date
-    * date_end : date
+
+    Attribute {
+        int id PK
+        int attribute_group_id FK
+        int sort_order
     }
-    participant Attribute
-    * id : int <<PK>>
-    --
-    * attribute_group_id : int <<FK>>
-    * sort_order : int
+
+    AttributeGroup {
+        int id PK
+        int sort_order
     }
-    participant AttributeGroup
-    * id : int <<PK>>
-    --
-    * sort_order : int
+
+    ProductAttribute {
+        int product_id PK, FK
+        int attribute_id PK, FK
+        int language_id PK, FK
+        text text
     }
-    participant ProductAttribute
-    * product_id : int <<PK, FK>>
-    * attribute_id : int <<PK, FK>>
-    * language_id : int <<PK, FK>>
-    --
-    * text : text
+
+    Identifier {
+        int id PK
+        varchar(64) name
+        varchar(64) code
+        varchar(255) validation
+        tinyint(1) status
     }
-    participant Identifier
-    * id : int <<PK>>
-    --
-    * name : varchar(64)
-    * code : varchar(64)
-    * validation : varchar(255)
-    * status : tinyint(1)
+
+    ProductCode {
+        int id PK
+        int product_id FK
+        varchar(64) code
+        varchar(255) value
     }
-    participant ProductCode
-    * id : int <<PK>>
-    --
-    * product_id : int <<FK>>
-    * code : varchar(64)
-    * value : varchar(255)
+
+    Customer {
+        int id PK
+        int customer_group_id FK
+        int store_id FK
+        int language_id FK
+        varchar(32) firstname
+        varchar(32) lastname
+        varchar(96) email
+        varchar(32) telephone
+        varchar(255) password
+        tinyint(1) newsletter
+        varchar(40) ip
+        tinyint(1) status
+        tinyint(1) safe
+        tinyint(1) commenter
+        varchar(255) token
+        varchar(40) code
+        datetime date_added
+        varchar(20) cpf_cnpj
+        varchar(20) persontype
+        int address_id FK
     }
+
+    CustomerGroup {
+        int id PK
+        int approval
+        int sort_order
     }
-    package "Customer Module" #D5E8D4 {
-    participant Customer
-    * id : int <<PK>>
-    --
-    * customer_group_id : int <<FK>>
-    * store_id : int <<FK>>
-    * language_id : int <<FK>>
-    * firstname : varchar(32)
-    * lastname : varchar(32)
-    * email : varchar(96)
-    * telephone : varchar(32)
-    * password : varchar(255)
-    * newsletter : tinyint(1)
-    * ip : varchar(40)
-    * status : tinyint(1)
-    * safe : tinyint(1)
-    * commenter : tinyint(1)
-    * token : varchar(255)
-    * code : varchar(40)
-    * date_added : datetime
-    * cpf_cnpj : varchar(20)
-    * persontype : varchar(20)
-    * address_id : int <<FK>>
+
+    Address {
+        int id PK
+        int customer_id FK
+        varchar(32) firstname
+        varchar(32) lastname
+        varchar(40) company
+        varchar(128) street
+        int number
+        varchar(128) complement
+        varchar(128) district
+        varchar(128) city
+        varchar(10) postcode
+        int country_id FK
+        int zone_id FK
     }
-    participant CustomerGroup
-    * id : int <<PK>>
-    --
-    * approval : int
-    * sort_order : int
+
+    CustomerAddresses {
+        int id PK
+        int customer_id FK
+        int country_id FK
+        int zone_id FK
+        int city_id FK
+        varchar(10) postal_code
+        varchar(255) street
+        varchar(32) number
+        varchar(255) complement
+        varchar(128) district
     }
-    participant Address
-    * id : int <<PK>>
-    --
-    * customer_id : int <<FK>>
-    * firstname : varchar(32)
-    * lastname : varchar(32)
-    * company : varchar(40)
-    * street : varchar(128)
-    * number : int
-    * complement : varchar(128)
-    * district : varchar(128)
-    * city : varchar(128)
-    * postcode : varchar(10)
-    * country_id : int <<FK>>
-    * zone_id : int <<FK>>
+
+    CustomerAffiliate {
+        int id PK
+        int customer_id FK
+        varchar(255) company
+        varchar(255) website
+        varchar(64) tracking
+        decimal(15,4) commission
+        tinyint(1) status
+        datetime date_added
     }
-    participant CustomerAddresses
-    * id : int <<PK>>
-    --
-    * customer_id : int <<FK>>
-    * country_id : int <<FK>>
-    * zone_id : int <<FK>>
-    * city_id : int <<FK>>
-    * postal_code : varchar(10)
-    * street : varchar(255)
-    * number : varchar(32)
-    complement : varchar(255)
-    district : varchar(128)
+
+    CustomerWishlist {
+        int customer_id PK, FK
+        int product_id PK, FK
+        datetime date_added
     }
-    participant CustomerAffiliate
-    * id : int <<PK>>
-    --
-    * customer_id : int <<FK>>
-    * company : varchar(255)
-    * website : varchar(255)
-    * tracking : varchar(64)
-    * commission : decimal(15,4)
-    * status : tinyint(1)
-    * date_added : datetime
+
+    CustomerIp {
+        int id PK
+        int customer_id FK
+        varchar(40) ip
+        int store_id
+        varchar(64) country
+        datetime date_added
     }
-    participant CustomerWishlist
-    * customer_id : int <<PK, FK>>
-    * product_id : int <<PK, FK>>
-    --
-    * date_added : datetime
+
+    Cart {
+        int id PK
+        int store_id FK
+        int customer_id FK
+        varchar(255) token_session
+        int product_id FK
+        int subscription_plan_id FK
+        text option
+        int quantity
+        text override
+        decimal(15,4) price
+        datetime date_added
     }
-    participant CustomerIp
-    * id : int <<PK>>
-    --
-    * customer_id : int <<FK>>
-    * ip : varchar(40)
-    * store_id : int
-    * country : varchar(64)
-    * date_added : datetime
+
+    Order {
+        int id PK
+        int store_id FK
+        int customer_id FK
+        int customer_group_id
+        varchar(32) firstname
+        varchar(32) lastname
+        varchar(96) email
+        varchar(32) telephone
+        varchar(32) payment_firstname
+        varchar(32) payment_lastname
+        varchar(40) payment_company
+        varchar(128) payment_street
+        int payment_number
+        varchar(128) payment_complement
+        varchar(128) payment_district
+        varchar(128) payment_city
+        varchar(10) payment_postcode
+        varchar(128) payment_country
+        int payment_country_id
+        varchar(128) payment_zone
+        int payment_zone_id
+        varchar(128) payment_method
+        varchar(32) shipping_firstname
+        varchar(32) shipping_lastname
+        varchar(40) shipping_company
+        varchar(128) shipping_street
+        int shipping_number
+        varchar(128) shipping_complement
+        varchar(128) shipping_district
+        varchar(128) shipping_city
+        varchar(10) shipping_postcode
+        varchar(128) shipping_country
+        int shipping_country_id
+        varchar(128) shipping_zone
+        int shipping_zone_id
+        varchar(128) shipping_method
+        decimal(15,4) total
+        int order_status_id FK
+        int affiliate_id
+        decimal(15,4) commission
+        int marketing_id
+        varchar(64) tracking
+        int language_id FK
+        int currency_id FK
+        varchar(3) currency_code
+        decimal(15,8) currency_value
+        varchar(40) ip
+        varchar(40) forwarded_ip
+        varchar(255) user_agent
+        varchar(255) accept_language
+        datetime date_added
+        datetime date_modified
     }
+
+    OrderProduct {
+        int id PK
+        int order_id FK
+        int product_id FK
+        varchar(255) name
+        varchar(64) model
+        int quantity
+        decimal(15,4) price
+        decimal(15,4) total
+        decimal(15,4) tax
+        int reward
     }
-    package "Checkout & Sales Module" #F8CECC {
-    participant Cart
-    * id : int <<PK>>
-    --
-    * store_id : int <<FK>>
-    * customer_id : int <<FK>>
-    * token_session : varchar(255)
-    * product_id : int <<FK>>
-    * subscription_plan_id : int <<FK>>
-    * option : text
-    * quantity : int
-    * override : text
-    * price : decimal(15,4)
-    * date_added : datetime
+
+    OrderOption {
+        int id PK
+        int order_id FK
+        int order_product_id FK
+        int product_option_id
+        int product_option_value_id
+        varchar(255) name
+        text value
+        varchar(32) type
     }
-    participant Order
-    * id : int <<PK>>
-    --
-    * store_id : int <<FK>>
-    * customer_id : int <<FK>>
-    * customer_group_id : int
-    * firstname : varchar(32)
-    * lastname : varchar(32)
-    * email : varchar(96)
-    * telephone : varchar(32)
-    * payment_firstname : varchar(32)
-    * payment_lastname : varchar(32)
-    * payment_company : varchar(40)
-    * payment_street : varchar(128)
-    * payment_number : int
-    * payment_complement : varchar(128)
-    * payment_district : varchar(128)
-    * payment_city : varchar(128)
-    * payment_postcode : varchar(10)
-    * payment_country : varchar(128)
-    * payment_country_id : int
-    * payment_zone : varchar(128)
-    * payment_zone_id : int
-    * payment_method : varchar(128)
-    * shipping_firstname : varchar(32)
-    * shipping_lastname : varchar(32)
-    * shipping_company : varchar(40)
-    * shipping_street : varchar(128)
-    * shipping_number : int
-    * shipping_complement : varchar(128)
-    * shipping_district : varchar(128)
-    * shipping_city : varchar(128)
-    * shipping_postcode : varchar(10)
-    * shipping_country : varchar(128)
-    * shipping_country_id : int
-    * shipping_zone : varchar(128)
-    * shipping_zone_id : int
-    * shipping_method : varchar(128)
-    * total : decimal(15,4)
-    * order_status_id : int <<FK>>
-    * affiliate_id : int
-    * commission : decimal(15,4)
-    * marketing_id : int
-    * tracking : varchar(64)
-    * language_id : int <<FK>>
-    * currency_id : int <<FK>>
-    * currency_code : varchar(3)
-    * currency_value : decimal(15,8)
-    * ip : varchar(40)
-    * forwarded_ip : varchar(40)
-    * user_agent : varchar(255)
-    * accept_language : varchar(255)
-    * date_added : datetime
-    * date_modified : datetime
+
+    OrderHistory {
+        int id PK
+        int order_id FK
+        int order_status_id FK
+        tinyint(1) notify
+        text comment
+        datetime date_added
     }
-    participant OrderProduct
-    * id : int <<PK>>
-    --
-    * order_id : int <<FK>>
-    * product_id : int <<FK>>
-    * name : varchar(255)
-    * model : varchar(64)
-    * quantity : int
-    * price : decimal(15,4)
-    * total : decimal(15,4)
-    * tax : decimal(15,4)
-    * reward : int
+
+    OrderTotal {
+        int id PK
+        int order_id FK
+        varchar(32) code
+        varchar(255) title
+        decimal(15,4) value
+        int sort_order
     }
-    participant OrderOption
-    * id : int <<PK>>
-    --
-    * order_id : int <<FK>>
-    * order_product_id : int <<FK>>
-    * product_option_id : int
-    * product_option_value_id : int
-    * name : varchar(255)
-    * value : text
-    * type : varchar(32)
+
+    OrderStatus {
+        int id PK
+        varchar(32) name
     }
-    participant OrderHistory
-    * id : int <<PK>>
-    --
-    * order_id : int <<FK>>
-    * order_status_id : int <<FK>>
-    * notify : tinyint(1)
-    * comment : text
-    * date_added : datetime
+
+    SubscriptionPlan {
+        int id PK
+        varchar(10) trial_frequency
+        int trial_cycle
+        int trial_duration
+        tinyint(1) trial_status
+        varchar(10) frequency
+        int cycle
+        int duration
+        int sort_order
+        tinyint(1) status
     }
-    participant OrderTotal
-    * id : int <<PK>>
-    --
-    * order_id : int <<FK>>
-    * code : varchar(32)
-    * title : varchar(255)
-    * value : decimal(15,4)
-    * sort_order : int
+
+    SubscriptionPlanDescription {
+        int subscription_plan_id PK, FK
+        int language_id PK, FK
+        varchar(255) name
     }
-    participant OrderStatus
-    * id : int <<PK>>
-    --
-    * name : varchar(32)
+
+    Subscription {
+        int id PK
+        int order_id FK
+        int customer_id FK
+        int subscription_plan_id FK
+        int store_id FK
+        int payment_address_id
+        varchar(128) payment_method
+        int shipping_address_id
+        varchar(128) shipping_method
+        decimal(15,4) trial_price
+        decimal(15,4) trial_tax
+        varchar(10) trial_frequency
+        int trial_cycle
+        int trial_duration
+        int trial_remaining
+        tinyint(1) trial_status
+        decimal(15,4) price
+        decimal(15,4) tax
+        varchar(10) frequency
+        int cycle
+        int duration
+        int remaining
+        datetime date_next
+        varchar(64) language
+        varchar(64) currency
+        int subscription_status_id FK
+        text comment
+        datetime date_added
+        datetime date_modified
     }
+
+    SubscriptionStatus {
+        int id PK
+        varchar(32) name
     }
-    package "Subscription Module" #E1D5E7 {
-    participant SubscriptionPlan
-    * id : int <<PK>>
-    --
-    * trial_frequency : varchar(10)
-    * trial_cycle : int
-    * trial_duration : int
-    * trial_status : tinyint(1)
-    * frequency : varchar(10)
-    * cycle : int
-    * duration : int
-    * sort_order : int
-    * status : tinyint(1)
+
+    Language {
+        int id PK
+        varchar(32) name
+        varchar(5) code
+        varchar(255) locale
+        varchar(64) image
+        varchar(32) directory
+        tinyint(1) status
+        int sort_order
     }
-    participant SubscriptionPlanDescription
-    * subscription_plan_id : int <<PK, FK>>
-    * language_id : int <<PK, FK>>
-    --
-    * name : varchar(255)
+
+    Currency {
+        int id PK
+        varchar(32) title
+        varchar(3) code
+        varchar(12) symbol_left
+        varchar(12) symbol_right
+        char(1) decimal_place
+        float(15,8) value
+        tinyint(1) status
+        datetime date_modified
     }
-    participant Subscription
-    * id : int <<PK>>
-    --
-    * order_id : int <<FK>>
-    * customer_id : int <<FK>>
-    * subscription_plan_id : int <<FK>>
-    * store_id : int <<FK>>
-    * payment_address_id : int
-    * payment_method : varchar(128)
-    * shipping_address_id : int
-    * shipping_method : varchar(128)
-    * trial_price : decimal(15,4)
-    * trial_tax : decimal(15,4)
-    * trial_frequency : varchar(10)
-    * trial_cycle : int
-    * trial_duration : int
-    * trial_remaining : int
-    * trial_status : tinyint(1)
-    * price : decimal(15,4)
-    * tax : decimal(15,4)
-    * frequency : varchar(10)
-    * cycle : int
-    * duration : int
-    * remaining : int
-    * date_next : datetime
-    * language : varchar(64)
-    * currency : varchar(64)
-    * subscription_status_id : int <<FK>>
-    * comment : text
-    * date_added : datetime
-    * date_modified : datetime
+
+    Country {
+        int id PK
+        varchar(128) name
+        varchar(2) iso_code_2
+        varchar(3) iso_code_3
+        text address_format
+        tinyint(1) postcode_required
+        tinyint(1) status
     }
-    participant SubscriptionStatus
-    * id : int <<PK>>
-    --
-    * name : varchar(32)
+
+    Zone {
+        int id PK
+        int country_id FK
+        varchar(128) name
+        varchar(32) code
+        tinyint(1) status
     }
+
+    City {
+        int id PK
+        int zone_id FK
+        varchar(128) name
+        tinyint(1) is_served
     }
-    package "Localization Module" #DAE8FC {
-    participant Language
-    * id : int <<PK>>
-    --
-    * name : varchar(32)
-    * code : varchar(5)
-    * locale : varchar(255)
-    * image : varchar(64)
-    * directory : varchar(32)
-    * status : tinyint(1)
-    * sort_order : int
+
+    TaxClass {
+        int id PK
+        varchar(32) title
+        varchar(255) description
+        datetime date_added
+        datetime date_modified
     }
-    participant Currency
-    * id : int <<PK>>
-    --
-    * title : varchar(32)
-    * code : varchar(3)
-    * symbol_left : varchar(12)
-    * symbol_right : varchar(12)
-    * decimal_place : char(1)
-    * value : float(15,8)
-    * status : tinyint(1)
-    * date_modified : datetime
+
+    TaxRate {
+        int id PK
+        varchar(32) name
+        decimal(15,4) rate
+        char(1) type
+        datetime date_added
+        datetime date_modified
     }
-    participant Country
-    * id : int <<PK>>
-    --
-    * name : varchar(128)
-    * iso_code_2 : varchar(2)
-    * iso_code_3 : varchar(3)
-    * address_format : text
-    * postcode_required : tinyint(1)
-    * status : tinyint(1)
+
+    TaxRule {
+        int id PK
+        int tax_class_id FK
+        int tax_rate_id FK
+        varchar(10) based
+        int priority
     }
-    participant Zone
-    * id : int <<PK>>
-    --
-    * country_id : int <<FK>>
-    * name : varchar(128)
-    * code : varchar(32)
-    * status : tinyint(1)
+
+    Store {
+        int id PK
+        varchar(64) name
+        varchar(255) url
     }
-    participant City
-    * id : int <<PK>>
-    --
-    * zone_id : int <<FK>>
-    * name : varchar(128)
-    * is_served : tinyint(1)
+
+    Extension {
+        int id PK
+        varchar(255) extension
+        varchar(32) type
+        varchar(32) code
     }
-    participant TaxClass
-    * id : int <<PK>>
-    --
-    * title : varchar(32)
-    * description : varchar(255)
-    * date_added : datetime
-    * date_modified : datetime
+
+    SeoUrl {
+        int id PK
+        int store_id FK
+        int language_id FK
+        varchar(64) key
+        varchar(255) value
+        varchar(255) keyword
+        int sort_order
     }
-    participant TaxRate
-    * id : int <<PK>>
-    --
-    * name : varchar(32)
-    * rate : decimal(15,4)
-    * type : char(1)
-    * date_added : datetime
-    * date_modified : datetime
+
+    Setting {
+        int id PK
+        int store_id FK
+        varchar(128) code
+        varchar(128) key
+        text value
+        tinyint(1) serialized
     }
-    participant TaxRule
-    * id : int <<PK>>
-    --
-    * tax_class_id : int <<FK>>
-    * tax_rate_id : int <<FK>>
-    * based : varchar(10)
-    * priority : int
+
+    Session {
+        varchar(255) session_id PK
+        text data
+        datetime expire
     }
+
+    Cron {
+        int id PK
+        varchar(64) code
+        text description
+        varchar(12) cycle
+        text action
+        tinyint(1) status
+        datetime date_added
+        datetime date_modified
     }
-    package "System & Store" #E3E3E3 {
-    participant Store
-    * id : int <<PK>>
-    --
-    * name : varchar(64)
-    * url : varchar(255)
+
+    Supplier {
+        int id PK
+        varchar(255) company_name
+        varchar(255) trade_name
+        varchar(14) tax_id
+        varchar(32) state_registration
+        varchar(32) municipal_registration
+        varchar(96) email
+        varchar(32) phone
+        varchar(255) website
+        tinyint(1) is_active
+        datetime created_at
+        datetime updated_at
     }
-    participant Extension
-    * id : int <<PK>>
-    --
-    * extension : varchar(255)
-    * type : varchar(32)
-    * code : varchar(32)
+
+    Contact {
+        int id PK
+        varchar(120) name
+        varchar(120) email
+        varchar(50) phone
+        varchar(100) position
+        tinyint(1) is_active
+        datetime created_at
+        datetime updated_at
     }
-    participant SeoUrl
-    * id : int <<PK>>
-    --
-    * store_id : int <<FK>>
-    * language_id : int <<FK>>
-    * key : varchar(64)
-    * value : varchar(255)
-    * keyword : varchar(255)
-    * sort_order : int
+
+    SupplierAddress {
+        int id PK
+        int supplier_id FK
+        int country_id FK
+        int zone_id FK
+        int city_id FK
+        varchar(10) postal_code
+        varchar(255) street
+        varchar(32) number
+        varchar(255) complement
+        varchar(128) district
     }
-    participant Setting
-    * id : int <<PK>>
-    --
-    * store_id : int <<FK>>
-    * code : varchar(128)
-    * key : varchar(128)
-    * value : text
-    * serialized : tinyint(1)
+
+    SupplierContactManufacturer {
+        int supplier_id PK, FK
+        int contact_id PK, FK
+        int manufacturer_id PK, FK
+        datetime created_at
     }
-    participant Session
-    * session_id : varchar(255) <<PK>>
-    --
-    * data : text
-    * expire : datetime
-    }
-    participant Cron
-    * id : int <<PK>>
-    --
-    * code : varchar(64)
-    * description : text
-    * cycle : varchar(12)
-    * action : text
-    * status : tinyint(1)
-    * date_added : datetime
-    * date_modified : datetime
-    }
-    }
-    package "Procurement Module" #E0F2F1 {
-    participant Supplier
-    * id : int <<PK>>
-    --
-    * company_name : varchar(255)
-    * trade_name : varchar(255)
-    * tax_id : varchar(14)
-    * state_registration : varchar(32)
-    * municipal_registration : varchar(32)
-    * email : varchar(96)
-    * phone : varchar(32)
-    * website : varchar(255)
-    * is_active : tinyint(1)
-    * created_at : datetime
-    * updated_at : datetime
-    }
-    participant Contact
-    * id : int <<PK>>
-    --
-    * name : varchar(120)
-    * email : varchar(120)
-    * phone : varchar(50)
-    * position : varchar(100)
-    * is_active : tinyint(1)
-    * created_at : datetime
-    * updated_at : datetime
-    }
-    participant SupplierAddress
-    * id : int <<PK>>
-    --
-    * supplier_id : int <<FK>>
-    * country_id : int <<FK>>
-    * zone_id : int <<FK>>
-    * city_id : int <<FK>>
-    * postal_code : varchar(10)
-    * street : varchar(255)
-    * number : varchar(32)
-    complement : varchar(255)
-    district : varchar(128)
-    }
-    participant SupplierContactManufacturer
-    * supplier_id : int <<PK, FK>>
-    * contact_id : int <<PK, FK>>
-    * manufacturer_id : int <<PK, FK>>
-    --
-    * created_at : datetime
-    }
-    }
-    "Catalog Module" -[hidden]right-> "Customer Module"
-    "Customer Module" -[hidden]right-> "Checkout & Sales Module"
-    "Checkout & Sales Module" -[hidden]down-> "Subscription Module"
-    "Subscription Module" -[hidden]left-> "Localization Module"
-    "Localization Module" -[hidden]left-> "Procurement Module"
-    Product "1" ||-right-|{ ProductDescription : "described by"
-    Product "1" ||-down-|{ ProductImage : "has"
-    Product "1" ||-left-|{ ProductToCategory : "categorized in"
-    Category "1" ||-down-|{ ProductToCategory : "holds"
-    Category "1" ||-right-|{ CategoryDescription : "described by"
-    Category "0..1" |o-up-|{ Category : "parent of"
-    Manufacturer "1" |o-down-|{ Product : "manufactures"
-    Option "1" ||-right-|{ OptionValue : "defines values"
-    Option "1" ||-down-|{ ProductOption : "offered by"
-    ProductOption "1" ||-right-|{ ProductOptionValue : "variants"
-    OptionValue "1" ||-down-|{ ProductOptionValue : "instantiates"
-    Product "1" ||-down-|{ ProductOption : "has options"
-    Product "1" ||-right-|{ ProductOptionValue : "has variant details"
-    Product "1" ||-down-|{ ProductDiscount : "offered with discount"
-    Product "1" ||-right-|{ ProductAttribute : "specified by"
-    Product "1" ||-down-|{ ProductCode : "has codes"
-    Attribute "1" ||-down-|{ ProductAttribute : "defines type"
-    AttributeGroup "1" ||-right-|{ Attribute : "groups"
-    Identifier "1" |o-right-|{ ProductCode : "formats code"
-    Identifier "1" |o-down-|{ Product : "validates code format for"
-    CustomerGroup "1" ||-right-|{ Customer : "classifies"
-    CustomerGroup "1" ||-down-|{ ProductDiscount : "targets"
-    Customer "1" ||-down-|{ Address : "has"
-    Customer "1" |o-right-|| Address : "default address"
-    Customer "1" ||-down-|{ CustomerAddresses : "has addresses"
-    Customer "1" |o-right-|| CustomerAffiliate : "has affiliate profile"
-    Customer "1" ||-down-|{ CustomerWishlist : "saves to"
-    Product "1" ||-down-|{ CustomerWishlist : "saved on"
-    Customer "1" ||-right-|{ CustomerIp : "logs IP"
-    Customer "1" ||-down-|{ Review : "writes"
-    Product "1" ||-right-|{ Review : "rated by"
-    Customer "1" ||-down-|{ Cart : "has active items"
-    Product "1" ||-down-|{ Cart : "item in cart"
-    SubscriptionPlan "1" |o-right-|{ Cart : "item subscription billing plan"
-    Store "1" ||-down-|{ Cart : "contains cart context"
-    Customer "1" ||-down-|{ Order : "places"
-    Store "1" ||-right-|{ Order : "records order in context"
-    OrderStatus "1" ||-right-|{ Order : "indicates status"
-    Language "1" ||-down-|{ Order : "placed using"
-    Currency "1" ||-right-|{ Order : "billed in"
-    Order "1" ||-down-|{ OrderProduct : "contains"
-    Product "1" ||-down-|{ OrderProduct : "sold in"
-    OrderProduct "1" ||-right-|{ OrderOption : "configured by"
-    Order "1" ||-down-|{ OrderTotal : "tallies cost"
-    Order "1" ||-down-|{ OrderHistory : "audited by"
-    OrderStatus "1" ||-down-|{ OrderHistory : "stage reached"
-    SubscriptionPlan "1" ||-right-|{ SubscriptionPlanDescription : "described by"
-    SubscriptionPlan "1" ||-down-|{ Subscription : "bills under"
-    Customer "1" ||-down-|{ Subscription : "holds subscription"
-    Order "1" ||-down-|{ Subscription : "billed in order"
-    SubscriptionStatus "1" ||-right-|{ Subscription : "indicates current state"
-    Language "1" ||-right-|{ ProductDescription : "translation"
-    Language "1" ||-right-|{ CategoryDescription : "translation"
-    Language "1" ||-right-|{ ProductAttribute : "translation"
-    Language "1" ||-right-|{ SubscriptionPlanDescription : "translation"
-    Country "1" ||-right-|{ Zone : "contains zones"
-    Zone "1" ||-[#0000FF]right-|{ City : "contains cities"
-    Country "1" ||-down-|{ Address : "address country"
-    Zone "1" ||-down-|{ Address : "address state/zone"
-    TaxClass "1" ||-right-|{ TaxRule : "contains rules"
-    TaxRate "1" ||-down-|{ TaxRule : "applied rate"
-    TaxClass "1" ||-down-|{ Product : "tax configuration"
-    Supplier "1" ||-right-|| SupplierAddress : "located at"
-    Supplier "1" ||-down-|{ SupplierContactManufacturer : "associated through"
-    Contact "1" ||-right-|{ SupplierContactManufacturer : "linked to"
-    Manufacturer "1" ||-down-|{ SupplierContactManufacturer : "represented by"
-    Country "1" ||-down-|{ SupplierAddress : "address country"
-    Zone "1" ||-down-|{ SupplierAddress : "address state/zone"
-    City "1" ||-down-|{ SupplierAddress : "address city"
-    Extension "1" |o-right-|{ Store : "configured for"
-    Store "1" ||-down-|{ SeoUrl : "defines URL keywords"
-    Language "1" ||-right-|{ SeoUrl : "localized keyword"
-    Store "1" ||-down-|{ Setting : "configures store"
-    Store "1" ||-down-|{ Session : "stores session context"
-    legend right
-    == Mapeamento de Tipos (Arquitetura)
-    * **Banco de Dados (DB)** -> **PHP (64-bit)**
-    * BIGINT (8 bytes, PK/FK) -> int (8-byte integer)
-    * INT (4 bytes) -> int
-    * TINYINT(1) -> bool
-    * VARCHAR / TEXT -> string
-    * DECIMAL -> string
-    * DATETIME / DATE -> DateTimeInterface
-    endlegend
+

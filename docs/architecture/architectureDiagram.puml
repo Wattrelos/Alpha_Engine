@@ -1,4 +1,6 @@
-@startuml "Alpha Engine - AI Optimized Architecture Diagram"
+@startuml "Alpha Engine - Architecture Diagram"
+
+skinparam backgroundcolor #FFFFFF
 
 ' --- ENTRYPOINT & FRAMEWORK ---
 package "0. Slim 4 Framework" as Slim {

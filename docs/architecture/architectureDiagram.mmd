@@ -5,7 +5,128 @@ sequenceDiagram
     [AppContainer (PSR-11)] as Container
     }
     package "1. Middleware Stack" as Middlewares {
-    [LanguageMiddleware] as LangMW
+    [LanguageMiddleware] as graph TD
+    %% --- ENTRYPOINT & FRAMEWORK ---
+    subgraph Slim ["0. Slim 4 Framework"]
+        Entrypoint["public_html/index.php"]
+        Routes["Config/Routes.php"]
+        Container["AppContainer (PSR-11)"]
+    end
+
+    %% --- MIDDLEWARE STACK ---
+    subgraph Middlewares ["1. Middleware Stack"]
+        LangMW["LanguageMiddleware"]
+        AdminMW["AdminSessionMiddleware"]
+        SessionMW["SessionMiddleware"]
+        LegacyMW["LegacyRouteRedirectMiddleware"]
+    end
+
+    %% --- ACTIONS (CONTROLLERS) ---
+    subgraph Actions ["2. Application Actions"]
+        FrontAction["Front-end Actions<br>(implements ActionInterface)"]
+        AdminAction["Admin Actions<br>(extends BaseController)"]
+        BaseCtrl["BaseController"]
+        AuthServices["Auth Services"]
+    end
+
+    %% --- PRESENTATION LAYER ---
+    subgraph TwigLayer ["3. Presentation (Twig)"]
+        Twig["TwigEnvironment"]
+        Views["Twig Templates<br>(resources/views/)"]
+    end
+
+    %% --- DOMAIN LAYER (DDD) ---
+    subgraph Domain ["4. Domain Layer"]
+        RepoFactory["RepositoryFactory"]
+        Repos["AbstractRepository"]
+        Entities["BaseEntity"]
+        AlphaContainer["AlphaContainer (Legacy Resolver)"]
+        Events["EventDispatcher & Events"]
+    end
+
+    %% --- PERSISTENCE LAYER ---
+    subgraph Persistence ["5. Persistence Infrastructure"]
+        MapperFactory["MapperFactory"]
+        Mappers["BaseMapper"]
+        Observers["Observers"]
+        DAO["DataAccessObject (DAO)"]
+        QB["QueryBuilder"]
+        UoW["UnitOfWork (UoW)"]
+        IdentityMap["Identity Map"]
+    end
+
+    %% --- INFRASTRUCTURE & SUPPORT ---
+    subgraph SupportLayer ["6. Support & Database"]
+        MySQL[("MySQL 8.0")]
+        Redis[("Redis (Cache & Session)")]
+        Support["Support Utils"]
+        Queue["RabbitMQ & QueueService"]
+        Worker["Worker CLI Consumer"]
+    end
+
+    %% --- RELATIONSHIPS (FLOW OF COUPLING) ---
+    
+    %% Bootstrapping
+    Entrypoint -->|Defines| Routes
+    Entrypoint -->|Configures| Container
+    Entrypoint -->|Injects| Twig
+
+    %% Routing to Actions
+    Routes -->|Global| LangMW
+    Routes -->|Admin Group| AdminMW
+    Routes -->|Account Group| SessionMW
+    Routes -->|Legacy Group| LegacyMW
+    Routes -->|Dispatches| FrontAction
+    Routes -->|Dispatches| AdminAction
+
+    %% Session / Middleware Persistence
+    AdminMW -->|Validates admin session| Redis
+    SessionMW -->|Validates customer session| Redis
+
+    %% Action Resolution & Execution
+    Container -.->|DI Constructor Injection| FrontAction
+    Container -.->|DI Constructor Injection| AdminAction
+    AdminAction -->|Inherits| BaseCtrl
+    BaseCtrl -->|Requests Repositories| RepoFactory
+    BaseCtrl -->|Renders Views| Twig
+    FrontAction -->|Renders Views| Twig
+    FrontAction -->|Dependency injection| Repos
+    FrontAction -->|Session management| AuthServices
+    AuthServices -->|Credentials check| Repos
+    FrontAction -->|Transactional operations<br>e.g. Checkout| UoW
+    AdminAction -->|Transactional operations<br>e.g. POS Sale| UoW
+
+    %% View Layer
+    Twig -->|Compiles| Views
+
+    %% Domain Layer
+    RepoFactory -.->|Instantiates| Repos
+    Repos -->|Hydrates| Entities
+    Repos -->|Requests Mapper| MapperFactory
+    Repos -->|Read/Write query cache| Redis
+    Repos -->|Transactional boundary| UoW
+    AlphaContainer -->|Resolves legacy calls| Repos
+    AlphaContainer -->|Resolves legacy mappers| Mappers
+
+    %% Persistence Layer
+    MapperFactory -.->|Instantiates| Mappers
+    Mappers -.->|Triggers hooks events| Observers
+    Mappers -->|Executes statements| DAO
+    DAO -->|Builds query statements| QB
+    DAO -->|Memory RAM Caching<br>N+1 prevention| IdentityMap
+    DAO -->|Persistent state updates| MySQL
+    QB -->|Safe SQL execution| MySQL
+    UoW -->|Coordinates ACID transactions<br>start/commit/rollback| DAO
+
+    %% Support cross-cutting concerns
+    Repos -->|Calculations| Support
+    FrontAction -->|Formats| Support
+
+    %% Asynchronous Events & Messaging Stack
+    FrontAction -->|Dispatches OrderCreatedEvent| Events
+    Events -->|Publishes to queue via QueueService| Queue
+    Queue -->|Asynchronously consumed by worker| Worker
+LangMW
     [AdminSessionMiddleware] as AdminMW
     [SessionMiddleware] as SessionMW
     [LegacyRouteRedirectMiddleware] as LegacyMW
