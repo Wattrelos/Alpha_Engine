@@ -1,91 +1,60 @@
 flowchart TD
-    skinparam backgroundColor #FFFFFF
-    skinparam shadowing false
-    skinparam activity {
-    StartColor #2563EB
-    EndColor #DC2626
-    BackgroundColor #F8FAFC
-    BorderColor #475569
-    FontName Inter, Arial, sans-serif
-    }
-    header Alpha Engine E-Commerce Architecture: Workflow de Atividades
-    title Árvore de Decisão e Workflow do Checkout E-Commerce
-    |#E0F2FE|Cliente / Frontend|
-    start
-    :Acessa a página de Checkout (/checkout);
-    |#FFF9C4|Engine Backend (Alpha Engine)|
-    :Valida sessão e estado do carrinho;
-    if (Carrinho possui produtos e estoque?) then (sim)
-    :Carrega endereços cadastrados do cliente;
-    else (não / carrinho vazio)
-    :Redireciona para /cart com mensagem de erro;
-    stop
-    endif
-    |Cliente / Frontend|
-    :Seleciona Endereço de Entrega;
-    :Solicita Cotação de Frete;
-    |Engine Backend (Alpha Engine)|
-    :Executa ShippingStrategyManager;
-    :Retorna opções de frete (Fixo, Peso, Grátis);
-    |Cliente / Frontend|
-    :Escolha o Método de Frete;
-    if (Possui Cupom de Desconto?) then (sim)
-    :Informa código do Cupom;
-    |Engine Backend (Alpha Engine)|
-    :Valida Cupom (Validade, Uso Máximo, Valor Mínimo);
-    if (Cupom Válido?) then (sim)
-    :Aplica desconto ao total da ordem;
-    else (inválido)
-    :Exibe alerta de cupom inválido / expirado;
-    endif
-    else (não)
-    endif
-    |Cliente / Frontend|
-    :Seleciona Forma de Pagamento;
-    if (Forma de Pagamento Selecionada?) is (PIX) then
-    |Engine Backend (Alpha Engine)|
-    :Gera Payload e QR Code PIX (PixGateway);
-    |Cliente / Frontend|
-    :Exibe QR Code e Chave Copia e Cola;
-    |#DCFCE7|Gateway / Provedor de Pagamento|
-    :Aguardando confirmação do BACEN / Banco;
-    if (Pagamento Confirmado no Prazo?) then (sim)
-    :Envia Webhook HTTP 200 (PAID);
-    else (expirado / timeout)
-    :Notifica expiração do QR Code;
-    |Engine Backend (Alpha Engine)|
-    :Cancela ordem por falta de pagamento;
-    stop
-    endif
-    elseif (Cartão de Crédito) then
-    |Cliente / Frontend|
-    :Preenche dados do Cartão e Parcelamento;
-    |Engine Backend (Alpha Engine)|
-    :Envia payload criptografado ao Gateway (MercadoPagoAdapter);
-    |Gateway / Provedor de Pagamento|
-    :Processa análise de risco (Antifraude) & Emissor;
-    if (Transação Aprovada?) then (sim)
-    :Retorna Status APPOVED;
-    else (recusada / suspeita)
-    :Retorna Status REJECTED;
-    |Cliente / Frontend|
-    :Exibe mensagem "Cartão Recusado";
-    :Oferece opção de trocar meio de pagamento;
-    stop
-    endif
-    else (Boleto Bancário)
-    |Engine Backend (Alpha Engine)|
-    :Emite linha digitável do Boleto;
-    |Cliente / Frontend|
-    :Disponibiliza link para impressão do Boleto;
-    |Engine Backend (Alpha Engine)|
-    :Reserva estoque aguardando compensação bancária (até 3 dias);
-    stop
-    endif
-    |Engine Backend (Alpha Engine)|
-    :Atualiza status do pedido para "PAGO / EM PROCESSAMENTO";
-    :Executa OrderObserverInterface (OrderEmailObserver + StockDeductionObserver);
-    :Limpa carrinho do cliente;
-    |Cliente / Frontend|
-    :Exibe Tela de Sucesso (/checkout/success) com número do pedido;
-    stop
+    %% Estilos Globais e Definições de Cores
+    classDef cliente fill:#FEF3C7,stroke:#D97706,stroke-width:2px;
+    classDef vendedor fill:#FFF9C4,stroke:#F59E0B,stroke-width:2px;
+    classDef sistema fill:#DCFCE7,stroke:#16A34A,stroke-width:2px;
+    classDef caixa fill:#E0F2FE,stroke:#0284C7,stroke-width:2px;
+
+    %% Início do Fluxo
+    Start([Início]) --> Sub1[Cliente dirige-se ao balcão e solicita produtos]:::cliente
+    
+    Sub1 --> Op1[Vendedor abre nova comanda Pré-Venda no Terminal POS]:::vendedor
+    
+    %% Loop de Adição de Itens
+    Op1 --> LoopBusca[Busca produto por Código de Barras / SKU / Nome]:::vendedor
+    LoopBusca --> CheckEstoque{Sistema verifica disponibilidade<br>no estoque da loja física}:::sistema
+    
+    CheckEstoque -- Disponível --> AdicionaItem[Vendedor adiciona item à comanda]:::vendedor
+    CheckEstoque -- Insuficiente --> AlertaEstoque[Vendedor informa falta de estoque<br>e oferece encomenda/substituição]:::vendedor
+    
+    AdicionaItem --> MaisItens{Deseja adicionar<br>mais itens?}
+    AlertaEstoque --> MaisItens
+    
+    MaisItens -- Sim --> LoopBusca
+    
+    %% Definição da Modalidade
+    MaisItens -- Não --> EscolhaModalidade{Vendedor seleciona<br>modalidade de entrega}:::vendedor
+    
+    EscolhaModalidade -- Retirada Imediata --> ProntaEntrega[Define modo Pronta Entrega no Balcão]:::vendedor
+    EscolhaModalidade -- Entrega em Domicílio --> Frete[Informa CEP do cliente e<br>calcula taxa de frete no sistema]:::vendedor
+    
+    %% Fechamento da Pré-Venda
+    ProntaEntrega --> ConcluiPre
+    Frete --> ConcluiPre
+    
+    ConcluiPre[Vendedor conclui Pré-Venda, gera QR Code da Comanda<br>e orienta cliente a ir ao Caixa]:::vendedor
+    
+    %% Fase do Caixa
+    ConcluiPre --> ApresentaComanda[Cliente apresenta Código da Comanda no Caixa]:::cliente
+    ApresentaComanda --> LeituraComanda[Operador de Caixa lê o QR Code no Terminal]:::caixa
+    LeituraComanda --> CarregaDados[Sistema carrega itens e valor total da Pré-Venda]:::sistema
+    
+    %% Formas de Pagamento
+    CarregaDados --> TipoPagamento{Operador de Caixa solicita<br>a forma de pagamento}:::caixa
+    
+    TipoPagamento -- Cartão Crédito/Débito --> PagCartao[Processa transação na Maquininha POS/TEF]:::caixa
+    TipoPagamento -- PIX Presencial --> PagPix[Exibe QR Code Dinâmico no visor do Caixa<br>e cliente paga pelo App do Banco]:::caixa
+    TipoPagamento -- Dinheiro --> PagDinheiro[Recebe cédulas e calcula o troco]:::caixa
+    
+    %% Finalização do Processo
+    PagCartao --> ConfirmaPgto
+    PagPix --> ConfirmaPgto
+    PagDinheiro --> ConfirmaPgto
+    
+    ConfirmaPgto[Operador de Caixa confirma pagamento no sistema]:::caixa
+    
+    ConfirmaPgto --> AtualizaSistema[Sistema atualiza status para PAGO/CONCLUÍDO,<br>dá baixa no estoque e dispara NFC-e]:::sistema
+    
+    AtualizaSistema --> EntregaCupom[Operador imprime NFC-e e entrega<br>cupom e sacola com produtos ao cliente]:::caixa
+    
+    EntregaCupom --> Fim([Cliente retira produtos e finaliza compra]):::cliente

@@ -1,53 +1,80 @@
 flowchart TD
-    skinparam backgroundColor #FFFFFF
-    skinparam shadowing false
-    skinparam activity {
-    StartColor #2563EB
-    EndColor #DC2626
-    BackgroundColor #F8FAFC
-    BorderColor #475569
-    FontName Inter, Arial, sans-serif
-    }
-    header Alpha Engine High-Concurrency Architecture: Control de Concorrência
-    title Workflow de Reserva e Decremento de Estoque com Bloqueio Otimista (Optimistic Locking)
-    |#E0F2FE|Cliente / Checkout|
-    start
-    :Submete confirmação de compra de produto N;
-    |#FFF9C4|ProductRepository / StockService|
-    :Inicializa tentativa de reserva (tentativa = 1, max_tentativas = 3);
-    repeat
-    :Lê registro atual do produto no MySQL;\nSELECT product_id, quantity, version FROM tbkk_product;
-    if (quantity >= quantidade_solicitada?) then (sim)
-    note right #E0F2FE
-    **Estratégia de Bloqueio Otimista:**
-    Usa a coluna 'version' como trava sem bloquear
-    as linhas da tabela para leitura (*non-blocking SELECT*).
-    end note
-    :Tenta decrementar estoque e incrementar versão;\nUPDATE tbkk_product SET quantity = quantity - N, version = version + 1\nWHERE product_id = X AND version = v_atual;
-    if (Linhas Afetadas == 1?) then (sucesso - lock obtido)
-    |#DCFCE7|Camada de Persistência (MySQL)|
-    :Confirma alteração no banco de dados (COMMIT);
-    |ProductRepository / StockService|
-    :Cria registro de reserva em tbkk_product_reservation com TTL;
-    :Dispara StockObserver (Auditoria de Estoque);
-    |Cliente / Checkout|
-    :Reserva efetuada com sucesso;
-    stop
-    else (colisão de concorrência - 0 linhas afetadas)
-    |ProductRepository / StockService|
-    :Incrementa contador de tentativas (tentativa++);
-    if (tentativa <= max_tentativas?) then (sim)
-    :Aplica Exponential Backoff (espera N ms);
-    else (não - limite excedido)
-    |Cliente / Checkout|
-    :Exibe erro "Produto disputado por múltiplos compradores. Tente novamente.";
-    stop
-    endif
-    endif
-    else (estoque insuficiente)
-    |Cliente / Checkout|
-    :Exibe mensagem "Estoque indisponível para a quantidade solicitada";
-    stop
-    endif
-    repeat while (tentativa <= max_tentativas)
-    stop
+    %% Estilos Globais e Configurações
+    classDef default fill:#F8FAFC,stroke:#475569,stroke-width:1px,font-family:Inter,Arial,sans-serif;
+    classDef startEnd fill:#2563EB,stroke:#1D4ED8,color:#FFFFFF,font-weight:bold;
+    classDef sqlNode fill:#1E293B,stroke:#475569,color:#38BDF8,font-family:Courier New,monospace;
+    classDef noteNode fill:#EFF6FF,stroke:#3B82F6,stroke-dasharray: 5 5;
+
+    %% --- RAIA: CLIENTE / CHECKOUT ---
+    subgraph Cliente ["👤 Cliente / Checkout"]
+        style Cliente fill:#E0F2FE,stroke:#0284C7,stroke-width:2px
+        Start([Início]):::startEnd
+        SubmeteCompra[Submete confirmação de compra de produto N]
+        Sucesso[Exibe: 'Reserva efetuada com sucesso!']
+        ErroConcorrencia[Exibe erro: 'Produto disputado por múltiplos compradores. Tente novamente.']:::startEnd
+        ErroEstoque[Exibe mensagem: 'Estoque indisponível para a quantidade solicitada']:::startEnd
+    end
+
+    %% --- RAIA: REPOSITORY / SERVICE ---
+    subgraph Servico ["⚙️ ProductRepository / StockService"]
+        style Servico fill:#FFF9C4,stroke:#F59E0B,stroke-width:2px
+        InitTentativa[Inicializa tentativa de reserva<br><code>tentativa = 1, max_tentativas = 3</code>]
+        
+        %% Query de Leitura
+        SelectMySQL["<code>SELECT product_id, quantity, version<br>FROM tbkk_product;</code>"]:::sqlNode
+        
+        CheckEstoque{quantity >=<br>quantidade_solicitada?}
+        
+        %% Nota Estratégia
+        NotaOtimista["<b>Estratégia de Bloqueio Otimista:</b><br>Usa a coluna 'version' como trava<br>sem bloquear as linhas da tabela<br>para leitura (<i>non-blocking SELECT</i>)."]:::noteNode
+        
+        %% Query de Update
+        UpdateMySQL["<code>UPDATE tbkk_product<br>SET quantity = quantity - N, version = version + 1<br>WHERE product_id = X AND version = v_atual;</code>"]:::sqlNode
+        
+        CheckLock{Linhas Afetadas == 1?}
+        
+        IncTentativa[Incrementa contador de tentativas<br><code>tentativa++</code>]
+        CheckTentativas{tentativa <=<br>max_tentativas?}
+        Backoff[Aplica Exponential Backoff<br><i>Espera N ms</i>]
+        
+        CriaReserva[Cria registro de reserva em<br><code>tbkk_product_reservation</code> com TTL]
+        DisparaObserver[Dispara StockObserver<br><i>Auditoria de Estoque</i>]
+    end
+
+    %% --- RAIA: PERSISTÊNCIA (MYSQL) ---
+    subgraph Mysql ["💾 Camada de Persistência (MySQL)"]
+        style Mysql fill:#DCFCE7,stroke:#16A34A,stroke-width:2px
+        CommitBD[Confirma alteração no banco de dados<br><b>COMMIT</b>]
+    end
+
+    %% --- CONEXÕES DO FLUXO ---
+    Start --> SubmeteCompra
+    SubmeteCompra --> InitTentativa
+    
+    %% Loop Principal
+    InitTentativa --> SelectMySQL
+    SelectMySQL --> CheckEstoque
+    
+    CheckEstoque -- Sim --> UpdateMySQL
+    CheckEstoque -- Não --> ErroEstoque
+    
+    %% Associação Visual da Nota
+    UpdateMySQL -.-> NotaOtimista
+    
+    UpdateMySQL --> CheckLock
+    
+    %% Caminho de Sucesso
+    CheckLock -- Sucesso (Lock Obtido) --> CommitBD
+    CommitBD --> CriaReserva
+    CriaReserva --> DisparaObserver
+    DisparaObserver --> Sucesso
+    Sucesso --> FimSucesso([Fim]):::startEnd
+    
+    %% Caminho de Falha / Colisão
+    CheckLock -- Colisão (0 linhas afetadas) --> IncTentativa
+    IncTentativa --> CheckTentativas
+    
+    CheckTentativas -- Sim --> Backoff
+    Backoff --> SelectMySQL
+    
+    CheckTentativas -- Não (Limite Excedido) --> ErroConcorrencia

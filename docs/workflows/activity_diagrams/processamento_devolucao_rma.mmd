@@ -1,59 +1,91 @@
 flowchart TD
-    skinparam backgroundColor #FFFFFF
-    skinparam shadowing false
-    skinparam activity {
-    StartColor #2563EB
-    EndColor #DC2626
-    BackgroundColor #F8FAFC
-    BorderColor #475569
-    FontName Inter, Arial, sans-serif
-    }
-    header Alpha Engine Reverse Logistics: Workflow de Devoluções (RMA)
-    title Processamento e Ciclo de Vida da Solidação de Devolução (RMA)
-    |#E0F2FE|Cliente|
-    start
-    :Acessa detalhes do pedido (/account/order/return);
-    :Preenche motivo e envia solicitação com fotos;
-    |#FFF9C4|Painel Admin / Atendimento|
-    :Recebe notificação de nova solicitação de RMA;
-    :Analisa justificativa e imagens do produto;
-    if (Solicitação cumpre a política de trocas/CDC?) then (não)
-    :Registra justificativa de indeferimento;
-    |Cliente|
-    :Recebe e-mail de solicitação recusada;
-    stop
-    else (sim - aprovado)
-    |Painel Admin / Atendimento|
-    :Gera código de postagem reversa (Correios/Logística);
-    |Cliente|
-    :Recebe e-mail com código de postagem e orientações;
-    :Embala o produto e realiza postagem na agência;
-    |#DCFCE7|Estoque / Triagem Logística|
-    :Recebe pacote devolvido no Centro de Distribuição;
-    :Realiza inspeção física de qualidade e conferência;
-    if (Produto em estado adequado e com acessórios?) then (não - avariado)
-    :Registra laudo de recusa por avaria do usuário;
-    :Devolve o item ao endereço do cliente;
-    |Cliente|
-    :Recebe notificação de recusa com laudo anexado;
-    stop
-    else (sim - aprovado na triagem)
-    |Estoque / Triagem Logística|
-    :Aprova recebimento no sistema de estoque;
-    :Executa retorno do item ao estoque disponível (Estorno de Estoque);
-    |Painel Admin / Atendimento|
-    :Seleciona tipo de ressarcimento acordado;
-    if (Modalidade de Reembolso?) is (Estorno Financeiro) then
-    |#FEE2E2|Engine / Gateway de Pagamento|
-    :Executa estorno via PaymentGatewayInterface (PIX / Cartão);
-    else (Vale-Compras / Cupom)
-    |Painel Admin / Atendimento|
-    :Gera Cupom de Crédito no valor total da devolução;
-    endif
-    |Painel Admin / Atendimento|
-    :Atualiza status do RMA para "FINALIZADO / REEMBOLSADO";
-    |Cliente|
-    :Recebe confirmação de estorno / cupom de crédito;
-    stop
-    endif
-    endif
+    %% Estilos Globais e Configurações
+    classDef default fill:#F8FAFC,stroke:#475569,stroke-width:1px,font-family:Inter,Arial,sans-serif;
+    classDef startEnd fill:#2563EB,stroke:#1D4ED8,color:#FFFFFF,font-weight:bold;
+    classDef errNode fill:#FEF2F2,stroke:#EF4444,color:#991B1B,font-weight:500;
+
+    %% --- RAIA: CLIENTE ---
+    subgraph Cliente ["👤 Cliente"]
+        style Cliente fill:#E0F2FE,stroke:#0284C7,stroke-width:2px
+        Start([Início]):::startEnd
+        AcessaPedido[Acessa detalhes do pedido<br><code>/account/order/return</code>]
+        PreencheMotivo[Preenche motivo e envia solicitação com fotos]
+        RecebeRecusa[Recebe e-mail de solicitação recusada]:::errNode
+        RecebeCodigo[Recebe e-mail com código de postagem e orientações]
+        PostaProduto[Embala o produto e realiza postagem na agência]
+        RecebeRecusaTriagem[Recebe notificação de recusa com laudo anexado]:::errNode
+        RecebeFim[Recebe confirmação de estorno / cupom de crédito]
+        Fim([Fim]):::startEnd
+    end
+
+    %% --- RAIA: PAINEL ADMIN / ATENDIMENTO ---
+    subgraph Admin ["🧑‍💻 Painel Admin / Atendimento"]
+        style Admin fill:#FFF9C4,stroke:#F59E0B,stroke-width:2px
+        RecebeNotif[Recebe notificação de nova solicitação de RMA]
+        AnalisaJustif[Analisa justificativa e imagens do produto]
+        CheckPolitica{Solicitação cumpre a<br>política de trocas/CDC?}
+        RegistraIndeferimento[Registra justificativa de indeferimento]
+        GeraCodigo[Gera código de postagem reversa<br>Correios / Logística]
+        SelectRessarcimento{Seleciona tipo de<br>ressarcimento acordado}
+        GeraCupom[Gera Cupom de Crédito no valor total da devolução]
+        AtualizaStatus[Atualiza status do RMA para<br>'FINALIZADO / REEMBOLSADO']
+    end
+
+    %% --- RAIA: ESTOQUE / TRIAGEM LOGÍSTICA ---
+    subgraph Estoque ["📦 Estoque / Triagem Logística"]
+        style Estoque fill:#DCFCE7,stroke:#16A34A,stroke-width:2px
+        RecebePacote[Recebe pacote devolvido no Centro de Distribuição]
+        InspecaoFisica[Realiza inspeção física de qualidade e conferência]
+        CheckTriagem{Produto em estado adequado<br>e com acessórios?}
+        RegistraLaudo[Registra laudo de recusa por avaria do usuário]
+        DevolveItem[Devolve o item ao endereço do cliente]
+        AprovaEstoque[Aprova recebimento no sistema de estoque]
+        EstornoEstoque[Executa retorno do item ao estoque disponível<br>Estorno de Estoque]
+    end
+
+    %% --- RAIA: GATEWAY DE PAGAMENTO ---
+    subgraph Gateway ["💳 Engine / Gateway de Pagamento"]
+        style Gateway fill:#FEE2E2,stroke:#EF4444,stroke-width:2px
+        ExecutaEstorno[Executa estorno via<br><code>PaymentGatewayInterface</code><br>PIX / Cartão]
+    end
+
+    %% --- CONEXÕES DO FLUXO ---
+    Start --> AcessaPedido
+    AcessaPedido --> PreencheMotivo
+    PreencheMotivo --> RecebeNotif
+    RecebeNotif --> AnalisaJustif
+    AnalisaJustif --> CheckPolitica
+    
+    %% Primeira Decisão: Política / CDC
+    CheckPolitica -- Não --> RegistraIndeferimento
+    RegistraIndeferimento --> RecebeRecusa
+    RecebeRecusa --> FimRecusa([Fim]):::startEnd
+    
+    CheckPolitica -- Sim (Aprovado) --> GeraCodigo
+    GeraCodigo --> RecebeCodigo
+    RecebeCodigo --> PostaProduto
+    
+    %% Triagem Logística
+    PostaProduto --> RecebePacote
+    RecebePacote --> InspecaoFisica
+    InspecaoFisica --> CheckTriagem
+    
+    %% Segunda Decisão: Estado do Produto
+    CheckTriagem -- Não (Avariado) --> RegistraLaudo
+    RegistraLaudo --> DevolveItem
+    DevolveItem --> RecebeRecusaTriagem
+    RecebeRecusaTriagem --> FimAvaria([Fim]):::startEnd
+    
+    CheckTriagem -- Sim (Aprovado) --> AprovaEstoque
+    AprovaEstoque --> EstornoEstoque
+    EstornoEstoque --> SelectRessarcimento
+    
+    %% Terceira Decisão: Modalidade de Reembolso
+    SelectRessarcimento -- Estorno Financeiro --> ExecutaEstorno
+    SelectRessarcimento -- Vale-Compras / Cupom --> GeraCupom
+    
+    ExecutaEstorno --> AtualizaStatus
+    GeraCupom --> AtualizaStatus
+    
+    AtualizaStatus --> RecebeFim
+    RecebeFim --> Fim

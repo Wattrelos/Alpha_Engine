@@ -1,71 +1,90 @@
 flowchart TD
-    skinparam backgroundColor #FFFFFF
-    skinparam shadowing false
-    skinparam activity {
-    StartColor #2563EB
-    EndColor #DC2626
-    BackgroundColor #F8FAFC
-    BorderColor #475569
-    FontName Inter, Arial, sans-serif
-    }
-    header Alpha Engine Physical Store Architecture: Ponto de Venda (POS / Balcão)
-    title Workflow de Atendimento Presencial e Venda de Balcão (POS)
-    |#E0F2FE|Cliente Presencial|
-    start
-    :Dirige-se ao balcão e solicita produtos;
-    |#FFF9C4|Vendedor (Balcão / Terminal POS)|
-    :Abre nova comanda / Pré-Venda no Terminal POS;
-    repeat
-    :Busca produto por Código de Barras / SKU / Nome;
-    |#DCFCE7|Sistema / Banco de Dados|
-    :Verifica disponibilidade no estoque da loja física;
-    if (Estoque Físico Disponível?) then (sim)
-    |Vendedor (Balcão / Terminal POS)|
-    :Adiciona item à comanda;
-    else (insuficiente)
-    |Vendedor (Balcão / Terminal POS)|
-    :Informa falta de estoque ao cliente;
-    :Oferece opção de encomenda ou substituição;
-    endif
-    repeat while (Deseja adicionar mais itens?) is (sim)
-    |Vendedor (Balcão / Terminal POS)|
-    :Seleciona modalidade de entrega;
-    if (Modalidade de Atendimento?) is (Retirada Imediata) then
-    :Define modo "Pronta Entrega no Balcão";
-    else (Entrega em Domicílio)
-    :Informa CEP de entrega do cliente;
-    :Calcula taxa de frete no sistema;
-    endif
-    |Vendedor (Balcão / Terminal POS)|
-    :Conclui Pré-Venda e gera Código / QR Code de Comanda;
-    :Orientar cliente a dirigir-se ao Caixa;
-    |Cliente Presencial|
-    :Apresenta Código da Comanda no Caixa;
-    |#FEF3C7|Operador de Caixa|
-    :Lê o QR Code / Código da Comanda no Terminal do Caixa;
-    |Sistema / Banco de Dados|
-    :Carrega itens e valor total da Pré-Venda;
-    |Operador de Caixa|
-    :Solicita a forma de pagamento ao cliente;
-    if (Forma de Pagamento Presencial?) is (Cartão Crédito / Débito) then
-    :Processa transação na Maquininha POS (TEF);
-    elseif (PIX Presencial) then
-    :Exibe QR Code Dinâmico no visor do Caixa;
-    |Cliente Presencial|
-    :Efetua pagamento pelo App do Banco;
-    else (Dinheiro)
-    |Operador de Caixa|
-    :Recebe cédulas e registra valor para cálculo de troco;
-    endif
-    |Operador de Caixa|
-    :Confirma pagamento no sistema;
-    |#DCFCE7|Sistema / Banco de Dados|
-    :Atualiza status do pedido para "PAGO / CONCLUÍDO";
-    :Executa baixa imediata no estoque físico (tbkk_product);
-    :Dispara emissão automática de Nota Fiscal (NFC-e);
-    |Operador de Caixa|
-    :Imprime NFC-e e Comprovante de Pagamento;
-    :Entrega cupom fiscal e sacola com produtos ao cliente;
-    |Cliente Presencial|
-    :Retira produtos e finaliza compra;
-    stop
+    %% Estilos Globais e Configurações
+    classDef default fill:#F8FAFC,stroke:#475569,stroke-width:1px,font-family:Inter,Arial,sans-serif;
+    classDef startEnd fill:#2563EB,stroke:#1D4ED8,color:#FFFFFF,font-weight:bold;
+    
+    %% --- RAIA: CLIENTE PRESENCIAL ---
+    subgraph Cliente ["👤 Cliente Presencial"]
+        style Cliente fill:#E0F2FE,stroke:#0284C7,stroke-width:2px
+        Start([Início]):::startEnd
+        SolocitaProd[Dirige-se ao balcão e solicita produtos]
+        ApresentaComanda[Apresenta Código da Comanda no Caixa]
+        PagaPix[Efetua pagamento pelo App do Banco]
+        Fim([Retira produtos e finaliza compra]):::startEnd
+    end
+
+    %% --- RAIA: VENDEDOR ---
+    subgraph Vendedor ["🧑‍💼 Vendedor (Balcão / Terminal POS)"]
+        style Vendedor fill:#FFF9C4,stroke:#F59E0B,stroke-width:2px
+        AbreComanda[Abre nova comanda / Pré-Venda no Terminal POS]
+        BuscaProd[Busca produto por Código de Barras / SKU / Nome]
+        AdicionaItem[Adiciona item à comanda]
+        InformaFalta[Informa falta de estoque ao cliente<br>e oferece opção de encomenda/substituição]
+        Modalidade{Modalidade de<br>Atendimento?}
+        ProntaEntrega[Define modo 'Pronta Entrega no Balcão']
+        CalculaFrete[Informa CEP de entrega do cliente<br>e calcula taxa de frete no sistema]
+        ConcluiPre[Conclui Pré-Venda, gera QR Code da Comanda<br>e orienta cliente a dirigir-se ao Caixa]
+    end
+
+    %% --- RAIA: SISTEMA / BANCO DE DADOS ---
+    subgraph Sistema ["💻 Sistema / Banco de Dados"]
+        style Sistema fill:#DCFCE7,stroke:#16A34A,stroke-width:2px
+        VerificaEstoque{Verifica disponibilidade<br>no estoque da loja física}
+        CarregaItens[Carrega itens e valor total da Pré-Venda]
+        ProcessaFim["Atualiza status para 'PAGO / CONCLUÍDO'<br>• Baixa imediata no estoque (tbkk_product)<br>• Dispara emissão automática de NFC-e"]
+    end
+
+    %% --- RAIA: OPERADOR DE CAIXA ---
+    subgraph Caixa ["🛍️ Operador de Caixa"]
+        style Caixa fill:#FEF3C7,stroke:#D97706,stroke-width:2px
+        LeQR[Lê o QR Code / Código da Comanda no Terminal do Caixa]
+        FormaPag{Solicita a forma<br>de pagamento}
+        PagCartao[Processa transação na Maquininha POS / TEF]
+        PagDinheiro[Recebe cédulas e registra valor para cálculo de troco]
+        ConfirmaPgto[Confirma pagamento no sistema]
+        EntregaPedido[Imprime NFC-e e Comprovante de Pagamento<br>e entrega sacola com produtos ao cliente]
+    end
+
+    %% --- CONEXÕES DO FLUXO ---
+    Start --> SolocitaProd
+    SolocitaProd --> AbreComanda
+    
+    %% Loop de Produtos
+    AbreComanda --> BuscaProd
+    BuscaProd --> VerificaEstoque
+    
+    VerificaEstoque -- Sim --> AdicionaItem
+    VerificaEstoque -- Insuficiente --> InformaFalta
+    
+    AdicionaItem --> MaisItens{Deseja adicionar<br>mais itens?}
+    InformaFalta --> MaisItens
+    
+    MaisItens -- Sim --> BuscaProd
+    
+    %% Definição de Entrega
+    MaisItens -- Não --> Modalidade
+    Modalidade -- Retirada Imediata --> ProntaEntrega
+    Modalidade -- Entrega em Domicílio --> CalculaFrete
+    
+    ProntaEntrega --> ConcluiPre
+    CalculaFrete --> ConcluiPre
+    
+    %% Checkout e Caixa
+    ConcluiPre --> ApresentaComanda
+    ApresentaComanda --> LeQR
+    LeQR --> CarregaItens
+    CarregaItens --> FormaPag
+    
+    %% Bifurcação de Pagamento
+    FormaPag -- Cartão Crédito / Débito --> PagCartao
+    FormaPag -- PIX Presencial --> PagaPix
+    FormaPag -- Dinheiro --> PagDinheiro
+    
+    PagCartao --> ConfirmaPgto
+    PagaPix --> ConfirmaPgto
+    PagDinheiro --> ConfirmaPgto
+    
+    %% Finalização
+    ConfirmaPgto --> ProcessaFim
+    ProcessaFim --> EntregaPedido
+    EntregaPedido --> Fim

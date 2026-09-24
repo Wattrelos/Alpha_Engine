@@ -1,48 +1,90 @@
-sequenceDiagram
-    StartColor #2563EB
-    EndColor #DC2626
-    BackgroundColor #F8FAFC
-    BorderColor #475569
-    FontName Inter, Arial, sans-serif
-    }
-    |#E0F2FE|Titular dos Dados / DPO|
-    start
-    :Solicita exclusão de dados pessoais e direito ao esquecimento (/account/lgpd/forget)#59;
-    |#FFF9C4|Engine de Governança & Compliance|
-    :Valida identidade do solicitante e token de segurança de 2 fatores (2FA)#59;
-    if (Identidade Confirmada?) then (sim)
-    |#DCFCE7|Persistência & Análise Legal|
-    :Verifica existência de pedidos vinculados ao customer_id nos últimos 5 anos#59;
-    note right #FFFBEB
-    **Exceção de Retenção Legal (Art. 16, I da LGPD):**
-    Dados fiscais e históricos de compras devem ser mantidos
-    por 5 anos por obrigação do Código Tributário Nacional (CTN).
-    end note
-    if (Possui obrigações de guarda fiscal ativa?) then (sim - retenção obrigatória)
-    |Engine de Governança & Compliance|
-    :Mantém registros fiscais estritamente necessários na tabela tbkk_order#59;
-    :Invoca LgpdSanitizer::sanitizeCustomerRecord()#59;
-    else (não - sem histórico fiscal recente)
-    |Engine de Governança & Compliance|
-    :Invoca LgpdSanitizer::anonymizeCompletely()#59;
-    endif
-    |Engine de Governança & Compliance|
-    partition "Processo de Sanitização (LgpdSanitizer)" {
-    :Mascara Nome e Sobrenome ("João Silva" -> "J*** S****")#59;
-    :Mascara CPF ("123.456.789-00" -> "***.456.789-**")#59;
-    :Mascara E-mail ("usuario@dominio.com" -> "u***@anon.lgpd")#59;
-    :Limpa números de telefone e dados de navegação/IPs#59;
-    :Remove cartões de crédito e tokens de pagamento salvos#59;
-    :Invalida e remove todas as sessões ativas no Redis (sessao:cliente:*)#59;
-    }
-    |#DCFCE7|Persistência & Análise Legal|
-    :UPDATE tbkk_customer SET status = 0, password = 'ANONYMIZED_HASH' WHERE customer_id = X#59;
-    :INSERT INTO tbkk_lgpd_audit_log (protocol, action, timestamp, hash_confirmation)#59;
-    |Titular dos Dados / DPO|
-    :Exibe tela/e-mail de confirmação com o Protocolo de Sanitização LGPD#59;
-    stop
-    else (não - falha de validação)
-    |Titular dos Dados / DPO|
-    :Notifica falha de verificação de segurança#59;
-    stop
-    endif
+flowchart TD
+    %% Estilos Globais e Configurações
+    classDef default fill:#F8FAFC,stroke:#475569,stroke-width:1px,font-family:Inter,Arial,sans-serif;
+    classDef startEnd fill:#2563EB,stroke:#1D4ED8,color:#FFFFFF,font-weight:bold;
+    classDef errNode fill:#FEF2F2,stroke:#EF4444,color:#991B1B,font-weight:500;
+    classDef sqlNode fill:#1E293B,stroke:#475569,color:#38BDF8,font-family:Courier New,monospace;
+    classDef noteNode fill:#FFFBEB,stroke:#D97706,stroke-dasharray: 5 5;
+
+    %% --- RAIA: TITULAR DOS DADOS / DPO ---
+    subgraph Titular ["👤 Titular dos Dados / DPO"]
+        style Titular fill:#E0F2FE,stroke:#0284C7,stroke-width:2px
+        Start([Início]):::startEnd
+        SolicitaExclusao[Solicita exclusão de dados pessoais e<br>direito ao esquecimento <code>/account/lgpd/forget</code>]
+        NotificaFalha[Notifica falha de verificação de segurança]:::errNode
+        ExibeConfirmacao[Exibe tela/e-mail de confirmação com<br>o Protocolo de Sanitização LGPD]
+        FimSucesso([Fim]):::startEnd
+    end
+
+    %% --- RAIA: ENGINE DE GOVERNANÇA & COMPLIANCE ---
+    subgraph Engine ["⚙️ Engine de Governança & Compliance"]
+        style Engine fill:#FFF9C4,stroke:#F59E0B,stroke-width:2px
+        ValidaIdentidade[Valida identidade do solicitante e<br>token de segurança de 2 fatores - 2FA]
+        CheckIdentidade{Identidade<br>Confirmada?}
+        
+        MantemRegFiscais["Mantém registros fiscais estritamente<br>necessários na tabela <code>tbkk_order</code>"]
+        CallSanitizer["Invoca <code>LgpdSanitizer::sanitizeCustomerRecord()</code>"]
+        CallAnonymize["Invoca <code>LgpdSanitizer::anonymizeCompletely()</code>"]
+
+        %% Sub-bloco de Sanitização
+        subgraph Sanitizer ["Processo de Sanitização (LgpdSanitizer)"]
+            style Sanitizer fill:#FFFBEB,stroke:#D97706,stroke-dasharray: 3 3
+            MascaraNome[Mascara Nome e Sobrenome<br><i>'João Silva' ➔ 'J*** S****'</i>]
+            MascaraCPF[Mascara CPF<br><i>'123.456.789-00' ➔ '***.456.789-**'</i>]
+            MascaraEmail[Mascara E-mail<br><i>'usuario@dominio.com' ➔ 'u***@anon.lgpd'</i>]
+            LimpaTelefones[Limpa números de telefone e<br>dados de navegação/IPs]
+            RemoveCartoes[Remove cartões de crédito e<br>tokens de pagamento salvos]
+            InvalidaRedis[Invalida e remove sessões ativas<br>no Redis <code>sessao:cliente:*</code>]
+        end
+    end
+
+    %% --- RAIA: PERSISTÊNCIA & ANÁLISE LEGAL ---
+    subgraph Legal ["⚖️ Persistência & Análise Legal"]
+        style Legal fill:#DCFCE7,stroke:#16A34A,stroke-width:2px
+        VerificaPedidos[Verifica existência de pedidos vinculados<br>ao customer_id nos últimos 5 anos]
+        
+        NotaRetencao["<b>Exceção de Retenção Legal (Art. 16, I da LGPD):</b><br>Dados fiscais e históricos de compras devem<br>ser mantidos por 5 anos por obrigação do<br>Código Tributário Nacional (CTN)."]:::noteNode
+        
+        CheckGuarda{Possui obrigações de<br>guarda fiscal ativa?}
+        
+        UpdateCustomer["<code>UPDATE tbkk_customer<br>SET status = 0, password = 'ANONYMIZED_HASH'<br>WHERE customer_id = X;</code>"]:::sqlNode
+        
+        InsertAudit["<code>INSERT INTO tbkk_lgpd_audit_log<br>(protocol, action, timestamp, hash_confirmation);</code>"]:::sqlNode
+    end
+
+    %% --- CONEXÕES DO FLUXO ---
+    Start --> SolicitaExclusao
+    SolicitaExclusao --> ValidaIdentidade
+    ValidaIdentidade --> CheckIdentidade
+    
+    %% Falha de Identidade
+    CheckIdentidade -- Não --> NotificaFalha
+    NotificaFalha --> FimFalha([Fim]):::startEnd
+    
+    %% Identidade Confirmada
+    CheckIdentidade -- Sim --> VerificaPedidos
+    VerificaPedidos -.-> NotaRetencao
+    VerificaPedidos --> CheckGuarda
+    
+    %% Ramificação de Retenção Fiscal
+    CheckGuarda -- "Sim (Retenção Obrigatória)" --> MantemRegFiscais
+    MantemRegFiscais --> CallSanitizer
+    CallSanitizer --> MascaraNome
+    
+    CheckGuarda -- "Não (Sem histórico fiscal)" --> CallAnonymize
+    CallAnonymize --> MascaraNome
+    
+    %% Execução Sequencial do Sanitizer
+    MascaraNome --> MascaraCPF
+    MascaraCPF --> MascaraEmail
+    MascaraEmail --> LimpaTelefones
+    LimpaTelefones --> RemoveCartoes
+    RemoveCartoes --> InvalidaRedis
+    
+    %% Persistência Final e Auditoria
+    InvalidaRedis --> UpdateCustomer
+    UpdateCustomer --> InsertAudit
+    InsertAudit --> ExibeConfirmacao
+    ExibeConfirmacao --> FimSucesso
+
+
