@@ -1,6 +1,6 @@
 @startuml "Complete product return flow - Secure Architecture"
 autonumber "<b>00:"
-
+skinparam backgroundColor #FFFEFE
 box "Infrastructure / HTTP / Async"
     actor "Client / Admin" as Ator
     participant "Slim Middleware" as Middleware

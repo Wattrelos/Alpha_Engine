@@ -1,6 +1,6 @@
 @startuml "Middleware Anti-CSRF Flow"
 autonumber "<b>00:"
-
+skinparam backgroundColor #FFFEFE
 header "Alpha Engine Security Workflow: Proteção Anti-CSRF (Cross-Site Request Forgery)"
 title "Fluxo de Proteção Anti-CSRF com CsrfGuardMiddleware, Twig & Slim Guard"
 

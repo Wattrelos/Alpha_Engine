@@ -1,5 +1,6 @@
 @startuml "Autenticacao Dual com Redis & Fallback PHP Session"
 autonumber "<b>00:"
+skinparam backgroundColor #FFFEFE
 
 header "Alpha Engine Security & Infrastructure Workflow: Gestão de Sessões Dual com Redis e Fallback"
 title "Fluxo de Autenticação (Admin / Cliente) com Cache Redis (Predis) e Fallback Gracioso para $_SESSION"

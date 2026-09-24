@@ -1,6 +1,6 @@
 @startuml "Fusão do Carrinho de Compras no Login"
 autonumber "<b>00:"
-
+skinparam backgroundColor #FFFEFE
 header "Alpha Engine E-commerce Domain Architecture: Gestão de Carrinho & Autenticação de Cliente"
 title "Fluxo de Mesclagem / Fusão do Carrinho de Compras do Visitante Anônimo para a Conta Autenticada"
 

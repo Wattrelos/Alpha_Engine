@@ -1,83 +1,114 @@
-@startuml POS - Sales and Checkout Sequence Diagram
+@startuml "POS - Sales and Checkout Sequence Diagram"
 
-' Ativando numeração automática
-autonumber
+' Ativando numeração automática formatada
+autonumber "<b>00:"
 
-' Estilização moderna via CSS do PlantUML
-<style>
-sequenceDiagram {
-    // Configurações Globais
-    roundcorner 8
-    linecolor #4A5568
-    linewidth 1.5
+header Alpha Engine POS Architecture: Ponto de Venda (POS) - Fluxo de Venda Balcão e Checkout
+title Fluxo Completo de Venda Balcão (POS) e Checkout com Slim 4, Redis e MySQL
 
-    // Estilo dos Atores (Customer, Sales Rep, Cashier)
-    actor {
-        BackgroundColor #E2E8F0
-        LineColor #4A5568
-        FontName Helvetica
-        FontSize 14
-        FontColor #1A202C
-    }
+skinparam backgroundColor #FFFFFF
+skinparam shadowing false
+skinparam roundcorner 8
+skinparam defaultFontName "Inter, -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Helvetica, Arial, sans-serif"
+skinparam defaultFontSize 12
+skinparam defaultFontColor #1E293B
 
-    // Estilo dos Participantes/Telas (Interfaces)
-    participant {
-        BackgroundColor #EDF2F7
-        LineColor #718096
-        FontColor #2D3748
-    }
+' Hierarquia Visual de Cabeçalho e Título
+skinparam TitleFontColor #0F172A
+skinparam TitleFontSize 15
+skinparam TitleFontStyle bold
+skinparam HeaderFontColor #64748B
+skinparam HeaderFontSize 10
 
-    // Estilo dos Controles/APIs (Back-end)
-    control {
-        BackgroundColor #EBF8FF
-        LineColor #3182CE
-        FontColor #2B6CB0
-    }
+' Configurações Globais de Espaçamento e Caixas
+skinparam BoxPadding 12
+skinparam ParticipantPadding 8
 
-    // Estilo do Banco de Dados
-    database {
-        BackgroundColor #FEFCBF
-        LineColor #D69E2E
-        FontColor #744210
-    }
+skinparam sequenceBoxBorderColor #CBD5E1
+skinparam sequenceBoxFontColor #334155
+skinparam sequenceBoxFontSize 13
+skinparam sequenceBoxFontStyle bold
 
-    // Estilo dos Grupos (Boxes)
-    box {
-        BackgroundColor #F7FAFC
-        LineColor #CBD5E0
-        FontColor #4A5568
-    }
+' Estilo das Linhas de Vida e Ativações
+skinparam SequenceLifeLineBorderColor #64748B
+skinparam SequenceLifeLineBackgroundColor #F8FAFC
 
-    // Estilo dos Textos das Setas (Mensagens)
-    arrow {
-        FontColor #4A5568
-        FontSize 12
-        LineColor #4A5568
-    }
-}
-</style>
+' Estilo dos Grupos e Divisores de Fase
+skinparam SequenceGroupBorderColor #94A3B8
+skinparam SequenceGroupBackgroundColor #F8FAFC
+skinparam SequenceGroupHeaderFontColor #1E293B
+skinparam SequenceGroupFontColor #475569
+
+skinparam SequenceDividerBorderColor #CBD5E1
+skinparam SequenceDividerBackgroundColor #F1F5F9
+skinparam SequenceDividerFontColor #0F172A
+skinparam SequenceDividerFontSize 13
+skinparam SequenceDividerFontStyle bold
+
+' Estilo das Setas de Mensagens
+skinparam ArrowColor #475569
+skinparam ArrowFontColor #334155
+skinparam ArrowFontSize 11
+skinparam ArrowThickness 1.2
+
+' Estilo dos Atores (Customer, Sales Rep, Cashier)
+skinparam ActorBackgroundColor #DBEAFE
+skinparam ActorBorderColor #2563EB
+skinparam ActorFontColor #1E293B
+skinparam ActorFontSize 13
+
+' Estilo dos Participantes
+skinparam ParticipantBackgroundColor #F1F5F9
+skinparam ParticipantBorderColor #64748B
+skinparam ParticipantFontColor #0F172A
+skinparam ParticipantFontSize 12
+
+' Estilo das Telas/Fronteiras (UI Interfaces)
+skinparam BoundaryBackgroundColor #EFF6FF
+skinparam BoundaryBorderColor #2563EB
+skinparam BoundaryFontColor #1E3A8A
+skinparam BoundaryFontSize 12
+
+' Estilo dos Controles e Handlers de Aplicação (Slim 4 Actions, Repos, Mappers)
+skinparam ControlBackgroundColor #EDE9FE
+skinparam ControlBorderColor #7C3AED
+skinparam ControlFontColor #4C1D95
+skinparam ControlFontSize 12
+
+' Estilo das Bases de Dados e Cache
+skinparam DatabaseBackgroundColor #FEF3C7
+skinparam DatabaseBorderColor #D97706
+skinparam DatabaseFontColor #78350F
+skinparam DatabaseFontSize 12
+
+' Estilo das Notas de Negócio / Idempotência
+skinparam NoteBackgroundColor #FFFBEB
+skinparam NoteBorderColor #F59E0B
+skinparam NoteFontColor #92400E
+skinparam NoteFontSize 11
+skinparam NoteTextAlignment left
 
 actor "Customer" as Customer
 actor "Sales Rep" as SalesRep
 
-box "POS Web Interface (Frontend)"
+box "POS Web Interface (Frontend)" #E0F2FE
     boundary "Catalog / Create Order Screen" as SalesScreen
     boundary "Cashier Checkout Screen" as CashierScreen
 end box
 
-box "Slim 4 Entry & Middleware Stack"
+box "Slim 4 Entry & Middleware Stack" #EDE9FE
     control "Router" as Router
     control "AdminSessionMiddleware" as Middleware
 end box
 
-box "Application Actions (Slim Actions)"
+box "Application Actions (Slim Actions)" #FFF9C4
     control "SearchProductAction" as SearchAction
     control "CreatePreOrderAction" as CreatePreOrderAction
     control "GetPreOrderAction" as GetPreOrderAction
     control "PayOrderAction" as PayOrderAction
 end box
 
-box "Domain & Persistence Layer"
+box "Domain & Persistence Layer" #DCFCE7
     control "ProductRepository" as ProductRepo
     control "OrderRepository" as OrderRepo
     control "UnitOfWork" as UoW
@@ -86,7 +117,7 @@ box "Domain & Persistence Layer"
     control "DataAccessObject (DAO)" as DAO
 end box
 
-box "Infrastructure Support"
+box "Infrastructure Support" #F1F5F9
     database "MySQL Database" as DB
     database "Redis Cache (Session & Idempotency)" as Redis
 end box
@@ -140,7 +171,7 @@ activate Router
         Middleware -> CreatePreOrderAction : __invoke(Request)
         activate CreatePreOrderAction
             
-            note over CreatePreOrderAction, Redis: Idempotency check to prevent duplicate pre-order creation
+            note over CreatePreOrderAction, Redis: **Idempotency Control (Redis Lock):** Prevents duplicate pre-order creation (SETNX ttl=5min)
             CreatePreOrderAction -> Redis : SETNX(Idempotency-Key, "PROCESSING", expire: 5min)
             activate Redis
                 Redis --> CreatePreOrderAction : OK (Lock acquired)

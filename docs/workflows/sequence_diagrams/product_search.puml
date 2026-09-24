@@ -1,5 +1,5 @@
 @startuml "Busca de Produtos - Diagrama de Sequência"
-
+skinparam backgroundColor #FFFEFE
 autonumber
 skinparam BoxPadding 10
 skinparam ParticipantPadding 10

@@ -1,5 +1,6 @@
 @startuml "Cálculo de Frete com GoF Strategy"
 autonumber "<b>00:"
+skinparam backgroundColor #FFFEFE
 
 header "Alpha Engine Architecture: Módulo de Cálculo de Frete Multi-Estratégia (GoF Strategy Pattern)"
 title "Fluxo de Cálculo e Cotação de Frete com Estratégias Intercambiáveis"

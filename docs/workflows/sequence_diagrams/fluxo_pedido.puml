@@ -1,6 +1,6 @@
 @startuml "Fluxo_Completo_Gravacao_e_Leitura_Reversa_Otimizado"
 autonumber
-
+skinparam backgroundColor #FFFEFE
 title Fluxo de Criação e Leitura de Pedidos (Escrita/Leitura Reversa)
 
 box "Apresentação e Infraestrutura"

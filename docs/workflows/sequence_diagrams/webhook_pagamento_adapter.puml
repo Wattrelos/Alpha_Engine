@@ -1,6 +1,6 @@
 @startuml "Webhook de Pagamento com GoF Adapter & Observers"
 autonumber "<b>00:"
-
+skinparam backgroundColor #FFFEFE
 header "Alpha Engine Integration & Payment Subsystem: Notificação Assíncrona de Webhook"
 title "Fluxo de Processamento Assíncrono de Webhook de Pagamento com PaymentGatewayFactory, Adapters e Observers"
 

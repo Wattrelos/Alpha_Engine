@@ -1,6 +1,6 @@
 @startuml "Resolução Dinâmica de SEO URLs & Cache"
 autonumber "<b>00:"
-
+skinparam backgroundColor #FFFEFE
 header "Alpha Engine Architecture: Resolução de Rotas Amigáveis (SEO URLs) com Caching"
 title "Fluxo de Resolução Dinâmica de SEO URLs com SeoUrlRepository & FilesystemCacheStrategy"
 

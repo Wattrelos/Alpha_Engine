@@ -1,6 +1,6 @@
 @startuml "Lazy Loading via ProxyFactory no DAO"
 autonumber "<b>00:"
-
+skinparam backgroundColor #FFFEFE
 header "Alpha Engine ORM & Persistence Architecture: Virtual Proxy & Lazy Loading"
 title "Fluxo de Hidratação Diferida (Lazy Loading) de Entidades com ProxyFactory & DataAccessObject"
 

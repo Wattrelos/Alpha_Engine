@@ -1,5 +1,6 @@
 @startuml Area Calculation for Ceramic Flooring and Wall Tiles
 ' !theme plain
+skinparam backgroundColor #FFFEFE
 skinparam responseMessageBelowArrow true
 skinparam sequenceMessageAlign center
 skinparam roundcorner 8

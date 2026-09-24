@@ -1,6 +1,6 @@
 @startuml "Optimistic Lock Failure Flow"
 autonumber "<b>00:"
-
+skinparam backgroundColor #FFFEFE
 header "Alpha Engine Workflow: Concurrency Control & Optimistic Locking Failure"
 title "Optimistic Lock Failure Flow with Redis Session & Cache Invalidation"
 

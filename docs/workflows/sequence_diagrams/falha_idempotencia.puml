@@ -1,4 +1,6 @@
 @startuml
+skinparam backgroundColor #FFFEFE
+
 autonumber "<b>[00]"
 
 header "Alpha Engine Workflow: Technical Idempotency & Queue Protection"
