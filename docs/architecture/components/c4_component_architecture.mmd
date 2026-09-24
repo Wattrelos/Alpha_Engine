@@ -1,0 +1,70 @@
+sequenceDiagram
+    package "1. Web Routing & Security Pipeline (Slim 4)" #E0F2FE {
+    [Slim Router (AppContainer)] as Router <<Framework>> #BAE6FD
+    [CsrfGuardMiddleware] as CsrfMW <<Middleware>> #7DD3FC
+    [AdminSessionMiddleware] as AdminMW <<Middleware>> #7DD3FC
+    [SessionMiddleware] as UserMW <<Middleware>> #7DD3FC
+    [LanguageMiddleware] as LangMW <<Middleware>> #7DD3FC
+    }
+    package "2. Subssistema de Autenticação & Sessão" #FFF9C4 {
+    [CustomerAuthService] as CustomerAuth <<Auth Service>> #FEF08A
+    [AdminAuthService] as AdminAuth <<Auth Service>> #FEF08A
+    [AbstractAuthService] as BaseAuth <<Core Auth>> #FDE047
+    }
+    package "3. Subssistema de Catálogo & SEO" #DCFCE7 {
+    [ProductRepository] as ProductRepo <<Repository>> #86EFAC
+    [CategoryRepository] as CategoryRepo <<Repository>> #86EFAC
+    [SeoUrlRepository] as SeoRepo <<Repository>> #86EFAC
+    [FilesystemCacheStrategy] as DiskCache <<Cache Strategy>> #4ADE80
+    }
+    package "4. Subssistema de Checkout & Pedidos" #FEE2E2 {
+    [CartRepository] as CartRepo <<Repository>> #FCA5A5
+    [OrderRepository] as OrderRepo <<Repository>> #FCA5A5
+    [UnitOfWork] as UoW <<Transaction Manager>> #F87171
+    }
+    package "5. Subssistema de Pagamentos & Frete (GoF Strategy/Adapter)" #F3E8FF {
+    [PaymentGatewayFactory] as PaymentFactory <<Factory>> #D8B4FE
+    [MercadoPagoAdapter] as MPAdapter <<Adapter>> #C084FC
+    [PixGateway] as PixGateway <<Gateway>> #C084FC
+    [ShippingStrategyManager] as ShippingManager <<Manager>> #D8B4FE
+    [FlatRateShippingService] as FlatRate <<Strategy>> #C084FC
+    [WeightBasedShippingService] as WeightShipping <<Strategy>> #C084FC
+    [FreeShippingService] as FreeShipping <<Strategy>> #C084FC
+    }
+    package "6. Processamento Assíncrono & Mensageria" #E0E7FF {
+    [EventDispatcher] as EventBus <<Event Bus>> #C7D2FE
+    [QueueService] as QueueService <<Message Broker>> #A5B4FC
+    [CLI Worker Consumer] as WorkerConsumer <<CLI Consumer>> #818CF8
+    }
+    participant MySQL as MySQL 8.0 (Relational Database)
+    participant Redis as Redis 6379 (Session Store)
+    queue "RabbitMQ<br/>(Message Queue)" as RabbitMQ #FED7AA
+    cloud "Mercado Pago / PIX API<br/>(External Gateways)" as ExtPayment #E0F2FE
+    Router -->> CsrfMW : Intercepta POST
+    Router -->> AdminMW : Protege /admin
+    Router -->> UserMW : Protege /account
+    Router -->> LangMW : Global
+    AdminMW -->> AdminAuth : Valida sessão admin
+    UserMW -->> CustomerAuth : Valida sessão cliente
+    AdminAuth --|> BaseAuth
+    CustomerAuth --|> BaseAuth
+    BaseAuth -->> Redis : Grava/Lê sessões (sessao:*)
+    BaseAuth ..> MySQL : Fallback se Redis falhar
+    Router -->> SeoRepo : Resolve SEO URLs
+    SeoRepo -->> DiskCache : Leitura/Gravação de Cache em Disco
+    ProductRepo -->> MySQL : Consultas de produtos
+    CategoryRepo -->> MySQL : Mapeamento de categorias
+    CartRepo -->> MySQL : Persistência do carrinho
+    OrderRepo -->> UoW : ACID Transactions
+    OrderRepo -->> MySQL : Leitura/Gravação de pedidos
+    PaymentFactory -->> MPAdapter : Instancia MercadoPago
+    PaymentFactory -->> PixGateway : Instancia PIX
+    MPAdapter -->> ExtPayment : HTTP REST API
+    ShippingManager -->> FlatRate : Executa cotação
+    ShippingManager -->> WeightShipping : Executa cotação
+    ShippingManager -->> FreeShipping : Executa cotação
+    OrderRepo -->> EventBus : Dispara OrderCreatedEvent
+    EventBus -->> QueueService : Publica payload
+    QueueService -->> RabbitMQ : Enfilera mensagem
+    RabbitMQ -->> WorkerConsumer : Consome assincronamente
+    WorkerConsumer -->> MySQL : Processa baixa e atualizações

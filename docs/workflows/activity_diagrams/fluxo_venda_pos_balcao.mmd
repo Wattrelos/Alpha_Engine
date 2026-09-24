@@ -1,0 +1,71 @@
+flowchart TD
+    skinparam backgroundColor #FFFFFF
+    skinparam shadowing false
+    skinparam activity {
+    StartColor #2563EB
+    EndColor #DC2626
+    BackgroundColor #F8FAFC
+    BorderColor #475569
+    FontName Inter, Arial, sans-serif
+    }
+    header Alpha Engine Physical Store Architecture: Ponto de Venda (POS / Balcão)
+    title Workflow de Atendimento Presencial e Venda de Balcão (POS)
+    |#E0F2FE|Cliente Presencial|
+    start
+    :Dirige-se ao balcão e solicita produtos;
+    |#FFF9C4|Vendedor (Balcão / Terminal POS)|
+    :Abre nova comanda / Pré-Venda no Terminal POS;
+    repeat
+    :Busca produto por Código de Barras / SKU / Nome;
+    |#DCFCE7|Sistema / Banco de Dados|
+    :Verifica disponibilidade no estoque da loja física;
+    if (Estoque Físico Disponível?) then (sim)
+    |Vendedor (Balcão / Terminal POS)|
+    :Adiciona item à comanda;
+    else (insuficiente)
+    |Vendedor (Balcão / Terminal POS)|
+    :Informa falta de estoque ao cliente;
+    :Oferece opção de encomenda ou substituição;
+    endif
+    repeat while (Deseja adicionar mais itens?) is (sim)
+    |Vendedor (Balcão / Terminal POS)|
+    :Seleciona modalidade de entrega;
+    if (Modalidade de Atendimento?) is (Retirada Imediata) then
+    :Define modo "Pronta Entrega no Balcão";
+    else (Entrega em Domicílio)
+    :Informa CEP de entrega do cliente;
+    :Calcula taxa de frete no sistema;
+    endif
+    |Vendedor (Balcão / Terminal POS)|
+    :Conclui Pré-Venda e gera Código / QR Code de Comanda;
+    :Orientar cliente a dirigir-se ao Caixa;
+    |Cliente Presencial|
+    :Apresenta Código da Comanda no Caixa;
+    |#FEF3C7|Operador de Caixa|
+    :Lê o QR Code / Código da Comanda no Terminal do Caixa;
+    |Sistema / Banco de Dados|
+    :Carrega itens e valor total da Pré-Venda;
+    |Operador de Caixa|
+    :Solicita a forma de pagamento ao cliente;
+    if (Forma de Pagamento Presencial?) is (Cartão Crédito / Débito) then
+    :Processa transação na Maquininha POS (TEF);
+    elseif (PIX Presencial) then
+    :Exibe QR Code Dinâmico no visor do Caixa;
+    |Cliente Presencial|
+    :Efetua pagamento pelo App do Banco;
+    else (Dinheiro)
+    |Operador de Caixa|
+    :Recebe cédulas e registra valor para cálculo de troco;
+    endif
+    |Operador de Caixa|
+    :Confirma pagamento no sistema;
+    |#DCFCE7|Sistema / Banco de Dados|
+    :Atualiza status do pedido para "PAGO / CONCLUÍDO";
+    :Executa baixa imediata no estoque físico (tbkk_product);
+    :Dispara emissão automática de Nota Fiscal (NFC-e);
+    |Operador de Caixa|
+    :Imprime NFC-e e Comprovante de Pagamento;
+    :Entrega cupom fiscal e sacola com produtos ao cliente;
+    |Cliente Presencial|
+    :Retira produtos e finaliza compra;
+    stop

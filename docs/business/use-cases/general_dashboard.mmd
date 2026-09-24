@@ -1,0 +1,25 @@
+sequenceDiagram
+    left to right direction
+    actor Operator as Operador do Painel
+    actor Admin as Administrador Geral
+    Operator <|-- Admin
+    rectangle "Alpha Engine - Dashboard Administrativo" {
+    usecase "Gerenciar Catálogo<br/>(Produtos, Categorias, Opções)" as UC_Catalog
+    usecase "Gerenciar Clientes<br/>(Aprovações, Grupos de Clientes)" as UC_Customers
+    usecase "Gerenciar Pedidos & Faturamento" as UC_Orders
+    usecase "Gerenciar Devoluções & Trocas" as UC_Returns
+    usecase "Visualizar Relatórios & Estatísticas" as UC_Reports
+    usecase "Configurar Lojas & Parâmetros do Motor" as UC_Settings
+    usecase "Gerenciar Usuários & Grupos de Permissões" as UC_Users
+    usecase "Gerenciar Planos de Assinatura" as UC_Subscriptions
+    usecase "Gerenciar Localização, Moedas & Impostos" as UC_Locales
+    }
+    Operator -->> UC_Catalog
+    Operator -->> UC_Customers
+    Operator -->> UC_Orders
+    Operator -->> UC_Returns
+    Operator -->> UC_Reports
+    Admin -->> UC_Settings
+    Admin -->> UC_Users
+    Admin -->> UC_Subscriptions
+    Admin -->> UC_Locales

@@ -1,0 +1,88 @@
+sequenceDiagram
+    package "0. Slim 4 Framework" as Slim {
+    [public_html/index.php] as Entrypoint
+    [Config/Routes.php] as Routes
+    [AppContainer (PSR-11)] as Container
+    }
+    package "1. Middleware Stack" as Middlewares {
+    [LanguageMiddleware] as LangMW
+    [AdminSessionMiddleware] as AdminMW
+    [SessionMiddleware] as SessionMW
+    [LegacyRouteRedirectMiddleware] as LegacyMW
+    }
+    package "2. Application Actions" as Actions {
+    [Front-end Actions<br/>(implements ActionInterface)] as FrontAction
+    [Admin Actions<br/>(extends BaseController)] as AdminAction
+    [BaseController] as BaseCtrl
+    [Auth Services] as AuthServices
+    }
+    package "3. Presentation (Twig)" as TwigLayer {
+    [TwigEnvironment] as Twig
+    [Twig Templates<br/>(resources/views/)] as Views
+    }
+    package "4. Domain Layer" as Domain {
+    [RepositoryFactory] as RepoFactory
+    [AbstractRepository] as Repos
+    [BaseEntity] as Entities
+    [AlphaContainer (Legacy Resolver)] as AlphaContainer
+    [EventDispatcher & Events] as Events
+    }
+    package "5. Persistence Infrastructure" as Persistence {
+    [MapperFactory] as MapperFactory
+    [BaseMapper] as Mappers
+    [Observers] as Observers
+    [DataAccessObject (DAO)] as DAO
+    [QueryBuilder] as QB
+    [UnitOfWork (UoW)] as UoW
+    [Identity Map] as IdentityMap
+    }
+    package "6. Support & Database" as SupportLayer {
+    participant MySQL as MySQL 8.0
+    participant Redis as Redis (Cache & Session)
+    [Support Utils] as Support
+    [RabbitMQ & QueueService] as Queue
+    [Worker CLI Consumer] as Worker
+    }
+    Entrypoint -->> Routes : Defines
+    Entrypoint -->> Container : Configures
+    Entrypoint -->> Twig : Injects
+    Routes -->> LangMW : Global
+    Routes -->> AdminMW : Admin Group
+    Routes -->> SessionMW : Account Group
+    Routes -->> LegacyMW : Legacy Group
+    Routes -->> FrontAction : Dispatches
+    Routes -->> AdminAction : Dispatches
+    AdminMW -->> Redis : Validates admin session
+    SessionMW -->> Redis : Validates customer session
+    Container ..> FrontAction : DI Constructor Injection
+    Container ..> AdminAction : DI Constructor Injection
+    AdminAction -->> BaseCtrl : Inherits
+    BaseCtrl -->> RepoFactory : Requests Repositories
+    BaseCtrl -->> Twig : Renders Views
+    FrontAction -->> Twig : Renders Views
+    FrontAction -->> Repos : Dependency injection
+    FrontAction -->> AuthServices : Session management
+    AuthServices -->> Repos : Credentials check
+    FrontAction -->> UoW : Transactional operations (e.g. Checkout)
+    AdminAction -->> UoW : Transactional operations (e.g. POS Sale)
+    Twig -->> Views : Compiles
+    RepoFactory ..> Repos : Instantiates
+    Repos -->> Entities : Hydrates
+    Repos -->> MapperFactory : Requests Mapper
+    Repos -->> Redis : Read/Write query cache
+    Repos -->> UoW : Transactional boundary
+    AlphaContainer -->> Repos : Resolves legacy calls
+    AlphaContainer -->> Mappers : Resolves legacy mappers
+    MapperFactory ..> Mappers : Instantiates
+    Mappers ..> Observers : Triggers hooks (events)
+    Mappers -->> DAO : Executes statements
+    DAO -->> QB : Builds query statements
+    DAO -->> IdentityMap : Memory RAM Caching (N+1 prevention)
+    DAO -->> MySQL : Persistent state updates
+    QB -->> MySQL : Safe SQL execution
+    UoW -->> DAO : Coordinates ACID transactions (start/commit/rollback)
+    Repos -->> Support : Calculations
+    FrontAction -->> Support : Formats
+    FrontAction -->> Events : Dispatches OrderCreatedEvent
+    Events -->> Queue : Publishes to queue via QueueService
+    Queue -->> Worker : Asynchronously consumed by worker

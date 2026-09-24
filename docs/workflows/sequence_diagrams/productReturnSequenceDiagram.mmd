@@ -1,0 +1,110 @@
+sequenceDiagram
+    autonumber
+    rect rgb(245, 247, 250)
+    note over: Infrastructure / HTTP / Async
+    actor Ator as Client / Admin
+    participant Middleware as Slim Middleware
+    participant Action as Slim Action
+    participant Queue as Queue / Event Bus
+    participant Twig as Twig Engine
+    end
+    rect rgb(245, 247, 250)
+    note over: Domain / Application
+    participant Domain as Domain Service
+    participant Repo as Repository
+    end
+    rect rgb(245, 247, 250)
+    note over: Persistence / Data
+    participant UoW as Unit Of Work
+    participant Mapper as Data Mapper
+    participant QB as Query Builder
+    participant DAO as Dynamic DAO
+    participant DB as Database
+    end
+    Ator ->> Middleware : HTTP Request (Product Return)
+    activate Middleware
+    Middleware ->> Action : __invoke(Request)
+    activate Action
+    alt READ ROUTE (HTTP GET /devolucao/{id})
+    Action ->> Repo : findById(id)
+    activate Repo
+    Repo ->> QB : select()->where('return_id', id)
+    activate QB
+    QB ->> QB : buildSQL()
+    QB -->> Repo : SQL String
+    deactivate QB
+    Repo ->> DAO : query(SQL)
+    activate DAO
+    DAO ->> DB : SELECT * FROM oc_return ...
+    activate DB
+    DB -->> DAO : Raw Data + version_id
+    deactivate DB
+    DAO -->> Repo : Raw Data
+    deactivate DAO
+    Repo ->> Mapper : mapToDomain(RawData)
+    activate Mapper
+    Mapper -->> Repo : ProductReturn (Entity with current version)
+    deactivate Mapper
+    Repo -->> Action : ProductReturn
+    deactivate Repo
+    Action ->> Twig : render('detalhes_devolucao.twig', ProductReturn)
+    activate Twig
+    Twig -->> Action : HTML / JSON Response
+    deactivate Twig
+    else WRITE ROUTE (HTTP POST /LPDHED2dC7Gjrg2b/devolucoes/{id}/status)
+    Action ->> Domain : atualizarStatusDevolucao(ProductReturn, novo_status)
+    activate Domain
+    Domain ->> Repo : save(ProductReturn)
+    activate Repo
+    Repo ->> UoW : registerDirty(ProductReturn)
+    activate UoW
+    UoW -->> Repo : OK
+    deactivate UoW
+    Repo -->> Domain : OK
+    deactivate Repo
+    Domain -->> Action : StateUpdated
+    deactivate Domain
+    Action ->> UoW : commit()
+    activate UoW
+    UoW ->> DB : BEGIN TRANSACTION
+    UoW ->> Mapper : mapToDatabase(ProductReturn)
+    activate Mapper
+    Mapper ->> QB : update('oc_return')->set('status', 'version=version+1')->where('id', 'version')
+    activate QB
+    QB ->> QB : buildSQL()
+    QB -->> Mapper : SQL UPDATE + Bindings
+    deactivate QB
+    Mapper ->> DAO : execute(SQL, Bindings)
+    activate DAO
+    DAO ->> DB : UPDATE oc_return ... WHERE version_id = current_version
+    activate DB
+    DB -->> DAO : DB_Success (Rows Affected: 1)
+    deactivate DB
+    DAO -->> Mapper : Success Status
+    deactivate Mapper
+    UoW ->> DB : COMMIT
+    UoW -->> Action : Committed Successfully
+    else #FFEBEE [Catch / Rollback Flow]
+    UoW ->> DB : ROLLBACK TRANSACTION
+    UoW -->> Action : Throws Exception (Rollback Executed)
+    deactivate UoW
+    alt Success Path
+    Action ->> Queue : publishEvent('ProductReturnUpdated', payload)
+    activate Queue
+    Queue -->> Action : Ack
+    deactivate Queue
+    Action ->> Twig : render('devolucao_sucesso.twig')
+    activate Twig
+    Twig -->> Action : HTML Success Response
+    deactivate Twig
+    else Error Path (Exception Caught)
+    Action ->> Twig : render('devolucao_erro.twig', error_message)
+    activate Twig
+    Twig -->> Action : HTML Error Page
+    deactivate Twig
+    end
+    end
+    Action -->> Middleware : Response Object
+    deactivate Action
+    Middleware -->> Ator : HTTP Response
+    deactivate Middleware

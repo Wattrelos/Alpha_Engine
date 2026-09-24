@@ -1,0 +1,77 @@
+sequenceDiagram
+    autonumber
+    rect rgb(245, 247, 250)
+    note over: Frontend / Web Client
+    actor Client as Client
+    participant Front as Frontend (JS)
+    end
+    rect rgb(245, 247, 250)
+    note over: Application Layer
+    participant Action as CheckoutAction
+    participant Idempotency as IdempotencyService
+    participant Events as EventDispatcher
+    end
+    rect rgb(245, 247, 250)
+    note over: Infrastructure Layer
+    participant Redis as Redis Cache
+    participant UoW as UnitOfWork
+    participant MySQL as MySQL Database
+    participant RabbitMQ as QueueService (RabbitMQ)
+    participant Worker as Worker CLI Consumer
+    end
+    Client ->> Front : Click "Submit Order"
+    activate Front
+    Front ->> Front : generateUUID() ->> idempotencyKey
+    Front ->> Action : HTTP POST /{lang}/checkout<br/>[Header: X-Idempotency-Key = "uuid-1234"]
+    activate Action
+    Action ->> Idempotency : acquireLock("uuid-1234", ttl = 300)
+    activate Idempotency
+    Idempotency ->> Redis : SETNX("idempotency:uuid-1234", "PROCESSING", EX 300)
+    activate Redis
+    Redis -->> Idempotency : 1 (Lock Acquired)
+    deactivate Redis
+    Idempotency -->> Action : true (Lock Granted)
+    deactivate Idempotency
+    Action ->> UoW : transaction(callable)
+    activate UoW
+    UoW ->> MySQL : BEGIN TRANSACTION
+    UoW ->> MySQL : INSERT INTO tbkk_order (...)
+    activate MySQL
+    Client ->> Front : Click "Submit Order" (Double Click)
+    Front ->> Action : HTTP POST /{lang}/checkout<br/>[Header: X-Idempotency-Key = "uuid-1234"]
+    activate Action
+    Action ->> Idempotency : acquireLock("uuid-1234", ttl = 300)
+    activate Idempotency
+    Idempotency ->> Redis : SETNX("idempotency:uuid-1234", "PROCESSING", EX 300)
+    activate Redis
+    Redis -->> Idempotency : 0 (Key Exists / Locked)
+    deactivate Redis
+    Idempotency ->> Idempotency : throw new IdempotencyLockException("Duplicate request")
+    Idempotency -->> Action : throws IdempotencyLockException
+    deactivate Idempotency
+    Action -->> Front : HTTP 429 Too Many Requests<br/>{error: "DUPLICATE_REQUEST"}
+    deactivate Action
+    MySQL -->> UoW : Rows Inserted
+    deactivate MySQL
+    UoW ->> MySQL : COMMIT TRANSACTION
+    UoW -->> Action : Transaction Success (orderId = 1050)
+    deactivate UoW
+    Action ->> Events : dispatch(new OrderCreatedEvent(1050))
+    activate Events
+    Events ->> RabbitMQ : publish("order.created", payload)
+    activate RabbitMQ
+    RabbitMQ -->> Events : ACK (Enqueued)
+    deactivate RabbitMQ
+    Events -->> Action : Event Dispatched
+    deactivate Events
+    Action -->> Front : HTTP 201 Created<br/>{success: true, order_id: 1050}
+    deactivate Action
+    RabbitMQ ->> Worker : Consume Message (order_id: 1050)
+    activate Worker
+    Worker ->> Worker : Process Payment & Email Notification
+    Worker -->> RabbitMQ : ACK
+    deactivate Worker
+    Front ->> Front : Ignore HTTP 429 Error
+    Front ->> Front : Process HTTP 201 Response
+    Front ->> Client : Redirect to /checkout/success?order_id=1050
+    deactivate Front

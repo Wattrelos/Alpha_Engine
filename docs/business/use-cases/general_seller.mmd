@@ -1,0 +1,46 @@
+sequenceDiagram
+    left to right direction
+    actor SalesRep as Sales Representative\n(Vendedor)
+    actor Customer as Customer\n(Cliente)
+    actor Cashier as Cashier\n(Caixa)
+    rectangle "AgSonhos POS System" {
+    package "Sales Module<br/>(Módulo Vendedor)" {
+    usecase "Browse Product Catalog<br/>(Navegar no Catálogo)" as UC_Catalog
+    usecase "Select Product Variations<br/>(Selecionar Variações)" as UC_Variants
+    usecase "Check Stock Availability<br/>(Verificar Estoque)" as UC_Stock
+    usecase "Identify/Register Customer<br/>(Identificar Cliente)" as UC_Customer
+    usecase "Create Pre-Order<br/>(Criar Pré-Venda)" as UC_CreateOrder
+    usecase "Add Items to Cart<br/>(Adicionar Itens)" as UC_AddItems
+    usecase "Save Pre-Order (Pending)<br/>(Salvar Pré-Venda)" as UC_SaveOrder
+    usecase "Generate Pre-Order Ticket<br/>(Gerar Ticket)" as UC_Ticket
+    }
+    package "Cashier Module<br/>(Módulo Caixa)" {
+    usecase "Look up Pre-Order by Ticket<br/>(Localizar Pré-Venda)" as UC_SearchOrder
+    usecase "Process Payment<br/>(Processar Pagamento)" as UC_Payment
+    usecase "Finalize Payment & Sale<br/>(Finalizar Recebimento)" as UC_Finalize
+    usecase "Print Customer Receipt<br/>(Imprimir Recibo)" as UC_Receipt
+    usecase "Pay via Pix (QR Code)<br/>(Pagar com Pix)" as UC_PayPix
+    usecase "Pay via Card (TEF)<br/>(Pagar com Cartão)" as UC_PayCard
+    usecase "Pay via Cash (Change Calc)<br/>(Pagar com Dinheiro)" as UC_PayCash
+    }
+    }
+    SalesRep -->> UC_Catalog
+    SalesRep -->> UC_Customer
+    SalesRep -->> UC_CreateOrder
+    UC_Catalog <.. UC_Stock : <<include>>
+    UC_Catalog <.. UC_Variants : <<extend>>
+    UC_CreateOrder ..> UC_AddItems : <<include>>
+    UC_CreateOrder ..> UC_SaveOrder : <<include>>
+    UC_SaveOrder ..> UC_Ticket : <<include>>
+    Cashier -->> UC_SearchOrder
+    Cashier -->> UC_Payment
+    Cashier -->> UC_Finalize
+    UC_Payment <|-- UC_PayPix
+    UC_Payment <|-- UC_PayCard
+    UC_Payment <|-- UC_PayCash
+    UC_Finalize ..> UC_Receipt : <<include>>
+    Customer -->> UC_Customer : Provides details
+    Customer <-- UC_Ticket : Receives ticket
+    Customer -->> Cashier : Presents ticket & pays
+    UC_Payment <-- Customer : Interacts with payment method
+    @endum

@@ -1,0 +1,68 @@
+sequenceDiagram
+    autonumber
+    rect rgb(224, 242, 254)
+    note over: Provedor Externo & HTTP Endpoint
+    participant ExternalGateway as Gateway Externo (Mercado Pago / PIX API)
+    participant WebhookAction as Slim 4 Route Handler (PaymentWebhookAction)
+    end
+    rect rgb(255, 249, 196)
+    note over: Camada de Negócio & Padrões GoF (Factory + Adapter)
+    participant Factory as PaymentGatewayFactory
+    participant Adapter as MercadoPagoAdapter / PixGateway (PaymentGatewayInterface)
+    participant OrderRepo as OrderRepository
+    end
+    rect rgb(220, 252, 231)
+    note over: Subssistema de Observers & Persistência
+    participant Observers as OrderEmailObserver / StockObserver (OrderObserverInterface)
+    participant DB as MySQL Database (tbkk_order & tbkk_order_history)
+    end
+    note over: 1. Recebimento da Notificação Assíncrona e Resolução Dinâmica do Gateway
+    ExternalGateway ->> WebhookAction : HTTP POST /payment/webhook/mercadopago<br/>[Header Signature + Payload JSON {id, status, order_id}]
+    activate ExternalGateway
+    activate WebhookAction
+    WebhookAction ->> WebhookAction : Valida assinatura de segurança (X-Signature)
+    WebhookAction ->> Factory : make('mercadopago')
+    activate Factory
+    Factory ->> Factory : Resolve 'MercadoPagoAdapter' via Container PSR-11
+    Factory -->> WebhookAction : Retorna PaymentGatewayInterface (MercadoPagoAdapter)
+    deactivate Factory
+    note over: 2. Tradução do Payload Externo para Contrato Interno (Adapter)
+    WebhookAction ->> Adapter : processWebhook(requestPayload)
+    activate Adapter
+    Adapter ->> ExternalGateway : GET /v1/payments/{payment_id} (Verificação de Autenticidade)
+    activate ExternalGateway
+    ExternalGateway -->> Adapter : Payment Status: "approved", PaidAmount: R$ 250.00
+    deactivate ExternalGateway
+    Adapter ->> Adapter : Normaliza resposta para PaymentResult(status: PAID, transactionId: "MP-98765")
+    Adapter -->> WebhookAction : Retorna PaymentResult
+    deactivate Adapter
+    note over: 3. Transição de Estado da Ordem & Execução de Observers Pós-Persistência
+    alt PaymentResult == PAID (Pagamento Confirmado)
+    WebhookAction ->> OrderRepo : updateOrderStatus(orderId, STATUS_PAYMENT_CONFIRMED)
+    activate OrderRepo
+    OrderRepo ->> DB : START TRANSACTION;<br/>UPDATE tbkk_order SET order_status_id = 2;<br/>INSERT INTO tbkk_order_history...;<br/>COMMIT;
+    activate DB
+    DB -->> OrderRepo : Transação Confirmada
+    deactivate DB
+    note over OrderRepo, Observers: **Desacoplamento via Eventos (Observer Pattern):**\nO OrderRepository notifica todos os observadores cadastrados sem acoplamento direto.
+    OrderRepo ->> Observers : notify(OrderAggregate)
+    activate Observers
+    Observers ->> Observers : 1. OrderEmailObserver: Envia e-mail de confirmação ao cliente<br/>2. StockDeductionObserver: Confirma reserva de estoque no MySQL
+    Observers -->> OrderRepo : Processamento concluído
+    deactivate Observers
+    OrderRepo -->> WebhookAction : Status Atualizado com Sucesso
+    deactivate OrderRepo
+    WebhookAction -->> ExternalGateway : HTTP 200 OK {"status": "success", "message": "Notification processed"}
+    else PaymentResult == REJECTED / CANCELLED (Pagamento Recusado)
+    WebhookAction ->> OrderRepo : updateOrderStatus(orderId, STATUS_CANCELED)
+    activate OrderRepo
+    OrderRepo ->> DB : UPDATE tbkk_order SET order_status_id = 7 (Canceled);
+    activate DB
+    DB -->> OrderRepo : Atualizado
+    deactivate DB
+    OrderRepo -->> WebhookAction : Pedido Cancelado
+    deactivate OrderRepo
+    WebhookAction -->> ExternalGateway : HTTP 200 OK {"status": "processed", "result": "cancelled"}
+    end
+    deactivate WebhookAction
+    deactivate ExternalGateway

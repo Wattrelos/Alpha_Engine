@@ -1,0 +1,62 @@
+sequenceDiagram
+    autonumber
+    rect rgb(224, 242, 254)
+    note over: Cliente & Action Slim 4
+    actor User as Cliente / UI Checkout
+    participant Action as QuoteShippingAction
+    end
+    rect rgb(255, 249, 196)
+    note over: Gerenciador & Estratégias de Frete (GoF Strategy)
+    participant Manager as ShippingStrategyManager
+    participant FlatRate as FlatRateShippingService
+    participant WeightBased as WeightBasedShippingService
+    participant FreeShipping as FreeShippingService
+    end
+    rect rgb(220, 252, 231)
+    note over: Dados do Carrinho & Persistência
+    participant CartRepo as CartRepository
+    participant DB as MySQL Database (tbkk_weight_class & config)
+    end
+    note over: 1. Cotação de Frete e Obtenção do Carrinho de Compras
+    User ->> Action : HTTP POST /cart/shipping-quote<br/>[postcode: "01310-100", country_id: 30]
+    activate Action
+    Action ->> CartRepo : getCartAggregate(sessionId, customerId)
+    activate CartRepo
+    CartRepo ->> DB : SELECT * FROM tbkk_cart ...
+    activate DB
+    DB -->> CartRepo : CartAggregate [Total: R$ 350.00, TotalWeight: 2.5 kg]
+    deactivate DB
+    CartRepo -->> Action : CartAggregate Object
+    deactivate CartRepo
+    note over: 2. Execução Polimórfica das Estratégias (Strategy Pattern)
+    Action ->> Manager : calculateQuotes(cartAggregate, destinationAddress)
+    activate Manager
+    note over Manager, FlatRate: **Estratégia 1 (FlatRate):** Custo fixo configurado por loja.
+    Manager ->> FlatRate : getQuote(destinationAddress, cartAggregate)
+    activate FlatRate
+    FlatRate -->> Manager : ShippingQuote [code: "flat.flat", title: "Frete Fixo (Entrega Padrão)", cost: R$ 20.00]
+    deactivate FlatRate
+    note over Manager, WeightBased: **Estratégia 2 (WeightBased):** Calcula custo baseado no peso total (2.5 kg).
+    Manager ->> WeightBased : getQuote(destinationAddress, cartAggregate)
+    activate WeightBased
+    WeightBased ->> DB : SELECT rate FROM tbkk_weight_class WHERE weight >= 2.5
+    activate DB
+    DB -->> WeightBased : Rate Row [cost: R$ 32.50]
+    deactivate DB
+    WeightBased -->> Manager : ShippingQuote [code: "weight.weight", title: "Transportadora Expressa", cost: R$ 32.50]
+    deactivate WeightBased
+    note over Manager, FreeShipping: **Estratégia 3 (FreeShipping):** Valida se valor total (R$ 350) >= Mínimo (R$ 300).
+    Manager ->> FreeShipping : getQuote(destinationAddress, cartAggregate)
+    activate FreeShipping
+    alt Total (R$ 350.00) >= Valor Mínimo Configurado (R$ 300.00)
+    FreeShipping -->> Manager : ShippingQuote [code: "free.free", title: "Frete Grátis", cost: R$ 0.00]
+    else Total < Valor Mínimo
+    FreeShipping -->> Manager : null (Estratégia Não Elegível)
+    end
+    deactivate FreeShipping
+    note over: 3. Consolidação e Retorno das Cotações Válidas
+    Manager ->> Manager : Ordena cotações por menor custo (FreeShipping ->> FlatRate ->> WeightBased)
+    Manager -->> Action : Array<ShippingQuote> [FreeShipping (R$ 0), FlatRate (R$ 20), WeightBased (R$ 32.50)]
+    deactivate Manager
+    Action -->> User : HTTP 200 OK JSON {<br/>  "status": "success",<br/>  "shipping_methods": [<br/>    {"code": "free.free", "title": "Frete Grátis", "cost": 0.00},<br/>    {"code": "flat.flat", "title": "Frete Fixo", "cost": 20.00},<br/>    {"code": "weight.weight", "title": "Expressa", "cost": 32.50}<br/>  ]<br/>}
+    deactivate Action

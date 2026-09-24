@@ -1,0 +1,79 @@
+sequenceDiagram
+    left to right direction
+    actor Guest as Visitante\n(Guest)
+    actor Customer as Cliente Logado\n(Customer)
+    actor System as Sistema / Gateway\n(Alpha Engine)
+    Guest <|-- Customer : Herda permissões
+    rectangle "Alpha Engine - Loja Virtual & Portal do Cliente" {
+    package "Catálogo, Busca & Mídia" {
+    usecase "Navegar no Catálogo & Categorias" as UC_Nav
+    usecase "Buscar Produtos com Filtros" as UC_Search
+    usecase "Visualizar Detalhes do Produto" as UC_ProductDetail
+    usecase "Selecionar Variantes & Opções" as UC_Variants
+    usecase "Carregar Mídia & Cache On-Demand" as UC_MediaCache
+    }
+    package "Carrinho & Compras" {
+    usecase "Adicionar ao Carrinho" as UC_Cart
+    usecase "Calcular Frete por CEP" as UC_Shipping
+    usecase "Aplicar Cupom de Desconto" as UC_Coupon
+    usecase "Realizar Checkout" as UC_Checkout
+    usecase "Comprar como Visitante" as UC_GuestCheckout
+    usecase "Processar Pagamento" as UC_Payment
+    }
+    package "Autenticação & Sessão" {
+    usecase "Cadastrar Nova Conta" as UC_Register
+    usecase "Autenticar-se (Login / Logout)" as UC_Login
+    usecase "Recuperar Senha por E-mail" as UC_ForgotPass
+    usecase "Sincronizar Sessão Redis & Carrinho" as UC_SyncSession
+    }
+    package "Área 'Minha Conta' (Painel do Cliente)" {
+    usecase "Acessar Painel do Cliente" as UC_AccountDash
+    usecase "Gerenciar Dados Cadastrais<br/>(/account/edit)" as UC_EditAccount
+    usecase "Alterar Senha Logado<br/>(/account/resetar-senha)" as UC_ChangePass
+    usecase "Gerenciar Livro de Endereços<br/>(/account/addresses)" as UC_Addresses
+    usecase "Gerenciar Lista de Desejos<br/>(/account/wishlist)" as UC_Wishlist
+    usecase "Consultar Pedidos & Histórico<br/>(/account/orders)" as UC_Orders
+    usecase "Consultar Extrato & Transações<br/>(/account/transaction)" as UC_Transactions
+    usecase "Solicitar Devolução / RMA<br/>(/account/return)" as UC_Returns
+    usecase "Gerenciar Inscrição na Newsletter<br/>(/account/newsletter)" as UC_Newsletter
+    }
+    package "Cotações & Projetos (RFQ / BoQ)" {
+    usecase "Criar Solicitação de Orçamento (RFQ)<br/>(/projetos/novo)" as UC_CreateRfq
+    usecase "Acompanhar Meus Projetos<br/>(/account/projetos)" as UC_MyProjects
+    usecase "Comparar Propostas Recebidas<br/>(/propostas)" as UC_CompareBids
+    usecase "Aceitar Proposta de Prestador<br/>(/aceitar)" as UC_AcceptBid
+    usecase "Aprovar BoQ & Enviar ao Carrinho<br/>(/boq)" as UC_ApproveBoq
+    }
+    }
+    Guest -->> UC_Nav
+    Guest -->> UC_Search
+    Guest -->> UC_ProductDetail
+    Guest -->> UC_Cart
+    Guest -->> UC_Register
+    Guest -->> UC_Login
+    Guest -->> UC_ForgotPass
+    Guest -->> UC_Checkout
+    UC_ProductDetail <.. UC_Variants : <<extend>>
+    UC_ProductDetail ..> UC_MediaCache : <<include>>
+    UC_Cart <.. UC_Shipping : <<extend>>
+    UC_Checkout <.. UC_Coupon : <<extend>>
+    UC_Checkout <.. UC_GuestCheckout : <<extend>>
+    UC_Checkout ..> UC_Payment : <<include>>
+    UC_Login ..> UC_SyncSession : <<include>>
+    Customer -->> UC_AccountDash
+    Customer -->> UC_EditAccount
+    Customer -->> UC_ChangePass
+    Customer -->> UC_Addresses
+    Customer -->> UC_Wishlist
+    Customer -->> UC_Orders
+    Customer -->> UC_Transactions
+    Customer -->> UC_Returns
+    Customer -->> UC_Newsletter
+    Customer -->> UC_CreateRfq
+    Customer -->> UC_MyProjects
+    UC_MyProjects <.. UC_CompareBids : <<extend>>
+    UC_CompareBids <.. UC_AcceptBid : <<extend>>
+    UC_MyProjects <.. UC_ApproveBoq : <<extend>>
+    UC_ApproveBoq ..> UC_Cart : <<include>>
+    System -->> UC_Payment
+    System -->> UC_MediaCache
