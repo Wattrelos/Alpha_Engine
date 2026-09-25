@@ -9,17 +9,80 @@ on:
 jobs:
   test:
     name: Full Test Suite
-    timeout-minutes: 60
+    timeout-minutes: 30
     runs-on: ubuntu-latest
+
+    services:
+      mysql:
+        image: mysql:8.0
+        env:
+          MYSQL_ROOT_PASSWORD: root
+          MYSQL_DATABASE: myDatabase
+        ports:
+          - 3306:3306
+        options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
 
     steps:
       - name: Checkout Source Code
         uses: actions/checkout@v4
 
+      - name: Setup PHP Environment
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.2'
+          extensions: mbstring, intl, pdo_mysql, mysqli, redis, curl, gd
+          ini-values: memory_limit=512M
+          coverage: none
+          tools: composer:v2
+
+      - name: Configure Environment (.env)
+        run: |
+          cat << 'EOF' > backend/.env
+          APP_ENV=development
+          APP_DEBUG=true
+          APP_INSTALLED=true
+          DB_DRIVER=mysqli
+          DB_HOSTNAME=127.0.0.1
+          DB_PORT=3306
+          DB_USERNAME=root
+          DB_PASSWORD=root
+          DB_DATABASE=myDatabase
+          DB_PREFIX=agsc_
+          ADMIN_DIR=adm_m7WbbFOqfoRo
+          JWT_SECRET_KEY=ci-pipeline-jwt-secret-key-alpha-engine-2026
+          API_SIGNATURE_SECRET=ci-pipeline-api-signature-alpha-engine-2026
+          REDIS_ENABLED=false
+          REDIS_HOST=
+          REDIS_PORT=6379
+          REDIS_PASSWORD=""
+          EOF
+          mkdir -p backend/storage/cache/twig_slim backend/storage/cache/twig_setup backend/storage/cache/alpha_proxies backend/storage/download backend/storage/logs backend/storage/session backend/storage/upload
+          chmod -R 777 backend/storage
+
+      - name: Setup Database Schema
+        run: |
+          sudo apt-get update && sudo apt-get install -y default-mysql-client || true
+          mysql -h 127.0.0.1 -P 3306 --protocol=tcp -u root -proot myDatabase < backend/resources/schema/install.sql
+          if [ -f backend/resources/schema/rfq_service_provider_tables.sql ]; then
+            mysql -h 127.0.0.1 -P 3306 --protocol=tcp -u root -proot myDatabase < backend/resources/schema/rfq_service_provider_tables.sql || true
+          fi
+
+      - name: Install Composer Dependencies (Root)
+        run: composer install --no-interaction --prefer-dist --optimize-autoloader || composer update --no-interaction --prefer-dist --optimize-autoloader
+
+      - name: Install Composer Dependencies (Backend)
+        run: composer install --no-interaction --prefer-dist --optimize-autoloader --working-dir=backend || composer update --no-interaction --prefer-dist --optimize-autoloader --working-dir=backend
+
+      - name: Run Unit Tests (PHPUnit)
+        run: composer test:phpunit
+
+      - name: Run BDD Tests (Behat)
+        run: composer test:behat
+
       - name: Setup Node.js Environment
         uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: 22
           cache: 'npm'
 
       - name: Install NPM Dependencies
@@ -28,10 +91,30 @@ jobs:
       - name: Install Playwright Browsers & OS Dependencies
         run: npx playwright install --with-deps chromium
 
+      - name: Start PHP Built-in Web Server
+        run: |
+          php -S 127.0.0.1:8080 -t public_html/ > /tmp/php-server.log 2>&1 &
+          SERVER_READY=0
+          for i in {1..30}; do
+            if curl -s -f http://127.0.0.1:8080/pt-br > /dev/null; then
+              echo "PHP Web Server is online on http://127.0.0.1:8080"
+              SERVER_READY=1
+              break
+            fi
+            echo "Waiting for PHP server to become available ($i/30)..."
+            sleep 1
+          done
+          if [ $SERVER_READY -eq 0 ]; then
+            echo "PHP Web Server failed to start! Log:"
+            cat /tmp/php-server.log
+            exit 1
+          fi
+
       - name: Run E2E Test Suite (Playwright)
         run: npm run test:e2e:chromium
         env:
-          BASE_URL: http://localhost
+          BASE_URL: http://127.0.0.1:8080
+          CI: 'true'
 
       - name: Upload Playwright Test Report
         uses: actions/upload-artifact@v4
@@ -48,3 +131,11 @@ jobs:
           name: playwright-test-results
           path: test-results/
           retention-days: 14
+
+      - name: Upload PHP Server Log on Failure
+        uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: php-server-log
+          path: /tmp/php-server.log
+          retention-days: 7
