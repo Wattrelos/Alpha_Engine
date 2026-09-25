@@ -59,13 +59,15 @@ jobs:
           mkdir -p backend/storage/cache/twig_slim backend/storage/cache/twig_setup backend/storage/cache/alpha_proxies backend/storage/download backend/storage/logs backend/storage/session backend/storage/upload
           chmod -R 777 backend/storage
 
-      - name: Setup Database Schema
+      - name: Setup Database Schema & Seeds
         run: |
           sudo apt-get update && sudo apt-get install -y default-mysql-client || true
+          mysql -h 127.0.0.1 -P 3306 --protocol=tcp -u root -proot -e "SET GLOBAL sql_mode = 'STRICT_TRANS_TABLES,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION';"
           mysql -h 127.0.0.1 -P 3306 --protocol=tcp -u root -proot myDatabase < backend/resources/schema/install.sql
           if [ -f backend/resources/schema/rfq_service_provider_tables.sql ]; then
             mysql -h 127.0.0.1 -P 3306 --protocol=tcp -u root -proot myDatabase < backend/resources/schema/rfq_service_provider_tables.sql || true
           fi
+          mysql -h 127.0.0.1 -P 3306 --protocol=tcp -u root -proot myDatabase < backend/resources/schema/seed_ci.sql
 
       - name: Install Composer Dependencies (Root)
         run: composer install --no-interaction --prefer-dist --optimize-autoloader || composer update --no-interaction --prefer-dist --optimize-autoloader

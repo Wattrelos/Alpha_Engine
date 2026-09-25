@@ -91,7 +91,7 @@ class ProductValidationTest extends TestCase
         $testCategoryId = (int)$this->conn->query("SELECT id FROM `" . DB_PREFIX . "category` LIMIT 1")->fetchColumn();
         $createdTestCategory = false;
         if (!$testCategoryId) {
-            $this->conn->prepare("INSERT INTO `" . DB_PREFIX . "category` (`parent_id`, `sort_order`, `status`, `date_added`, `date_modified`) VALUES (0, 0, 1, NOW(), NOW())")->execute();
+            $this->conn->prepare("INSERT INTO `" . DB_PREFIX . "category` (`parent_id`, `sort_order`, `status`) VALUES (NULL, 0, 1)")->execute();
             $testCategoryId = (int)$this->conn->lastInsertId();
             $this->conn->prepare("INSERT INTO `" . DB_PREFIX . "category_description` (`category_id`, `language_id`, `name`, `description`, `meta_title`, `meta_description`, `meta_keyword`) VALUES (?, 1, 'Test Cat', '', '', '', '')")->execute([$testCategoryId]);
             $createdTestCategory = true;
