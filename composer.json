@@ -2,6 +2,10 @@
     "config": {
         "platform": {
             "php": "8.2.0"
+        },
+        "allow-plugins": {
+            "pestphp/pest-plugin": true,
+            "dealerdirect/phpcodesniffer-composer-installer": true
         }
     },
     "require-dev": {
@@ -9,7 +13,11 @@
         "behat/mink": "^1.13",
         "friends-of-behat/mink-extension": "^2.7",
         "behat/mink-browserkit-driver": "^2.3",
-        "symfony/http-client": "^7.2"
+        "symfony/http-client": "^7.2",
+        "nunomaduro/phpinsights": "^2.13",
+        "pestphp/pest": "^3.8",
+        "rector/rector": "^2.6",
+        "deptrac/deptrac": "^4.7"
     },
     "scripts": {
         "test:behat": "./vendor/bin/behat --no-snippets",
@@ -25,6 +33,9 @@
         "test:e2e": "npx playwright test",
         "test:e2e:chromium": "npx playwright test --project=chromium",
         "test:all": "composer test:phpunit && composer test:behat && npx playwright test --project=chromium",
-        "test:all:full": "composer test:phpunit && composer test:behat && npx playwright test"
+        "test:all:full": "composer test:phpunit && composer test:behat && npx playwright test",
+        "insights": "./vendor/bin/phpinsights",
+        "pest": "./vendor/bin/pest",
+        "rector": "./vendor/bin/rector process --dry-run"
     }
 }

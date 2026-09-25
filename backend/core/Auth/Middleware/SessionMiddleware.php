@@ -58,6 +58,7 @@ class SessionMiddleware
 
         // Se não encontrou no Redis ou Redis desabilitado, lê da sessão nativa do PHP
         if (!$sessionData) {
+            $existingSession = $_SESSION ?? [];
             if (session_status() === PHP_SESSION_NONE && !headers_sent()) {
                 if (defined('APPLICATION') && APPLICATION === 'admin') {
                     session_name('admin_session_id');
@@ -68,6 +69,9 @@ class SessionMiddleware
                     @session_id($sessionId);
                 }
                 @session_start();
+            }
+            if (!empty($existingSession)) {
+                $_SESSION = array_merge($_SESSION, $existingSession);
             }
 
             if (!empty($_SESSION['logged_user'])) {

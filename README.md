@@ -1,4 +1,8 @@
 
+![Status do Pipeline](https://github.com/Wattrelos/Alpha_Engine/actions/workflows/playwright.yml/badge.svg)
+
+
+
 
 ## Entregas da Faculdade
 
