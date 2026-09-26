@@ -49,7 +49,7 @@ Para embasar a tomada de decisão, foram comparadas as 3 principais soluções s
 
 ## Decisão Arquitetural
 
-Decidiu-se pela **adoção do Forgejo** como a plataforma oficial *self-hosted* de controle de versões, espelhamento contínuo de código e contingência operacional para o projeto AgSonhos e a Alpha Engine no ambiente Debian 13.
+Decidiu-se pela **adoção do Forgejo** como a plataforma oficial *self-hosted* de controle de versões, espelhamento contínuo de código e contingência operacional para o projeto meusite e a Alpha Engine no ambiente Debian 13.
 
 ### Pilares da Escolha:
 

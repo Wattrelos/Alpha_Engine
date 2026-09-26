@@ -65,7 +65,7 @@ class PosCashierValidationTest extends TestCase
         $customerId = $testCustomer ? $testCustomer->getId() : 0;
         $firstname = $testCustomer ? $testCustomer->getFirstname() : 'Cliente';
         $lastname = $testCustomer ? $testCustomer->getLastname() : 'PDV';
-        $email = $testCustomer ? $testCustomer->getEmail() : 'cliente.pdv@agsonhos.com';
+        $email = $testCustomer ? $testCustomer->getEmail() : 'cliente.pdv@meusite.com';
 
         $price = (float)($testProduct['special'] ?: $testProduct['price']);
         $total = $price * 1;
@@ -81,7 +81,7 @@ class PosCashierValidationTest extends TestCase
             'shipping_method'       => 'Retirada no Balcão',
             'total'                 => $total,
             'order_status_id'       => 1,
-            'store_name'            => 'AgSonhos PDV Teste Caixa',
+            'store_name'            => 'meusite PDV Teste Caixa',
             'store_url'             => 'http://localhost/',
             'customer_group_id'     => 1,
             'language_id'           => 2,

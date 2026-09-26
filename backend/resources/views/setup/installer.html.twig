@@ -1,618 +1,698 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Instalação & Provisionamento | Alpha Engine On-Premise</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <style>
-        :root {
-            --bg-main: #0c0f17;
-            --card-bg: rgba(22, 27, 38, 0.85);
-            --card-border: rgba(255, 255, 255, 0.1);
-            --accent-orange: #ff6b00;
-            --accent-orange-hover: #e05d00;
-            --accent-blue: #3b82f6;
-            --text-primary: #f3f4f6;
-            --text-secondary: #9ca3af;
-            --success-color: #10b981;
-            --error-color: #ef4444;
-            --warning-color: #f59e0b;
-        }
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Instalação & Provisionamento | Alpha Engine On-Premise</title>
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+        <style>
+            :root {
+                --bg-main: #0c0f17;
+                --card-bg: rgba(22, 27, 38, 0.85);
+                --card-border: rgba(255, 255, 255, 0.1);
+                --accent-orange: #ff6b00;
+                --accent-orange-hover: #e05d00;
+                --accent-blue: #3b82f6;
+                --text-primary: #f3f4f6;
+                --text-secondary: #9ca3af;
+                --success-color: #10b981;
+                --error-color: #ef4444;
+                --warning-color: #f59e0b;
+            }
 
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-            font-family: 'Inter', system-ui, sans-serif;
-        }
+            * {
+                box-sizing: border-box;
+                margin: 0;
+                padding: 0;
+                font-family: "Inter", system-ui, sans-serif;
+            }
 
-        body {
-            background-color: var(--bg-main);
-            background-image: 
-                radial-gradient(circle at 15% 20%, rgba(255, 107, 0, 0.08) 0%, transparent 45%),
-                radial-gradient(circle at 85% 80%, rgba(59, 130, 246, 0.08) 0%, transparent 45%);
-            color: var(--text-primary);
-            min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 24px 16px;
-        }
+            body {
+                background-color: var(--bg-main);
+                background-image:
+                    radial-gradient(
+                        circle at 15% 20%,
+                        rgba(255, 107, 0, 0.08) 0%,
+                        transparent 45%
+                    ),
+                    radial-gradient(
+                        circle at 85% 80%,
+                        rgba(59, 130, 246, 0.08) 0%,
+                        transparent 45%
+                    );
+                color: var(--text-primary);
+                min-height: 100vh;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                padding: 24px 16px;
+            }
 
-        .installer-container {
-            width: 100%;
-            max-width: 720px;
-            background: var(--card-bg);
-            backdrop-filter: blur(16px);
-            -webkit-backdrop-filter: blur(16px);
-            border: 1px solid var(--card-border);
-            border-radius: 16px;
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6);
-            overflow: hidden;
-        }
+            .installer-container {
+                width: 100%;
+                max-width: 720px;
+                background: var(--card-bg);
+                backdrop-filter: blur(16px);
+                -webkit-backdrop-filter: blur(16px);
+                border: 1px solid var(--card-border);
+                border-radius: 16px;
+                box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6);
+                overflow: hidden;
+            }
 
-        .installer-header {
-            padding: 32px 32px 24px 32px;
-            border-bottom: 1px solid var(--card-border);
-            text-align: center;
-        }
+            .installer-header {
+                padding: 32px 32px 24px 32px;
+                border-bottom: 1px solid var(--card-border);
+                text-align: center;
+            }
 
-        .installer-title {
-            font-size: 1.6rem;
-            font-weight: 700;
-            background: linear-gradient(135deg, #ffffff 0%, var(--accent-orange) 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            margin-bottom: 8px;
-        }
+            .installer-title {
+                font-size: 1.6rem;
+                font-weight: 700;
+                background: linear-gradient(135deg, #ffffff 0%, var(--accent-orange) 100%);
+                -webkit-background-clip: text;
+                -webkit-text-fill-color: transparent;
+                margin-bottom: 8px;
+            }
 
-        .installer-subtitle {
-            font-size: 0.9rem;
-            color: var(--text-secondary);
-        }
+            .installer-subtitle {
+                font-size: 0.9rem;
+                color: var(--text-secondary);
+            }
 
-        /* Progress Steps Bar */
-        .steps-bar {
-            display: flex;
-            justify-content: space-between;
-            padding: 20px 32px;
-            background: rgba(0, 0, 0, 0.2);
-            border-bottom: 1px solid var(--card-border);
-        }
+            /* Progress Steps Bar */
+            .steps-bar {
+                display: flex;
+                justify-content: space-between;
+                padding: 20px 32px;
+                background: rgba(0, 0, 0, 0.2);
+                border-bottom: 1px solid var(--card-border);
+            }
 
-        .step-item {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            font-size: 0.85rem;
-            font-weight: 500;
-            color: var(--text-secondary);
-        }
+            .step-item {
+                display: flex;
+                align-items: center;
+                gap: 8px;
+                font-size: 0.85rem;
+                font-weight: 500;
+                color: var(--text-secondary);
+            }
 
-        .step-item.active {
-            color: var(--accent-orange);
-        }
+            .step-item.active {
+                color: var(--accent-orange);
+            }
 
-        .step-item.completed {
-            color: var(--success-color);
-        }
+            .step-item.completed {
+                color: var(--success-color);
+            }
 
-        .step-number {
-            width: 26px;
-            height: 26px;
-            border-radius: 50%;
-            background: rgba(255, 255, 255, 0.1);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 0.8rem;
-            font-weight: 600;
-        }
+            .step-number {
+                width: 26px;
+                height: 26px;
+                border-radius: 50%;
+                background: rgba(255, 255, 255, 0.1);
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-size: 0.8rem;
+                font-weight: 600;
+            }
 
-        .step-item.active .step-number {
-            background: var(--accent-orange);
-            color: #fff;
-        }
+            .step-item.active .step-number {
+                background: var(--accent-orange);
+                color: #fff;
+            }
 
-        .step-item.completed .step-number {
-            background: var(--success-color);
-            color: #fff;
-        }
+            .step-item.completed .step-number {
+                background: var(--success-color);
+                color: #fff;
+            }
 
-        /* Form Steps Content */
-        .installer-body {
-            padding: 32px;
-        }
+            /* Form Steps Content */
+            .installer-body {
+                padding: 32px;
+            }
 
-        .step-content {
-            display: none;
-        }
+            .step-content {
+                display: none;
+            }
 
-        .step-content.active {
-            display: block;
-            animation: fadeIn 0.3s ease;
-        }
+            .step-content.active {
+                display: block;
+                animation: fadeIn 0.3s ease;
+            }
 
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(6px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
+            @keyframes fadeIn {
+                from {
+                    opacity: 0;
+                    transform: translateY(6px);
+                }
+                to {
+                    opacity: 1;
+                    transform: translateY(0);
+                }
+            }
 
-        .section-title {
-            font-size: 1.1rem;
-            font-weight: 600;
-            margin-bottom: 16px;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
+            .section-title {
+                font-size: 1.1rem;
+                font-weight: 600;
+                margin-bottom: 16px;
+                display: flex;
+                align-items: center;
+                gap: 8px;
+            }
 
-        /* Requirements List */
-        .req-list {
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-            margin-bottom: 24px;
-        }
+            /* Requirements List */
+            .req-list {
+                display: flex;
+                flex-direction: column;
+                gap: 12px;
+                margin-bottom: 24px;
+            }
 
-        .req-item {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 12px 16px;
-            background: rgba(255, 255, 255, 0.03);
-            border: 1px solid rgba(255, 255, 255, 0.05);
-            border-radius: 8px;
-            font-size: 0.9rem;
-        }
+            .req-item {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                padding: 12px 16px;
+                background: rgba(255, 255, 255, 0.03);
+                border: 1px solid rgba(255, 255, 255, 0.05);
+                border-radius: 8px;
+                font-size: 0.9rem;
+            }
 
-        .badge {
-            padding: 4px 10px;
-            border-radius: 20px;
-            font-size: 0.75rem;
-            font-weight: 600;
-        }
+            .badge {
+                padding: 4px 10px;
+                border-radius: 20px;
+                font-size: 0.75rem;
+                font-weight: 600;
+            }
 
-        .badge-success { background: rgba(16, 185, 129, 0.2); color: var(--success-color); border: 1px solid var(--success-color); }
-        .badge-danger { background: rgba(239, 68, 68, 0.2); color: var(--error-color); border: 1px solid var(--error-color); }
+            .badge-success {
+                background: rgba(16, 185, 129, 0.2);
+                color: var(--success-color);
+                border: 1px solid var(--success-color);
+            }
+            .badge-danger {
+                background: rgba(239, 68, 68, 0.2);
+                color: var(--error-color);
+                border: 1px solid var(--error-color);
+            }
 
-        /* Form Inputs */
-        .form-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 16px;
-            margin-bottom: 20px;
-        }
+            /* Form Inputs */
+            .form-grid {
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                gap: 16px;
+                margin-bottom: 20px;
+            }
 
-        .form-group {
-            display: flex;
-            flex-direction: column;
-            gap: 6px;
-        }
+            .form-group {
+                display: flex;
+                flex-direction: column;
+                gap: 6px;
+            }
 
-        .form-group.full-width {
-            grid-column: span 2;
-        }
+            .form-group.full-width {
+                grid-column: span 2;
+            }
 
-        label {
-            font-size: 0.85rem;
-            font-weight: 500;
-            color: var(--text-secondary);
-        }
+            label {
+                font-size: 0.85rem;
+                font-weight: 500;
+                color: var(--text-secondary);
+            }
 
-        input {
-            width: 100%;
-            padding: 10px 14px;
-            background: rgba(0, 0, 0, 0.3);
-            border: 1px solid var(--card-border);
-            border-radius: 8px;
-            color: var(--text-primary);
-            font-size: 0.9rem;
-            outline: none;
-            transition: border-color 0.2s;
-        }
+            input {
+                width: 100%;
+                padding: 10px 14px;
+                background: rgba(0, 0, 0, 0.3);
+                border: 1px solid var(--card-border);
+                border-radius: 8px;
+                color: var(--text-primary);
+                font-size: 0.9rem;
+                outline: none;
+                transition: border-color 0.2s;
+            }
 
-        input:focus {
-            border-color: var(--accent-orange);
-        }
+            input:focus {
+                border-color: var(--accent-orange);
+            }
 
-        /* Buttons & Footer */
-        .installer-footer {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-top: 28px;
-            padding-top: 20px;
-            border-top: 1px solid var(--card-border);
-        }
+            /* Buttons & Footer */
+            .installer-footer {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                margin-top: 28px;
+                padding-top: 20px;
+                border-top: 1px solid var(--card-border);
+            }
 
-        .btn {
-            padding: 10px 20px;
-            border-radius: 8px;
-            font-size: 0.9rem;
-            font-weight: 600;
-            cursor: pointer;
-            border: none;
-            transition: all 0.2s;
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-        }
+            .btn {
+                padding: 10px 20px;
+                border-radius: 8px;
+                font-size: 0.9rem;
+                font-weight: 600;
+                cursor: pointer;
+                border: none;
+                transition: all 0.2s;
+                display: inline-flex;
+                align-items: center;
+                gap: 8px;
+            }
 
-        .btn-primary {
-            background: var(--accent-orange);
-            color: #fff;
-        }
+            .btn-primary {
+                background: var(--accent-orange);
+                color: #fff;
+            }
 
-        .btn-primary:hover {
-            background: var(--accent-orange-hover);
-        }
+            .btn-primary:hover {
+                background: var(--accent-orange-hover);
+            }
 
-        .btn-secondary {
-            background: rgba(255, 255, 255, 0.1);
-            color: var(--text-primary);
-        }
+            .btn-secondary {
+                background: rgba(255, 255, 255, 0.1);
+                color: var(--text-primary);
+            }
 
-        .btn-secondary:hover {
-            background: rgba(255, 255, 255, 0.18);
-        }
+            .btn-secondary:hover {
+                background: rgba(255, 255, 255, 0.18);
+            }
 
-        .btn:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-        }
+            .btn:disabled {
+                opacity: 0.5;
+                cursor: not-allowed;
+            }
 
-        /* Feedback Alerts */
-        .alert {
-            padding: 12px 16px;
-            border-radius: 8px;
-            font-size: 0.85rem;
-            margin-bottom: 20px;
-            display: none;
-        }
+            /* Feedback Alerts */
+            .alert {
+                padding: 12px 16px;
+                border-radius: 8px;
+                font-size: 0.85rem;
+                margin-bottom: 20px;
+                display: none;
+            }
 
-        .alert-success { background: rgba(16, 185, 129, 0.15); border: 1px solid var(--success-color); color: #34d399; }
-        .alert-danger { background: rgba(239, 68, 68, 0.15); border: 1px solid var(--error-color); color: #f87171; }
-        .alert-info { background: rgba(59, 130, 246, 0.15); border: 1px solid var(--accent-blue); color: #93c5fd; }
+            .alert-success {
+                background: rgba(16, 185, 129, 0.15);
+                border: 1px solid var(--success-color);
+                color: #34d399;
+            }
+            .alert-danger {
+                background: rgba(239, 68, 68, 0.15);
+                border: 1px solid var(--error-color);
+                color: #f87171;
+            }
+            .alert-info {
+                background: rgba(59, 130, 246, 0.15);
+                border: 1px solid var(--accent-blue);
+                color: #93c5fd;
+            }
 
-        .spinner {
-            width: 16px;
-            height: 16px;
-            border: 2px solid rgba(255,255,255,0.3);
-            border-top-color: #fff;
-            border-radius: 50%;
-            animation: spin 0.8s linear infinite;
-        }
+            .spinner {
+                width: 16px;
+                height: 16px;
+                border: 2px solid rgba(255, 255, 255, 0.3);
+                border-top-color: #fff;
+                border-radius: 50%;
+                animation: spin 0.8s linear infinite;
+            }
 
-        @keyframes spin {
-            to { transform: rotate(360deg); }
-        }
+            @keyframes spin {
+                to {
+                    transform: rotate(360deg);
+                }
+            }
 
-        .installer-flex-gap-8 { display: flex; gap: 8px; }
-        .installer-ws-nowrap { white-space: nowrap; }
-        .installer-help-text { color: var(--text-secondary); font-size: 0.78rem; margin-top: 4px; }
-        .installer-success-box { text-align: center; padding: 20px 0; }
-        .installer-success-icon { font-size: 3rem; margin-bottom: 16px; }
-        .installer-success-title { font-size: 1.4rem; font-weight: 700; margin-bottom: 12px; color: var(--success-color); }
-        .installer-success-desc { color: var(--text-secondary); font-size: 0.95rem; margin-bottom: 24px; }
-        .installer-success-btn { text-decoration: none; padding: 12px 28px; font-size: 1rem; }
-    </style>
-</head>
-<body>
-    <div class="installer-container">
-        <div class="installer-header">
-            <h1 class="installer-title">Alpha Engine On-Premise</h1>
-            <p class="installer-subtitle">Assistente de Instalação e Provisionamento de Tenant</p>
-        </div>
-
-        <div class="steps-bar">
-            <div class="step-item active" id="step-tab-1">
-                <span class="step-number">1</span> Requisitos
+            .installer-flex-gap-8 {
+                display: flex;
+                gap: 8px;
+            }
+            .installer-ws-nowrap {
+                white-space: nowrap;
+            }
+            .installer-help-text {
+                color: var(--text-secondary);
+                font-size: 0.78rem;
+                margin-top: 4px;
+            }
+            .installer-success-box {
+                text-align: center;
+                padding: 20px 0;
+            }
+            .installer-success-icon {
+                font-size: 3rem;
+                margin-bottom: 16px;
+            }
+            .installer-success-title {
+                font-size: 1.4rem;
+                font-weight: 700;
+                margin-bottom: 12px;
+                color: var(--success-color);
+            }
+            .installer-success-desc {
+                color: var(--text-secondary);
+                font-size: 0.95rem;
+                margin-bottom: 24px;
+            }
+            .installer-success-btn {
+                text-decoration: none;
+                padding: 12px 28px;
+                font-size: 1rem;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="installer-container">
+            <div class="installer-header">
+                <h1 class="installer-title">Alpha Engine On-Premise</h1>
+                <p class="installer-subtitle">Assistente de Instalação e Provisionamento de Tenant</p>
             </div>
-            <div class="step-item" id="step-tab-2">
-                <span class="step-number">2</span> Banco de Dados
-            </div>
-            <div class="step-item" id="step-tab-3">
-                <span class="step-number">3</span> Loja & Admin
-            </div>
-            <div class="step-item" id="step-tab-4">
-                <span class="step-number">4</span> Conclusão
-            </div>
-        </div>
 
-        <div class="installer-body">
-            <div id="feedback-alert" class="alert"></div>
-
-            <!-- ETAPA 1: REQUISITOS -->
-            <div class="step-content active" id="step-1">
-                <h2 class="section-title">🔍 Verificação de Requisitos do Servidor</h2>
-                <div class="req-list">
-                    {% for key, req in requirements %}
-                    <div class="req-item">
-                        <span>{{ req.name }}</span>
-                        <span class="badge {{ req.success ? 'badge-success' : 'badge-danger' }}">
-                            {{ req.current }}
-                        </span>
-                    </div>
-                    {% endfor %}
+            <div class="steps-bar">
+                <div class="step-item active" id="step-tab-1">
+                    <span class="step-number">1</span> Requisitos
                 </div>
-
-                <div class="installer-footer">
-                    <div></div>
-                    <button type="button" class="btn btn-primary" id="btn-step-1" {{ not all_requirements_passed ? 'disabled' : '' }}>
-                        Próximo Passos →
-                    </button>
+                <div class="step-item" id="step-tab-2">
+                    <span class="step-number">2</span> Banco de Dados
                 </div>
-            </div>
-
-            <!-- ETAPA 2: BANCO DE DADOS -->
-            <div class="step-content" id="step-2">
-                <h2 class="section-title">🗄️ Conexão com o Banco de Dados MySQL</h2>
-                <form id="form-db">
-                    <div class="form-grid">
-                        <div class="form-group">
-                            <label for="db_host">Host do MySQL</label>
-                            <input type="text" id="db_host" name="db_host" value="{{ default_host }}" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="db_port">Porta</label>
-                            <input type="text" id="db_port" name="db_port" value="{{ default_port }}" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="db_user">Usuário MySQL</label>
-                            <input type="text" id="db_user" name="db_user" value="{{ default_user }}" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="db_pass">Senha MySQL</label>
-                            <input type="password" id="db_pass" name="db_pass" placeholder="••••••••">
-                        </div>
-                        <div class="form-group">
-                            <label for="db_name">Nome do Banco de Dados</label>
-                            <input type="text" id="db_name" name="db_name" value="{{ default_db }}" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="db_prefix">Prefixo das Tabelas</label>
-                            <input type="text" id="db_prefix" name="db_prefix" value="{{ default_prefix }}" required>
-                        </div>
-                    </div>
-                    <button type="button" class="btn btn-secondary mb-3" id="btn-test-db">
-                        🧪 Testar Conexão
-                    </button>
-                </form>
-
-                <div class="installer-footer">
-                    <button type="button" class="btn btn-secondary" onclick="goToStep(1)">← Voltar</button>
-                    <button type="button" class="btn btn-primary" id="btn-step-2">Próximo Passo →</button>
+                <div class="step-item" id="step-tab-3">
+                    <span class="step-number">3</span> Loja & Admin
+                </div>
+                <div class="step-item" id="step-tab-4">
+                    <span class="step-number">4</span> Conclusão
                 </div>
             </div>
 
-            <!-- ETAPA 3: LOJA E SUPER ADMIN -->
-            <div class="step-content" id="step-3">
-                <h2 class="section-title">👑 Dados da Loja & Super Administrador</h2>
-                <form id="form-admin">
-                    <div class="form-grid">
-                        <div class="form-group">
-                            <label for="store_name">Nome da Loja (On-Premise)</label>
-                            <input type="text" id="store_name" name="store_name" value="AgSonhos E-commerce" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="store_email">E-mail Comercial da Loja</label>
-                            <input type="email" id="store_email" name="store_email" value="contato@agsonhos.com" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="admin_firstname">Nome do Admin</label>
-                            <input type="text" id="admin_firstname" name="admin_firstname" value="Administrador" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="admin_lastname">Sobrenome</label>
-                            <input type="text" id="admin_lastname" name="admin_lastname" value="On-Premise" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="admin_user">Usuário de Login (Admin)</label>
-                            <input type="text" id="admin_user" name="admin_user" value="admin" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="admin_email">E-mail do Admin</label>
-                            <input type="email" id="admin_email" name="admin_email" value="admin@agsonhos.com" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="admin_pass">Senha (mínimo 6 caracteres)</label>
-                            <input type="password" id="admin_pass" name="admin_pass" placeholder="••••••••" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="admin_pass_confirm">Confirmar Senha</label>
-                            <input type="password" id="admin_pass_confirm" name="admin_pass_confirm" placeholder="••••••••" required>
-                        </div>
-                        <div class="form-group full-width">
-                            <label for="admin_dir">Caminho/Pasta do Dashboard (Mascaramento de Segurança)</label>
-                            <div class="installer-flex-gap-8">
-                                <input type="text" id="admin_dir" name="admin_dir" value="{{ default_admin_dir|default('LPDHED2dC7Gjrg2b') }}" placeholder="ex: painel_seguro" required>
-                                <button type="button" class="btn btn-secondary installer-ws-nowrap" id="btn-generate-admin-dir">
-                                    🎲 Gerar Aleatório
-                                </button>
+            <div class="installer-body">
+                <div id="feedback-alert" class="alert"></div>
+
+                <!-- ETAPA 1: REQUISITOS -->
+                <div class="step-content active" id="step-1">
+                    <h2 class="section-title">🔍 Verificação de Requisitos do Servidor</h2>
+                    <div class="req-list">
+                        {% for key, req in requirements %}
+                            <div class="req-item">
+                                <span>{{ req.name }}</span>
+                                <span class="badge {{ req.success ? 'badge-success' : 'badge-danger' }}">
+                                    {{ req.current }}
+                                </span>
                             </div>
-                            <small class="installer-help-text">
-                                Esta pasta será usada para acessar o painel administrativo (ex: <code>http://seudominio.com/<span id="admin-dir-preview">{{ default_admin_dir|default('LPDHED2dC7Gjrg2b') }}</span></code>).
-                            </small>
-                        </div>
+                        {% endfor %}
                     </div>
-                </form>
 
-                <div class="installer-footer">
-                    <button type="button" class="btn btn-secondary" onclick="goToStep(2)">← Voltar</button>
-                    <button type="button" class="btn btn-primary" id="btn-process-install">⚡ Concluir & Instalar</button>
+                    <div class="installer-footer">
+                        <div></div>
+                        <button type="button" class="btn btn-primary" id="btn-step-1" {{ not all_requirements_passed ? 'disabled' : '' }}>
+                            Próximo Passos →
+                        </button>
+                    </div>
                 </div>
-            </div>
 
-            <!-- ETAPA 4: SUCESSO -->
-            <div class="step-content" id="step-4">
-                <div class="installer-success-box">
-                    <div class="installer-success-icon">🎉</div>
-                    <h2 class="installer-success-title">
-                        Instalação Concluída com Sucesso!
-                    </h2>
-                    <p class="installer-success-desc">
-                        O banco de dados foi provisionado, o Super Admin foi criado e o arquivo <code>.env</code> foi atualizado com a flag <code>APP_INSTALLED=true</code>.
-                    </p>
-                    <a href="/{{ default_admin_dir|default('LPDHED2dC7Gjrg2b') }}" id="btn-goto-admin" class="btn btn-primary installer-success-btn">
-                        Acessar Painel Administrativo →
-                    </a>
+                <!-- ETAPA 2: BANCO DE DADOS -->
+                <div class="step-content" id="step-2">
+                    <h2 class="section-title">🗄️ Conexão com o Banco de Dados MySQL</h2>
+                    <form id="form-db">
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label for="db_host">Host do MySQL</label>
+                                <input type="text" id="db_host" name="db_host" value="{{ default_host }}" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="db_port">Porta</label>
+                                <input type="text" id="db_port" name="db_port" value="{{ default_port }}" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="db_user">Usuário MySQL</label>
+                                <input type="text" id="db_user" name="db_user" value="{{ default_user }}" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="db_pass">Senha MySQL</label>
+                                <input type="password" id="db_pass" name="db_pass" placeholder="••••••••">
+                            </div>
+                            <div class="form-group">
+                                <label for="db_name">Nome do Banco de Dados</label>
+                                <input type="text" id="db_name" name="db_name" value="{{ default_db }}" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="db_prefix">Prefixo das Tabelas</label>
+                                <input type="text" id="db_prefix" name="db_prefix" value="{{ default_prefix }}" required>
+                            </div>
+                        </div>
+                        <button type="button" class="btn btn-secondary mb-3" id="btn-test-db">
+                            🧪 Testar Conexão
+                        </button>
+                    </form>
+
+                    <div class="installer-footer">
+                        <button type="button" class="btn btn-secondary" onclick="goToStep(1)">← Voltar</button>
+                        <button type="button" class="btn btn-primary" id="btn-step-2">Próximo Passo →</button>
+                    </div>
+                </div>
+
+                <!-- ETAPA 3: LOJA E SUPER ADMIN -->
+                <div class="step-content" id="step-3">
+                    <h2 class="section-title">👑 Dados da Loja & Super Administrador</h2>
+                    <form id="form-admin">
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label for="store_name">Nome da Loja (On-Premise)</label>
+                                <input type="text" id="store_name" name="store_name" value="meusite E-commerce" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="store_email">E-mail Comercial da Loja</label>
+                                <input type="email" id="store_email" name="store_email" value="contato@meusite.com" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="admin_firstname">Nome do Admin</label>
+                                <input type="text" id="admin_firstname" name="admin_firstname" value="Administrador" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="admin_lastname">Sobrenome</label>
+                                <input type="text" id="admin_lastname" name="admin_lastname" value="On-Premise" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="admin_user">Usuário de Login (Admin)</label>
+                                <input type="text" id="admin_user" name="admin_user" value="admin" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="admin_email">E-mail do Admin</label>
+                                <input type="email" id="admin_email" name="admin_email" value="admin@meusite.com" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="admin_pass">Senha (mínimo 6 caracteres)</label>
+                                <input type="password" id="admin_pass" name="admin_pass" placeholder="••••••••" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="admin_pass_confirm">Confirmar Senha</label>
+                                <input type="password" id="admin_pass_confirm" name="admin_pass_confirm" placeholder="••••••••" required>
+                            </div>
+                            <div class="form-group full-width">
+                                <label for="admin_dir">Caminho/Pasta do Dashboard (Mascaramento de Segurança)</label>
+                                <div class="installer-flex-gap-8">
+                                    <input type="text" id="admin_dir" name="admin_dir" value="{{ default_admin_dir|default('LPDHED2dC7Gjrg2b') }}" placeholder="ex: painel_seguro" required>
+                                    <button type="button" class="btn btn-secondary installer-ws-nowrap" id="btn-generate-admin-dir">
+                                        🎲 Gerar Aleatório
+                                    </button>
+                                </div>
+                                <small class="installer-help-text">
+                                    Esta pasta será usada para acessar o painel administrativo (ex: <code>http://seudominio.com/<span id="admin-dir-preview">{{ default_admin_dir|default('LPDHED2dC7Gjrg2b') }}</span></code>).
+                                </small>
+                            </div>
+                        </div>
+                    </form>
+
+                    <div class="installer-footer">
+                        <button type="button" class="btn btn-secondary" onclick="goToStep(2)">← Voltar</button>
+                        <button type="button" class="btn btn-primary" id="btn-process-install">⚡ Concluir & Instalar</button>
+                    </div>
+                </div>
+
+                <!-- ETAPA 4: SUCESSO -->
+                <div class="step-content" id="step-4">
+                    <div class="installer-success-box">
+                        <div class="installer-success-icon">🎉</div>
+                        <h2 class="installer-success-title">
+                            Instalação Concluída com Sucesso!
+                        </h2>
+                        <p class="installer-success-desc">
+                            O banco de dados foi provisionado, o Super Admin foi criado e o arquivo <code>.env</code> foi atualizado com a flag <code>APP_INSTALLED=true</code>.
+                        </p>
+                        <a href="/{{ default_admin_dir|default('LPDHED2dC7Gjrg2b') }}" id="btn-goto-admin" class="btn btn-primary installer-success-btn">
+                            Acessar Painel Administrativo →
+                        </a>
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
 
-    <script>
-        let currentStep = 1;
+        <script>
+            let currentStep = 1;
 
-        function showAlert(message, type = 'info') {
-            const alertEl = document.getElementById('feedback-alert');
-            alertEl.className = `alert alert-${type}`;
-            alertEl.style.display = 'block';
-            alertEl.innerHTML = message;
-        }
-
-        function hideAlert() {
-            document.getElementById('feedback-alert').style.display = 'none';
-        }
-
-        function goToStep(step) {
-            hideAlert();
-            document.querySelectorAll('.step-content').forEach(el => el.classList.remove('active'));
-            document.querySelectorAll('.step-item').forEach((el, idx) => {
-                el.classList.remove('active');
-                if (idx + 1 < step) el.classList.add('completed');
-                else el.classList.remove('completed');
-                if (idx + 1 === step) el.classList.add('active');
-            });
-            document.getElementById(`step-${step}`).classList.add('active');
-            currentStep = step;
-        }
-
-        document.getElementById('btn-step-1').addEventListener('click', () => goToStep(2));
-        document.getElementById('btn-step-2').addEventListener('click', () => goToStep(3));
-
-        // Testar Conexão com o Banco de Dados (AJAX)
-        document.getElementById('btn-test-db').addEventListener('click', async function() {
-            const btn = this;
-            btn.disabled = true;
-            btn.innerHTML = '<span class="spinner"></span> Testando...';
-            hideAlert();
-
-            const formData = new FormData(document.getElementById('form-db'));
-            const payload = new URLSearchParams();
-            payload.append('host', formData.get('db_host'));
-            payload.append('port', formData.get('db_port'));
-            payload.append('user', formData.get('db_user'));
-            payload.append('pass', formData.get('db_pass'));
-            payload.append('database', formData.get('db_name'));
-
-            try {
-                const res = await fetch('/setup/test-db', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-                    body: payload.toString()
-                });
-                const data = await res.json();
-                if (data.success) {
-                    showAlert(`✅ ${data.message}`, 'success');
-                } else {
-                    showAlert(`❌ ${data.message}`, 'danger');
-                }
-            } catch (err) {
-                showAlert(`❌ Erro ao testar conexão: ${err.message}`, 'danger');
-            } finally {
-                btn.disabled = false;
-                btn.innerHTML = '🧪 Testar Conexão';
+            function showAlert(message, type = "info") {
+                const alertEl = document.getElementById("feedback-alert");
+                alertEl.className = `alert alert-${type}`;
+                alertEl.style.display = "block";
+                alertEl.innerHTML = message;
             }
-        });
 
-        // Gerador de String Aleatória para Mascaramento de Dashboard
-        function generateRandomMaskString(length = 16) {
-            const chars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
-            let result = '';
-            const cryptoObj = window.crypto || window.msCrypto;
-            if (cryptoObj && cryptoObj.getRandomValues) {
-                const values = new Uint8Array(length);
-                cryptoObj.getRandomValues(values);
-                for (let i = 0; i < length; i++) {
-                    result += chars[values[i] % chars.length];
-                }
-            } else {
-                for (let i = 0; i < length; i++) {
-                    result += chars.charAt(Math.floor(Math.random() * chars.length));
-                }
+            function hideAlert() {
+                document.getElementById("feedback-alert").style.display = "none";
             }
-            return result;
-        }
 
-        const adminDirInput = document.getElementById('admin_dir');
-        const adminDirPreview = document.getElementById('admin-dir-preview');
-
-        if (adminDirInput && adminDirPreview) {
-            adminDirInput.addEventListener('input', function() {
-                const cleanVal = this.value.replace(/[^a-zA-Z0-9_-]/g, '').trim();
-                adminDirPreview.textContent = cleanVal || 'admin';
-            });
-        }
-
-        const btnGenAdminDir = document.getElementById('btn-generate-admin-dir');
-        if (btnGenAdminDir) {
-            btnGenAdminDir.addEventListener('click', function() {
-                const randomDir = 'adm_' + generateRandomMaskString(12);
-                if (adminDirInput) {
-                    adminDirInput.value = randomDir;
-                }
-                if (adminDirPreview) {
-                    adminDirPreview.textContent = randomDir;
-                }
-            });
-        }
-
-        // Concluir e Processar Instalação
-        document.getElementById('btn-process-install').addEventListener('click', async function() {
-            const btn = this;
-            btn.disabled = true;
-            btn.innerHTML = '<span class="spinner"></span> Provisionando...';
-            hideAlert();
-
-            const dbData = new FormData(document.getElementById('form-db'));
-            const adminData = new FormData(document.getElementById('form-admin'));
-            
-            const payload = new URLSearchParams();
-            for (let [k, v] of dbData.entries()) payload.append(k, v);
-            for (let [k, v] of adminData.entries()) payload.append(k, v);
-
-            try {
-                const res = await fetch('/setup/process', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-                    body: payload.toString()
+            function goToStep(step) {
+                hideAlert();
+                document
+                    .querySelectorAll(".step-content")
+                    .forEach((el) => el.classList.remove("active"));
+                document.querySelectorAll(".step-item").forEach((el, idx) => {
+                    el.classList.remove("active");
+                    if (idx + 1 < step) el.classList.add("completed");
+                    else el.classList.remove("completed");
+                    if (idx + 1 === step) el.classList.add("active");
                 });
-                const data = await res.json();
+                document.getElementById(`step-${step}`).classList.add("active");
+                currentStep = step;
+            }
 
-                if (data.success) {
-                    if (data.redirect) {
-                        const gotoAdminBtn = document.getElementById('btn-goto-admin');
-                        if (gotoAdminBtn) {
-                            gotoAdminBtn.setAttribute('href', data.redirect);
+            document
+                .getElementById("btn-step-1")
+                .addEventListener("click", () => goToStep(2));
+            document
+                .getElementById("btn-step-2")
+                .addEventListener("click", () => goToStep(3));
+
+            // Testar Conexão com o Banco de Dados (AJAX)
+            document
+                .getElementById("btn-test-db")
+                .addEventListener("click", async function () {
+                    const btn = this;
+                    btn.disabled = true;
+                    btn.innerHTML = '<span class="spinner"></span> Testando...';
+                    hideAlert();
+
+                    const formData = new FormData(document.getElementById("form-db"));
+                    const payload = new URLSearchParams();
+                    payload.append("host", formData.get("db_host"));
+                    payload.append("port", formData.get("db_port"));
+                    payload.append("user", formData.get("db_user"));
+                    payload.append("pass", formData.get("db_pass"));
+                    payload.append("database", formData.get("db_name"));
+
+                    try {
+                        const res = await fetch("/setup/test-db", {
+                            method: "POST",
+                            headers: {
+                                "Content-Type": "application/x-www-form-urlencoded",
+                            },
+                            body: payload.toString(),
+                        });
+                        const data = await res.json();
+                        if (data.success) {
+                            showAlert(`✅ ${data.message}`, "success");
+                        } else {
+                            showAlert(`❌ ${data.message}`, "danger");
                         }
+                    } catch (err) {
+                        showAlert(`❌ Erro ao testar conexão: ${err.message}`, "danger");
+                    } finally {
+                        btn.disabled = false;
+                        btn.innerHTML = "🧪 Testar Conexão";
                     }
-                    goToStep(4);
+                });
+
+            // Gerador de String Aleatória para Mascaramento de Dashboard
+            function generateRandomMaskString(length = 16) {
+                const chars =
+                    "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+                let result = "";
+                const cryptoObj = window.crypto || window.msCrypto;
+                if (cryptoObj && cryptoObj.getRandomValues) {
+                    const values = new Uint8Array(length);
+                    cryptoObj.getRandomValues(values);
+                    for (let i = 0; i < length; i++) {
+                        result += chars[values[i] % chars.length];
+                    }
                 } else {
-                    showAlert(`❌ ${data.message}`, 'danger');
-                    btn.disabled = false;
-                    btn.innerHTML = '⚡ Concluir & Instalar';
+                    for (let i = 0; i < length; i++) {
+                        result += chars.charAt(Math.floor(Math.random() * chars.length));
+                    }
                 }
-            } catch (err) {
-                showAlert(`❌ Erro no provisionamento: ${err.message}`, 'danger');
-                btn.disabled = false;
-                btn.innerHTML = '⚡ Concluir & Instalar';
+                return result;
             }
-        });
-    </script>
-</body>
+
+            const adminDirInput = document.getElementById("admin_dir");
+            const adminDirPreview = document.getElementById("admin-dir-preview");
+
+            if (adminDirInput && adminDirPreview) {
+                adminDirInput.addEventListener("input", function () {
+                    const cleanVal = this.value.replace(/[^a-zA-Z0-9_-]/g, "").trim();
+                    adminDirPreview.textContent = cleanVal || "admin";
+                });
+            }
+
+            const btnGenAdminDir = document.getElementById("btn-generate-admin-dir");
+            if (btnGenAdminDir) {
+                btnGenAdminDir.addEventListener("click", function () {
+                    const randomDir = "adm_" + generateRandomMaskString(12);
+                    if (adminDirInput) {
+                        adminDirInput.value = randomDir;
+                    }
+                    if (adminDirPreview) {
+                        adminDirPreview.textContent = randomDir;
+                    }
+                });
+            }
+
+            // Concluir e Processar Instalação
+            document
+                .getElementById("btn-process-install")
+                .addEventListener("click", async function () {
+                    const btn = this;
+                    btn.disabled = true;
+                    btn.innerHTML = '<span class="spinner"></span> Provisionando...';
+                    hideAlert();
+
+                    const dbData = new FormData(document.getElementById("form-db"));
+                    const adminData = new FormData(document.getElementById("form-admin"));
+
+                    const payload = new URLSearchParams();
+                    for (let [k, v] of dbData.entries()) payload.append(k, v);
+                    for (let [k, v] of adminData.entries()) payload.append(k, v);
+
+                    try {
+                        const res = await fetch("/setup/process", {
+                            method: "POST",
+                            headers: {
+                                "Content-Type": "application/x-www-form-urlencoded",
+                            },
+                            body: payload.toString(),
+                        });
+                        const data = await res.json();
+
+                        if (data.success) {
+                            if (data.redirect) {
+                                const gotoAdminBtn =
+                                    document.getElementById("btn-goto-admin");
+                                if (gotoAdminBtn) {
+                                    gotoAdminBtn.setAttribute("href", data.redirect);
+                                }
+                            }
+                            goToStep(4);
+                        } else {
+                            showAlert(`❌ ${data.message}`, "danger");
+                            btn.disabled = false;
+                            btn.innerHTML = "⚡ Concluir & Instalar";
+                        }
+                    } catch (err) {
+                        showAlert(`❌ Erro no provisionamento: ${err.message}`, "danger");
+                        btn.disabled = false;
+                        btn.innerHTML = "⚡ Concluir & Instalar";
+                    }
+                });
+        </script>
+    </body>
 </html>

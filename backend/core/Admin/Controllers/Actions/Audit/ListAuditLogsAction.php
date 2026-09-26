@@ -75,7 +75,7 @@ class ListAuditLogsAction extends BaseController implements ActionInterface
         $paginationBaseUrl = $baseUrl . '?' . ($urlQueryString ? $urlQueryString . '&' : '') . 'page=';
 
         $html = $this->getTemplate('admin/pages/audit/index.html.twig', [
-            'title'              => 'Auditoria & Logs de Acesso | AgSonhos Admin',
+            'title'              => 'Auditoria & Logs de Acesso | meusite Admin',
             'logs'               => $logs,
             'stats'              => $stats,
             'total'              => $totalLogs,

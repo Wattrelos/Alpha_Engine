@@ -4,7 +4,7 @@
 		<meta charset="UTF-8">
 		<meta name="viewport" content="width=device-width, initial-scale=1.0">
 		<title>
-			{% block title %}Painel Administrativo | AgSonhos
+			{% block title %}Painel Administrativo | meusite
 			{% endblock %}
 		</title>
 
@@ -20,13 +20,14 @@
 	</head>
 	<body class="admin-body">
 		<div
-			class="admin-wrapper">
+			class="admin-wrapper"
+		>
 			<!-- Sidebar -->
 			<aside class="sidebar">
 				<div class="sidebar-brand">
 					<h1 class="sidebar-title">
 						<span class="sidebar-logo-icon">🌌</span>
-						{{ AdminLang.sidebar.title|default('AgSonhos Admin') }}
+						{{ AdminLang.sidebar.title|default('meusite Admin') }}
 					</h1>
 				</div>
 				<ul>
@@ -115,7 +116,8 @@
 
 			<!-- Main Content Wrapper -->
 			<div
-				class="main-content">
+				class="main-content"
+			>
 				<!-- Topbar -->
 				<header class="topbar">
 					<div class="topbar-left">
@@ -141,7 +143,7 @@
 						</div>
 						<div class="topbar-user-info">
 							<p class="topbar-username">{{ logged_admin.name|default(AdminLang.topbar.default_name|default('Administrador')) }}</p>
-							<p class="topbar-email">{{ logged_admin.email|default(AdminLang.topbar.default_email|default('admin@agsonhos.com')) }}</p>
+							<p class="topbar-email">{{ logged_admin.email|default(AdminLang.topbar.default_email|default('admin@meusite.com')) }}</p>
 						</div>
 						<div class="topbar-avatar">
 							{% if logged_admin.image %}
@@ -159,22 +161,25 @@
 
 				<!-- Main Page Content -->
 				<main class="page-body"> {% block content %}{% endblock %}
-					</main>
-				</div>
+				</main>
 			</div>
-			<script>
-				document.addEventListener('DOMContentLoaded', () => {
-const currentPath = window.location.pathname;
-const links = document.querySelectorAll('.sidebar a');
-const adminDashboardUrl = "{{ admin_path }}/dashboard";
-links.forEach(link => {
-link.classList.remove('active');
-const href = link.getAttribute('href');
-if (currentPath === href || (href !== adminDashboardUrl && currentPath.startsWith(href))) {
-link.classList.add('active');
-}
-});
-});
-			</script>
-		</body>
-	</html>
+		</div>
+		<script>
+			document.addEventListener("DOMContentLoaded", () => {
+				const currentPath = window.location.pathname;
+				const links = document.querySelectorAll(".sidebar a");
+				const adminDashboardUrl = "{{ admin_path }}/dashboard";
+				links.forEach((link) => {
+					link.classList.remove("active");
+					const href = link.getAttribute("href");
+					if (
+						currentPath === href ||
+						(href !== adminDashboardUrl && currentPath.startsWith(href))
+					) {
+						link.classList.add("active");
+					}
+				});
+			});
+		</script>
+	</body>
+</html>

@@ -2,7 +2,7 @@
 
 ## 📌 Contexto e Posicionamento na Pirâmide de Testes
 
-Esta suíte de testes E2E com **Playwright** e **TypeScript** complementa a estratégia de qualidade de software do projeto **Alpha Engine (agsonhos)**, integrando-se perfeitamente com os testes unitários (**PHPUnit**) e de comportamento BDD (**Gherkin / Behat**):
+Esta suíte de testes E2E com **Playwright** e **TypeScript** complementa a estratégia de qualidade de software do projeto **Alpha Engine**, integrando-se perfeitamente com os testes unitários (**PHPUnit**) e de comportamento BDD (**Gherkin / Behat**):
 
 ```
        / \

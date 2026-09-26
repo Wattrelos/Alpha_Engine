@@ -86,7 +86,7 @@ composer test:all
 ## ⚙️ Estrutura de Diretórios dos Testes
 
 ```
-agsonhos/
+meusite/
 ├── behat.yml                            # Configuração global de suítes e contextos Behat
 ├── composer.json                        # Scripts de automação ('test:behat', 'test:phpunit', etc.)
 ├── features/                            # Especificações executáveis escritas em Gherkin (.feature)

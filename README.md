@@ -1,6 +1,10 @@
 
 ![Status do Pipeline](https://github.com/Wattrelos/Alpha_Engine/actions/workflows/playwright.yml/badge.svg)
-
+![PHP Version](https://img.shields.io/badge/php-%3E%3D8.2-8892BF.svg)
+![Slim Framework](https://img.shields.io/badge/framework-Slim_4-blue.svg)
+![License](https://img.shields.io/badge/license-MIT-green.svg)
+![Testing](https://img.shields.io/badge/tests-PHPUnit%20%7C%20Behat%20%7C%20Playwright-brightgreen.svg)
+![Code Quality](https://img.shields.io/badge/quality-PHPStan%20%7C%20PSR--12-informational.svg)
 
 
 
@@ -22,7 +26,7 @@
 - Backlog do projeto
 ## Introdução
 
-O Projeto AGsonhos visa oferecer um serviço de entrega de produtos diretamente na casa do cliente, proporcionando agilidade e praticidade no processo de compra e recebimento.
+O Projeto meusite visa oferecer um serviço de entrega de produtos diretamente na casa do cliente, proporcionando agilidade e praticidade no processo de compra e recebimento.
 
 
 ## Padrões de Projeto (Design Patterns)

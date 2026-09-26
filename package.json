@@ -1,7 +1,7 @@
 {
-  "name": "agsonhos",
+  "name": "meusite",
   "version": "1.0.0",
-  "description": "Suíte E2E com Playwright para Alpha Engine (agsonhos)",
+  "description": "Suíte E2E com Playwright para Alpha Engine",
   "main": "index.js",
   "directories": {
     "doc": "docs",

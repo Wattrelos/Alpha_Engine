@@ -9,7 +9,7 @@ actor "Sales Representative\n(Vendedor)" as SalesRep
 actor "Customer\n(Cliente)" as Customer
 actor "Cashier\n(Caixa)" as Cashier
 
-rectangle "AgSonhos POS System" {
+rectangle "meusite POS System" {
     
     package "Sales Module\n(Módulo Vendedor)" {
         usecase "Browse Product Catalog\n(Navegar no Catálogo)" as UC_Catalog

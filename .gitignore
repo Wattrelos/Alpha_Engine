@@ -10,7 +10,7 @@
 # Build & Release Artifacts (ZIPs e Pacotes de Release)
 dist/
 backend/dist/
-backend/dist/agsonhos-release.zip
+backend/dist/meusite-release.zip
 *.zip
 *.tar.gz
 *.tgz

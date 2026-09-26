@@ -51,4 +51,4 @@ Disallow: /busca?*
 Disallow: /*/busca?*
 
 # Referência aos Arquivos Canônicos e Metadados
-Sitemap: https://www.agsonhos.com.br/sitemap.xml
+Sitemap: https://www.meusite.com.br/sitemap.xml

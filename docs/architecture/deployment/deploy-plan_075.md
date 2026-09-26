@@ -18,7 +18,7 @@ Documentamos a arquitetura de degradação graciosa e otimização de performanc
 
 ## 1. Como o Projeto Trata o Cache e Sessões sem Redis
 
-O projeto **AgSonhos (Alpha Engine)** já possui uma arquitetura desacoplada e resistente a falhas (GoF Strategy + Graceful Degradation):
+O projeto **meusite (Alpha Engine)** já possui uma arquitetura desacoplada e resistente a falhas (GoF Strategy + Graceful Degradation):
 
 1. **Cache de Dados e Consultas (`FilesystemCacheStrategy`):**
    - Todo o cache de catálogo (categorias, produtos, configurações de loja, URLs amigáveis SEO) é salvo em disco em `backend/storage/cache/`.

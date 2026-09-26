@@ -1,87 +1,87 @@
 {% extends 'layouts/base.html.twig' %}
 
-{% block title %}Painel do Prestador - Oportunidades | AgSonhos{% endblock %}
+{% block title %}Painel do Prestador - Oportunidades | meusite{% endblock %}
 
 {% block stylesheets %}
     <link rel="stylesheet" href="/css/custom/quotation.css">
 {% endblock %}
 
 {% block content %}
-<div class="rfq-container">
-    <div class="rfq-hero">
-        <nav class="rfq-breadcrumb">
-            {% for breadcrumb in breadcrumbs %}
-                {% if not loop.last %}
-                    <a href="{{ breadcrumb.href }}">{{ breadcrumb.text }}</a>
-                    <span>›</span>
-                {% else %}
-                    <span>{{ breadcrumb.text }}</span>
-                {% endif %}
-            {% endfor %}
-        </nav>
-        <h1 class="rfq-hero-title">
-            <span>👷</span> Painel do Prestador de Serviços (Alpha Pro)
-        </h1>
-        <p class="rfq-hero-desc">Projetos e solicitações de orçamento disponíveis no seu raio de atendimento ({{ provider.radius_km }} km).</p>
-    </div>
-
-    <h2 style="font-size:1.3rem; color:#1e293b; margin-bottom:1rem;">Oportunidades em Aberto na sua Região ({{ opportunities|length }})</h2>
-
-    {% if opportunities is empty %}
-        <div class="rfq-card" style="text-align:center; padding:3rem 1.5rem;">
-            <div style="font-size:3rem; margin-bottom:1rem;">📍</div>
-            <h3 style="font-size:1.2rem; margin-bottom:0.5rem;">Nenhuma obra aberta no momento no seu raio de atendimento</h3>
-            <p style="color:#64748b;">Assim que clientes publicarem novos projetos próximos a você, eles aparecerão aqui automaticamente.</p>
+    <div class="rfq-container">
+        <div class="rfq-hero">
+            <nav class="rfq-breadcrumb">
+                {% for breadcrumb in breadcrumbs %}
+                    {% if not loop.last %}
+                        <a href="{{ breadcrumb.href }}">{{ breadcrumb.text }}</a>
+                        <span>›</span>
+                    {% else %}
+                        <span>{{ breadcrumb.text }}</span>
+                    {% endif %}
+                {% endfor %}
+            </nav>
+            <h1 class="rfq-hero-title">
+                <span>👷</span> Painel do Prestador de Serviços (Alpha Pro)
+            </h1>
+            <p class="rfq-hero-desc">Projetos e solicitações de orçamento disponíveis no seu raio de atendimento ({{ provider.radius_km }} km).</p>
         </div>
-    {% else %}
-        {% for opp in opportunities %}
-            <div class="rfq-card">
-                <div class="rfq-card-header">
-                    <div>
-                        <span class="rfq-badge rfq-badge--{{ opp.is_assigned_to_me ? 'accepted' : 'open' }}">
-                            {{ opp.is_assigned_to_me ? 'Você foi Contratado!' : 'Oportunidade Aberta' }}
-                        </span>
-                        <h3 style="font-size:1.25rem; color:#1e293b; margin:0.5rem 0 0.25rem 0;">{{ opp.title }}</h3>
-                        <div style="font-size:0.85rem; color:#64748b;">
-                            📍 Local: <strong>{{ opp.city }} - {{ opp.state }}</strong> (CEP: {{ opp.cep }})
-                            {% if opp.distance_km is not null %}
-                                | Distância aprox: <strong style="color:#ff6b00;">{{ opp.distance_km }} km</strong>
+
+        <h2 style="font-size:1.3rem; color:#1e293b; margin-bottom:1rem;">Oportunidades em Aberto na sua Região ({{ opportunities|length }})</h2>
+
+        {% if opportunities is empty %}
+            <div class="rfq-card" style="text-align:center; padding:3rem 1.5rem;">
+                <div style="font-size:3rem; margin-bottom:1rem;">📍</div>
+                <h3 style="font-size:1.2rem; margin-bottom:0.5rem;">Nenhuma obra aberta no momento no seu raio de atendimento</h3>
+                <p style="color:#64748b;">Assim que clientes publicarem novos projetos próximos a você, eles aparecerão aqui automaticamente.</p>
+            </div>
+        {% else %}
+            {% for opp in opportunities %}
+                <div class="rfq-card">
+                    <div class="rfq-card-header">
+                        <div>
+                            <span class="rfq-badge rfq-badge--{{ opp.is_assigned_to_me ? 'accepted' : 'open' }}">
+                                {{ opp.is_assigned_to_me ? 'Você foi Contratado!' : 'Oportunidade Aberta' }}
+                            </span>
+                            <h3 style="font-size:1.25rem; color:#1e293b; margin:0.5rem 0 0.25rem 0;">{{ opp.title }}</h3>
+                            <div style="font-size:0.85rem; color:#64748b;">
+                                📍 Local: <strong>{{ opp.city }} - {{ opp.state }}</strong> (CEP: {{ opp.cep }})
+                                {% if opp.distance_km is not null %}
+                                    | Distância aprox: <strong style="color:#ff6b00;">{{ opp.distance_km }} km</strong>
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        {% if opp.budget_expectation > 0 %}
+                            <div style="text-align:right;">
+                                <small style="color:#64748b; display:block;">Orçamento do Cliente:</small>
+                                <strong style="color:#059669; font-size:1.2rem;">R$ {{ opp.budget_expectation|number_format(2, ',', '.') }}</strong>
+                            </div>
+                        {% endif %}
+                    </div>
+
+                    <p style="color:#475569; font-size:0.95rem; margin:1rem 0;">{{ opp.description }}</p>
+
+                    <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:1rem; padding-top:1rem; border-top:1px solid #f1f5f9;">
+                        <div>
+                            {% if opp.has_bid %}
+                                <span style="font-size:0.85rem; background:#ecfdf5; color:#065f46; padding:4px 8px; border-radius:6px; font-weight:600;">
+                                    ✓ Sua Proposta: R$ {{ opp.my_bid.price|number_format(2, ',', '.') }} ({{ opp.my_bid.duration }} dias)
+                                </span>
                             {% endif %}
                         </div>
-                    </div>
 
-                    {% if opp.budget_expectation > 0 %}
-                        <div style="text-align:right;">
-                            <small style="color:#64748b; display:block;">Orçamento do Cliente:</small>
-                            <strong style="color:#059669; font-size:1.2rem;">R$ {{ opp.budget_expectation|number_format(2, ',', '.') }}</strong>
-                        </div>
-                    {% endif %}
-                </div>
-
-                <p style="color:#475569; font-size:0.95rem; margin:1rem 0;">{{ opp.description }}</p>
-
-                <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:1rem; padding-top:1rem; border-top:1px solid #f1f5f9;">
-                    <div>
-                        {% if opp.has_bid %}
-                            <span style="font-size:0.85rem; background:#ecfdf5; color:#065f46; padding:4px 8px; border-radius:6px; font-weight:600;">
-                                ✓ Sua Proposta: R$ {{ opp.my_bid.price|number_format(2, ',', '.') }} ({{ opp.my_bid.duration }} dias)
-                            </span>
-                        {% endif %}
-                    </div>
-
-                    <div style="display:flex; gap:0.75rem;">
-                        {% if opp.is_assigned_to_me %}
-                            <a href="{{ opp.takeoff_url }}" class="rfq-btn rfq-btn-success">
-                                <span>🛠️</span> Ferramenta de Levantamento de Materiais (Takeoff Tool)
+                        <div style="display:flex; gap:0.75rem;">
+                            {% if opp.is_assigned_to_me %}
+                                <a href="{{ opp.takeoff_url }}" class="rfq-btn rfq-btn-success">
+                                    <span>🛠️</span> Ferramenta de Levantamento de Materiais (Takeoff Tool)
+                                </a>
+                            {% endif %}
+                            <a href="{{ opp.bid_url }}" class="rfq-btn rfq-btn-primary">
+                                <span>📝</span> {{ opp.has_bid ? 'Editar Proposta' : 'Enviar Orçamento' }}
                             </a>
-                        {% endif %}
-                        <a href="{{ opp.bid_url }}" class="rfq-btn rfq-btn-primary">
-                            <span>📝</span> {{ opp.has_bid ? 'Editar Proposta' : 'Enviar Orçamento' }}
-                        </a>
+                        </div>
                     </div>
                 </div>
-            </div>
-        {% endfor %}
-    {% endif %}
-</div>
+            {% endfor %}
+        {% endif %}
+    </div>
 {% endblock %}

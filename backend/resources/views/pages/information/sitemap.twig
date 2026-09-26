@@ -1,13 +1,14 @@
 {% extends 'layouts/base.html.twig' %}
 
 {% block title %}
-	{{ Sitemap.headingTitle|default(seo.title)|default('Mapa do Site') }} | AgSonhos
+	{{ Sitemap.headingTitle|default(seo.title)|default('Mapa do Site') }} | meusite
 {% endblock %}
 
 {% block content %}
 	<div id="information-sitemap" class="egen-sitemap-page">
 		<div
-			class="egen-sitemap-container">
+			class="egen-sitemap-container"
+		>
 
 			{# ── Breadcrumbs ── #}
 			<nav class="egen-sitemap-breadcrumb" aria-label="Navegação">
@@ -42,7 +43,8 @@
 					{{ content_top }}
 
 					<div
-						class="egen-sitemap-grid">
+						class="egen-sitemap-grid"
+					>
 
 						{# ── Coluna 1: Categorias ── #}
 						<div class="egen-sitemap-card">

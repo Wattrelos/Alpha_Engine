@@ -1,73 +1,73 @@
 {% extends 'layouts/base.html.twig' %}
 
-{% block title %}Enviar Proposta / Orçamento de Serviço | AgSonhos{% endblock %}
+{% block title %}Enviar Proposta / Orçamento de Serviço | meusite{% endblock %}
 
 {% block stylesheets %}
     <link rel="stylesheet" href="/css/custom/quotation.css">
 {% endblock %}
 
 {% block content %}
-<div class="rfq-container">
-    <div class="rfq-hero">
-        <nav class="rfq-breadcrumb">
-            {% for breadcrumb in breadcrumbs %}
-                {% if not loop.last %}
-                    <a href="{{ breadcrumb.href }}">{{ breadcrumb.text }}</a>
-                    <span>›</span>
-                {% else %}
-                    <span>{{ breadcrumb.text }}</span>
+    <div class="rfq-container">
+        <div class="rfq-hero">
+            <nav class="rfq-breadcrumb">
+                {% for breadcrumb in breadcrumbs %}
+                    {% if not loop.last %}
+                        <a href="{{ breadcrumb.href }}">{{ breadcrumb.text }}</a>
+                        <span>›</span>
+                    {% else %}
+                        <span>{{ breadcrumb.text }}</span>
+                    {% endif %}
+                {% endfor %}
+            </nav>
+            <h1 class="rfq-hero-title">
+                <span>📝</span> Enviar Proposta Comercial (Bid)
+            </h1>
+            <p class="rfq-hero-desc">Projeto: <strong>{{ rfq.title }}</strong> ({{ rfq.city }} - {{ rfq.state }})</p>
+        </div>
+
+        {% if error %}
+            <div style="background:#fee2e2; border:1px solid #ef4444; color:#991b1b; padding:1rem 1.25rem; border-radius:8px; margin-bottom:1.5rem;">
+                {{ error }}
+            </div>
+        {% endif %}
+
+        <div class="rfq-card">
+            <h2 style="font-size:1.25rem; margin-bottom:1rem; color:#1e293b;">Resumo da Obra</h2>
+            <p style="color:#475569; margin-bottom:1rem;">{{ rfq.description }}</p>
+            <div style="font-size:0.9rem; color:#64748b; margin-bottom:2rem;">
+                Prazo desejado pelo cliente: <strong>{{ rfq.deadline_days }} dias</strong>
+                {% if rfq.budget_expectation > 0 %}
+                    | Orçamento esperado: <strong>R$ {{ rfq.budget_expectation|number_format(2, ',', '.') }}</strong>
                 {% endif %}
-            {% endfor %}
-        </nav>
-        <h1 class="rfq-hero-title">
-            <span>📝</span> Enviar Proposta Comercial (Bid)
-        </h1>
-        <p class="rfq-hero-desc">Projeto: <strong>{{ rfq.title }}</strong> ({{ rfq.city }} - {{ rfq.state }})</p>
-    </div>
-
-    {% if error %}
-        <div style="background:#fee2e2; border:1px solid #ef4444; color:#991b1b; padding:1rem 1.25rem; border-radius:8px; margin-bottom:1.5rem;">
-            {{ error }}
-        </div>
-    {% endif %}
-
-    <div class="rfq-card">
-        <h2 style="font-size:1.25rem; margin-bottom:1rem; color:#1e293b;">Resumo da Obra</h2>
-        <p style="color:#475569; margin-bottom:1rem;">{{ rfq.description }}</p>
-        <div style="font-size:0.9rem; color:#64748b; margin-bottom:2rem;">
-            Prazo desejado pelo cliente: <strong>{{ rfq.deadline_days }} dias</strong>
-            {% if rfq.budget_expectation > 0 %}
-                | Orçamento esperado: <strong>R$ {{ rfq.budget_expectation|number_format(2, ',', '.') }}</strong>
-            {% endif %}
-        </div>
-
-        <form method="POST" action="/{{ lang }}/prestador/projetos/{{ rfq.id }}/proposta">
-            <h2 style="font-size:1.25rem; margin-bottom:1.25rem; color:#1e293b;">Sua Proposta Comercial</h2>
-
-            <div class="rfq-form-grid">
-                <div class="rfq-form-group">
-                    <label class="rfq-label" for="labor_price">Valor da Mão de Obra (R$) *</label>
-                    <input type="number" step="0.01" id="labor_price" name="labor_price" class="rfq-input" placeholder="Ex: 2500.00" value="{{ bid ? bid.labor_price : '' }}" required>
-                </div>
-
-                <div class="rfq-form-group">
-                    <label class="rfq-label" for="estimated_duration_days">Prazo Estimado de Execução (dias) *</label>
-                    <input type="number" id="estimated_duration_days" name="estimated_duration_days" class="rfq-input" min="1" placeholder="Ex: 15" value="{{ bid ? bid.estimated_duration_days : '15' }}" required>
-                </div>
-
-                <div class="rfq-form-group full-width">
-                    <label class="rfq-label" for="proposal_notes">Detalhes e Condições da Proposta</label>
-                    <textarea id="proposal_notes" name="proposal_notes" class="rfq-textarea" rows="4" placeholder="Detalhe sua experiência, garantias oferecidas, etapas de execução e formas de pagamento da mão de obra...">{{ bid ? bid.proposal_notes : '' }}</textarea>
-                </div>
             </div>
 
-            <div style="display:flex; justify-content:flex-end; gap:1rem; margin-top:2rem;">
-                <a href="/{{ lang }}/prestador/oportunidades" class="rfq-btn rfq-btn-secondary">Voltar</a>
-                <button type="submit" class="rfq-btn rfq-btn-primary">
-                    <span>📨</span> Enviar Proposta ao Cliente
-                </button>
-            </div>
-        </form>
+            <form method="POST" action="/{{ lang }}/prestador/projetos/{{ rfq.id }}/proposta">
+                <h2 style="font-size:1.25rem; margin-bottom:1.25rem; color:#1e293b;">Sua Proposta Comercial</h2>
+
+                <div class="rfq-form-grid">
+                    <div class="rfq-form-group">
+                        <label class="rfq-label" for="labor_price">Valor da Mão de Obra (R$) *</label>
+                        <input type="number" step="0.01" id="labor_price" name="labor_price" class="rfq-input" placeholder="Ex: 2500.00" value="{{ bid ? bid.labor_price : '' }}" required>
+                    </div>
+
+                    <div class="rfq-form-group">
+                        <label class="rfq-label" for="estimated_duration_days">Prazo Estimado de Execução (dias) *</label>
+                        <input type="number" id="estimated_duration_days" name="estimated_duration_days" class="rfq-input" min="1" placeholder="Ex: 15" value="{{ bid ? bid.estimated_duration_days : '15' }}" required>
+                    </div>
+
+                    <div class="rfq-form-group full-width">
+                        <label class="rfq-label" for="proposal_notes">Detalhes e Condições da Proposta</label>
+                        <textarea id="proposal_notes" name="proposal_notes" class="rfq-textarea" rows="4" placeholder="Detalhe sua experiência, garantias oferecidas, etapas de execução e formas de pagamento da mão de obra...">{{ bid ? bid.proposal_notes : '' }}</textarea>
+                    </div>
+                </div>
+
+                <div style="display:flex; justify-content:flex-end; gap:1rem; margin-top:2rem;">
+                    <a href="/{{ lang }}/prestador/oportunidades" class="rfq-btn rfq-btn-secondary">Voltar</a>
+                    <button type="submit" class="rfq-btn rfq-btn-primary">
+                        <span>📨</span> Enviar Proposta ao Cliente
+                    </button>
+                </div>
+            </form>
+        </div>
     </div>
-</div>
 {% endblock %}

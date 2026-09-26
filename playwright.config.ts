@@ -9,7 +9,7 @@ dotenv.config({ path: path.resolve(__dirname, '.env') });
 const BASE_URL = process.env.BASE_URL || 'http://localhost';
 
 /**
- * Configuração do Playwright Test para a Alpha Engine (agsonhos).
+ * Configuração do Playwright Test para a Alpha Engine.
  * Complementa a suíte de testes BDD (Gherkin/Behat) e Unitários/Integração (PHPUnit).
  * @see https://playwright.dev/docs/test-configuration
  */

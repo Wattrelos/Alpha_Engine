@@ -12,7 +12,7 @@
 
 # Plano de Implementação: Evolução da Suíte E2E Playwright
 
-Este plano descreve a implementação das 3 frentes de evolução técnica para a suíte de testes E2E do projeto **Alpha Engine (agsonhos)**, elevando a confiabilidade, velocidade e cobertura visual e de integração da aplicação.
+Este plano descreve a implementação das 3 frentes de evolução técnica para a suíte de testes E2E do projeto **Alpha Engine**, elevando a confiabilidade, velocidade e cobertura visual e de integração da aplicação.
 
 ---
 
@@ -135,7 +135,7 @@ e2e/
    ```
 # Walkthrough: Evoluções Técnicas da Suíte E2E com Playwright
 
-Implementação e validação completa das 3 frentes de evolução técnica para a suíte de testes E2E do projeto **Alpha Engine (agsonhos)**.
+Implementação e validação completa das 3 frentes de evolução técnica para a suíte de testes E2E do projeto **Alpha Engine**.
 
 ---
 

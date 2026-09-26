@@ -1,202 +1,204 @@
 {% extends 'layouts/base.html.twig' %}
 
-{% block title %}Novo Endereço | AgSonhos{% endblock %}
+{% block title %}Novo Endereço | meusite{% endblock %}
 
 {% block stylesheets %}
 	<link rel="stylesheet" href="/css/custom/addresses.css">
 {% endblock %}
 
 {% block content %}
-<div id="address-create-page">
+	<div id="address-create-page">
 
-	{# ── Hero ── #}
-	<div class="addr-hero">
-		<div class="addr-hero-inner">
-			<nav class="addr-breadcrumb" aria-label="Navegação">
-				{% for breadcrumb in breadcrumbs %}
-					{% if not loop.last %}
-						<a href="{{ breadcrumb.href }}">{{ breadcrumb.text }}</a>
-						<span class="sep">›</span>
-					{% else %}
-						<span class="current">{{ breadcrumb.text }}</span>
-					{% endif %}
-				{% endfor %}
-			</nav>
-			<h1 class="addr-hero-title">
-				<span class="addr-hero-icon">
-					<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-						<path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
-						<circle cx="12" cy="10" r="3"/>
-					</svg>
-				</span>
-				{{ heading_title|default('Novo Endereço') }}
-			</h1>
-			<p class="addr-hero-sub">Preencha os dados do novo endereço de entrega</p>
+		{# ── Hero ── #}
+		<div class="addr-hero">
+			<div class="addr-hero-inner">
+				<nav class="addr-breadcrumb" aria-label="Navegação">
+					{% for breadcrumb in breadcrumbs %}
+						{% if not loop.last %}
+							<a href="{{ breadcrumb.href }}">{{ breadcrumb.text }}</a>
+							<span class="sep">›</span>
+						{% else %}
+							<span class="current">{{ breadcrumb.text }}</span>
+						{% endif %}
+					{% endfor %}
+				</nav>
+				<h1 class="addr-hero-title">
+					<span class="addr-hero-icon">
+						<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+							<path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
+							<circle cx="12" cy="10" r="3"/>
+						</svg>
+					</span>
+					{{ heading_title|default('Novo Endereço') }}
+				</h1>
+				<p class="addr-hero-sub">Preencha os dados do novo endereço de entrega</p>
+			</div>
+		</div>
+
+		{# ── Formulário ── #}
+		<div class="addr-wrapper">
+
+			{% if error_warning %}
+				<div class="addr-alert addr-alert--danger">
+					<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+					{{ error_warning }}
+				</div>
+			{% endif %}
+
+			<form action="{{ action }}" method="post" class="addr-form-card" id="address-create-form" novalidate>
+				{% if csrf %}
+					<input type="hidden" name="{{ csrf.keys.name }}" value="{{ csrf.name }}">
+					<input type="hidden" name="{{ csrf.keys.value }}" value="{{ csrf.value }}">
+				{% endif %}
+
+				{# ── Seção: Endereço ── #}
+				<div class="addr-form-section">
+					<h2 class="addr-form-section-title">
+						<span class="addr-section-num">1</span>
+						Dados do Endereço
+					</h2>
+
+					{# CEP com autocompletar ── #}
+					<div class="addr-form-grid">
+						<div class="addr-form-group {% if error_postcode %}has-error{% endif %}">
+							<label for="input-postcode" class="addr-form-label">
+								{{ entry_postcode|default('CEP') }}
+								<span class="required">*</span>
+							</label>
+							<div class="addr-postcode-wrap">
+								<input type="text" name="postcode" value="{{ postcode }}" placeholder="00000-000" id="input-postcode" class="addr-form-input addr-form-input--postcode" maxlength="9" required/>
+								<span class="addr-postcode-spinner d-none" id="postcode-spinner">
+									<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="addr-spinner-icon"><circle cx="12" cy="12" r="10"/></svg>
+								</span>
+							</div>
+							{% if error_postcode %}
+								<span class="addr-form-error">{{ error_postcode }}</span>
+							{% endif %}
+						</div>
+						<div class="addr-form-group {% if error_street %}has-error{% endif %}">
+							<label for="input-address-1" class="addr-form-label">
+								{{ entry_street|default('Logradouro') }}
+								<span class="required">*</span>
+							</label>
+							<input type="text" name="street" value="{{ street }}" placeholder="{{ entry_street|default('Rua, Avenida...') }}" id="input-address-1" class="addr-form-input" required/>
+							{% if error_street %}
+								<span class="addr-form-error">{{ error_street }}</span>
+							{% endif %}
+						</div>
+					</div>
+
+					<div class="addr-form-grid">
+						<div class="addr-form-group">
+							<label for="input-number" class="addr-form-label">
+								Número
+								<span class="required">*</span>
+							</label>
+							<input type="text" name="number" value="{{ number }}" placeholder="Nº" id="input-number" class="addr-form-input" required/>
+						</div>
+						<div class="addr-form-group">
+							<label for="input-address-2" class="addr-form-label">{{ entry_complement|default('Complemento') }}</label>
+							<input type="text" name="complement" value="{{ complement }}" placeholder="{{ entry_complement|default('Apto, Bloco... (opcional)') }}" id="input-address-2" class="addr-form-input"/>
+						</div>
+					</div>
+
+					<div class="addr-form-grid">
+						<div class="addr-form-group">
+							<label for="input-neighborhood" class="addr-form-label">
+								Bairro
+								<span class="required">*</span>
+							</label>
+							<input type="text" name="neighborhood" value="{{ neighborhood }}" placeholder="Bairro" id="input-neighborhood" class="addr-form-input" required/>
+						</div>
+						<div class="addr-form-group {% if error_city %}has-error{% endif %}">
+							<label for="input-city" class="addr-form-label">
+								{{ entry_city|default('Cidade') }}
+								<span class="required">*</span>
+							</label>
+							<input type="text" name="city" value="{{ city }}" placeholder="{{ entry_city|default('Cidade') }}" id="input-city" class="addr-form-input" required/>
+							{% if error_city %}
+								<span class="addr-form-error">{{ error_city }}</span>
+							{% endif %}
+						</div>
+					</div>
+
+					<div class="addr-form-grid">
+						<div class="addr-form-group">
+							<label for="input-zone" class="addr-form-label">
+								Estado (UF)
+								<span class="required">*</span>
+							</label>
+							<input type="text" name="zone_id" value="{{ zone_id }}" placeholder="SP" id="input-zone" class="addr-form-input" readonly required/>
+							<input type="hidden" name="country_id" value="30"/>
+						</div>
+						<div class="addr-form-group addr-form-group--default">
+							<label class="addr-form-label">Endereço Padrão</label>
+							<label class="addr-toggle-wrap" for="input-default">
+								<input type="checkbox" name="default" value="1" id="input-default" {% if default %}checked{% endif %}/>
+								<span class="addr-toggle"></span>
+								<span class="addr-toggle-label">Usar como endereço padrão</span>
+							</label>
+						</div>
+					</div>
+				</div>
+
+				{# ── Ações do Formulário ── #}
+				<div class="addr-form-actions">
+					<a href="{{ back }}" class="addr-btn-back">
+						<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+						Voltar
+					</a>
+					<button type="submit" class="addr-btn-submit" id="btn-save-address">
+						<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+						{{ button_continue|default('Salvar Endereço') }}
+					</button>
+				</div>
+
+			</form>
 		</div>
 	</div>
 
-	{# ── Formulário ── #}
-	<div class="addr-wrapper">
-
-		{% if error_warning %}
-			<div class="addr-alert addr-alert--danger">
-				<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
-				{{ error_warning }}
-			</div>
-		{% endif %}
-
-		<form action="{{ action }}" method="post" class="addr-form-card" id="address-create-form" novalidate>
-			{% if csrf %}
-				<input type="hidden" name="{{ csrf.keys.name }}" value="{{ csrf.name }}">
-				<input type="hidden" name="{{ csrf.keys.value }}" value="{{ csrf.value }}">
-			{% endif %}
-
-			{# ── Seção: Endereço ── #}
-			<div class="addr-form-section">
-				<h2 class="addr-form-section-title">
-					<span class="addr-section-num">1</span>
-					Dados do Endereço
-				</h2>
-
-				{# CEP com autocompletar ── #}
-				<div class="addr-form-grid">
-					<div class="addr-form-group {% if error_postcode %}has-error{% endif %}">
-						<label for="input-postcode" class="addr-form-label">
-							{{ entry_postcode|default('CEP') }}
-							<span class="required">*</span>
-						</label>
-						<div class="addr-postcode-wrap">
-							<input type="text" name="postcode" value="{{ postcode }}" placeholder="00000-000" id="input-postcode" class="addr-form-input addr-form-input--postcode" maxlength="9" required />
-							<span class="addr-postcode-spinner d-none" id="postcode-spinner">
-								<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="addr-spinner-icon"><circle cx="12" cy="12" r="10"/></svg>
-							</span>
-						</div>
-						{% if error_postcode %}
-							<span class="addr-form-error">{{ error_postcode }}</span>
-						{% endif %}
-					</div>
-					<div class="addr-form-group {% if error_street %}has-error{% endif %}">
-						<label for="input-address-1" class="addr-form-label">
-							{{ entry_street|default('Logradouro') }}
-							<span class="required">*</span>
-						</label>
-						<input type="text" name="street" value="{{ street }}" placeholder="{{ entry_street|default('Rua, Avenida...') }}" id="input-address-1" class="addr-form-input" required />
-						{% if error_street %}
-							<span class="addr-form-error">{{ error_street }}</span>
-						{% endif %}
-					</div>
-				</div>
-
-				<div class="addr-form-grid">
-					<div class="addr-form-group">
-						<label for="input-number" class="addr-form-label">
-							Número
-							<span class="required">*</span>
-						</label>
-						<input type="text" name="number" value="{{ number }}" placeholder="Nº" id="input-number" class="addr-form-input" required />
-					</div>
-					<div class="addr-form-group">
-						<label for="input-address-2" class="addr-form-label">{{ entry_complement|default('Complemento') }}</label>
-						<input type="text" name="complement" value="{{ complement }}" placeholder="{{ entry_complement|default('Apto, Bloco... (opcional)') }}" id="input-address-2" class="addr-form-input" />
-					</div>
-				</div>
-
-				<div class="addr-form-grid">
-					<div class="addr-form-group">
-						<label for="input-neighborhood" class="addr-form-label">
-							Bairro
-							<span class="required">*</span>
-						</label>
-						<input type="text" name="neighborhood" value="{{ neighborhood }}" placeholder="Bairro" id="input-neighborhood" class="addr-form-input" required />
-					</div>
-					<div class="addr-form-group {% if error_city %}has-error{% endif %}">
-						<label for="input-city" class="addr-form-label">
-							{{ entry_city|default('Cidade') }}
-							<span class="required">*</span>
-						</label>
-						<input type="text" name="city" value="{{ city }}" placeholder="{{ entry_city|default('Cidade') }}" id="input-city" class="addr-form-input" required />
-						{% if error_city %}
-							<span class="addr-form-error">{{ error_city }}</span>
-						{% endif %}
-					</div>
-				</div>
-
-				<div class="addr-form-grid">
-					<div class="addr-form-group">
-						<label for="input-zone" class="addr-form-label">
-							Estado (UF)
-							<span class="required">*</span>
-						</label>
-						<input type="text" name="zone_id" value="{{ zone_id }}" placeholder="SP" id="input-zone" class="addr-form-input" readonly required />
-						<input type="hidden" name="country_id" value="30" />
-					</div>
-					<div class="addr-form-group addr-form-group--default">
-						<label class="addr-form-label">Endereço Padrão</label>
-						<label class="addr-toggle-wrap" for="input-default">
-							<input type="checkbox" name="default" value="1" id="input-default" {% if default %}checked{% endif %} />
-							<span class="addr-toggle"></span>
-							<span class="addr-toggle-label">Usar como endereço padrão</span>
-						</label>
-					</div>
-				</div>
-			</div>
-
-			{# ── Ações do Formulário ── #}
-			<div class="addr-form-actions">
-				<a href="{{ back }}" class="addr-btn-back">
-					<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
-					Voltar
-				</a>
-				<button type="submit" class="addr-btn-submit" id="btn-save-address">
-					<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
-					{{ button_continue|default('Salvar Endereço') }}
-				</button>
-			</div>
-
-		</form>
-	</div>
-</div>
 
 
+	<script>
+		document.addEventListener("DOMContentLoaded", function () {
+			const postcodeInput = document.getElementById("input-postcode");
+			const spinner = document.getElementById("postcode-spinner");
+			if (!postcodeInput) return;
 
-<script>
-document.addEventListener('DOMContentLoaded', function () {
-	const postcodeInput = document.getElementById('input-postcode');
-	const spinner = document.getElementById('postcode-spinner');
-	if (!postcodeInput) return;
+			// Máscara de CEP
+			postcodeInput.addEventListener("input", function () {
+				let v = this.value.replace(/\D/g, "").slice(0, 8);
+				if (v.length > 5) v = v.slice(0, 5) + "-" + v.slice(5);
+				this.value = v;
+			});
 
-	// Máscara de CEP
-	postcodeInput.addEventListener('input', function () {
-		let v = this.value.replace(/\D/g, '').slice(0, 8);
-		if (v.length > 5) v = v.slice(0, 5) + '-' + v.slice(5);
-		this.value = v;
-	});
+			postcodeInput.addEventListener("blur", function () {
+				const cep = this.value.replace(/\D/g, "");
+				if (cep.length !== 8) return;
 
-	postcodeInput.addEventListener('blur', function () {
-		const cep = this.value.replace(/\D/g, '');
-		if (cep.length !== 8) return;
+				spinner.style.display = "flex";
 
-		spinner.style.display = 'flex';
-
-		fetch(`https://viacep.com.br/ws/${cep}/json/`)
-			.then(r => r.json())
-			.then(data => {
-				if (data.erro) return;
-				const setVal = (id, val, lock) => {
-					const el = document.getElementById(id);
-					if (!el) return;
-					el.value = val || '';
-					if (lock && val) el.setAttribute('readonly', 'readonly');
-					else if (lock) el.removeAttribute('readonly');
-				};
-				setVal('input-address-1',   data.logradouro, true);
-				setVal('input-neighborhood', data.bairro,     true);
-				setVal('input-city',         data.localidade, true);
-				setVal('input-zone',         data.uf,         true);
-			})
-			.catch(err => console.error('Erro ViaCEP:', err))
-			.finally(() => { spinner.style.display = 'none'; });
-	});
-});
-</script>
+				fetch(`https://viacep.com.br/ws/${cep}/json/`)
+					.then((r) => r.json())
+					.then((data) => {
+						if (data.erro) return;
+						const setVal = (id, val, lock) => {
+							const el = document.getElementById(id);
+							if (!el) return;
+							el.value = val || "";
+							if (lock && val) el.setAttribute("readonly", "readonly");
+							else if (lock) el.removeAttribute("readonly");
+						};
+						setVal("input-address-1", data.logradouro, true);
+						setVal("input-neighborhood", data.bairro, true);
+						setVal("input-city", data.localidade, true);
+						setVal("input-zone", data.uf, true);
+					})
+					.catch((err) => console.error("Erro ViaCEP:", err))
+					.finally(() => {
+						spinner.style.display = "none";
+					});
+			});
+		});
+	</script>
 {% endblock %}

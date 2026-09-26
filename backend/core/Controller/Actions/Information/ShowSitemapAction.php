@@ -88,8 +88,8 @@ class ShowSitemapAction implements ActionInterface
 
         // 2. SEO tags
         $seoData = [
-            'title'       => 'Mapa do Site | AgSonhos',
-            'description' => 'Mapa do site completo da AgSonhos. Navegue por departamentos, categorias, páginas informativas e conta de usuário.',
+            'title'       => 'Mapa do Site | meusite',
+            'description' => 'Mapa do site completo da meusite. Navegue por departamentos, categorias, páginas informativas e conta de usuário.',
             'keywords'    => 'mapa do site, sitemap, departamentos, categorias, institucional',
             'canonical'   => $routeParser->urlFor('sitemap', ['lang' => $lang])
         ];

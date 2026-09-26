@@ -1,82 +1,87 @@
 {% extends "pos/layout.twig" %}
 
-{% block title %}{{ title }} | AgSonhos PDV{% endblock %}
+{% block title %}{{ title }} | meusite PDV{% endblock %}
 
 {% block extra_styles %}{% endblock %}
 
 {% block content %}
-<div class="success-container">
-    <div class="ticket-card">
-        <!-- Glow Success Icon -->
-        <div class="success-glow-ring">
-            <i class="fas fa-check-circle success-icon"></i>
-        </div>
-        
-        <h2 class="ticket-title">Pré-Venda Emitida</h2>
-        <p class="ticket-subtitle">Oriente o cliente a apresentar o ticket abaixo no caixa para realizar o pagamento e retirar os produtos.</p>
-        
-        <!-- Ticket ID -->
-        <div class="ticket-code-container">
-            <span class="ticket-code-label">Senha / Ticket de Atendimento</span>
-            <span class="ticket-number">#{{ order_id }}</span>
-        </div>
-        
-        <!-- Details List -->
-        <div class="receipt-details">
-            <div class="receipt-row">
-                <span class="receipt-row-label">Cliente:</span>
-                <span class="receipt-row-value">{{ order.firstname }} {{ order.lastname }}</span>
+    <div class="success-container">
+        <div class="ticket-card">
+            <!-- Glow Success Icon -->
+            <div class="success-glow-ring">
+                <i class="fas fa-check-circle success-icon"></i>
             </div>
-            <div class="receipt-row">
-                <span class="receipt-row-label">E-mail:</span>
-                <span class="receipt-row-value">{{ order.email|default('Não informado') }}</span>
-            </div>
-            <div class="receipt-row">
-                <span class="receipt-row-label">Telefone:</span>
-                <span class="receipt-row-value">{{ order.telephone|default('Não informado') }}</span>
-            </div>
-            <div class="receipt-row">
-                <span class="receipt-row-label">Vendedor:</span>
-                <span class="receipt-row-value">{{ logged_admin.name }}</span>
-            </div>
-            <div class="receipt-row">
-                <span class="receipt-row-label">Valor Total:</span>
-                <span class="receipt-row-value pos-text-success-lg">R$ {{ order.total|number_format(2, ',', '.') }}</span>
-            </div>
-        </div>
         
-        <!-- CSS Simulated Barcode -->
-        <div class="barcode-simulation" id="barcode_container">
-            <!-- Injetado dinamicamente para parecer um código real -->
-        </div>
+            <h2 class="ticket-title">Pré-Venda Emitida</h2>
+            <p class="ticket-subtitle">Oriente o cliente a apresentar o ticket abaixo no caixa para realizar o pagamento e retirar os produtos.</p>
         
-        <!-- Actions Row -->
-        <div class="ticket-actions">
-            <button onclick="window.print()" class="action-btn btn-secondary">
-                <i class="fas fa-print"></i>
-                Imprimir Ticket
-            </button>
-            <button onclick="window.location.href='{{ admin_path }}/pos/vendedor'" class="action-btn btn-primary">
-                <i class="fas fa-plus"></i>
-                Nova Venda
-            </button>
+            <!-- Ticket ID -->
+            <div class="ticket-code-container">
+                <span class="ticket-code-label">Senha / Ticket de Atendimento</span>
+                <span class="ticket-number">#{{ order_id }}</span>
+            </div>
+        
+            <!-- Details List -->
+            <div class="receipt-details">
+                <div class="receipt-row">
+                    <span class="receipt-row-label">Cliente:</span>
+                    <span class="receipt-row-value">{{ order.firstname }} {{ order.lastname }}</span>
+                </div>
+                <div class="receipt-row">
+                    <span class="receipt-row-label">E-mail:</span>
+                    <span class="receipt-row-value">{{ order.email|default('Não informado') }}</span>
+                </div>
+                <div class="receipt-row">
+                    <span class="receipt-row-label">Telefone:</span>
+                    <span class="receipt-row-value">{{ order.telephone|default('Não informado') }}</span>
+                </div>
+                <div class="receipt-row">
+                    <span class="receipt-row-label">Vendedor:</span>
+                    <span class="receipt-row-value">{{ logged_admin.name }}</span>
+                </div>
+                <div class="receipt-row">
+                    <span class="receipt-row-label">Valor Total:</span>
+                    <span class="receipt-row-value pos-text-success-lg">R$ {{ order.total|number_format(2, ',', '.') }}</span>
+                </div>
+            </div>
+        
+            <!-- CSS Simulated Barcode -->
+            <div class="barcode-simulation" id="barcode_container">
+                <!-- Injetado dinamicamente para parecer um código real -->
+            </div>
+        
+            <!-- Actions Row -->
+            <div class="ticket-actions">
+                <button onclick="window.print()" class="action-btn btn-secondary">
+                    <i class="fas fa-print"></i>
+                    Imprimir Ticket
+                </button>
+                <button onclick="window.location.href='{{ admin_path }}/pos/vendedor'" class="action-btn btn-primary">
+                    <i class="fas fa-plus"></i>
+                    Nova Venda
+                </button>
+            </div>
         </div>
     </div>
-</div>
 {% endblock %}
 
 {% block extra_scripts %}
-<script>
-    document.addEventListener('DOMContentLoaded', () => {
-        const barcodeContainer = document.getElementById('barcode_container');
-        
-        // Gera um código de barras de largura aleatória em CSS
-        const lines = [];
-        const pattern = [3,1,2,4,1,2,3,1,4,2,1,3,2,1,4,1,2,3,1,2,4,3,1,2,1,4,3,2,1,2,3,4,1,2,3,1];
-        
-        barcodeContainer.innerHTML = pattern.map(width => {
-            return `<div class="barcode-line" style="width: ${width}px;"></div>`;
-        }).join('');
-    });
-</script>
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            const barcodeContainer = document.getElementById("barcode_container");
+
+            // Gera um código de barras de largura aleatória em CSS
+            const lines = [];
+            const pattern = [
+                3, 1, 2, 4, 1, 2, 3, 1, 4, 2, 1, 3, 2, 1, 4, 1, 2, 3, 1, 2, 4, 3, 1, 2,
+                1, 4, 3, 2, 1, 2, 3, 4, 1, 2, 3, 1,
+            ];
+
+            barcodeContainer.innerHTML = pattern
+                .map((width) => {
+                    return `<div class="barcode-line" style="width: ${width}px;"></div>`;
+                })
+                .join("");
+        });
+    </script>
 {% endblock %}

@@ -56,7 +56,7 @@ NOTE
 -   Modify ShowCategoryAction.php to assign sorts and limits within $data
 -   Verify functionality
 
-.../html/agsonhos $ php -l /core/Controller/Actions/Product/SearchProductsAction.php /core/Controller/Actions/Category/ShowCategoryAction.php
+.../html/meusite $ php -l /core/Controller/Actions/Product/SearchProductsAction.php /core/Controller/Actions/Category/ShowCategoryAction.php
 
 No syntax errors detected in /core/Controller/Actions/Prod
 uct/SearchProductsAction.php

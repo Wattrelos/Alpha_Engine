@@ -43,5 +43,5 @@ Este documento contém informações detalhadas sobre a estrutura comercial, pol
 
 ## 4. Segurança e Privacidade (LGPD)
 * **Proteção de Dados:** Processamento de pagamentos criptografado (SSL/TLS).
-* **Responsável pela Segurança da Informação:** `seguranca@agsonhos.com.br`
-* **Políticas Oficiais:** Consulte `https://www.agsonhos.com.br/pt-br/pagina/politica-de-privacidade`.
+* **Responsável pela Segurança da Informação:** `seguranca@meusite.com.br`
+* **Políticas Oficiais:** Consulte `https://www.meusite.com.br/pt-br/pagina/politica-de-privacidade`.

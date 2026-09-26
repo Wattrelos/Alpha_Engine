@@ -69,9 +69,9 @@ class ShowContactAction implements ActionInterface
 
         // Tags de SEO
         $seoData = [
-            'title'       => 'Fale Conosco | AgSonhos',
-            'description' => 'Entre em contato com a equipe AgSonhos. Tire suas dúvidas, envie sugestões ou solicite orçamentos.',
-            'keywords'    => 'contato, fale conosco, suporte, email, telefone, agsonhos',
+            'title'       => 'Fale Conosco | meusite',
+            'description' => 'Entre em contato com a equipe meusite. Tire suas dúvidas, envie sugestões ou solicite orçamentos.',
+            'keywords'    => 'contato, fale conosco, suporte, email, telefone, meusite',
             'canonical'   => $routeParser->urlFor('contact', ['lang' => $lang])
         ];
 

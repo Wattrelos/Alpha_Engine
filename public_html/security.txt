@@ -1,6 +1,6 @@
 # RFC 9116: O arquivo canônico localiza-se em /.well-known/security.txt
-Contact: mailto:seguranca@agsonhos.com.br
+Contact: mailto:seguranca@meusite.com.br
 Expires: 2027-12-31T23:59:59.000Z
 Preferred-Languages: pt-br, pt, en
-Canonical: https://www.agsonhos.com.br/.well-known/security.txt
-Policy: https://www.agsonhos.com.br/pt-br/pagina/politica-de-privacidade
+Canonical: https://www.meusite.com.br/.well-known/security.txt
+Policy: https://www.meusite.com.br/pt-br/pagina/politica-de-privacidade

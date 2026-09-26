@@ -74,7 +74,7 @@ class ShowProductAction implements ActionInterface
         if (!$product) {
             // Renderiza 404 caso o produto não exista
             $html404 = $this->twig->render('pages/errors/404.html.twig', [
-                'title'       => 'Produto Não Encontrado | AgSonhos',
+                'title'       => 'Produto Não Encontrado | meusite',
                 'description' => 'O produto solicitado não foi encontrado em nosso catálogo.',
             ]);
             $response->getBody()->write($html404);
@@ -202,7 +202,7 @@ class ShowProductAction implements ActionInterface
 
         // SEO tags e cabeçalhos
         $seoData = [
-            'title'       => ($product['meta_title'] ?? $product['name']) . ' | AgSonhos',
+            'title'       => ($product['meta_title'] ?? $product['name']) . ' | meusite',
             'description' => $product['meta_description'] ?? 'Confira os detalhes de nossos produtos.',
             'keywords'    => $product['meta_keyword'] ?? '',
             'image'       => $product['popup'] ?? '',

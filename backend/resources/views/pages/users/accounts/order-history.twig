@@ -1,7 +1,7 @@
 {% extends 'layouts/base.html.twig' %}
 
 {% block title %}
-	Pedido #{{ order_id }} | AgSonhos
+	Pedido #{{ order_id }} | meusite
 {% endblock %}
 
 {% block stylesheets %}
@@ -87,7 +87,7 @@
 									<td>
 										<strong class="product-name-text">{{ product.name }}</strong>
 										{% for option in product.option %}
-											<br />
+											<br/>
 											<small class="product-option-text">&nbsp;- {{ option.name }}: {{ option.value }}</small>
 										{% endfor %}
 									</td>

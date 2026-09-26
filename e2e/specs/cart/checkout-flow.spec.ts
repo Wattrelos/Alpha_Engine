@@ -20,7 +20,7 @@ test.describe('Fluxo Completo de Compras E2E (End-to-End)', () => {
 
     // 1. Cliente entra no site
     await homePage.open();
-    await expect(page).toHaveTitle(/Alpha|AgSonhos/i);
+    await expect(page).toHaveTitle(/Alpha|meusite/i);
 
     // 2. Clica na barra de busca, digita "ceramica" e pesquisa
     await homePage.search('ceramica');

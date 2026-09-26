@@ -55,7 +55,7 @@ class ShowLoginFormAction implements ActionInterface
         $html = $this->twig->render('pages/users/login.twig', [
             'direction' => 'ltr',
             'lang' => $language ? $language->getCode() : 'pt-br',
-            'title' => 'Acessar Conta | AgSonhos',
+            'title' => 'Acessar Conta | meusite',
             'description' => 'Acesse sua conta para gerenciar seus pedidos e compras.',
             'breadcrumbs' => $breadcrumbs,
             

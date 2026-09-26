@@ -1,5 +1,5 @@
 # Pastas úteis para instalação
-Para o funcionamento da **Alpha Engine (AgSonhos)** em um ambiente de produção ou nova instalação, a arquitetura é estruturada de forma desacoplada entre **`backend/`** (lógica de negócio protegida fora do acesso web) e **`public_html/`** (DocumentRoot acessível via navegador).
+Para o funcionamento da **Alpha Engine** em um ambiente de produção ou nova instalação, a arquitetura é estruturada de forma desacoplada entre **`backend/`** (lógica de negócio protegida fora do acesso web) e **`public_html/`** (DocumentRoot acessível via navegador).
 
 Dentro dessa estrutura, as **pastas e subdiretórios estritamente essenciais** são:
 

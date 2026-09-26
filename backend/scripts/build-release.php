@@ -3,14 +3,14 @@
 declare(strict_types=1);
 
 /**
- * Script de empacotamento de Release do AgSonhos (Alpha Engine)
+ * Script de empacotamento de Release do meusite (Alpha Engine)
  * Gera um arquivo ZIP pronto para produção no XAMPP/servidores PHP sem necessidade de Composer/Git.
  */
 
 $rootDir = realpath(__DIR__ . '/..');
 $distDir = $rootDir . '/dist';
 $buildDir = $distDir . '/build_temp';
-$zipFile = $distDir . '/agsonhos-release.zip';
+$zipFile = $distDir . '/meusite-release.zip';
 
 echo "=== [Alpha Engine] Gerador de Pacote de Release (.zip) ===\n";
 echo "Diretório do projeto: {$rootDir}\n";

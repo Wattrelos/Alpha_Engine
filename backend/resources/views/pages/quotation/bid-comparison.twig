@@ -1,98 +1,98 @@
 {% extends 'layouts/base.html.twig' %}
 
-{% block title %}Comparação de Propostas (Bid Comparison) | AgSonhos{% endblock %}
+{% block title %}Comparação de Propostas (Bid Comparison) | meusite{% endblock %}
 
 {% block stylesheets %}
     <link rel="stylesheet" href="/css/custom/quotation.css">
 {% endblock %}
 
 {% block content %}
-<div class="rfq-container">
-    <div class="rfq-hero">
-        <nav class="rfq-breadcrumb">
-            {% for breadcrumb in breadcrumbs %}
-                {% if not loop.last %}
-                    <a href="{{ breadcrumb.href }}">{{ breadcrumb.text }}</a>
-                    <span>›</span>
-                {% else %}
-                    <span>{{ breadcrumb.text }}</span>
-                {% endif %}
-            {% endfor %}
-        </nav>
-        <h1 class="rfq-hero-title">
-            <span>⚖️</span> Comparação de Propostas Comerciais (Bid Comparison)
-        </h1>
-        <p class="rfq-hero-desc">Projeto: <strong>{{ rfq.title }}</strong> ({{ rfq.city }} - {{ rfq.state }})</p>
-    </div>
+    <div class="rfq-container">
+        <div class="rfq-hero">
+            <nav class="rfq-breadcrumb">
+                {% for breadcrumb in breadcrumbs %}
+                    {% if not loop.last %}
+                        <a href="{{ breadcrumb.href }}">{{ breadcrumb.text }}</a>
+                        <span>›</span>
+                    {% else %}
+                        <span>{{ breadcrumb.text }}</span>
+                    {% endif %}
+                {% endfor %}
+            </nav>
+            <h1 class="rfq-hero-title">
+                <span>⚖️</span> Comparação de Propostas Comerciais (Bid Comparison)
+            </h1>
+            <p class="rfq-hero-desc">Projeto: <strong>{{ rfq.title }}</strong> ({{ rfq.city }} - {{ rfq.state }})</p>
+        </div>
 
-    <div class="rfq-card">
-        <div style="display:flex; justify-content:space-between; align-items:flex-start; flex-wrap:wrap; gap:1rem;">
-            <div>
-                <span class="rfq-badge rfq-badge--{{ rfq.status }}">{{ rfq.status }}</span>
-                <p style="margin-top:0.75rem; color:#475569;">{{ rfq.description }}</p>
-            </div>
-            {% if rfq.budget_expectation > 0 %}
-                <div style="background:#f8fafc; border:1px solid #e2e8f0; padding:0.75rem 1rem; border-radius:8px;">
-                    <span style="font-size:0.8rem; color:#64748b; display:block;">Orçamento Estimado:</span>
-                    <strong style="color:#1e293b; font-size:1.1rem;">R$ {{ rfq.budget_expectation|number_format(2, ',', '.') }}</strong>
+        <div class="rfq-card">
+            <div style="display:flex; justify-content:space-between; align-items:flex-start; flex-wrap:wrap; gap:1rem;">
+                <div>
+                    <span class="rfq-badge rfq-badge--{{ rfq.status }}">{{ rfq.status }}</span>
+                    <p style="margin-top:0.75rem; color:#475569;">{{ rfq.description }}</p>
                 </div>
-            {% endif %}
+                {% if rfq.budget_expectation > 0 %}
+                    <div style="background:#f8fafc; border:1px solid #e2e8f0; padding:0.75rem 1rem; border-radius:8px;">
+                        <span style="font-size:0.8rem; color:#64748b; display:block;">Orçamento Estimado:</span>
+                        <strong style="color:#1e293b; font-size:1.1rem;">R$ {{ rfq.budget_expectation|number_format(2, ',', '.') }}</strong>
+                    </div>
+                {% endif %}
+            </div>
         </div>
-    </div>
 
-    <h2 style="font-size:1.4rem; color:#1e293b; margin:2rem 0 1rem 0;">Propostas Recebidas ({{ bids|length }})</h2>
+        <h2 style="font-size:1.4rem; color:#1e293b; margin:2rem 0 1rem 0;">Propostas Recebidas ({{ bids|length }})</h2>
 
-    {% if bids is empty %}
-        <div class="rfq-card" style="text-align:center; padding:3rem 1.5rem;">
-            <div style="font-size:2.5rem; margin-bottom:1rem;">⏳</div>
-            <h3 style="font-size:1.2rem; margin-bottom:0.5rem;">Aguardando envio de propostas pelos prestadores</h3>
-            <p style="color:#64748b;">Os profissionais da sua região foram notificados e em breve enviarão os orçamentos.</p>
-        </div>
-    {% else %}
-        <div class="bid-grid">
-            {% for bid in bids %}
-                <div class="bid-card {% if bid.status == 'accepted' %}accepted{% endif %}">
-                    <div>
-                        <div style="display:flex; justify-content:space-between; align-items:flex-start;">
-                            <div>
-                                <h3 style="font-size:1.15rem; color:#1e293b; margin-bottom:0.25rem;">{{ bid.provider_name }}</h3>
-                                <div style="display:flex; align-items:center; gap:0.25rem; font-size:0.85rem; color:#f59e0b;">
-                                    ★ <strong>{{ bid.provider_rating }}</strong> ({{ bid.provider_reviews }} avaliações)
+        {% if bids is empty %}
+            <div class="rfq-card" style="text-align:center; padding:3rem 1.5rem;">
+                <div style="font-size:2.5rem; margin-bottom:1rem;">⏳</div>
+                <h3 style="font-size:1.2rem; margin-bottom:0.5rem;">Aguardando envio de propostas pelos prestadores</h3>
+                <p style="color:#64748b;">Os profissionais da sua região foram notificados e em breve enviarão os orçamentos.</p>
+            </div>
+        {% else %}
+            <div class="bid-grid">
+                {% for bid in bids %}
+                    <div class="bid-card {% if bid.status == 'accepted' %}accepted{% endif %}">
+                        <div>
+                            <div style="display:flex; justify-content:space-between; align-items:flex-start;">
+                                <div>
+                                    <h3 style="font-size:1.15rem; color:#1e293b; margin-bottom:0.25rem;">{{ bid.provider_name }}</h3>
+                                    <div style="display:flex; align-items:center; gap:0.25rem; font-size:0.85rem; color:#f59e0b;">
+                                        ★ <strong>{{ bid.provider_rating }}</strong> ({{ bid.provider_reviews }} avaliações)
+                                    </div>
                                 </div>
+                                <span class="rfq-badge rfq-badge--{{ bid.status }}">{{ bid.status }}</span>
                             </div>
-                            <span class="rfq-badge rfq-badge--{{ bid.status }}">{{ bid.status }}</span>
+
+                            <div class="bid-price">
+                                R$ {{ bid.labor_price|number_format(2, ',', '.') }}
+                                <small style="font-size:0.8rem; color:#64748b; font-weight:normal; display:block;">Mão de Obra</small>
+                            </div>
+
+                            <div class="bid-meta">
+                                <div>⏱️ Prazo estimado: <strong>{{ bid.estimated_duration_days }} dias</strong></div>
+                                <div>🛠️ Especialidades: {{ bid.provider_specialties }}</div>
+                                {% if bid.proposal_notes %}
+                                    <div style="background:#f8fafc; padding:0.6rem; border-radius:6px; font-style:italic; font-size:0.85rem; margin-top:0.5rem;">
+                                        "{{ bid.proposal_notes }}"
+                                    </div>
+                                {% endif %}
+                            </div>
                         </div>
 
-                        <div class="bid-price">
-                            R$ {{ bid.labor_price|number_format(2, ',', '.') }}
-                            <small style="font-size:0.8rem; color:#64748b; font-weight:normal; display:block;">Mão de Obra</small>
-                        </div>
-
-                        <div class="bid-meta">
-                            <div>⏱️ Prazo estimado: <strong>{{ bid.estimated_duration_days }} dias</strong></div>
-                            <div>🛠️ Especialidades: {{ bid.provider_specialties }}</div>
-                            {% if bid.proposal_notes %}
-                                <div style="background:#f8fafc; padding:0.6rem; border-radius:6px; font-style:italic; font-size:0.85rem; margin-top:0.5rem;">
-                                    "{{ bid.proposal_notes }}"
+                        <div style="margin-top:1.25rem; padding-top:1rem; border-top:1px solid #e2e8f0;">
+                            {% if bid.status == 'accepted' %}
+                                <div style="color:#059669; font-weight:700; text-align:center; padding:0.5rem;">
+                                    ✓ Proposta Selecionada e Contratada
                                 </div>
+                            {% elseif rfq.status == 'open' or rfq.status == 'bidding' %}
+                                <a href="{{ bid.accept_url }}" class="rfq-btn rfq-btn-primary" style="width:100%;" onclick="return confirm('Deseja aceitar a proposta deste profissional para a execução da obra?');">
+                                    <span>🤝</span> Aceitar e Contratar
+                                </a>
                             {% endif %}
                         </div>
                     </div>
-
-                    <div style="margin-top:1.25rem; padding-top:1rem; border-top:1px solid #e2e8f0;">
-                        {% if bid.status == 'accepted' %}
-                            <div style="color:#059669; font-weight:700; text-align:center; padding:0.5rem;">
-                                ✓ Proposta Selecionada e Contratada
-                            </div>
-                        {% elseif rfq.status == 'open' or rfq.status == 'bidding' %}
-                            <a href="{{ bid.accept_url }}" class="rfq-btn rfq-btn-primary" style="width:100%;" onclick="return confirm('Deseja aceitar a proposta deste profissional para a execução da obra?');">
-                                <span>🤝</span> Aceitar e Contratar
-                            </a>
-                        {% endif %}
-                    </div>
-                </div>
-            {% endfor %}
-        </div>
-    {% endif %}
-</div>
+                {% endfor %}
+            </div>
+        {% endif %}
+    </div>
 {% endblock %}

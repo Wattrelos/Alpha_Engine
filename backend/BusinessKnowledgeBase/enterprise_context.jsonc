@@ -1,23 +1,23 @@
 {
   "empresa": {
-    "nome_fantasia": "AG Sonhos e Construções",
+    "nome_fantasia": "A preencher antes da produção",
     "razao_social": "[Razão Social da Empresa - A preencher antes da produção]",
     "cnpj": "[CNPJ da Empresa - A preencher antes da produção. Ex: 00.000.000/0000-00]",
     "inscricao_estadual": "[Inscrição Estadual da Empresa - A preencher antes da produção]",
     "setor": "Comércio Varejista",
     "ramo_atuacao": "Materiais de Construção, Acabamentos e Ferramentas",
     "contato": {
-      "telefone": "(11) 4676 2302",
-      "email": "josiaswattrelos-suport@yahoo.com.br",
-      "endereco": "Rua Antônio Massa, 185",
-      "cidade": "Poá",
-      "estado": "SP",
-      "cep": "08570-170",
-      "geocode": "-23.55290319386898, -46.36700075786545",
+      "telefone": "A preencher antes da produção",
+      "email": "A preencher antes da produção",
+      "endereco": "A preencher antes da produção",
+      "cidade": "A preencher antes da produção",
+      "estado": "A preencher antes da produção",
+      "cep": "A preencher antes da produção",
+      "geocode": "A preencher antes da produção",
       "redes_sociais": {
-        "facebook": "https://www.facebook.com/p/AG-Sonhos-E-Constru%C3%A7%C3%B5es-100028153401680/",
-        "instagram": "https://www.instagram.com/agsonhos/",
-        "youtube": "https://youtube.com"
+        "facebook": "A preencher antes da produção",
+        "instagram": "A preencher antes da produção",
+        "youtube": "A preencher antes da produção"
       }
     }
   },
@@ -29,7 +29,6 @@
     "faturamento_anual_estimado": null, // [A preencher: faturamento anual estimado]
     "custo_fixo_mensal": null, // [A preencher: custo fixo operacional para cálculo de margem real]
     "ticket_medio": null, // [A preencher: valor do ticket médio de compra estimado]
-    
     // Crucial para materiais de construção: Margem de lucro mínima desejada (Markup) por tipo de material
     "markup_minimo_por_categoria": {
       "commodities_bruto": 0.12, // Cimento, areia, tijolo, ferro possuem margem muito baixa
@@ -37,7 +36,6 @@
       "ferramentas_e_ferragens": 0.25,
       "tintas_e_acessorios": 0.20
     },
-    
     // Crucial para evitar multas fiscais no Brasil (e-commerce interestadual)
     "regras_tributarias": {
       "icms_substituicao_tributaria": "[A preencher: Como a empresa lida com ST. Os preços de custo já embutem ST? Yes/No]",
@@ -51,7 +49,6 @@
       "sabados": "07:00 as 17:00",
       "domingos": "08:00 as 13:00"
     },
-    
     // Crucial para materiais de construção (tijolo, areia, cimento pesam toneladas e inviabilizam Correios)
     "politica_logistica_e_frete": {
       "entrega_propria_ativa": "[A preencher: A empresa possui frota própria de caminhões/utilitários? Yes/No]",
@@ -60,14 +57,12 @@
       "peso_maximo_correios_kg": 30.0, // Limite regulamentar dos Correios
       "cubagem_limite_transportadora_parceira": "[A preencher: Restrições de tamanho/peso para envio via transportadora tradicional]"
     },
-    
     // Controle de Estoque e Segurança Operacional
     "gestao_estoque": {
       "sincronizacao_erp_em_tempo_real": "[A preencher: O estoque do e-commerce sincroniza em tempo real com a loja física? Yes/No]",
       "estoque_seguranca_default": 5, // Margem de segurança padrão para evitar que o site venda o que foi vendido fisicamente há minutos
       "tempo_medio_separacao_horas": 24 // Tempo necessário para separar materiais pesados e carregar o veículo
     },
-    
     // Regras de Negócio de Trocas e Devoluções específicas de materiais de construção (RN010, RN011)
     "politica_trocas_devolucoes": {
       "prazo_direito_arrependimento_dias": 7, // Conforme CDC

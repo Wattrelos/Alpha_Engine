@@ -181,8 +181,8 @@ class SearchAction implements ActionInterface
 
         // SEO tags
         $seoData = [
-            'title'       => 'Resultado de Busca: ' . ($filterData['filter_name'] ?: 'Todos os Produtos') . ' | AgSonhos',
-            'description' => 'Resultado da pesquisa por produtos artesanais na AgSonhos.',
+            'title'       => 'Resultado de Busca: ' . ($filterData['filter_name'] ?: 'Todos os Produtos') . ' | meusite',
+            'description' => 'Resultado da pesquisa por produtos artesanais na meusite.',
             'canonical'   => $routeParser->urlFor('search', ['lang' => $lang])
         ];
 

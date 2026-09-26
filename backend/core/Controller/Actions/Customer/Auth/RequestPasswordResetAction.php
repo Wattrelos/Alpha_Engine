@@ -93,7 +93,7 @@ class RequestPasswordResetAction implements ActionInterface
         $html = $this->twig->render('pages/auth/request-password-reset.html.twig', [
             'direction'   => 'ltr',
             'lang'        => $language ? $language->getCode() : 'pt-br',
-            'title'       => 'Recuperar Senha | AgSonhos',
+            'title'       => 'Recuperar Senha | meusite',
             'description' => 'Recupere o acesso à sua conta.',
             'breadcrumbs' => $breadcrumbs,
             'action'      => $routeParser->urlFor('account.recuperar-senha', ['lang' => $lang]),

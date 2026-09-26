@@ -1,6 +1,6 @@
 {
     "sidebar": {
-        "title": "AgSonhos Admin",
+        "title": "meusite Admin",
         "dashboard": "Dashboard",
         "orders": "Sales / Orders",
         "returns": "Returns",
@@ -16,7 +16,7 @@
     "topbar": {
         "role": "Administrator Mode",
         "default_name": "Administrator",
-        "default_email": "admin@agsonhos.com"
+        "default_email": "admin@meusite.com"
     },
     "language": {
         "select": "Select Language"

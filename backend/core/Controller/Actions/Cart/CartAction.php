@@ -40,9 +40,9 @@ class CartAction implements ActionInterface
         $title = $viewData['heading_title'] ?? 'Carrinho de Compras';
         
         $seoData = [
-            'title'       => $title . ' | AgSonhos',
+            'title'       => $title . ' | meusite',
             'description' => 'Visualize e edite os itens em seu carrinho de compras.',
-            'keywords'    => 'carrinho, compras, agsonhos'
+            'keywords'    => 'carrinho, compras, meusite'
         ];
 
         $html = $this->twig->render('pages/cart/cart.twig', array_merge($viewData, [

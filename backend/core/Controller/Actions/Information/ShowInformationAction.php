@@ -70,8 +70,8 @@ class ShowInformationAction implements ActionInterface
 
         // SEO tags
         $seoData = [
-            'title'       => ($data['meta_title'] ?? $data['title']) . ' | AgSonhos',
-            'description' => $data['meta_description'] ?? 'Páginas informativas da AgSonhos.',
+            'title'       => ($data['meta_title'] ?? $data['title']) . ' | meusite',
+            'description' => $data['meta_description'] ?? 'Páginas informativas da meusite.',
             'keywords'    => $data['meta_keyword'] ?? '',
             'canonical'   => $routeParser->urlFor('info.page', ['lang' => $lang, 'slug' => $slug])
         ];
@@ -91,7 +91,7 @@ class ShowInformationAction implements ActionInterface
     private function render404(Response $response): Response
     {
         $html404 = $this->twig->render('pages/errors/404.html.twig', [
-            'title'       => 'Página Não Encontrada | AgSonhos',
+            'title'       => 'Página Não Encontrada | meusite',
             'description' => 'A página solicitada não foi encontrada.',
         ]);
         $response->getBody()->write($html404);

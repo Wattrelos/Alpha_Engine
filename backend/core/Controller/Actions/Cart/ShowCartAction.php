@@ -160,9 +160,9 @@ class ShowCartAction implements ActionInterface
         $title = $translations['heading_title'] ?? 'Carrinho de Compras';
 
         $seoData = [
-            'title'       => $title . ' | AgSonhos',
+            'title'       => $title . ' | meusite',
             'description' => $translations['meta_description'] ?? 'Visualize e edite os itens em seu carrinho de compras.',
-            'keywords'    => 'carrinho, compras, agsonhos'
+            'keywords'    => 'carrinho, compras, meusite'
         ];
 
         $viewData = array_merge($translations, [

@@ -4,7 +4,7 @@
 # ==============================================================================
 
 # Canal de Contato do Time de Segurança
-Contact: mailto:suport@agsonhos.com.br
+Contact: mailto:suport@meusite.com.br
 
 # Data de Expiração deste arquivo (Atualizar anualmente)
 Expires: 2027-12-31T23:59:59.000Z
@@ -13,10 +13,10 @@ Expires: 2027-12-31T23:59:59.000Z
 Preferred-Languages: pt-br, pt, en
 
 # URL Canônica do Arquivo
-Canonical: https://www.agsonhos.com.br/.well-known/security.txt
+Canonical: https://www.meusite.com.br/.well-known/security.txt
 
 # Política de Segurança e Divulgação Responsável
-Policy: https://www.agsonhos.com.br/pt-br/pagina/3
+Policy: https://www.meusite.com.br/pt-br/pagina/3
 
 # Agradecimentos e Hall da Fama para Pesquisadores de Segurança
-Acknowledgments: https://www.agsonhos.com.br/pt-br/pagina/seguranca
+Acknowledgments: https://www.meusite.com.br/pt-br/pagina/seguranca

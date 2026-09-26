@@ -12,7 +12,7 @@
 
 # Plano de Implementação - Controle de Concorrência Otimista (RMA)
 
-Este plano descreve as alterações necessárias para implementar o controle de concorrência otimista (Optimistic Locking) no fluxo de devolução de produtos (RMA) no painel administrativo do e-commerce AgSonhos, corrigindo as brechas de concorrência e atualizando a experiência do usuário (UX) no dashboard administrativo.
+Este plano descreve as alterações necessárias para implementar o controle de concorrência otimista (Optimistic Locking) no fluxo de devolução de produtos (RMA) no painel administrativo do e-commerce meusite, corrigindo as brechas de concorrência e atualizando a experiência do usuário (UX) no dashboard administrativo.
 
 ## User Review Required
 

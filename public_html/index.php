@@ -268,7 +268,7 @@ $errorMiddleware->setErrorHandler(
     function ($request, $exception) use ($twigEnv) {
         $response = new \Slim\Psr7\Response();
         $html = $twigEnv->render('pages/errors/404.html.twig', [
-            'title'       => 'Página Não Encontrada | AgSonhos',
+            'title'       => 'Página Não Encontrada | meusite',
             'description' => 'A página que você procura não existe.',
         ]);
         $response->getBody()->write($html);
@@ -301,7 +301,7 @@ if (!$isDev) {
 
             try {
                 $html = $twigEnv->render('pages/errors/500.html.twig', [
-                    'title'       => 'Erro Interno no Servidor | AgSonhos',
+                    'title'       => 'Erro Interno no Servidor | meusite',
                     'description' => 'Ocorreu um problema ao processar sua requisição.',
                 ]);
             } catch (Throwable $e) {

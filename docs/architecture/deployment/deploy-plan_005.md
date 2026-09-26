@@ -131,7 +131,7 @@ Edited test_auth.php
 
 Ran command: `php /test_auth.php`
 
-Listed directory agsonhos
+Listed directory meusite
 
 Edited test_auth.php
 

@@ -41,7 +41,7 @@ class OrderHistoryAction implements ActionInterface
 
         if (!$order) {
             $html = $this->twig->render('pages/errors/404.html.twig', [
-                'title'       => 'Pedido Não Encontrado | AgSonhos',
+                'title'       => 'Pedido Não Encontrado | meusite',
                 'description' => 'O pedido solicitado não existe ou não pertence a esta conta.',
             ]);
             $response->getBody()->write($html);

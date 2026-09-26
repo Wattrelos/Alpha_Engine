@@ -1,7 +1,7 @@
 {% extends 'admin/layouts/base.html.twig' %}
 
 {% block title %}
-	{{ title|default('Auditoria & Logs de Acesso | AgSonhos Admin') }}
+	{{ title|default('Auditoria & Logs de Acesso | meusite Admin') }}
 {% endblock %}
 
 {% block content %}
@@ -101,7 +101,7 @@
 				<!-- Busca textual -->
 				<div class="form-group mb-0">
 					<label for="search" class="form-label-sm">Buscar (IP, Usuário, URL, Payload)</label>
-					<input type="text" id="search" name="search" class="form-control" value="{{ filters.search }}" placeholder="Ex: 192.168, /carrinho, admin..." />
+					<input type="text" id="search" name="search" class="form-control" value="{{ filters.search }}" placeholder="Ex: 192.168, /carrinho, admin..."/>
 				</div>
 
 				<!-- Tipo de Evento -->
@@ -120,13 +120,13 @@
 				<!-- Data Inicial -->
 				<div class="form-group mb-0">
 					<label for="start_date" class="form-label-sm">Data Inicial</label>
-					<input type="date" id="start_date" name="start_date" class="form-control" value="{{ filters.start_date }}" />
+					<input type="date" id="start_date" name="start_date" class="form-control" value="{{ filters.start_date }}"/>
 				</div>
 
 				<!-- Data Final -->
 				<div class="form-group mb-0">
 					<label for="end_date" class="form-label-sm">Data Final</label>
-					<input type="date" id="end_date" name="end_date" class="form-control" value="{{ filters.end_date }}" />
+					<input type="date" id="end_date" name="end_date" class="form-control" value="{{ filters.end_date }}"/>
 				</div>
 			</div>
 
@@ -288,15 +288,17 @@
 
 								<!-- Ações / Modal -->
 								<td class="text-right">
-									<button type="button" 
-									        class="btn btn-secondary btn-sm btn-view-audit" 
-									        data-id="{{ row.id }}"
-									        data-event="{{ row.event }}"
-									        data-username="{{ row.username }}"
-									        data-ip="{{ row.ip }}"
-									        data-created="{{ row.created_at }}"
-									        data-payload='{{ row.payload|json_encode|raw }}'
-									        title="Ver Payload Detalhado">
+									<button
+										type="button"
+										class="btn btn-secondary btn-sm btn-view-audit"
+										data-id="{{ row.id }}"
+										data-event="{{ row.event }}"
+										data-username="{{ row.username }}"
+										data-ip="{{ row.ip }}"
+										data-created="{{ row.created_at }}"
+										data-payload='{{ row.payload|json_encode|raw }}'
+										title="Ver Payload Detalhado"
+									>
 										<i class="fas fa-eye"></i>
 									</button>
 								</td>
@@ -431,7 +433,8 @@
 			color: #38bdf8;
 			padding: 14px;
 			border-radius: 8px;
-			font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+			font-family:
+				ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
 			font-size: 0.85rem;
 			max-height: 350px;
 			overflow-y: auto;
@@ -439,45 +442,57 @@
 			white-space: pre-wrap;
 			word-break: break-word;
 		}
-		.gap-1 { gap: 0.25rem; }
-		.gap-2 { gap: 0.5rem; }
-		.border-top { border-top: 1px solid rgba(255, 255, 255, 0.08); }
+		.gap-1 {
+			gap: 0.25rem;
+		}
+		.gap-2 {
+			gap: 0.5rem;
+		}
+		.border-top {
+			border-top: 1px solid rgba(255, 255, 255, 0.08);
+		}
 	</style>
 
 	<script>
 		function openAuditModal(data) {
-			document.getElementById('modalAuditTitle').innerHTML = '<i class="fas fa-shield-alt text-primary mr-2"></i> Log #' + data.id + ' - Detalhes';
-			document.getElementById('modalEvent').textContent = data.event || '-';
-			document.getElementById('modalDate').textContent = data.created || '-';
-			document.getElementById('modalUser').textContent = data.username || '-';
-			document.getElementById('modalIp').textContent = data.ip || '-';
+			document.getElementById("modalAuditTitle").innerHTML =
+				'<i class="fas fa-shield-alt text-primary mr-2"></i> Log #' +
+				data.id +
+				" - Detalhes";
+			document.getElementById("modalEvent").textContent = data.event || "-";
+			document.getElementById("modalDate").textContent = data.created || "-";
+			document.getElementById("modalUser").textContent = data.username || "-";
+			document.getElementById("modalIp").textContent = data.ip || "-";
 
-			var payloadFormatted = '';
+			var payloadFormatted = "";
 			try {
-				var p = typeof data.payload === 'string' ? JSON.parse(data.payload) : data.payload;
+				var p =
+					typeof data.payload === "string"
+						? JSON.parse(data.payload)
+						: data.payload;
 				payloadFormatted = JSON.stringify(p, null, 2);
-			} catch(e) {
-				payloadFormatted = data.payload || 'Sem dados adicionais.';
+			} catch (e) {
+				payloadFormatted = data.payload || "Sem dados adicionais.";
 			}
 
-			document.getElementById('modalPayloadJson').textContent = payloadFormatted;
-			document.getElementById('auditDetailModal').style.display = 'flex';
+			document.getElementById("modalPayloadJson").textContent = payloadFormatted;
+			document.getElementById("auditDetailModal").style.display = "flex";
 		}
 
 		function closeAuditModal() {
-			document.getElementById('auditDetailModal').style.display = 'none';
+			document.getElementById("auditDetailModal").style.display = "none";
 		}
 
-		document.addEventListener('DOMContentLoaded', function() {
-			var buttons = document.querySelectorAll('.btn-view-audit');
-			buttons.forEach(function(btn) {
-				btn.addEventListener('click', function() {
-					var id = this.getAttribute('data-id');
-					var event = this.getAttribute('data-event');
-					var username = this.getAttribute('data-username');
-					var ip = this.getAttribute('data-ip');
-					var created = this.getAttribute('data-created');
-					var payload = this.getAttribute('data-payload');
+		document.addEventListener("DOMContentLoaded", function () {
+			var buttons = document.querySelectorAll(".btn-view-audit");
+			buttons.forEach(function (btn) {
+				btn.addEventListener("click", function () {
+					var id = this.getAttribute("data-id");
+					var event = this.getAttribute("data-event");
+					var username = this.getAttribute("data-username");
+					var ip = this.getAttribute("data-ip");
+					var created = this.getAttribute("data-created");
+					var payload = this.getAttribute("data-payload");
 
 					openAuditModal({
 						id: id,
@@ -485,15 +500,15 @@
 						username: username,
 						ip: ip,
 						created: created,
-						payload: payload
+						payload: payload,
 					});
 				});
 			});
 
 			// Fechar modal ao clicar fora
-			var modalBackdrop = document.getElementById('auditDetailModal');
+			var modalBackdrop = document.getElementById("auditDetailModal");
 			if (modalBackdrop) {
-				modalBackdrop.addEventListener('click', function(e) {
+				modalBackdrop.addEventListener("click", function (e) {
 					if (e.target === modalBackdrop) {
 						closeAuditModal();
 					}

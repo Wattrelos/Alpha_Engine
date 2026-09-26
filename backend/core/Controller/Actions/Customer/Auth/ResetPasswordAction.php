@@ -67,7 +67,7 @@ class ResetPasswordAction implements ActionInterface
             }
             // Token inválido ou expirado
             $html = $this->twig->render('pages/errors/404.html.twig', [
-                'title'       => 'Link de Redefinição Inválido | AgSonhos',
+                'title'       => 'Link de Redefinição Inválido | meusite',
                 'description' => 'O link de redefinição de senha é inválido ou já expirou.',
             ]);
             $response->getBody()->write($html);
@@ -142,7 +142,7 @@ class ResetPasswordAction implements ActionInterface
         $html = $this->twig->render('pages/auth/reset-password.html.twig', [
             'direction'   => 'ltr',
             'lang'        => $language ? $language->getCode() : 'pt-br',
-            'title'       => ($isLogged ? 'Alterar Senha' : 'Redefinir Senha') . ' | AgSonhos',
+            'title'       => ($isLogged ? 'Alterar Senha' : 'Redefinir Senha') . ' | meusite',
             'description' => $isLogged ? 'Altere a senha de sua conta.' : 'Redefina a senha de sua conta.',
             'breadcrumbs' => $breadcrumbs,
             'action'      => $actionUrl,

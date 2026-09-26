@@ -1,210 +1,210 @@
 {% extends 'layouts/base.html.twig' %}
 
 {% block title %}
-	{{ seo.title|default('Fale Conosco | AgSonhos') }}
+    {{ seo.title|default('Fale Conosco | meusite') }}
 {% endblock %}
 
 {% block stylesheets %}
-	<link rel="stylesheet" href="/css/custom/returns-institutional.css">
+    <link rel="stylesheet" href="/css/custom/returns-institutional.css">
 {% endblock %}
 
 {% block content %}
-<div id="contact-page">
+    <div id="contact-page">
 
-    {# ── Hero ── #}
-    <div class="contact-hero">
-        <div class="contact-hero-inner">
-            <nav class="contact-breadcrumb" aria-label="Navegação">
-                {% for breadcrumb in breadcrumbs %}
-                    {% if not loop.last %}
-                        <a href="{{ breadcrumb.href }}">{{ breadcrumb.text }}</a>
-                        <span class="sep">›</span>
-                    {% else %}
-                        <span class="current">{{ breadcrumb.text }}</span>
-                    {% endif %}
-                {% endfor %}
-            </nav>
-            <div class="contact-hero-content">
-                <div class="contact-icon-hero">
-                    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-                        <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
-                        <polyline points="22,6 12,13 2,6"></polyline>
-                    </svg>
-                </div>
-                <div>
-                    <h1 class="contact-hero-title">Fale Conosco</h1>
-                    <p class="contact-hero-sub">Estamos à disposição para ajudar com sua obra e seus sonhos</p>
+        {# ── Hero ── #}
+        <div class="contact-hero">
+            <div class="contact-hero-inner">
+                <nav class="contact-breadcrumb" aria-label="Navegação">
+                    {% for breadcrumb in breadcrumbs %}
+                        {% if not loop.last %}
+                            <a href="{{ breadcrumb.href }}">{{ breadcrumb.text }}</a>
+                            <span class="sep">›</span>
+                        {% else %}
+                            <span class="current">{{ breadcrumb.text }}</span>
+                        {% endif %}
+                    {% endfor %}
+                </nav>
+                <div class="contact-hero-content">
+                    <div class="contact-icon-hero">
+                        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
+                            <polyline points="22,6 12,13 2,6"></polyline>
+                        </svg>
+                    </div>
+                    <div>
+                        <h1 class="contact-hero-title">Fale Conosco</h1>
+                        <p class="contact-hero-sub">Estamos à disposição para ajudar com sua obra e seus sonhos</p>
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
 
-    {# ── Main Grid ── #}
-    <div class="contact-wrapper">
-        <div class="contact-grid">
+        {# ── Main Grid ── #}
+        <div class="contact-wrapper">
+            <div class="contact-grid">
             
-            {# ── Info Column ── #}
-            <div class="contact-info-col">
-                <div class="info-card-group">
-                    <h2 class="contact-section-title">Informações de Contato</h2>
+                {# ── Info Column ── #}
+                <div class="contact-info-col">
+                    <div class="info-card-group">
+                        <h2 class="contact-section-title">Informações de Contato</h2>
                     
-                    {# Store Info Item #}
-                    <div class="info-detail-item align-items-start">
-                        {% if store.logo %}
-                            <div class="detail-thumbnail me-3">
-                                <img src="{{ store.logo }}" alt="{{ store.name|default(store) }}" class="img-thumbnail contact-map-img">
+                        {# Store Info Item #}
+                        <div class="info-detail-item align-items-start">
+                            {% if store.logo %}
+                                <div class="detail-thumbnail me-3">
+                                    <img src="{{ store.logo }}" alt="{{ store.name|default(store) }}" class="img-thumbnail contact-map-img">
+                                </div>
+                            {% endif %}
+                            <div>
+                                <div class="d-flex align-items-center mb-1">
+                                    <span class="detail-icon-inline me-2 contact-primary-text">
+                                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                            <circle cx="12" cy="12" r="10"></circle>
+                                            <path d="M12 8l4 4-4 4M8 12h8"></path>
+                                        </svg>
+                                    </span>
+                                    <h3 class="m-0 contact-title-sm">{{ store.name|default(store) }}</h3>
+                                </div>
+                                <p class="m-0 text-muted">Sua loja de materiais de construção e realização de sonhos.</p>
+                            </div>
+                        </div>
+
+                        {# Address Info Item #}
+                        {% if store.address %}
+                            <div class="info-detail-item">
+                                <div class="detail-icon">
+                                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+                                        <circle cx="12" cy="10" r="3"></circle>
+                                    </svg>
+                                </div>
+                                <div>
+                                    <h3>Endereço</h3>
+                                    <address class="store-address contact-addr-text">{{ store.address|nl2br }}</address>
+                                    {% if store.geocode %}
+                                        <a href="https://maps.google.com/maps?q={{ store.geocode|url_encode }}&hl=pt-br&t=m&z=15" target="_blank" rel="noopener" class="btn btn-info btn-sm text-white contact-badge-btn"><i class="fa-solid fa-location-dot"></i> Visualizar mapa do Google</a>
+                                    {% endif %}
+                                </div>
                             </div>
                         {% endif %}
-                        <div>
-                            <div class="d-flex align-items-center mb-1">
-                                <span class="detail-icon-inline me-2 contact-primary-text">
+
+                        {# Telephone Info Item #}
+                        {% if store.telephone %}
+                            <div class="info-detail-item">
+                                <div class="detail-icon">
+                                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path>
+                                    </svg>
+                                </div>
+                                <div>
+                                    <h3>Telefone</h3>
+                                    <p><a href="tel:{{ store.telephone }}" class="detail-link">{{ store.telephone }}</a></p>
+                                </div>
+                            </div>
+                        {% endif %}
+
+                        {# Open Hours Info Item #}
+                        {% if store.open %}
+                            <div class="info-detail-item">
+                                <div class="detail-icon">
                                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                         <circle cx="12" cy="12" r="10"></circle>
-                                        <path d="M12 8l4 4-4 4M8 12h8"></path>
+                                        <polyline points="12 6 12 12 16 14"></polyline>
                                     </svg>
-                                </span>
-                                <h3 class="m-0 contact-title-sm">{{ store.name|default(store) }}</h3>
+                                </div>
+                                <div>
+                                    <h3>Horário de Funcionamento</h3>
+                                    <p>{{ store.open|nl2br }}</p>
+                                </div>
                             </div>
-                            <p class="m-0 text-muted">Sua loja de materiais de construção e realização de sonhos.</p>
-                        </div>
-                    </div>
-
-                    {# Address Info Item #}
-                    {% if store.address %}
-                    <div class="info-detail-item">
-                        <div class="detail-icon">
-                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
-                                <circle cx="12" cy="10" r="3"></circle>
-                            </svg>
-                        </div>
-                        <div>
-                            <h3>Endereço</h3>
-                            <address class="store-address contact-addr-text">{{ store.address|nl2br }}</address>
-                            {% if store.geocode %}
-                                <a href="https://maps.google.com/maps?q={{ store.geocode|url_encode }}&hl=pt-br&t=m&z=15" target="_blank" rel="noopener" class="btn btn-info btn-sm text-white contact-badge-btn"><i class="fa-solid fa-location-dot"></i> Visualizar mapa do Google</a>
-                            {% endif %}
-                        </div>
-                    </div>
-                    {% endif %}
-
-                    {# Telephone Info Item #}
-                    {% if store.telephone %}
-                    <div class="info-detail-item">
-                        <div class="detail-icon">
-                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path>
-                            </svg>
-                        </div>
-                        <div>
-                            <h3>Telefone</h3>
-                            <p><a href="tel:{{ store.telephone }}" class="detail-link">{{ store.telephone }}</a></p>
-                        </div>
-                    </div>
-                    {% endif %}
-
-                    {# Open Hours Info Item #}
-                    {% if store.open %}
-                    <div class="info-detail-item">
-                        <div class="detail-icon">
-                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                <circle cx="12" cy="12" r="10"></circle>
-                                <polyline points="12 6 12 12 16 14"></polyline>
-                            </svg>
-                        </div>
-                        <div>
-                            <h3>Horário de Funcionamento</h3>
-                            <p>{{ store.open|nl2br }}</p>
-                        </div>
-                    </div>
-                    {% endif %}
-
-                    {# Comments/Extra Info #}
-                    {% if store.raw.comment %}
-                    <div class="info-detail-item">
-                        <div class="detail-icon">
-                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
-                            </svg>
-                        </div>
-                        <div>
-                            <h3>Observações</h3>
-                            <p>{{ store.raw.comment|nl2br }}</p>
-                        </div>
-                    </div>
-                    {% endif %}
-                </div>
-            </div>
-
-            {# ── Form Column ── #}
-            <div class="contact-form-col">
-                <div class="contact-form-card">
-                    <h2 class="contact-section-title">Envie uma Mensagem</h2>
-
-                    {% if success %}
-                        <div class="contact-success-alert">
-                            <div class="alert-icon">
-                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                                    <polyline points="20 6 9 17 4 12"></polyline>
-                                </svg>
-                            </div>
-                            <div>
-                                <h3>Mensagem Enviada!</h3>
-                                <p>Agradecemos o seu contato. Retornaremos o mais breve possível.</p>
-                            </div>
-                        </div>
-                    {% endif %}
-
-                    <form action="{{ action }}" method="POST" class="egen-contact-form" novalidate>
-                        {% if csrf %}
-                            <input type="hidden" name="{{ csrf.keys.name }}" value="{{ csrf.name }}">
-                            <input type="hidden" name="{{ csrf.keys.value }}" value="{{ csrf.value }}">
                         {% endif %}
-                        
-                        {# Name Input #}
-                        <div class="form-group {% if errors.name %}has-error{% endif %}">
-                            <label for="input-name" class="form-label">Nome Completo</label>
-                            <input type="text" name="name" value="{{ name|default('') }}" placeholder="Digite seu nome completo" id="input-name" class="form-input" required />
-                            {% if errors.name %}
-                                <div class="invalid-feedback">{{ errors.name }}</div>
-                            {% endif %}
-                        </div>
 
-                        {# Email Input #}
-                        <div class="form-group {% if errors.email %}has-error{% endif %}">
-                            <label for="input-email" class="form-label">Endereço de E-mail</label>
-                            <input type="email" name="email" value="{{ email|default('') }}" placeholder="exemplo@email.com" id="input-email" class="form-input" required />
-                            {% if errors.email %}
-                                <div class="invalid-feedback">{{ errors.email }}</div>
-                            {% endif %}
-                        </div>
-
-                        {# Enquiry Input (Message) #}
-                        <div class="form-group {% if errors.enquiry %}has-error{% endif %}">
-                            <label for="input-enquiry" class="form-label">Sua Mensagem</label>
-                            <textarea name="enquiry" rows="6" placeholder="Escreva aqui sua dúvida, sugestão ou solicitação de orçamento..." id="input-enquiry" class="form-input form-textarea" required>{{ enquiry|default('') }}</textarea>
-                            {% if errors.enquiry %}
-                                <div class="invalid-feedback">{{ errors.enquiry }}</div>
-                            {% endif %}
-                        </div>
-
-                        {# Form Footer / Button #}
-                        <div class="form-footer">
-                            <button type="submit" class="contact-btn-submit">
-                                <span>Enviar Mensagem</span>
-                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="btn-arrow">
-                                    <line x1="5" y1="12" x2="19" y2="12"></line>
-                                    <polyline points="12 5 19 12 12 19"></polyline>
-                                </svg>
-                            </button>
-                        </div>
-                    </form>
+                        {# Comments/Extra Info #}
+                        {% if store.raw.comment %}
+                            <div class="info-detail-item">
+                                <div class="detail-icon">
+                                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+                                    </svg>
+                                </div>
+                                <div>
+                                    <h3>Observações</h3>
+                                    <p>{{ store.raw.comment|nl2br }}</p>
+                                </div>
+                            </div>
+                        {% endif %}
+                    </div>
                 </div>
-            </div>
 
+                {# ── Form Column ── #}
+                <div class="contact-form-col">
+                    <div class="contact-form-card">
+                        <h2 class="contact-section-title">Envie uma Mensagem</h2>
+
+                        {% if success %}
+                            <div class="contact-success-alert">
+                                <div class="alert-icon">
+                                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                                        <polyline points="20 6 9 17 4 12"></polyline>
+                                    </svg>
+                                </div>
+                                <div>
+                                    <h3>Mensagem Enviada!</h3>
+                                    <p>Agradecemos o seu contato. Retornaremos o mais breve possível.</p>
+                                </div>
+                            </div>
+                        {% endif %}
+
+                        <form action="{{ action }}" method="POST" class="egen-contact-form" novalidate>
+                            {% if csrf %}
+                                <input type="hidden" name="{{ csrf.keys.name }}" value="{{ csrf.name }}">
+                                <input type="hidden" name="{{ csrf.keys.value }}" value="{{ csrf.value }}">
+                            {% endif %}
+                        
+                            {# Name Input #}
+                            <div class="form-group {% if errors.name %}has-error{% endif %}">
+                                <label for="input-name" class="form-label">Nome Completo</label>
+                                <input type="text" name="name" value="{{ name|default('') }}" placeholder="Digite seu nome completo" id="input-name" class="form-input" required/>
+                                {% if errors.name %}
+                                    <div class="invalid-feedback">{{ errors.name }}</div>
+                                {% endif %}
+                            </div>
+
+                            {# Email Input #}
+                            <div class="form-group {% if errors.email %}has-error{% endif %}">
+                                <label for="input-email" class="form-label">Endereço de E-mail</label>
+                                <input type="email" name="email" value="{{ email|default('') }}" placeholder="exemplo@email.com" id="input-email" class="form-input" required/>
+                                {% if errors.email %}
+                                    <div class="invalid-feedback">{{ errors.email }}</div>
+                                {% endif %}
+                            </div>
+
+                            {# Enquiry Input (Message) #}
+                            <div class="form-group {% if errors.enquiry %}has-error{% endif %}">
+                                <label for="input-enquiry" class="form-label">Sua Mensagem</label>
+                                <textarea name="enquiry" rows="6" placeholder="Escreva aqui sua dúvida, sugestão ou solicitação de orçamento..." id="input-enquiry" class="form-input form-textarea" required>{{ enquiry|default('') }}</textarea>
+                                {% if errors.enquiry %}
+                                    <div class="invalid-feedback">{{ errors.enquiry }}</div>
+                                {% endif %}
+                            </div>
+
+                            {# Form Footer / Button #}
+                            <div class="form-footer">
+                                <button type="submit" class="contact-btn-submit">
+                                    <span>Enviar Mensagem</span>
+                                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="btn-arrow">
+                                        <line x1="5" y1="12" x2="19" y2="12"></line>
+                                        <polyline points="12 5 19 12 12 19"></polyline>
+                                    </svg>
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+            </div>
         </div>
     </div>
-</div>
 
 
 {% endblock %}

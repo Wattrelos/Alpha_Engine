@@ -2,13 +2,13 @@
 
 {% block title %}
 	{{ Checkout.headingTitle|default(Checkout.buttonConfirm|default('Finalizar Compra')) }}
-	| AgSonhos
+	| meusite
 {% endblock %}
 
 {% block breadcrumbs %}
 	<div class="egen-page-header">
 		<div class="egen-page-header__inner">
-			{% include 'components/molecules/breadcrumbs.twig' with { items: breadcrumbs } %}
+			{% include 'components/molecules/breadcrumbs.twig' with {items: breadcrumbs} %}
 		</div>
 	</div>
 {% endblock %}
@@ -36,7 +36,7 @@
 					<div class="egen-checkout-progress__circle">2</div>
 					<span class="egen-checkout-progress__label">{{ Checkout.step2Label|default('Endereço de entrega') }}</span>
 				</div>
-{#
+				{#
 				<div class="egen-checkout-progress__step" data-progress-step="3">
 					<div class="egen-checkout-progress__circle">3</div>
 					<span class="egen-checkout-progress__label">{{ Checkout.step3Label|default('Cálculo de frete') }}</span>
@@ -49,7 +49,13 @@
 			</div>
 
 			<form
-				action="{{ action }}" method="post" enctype="multipart/form-data" class="egen-checkout-form" id="checkout-main-form" novalidate>
+				action="{{ action }}"
+				method="post"
+				enctype="multipart/form-data"
+				class="egen-checkout-form"
+				id="checkout-main-form"
+				novalidate
+			>
 				{% if csrf %}
 					<input type="hidden" name="{{ csrf.keys.name }}" value="{{ csrf.name }}">
 					<input type="hidden" name="{{ csrf.keys.value }}" value="{{ csrf.value }}">
@@ -57,7 +63,9 @@
 
 				<!-- Etapas do Checkout -->
 				<div
-					class="egen-checkout-steps" id="checkout-steps">
+					class="egen-checkout-steps"
+					id="checkout-steps"
+				>
 
 					<!-- 1. Identificação -->
 					<div class="egen-checkout-step active" data-step="1" id="step-identity">
@@ -67,7 +75,8 @@
 						</h2>
 
 						<div
-							class="egen-checkout-step-content">
+							class="egen-checkout-step-content"
+						>
 							<!-- Botões de login/cadastro -->
 							{% if not allow_guest_checkout %}
 								<div class="egen-alert egen-alert--info mb-4" id="guest-checkout-disabled-notice" style="margin-bottom: 1.25rem;">
@@ -335,9 +344,9 @@
 						</div>
 					</div>
 				</div>
-			</div>
+		</div>
 		</form>
 	</div>
-</div>
-<script src="/js/custom/completePurchase.js"></script>
+	</div>
+	<script src="/js/custom/completePurchase.js"></script>
 {% endblock %}

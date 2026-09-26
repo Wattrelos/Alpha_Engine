@@ -2,12 +2,12 @@
 
 Migração da configuração do Apache para o Nginx
 
-Aqui está o arquivo de configuração para o Nginx (/etc/nginx/sites-available/agsonhos):
+Aqui está o arquivo de configuração para o Nginx (/etc/nginx/sites-available/meusite):
 
 ```nginx
 server {
     listen 80;
-    server_name agsonhos.local www.agsonhos.local localhost;
+    server_name meusite.local www.meusite.local localhost;
 
     # Ponto de entrada do projeto (pasta pública)
     root /public_html;
@@ -19,8 +19,8 @@ server {
     client_max_body_size 64M;
 
     # Logs
-    access_log /var/log/nginx/agsonhos-access.log;
-    error_log /var/log/nginx/agsonhos-error.log;
+    access_log /var/log/nginx/meusite-access.log;
+    error_log /var/log/nginx/meusite-error.log;
 
     # Bloqueia acesso direto à rota /admin (pois o admin usa pasta ofuscada)
     location ^~ /admin {

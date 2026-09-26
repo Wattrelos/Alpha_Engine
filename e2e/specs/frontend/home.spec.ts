@@ -9,7 +9,7 @@ test.describe('Módulo Frontend - Página Inicial (Home)', () => {
     await homePage.open();
 
     // Valida título da página
-    await expect(page).toHaveTitle(/Alpha|AgSonhos/i);
+    await expect(page).toHaveTitle(/Alpha|meusite/i);
 
     // Valida visibilidade dos componentes essenciais
     await expect(homePage.header).toBeVisible();
@@ -28,7 +28,7 @@ test.describe('Módulo Frontend - Página Inicial (Home)', () => {
 
   test('deve possuir estrutura de acessibilidade básica (WCAG)', async ({ homePage, makeAxeBuilder }) => {
     await homePage.open();
-    
+
     // Executa análise de acessibilidade com axe-core
     const accessibilityScanResults = await makeAxeBuilder()
       .include('.egen-header')

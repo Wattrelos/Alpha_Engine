@@ -7,7 +7,7 @@ info:
     e isolamento multi-tenant por `store_id`.
   version: 1.0.0
 servers:
-  - url: https://loja.agsonhos.com.br/{lang}
+  - url: https://loja.meusite.com.br/{lang}
     description: Servidor Principal
     variables:
       lang:

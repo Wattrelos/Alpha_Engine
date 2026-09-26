@@ -146,7 +146,7 @@ Ran command: `rm -f storage/cache/alpha_cache_*.cache`
 
 Edited task.md
 
-Ran command: `mysql -h 127.0.0.1 -u root -p42010052 -e "SELECT description FROM AlphaAgsonhos.agsc_product_description WHERE product_id = 13;"`
+Ran command: `mysql -h 127.0.0.1 -u root -p42010052 -e "SELECT description FROM Alphameusite.agsc_product_description WHERE product_id = 13;"`
 
 Viewed RepositoryFactory.php:1-39
 

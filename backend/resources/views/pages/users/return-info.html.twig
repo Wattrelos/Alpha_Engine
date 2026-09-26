@@ -1,160 +1,160 @@
 {% extends 'layouts/base.html.twig' %}
 
-{% block title %}Devolução #{{ return.id }} | AgSonhos{% endblock %}
+{% block title %}Devolução #{{ return.id }} | meusite{% endblock %}
 
 {% block stylesheets %}
-	<link rel="stylesheet" href="/css/custom/returns-institutional.css">
+    <link rel="stylesheet" href="/css/custom/returns-institutional.css">
 {% endblock %}
 
 {% block content %}
-<div id="account-return-detail-page">
+    <div id="account-return-detail-page">
 
-    {# ── Hero ── #}
-    <div class="return-hero">
-        <div class="return-hero-inner">
-            <nav class="return-breadcrumb" aria-label="Navegação">
-                {% for breadcrumb in breadcrumbs %}
-                    {% if not loop.last %}
-                        <a href="{{ breadcrumb.href }}">{{ breadcrumb.text }}</a>
-                        <span class="sep">›</span>
-                    {% else %}
-                        <span class="current">{{ breadcrumb.text }}</span>
-                    {% endif %}
-                {% endfor %}
-            </nav>
-            <h1 class="return-title">
-                <span class="return-title-icon">🔄</span>
-                Devolução #{{ return.id }}
-            </h1>
-            <p class="return-subtitle">Solicitada em {{ return.date_added }}</p>
+        {# ── Hero ── #}
+        <div class="return-hero">
+            <div class="return-hero-inner">
+                <nav class="return-breadcrumb" aria-label="Navegação">
+                    {% for breadcrumb in breadcrumbs %}
+                        {% if not loop.last %}
+                            <a href="{{ breadcrumb.href }}">{{ breadcrumb.text }}</a>
+                            <span class="sep">›</span>
+                        {% else %}
+                            <span class="current">{{ breadcrumb.text }}</span>
+                        {% endif %}
+                    {% endfor %}
+                </nav>
+                <h1 class="return-title">
+                    <span class="return-title-icon">🔄</span>
+                    Devolução #{{ return.id }}
+                </h1>
+                <p class="return-subtitle">Solicitada em {{ return.date_added }}</p>
+            </div>
         </div>
-    </div>
 
-    {# ── Main content ── #}
-    <div class="return-wrapper">
+        {# ── Main content ── #}
+        <div class="return-wrapper">
 
-        {# ── Metadata Grid ── #}
-        <div class="detail-grid">
+            {# ── Metadata Grid ── #}
+            <div class="detail-grid">
             
-            {# ── Section 1: Customer details ── #}
-            <div class="detail-card">
-                <h3 class="detail-card-title">
-                    <span>👤</span> {{ Returns.text_customer }}
-                </h3>
-                <div class="detail-card-content">
-                    <div class="info-row"><strong>Nome:</strong> {{ return.firstname }} {{ return.lastname }}</div>
-                    <div class="info-row"><strong>E-mail:</strong> {{ return.email }}</div>
-                    <div class="info-row"><strong>Telefone:</strong> {{ return.telephone }}</div>
-                </div>
-            </div>
-
-            {# ── Section 2: Order details ── #}
-            <div class="detail-card">
-                <h3 class="detail-card-title">
-                    <span>📦</span> {{ Returns.text_order }}
-                </h3>
-                <div class="detail-card-content">
-                    <div class="info-row"><strong>{{ Returns.text_order_id }}</strong> #{{ return.order_id }}</div>
-                    <div class="info-row"><strong>{{ Returns.text_date_ordered }}</strong> {{ return.date_ordered }}</div>
-                    <div class="info-row">
-                        <strong>{{ Returns.column_status }}:</strong>
-                        <span class="status-pill status-{{ return.status|lower|replace({' ': '-'}) }}">
-                            {{ return.status }}
-                        </span>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        {# ── Section 3: Product Info ── #}
-        <div class="return-card">
-            <div class="return-card-header">
-                <h3 class="return-card-header-title">{{ Returns.text_return }}</h3>
-            </div>
-            <div class="return-card-body">
-                <div class="product-info-grid">
-                    <div class="product-info-item">
-                        <span class="product-info-label">{{ Returns.column_product }}</span>
-                        <strong class="product-info-val">{{ return.product }}</strong>
-                    </div>
-                    <div class="product-info-item">
-                        <span class="product-info-label">{{ Returns.column_model }}</span>
-                        <span class="product-info-val model-badge">{{ return.model }}</span>
-                    </div>
-                    <div class="product-info-item">
-                        <span class="product-info-label">{{ Returns.column_quantity }}</span>
-                        <span class="product-info-val">{{ return.quantity }}</span>
-                    </div>
-                    <div class="product-info-item">
-                        <span class="product-info-label">{{ Returns.column_opened }}</span>
-                        <span class="product-info-val">{{ return.opened }}</span>
-                    </div>
-                    <div class="product-info-item">
-                        <span class="product-info-label">{{ Returns.column_reason }}</span>
-                        <span class="product-info-val text-warning">{{ return.reason }}</span>
-                    </div>
-                    <div class="product-info-item">
-                        <span class="product-info-label">{{ Returns.column_action }}</span>
-                        <span class="product-info-val text-success">{{ return.action }}</span>
+                {# ── Section 1: Customer details ── #}
+                <div class="detail-card">
+                    <h3 class="detail-card-title">
+                        <span>👤</span> {{ Returns.text_customer }}
+                    </h3>
+                    <div class="detail-card-content">
+                        <div class="info-row"><strong>Nome:</strong> {{ return.firstname }} {{ return.lastname }}</div>
+                        <div class="info-row"><strong>E-mail:</strong> {{ return.email }}</div>
+                        <div class="info-row"><strong>Telefone:</strong> {{ return.telephone }}</div>
                     </div>
                 </div>
 
-                {% if return.comment %}
-                    <div class="fault-comment-wrap">
-                        <span class="fault-comment-label">{{ Returns.entry_fault_detail }}</span>
-                        <div class="fault-comment-content">
-                            {{ return.comment|raw }}
+                {# ── Section 2: Order details ── #}
+                <div class="detail-card">
+                    <h3 class="detail-card-title">
+                        <span>📦</span> {{ Returns.text_order }}
+                    </h3>
+                    <div class="detail-card-content">
+                        <div class="info-row"><strong>{{ Returns.text_order_id }}</strong> #{{ return.order_id }}</div>
+                        <div class="info-row"><strong>{{ Returns.text_date_ordered }}</strong> {{ return.date_ordered }}</div>
+                        <div class="info-row">
+                            <strong>{{ Returns.column_status }}:</strong>
+                            <span class="status-pill status-{{ return.status|lower|replace({' ': '-'}) }}">
+                                {{ return.status }}
+                            </span>
                         </div>
                     </div>
-                {% endif %}
+                </div>
             </div>
-        </div>
 
-        {# ── Section 4: History Timeline ── #}
-        <div class="return-card">
-            <div class="return-card-header">
-                <h3 class="return-card-header-title">{{ Returns.text_history }}</h3>
-            </div>
-            <div class="timeline-wrap">
-                {% if histories %}
-                    <div class="timeline">
-                        {% for history in histories %}
-                            <div class="timeline-item">
-                                <div class="timeline-dot"></div>
-                                <div class="timeline-content">
-                                    <div class="timeline-header">
-                                        <span class="timeline-status-pill status-{{ history.status|lower|replace({' ': '-'}) }}">
-                                            {{ history.status }}
-                                        </span>
-                                        <span class="timeline-date">{{ history.date_added }}</span>
-                                    </div>
-                                    {% if history.comment %}
-                                        <div class="timeline-comment">
-                                            {{ history.comment|raw }}
-                                        </div>
-                                    {% endif %}
-                                </div>
-                            </div>
-                        {% endfor %}
+            {# ── Section 3: Product Info ── #}
+            <div class="return-card">
+                <div class="return-card-header">
+                    <h3 class="return-card-header-title">{{ Returns.text_return }}</h3>
+                </div>
+                <div class="return-card-body">
+                    <div class="product-info-grid">
+                        <div class="product-info-item">
+                            <span class="product-info-label">{{ Returns.column_product }}</span>
+                            <strong class="product-info-val">{{ return.product }}</strong>
+                        </div>
+                        <div class="product-info-item">
+                            <span class="product-info-label">{{ Returns.column_model }}</span>
+                            <span class="product-info-val model-badge">{{ return.model }}</span>
+                        </div>
+                        <div class="product-info-item">
+                            <span class="product-info-label">{{ Returns.column_quantity }}</span>
+                            <span class="product-info-val">{{ return.quantity }}</span>
+                        </div>
+                        <div class="product-info-item">
+                            <span class="product-info-label">{{ Returns.column_opened }}</span>
+                            <span class="product-info-val">{{ return.opened }}</span>
+                        </div>
+                        <div class="product-info-item">
+                            <span class="product-info-label">{{ Returns.column_reason }}</span>
+                            <span class="product-info-val text-warning">{{ return.reason }}</span>
+                        </div>
+                        <div class="product-info-item">
+                            <span class="product-info-label">{{ Returns.column_action }}</span>
+                            <span class="product-info-val text-success">{{ return.action }}</span>
+                        </div>
                     </div>
-                {% else %}
-                    <p class="timeline-empty">Nenhum histórico registrado para esta devolução.</p>
-                {% endif %}
+
+                    {% if return.comment %}
+                        <div class="fault-comment-wrap">
+                            <span class="fault-comment-label">{{ Returns.entry_fault_detail }}</span>
+                            <div class="fault-comment-content">
+                                {{ return.comment|raw }}
+                            </div>
+                        </div>
+                    {% endif %}
+                </div>
             </div>
-        </div>
 
-        {# ── Footer Actions ── #}
-        <div class="return-footer">
-            <a href="{{ back }}" class="btn-back">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <polyline points="15 18 9 12 15 6"/>
-                </svg>
-                Voltar para Devoluções
-            </a>
-        </div>
+            {# ── Section 4: History Timeline ── #}
+            <div class="return-card">
+                <div class="return-card-header">
+                    <h3 class="return-card-header-title">{{ Returns.text_history }}</h3>
+                </div>
+                <div class="timeline-wrap">
+                    {% if histories %}
+                        <div class="timeline">
+                            {% for history in histories %}
+                                <div class="timeline-item">
+                                    <div class="timeline-dot"></div>
+                                    <div class="timeline-content">
+                                        <div class="timeline-header">
+                                            <span class="timeline-status-pill status-{{ history.status|lower|replace({' ': '-'}) }}">
+                                                {{ history.status }}
+                                            </span>
+                                            <span class="timeline-date">{{ history.date_added }}</span>
+                                        </div>
+                                        {% if history.comment %}
+                                            <div class="timeline-comment">
+                                                {{ history.comment|raw }}
+                                            </div>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        <p class="timeline-empty">Nenhum histórico registrado para esta devolução.</p>
+                    {% endif %}
+                </div>
+            </div>
 
-    </div>{# /.return-wrapper #}
-</div>{# /#account-return-detail-page #}
+            {# ── Footer Actions ── #}
+            <div class="return-footer">
+                <a href="{{ back }}" class="btn-back">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <polyline points="15 18 9 12 15 6"/>
+                    </svg>
+                    Voltar para Devoluções
+                </a>
+            </div>
+
+        </div>{# /.return-wrapper #}
+    </div>{# /#account-return-detail-page #}
 
 
 {% endblock %}

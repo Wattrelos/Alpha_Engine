@@ -12,7 +12,7 @@
 
 # Plano de Reestruturação da Arquitetura: Isolamento da Pasta `backend/`
 
-Este plano detalha a reorganização da estrutura do projeto **AgSonhos (Alpha Engine)** para isolar o código-fonte, dependências, configurações e recursos na diretório `backend/`, mantendo a raiz pública `public_html/` isolada como o único ponto de entrada HTTP exposto ao servidor web (Cenário 1 de hospedagem para Hostinger / cPanel).
+Este plano detalha a reorganização da estrutura do projeto **meusite (Alpha Engine)** para isolar o código-fonte, dependências, configurações e recursos na diretório `backend/`, mantendo a raiz pública `public_html/` isolada como o único ponto de entrada HTTP exposto ao servidor web (Cenário 1 de hospedagem para Hostinger / cPanel).
 
 ## User Review Required
 
@@ -25,7 +25,7 @@ Este plano detalha a reorganização da estrutura do projeto **AgSonhos (Alpha E
 ## Estrutura Alvo do Repositório
 
 ```text
-agsonhos/ (raiz do repositório)
+meusite/ (raiz do repositório)
 ├── backend/                             [NOVA PASTA]
 │   ├── BusinessKnowledgeBase/
 │   ├── Config/
@@ -153,7 +153,7 @@ Nenhuma pergunta pendente neste momento. Caso deseje incluir ou manter algum arq
 
 # Walkthrough: Isolamento da Arquitetura na Pasta `backend/`
 
-Concluímos com sucesso a reorganização da estrutura do projeto **AgSonhos (Alpha Engine)**. O código-fonte, módulos, dependências e arquivos de configuração foram isolados dentro de `backend/`, mantendo a pasta pública `public_html/` limpa na raiz do repositório.
+Concluímos com sucesso a reorganização da estrutura do projeto **meusite (Alpha Engine)**. O código-fonte, módulos, dependências e arquivos de configuração foram isolados dentro de `backend/`, mantendo a pasta pública `public_html/` limpa na raiz do repositório.
 
 ## Resumo das Alterações Realizadas
 

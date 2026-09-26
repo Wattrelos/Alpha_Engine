@@ -1,145 +1,150 @@
 {% extends 'layouts/base.html.twig' %}
 
-{% block title %}Meus Endereços | AgSonhos{% endblock %}
+{% block title %}Meus Endereços | meusite{% endblock %}
 
 {% block stylesheets %}
 	<link rel="stylesheet" href="/css/custom/addresses.css">
 {% endblock %}
 
 {% block content %}
-<div id="addresses-page">
+	<div id="addresses-page">
 
-	{# ── Hero ── #}
-	<div class="addr-hero">
-		<div class="addr-hero-inner">
-			<nav class="addr-breadcrumb" aria-label="Navegação">
-				{% for breadcrumb in breadcrumbs %}
-					{% if not loop.last %}
-						<a href="{{ breadcrumb.href }}">{{ breadcrumb.text }}</a>
-						<span class="sep">›</span>
-					{% else %}
-						<span class="current">{{ breadcrumb.text }}</span>
-					{% endif %}
-				{% endfor %}
-			</nav>
-			<h1 class="addr-hero-title">
-				<span class="addr-hero-icon">
-					<svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-						<path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
-						<circle cx="12" cy="10" r="3"/>
-					</svg>
-				</span>
-				{{ heading_title|default('Meus Endereços') }}
-			</h1>
-			<p class="addr-hero-sub">Gerencie seus endereços de entrega e cobrança</p>
-		</div>
-	</div>
-
-	{# ── Conteúdo Principal ── #}
-	<div class="addr-wrapper">
-
-		{% if error_warning %}
-			<div class="addr-alert addr-alert--danger">
-				<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
-				{{ error_warning }}
-			</div>
-		{% endif %}
-
-		{% if success %}
-			<div class="addr-alert addr-alert--success">
-				<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
-				{{ success }}
-			</div>
-		{% endif %}
-
-		{# ── Ação: Novo Endereço ── #}
-		<div class="addr-actions-bar">
-			<a href="{{ add }}" class="addr-btn-primary" id="btn-add-address">
-				<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-				{{ button_add|default('Novo Endereço') }}
-			</a>
-		</div>
-
-		{% if addresses %}
-
-			{# ── Grid de Endereços ── #}
-			<div class="addr-grid">
-				{% for address in addresses %}
-					<div class="addr-card {% if address.default %}addr-card--default{% endif %}" id="address-card-{{ address.address_id }}">
-
-						{% if address.default %}
-							<div class="addr-card-badge">
-								<svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
-								Padrão
-							</div>
+		{# ── Hero ── #}
+		<div class="addr-hero">
+			<div class="addr-hero-inner">
+				<nav class="addr-breadcrumb" aria-label="Navegação">
+					{% for breadcrumb in breadcrumbs %}
+						{% if not loop.last %}
+							<a href="{{ breadcrumb.href }}">{{ breadcrumb.text }}</a>
+							<span class="sep">›</span>
+						{% else %}
+							<span class="current">{{ breadcrumb.text }}</span>
 						{% endif %}
-
-						<div class="addr-card-header">
-							<div class="addr-card-icon">
-								<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-									<path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
-									<circle cx="12" cy="10" r="3"/>
-								</svg>
-							</div>
-							<div class="addr-card-name">{{ address.street }}{% if address.number %}, {{ address.number }}{% endif %}</div>
-						</div>
-
-						<div class="addr-card-body">
-							{% if address.complement %}
-								<div class="addr-line">{{ address.complement }}</div>
-							{% endif %}
-							{% if address.neighborhood %}
-								<div class="addr-line">{{ address.neighborhood }}</div>
-							{% endif %}
-							<div class="addr-line">{{ address.city }}{% if address.zone %} – {{ address.zone }}{% endif %}</div>
-							<div class="addr-line">CEP {{ address.postcode }}</div>
-							<div class="addr-line addr-line--country">{{ address.country }}</div>
-						</div>
-
-						<div class="addr-card-actions">
-							<a href="{{ address.edit }}" class="addr-btn-card addr-btn-card--edit" id="btn-edit-address-{{ address.address_id }}" title="Editar">
-								<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
-								Editar
-							</a>
-							{% if not address.default %}
-								<a href="{{ address.delete }}" class="addr-btn-card addr-btn-card--delete" id="btn-delete-address-{{ address.address_id }}" title="Excluir"
-									onclick="return confirm('Deseja realmente excluir este endereço?');">
-									<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg>
-									Excluir
-								</a>
-							{% endif %}
-						</div>
-
-					</div>
-				{% endfor %}
+					{% endfor %}
+				</nav>
+				<h1 class="addr-hero-title">
+					<span class="addr-hero-icon">
+						<svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+							<path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
+							<circle cx="12" cy="10" r="3"/>
+						</svg>
+					</span>
+					{{ heading_title|default('Meus Endereços') }}
+				</h1>
+				<p class="addr-hero-sub">Gerencie seus endereços de entrega e cobrança</p>
 			</div>
+		</div>
 
-		{% else %}
-			{# ── Empty State ── #}
-			<div class="addr-empty">
-				<div class="addr-empty-icon">
-					<svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round">
-						<path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
-						<circle cx="12" cy="10" r="3"/>
-					</svg>
+		{# ── Conteúdo Principal ── #}
+		<div class="addr-wrapper">
+
+			{% if error_warning %}
+				<div class="addr-alert addr-alert--danger">
+					<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+					{{ error_warning }}
 				</div>
-				<h2 class="addr-empty-title">Nenhum endereço cadastrado</h2>
-				<p class="addr-empty-desc">{{ text_no_results|default('Adicione um endereço para agilizar suas compras.') }}</p>
-				<a href="{{ add }}" class="addr-btn-primary">
+			{% endif %}
+
+			{% if success %}
+				<div class="addr-alert addr-alert--success">
+					<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+					{{ success }}
+				</div>
+			{% endif %}
+
+			{# ── Ação: Novo Endereço ── #}
+			<div class="addr-actions-bar">
+				<a href="{{ add }}" class="addr-btn-primary" id="btn-add-address">
 					<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-					Adicionar Primeiro Endereço
+					{{ button_add|default('Novo Endereço') }}
 				</a>
 			</div>
-		{% endif %}
 
-		{# ── Rodapé ── #}
-		<div class="addr-footer">
-			<a href="{{ continue }}" class="addr-btn-back">
-				<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
-				{{ button_continue|default('Voltar para Minha Conta') }}
-			</a>
+			{% if addresses %}
+
+				{# ── Grid de Endereços ── #}
+				<div class="addr-grid">
+					{% for address in addresses %}
+						<div class="addr-card {% if address.default %}addr-card--default{% endif %}" id="address-card-{{ address.address_id }}">
+
+							{% if address.default %}
+								<div class="addr-card-badge">
+									<svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+									Padrão
+								</div>
+							{% endif %}
+
+							<div class="addr-card-header">
+								<div class="addr-card-icon">
+									<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+										<path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
+										<circle cx="12" cy="10" r="3"/>
+									</svg>
+								</div>
+								<div class="addr-card-name">{{ address.street }}{% if address.number %}, {{ address.number }}{% endif %}</div>
+							</div>
+
+							<div class="addr-card-body">
+								{% if address.complement %}
+									<div class="addr-line">{{ address.complement }}</div>
+								{% endif %}
+								{% if address.neighborhood %}
+									<div class="addr-line">{{ address.neighborhood }}</div>
+								{% endif %}
+								<div class="addr-line">{{ address.city }}{% if address.zone %} – {{ address.zone }}{% endif %}</div>
+								<div class="addr-line">CEP {{ address.postcode }}</div>
+								<div class="addr-line addr-line--country">{{ address.country }}</div>
+							</div>
+
+							<div class="addr-card-actions">
+								<a href="{{ address.edit }}" class="addr-btn-card addr-btn-card--edit" id="btn-edit-address-{{ address.address_id }}" title="Editar">
+									<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+									Editar
+								</a>
+								{% if not address.default %}
+									<a
+										href="{{ address.delete }}"
+										class="addr-btn-card addr-btn-card--delete"
+										id="btn-delete-address-{{ address.address_id }}"
+										title="Excluir"
+										onclick="return confirm('Deseja realmente excluir este endereço?');"
+									>
+										<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg>
+										Excluir
+									</a>
+								{% endif %}
+							</div>
+
+						</div>
+					{% endfor %}
+				</div>
+
+			{% else %}
+				{# ── Empty State ── #}
+				<div class="addr-empty">
+					<div class="addr-empty-icon">
+						<svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round">
+							<path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
+							<circle cx="12" cy="10" r="3"/>
+						</svg>
+					</div>
+					<h2 class="addr-empty-title">Nenhum endereço cadastrado</h2>
+					<p class="addr-empty-desc">{{ text_no_results|default('Adicione um endereço para agilizar suas compras.') }}</p>
+					<a href="{{ add }}" class="addr-btn-primary">
+						<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+						Adicionar Primeiro Endereço
+					</a>
+				</div>
+			{% endif %}
+
+			{# ── Rodapé ── #}
+			<div class="addr-footer">
+				<a href="{{ continue }}" class="addr-btn-back">
+					<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+					{{ button_continue|default('Voltar para Minha Conta') }}
+				</a>
+			</div>
+
 		</div>
-
 	</div>
-</div>
 {% endblock %}

@@ -37,9 +37,9 @@ class ListProductsAction implements ActionInterface
 
         // 3. Prepara os dados de SEO para a página de catálogo
         $seoData = [
-            'title'       => 'Catálogo de Produtos Artesanais | AgSonhos',
+            'title'       => 'Catálogo de Produtos Artesanais | meusite',
             'description' => 'Confira nossa linha completa de produtos exclusivos para o seu sonho.',
-            'canonical'   => 'https://agsonhos.com'
+            'canonical'   => 'https://meusite.com'
         ];
 
         // 4. Renderiza o template do Twig respeitando o padrão PascalCase

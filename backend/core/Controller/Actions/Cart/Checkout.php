@@ -176,9 +176,9 @@ class Checkout implements ActionInterface
 
         $title = $languageData['heading_title'] ?? 'Finalizar Compra';
         $seoData = [
-            'title'       => $title . ' | AgSonhos',
-            'description' => 'Finalize a sua compra com segurança na AgSonhos.',
-            'keywords'    => 'checkout, finalizar compra, agsonhos'
+            'title'       => $title . ' | meusite',
+            'description' => 'Finalize a sua compra com segurança na meusite.',
+            'keywords'    => 'checkout, finalizar compra, meusite'
         ];
 
         $html = $this->twig->render('pages/cart/checkout.twig', array_merge($viewData, [

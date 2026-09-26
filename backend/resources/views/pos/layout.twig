@@ -1,49 +1,49 @@
 <!DOCTYPE html>
 <html lang="pt-br">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% block title %}AgSonhos - Terminal de Vendas (PDV){% endblock %}</title>
-    <!-- Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    <!-- FontAwesome icons -->
-    <link rel="stylesheet" href="/fonts/fontawesome/css/all.min.css">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>{% block title %}meusite - Terminal de Vendas (PDV){% endblock %}</title>
+        <!-- Fonts -->
+        <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+        <!-- FontAwesome icons -->
+        <link rel="stylesheet" href="/fonts/fontawesome/css/all.min.css">
     
-    <link rel="stylesheet" href="/css/pov/pov.css">
-</head>
-<body>
+        <link rel="stylesheet" href="/css/pov/pov.css">
+    </head>
+    <body>
 
-    <header class="pos-header">
-        <div class="header-brand">
-            <span class="brand-icon">🌌</span>
-            <span class="brand-text">AgSonhos</span>
-            <span class="brand-badge">PDV Vendedor</span>
-        </div>
-        
-        <div class="header-meta">
-            <div class="user-panel">
-                {% if logged_admin.image %}
-                    <img src="/image/{{ logged_admin.image }}" class="user-avatar" alt="Avatar">
-                {% else %}
-                    <img src="/image/profile/default-user-profile.jpg" class="user-avatar" alt="Avatar">
-                {% endif %}
-                <div>
-                    <p class="user-name">{{ logged_admin.name|default('Vendedor') }}</p>
-                    <p class="user-role">Código #{{ logged_admin.id|default('001') }}</p>
-                </div>
+        <header class="pos-header">
+            <div class="header-brand">
+                <span class="brand-icon">🌌</span>
+                <span class="brand-text">meusite</span>
+                <span class="brand-badge">PDV Vendedor</span>
             </div>
+        
+            <div class="header-meta">
+                <div class="user-panel">
+                    {% if logged_admin.image %}
+                        <img src="/image/{{ logged_admin.image }}" class="user-avatar" alt="Avatar">
+                    {% else %}
+                        <img src="/image/profile/default-user-profile.jpg" class="user-avatar" alt="Avatar">
+                    {% endif %}
+                    <div>
+                        <p class="user-name">{{ logged_admin.name|default('Vendedor') }}</p>
+                        <p class="user-role">Código #{{ logged_admin.id|default('001') }}</p>
+                    </div>
+                </div>
             
-            <button onclick="window.location.href='{{ admin_path }}/dashboard'" class="pos-exit-btn">
-                <i class="fas fa-sign-out-alt"></i>
-                Painel Admin
-            </button>
+                <button onclick="window.location.href='{{ admin_path }}/dashboard'" class="pos-exit-btn">
+                    <i class="fas fa-sign-out-alt"></i>
+                    Painel Admin
+                </button>
+            </div>
+        </header>
+
+        <div class="pos-container">
+            {% block content %}{% endblock %}
         </div>
-    </header>
 
-    <div class="pos-container">
-        {% block content %}{% endblock %}
-    </div>
-
-    {% block extra_scripts %}{% endblock %}
-</body>
+        {% block extra_scripts %}{% endblock %}
+    </body>
 </html>

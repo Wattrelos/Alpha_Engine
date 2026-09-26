@@ -139,7 +139,7 @@ class UpdateAction implements ActionInterface
         $viewData = array_merge([
             'direction'   => 'ltr',
             'lang'        => $languageCodeStr,
-            'title'       => ($languageData['heading_title'] ?? 'Editar Informações') . ' | AgSonhos',
+            'title'       => ($languageData['heading_title'] ?? 'Editar Informações') . ' | meusite',
             'description' => 'Edite suas informações cadastrais.',
             'breadcrumbs' => $breadcrumbs,
             'action'      => $routeParser->urlFor('account.edit', ['lang' => $lang]),

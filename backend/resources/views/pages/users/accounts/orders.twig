@@ -1,126 +1,126 @@
 {% extends 'layouts/base.html.twig' %}
 
-{% block title %}Meus Pedidos | AgSonhos{% endblock %}
+{% block title %}Meus Pedidos | meusite{% endblock %}
 
 {% block stylesheets %}
-	<link rel="stylesheet" href="/css/custom/orders.css">
+    <link rel="stylesheet" href="/css/custom/orders.css">
 {% endblock %}
 
 {% block content %}
-<div id="account-orders-page">
+    <div id="account-orders-page">
 
-    {# ── Breadcrumb ── #}
-    <div class="orders-hero">
-        <div class="orders-hero-inner">
-            <nav class="orders-breadcrumb" aria-label="Navegação">
-                {% for breadcrumb in breadcrumbs %}
-                    {% if not loop.last %}
-                        <a href="{{ breadcrumb.href }}">{{ breadcrumb.text }}</a>
-                        <span class="sep">›</span>
-                    {% else %}
-                        <span class="current">{{ breadcrumb.text }}</span>
+        {# ── Breadcrumb ── #}
+        <div class="orders-hero">
+            <div class="orders-hero-inner">
+                <nav class="orders-breadcrumb" aria-label="Navegação">
+                    {% for breadcrumb in breadcrumbs %}
+                        {% if not loop.last %}
+                            <a href="{{ breadcrumb.href }}">{{ breadcrumb.text }}</a>
+                            <span class="sep">›</span>
+                        {% else %}
+                            <span class="current">{{ breadcrumb.text }}</span>
+                        {% endif %}
+                    {% endfor %}
+                </nav>
+                <h1 class="orders-title">
+                    <span class="orders-title-icon">📦</span>
+                    Meus Pedidos
+                </h1>
+                <p class="orders-subtitle">Acompanhe o status e histórico das suas compras</p>
+            </div>
+        </div>
+
+        {# ── Main content ── #}
+        <div class="orders-wrapper">
+
+            {% if orders %}
+                {# ── Stats Bar ── #}
+                <div class="orders-stats">
+                    <div class="stat-chip">
+                        <span class="stat-chip-value">{{ orders|length }}</span>
+                        <span class="stat-chip-label">pedido{{ orders|length != 1 ? 's' : '' }}</span>
+                    </div>
+                </div>
+
+                {# ── Orders Table ── #}
+                <div class="orders-card">
+                    <div class="orders-table-wrap">
+                        <table class="orders-table" id="orders-table">
+                            <thead>
+                                <tr>
+                                    <th class="col-id">{{ column_order_id }}</th>
+                                    <th class="col-items">{{ column_product_total }}</th>
+                                    <th class="col-status">{{ column_status }}</th>
+                                    <th class="col-total">{{ column_total }}</th>
+                                    <th class="col-date">{{ column_date_added }}</th>
+                                    <th class="col-action"></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for order in orders %}
+                                    <tr class="order-row" data-order="{{ order.order_id }}">
+                                        <td class="col-id">
+                                            <span class="order-num">#{{ order.order_id }}</span>
+                                        </td>
+                                        <td class="col-items">
+                                            <span class="items-badge">{{ order.product_total }} {{ order.product_total == 1 ? 'item' : 'itens' }}</span>
+                                        </td>
+                                        <td class="col-status">
+                                            <span class="status-pill status-{{ order.status|lower|replace({' ': '-'}) }}">
+                                                {{ order.status ?: 'Em processamento' }}
+                                            </span>
+                                        </td>
+                                        <td class="col-total">
+                                            <strong class="order-total-value">{{ order.total }}</strong>
+                                        </td>
+                                        <td class="col-date">
+                                            <span class="date-text">{{ order.date_added }}</span>
+                                        </td>
+                                        <td class="col-action">
+                                            <a href="{{ order.view }}" class="btn-view" title="{{ button_view }}">
+                                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                                    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+                                                    <circle cx="12" cy="12" r="3"/>
+                                                </svg>
+                                                <span>{{ button_view }}</span>
+                                            </a>
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+
+                    {% if pagination %}
+                        <div class="orders-pagination">
+                            <div class="pagination-info">{{ results }}</div>
+                            <div class="pagination-nav">{{ pagination|raw }}</div>
+                        </div>
                     {% endif %}
-                {% endfor %}
-            </nav>
-            <h1 class="orders-title">
-                <span class="orders-title-icon">📦</span>
-                Meus Pedidos
-            </h1>
-            <p class="orders-subtitle">Acompanhe o status e histórico das suas compras</p>
-        </div>
-    </div>
-
-    {# ── Main content ── #}
-    <div class="orders-wrapper">
-
-        {% if orders %}
-            {# ── Stats Bar ── #}
-            <div class="orders-stats">
-                <div class="stat-chip">
-                    <span class="stat-chip-value">{{ orders|length }}</span>
-                    <span class="stat-chip-label">pedido{{ orders|length != 1 ? 's' : '' }}</span>
-                </div>
-            </div>
-
-            {# ── Orders Table ── #}
-            <div class="orders-card">
-                <div class="orders-table-wrap">
-                    <table class="orders-table" id="orders-table">
-                        <thead>
-                            <tr>
-                                <th class="col-id">{{ column_order_id }}</th>
-                                <th class="col-items">{{ column_product_total }}</th>
-                                <th class="col-status">{{ column_status }}</th>
-                                <th class="col-total">{{ column_total }}</th>
-                                <th class="col-date">{{ column_date_added }}</th>
-                                <th class="col-action"></th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {% for order in orders %}
-                            <tr class="order-row" data-order="{{ order.order_id }}">
-                                <td class="col-id">
-                                    <span class="order-num">#{{ order.order_id }}</span>
-                                </td>
-                                <td class="col-items">
-                                    <span class="items-badge">{{ order.product_total }} {{ order.product_total == 1 ? 'item' : 'itens' }}</span>
-                                </td>
-                                <td class="col-status">
-                                    <span class="status-pill status-{{ order.status|lower|replace({' ': '-'}) }}">
-                                        {{ order.status ?: 'Em processamento' }}
-                                    </span>
-                                </td>
-                                <td class="col-total">
-                                    <strong class="order-total-value">{{ order.total }}</strong>
-                                </td>
-                                <td class="col-date">
-                                    <span class="date-text">{{ order.date_added }}</span>
-                                </td>
-                                <td class="col-action">
-                                    <a href="{{ order.view }}" class="btn-view" title="{{ button_view }}">
-                                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                            <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
-                                            <circle cx="12" cy="12" r="3"/>
-                                        </svg>
-                                        <span>{{ button_view }}</span>
-                                    </a>
-                                </td>
-                            </tr>
-                            {% endfor %}
-                        </tbody>
-                    </table>
                 </div>
 
-                {% if pagination %}
-                <div class="orders-pagination">
-                    <div class="pagination-info">{{ results }}</div>
-                    <div class="pagination-nav">{{ pagination|raw }}</div>
+            {% else %}
+                {# ── Empty State ── #}
+                <div class="orders-empty">
+                    <div class="empty-icon">🛍️</div>
+                    <h2 class="empty-title">Nenhum pedido encontrado</h2>
+                    <p class="empty-desc">{{ text_no_results }}</p>
+                    <a href="{{ continue }}" class="btn-shop">Explorar produtos</a>
                 </div>
-                {% endif %}
+            {% endif %}
+
+            {# ── Footer Actions ── #}
+            <div class="orders-footer">
+                <a href="{{ continue }}" class="btn-back">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <polyline points="15 18 9 12 15 6"/>
+                    </svg>
+                    {{ button_continue }}
+                </a>
             </div>
 
-        {% else %}
-            {# ── Empty State ── #}
-            <div class="orders-empty">
-                <div class="empty-icon">🛍️</div>
-                <h2 class="empty-title">Nenhum pedido encontrado</h2>
-                <p class="empty-desc">{{ text_no_results }}</p>
-                <a href="{{ continue }}" class="btn-shop">Explorar produtos</a>
-            </div>
-        {% endif %}
-
-        {# ── Footer Actions ── #}
-        <div class="orders-footer">
-            <a href="{{ continue }}" class="btn-back">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <polyline points="15 18 9 12 15 6"/>
-                </svg>
-                {{ button_continue }}
-            </a>
-        </div>
-
-    </div>{# /.orders-wrapper #}
-</div>{# /#account-orders-page #}
+        </div>{# /.orders-wrapper #}
+    </div>{# /#account-orders-page #}
 
 
 {% endblock %}

@@ -1,125 +1,129 @@
 {% extends 'layouts/base.html.twig' %}
 
-{% block title %}{{ Returns.heading_title }} | AgSonhos{% endblock %}
+{% block title %}{{ Returns.heading_title }} | meusite{% endblock %}
 
 {% block stylesheets %}
-	<link rel="stylesheet" href="/css/custom/returns-institutional.css">
+    <link rel="stylesheet" href="/css/custom/returns-institutional.css">
 {% endblock %}
 
 {% block content %}
-<div id="account-returns-page">
+    <div id="account-returns-page">
 
-    {# ── Breadcrumb ── #}
-    <div class="returns-hero">
-        <div class="returns-hero-inner">
-            <nav class="returns-breadcrumb" aria-label="Navegação">
-                {% for breadcrumb in breadcrumbs %}
-                    {% if not loop.last %}
-                        <a href="{{ breadcrumb.href }}">{{ breadcrumb.text }}</a>
-                        <span class="sep">›</span>
-                    {% else %}
-                        <span class="current">{{ breadcrumb.text }}</span>
-                    {% endif %}
-                {% endfor %}
-            </nav>
-            <h1 class="returns-title">
-                <span class="returns-title-icon">🔄</span>
-                {{ Returns.heading_title }}
-            </h1>
-            <p class="returns-subtitle">{{ Returns.text_subtitle }}</p>
-        </div>
-    </div>
-
-    {# ── Main content ── #}
-    <div class="returns-wrapper">
-
-        {% if returns %}
-            {# ── Stats Bar ── #}
-            <div class="returns-stats">
-                <div class="stat-chip">
-                    <span class="stat-chip-value">{{ returns|length }}</span>
-                    <span class="stat-chip-label">{{ returns|length != 1 ? Returns.text_request_plural : Returns.text_request_singular }}</span>
-                </div>
+        {# ── Breadcrumb ── #}
+        <div class="returns-hero">
+            <div class="returns-hero-inner">
+                <nav class="returns-breadcrumb" aria-label="Navegação">
+                    {% for breadcrumb in breadcrumbs %}
+                        {% if not loop.last %}
+                            <a href="{{ breadcrumb.href }}">{{ breadcrumb.text }}</a>
+                            <span class="sep">›</span>
+                        {% else %}
+                            <span class="current">{{ breadcrumb.text }}</span>
+                        {% endif %}
+                    {% endfor %}
+                </nav>
+                <h1 class="returns-title">
+                    <span class="returns-title-icon">🔄</span>
+                    {{ Returns.heading_title }}
+                </h1>
+                <p class="returns-subtitle">{{ Returns.text_subtitle }}</p>
             </div>
-
-            {# ── Returns Table ── #}
-            <div class="returns-card">
-                <div class="returns-table-wrap">
-                    <table class="returns-table" id="returns-table">
-                        <thead>
-                            <tr>
-                                <th class="col-id">{{ Returns.column_return_id }}</th>
-                                <th class="col-order">{{ Returns.column_order_id }}</th>
-                                <th class="col-status">{{ Returns.column_status }}</th>
-                                <th class="col-date">{{ Returns.column_date_added }}</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {% for ret in returns %}
-                            <tr class="return-row" data-return="{{ ret.return_id }}">
-                                <td class="col-id">
-                                    <span class="return-num">#{{ ret.return_id }}</span>
-                                </td>
-                                <td class="col-order">
-                                    <span class="order-num">#{{ ret.order_id }}</span>
-                                </td>
-                                <td class="col-status">
-                                    <span class="status-pill status-{{ ret.status|lower|replace({' ': '-'}) }}">
-                                        {{ ret.status ?: Returns.text_pending }}
-                                    </span>
-                                </td>
-                                <td class="col-date">
-                                    <span class="date-text">{{ ret.date_added }}</span>
-                                </td>
-                            </tr>
-                            {% endfor %}
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-
-        {% else %}
-            {# ── Empty State ── #}
-            <div class="returns-empty">
-                <div class="empty-icon">🔄</div>
-                <h2 class="empty-title">{{ Returns.text_empty_title }}</h2>
-                <p class="empty-desc">{{ Returns.text_no_results }}</p>
-                <a href="{{ continue }}" class="btn-shop">{{ Returns.button_account }}</a>
-            </div>
-        {% endif %}
-
-        {# ── Footer Actions ── #}
-        <div class="returns-footer">
-            <a href="{{ continue }}" class="btn-back">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <polyline points="15 18 9 12 15 6"/>
-                </svg>
-                {{ Returns.button_continue }}
-            </a>
         </div>
 
-    </div>{# /.returns-wrapper #}
-</div>{# /#account-returns-page #}
+        {# ── Main content ── #}
+        <div class="returns-wrapper">
+
+            {% if returns %}
+                {# ── Stats Bar ── #}
+                <div class="returns-stats">
+                    <div class="stat-chip">
+                        <span class="stat-chip-value">{{ returns|length }}</span>
+                        <span class="stat-chip-label">{{ returns|length != 1 ? Returns.text_request_plural : Returns.text_request_singular }}</span>
+                    </div>
+                </div>
+
+                {# ── Returns Table ── #}
+                <div class="returns-card">
+                    <div class="returns-table-wrap">
+                        <table class="returns-table" id="returns-table">
+                            <thead>
+                                <tr>
+                                    <th class="col-id">{{ Returns.column_return_id }}</th>
+                                    <th class="col-order">{{ Returns.column_order_id }}</th>
+                                    <th class="col-status">{{ Returns.column_status }}</th>
+                                    <th class="col-date">{{ Returns.column_date_added }}</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for ret in returns %}
+                                    <tr class="return-row" data-return="{{ ret.return_id }}">
+                                        <td class="col-id">
+                                            <span class="return-num">#{{ ret.return_id }}</span>
+                                        </td>
+                                        <td class="col-order">
+                                            <span class="order-num">#{{ ret.order_id }}</span>
+                                        </td>
+                                        <td class="col-status">
+                                            <span class="status-pill status-{{ ret.status|lower|replace({' ': '-'}) }}">
+                                                {{ ret.status ?: Returns.text_pending }}
+                                            </span>
+                                        </td>
+                                        <td class="col-date">
+                                            <span class="date-text">{{ ret.date_added }}</span>
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+            {% else %}
+                {# ── Empty State ── #}
+                <div class="returns-empty">
+                    <div class="empty-icon">🔄</div>
+                    <h2 class="empty-title">{{ Returns.text_empty_title }}</h2>
+                    <p class="empty-desc">{{ Returns.text_no_results }}</p>
+                    <a href="{{ continue }}" class="btn-shop">{{ Returns.button_account }}</a>
+                </div>
+            {% endif %}
+
+            {# ── Footer Actions ── #}
+            <div class="returns-footer">
+                <a href="{{ continue }}" class="btn-back">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <polyline points="15 18 9 12 15 6"/>
+                    </svg>
+                    {{ Returns.button_continue }}
+                </a>
+            </div>
+
+        </div>{# /.returns-wrapper #}
+    </div>{# /#account-returns-page #}
 
 
 
-<script>
-document.addEventListener('DOMContentLoaded', () => {
-    const table = document.getElementById('returns-table');
-    if (table) {
-        table.addEventListener('click', (e) => {
-            const row = e.target.closest('.return-row');
-            if (row) {
-                const id = row.getAttribute('data-return');
-                if (id) {
-                    // Pega o idioma da URL de forma segura
-                    const pathParts = window.location.pathname.split('/');
-                    const lang = (pathParts[1] && ['pt-br', 'en', 'es'].includes(pathParts[1])) ? pathParts[1] : 'pt-br';
-                    window.location.href = `/${lang}/account/return/${id}`;
-                }
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            const table = document.getElementById("returns-table");
+            if (table) {
+                table.addEventListener("click", (e) => {
+                    const row = e.target.closest(".return-row");
+                    if (row) {
+                        const id = row.getAttribute("data-return");
+                        if (id) {
+                            // Pega o idioma da URL de forma segura
+                            const pathParts = window.location.pathname.split("/");
+                            const lang =
+                                pathParts[1] &&
+                                ["pt-br", "en", "es"].includes(pathParts[1])
+                                    ? pathParts[1]
+                                    : "pt-br";
+                            window.location.href = `/${lang}/account/return/${id}`;
+                        }
+                    }
+                });
             }
         });
-    }
-});
-</script>
+    </script>
 {% endblock %}

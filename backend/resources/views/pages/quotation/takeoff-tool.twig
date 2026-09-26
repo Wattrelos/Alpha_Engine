@@ -1,166 +1,166 @@
 {% extends 'layouts/base.html.twig' %}
 
-{% block title %}Ferramenta de Levantamento de Materiais (Takeoff Tool / BoQ) | AgSonhos{% endblock %}
+{% block title %}Ferramenta de Levantamento de Materiais (Takeoff Tool / BoQ) | meusite{% endblock %}
 
 {% block stylesheets %}
     <link rel="stylesheet" href="/css/custom/quotation.css">
 {% endblock %}
 
 {% block content %}
-<div class="rfq-container">
-    <div class="rfq-hero">
-        <nav class="rfq-breadcrumb">
-            {% for breadcrumb in breadcrumbs %}
-                {% if not loop.last %}
-                    <a href="{{ breadcrumb.href }}">{{ breadcrumb.text }}</a>
-                    <span>›</span>
-                {% else %}
-                    <span>{{ breadcrumb.text }}</span>
-                {% endif %}
-            {% endfor %}
-        </nav>
-        <h1 class="rfq-hero-title">
-            <span>📐</span> Ferramenta de Levantamento de Materiais (Takeoff Tool)
-        </h1>
-        <p class="rfq-hero-desc">Projeto: <strong>{{ rfq.title }}</strong> - Selecione produtos do catálogo, insira insumos manualmente ou importe uma planilha em lote para compor o BoQ.</p>
-    </div>
-
-    <!-- 1. Importação de Planilha em Lote -->
-    <div class="rfq-card" style="background:#f8fafc; border:2px dashed #cbd5e1;">
-        <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:1rem;">
-            <div>
-                <h3 style="font-size:1.15rem; color:#1e293b; margin-bottom:0.25rem; display:flex; align-items:center; gap:0.5rem;">
-                    <span>📊</span> Importação em Lote via Planilha (CSV / TSV)
-                </h3>
-                <p style="color:#64748b; font-size:0.875rem; margin:0;">
-                    Envie uma planilha com as colunas: <code>Nome do Item, Unidade, Quantidade, Preço Unitário, SKU (opcional), Observações</code>.
-                </p>
-            </div>
-            <div style="display:flex; align-items:center; gap:0.75rem;">
-                <input type="file" id="spreadsheet-file-input" accept=".csv,.tsv,.txt" style="display:none;">
-                <button type="button" class="rfq-btn rfq-btn-secondary" onclick="document.getElementById('spreadsheet-file-input').click();">
-                    <span>📁</span> Selecionar Arquivo
-                </button>
-                <button type="button" id="btn-upload-spreadsheet" class="rfq-btn rfq-btn-primary">
-                    <span>⬆️</span> Processar Planilha
-                </button>
-            </div>
-        </div>
-        <div id="import-status-message" style="display:none; margin-top:1rem; padding:0.75rem 1rem; border-radius:8px;"></div>
-    </div>
-
-    <!-- 2. Adicionar Item Manual ao BoQ -->
-    <div class="rfq-card">
-        <h2 style="font-size:1.25rem; margin-bottom:1.25rem; color:#1e293b;">Adicionar Material / Insumo à Lista</h2>
-        <div class="rfq-form-grid">
-            <div class="rfq-form-group full-width sku-search-wrapper">
-                <label class="rfq-label" for="sku-search-input">Buscar Produto no Catálogo da Loja (Autocomplete)</label>
-                <input type="text" id="sku-search-input" class="rfq-input" placeholder="Digite o nome ou SKU do produto (ex: Cimento, Argamassa, Piso)..." autocomplete="off">
-                <div id="sku-results-dropdown" class="sku-results-dropdown"></div>
-                <input type="hidden" id="selected-product-id" value="">
-            </div>
-
-            <div class="rfq-form-group">
-                <label class="rfq-label" for="item-name-input">Nome / Descrição do Item *</label>
-                <input type="text" id="item-name-input" class="rfq-input" placeholder="Ex: Argamassa AC-III 20kg" required>
-            </div>
-
-            <div class="rfq-form-group">
-                <label class="rfq-label" for="unit-select">Unidade de Medida</label>
-                <select id="unit-select" class="rfq-select">
-                    <option value="un">Unidade (un)</option>
-                    <option value="cx">Caixa (cx)</option>
-                    <option value="m²">Metro Quadrado (m²)</option>
-                    <option value="m">Metro Linear (m)</option>
-                    <option value="saco">Saco</option>
-                    <option value="kg">Quilograma (kg)</option>
-                    <option value="L">Litro (L)</option>
-                </select>
-            </div>
-
-            <div class="rfq-form-group">
-                <label class="rfq-label" for="quantity-input">Quantidade *</label>
-                <input type="number" step="0.01" id="quantity-input" class="rfq-input" value="1" min="0.01" required>
-            </div>
-
-            <div class="rfq-form-group">
-                <label class="rfq-label" for="unit-price-input">Preço Unitário Estimado (R$)</label>
-                <input type="number" step="0.01" id="unit-price-input" class="rfq-input" placeholder="0.00" value="0.00">
-            </div>
-
-            <div class="rfq-form-group full-width">
-                <label class="rfq-label" for="item-notes-input">Observações / Aplicação do Material</label>
-                <input type="text" id="item-notes-input" class="rfq-input" placeholder="Ex: Para assentamento dos pisos do box">
-            </div>
-        </div>
-
-        <div style="display:flex; justify-content:flex-end;">
-            <button type="button" id="btn-add-takeoff-item" class="rfq-btn rfq-btn-primary">
-                <span>➕</span> Inserir no Levantamento (BoQ)
-            </button>
-        </div>
-    </div>
-
-    <!-- 3. Tabela do BoQ -->
-    <div class="rfq-card">
-        <h2 style="font-size:1.25rem; margin-bottom:1rem; color:#1e293b;">Lista Consolidada de Materiais da Obra</h2>
-
-        <div class="takeoff-table-container">
-            <table class="takeoff-table">
-                <thead>
-                    <tr>
-                        <th>Material</th>
-                        <th>Unidade</th>
-                        <th>Quantidade</th>
-                        <th>Preço Unit.</th>
-                        <th>Total</th>
-                        <th>Notas</th>
-                        <th>Ações</th>
-                    </tr>
-                </thead>
-                <tbody id="takeoff-table-body">
-                    {% if boq.items is empty %}
-                        <tr>
-                            <td colspan="7" style="text-align:center; padding:2rem; color:#64748b;">Nenhum material adicionado ainda. Use o formulário ou importe uma planilha acima para compor a lista.</td>
-                        </tr>
+    <div class="rfq-container">
+        <div class="rfq-hero">
+            <nav class="rfq-breadcrumb">
+                {% for breadcrumb in breadcrumbs %}
+                    {% if not loop.last %}
+                        <a href="{{ breadcrumb.href }}">{{ breadcrumb.text }}</a>
+                        <span>›</span>
                     {% else %}
-                        {% for item in boq.items %}
-                            <tr>
-                                <td>
-                                    <strong>{{ item.name }}</strong>
-                                    {% if item.product_id %}
-                                        <span style="font-size:0.75rem; background:#dbeafe; color:#1e40af; padding:2px 6px; border-radius:4px; margin-left:4px;">Catálogo</span>
-                                    {% endif %}
-                                </td>
-                                <td>{{ item.unit }}</td>
-                                <td>{{ item.quantity }}</td>
-                                <td>R$ {{ item.unit_price|number_format(2, ',', '.') }}</td>
-                                <td><strong>R$ {{ item.total_price|number_format(2, ',', '.') }}</strong></td>
-                                <td><small style="color:#64748b;">{{ item.notes|default('-') }}</small></td>
-                                <td>
-                                    <button type="button" class="btn-remove-takeoff-item" data-item-id="{{ item.id }}" style="background:none; border:none; color:#ef4444; cursor:pointer; font-weight:bold; font-size:1.1rem;" title="Remover item">
-                                        🗑️
-                                    </button>
-                                </td>
-                            </tr>
-                        {% endfor %}
+                        <span>{{ breadcrumb.text }}</span>
                     {% endif %}
-                </tbody>
-            </table>
+                {% endfor %}
+            </nav>
+            <h1 class="rfq-hero-title">
+                <span>📐</span> Ferramenta de Levantamento de Materiais (Takeoff Tool)
+            </h1>
+            <p class="rfq-hero-desc">Projeto: <strong>{{ rfq.title }}</strong> - Selecione produtos do catálogo, insira insumos manualmente ou importe uma planilha em lote para compor o BoQ.</p>
         </div>
 
-        <div class="takeoff-summary-box">
-            <div>
-                <span style="font-size:0.9rem; color:#94a3b8; display:block;">Total Estimado da Lista de Materiais:</span>
-                <span id="takeoff-total-display" class="takeoff-total-amount">R$ {{ boq.total|number_format(2, ',', '.') }}</span>
+        <!-- 1. Importação de Planilha em Lote -->
+        <div class="rfq-card" style="background:#f8fafc; border:2px dashed #cbd5e1;">
+            <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:1rem;">
+                <div>
+                    <h3 style="font-size:1.15rem; color:#1e293b; margin-bottom:0.25rem; display:flex; align-items:center; gap:0.5rem;">
+                        <span>📊</span> Importação em Lote via Planilha (CSV / TSV)
+                    </h3>
+                    <p style="color:#64748b; font-size:0.875rem; margin:0;">
+                        Envie uma planilha com as colunas: <code>Nome do Item, Unidade, Quantidade, Preço Unitário, SKU (opcional), Observações</code>.
+                    </p>
+                </div>
+                <div style="display:flex; align-items:center; gap:0.75rem;">
+                    <input type="file" id="spreadsheet-file-input" accept=".csv,.tsv,.txt" style="display:none;">
+                    <button type="button" class="rfq-btn rfq-btn-secondary" onclick="document.getElementById('spreadsheet-file-input').click();">
+                        <span>📁</span> Selecionar Arquivo
+                    </button>
+                    <button type="button" id="btn-upload-spreadsheet" class="rfq-btn rfq-btn-primary">
+                        <span>⬆️</span> Processar Planilha
+                    </button>
+                </div>
+            </div>
+            <div id="import-status-message" style="display:none; margin-top:1rem; padding:0.75rem 1rem; border-radius:8px;"></div>
+        </div>
+
+        <!-- 2. Adicionar Item Manual ao BoQ -->
+        <div class="rfq-card">
+            <h2 style="font-size:1.25rem; margin-bottom:1.25rem; color:#1e293b;">Adicionar Material / Insumo à Lista</h2>
+            <div class="rfq-form-grid">
+                <div class="rfq-form-group full-width sku-search-wrapper">
+                    <label class="rfq-label" for="sku-search-input">Buscar Produto no Catálogo da Loja (Autocomplete)</label>
+                    <input type="text" id="sku-search-input" class="rfq-input" placeholder="Digite o nome ou SKU do produto (ex: Cimento, Argamassa, Piso)..." autocomplete="off">
+                    <div id="sku-results-dropdown" class="sku-results-dropdown"></div>
+                    <input type="hidden" id="selected-product-id" value="">
+                </div>
+
+                <div class="rfq-form-group">
+                    <label class="rfq-label" for="item-name-input">Nome / Descrição do Item *</label>
+                    <input type="text" id="item-name-input" class="rfq-input" placeholder="Ex: Argamassa AC-III 20kg" required>
+                </div>
+
+                <div class="rfq-form-group">
+                    <label class="rfq-label" for="unit-select">Unidade de Medida</label>
+                    <select id="unit-select" class="rfq-select">
+                        <option value="un">Unidade (un)</option>
+                        <option value="cx">Caixa (cx)</option>
+                        <option value="m²">Metro Quadrado (m²)</option>
+                        <option value="m">Metro Linear (m)</option>
+                        <option value="saco">Saco</option>
+                        <option value="kg">Quilograma (kg)</option>
+                        <option value="L">Litro (L)</option>
+                    </select>
+                </div>
+
+                <div class="rfq-form-group">
+                    <label class="rfq-label" for="quantity-input">Quantidade *</label>
+                    <input type="number" step="0.01" id="quantity-input" class="rfq-input" value="1" min="0.01" required>
+                </div>
+
+                <div class="rfq-form-group">
+                    <label class="rfq-label" for="unit-price-input">Preço Unitário Estimado (R$)</label>
+                    <input type="number" step="0.01" id="unit-price-input" class="rfq-input" placeholder="0.00" value="0.00">
+                </div>
+
+                <div class="rfq-form-group full-width">
+                    <label class="rfq-label" for="item-notes-input">Observações / Aplicação do Material</label>
+                    <input type="text" id="item-notes-input" class="rfq-input" placeholder="Ex: Para assentamento dos pisos do box">
+                </div>
             </div>
 
-            <button type="button" id="btn-finalize-boq" class="rfq-btn rfq-btn-success" style="font-size:1.05rem; padding:0.85rem 1.75rem;">
-                <span>✓</span> Finalizar e Enviar BoQ para o Cliente
-            </button>
+            <div style="display:flex; justify-content:flex-end;">
+                <button type="button" id="btn-add-takeoff-item" class="rfq-btn rfq-btn-primary">
+                    <span>➕</span> Inserir no Levantamento (BoQ)
+                </button>
+            </div>
+        </div>
+
+        <!-- 3. Tabela do BoQ -->
+        <div class="rfq-card">
+            <h2 style="font-size:1.25rem; margin-bottom:1rem; color:#1e293b;">Lista Consolidada de Materiais da Obra</h2>
+
+            <div class="takeoff-table-container">
+                <table class="takeoff-table">
+                    <thead>
+                        <tr>
+                            <th>Material</th>
+                            <th>Unidade</th>
+                            <th>Quantidade</th>
+                            <th>Preço Unit.</th>
+                            <th>Total</th>
+                            <th>Notas</th>
+                            <th>Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody id="takeoff-table-body">
+                        {% if boq.items is empty %}
+                            <tr>
+                                <td colspan="7" style="text-align:center; padding:2rem; color:#64748b;">Nenhum material adicionado ainda. Use o formulário ou importe uma planilha acima para compor a lista.</td>
+                            </tr>
+                        {% else %}
+                            {% for item in boq.items %}
+                                <tr>
+                                    <td>
+                                        <strong>{{ item.name }}</strong>
+                                        {% if item.product_id %}
+                                            <span style="font-size:0.75rem; background:#dbeafe; color:#1e40af; padding:2px 6px; border-radius:4px; margin-left:4px;">Catálogo</span>
+                                        {% endif %}
+                                    </td>
+                                    <td>{{ item.unit }}</td>
+                                    <td>{{ item.quantity }}</td>
+                                    <td>R$ {{ item.unit_price|number_format(2, ',', '.') }}</td>
+                                    <td><strong>R$ {{ item.total_price|number_format(2, ',', '.') }}</strong></td>
+                                    <td><small style="color:#64748b;">{{ item.notes|default('-') }}</small></td>
+                                    <td>
+                                        <button type="button" class="btn-remove-takeoff-item" data-item-id="{{ item.id }}" style="background:none; border:none; color:#ef4444; cursor:pointer; font-weight:bold; font-size:1.1rem;" title="Remover item">
+                                            🗑️
+                                        </button>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        {% endif %}
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="takeoff-summary-box">
+                <div>
+                    <span style="font-size:0.9rem; color:#94a3b8; display:block;">Total Estimado da Lista de Materiais:</span>
+                    <span id="takeoff-total-display" class="takeoff-total-amount">R$ {{ boq.total|number_format(2, ',', '.') }}</span>
+                </div>
+
+                <button type="button" id="btn-finalize-boq" class="rfq-btn rfq-btn-success" style="font-size:1.05rem; padding:0.85rem 1.75rem;">
+                    <span>✓</span> Finalizar e Enviar BoQ para o Cliente
+                </button>
+            </div>
         </div>
     </div>
-</div>
 {% endblock %}
 
 {% block scripts %}

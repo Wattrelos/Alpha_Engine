@@ -175,7 +175,7 @@ class ShowCategoryAction implements ActionInterface
 
         // SEO tags
         $seoData = [
-            'title'       => ($data['meta_title'] ?? $data['name']) . ' | AgSonhos',
+            'title'       => ($data['meta_title'] ?? $data['name']) . ' | meusite',
             'description' => $data['meta_description'] ?? 'Confira nossa categoria de produtos.',
             'keywords'    => $data['meta_keyword'] ?? '',
             'image'       => $data['thumb'] ?? '',
@@ -270,7 +270,7 @@ class ShowCategoryAction implements ActionInterface
     private function render404(Response $response): Response
     {
         $html404 = $this->twig->render('pages/errors/404.html.twig', [
-            'title'       => 'Categoria Não Encontrada | AgSonhos',
+            'title'       => 'Categoria Não Encontrada | meusite',
             'description' => 'A categoria solicitada não foi encontrada.',
         ]);
         $response->getBody()->write($html404);

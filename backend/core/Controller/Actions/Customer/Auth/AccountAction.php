@@ -62,7 +62,7 @@ class AccountAction implements ActionInterface
         $data = array_merge([
             'direction' => 'ltr',
             'lang' => $language ? $language->getCode() : 'pt-br',
-            'title' => ($translationData['headingTitle'] ?? 'Minha Conta') . ' | AgSonhos',
+            'title' => ($translationData['headingTitle'] ?? 'Minha Conta') . ' | meusite',
             'description' => 'Gerencie sua conta e compras.',
             'breadcrumbs' => $breadcrumbs,
 

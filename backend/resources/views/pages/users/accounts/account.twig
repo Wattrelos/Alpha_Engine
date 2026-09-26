@@ -1,12 +1,13 @@
 {% extends 'layouts/base.html.twig' %}
 
 {% block title %}
-	{{ title|default('Minha Conta | AgSonhos') }}
+	{{ title|default('Minha Conta | meusite') }}
 {% endblock %}
 
 {% block content %}
 	<div
-		id="account-page">
+		id="account-page"
+	>
 
 		{# ── Hero ── #}
 		<div class="account-hero">
@@ -38,7 +39,8 @@
 
 		{# ── Dashboard Grid ── #}
 		<div
-			class="account-wrapper">
+			class="account-wrapper"
+		>
 
 			{# Exibição de alertas de sucesso/erro vindos da sessão #}
 			{% if success %}
@@ -294,49 +296,61 @@
 	{# /#account-page #}
 
 	<script>
-		document.addEventListener('DOMContentLoaded', function () {
-const toggle = document.getElementById('newsletter-toggle');
-if (!toggle) 
-return;
+		document.addEventListener("DOMContentLoaded", function () {
+			const toggle = document.getElementById("newsletter-toggle");
+			if (!toggle) return;
 
-const hint = document.getElementById('newsletter-hint');
-const form = toggle.closest('form');
+			const hint = document.getElementById("newsletter-hint");
+			const form = toggle.closest("form");
 
-toggle.addEventListener('change', function () {
-const isChecked = this.checked;
-const formData = new FormData(form);
-if (!formData.has('newsletter')) {
-	formData.append('newsletter', isChecked ? '1' : '0');
-}
-const metaNameKey = document.querySelector('meta[name="csrf-key-name"]')?.content || 'csrf_name';
-const metaValueKey = document.querySelector('meta[name="csrf-key-value"]')?.content || 'csrf_value';
-const metaName = document.querySelector('meta[name="csrf-name"]')?.content;
-const metaValue = document.querySelector('meta[name="csrf-value"]')?.content;
-if (metaName && metaValue && !formData.has(metaNameKey)) {
-	formData.append(metaNameKey, metaName);
-	formData.append(metaValueKey, metaValue);
-}
+			toggle.addEventListener("change", function () {
+				const isChecked = this.checked;
+				const formData = new FormData(form);
+				if (!formData.has("newsletter")) {
+					formData.append("newsletter", isChecked ? "1" : "0");
+				}
+				const metaNameKey =
+					document.querySelector('meta[name="csrf-key-name"]')?.content ||
+					"csrf_name";
+				const metaValueKey =
+					document.querySelector('meta[name="csrf-key-value"]')?.content ||
+					"csrf_value";
+				const metaName = document.querySelector(
+					'meta[name="csrf-name"]',
+				)?.content;
+				const metaValue = document.querySelector(
+					'meta[name="csrf-value"]',
+				)?.content;
+				if (metaName && metaValue && !formData.has(metaNameKey)) {
+					formData.append(metaNameKey, metaName);
+					formData.append(metaValueKey, metaValue);
+				}
 
-const originalHint = hint.textContent;
-hint.textContent = isChecked ? 'Você recebe nossas ofertas e novidades' : 'Receba ofertas e novidades por e-mail';
+				const originalHint = hint.textContent;
+				hint.textContent = isChecked
+					? "Você recebe nossas ofertas e novidades"
+					: "Receba ofertas e novidades por e-mail";
 
-fetch(form.action, {
-method: 'POST',
-body: formData,
-headers: {
-'X-Requested-With': 'XMLHttpRequest'
-}
-}).then(response => response.json()).then(data => {
-if (!data.success) {
-throw new Error(data.error || 'Falha ao atualizar status.');
-}
-}).catch(error => {
-console.error('Error:', error);
-toggle.checked = !isChecked;
-hint.textContent = originalHint;
-alert('Ocorreu um erro de comunicação. Tente novamente.');
-});
-});
+				fetch(form.action, {
+					method: "POST",
+					body: formData,
+					headers: {
+						"X-Requested-With": "XMLHttpRequest",
+					},
+				})
+					.then((response) => response.json())
+					.then((data) => {
+						if (!data.success) {
+							throw new Error(data.error || "Falha ao atualizar status.");
+						}
+					})
+					.catch((error) => {
+						console.error("Error:", error);
+						toggle.checked = !isChecked;
+						hint.textContent = originalHint;
+						alert("Ocorreu um erro de comunicação. Tente novamente.");
+					});
+			});
 		});
 	</script>
 {% endblock %}

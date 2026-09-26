@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://agsonhos.com.br/schemas/OrderDataDTO.json",
+  "$id": "https://meusite.com.br/schemas/OrderDataDTO.json",
   "title": "OrderDataDTO",
   "description": "Especificação formal do DTO de dados de criação de pedido na Alpha Engine",
   "type": "object",

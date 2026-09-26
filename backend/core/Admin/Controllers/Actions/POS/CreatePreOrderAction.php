@@ -86,7 +86,7 @@ class CreatePreOrderAction extends BaseController implements ActionInterface
 
             $firstname = $customer ? $customer->getFirstname() : 'Cliente';
             $lastname  = $customer ? $customer->getLastname() : 'PDV';
-            $email     = $customer ? $customer->getEmail() : 'cliente.pdv@agsonhos.com';
+            $email     = $customer ? $customer->getEmail() : 'cliente.pdv@meusite.com';
             $telephone = $customer ? $customer->getTelephone() : '';
 
             /** @var ProductRepository $productRepo */
@@ -160,7 +160,7 @@ class CreatePreOrderAction extends BaseController implements ActionInterface
                 'shipping_method'       => 'Retirada no Balcão',
                 'total'                 => $total,
                 'order_status_id'       => 1, // Status 1 = Pendente
-                'store_name'            => 'AgSonhos PDV',
+                'store_name'            => 'meusite PDV',
                 'store_url'             => HTTP_SERVER,
                 'customer_group_id'     => $customer ? (int)$customer->getCustomerGroupId() : 1,
                 'language_id'           => $this->languageId,

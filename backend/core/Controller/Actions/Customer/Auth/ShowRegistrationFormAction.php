@@ -76,7 +76,7 @@ class ShowRegistrationFormAction implements ActionInterface
         $viewData = array_merge([
             'direction' => 'ltr',
             'lang' => $languageCodeStr,
-            'title' => 'Criar Conta | AgSonhos',
+            'title' => 'Criar Conta | meusite',
             'description' => 'Crie sua conta para gerenciar seus pedidos e compras.',
             'breadcrumbs' => $breadcrumbs,
             'register' => $routeParser->urlFor('register.submit', ['lang' => $lang]), // Rota POST para submissão do formulário

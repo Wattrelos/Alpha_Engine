@@ -1,71 +1,71 @@
 {% extends 'layouts/base.html.twig' %}
 
 {% block title %}
-	{{ title|default('Acessar Conta | AgSonhos') }}
+	{{ title|default('Acessar Conta | meusite') }}
 {% endblock %}
 
 {% block content %}
-<div id="account-login-page">
+	<div id="account-login-page">
 
-	{# ── Hero ── #}
-	<div class="login-hero">
-		<div class="login-hero-inner">
-			<nav class="login-breadcrumb" aria-label="Navegação">
-				{% for breadcrumb in breadcrumbs %}
-					{% if not loop.last %}
-						<a href="{{ breadcrumb.href }}">{{ breadcrumb.text }}</a>
-						<span class="sep">›</span>
-					{% else %}
-						<span class="current">{{ breadcrumb.text }}</span>
-					{% endif %}
-				{% endfor %}
-			</nav>
-			<h1 class="login-hero-title">
-				<span class="login-hero-icon">
-					<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-						<path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
-						<circle cx="12" cy="7" r="4"/>
-					</svg>
-				</span>
-				Minha Conta
-			</h1>
-			<p class="login-hero-sub">Identifique-se para gerenciar seus pedidos e dados</p>
+		{# ── Hero ── #}
+		<div class="login-hero">
+			<div class="login-hero-inner">
+				<nav class="login-breadcrumb" aria-label="Navegação">
+					{% for breadcrumb in breadcrumbs %}
+						{% if not loop.last %}
+							<a href="{{ breadcrumb.href }}">{{ breadcrumb.text }}</a>
+							<span class="sep">›</span>
+						{% else %}
+							<span class="current">{{ breadcrumb.text }}</span>
+						{% endif %}
+					{% endfor %}
+				</nav>
+				<h1 class="login-hero-title">
+					<span class="login-hero-icon">
+						<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+							<path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+							<circle cx="12" cy="7" r="4"/>
+						</svg>
+					</span>
+					Minha Conta
+				</h1>
+				<p class="login-hero-sub">Identifique-se para gerenciar seus pedidos e dados</p>
+			</div>
 		</div>
-	</div>
 
-	{# ── Conteúdo Principal ── #}
-	<div class="login-wrapper">
+		{# ── Conteúdo Principal ── #}
+		<div class="login-wrapper">
 
-		{# ── Alertas ── #}
-		{% if success %}
-			<div class="login-alert login-alert--success">
-				<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
-				{{ success }}
-			</div>
-		{% endif %}
+			{# ── Alertas ── #}
+			{% if success %}
+				<div class="login-alert login-alert--success">
+					<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+					{{ success }}
+				</div>
+			{% endif %}
 
-		{% if error_warning %}
-			<div class="login-alert login-alert--danger">
-				<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
-				{{ error_warning }}
-			</div>
-		{% endif %}
+			{% if error_warning %}
+				<div class="login-alert login-alert--danger">
+					<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+					{{ error_warning }}
+				</div>
+			{% endif %}
 
-		<div class="login-grid-container">
-			{# 4. Bloco de Novo Cliente #}
-			<div class="login-grid-col">
-				{% include 'components/molecules/card-register.twig' with { 
+			<div class="login-grid-container">
+				{# 4. Bloco de Novo Cliente #}
+				<div class="login-grid-col">
+					{% include 'components/molecules/card-register.twig' with { 
 					title: text_new_customer, 
 					subtitle: text_register,
 					description: text_register_account,
 					button_label: button_continue, 
 					url: register 
 				} %}
-			</div>
+				</div>
 
-			{# 5. Formulário de Login #}
-			<div class="login-grid-col">
-				{% include 'components/organisms/form-login.twig' with { 
+				{# 5. Formulário de Login #}
+				<div class="login-grid-col">
+					{% include 'components/organisms/form-login.twig' with { 
 					action: login,
 					title: text_returning_customer,
 					subtitle: text_i_am_returning_customer,
@@ -78,9 +78,9 @@
 					redirect: redirect,
 					button_login_text: button_login
 				} %}
+				</div>
 			</div>
-		</div>
 
+		</div>
 	</div>
-</div>
 {% endblock %}
