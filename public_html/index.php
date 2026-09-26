@@ -2,6 +2,7 @@
 
 use Slim\Factory\AppFactory;
 use Slim\Exception\HttpNotFoundException;
+use Slim\Exception\HttpMethodNotAllowedException;
 use Twig\Environment;
 use Slim\Views\Twig;
 use Slim\Views\TwigMiddleware;
@@ -273,6 +274,37 @@ $errorMiddleware->setErrorHandler(
         ]);
         $response->getBody()->write($html);
         return $response->withStatus(404);
+    }
+);
+$errorMiddleware->setErrorHandler(
+    HttpMethodNotAllowedException::class,
+    function ($request, $exception) use ($twigEnv) {
+        $response = new \Slim\Psr7\Response();
+        $allowedMethods = method_exists($exception, 'getAllowedMethods') ? $exception->getAllowedMethods() : ['GET', 'POST'];
+        $response = $response->withHeader('Allow', implode(', ', $allowedMethods));
+
+        $isXmlHttpRequest = strtolower($request->getHeaderLine('X-Requested-With')) === 'xmlhttprequest';
+        $acceptsJson = str_contains(strtolower($request->getHeaderLine('Accept')), 'application/json');
+
+        if ($isXmlHttpRequest || $acceptsJson) {
+            $response->getBody()->write((string)json_encode([
+                'error' => 'Método HTTP não permitido. Métodos suportados: ' . implode(', ', $allowedMethods)
+            ], JSON_UNESCAPED_UNICODE));
+            return $response->withHeader('Content-Type', 'application/json')->withStatus(405);
+        }
+
+        try {
+            $html = $twigEnv->render('pages/errors/405.html.twig', [
+                'title'          => 'Método Não Permitido | meusite',
+                'description'    => 'O método HTTP utilizado não é permitido para esta página.',
+                'allowedMethods' => $allowedMethods,
+            ]);
+        } catch (\Throwable $e) {
+            $html = '<!DOCTYPE html><html lang="pt-BR"><head><meta charset="UTF-8"><title>405 - Método Não Permitido</title></head><body><h1>405 - Método Não Permitido</h1><p>O método de requisição utilizado não é suportado para este endereço.</p><p><a href="/">Voltar para o início</a></p></body></html>';
+        }
+
+        $response->getBody()->write($html);
+        return $response->withStatus(405);
     }
 );
 

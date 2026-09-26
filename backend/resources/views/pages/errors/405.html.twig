@@ -1,0 +1,19 @@
+{% extends 'layouts/base.html.twig' %}
+
+{% block title %}Método Não Permitido | meusite{% endblock %}
+
+{% block content %}
+    <div class="error-card">
+        <div class="error-emoji">🚫</div>
+        <h1 class="error-title">Método Não Permitido</h1>
+        <p class="error-desc">
+            O método de requisição HTTP utilizado não é suportado para este endereço.
+            {% if allowedMethods %}
+                <br><small style="color: var(--text-muted, #64748b);">Métodos aceitos: {{ allowedMethods|join(', ') }}</small>
+            {% endif %}
+        </p>
+        <a href="/" class="btn-3d error-btn">
+            Voltar para a Página Inicial
+        </a>
+    </div>
+{% endblock %}

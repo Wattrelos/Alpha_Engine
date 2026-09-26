@@ -1,0 +1,107 @@
+{% extends 'layouts/base.html.twig' %}
+
+{% block title %}
+	{{ heading_title|default('Informativo') }} | meusite
+{% endblock %}
+
+{% block content %}
+	<div id="account-page">
+		{# ── Hero ── #}
+		<div class="account-hero">
+			<div class="account-hero-inner">
+				<nav class="account-breadcrumb" aria-label="Navegação">
+					{% for breadcrumb in breadcrumbs %}
+						{% if not loop.last %}
+							<a href="{{ breadcrumb.href }}">{{ breadcrumb.text }}</a>
+							<span class="sep">›</span>
+						{% else %}
+							<span class="current">{{ breadcrumb.text }}</span>
+						{% endif %}
+					{% endfor %}
+				</nav>
+				<div class="account-hero-content">
+					<div class="account-avatar">
+						<svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+							<path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
+							<polyline points="22,6 12,13 2,6"/>
+						</svg>
+					</div>
+					<div>
+						<h1 class="account-hero-title">{{ heading_title|default('Informativo') }}</h1>
+						<p class="account-hero-sub">{{ text_newsletter|default('Gerencie suas preferências de e-mail e ofertas exclusivas') }}</p>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		{# ── Wrapper ── #}
+		<div class="account-wrapper">
+			{% if success %}
+				<div class="egen-alert egen-alert--success account-slide-card">
+					<i class="fa-solid fa-circle-check"></i>
+					{{ success }}
+				</div>
+			{% endif %}
+			{% if error_warning %}
+				<div class="egen-alert egen-alert--danger account-slide-card">
+					<i class="fa-solid fa-circle-exclamation"></i>
+					{{ error_warning }}
+				</div>
+			{% endif %}
+
+			<div class="egen-account-card">
+				<form id="form-newsletter" action="{{ action }}" method="post" class="egen-form">
+					{% if csrf %}
+						<input type="hidden" name="{{ csrf.keys.name }}" value="{{ csrf.name }}">
+						<input type="hidden" name="{{ csrf.keys.value }}" value="{{ csrf.value }}">
+					{% endif %}
+
+					<fieldset class="egen-fieldset">
+						<legend class="egen-legend">{{ text_newsletter|default('Informativo') }}</legend>
+
+						<div class="egen-newsletter-container" style="padding: 0.5rem 0;">
+							<label class="egen-form-label-premium" style="margin-bottom: 1rem; display: block; font-weight: 600;">
+								{{ entry_newsletter|default('Deseja receber novidades, ofertas e promoções da loja em seu e-mail?') }}
+							</label>
+
+							<div class="egen-newsletter-choices" style="display: flex; flex-direction: column; gap: 0.875rem;">
+								<label class="egen-radio-card" style="display: flex; align-items: flex-start; gap: 1rem; padding: 1.25rem; border: 1.5px solid {% if newsletter_status %}var(--primary-color, #2563eb){% else %}var(--border-color, #e2e8f0){% endif %}; background: {% if newsletter_status %}rgba(37, 99, 235, 0.04){% else %}var(--card-bg, #ffffff){% endif %}; border-radius: 10px; cursor: pointer; transition: all 0.2s ease;">
+									<input type="radio" name="newsletter" value="1" {% if newsletter_status %}checked{% endif %} style="width: 1.25rem; height: 1.25rem; margin-top: 0.15rem; accent-color: var(--primary-color, #2563eb); cursor: pointer;">
+									<div style="flex: 1;">
+										<span style="display: block; font-weight: 600; font-size: 1rem; color: var(--text-primary, #0f172a); margin-bottom: 0.25rem;">
+											Sim, quero receber ofertas e cupons por e-mail
+										</span>
+										<span style="display: block; font-size: 0.875rem; color: var(--text-muted, #64748b); line-height: 1.4;">
+											Receba comunicados de campanhas sazonais, lançamentos de produtos e promoções imperdíveis.
+										</span>
+									</div>
+								</label>
+
+								<label class="egen-radio-card" style="display: flex; align-items: flex-start; gap: 1rem; padding: 1.25rem; border: 1.5px solid {% if not newsletter_status %}var(--primary-color, #2563eb){% else %}var(--border-color, #e2e8f0){% endif %}; background: {% if not newsletter_status %}rgba(37, 99, 235, 0.04){% else %}var(--card-bg, #ffffff){% endif %}; border-radius: 10px; cursor: pointer; transition: all 0.2s ease;">
+									<input type="radio" name="newsletter" value="0" {% if not newsletter_status %}checked{% endif %} style="width: 1.25rem; height: 1.25rem; margin-top: 0.15rem; accent-color: var(--primary-color, #2563eb); cursor: pointer;">
+									<div style="flex: 1;">
+										<span style="display: block; font-weight: 600; font-size: 1rem; color: var(--text-primary, #0f172a); margin-bottom: 0.25rem;">
+											Não desejo receber e-mails promocionais
+										</span>
+										<span style="display: block; font-size: 0.875rem; color: var(--text-muted, #64748b); line-height: 1.4;">
+											Você deixará de receber nossas ofertas promocionais (em total conformidade com as diretrizes da LGPD).
+										</span>
+									</div>
+								</label>
+							</div>
+						</div>
+					</fieldset>
+
+					<div class="egen-form-footer" style="margin-top: 2rem;">
+						<a href="{{ back }}" class="egen-btn-secondary">
+							<i class="fa-solid fa-arrow-left"></i> Voltar
+						</a>
+						<button type="submit" class="egen-btn-primary">
+							Salvar Preferências <i class="fa-solid fa-check"></i>
+						</button>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+{% endblock %}

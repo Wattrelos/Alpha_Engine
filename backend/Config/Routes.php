@@ -193,6 +193,7 @@ return function (\Slim\App $app) {
         $account->map(['GET', 'POST'], '/resetar-senha', RedirectToDefaultLanguageAction::class);
         $account->get('/transaction', RedirectToDefaultLanguageAction::class);
         $account->get('/transactions', RedirectToDefaultLanguageAction::class);
+        $account->map(['GET', 'POST'], '/newsletter', RedirectToDefaultLanguageAction::class);
     });
 
     // ─────────────────────────────────────────────────────────
@@ -269,7 +270,7 @@ return function (\Slim\App $app) {
             $account->map(['GET', 'POST'], '/resetar-senha', ResetPasswordAction::class)->setName('account.resetar-senha.logged');
 
             // ── Newsletter ───────────────────────────────────────────────────
-            $account->post('/newsletter', \Alpha\Controller\Actions\Customer\Account\NewsletterAction::class)->setName('account.newsletter');
+            $account->map(['GET', 'POST'], '/newsletter', \Alpha\Controller\Actions\Customer\Account\NewsletterAction::class)->setName('account.newsletter');
 
             // ── Transações ───────────────────────────────────────────────────
             $account->get('/transaction', \Alpha\Controller\Actions\Customer\Account\TransactionAction::class)->setName('account.transaction');
@@ -347,8 +348,16 @@ return function (\Slim\App $app) {
         // Carrinho de Compras
         $group->get('/carrinho', ShowCartAction::class)->setName('cart.index');
         $group->post('/carrinho/adicionar', AddCartAction::class)->setName('cart.add');
+        $group->get('/carrinho/adicionar', function ($request, $response) {
+            $lang = $request->getAttribute('lang', 'pt-br');
+            return $response->withHeader('Location', '/' . $lang . '/carrinho')->withStatus(302);
+        });
         $group->post('/carrinho/editar', EditCartAction::class)->setName('cart.edit');
-        $group->get('/carrinho/remover/{key}', RemoveCartAction::class)->setName('cart.remove');
+        $group->get('/carrinho/editar', function ($request, $response) {
+            $lang = $request->getAttribute('lang', 'pt-br');
+            return $response->withHeader('Location', '/' . $lang . '/carrinho')->withStatus(302);
+        });
+        $group->map(['GET', 'POST'], '/carrinho/remover/{key}', RemoveCartAction::class)->setName('cart.remove');
 
         // Checkout
         $group->get('/checkout', \Alpha\Controller\Actions\Cart\Checkout::class)->setName('checkout.index');
