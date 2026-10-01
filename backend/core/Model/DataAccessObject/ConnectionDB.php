@@ -40,7 +40,7 @@ class ConnectionDB
                 PDO::ATTR_EMULATE_PREPARES => false, // Garante tipos nativos no PDO, reduzindo footprint de memória drasticamente
                 PDO::ATTR_STRINGIFY_FETCHES => false // Impede a conversão automática de tipos numéricos para string na leitura
             ]);
-            $this->connection->exec("SET NAMES 'utf8mb4'");
+            $this->connection->exec("SET NAMES 'utf8mb4' COLLATE 'utf8mb4_unicode_ci'");
             $this->connection->exec("SET SESSION sql_mode = 'STRICT_TRANS_TABLES,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION'");
 
 
