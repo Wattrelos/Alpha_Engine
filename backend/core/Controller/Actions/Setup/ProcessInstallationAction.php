@@ -195,7 +195,7 @@ class ProcessInstallationAction
                     "use Containers\AppBootstrap;\n\n" .
                     "require __DIR__ . '/../../backend/vendor/autoload.php';\n\n" .
                     "if (file_exists(__DIR__ . '/../../backend/.env')) {\n" .
-                    "    \$dotenv = Dotenv\Dotenv::createImmutable(__DIR__ . '/../../backend/');\n" .
+                    "    \$dotenv = Dotenv\Dotenv::createUnsafeMutable(__DIR__ . '/../../backend/');\n" .
                     "    \$dotenv->safeLoad();\n" .
                     "}\n\n" .
                     "if (!defined('APPLICATION')) {\n" .

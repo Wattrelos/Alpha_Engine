@@ -9,7 +9,7 @@ define('DIR_ROOT', $root);
 
 // Carrega variáveis de ambiente do arquivo .env se ainda não tiverem sido carregadas
 if (class_exists('Dotenv\Dotenv') && file_exists(DIR_ROOT . '.env')) {
-    $dotenv = Dotenv\Dotenv::createImmutable(DIR_ROOT);
+    $dotenv = Dotenv\Dotenv::createUnsafeMutable(DIR_ROOT);
     $dotenv->safeLoad();
 }
 

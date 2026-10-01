@@ -10,7 +10,7 @@ use Containers\AppBootstrap;
 require __DIR__ . '/../../backend/vendor/autoload.php';
 
 if (file_exists(__DIR__ . '/../../backend/.env')) {
-    $dotenv = Dotenv\Dotenv::createImmutable(__DIR__ . '/../../backend/');
+    $dotenv = Dotenv\Dotenv::createUnsafeMutable(__DIR__ . '/../../backend/');
     $dotenv->safeLoad();
 }
 
