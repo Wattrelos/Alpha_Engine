@@ -5,12 +5,15 @@
 ![License](https://img.shields.io/badge/license-MIT-green.svg)
 ![Testing](https://img.shields.io/badge/tests-PHPUnit%20%7C%20Behat%20%7C%20Playwright-brightgreen.svg)
 ![Code Quality](https://img.shields.io/badge/quality-PHPStan%20%7C%20PSR--12-informational.svg)
-
+![Nginx Proxy Manager](https://img.shields.io/badge/nginx_proxy_manager-%23F15833.svg)
+![Apache2](https://img.shields.io/badge/apache-%23D42029.svg)
+![Redis](https://img.shields.io/badge/redis-%23DD0031.svg)
+![RabbitMQ](https://img.shields.io/badge/RabbitMQ-%23FF6600.svg)
 
 
 ## Entregas da Faculdade
 
-### [1. Documento Visão](/docs/1.%20Documento%20Visão.doc.md)
+### [1. Documento de Visão](/docs/1.%20Documento%20de%20Visão.doc.md)
 ### [2. Atividade do Negócio](/docs/2.%20Atividades%20do%20Negócio.doc.md)
 ### [3. Requisitos do Sistema](/docs/3.%20Requisitos%20do%20Sistema.doc.md)
 ### [4. Casos de Uso](/docs/4.%20Casos%20de%20Uso.doc.md)

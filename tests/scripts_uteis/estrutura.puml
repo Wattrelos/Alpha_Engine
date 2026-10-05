@@ -947,7 +947,7 @@
 ├── composer.json
 ├── core/
 ├── docs/
-│   ├── 1. Documento Visão.doc.md
+│   ├── 1. Documento de Visão.doc.md
 │   ├── 2. Atividades do Negócio.doc.md
 │   ├── 3. Requisitos do Sistema.doc.md
 │   ├── 4. Casos de Uso.doc.md

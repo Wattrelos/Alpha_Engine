@@ -1,9 +1,9 @@
-# 🏛️ Alpha Engine - Arquitetura e Engenharia de Software
+# 🏛️ Skanstull Commerce - Arquitetura e Engenharia de Software
 
 ## 1. Visão Geral
-A **Alpha Engine** é um ecossistema de e-commerce totalmente independente e autônomo, construído sob o conceito de arquitetura standalone moderna. A decisão estratégica de **abandonar por completo a engine originaldo código legado** resultou no desenvolvimento de um sistema "do zero", abrangendo um novo bootstrap, router, controllers e views.
+A **Skanstull Commerce** é um ecossistema de e-commerce totalmente independente e autônomo, construído sob o conceito de arquitetura standalone moderna. A decisão estratégica de **abandonar por completo a engine originaldo código legado** resultou no desenvolvimento de um sistema "do zero", abrangendo um novo bootstrap, router, controllers e views.
 
-O motor foi projetado com forte isolamento de responsabilidades usando **Domain-Driven Design (DDD)**, **Repository Pattern** e **Data Mappers**. Toda a execução da aplicação (roteamento, manipulação de sessão, renderização e controle transacional) é nativa da Alpha Engine, eliminando a dependência do runtime legadodo código legado. Os arquivos legados deste último servem estritamente como referência conceitual e para migração de dados históricos.
+O motor foi projetado com forte isolamento de responsabilidades usando **Domain-Driven Design (DDD)**, **Repository Pattern** e **Data Mappers**. Toda a execução da aplicação (roteamento, manipulação de sessão, renderização e controle transacional) é nativa da Skanstull Commerce, eliminando a dependência do runtime legadodo código legado. Os arquivos legados deste último servem estritamente como referência conceitual e para migração de dados históricos.
 
 ---
 
@@ -19,7 +19,7 @@ O motor foi projetado com forte isolamento de responsabilidades usando **Domain-
 
 ## 3. Topologia de Camadas
 
-A Alpha Engine divide suas responsabilidades em camadas bem delineadas:
+A Skanstull Commerce divide suas responsabilidades em camadas bem delineadas:
 
 ### 🏦 Camada de Banco de Dados:
 *   Armazenamento dos dados brutos em banco relacional.
@@ -60,7 +60,7 @@ A Alpha Engine divide suas responsabilidades em camadas bem delineadas:
 
 ## 4. Tratamento de Integridade e Isolamento de Dados
 
-Para assegurar uma transição limpa da base de dados e sanear os débitos técnicos do código legado, a Alpha Engine implementa proteções ativas na camada de dados, além de saneamentos definitivos na estrutura do banco:
+Para assegurar uma transição limpa da base de dados e sanear os débitos técnicos do código legado, a Skanstull Commerce implementa proteções ativas na camada de dados, além de saneamentos definitivos na estrutura do banco:
 
 *   **Tratamento do Pseudo-Null (FK = 0)**: 
     O banco legado utilizava o valor numérico `0` para representar ausência de associação (ex: `parent_id = 0` para categoria sem pai, ou `manufacturer_id = 0` para produto sem fabricante). 
@@ -107,7 +107,7 @@ O fluxo acima executa-se de forma 100% isolada e protegida, garantindo tempos de
 
 ## 6. Sistema de Roteamento Centralizado e Internacionalização
 
-A Alpha Engine adota um sistema de rotas centralizado, totalmente desacoplado do bootstrap principal da aplicação (`public_html/index.php`), concentrando as definições em `Config/Routes.php`.
+A Skanstull Commerce adota um sistema de rotas centralizado, totalmente desacoplado do bootstrap principal da aplicação (`public_html/index.php`), concentrando as definições em `Config/Routes.php`.
 
 ### 🔀 Centralização de Definições (`Config/Routes.php`):
 *   O arquivo de rotas retorna uma closure que configura a instância do Slim `$app`.

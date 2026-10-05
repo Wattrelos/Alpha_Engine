@@ -1,7 +1,7 @@
-# ***Alpha Engine: Plataforma E-commerce On-Premise & Ponto de Venda para Materiais de Construção***
+# ***Skanstull Commerce: Plataforma E-commerce On-Premise & Ponto de Venda para Materiais de Construção***
 
 ***Matriz de Rastreabilidade e Relacionamento: Regras de Negócio (RN) x Requisitos Funcionais (RF)***  
-**Projeto:** Alpha Engine (Plataforma E-commerce On-Premise para Varejo de Materiais de Construção)  
+**Projeto:** Skanstull Commerce (Plataforma E-commerce On-Premise para Varejo de Materiais de Construção)  
 **Disciplina:** Laboratório de Engenharia de Software  
 
 ---
