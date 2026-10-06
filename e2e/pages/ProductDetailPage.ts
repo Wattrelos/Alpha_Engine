@@ -11,6 +11,16 @@ export class ProductDetailPage extends BasePage {
   readonly priceElement: Locator;
   readonly increaseQtyBtn: Locator;
   readonly decreaseQtyBtn: Locator;
+  readonly stockAlertBox: Locator;
+  readonly stockAlertBtnOpen: Locator;
+  readonly stockAlertModal: Locator;
+  readonly stockAlertNameInput: Locator;
+  readonly stockAlertEmailInput: Locator;
+  readonly stockAlertPhoneInput: Locator;
+  readonly stockAlertConsentCheckbox: Locator;
+  readonly stockAlertSubmitBtn: Locator;
+  readonly stockAlertFeedback: Locator;
+  readonly stockAlertCloseBtn: Locator;
 
   constructor(page: Page, lang = 'pt-br') {
     super(page, lang);
@@ -20,6 +30,18 @@ export class ProductDetailPage extends BasePage {
     this.priceElement = page.locator('.egen-product-price-card__price-normal, .egen-product-price');
     this.increaseQtyBtn = page.locator('.egen-product-qty__btn:has-text("+")');
     this.decreaseQtyBtn = page.locator('.egen-product-qty__btn:has-text("-")');
+
+    // Locators do Alerta de Reposição de Estoque (ADR 0008)
+    this.stockAlertBox = page.locator('#product-action-stock-alert');
+    this.stockAlertBtnOpen = page.locator('#btn-open-stock-alert');
+    this.stockAlertModal = page.locator('#stock-alert-modal');
+    this.stockAlertNameInput = page.locator('#stock-alert-name');
+    this.stockAlertEmailInput = page.locator('#stock-alert-email');
+    this.stockAlertPhoneInput = page.locator('#stock-alert-phone');
+    this.stockAlertConsentCheckbox = page.locator('#stock-alert-consent-privacy');
+    this.stockAlertSubmitBtn = page.locator('#stock-alert-btn-submit');
+    this.stockAlertFeedback = page.locator('#stock-alert-feedback');
+    this.stockAlertCloseBtn = page.locator('#stock-alert-btn-close');
   }
 
   /**

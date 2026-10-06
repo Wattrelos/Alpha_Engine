@@ -55,6 +55,7 @@ return function (\Slim\App $app) {
     // ─────────────────────────────────────────────────────────
     if (defined('APPLICATION') && APPLICATION === 'admin') {
         $app->get('/', \Alpha\Admin\Controllers\Actions\Auth\ShowLoginAction::class)->setName('admin.login.form');
+        $app->get('/login', \Alpha\Admin\Controllers\Actions\Auth\ShowLoginAction::class);
         $app->post('/login', \Alpha\Admin\Controllers\Actions\Auth\LoginAction::class)->setName('admin.login.submit')->add($authRateLimiter);
         $app->get('/setup', \Alpha\Admin\Controllers\Actions\Auth\ShowSetupAction::class)->setName('admin.setup.form');
         $app->post('/setup', \Alpha\Admin\Controllers\Actions\Auth\SetupAction::class)->setName('admin.setup.submit');
@@ -328,6 +329,12 @@ return function (\Slim\App $app) {
         $group->get('/produto/{slug}',   ShowProductAction::class)->setName('product.detail');
         $group->get('/categoria/{slug}', ShowCategoryAction::class)->setName('category.detail');
         $group->get('/pagina/{slug}',    ShowInformationAction::class)->setName('info.page');
+
+        // Alertas de Reposição de Estoque ("Avise-me quando chegar" - ADR 0008)
+        $group->post('/catalog/stock-alert/subscribe', \Alpha\Controller\Actions\Product\SubscribeStockAlertAction::class)->setName('product.stock_alert.subscribe');
+        $group->post('/estoque/avise-me', \Alpha\Controller\Actions\Product\SubscribeStockAlertAction::class);
+        $group->get('/catalog/stock-alert/unsubscribe', \Alpha\Controller\Actions\Product\UnsubscribeStockAlertAction::class)->setName('product.stock_alert.unsubscribe');
+        $group->get('/estoque/avise-me/cancelar', \Alpha\Controller\Actions\Product\UnsubscribeStockAlertAction::class);
 
         // Mapa do Site (Sitemap)
         $group->get('/mapa-do-site', ShowSitemapAction::class)->setName('sitemap');

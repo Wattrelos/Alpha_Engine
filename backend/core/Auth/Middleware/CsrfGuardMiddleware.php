@@ -104,13 +104,19 @@ class CsrfGuardMiddleware implements MiddlewareInterface
 
     public function process(Request $request, Handler $handler): Response
     {
-        // Endpoints RESTful e APIs internas (/api/* e /{lang}/api/*) operam sem validação CSRF de formulário web
+        // Endpoints RESTful e APIs internas (/api/* e /{lang}/api/*) e alertas de reposição operam sem validação CSRF de formulário web
         $path = $request->getUri()->getPath();
-        if (preg_match('#^/?([a-zA-Z-]+/)?api(/|$)#', $path)) {
+        if (preg_match('#^/?([a-zA-Z-]+/)?(api|catalog/stock-alert|estoque/avise-me)(/|$)#', $path)) {
             return $handler->handle($request);
         }
 
         $guard = $this->getGuard();
+
+        $bodyDebug = $request->getParsedBody();
+        $sessId = session_id();
+        $sessCsrf = $_SESSION['csrf'] ?? 'not-set';
+        $cookieHeader = $request->getHeaderLine('Cookie');
+        file_put_contents(__DIR__ . '/../../../storage/cache/csrf_debug.log', "[CSRF DEBUG] Method: " . $request->getMethod() . " | Session ID: " . $sessId . " | CookieHeader: " . $cookieHeader . " | \$_COOKIE: " . json_encode($_COOKIE) . " | \$_SESSION['csrf']: " . json_encode($sessCsrf) . "\n", FILE_APPEND);
 
         // Fallback: se for requisição JSON e o parsedBody estiver vazio, faz a conversão do corpo da requisição
         $contentType = strtolower($request->getHeaderLine('Content-Type'));

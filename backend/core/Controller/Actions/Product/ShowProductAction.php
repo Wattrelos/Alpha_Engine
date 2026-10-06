@@ -229,15 +229,17 @@ class ShowProductAction implements ActionInterface
             }
         }
 
+        // ADR 0008: Flag de disponibilidade do produto pai
+        $product['is_out_of_stock'] = ((int)($product['quantity'] ?? 0) <= 0);
+
         // Busca variações filhas do produto pai
         $variantsRaw = $this->productRepository->getProductVariants($productId);
         $variants = [];
         foreach ($variantsRaw as $variant) {
             if ($variant['status']) {
-                // Não mostrar variação cuja quantidade seja <= 0 e o stock status seja "esgotado" (5)
-                if ((int)$variant['quantity'] <= 0 && (int)$variant['stock_status_id'] === 5) {
-                    continue;
-                }
+                $vQty = (int)($variant['quantity'] ?? 0);
+                $isVariantOutOfStock = ($vQty <= 0 || (int)($variant['stock_status_id'] ?? 0) === 5);
+
                 $vPriceRaw = (float)($variant['price'] ?? 0);
                 if ($vPriceRaw <= 0.0) {
                     $vPriceRaw = (float)($product['price'] ?? 0);
@@ -266,7 +268,8 @@ class ShowProductAction implements ActionInterface
                     'sku'             => $variant['sku'],
                     'price'           => $vPriceRaw,
                     'price_formatted' => $vPriceFormatted,
-                    'quantity'        => (int)$variant['quantity'],
+                    'quantity'        => $vQty,
+                    'is_out_of_stock' => $isVariantOutOfStock,
                     'image'           => $variant['image'],
                     'thumb'           => $vImageThumb
                 ];

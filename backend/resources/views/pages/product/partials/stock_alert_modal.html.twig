@@ -1,0 +1,74 @@
+<!-- Modal de Alerta de Estoque ("Avise-me quando chegar" - ADR 0008) -->
+<div id="stock-alert-modal" class="stock-alert-modal-backdrop" aria-hidden="true" role="dialog">
+    <div class="stock-alert-modal-container">
+        <!-- Cabeçalho -->
+        <div class="stock-alert-modal-header">
+            <h3 class="stock-alert-modal-title">
+                <i class="fa-solid fa-bell"></i> Avise-me quando chegar
+            </h3>
+            <button type="button" id="stock-alert-btn-close" class="stock-alert-modal-close" aria-label="Fechar">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+        </div>
+
+        <!-- Corpo -->
+        <div class="stock-alert-modal-body">
+            <div class="stock-alert-product-preview">
+                <img src="{{ product.thumb|default('/image/no-image.png') }}" alt="{{ product.name }}" id="stock-alert-preview-img" class="stock-alert-product-img">
+                <div class="stock-alert-product-details">
+                    <div class="stock-alert-product-name" id="stock-alert-preview-name">{{ product.name }}</div>
+                    <div class="stock-alert-product-variant" id="stock-alert-preview-variant" style="display: none;"></div>
+                </div>
+            </div>
+
+            <form id="form-stock-alert" novalidate>
+                {% if csrf %}
+                    <input type="hidden" name="{{ csrf.keys.name }}" value="{{ csrf.name }}">
+                    <input type="hidden" name="{{ csrf.keys.value }}" value="{{ csrf.value }}">
+                {% endif %}
+
+                <!-- Honeypot Anti-Spam invisível -->
+                <div style="display:none !important; opacity:0; position:absolute; left:-9999px;">
+                    <label for="form_check_company">Não preencha este campo:</label>
+                    <input type="text" name="form_check_company" id="form_check_company" tabindex="-1" autocomplete="off">
+                </div>
+
+                <input type="hidden" name="product_id" id="stock-alert-product-id" value="{{ product.id }}">
+                <input type="hidden" name="variant_id" id="stock-alert-variant-id" value="">
+
+                <div class="stock-alert-form-group">
+                    <label for="stock-alert-name" class="stock-alert-label">Seu Nome *</label>
+                    <input type="text" name="name" id="stock-alert-name" required placeholder="Como podemos te chamar?" class="stock-alert-input" value="{% if customer %}{{ customer.firstname }} {{ customer.lastname }}{% endif %}">
+                </div>
+
+                <div class="stock-alert-form-group">
+                    <label for="stock-alert-email" class="stock-alert-label">Seu E-mail *</label>
+                    <input type="email" name="email" id="stock-alert-email" required placeholder="seu@email.com" class="stock-alert-input" value="{% if customer %}{{ customer.email }}{% endif %}">
+                </div>
+
+                <div class="stock-alert-form-group">
+                    <label for="stock-alert-phone" class="stock-alert-label">WhatsApp / Celular (Opcional)</label>
+                    <input type="tel" name="phone" id="stock-alert-phone" placeholder="(11) 99999-9999" class="stock-alert-input" value="{% if customer %}{{ customer.telephone }}{% endif %}">
+                </div>
+
+                <!-- LGPD Consentimento Obrigatório e Opcional -->
+                <div class="stock-alert-consent-group">
+                    <label class="stock-alert-checkbox-label">
+                        <input type="checkbox" name="consent_privacy" id="stock-alert-consent-privacy" value="1" required checked>
+                        <span>Concordo em receber um alerta por e-mail/WhatsApp quando este produto estiver disponível. (Obrigatório)</span>
+                    </label>
+                    <label class="stock-alert-checkbox-label">
+                        <input type="checkbox" name="consent_marketing" id="stock-alert-consent-marketing" value="1">
+                        <span>Desejo também receber ofertas exclusivas e lançamentos da AG Sonhos.</span>
+                    </label>
+                </div>
+
+                <div id="stock-alert-feedback" class="stock-alert-feedback"></div>
+
+                <button type="submit" id="stock-alert-btn-submit" class="stock-alert-btn-submit">
+                    <i class="fa-solid fa-paper-plane"></i> Quero ser avisado!
+                </button>
+            </form>
+        </div>
+    </div>
+</div>

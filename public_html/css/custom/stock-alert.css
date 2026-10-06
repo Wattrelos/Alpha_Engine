@@ -1,0 +1,314 @@
+/* ==========================================================================
+   SUBSISTEMA DE ALERTA DE ESTOQUE ("AVISE-ME QUANDO CHEGAR" - ADR 0008)
+   ========================================================================== */
+
+.egen-stock-alert-box {
+    margin: 20px 0;
+    padding: 20px;
+    background: linear-gradient(135deg, rgba(252, 144, 3, 0.06) 0%, rgba(255, 255, 255, 0.02) 100%);
+    border: 1px solid rgba(252, 144, 3, 0.25);
+    border-radius: 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    animation: fadeInAlert 0.3s ease-out;
+}
+
+@keyframes fadeInAlert {
+    from { opacity: 0; transform: translateY(-4px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.egen-stock-alert-box__header {
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+}
+
+.egen-stock-alert-box__icon {
+    font-size: 24px;
+    color: #fc9003;
+    padding-top: 2px;
+}
+
+.egen-stock-alert-box__title {
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--egen-text-color, #1e293b);
+    display: block;
+    margin-bottom: 4px;
+}
+
+.egen-stock-alert-box__desc {
+    font-size: 14px;
+    color: var(--egen-text-muted, #64748b);
+    margin: 0;
+    line-height: 1.5;
+}
+
+.egen-btn-stock-alert {
+    background: #fc9003;
+    color: #ffffff;
+    font-size: 15px;
+    font-weight: 600;
+    padding: 14px 24px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 4px 12px rgba(252, 144, 3, 0.25);
+    width: 100%;
+}
+
+.egen-btn-stock-alert:hover {
+    background: #e07f00;
+    box-shadow: 0 6px 16px rgba(252, 144, 3, 0.35);
+    transform: translateY(-1px);
+}
+
+/* Badge de Esgotado nas Variações */
+.variant-selector-item.variant--out-of-stock {
+    opacity: 0.65;
+    position: relative;
+    border-style: dashed !important;
+}
+
+.variant-selector-item.variant--out-of-stock .prod-show-opt-text {
+    text-decoration: line-through;
+}
+
+.variant-badge-soldout {
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    background: rgba(239, 68, 68, 0.15);
+    color: #ef4444;
+    padding: 2px 6px;
+    border-radius: 4px;
+    margin-left: 6px;
+    vertical-align: middle;
+}
+
+/* Modal do Avise-me */
+.stock-alert-modal-backdrop {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0, 0, 0, 0.65);
+    backdrop-filter: blur(4px);
+    z-index: 99999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.25s ease, visibility 0.25s ease;
+}
+
+.stock-alert-modal-backdrop.active {
+    opacity: 1;
+    visibility: visible;
+}
+
+.stock-alert-modal-container {
+    background: #ffffff;
+    width: 100%;
+    max-width: 500px;
+    border-radius: 16px;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+    overflow: hidden;
+    transform: scale(0.95);
+    transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.stock-alert-modal-backdrop.active .stock-alert-modal-container {
+    transform: scale(1);
+}
+
+.stock-alert-modal-header {
+    padding: 20px 24px;
+    background: #f8fafc;
+    border-bottom: 1px solid #e2e8f0;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.stock-alert-modal-title {
+    font-size: 18px;
+    font-weight: 700;
+    color: #1e293b;
+    margin: 0;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.stock-alert-modal-title i {
+    color: #fc9003;
+}
+
+.stock-alert-modal-close {
+    background: none;
+    border: none;
+    font-size: 20px;
+    color: #94a3b8;
+    cursor: pointer;
+    padding: 4px;
+    border-radius: 6px;
+    transition: color 0.15s ease;
+}
+
+.stock-alert-modal-close:hover {
+    color: #1e293b;
+}
+
+.stock-alert-modal-body {
+    padding: 24px;
+}
+
+.stock-alert-product-preview {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 12px;
+    background: #f1f5f9;
+    border-radius: 8px;
+    margin-bottom: 20px;
+}
+
+.stock-alert-product-img {
+    width: 48px;
+    height: 48px;
+    object-fit: cover;
+    border-radius: 6px;
+    background: #ffffff;
+}
+
+.stock-alert-product-details {
+    flex: 1;
+    min-width: 0;
+}
+
+.stock-alert-product-name {
+    font-size: 14px;
+    font-weight: 600;
+    color: #1e293b;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.stock-alert-product-variant {
+    font-size: 12px;
+    color: #fc9003;
+    font-weight: 500;
+}
+
+.stock-alert-form-group {
+    margin-bottom: 16px;
+}
+
+.stock-alert-label {
+    display: block;
+    font-size: 13px;
+    font-weight: 600;
+    color: #334155;
+    margin-bottom: 6px;
+}
+
+.stock-alert-input {
+    width: 100%;
+    padding: 12px 14px;
+    border: 1px solid #cbd5e1;
+    border-radius: 8px;
+    font-size: 14px;
+    color: #1e293b;
+    transition: border-color 0.15s ease, box-shadow 0.15s ease;
+    box-sizing: border-box;
+}
+
+.stock-alert-input:focus {
+    border-color: #fc9003;
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(252, 144, 3, 0.15);
+}
+
+.stock-alert-consent-group {
+    margin-top: 18px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.stock-alert-checkbox-label {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    font-size: 12px;
+    line-height: 1.4;
+    color: #475569;
+    cursor: pointer;
+}
+
+.stock-alert-checkbox-label input {
+    margin-top: 2px;
+    accent-color: #fc9003;
+}
+
+.stock-alert-btn-submit {
+    margin-top: 20px;
+    width: 100%;
+    padding: 14px;
+    background: #fc9003;
+    color: #ffffff;
+    font-size: 15px;
+    font-weight: 700;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background 0.2s ease, transform 0.1s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+}
+
+.stock-alert-btn-submit:hover {
+    background: #e07f00;
+}
+
+.stock-alert-btn-submit:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.stock-alert-feedback {
+    margin-top: 14px;
+    padding: 12px;
+    border-radius: 8px;
+    font-size: 13px;
+    display: none;
+    line-height: 1.4;
+}
+
+.stock-alert-feedback.success {
+    display: block;
+    background: #ecfdf5;
+    color: #065f46;
+    border: 1px solid #a7f3d0;
+}
+
+.stock-alert-feedback.error {
+    display: block;
+    background: #fef2f2;
+    color: #991b1b;
+    border: 1px solid #fecaca;
+}

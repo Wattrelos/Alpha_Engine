@@ -75,7 +75,7 @@ $requestUri = $_SERVER['REQUEST_URI'] ?? '';
 $isSetupRoute = (str_starts_with($requestUri, '/setup') || str_starts_with($requestUri, '/install'));
 
 // Redireciona caminhos do admin localizados (ex: /pt-br/{ADMIN_DIR}/) de volta para o admin correto
-$adminDirConst = defined('ADMIN_DIR') ? ADMIN_DIR : 'LPDHED2dC7Gjrg2b';
+$adminDirConst = defined('ADMIN_DIR') ? ADMIN_DIR : ($_ENV['ADMIN_DIR'] ?? 'LPDHED2dC7Gjrg2b');
 $adminPattern = preg_quote($adminDirConst, '#');
 if (preg_match('#^/(pt-br|en|es)/' . $adminPattern . '(/.*)?$#i', $requestUri, $matches)) {
     $remaining = $matches[2] ?? '';

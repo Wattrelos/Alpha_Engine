@@ -5,6 +5,7 @@
 {% block stylesheets %}
     <link rel="stylesheet" href="/css/custom/materials-calculator.css">
     <link rel="stylesheet" href="/css/custom/quotation.css">
+    <link rel="stylesheet" href="/css/custom/stock-alert.css">
 {% endblock %}
 
 {% block content %}
@@ -110,10 +111,13 @@
                         <h4 class="egen-product-options__title">Escolha a Variação:</h4>
                         <div class="egen-product-options__inline-group" id="variants-selector-container">
                             {% for variant in variants %}
-                                <div class="egen-product-options__inline-item variant-selector-item prod-show-opt-label" data-id="{{ variant.id }}" data-sku="{{ variant.sku }}" data-price="{{ variant.price_formatted }}" data-thumb="{{ variant.thumb }}" data-qty="{{ variant.quantity }}">
+                                <div class="egen-product-options__inline-item variant-selector-item prod-show-opt-label {% if variant.is_out_of_stock %}variant--out-of-stock{% endif %}" data-id="{{ variant.id }}" data-sku="{{ variant.sku }}" data-price="{{ variant.price_formatted }}" data-thumb="{{ variant.thumb }}" data-qty="{{ variant.quantity }}" data-out-of-stock="{{ variant.is_out_of_stock ? '1' : '0' }}">
                                     <span class="prod-show-opt-text">{{ variant.name }}</span>
                                     {% if variant.price > 0 %}
                                         <span class="egen-product-options__price-prefix prod-show-opt-price">({{ variant.price_formatted }})</span>
+                                    {% endif %}
+                                    {% if variant.is_out_of_stock %}
+                                        <span class="variant-badge-soldout">Esgotado</span>
                                     {% endif %}
                                 </div>
                             {% endfor %}
@@ -173,7 +177,7 @@
                 {% endif %}
 
                 <!-- Quantidade & Adicionar ao carrinho -->
-                <div class="egen-product-action-row">
+                <div class="egen-product-action-row" id="product-action-row-buy" {% if product.is_out_of_stock and not variants %}style="display:none;"{% endif %}>
                     <div class="egen-product-qty">
                         <label for="input-quantity" class="egen-form-label">{{ Product.quantity }}</label>
                         <div class="egen-product-qty__control">
@@ -193,6 +197,20 @@
                             <i class="fa-solid fa-arrow-left"></i> {{ Common.button.back|default('Voltar') }}
                         </a>
                     </div>
+                </div>
+
+                <!-- Bloco "Avise-me quando chegar" (ADR 0008) -->
+                <div id="product-action-stock-alert" class="egen-stock-alert-box" {% if not product.is_out_of_stock and not variants %}style="display:none;"{% endif %}>
+                    <div class="egen-stock-alert-box__header">
+                        <i class="fa-solid fa-bell egen-stock-alert-box__icon"></i>
+                        <div>
+                            <strong class="egen-stock-alert-box__title">Produto temporariamente indisponível</strong>
+                            <p class="egen-stock-alert-box__desc">Cadastre-se para ser avisado por e-mail ou WhatsApp assim que este item voltar ao estoque:</p>
+                        </div>
+                    </div>
+                    <button type="button" id="btn-open-stock-alert" class="egen-btn-stock-alert">
+                        <i class="fa-solid fa-bell"></i> Avise-me quando chegar
+                    </button>
                 </div>
                 <!-- Calculadora de Materiais (Pisos e Revestimentos) -->
                 <div class="egen-calculator-trigger-wrapper">
@@ -276,6 +294,9 @@
 <!-- Modal da Calculadora de Materiais -->
 {% include 'components/molecules/materials-calculator.twig' %}
 
+<!-- Modal de Alerta de Estoque (ADR 0008) -->
+{% include 'pages/product/partials/stock_alert_modal.html.twig' %}
+
 <script>
 document.addEventListener('DOMContentLoaded', function() {
     // 1. Abas
@@ -301,16 +322,20 @@ document.addEventListener('DOMContentLoaded', function() {
     const mainPriceSpecial = document.querySelector('.egen-product-price-card__price-special');
     const mainImg = document.getElementById('main-product-image');
     const qtyInput = document.getElementById('input-quantity');
+    const buyRow = document.getElementById('product-action-row-buy');
+    const alertRow = document.getElementById('product-action-stock-alert');
 
     variantItems.forEach(item => {
         item.addEventListener('click', function() {
             // Remove seleção ativa das outras variações
             variantItems.forEach(i => {
+                i.classList.remove('variant--active');
                 i.style.borderColor = 'var(--egen-border-color)';
                 i.style.background = 'rgba(255, 255, 255, 0.05)';
             });
 
             // Aplica seleção ativa nesta variação
+            this.classList.add('variant--active');
             this.style.borderColor = 'var(--egen-primary-color)';
             this.style.background = 'rgba(252, 144, 3, 0.08)';
 
@@ -319,6 +344,18 @@ document.addEventListener('DOMContentLoaded', function() {
             const varPrice = this.getAttribute('data-price');
             const varThumb = this.getAttribute('data-thumb');
             const varQty = parseInt(this.getAttribute('data-qty')) || 0;
+            const isOutOfStock = this.getAttribute('data-out-of-stock') === '1' || varQty <= 0;
+
+            // Alterna visibilidade entre Comprar e Avise-me quando chegar (ADR 0008)
+            if (buyRow && alertRow) {
+                if (isOutOfStock) {
+                    buyRow.style.display = 'none';
+                    alertRow.style.display = 'flex';
+                } else {
+                    buyRow.style.display = 'flex';
+                    alertRow.style.display = 'none';
+                }
+            }
 
             // Atualiza o ID do produto para envio ao carrinho
             if (purchaseProductId) purchaseProductId.value = varId;
@@ -339,8 +376,8 @@ document.addEventListener('DOMContentLoaded', function() {
 
             // Atualiza quantidade máxima do input quantity
             if (qtyInput) {
-                qtyInput.max = varQty;
-                if (parseInt(qtyInput.value) > varQty) {
+                qtyInput.max = varQty > 0 ? varQty : 1;
+                if (parseInt(qtyInput.value) > varQty && varQty > 0) {
                     qtyInput.value = varQty;
                 }
             }
@@ -356,4 +393,5 @@ document.addEventListener('DOMContentLoaded', function() {
 <script src="/js/custom/shipping-simulator.js"></script>
 <script src="/js/custom/materials-calculator.js"></script>
 <script src="/js/custom/quotation.js"></script>
+<script src="/js/custom/stock-alert.js"></script>
 {% endblock %}
