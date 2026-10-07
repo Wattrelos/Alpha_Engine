@@ -95,21 +95,28 @@ docs/business/use-cases/
 │   ├── UC_POS_014_finalizar_recebimento_venda.md
 │   └── UC_POS_015_imprimir_recibo_nfce.md
 │
-└── dashboard/                                 # ⚙️ Painel Administrativo On-Premise (9 Casos de Uso)
-    ├── UC_ADM_001_gerenciar_catalogo_produtos.md
-    ├── UC_ADM_002_gerenciar_clientes_aprovacoes.md
-    ├── UC_ADM_003_gerenciar_pedidos_faturamento.md
-    ├── UC_ADM_004_gerenciar_devolucoes_trocas.md
-    ├── UC_ADM_005_visualizar_relatorios_estatisticas.md
-    ├── UC_ADM_006_configurar_lojas_parametros.md
-    ├── UC_ADM_007_gerenciar_usuarios_permissoes_rbac.md
-    ├── UC_ADM_008_gerenciar_planos_assinatura.md
-    └── UC_ADM_009_gerenciar_localizacao_moedas_impostos.md
+├── dashboard/                                 # ⚙️ Painel Administrativo On-Premise (9 Casos de Uso)
+│   ├── UC_ADM_001_gerenciar_catalogo_produtos.md
+│   ├── UC_ADM_002_gerenciar_clientes_aprovacoes.md
+│   ├── UC_ADM_003_gerenciar_pedidos_faturamento.md
+│   ├── UC_ADM_004_gerenciar_devolucoes_trocas.md
+│   ├── UC_ADM_005_visualizar_relatorios_estatisticas.md
+│   ├── UC_ADM_006_configurar_lojas_parametros.md
+│   ├── UC_ADM_007_gerenciar_usuarios_permissoes_rbac.md
+│   ├── UC_ADM_008_gerenciar_planos_assinatura.md
+│   └── UC_ADM_009_gerenciar_localizacao_moedas_impostos.md
+│
+└── service_provider_area/                     # 👷 Portal do Prestador de Serviços (3 Casos de Uso)
+    ├── README.md                              # Sumário e Rastreabilidade do Prestador
+    ├── UC_PRV_001_consultar_oportunidades_raio.md
+    ├── UC_PRV_002_submeter_proposta_mao_de_obra.md
+    ├── UC_PRV_003_levantamento_materiais_takeoff_boq.md
+    └── service_provider_area                  # Especificação Consolidada do Módulo
 ```
 
 ---
 
-## 📋 3. Índice Geral dos 53 Casos de Uso
+## 📋 3. Índice Geral dos 56 Casos de Uso
 
 ### 🛒 Módulo 1: Loja Virtual & Portal do Cliente (`customer/`)
 *Baseado no diagrama:* [SVG](/docs/business/use-cases/general_customer_use.svg) - [PlantUML](/docs/business/use-cases/general_customer_use.puml)  
@@ -191,6 +198,18 @@ docs/business/use-cases/
 
 ---
 
+### 👷 Módulo 4: Portal do Prestador de Serviços (`service_provider_area/`)
+*Módulo de Obras, Cotações & Levantamento de Materiais (RFQ & BoQ)*  
+*Atores:* **Prestador de Serviços (Service Provider)**, **Cliente (Customer)**, **Sistema Alpha Engine**
+
+| ID | Caso de Uso | Domínio / Ação | Relacionamento | Especificação |
+| :--- | :--- | :--- | :--- | :--- |
+| `UC_PRV_001` | Consultar Oportunidades no Raio de Atendimento | Matching & Oportunidades | Direto (Provider & Sistema Geo) | [Visualizar](/docs/business/use-cases/service_provider_area/UC_PRV_001_consultar_oportunidades_raio.md) |
+| `UC_PRV_002` | Submeter Proposta Comercial de Mão de Obra | Cotações & Bids | Direto (Provider) | [Visualizar](/docs/business/use-cases/service_provider_area/UC_PRV_002_submeter_proposta_mao_de_obra.md) |
+| `UC_PRV_003` | Realizar Levantamento Técnico de Materiais (Takeoff & BoQ) | Materiais & BoQ Tool | Direto (Provider Selecionado) | [Visualizar](/docs/business/use-cases/service_provider_area/UC_PRV_003_levantamento_materiais_takeoff_boq.md) |
+
+---
+
 ## 🔗 4. Matriz de Rastreabilidade Bidirecional (Requisitos x Casos de Uso)
 
 | Requisito Funcional (RF) | Regra de Negócio (RN) | Casos de Uso Associados |
@@ -220,5 +239,10 @@ docs/business/use-cases/
 | **RF023** (Gestão administrativa global e preços) | `RN017`, `RN018` | `UC_ADM_001`, `UC_ADM_002`, `UC_ADM_003`, `UC_ADM_004`, `UC_ADM_006`, `UC_ADM_007`, `UC_ADM_008`, `UC_ADM_009` |
 | **RF024** (Alerta proativo de ruptura / Stockout) | `RN006` | `UC_ADM_005` |
 | **RF025** (Painel analítico e relatórios gerenciais)| `RN015` | `UC_ADM_005` |
+| **RF033** (RFQ de Projetos e Serviços de Obras) | `RN003` | `UC_CLI_025`, `UC_PRV_001` |
+| **RF034** (Distribuição e matching por raio geográfico) | `RN-GEO-01` | `UC_PRV_001` |
+| **RF035** (Submissão e comparação de propostas - Bid) | `RN-BID-01` | `UC_PRV_002`, `UC_CLI_027`, `UC_CLI_028` |
+| **RF036** (Levantamento técnico de materiais - BoQ/MTO) | `RN001`, `RN003` | `UC_PRV_003`, `UC_CLI_029` |
+| **RF037** (Conversão de BoQ em cotação e carrinho) | `RN001`, `RN015`, `RN017` | `UC_PRV_003`, `UC_CLI_029` |
 
 ---
