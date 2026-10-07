@@ -71,6 +71,16 @@ class ProjectBidRepository extends AbstractRepository implements BaseRepositoryI
         return $bid;
     }
 
+    public function countByRfqId(int $rfqId): int
+    {
+        $qb = (new QueryBuilder())
+            ->from(DB_PREFIX . 'project_bid')
+            ->where('rfq_id = ?', [$rfqId]);
+
+        $rows = (new DataAccessObject())->executeQuery($qb);
+        return count($rows);
+    }
+
     public function save(ProjectBid $bid): ?int
     {
         return $this->getMapper()->save($bid);

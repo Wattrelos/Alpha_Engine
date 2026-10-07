@@ -42,6 +42,10 @@
             </div>
 
             <form method="POST" action="/{{ lang }}/prestador/projetos/{{ rfq.id }}/proposta">
+                {% if csrf %}
+                    <input type="hidden" name="{{ csrf.keys.name }}" value="{{ csrf.name }}">
+                    <input type="hidden" name="{{ csrf.keys.value }}" value="{{ csrf.value }}">
+                {% endif %}
                 <h2 style="font-size:1.25rem; margin-bottom:1.25rem; color:#1e293b;">Sua Proposta Comercial</h2>
 
                 <div class="rfq-form-grid">
@@ -63,7 +67,7 @@
 
                 <div style="display:flex; justify-content:flex-end; gap:1rem; margin-top:2rem;">
                     <a href="/{{ lang }}/prestador/oportunidades" class="rfq-btn rfq-btn-secondary">Voltar</a>
-                    <button type="submit" class="rfq-btn rfq-btn-primary">
+                    <button type="submit" id="btn-submit-bid" class="rfq-btn rfq-btn-primary">
                         <span>📨</span> Enviar Proposta ao Cliente
                     </button>
                 </div>

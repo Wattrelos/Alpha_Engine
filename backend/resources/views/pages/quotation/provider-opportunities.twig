@@ -1,6 +1,6 @@
 {% extends 'layouts/base.html.twig' %}
 
-{% block title %}Painel do Prestador - Oportunidades | meusite{% endblock %}
+{% block title %}Painel do Prestador - Oportunidades de Obras | meusite{% endblock %}
 
 {% block stylesheets %}
     <link rel="stylesheet" href="/css/custom/quotation.css">
@@ -8,6 +8,28 @@
 
 {% block content %}
     <div class="rfq-container">
+        {# ── Alertas de Feedback ── #}
+        {% if bid_saved %}
+            <div style="background:#ecfdf5; border:1px solid #10b981; color:#065f46; padding:1rem 1.25rem; border-radius:8px; margin-bottom:1.5rem; display:flex; align-items:center; gap:0.75rem;">
+                <span style="font-size:1.5rem;">🎉</span>
+                <div>
+                    <strong>Proposta enviada com sucesso!</strong>
+                    <div style="font-size:0.9rem; color:#047857;">O cliente solicitante foi notificado. Você receberá um aviso assim que a proposta for avaliada.</div>
+                </div>
+            </div>
+        {% endif %}
+
+        {% if profile_saved %}
+            <div style="background:#ecfdf5; border:1px solid #10b981; color:#065f46; padding:1rem 1.25rem; border-radius:8px; margin-bottom:1.5rem; display:flex; align-items:center; gap:0.75rem;">
+                <span style="font-size:1.5rem;">✅</span>
+                <div>
+                    <strong>Perfil e Raio de Atendimento Atualizados!</strong>
+                    <div style="font-size:0.9rem; color:#047857;">As novas preferências geográficas já estão sendo aplicadas na busca de oportunidades.</div>
+                </div>
+            </div>
+        {% endif %}
+
+        {# ── Hero Section ── #}
         <div class="rfq-hero">
             <nav class="rfq-breadcrumb">
                 {% for breadcrumb in breadcrumbs %}
@@ -19,64 +41,164 @@
                     {% endif %}
                 {% endfor %}
             </nav>
-            <h1 class="rfq-hero-title">
-                <span>👷</span> Painel do Prestador de Serviços (Alpha Pro)
-            </h1>
-            <p class="rfq-hero-desc">Projetos e solicitações de orçamento disponíveis no seu raio de atendimento ({{ provider.radius_km }} km).</p>
+            <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:1.5rem;">
+                <div>
+                    <h1 class="rfq-hero-title">
+                        <span>👷</span> Portal do Prestador de Serviços (Alpha Pro)
+                    </h1>
+                    <p class="rfq-hero-desc">
+                        Conectando seu talento às obras da sua região. Raio configurado: <strong>{{ provider.radius_km }} km</strong> a partir de <strong>{{ provider.city|default('Sua Base') }} {{ provider.state ? '(' ~ provider.state ~ ')' : '' }}</strong>.
+                    </p>
+                </div>
+                <div>
+                    <button type="button" class="rfq-btn rfq-btn-secondary" id="btn-toggle-profile-settings" style="background:rgba(255,255,255,0.15); color:#ffffff; border-color:rgba(255,255,255,0.3);">
+                        <span>⚙️</span> Configurar Raio & Especialidades
+                    </button>
+                </div>
+            </div>
         </div>
 
-        <h2 style="font-size:1.3rem; color:#1e293b; margin-bottom:1rem;">Oportunidades em Aberto na sua Região ({{ opportunities|length }})</h2>
+        {# ── Painel Expansível de Configuração do Prestador ── #}
+        <div id="provider-profile-card" class="rfq-card" style="display:none; background:#f8fafc; border:1px solid #e2e8f0;">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1rem;">
+                <h2 style="font-size:1.2rem; color:#1e293b; margin:0; display:flex; align-items:center; gap:0.5rem;">
+                    <span>📍</span> Configurações de Atendimento do Profissional
+                </h2>
+                <button type="button" id="btn-close-profile-settings" style="background:none; border:none; color:#64748b; font-size:1.2rem; cursor:pointer;">✕</button>
+            </div>
+            <form method="POST" action="/{{ lang }}/prestador/oportunidades">
+                {% if csrf %}
+                    <input type="hidden" name="{{ csrf.keys.name }}" value="{{ csrf.name }}">
+                    <input type="hidden" name="{{ csrf.keys.value }}" value="{{ csrf.value }}">
+                {% endif %}
+                <input type="hidden" name="action" value="update_profile">
+                <div class="rfq-form-grid">
+                    <div class="rfq-form-group">
+                        <label class="rfq-label" for="service_radius_km">Raio de Cobertura (km) *</label>
+                        <input type="number" step="1" min="5" max="200" id="service_radius_km" name="service_radius_km" class="rfq-input" value="{{ provider.radius_km }}" required>
+                        <small style="color:#64748b;">Distância máxima em km para receber obras.</small>
+                    </div>
+                    <div class="rfq-form-group">
+                        <label class="rfq-label" for="address_cep">CEP Base de Atendimento</label>
+                        <input type="text" id="address_cep" name="address_cep" class="rfq-input" placeholder="00000-000" value="{{ provider.cep|default('') }}">
+                    </div>
+                    <div class="rfq-form-group">
+                        <label class="rfq-label" for="address_city">Cidade</label>
+                        <input type="text" id="address_city" name="address_city" class="rfq-input" placeholder="São Paulo" value="{{ provider.city|default('') }}">
+                    </div>
+                    <div class="rfq-form-group">
+                        <label class="rfq-label" for="address_state">UF</label>
+                        <input type="text" maxlength="2" id="address_state" name="address_state" class="rfq-input" placeholder="SP" value="{{ provider.state|default('') }}">
+                    </div>
+                    <div class="rfq-form-group full-width">
+                        <label class="rfq-label" for="specialties">Especialidades e Serviços Oferecidos</label>
+                        <input type="text" id="specialties" name="specialties" class="rfq-input" placeholder="Ex: Elétrica, Hidráulica, Pintura, Alvenaria, Porcelanato" value="{{ provider.specialties|default('') }}">
+                    </div>
+                </div>
+                <div style="display:flex; justify-content:flex-end; gap:0.75rem; margin-top:1.25rem;">
+                    <button type="submit" class="rfq-btn rfq-btn-primary">
+                        <span>💾</span> Salvar Configurações
+                    </button>
+                </div>
+            </form>
+        </div>
+
+        {# ── Barra de Filtros e Busca de Oportunidades (FA01 & FA02) ── #}
+        <div class="rfq-card" style="padding:1.25rem; margin-bottom:1.5rem;">
+            <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:1rem;">
+                <div style="display:flex; align-items:center; gap:0.5rem; flex-wrap:wrap;">
+                    <span style="font-weight:600; color:#1e293b; font-size:0.9rem;">Categoria:</span>
+                    <a href="/{{ lang }}/prestador/oportunidades?radius={{ selected_radius }}" class="rfq-btn {{ not selected_category ? 'rfq-btn-primary' : 'rfq-btn-secondary' }}" style="padding:0.35rem 0.75rem; font-size:0.85rem; border-radius:20px;">
+                        Todas
+                    </a>
+                    {% for cat in categories %}
+                        <a href="/{{ lang }}/prestador/oportunidades?categoria={{ cat|url_encode }}&radius={{ selected_radius }}" class="rfq-btn {{ selected_category == cat ? 'rfq-btn-primary' : 'rfq-btn-secondary' }}" style="padding:0.35rem 0.75rem; font-size:0.85rem; border-radius:20px;">
+                            {{ cat|capitalize }}
+                        </a>
+                    {% endfor %}
+                </div>
+
+                <div style="display:flex; align-items:center; gap:0.5rem;">
+                    <label for="filter-radius-select" style="font-weight:600; color:#1e293b; font-size:0.9rem;">Simular Raio:</label>
+                    <select id="filter-radius-select" class="rfq-select" style="padding:0.4rem 0.75rem; font-size:0.85rem; width:auto;" onchange="location.href='/{{ lang }}/prestador/oportunidades?radius=' + this.value + '{{ selected_category ? '&categoria=' ~ selected_category|url_encode : '' }}';">
+                        <option value="15" {{ selected_radius == 15 ? 'selected' : '' }}>Até 15 km</option>
+                        <option value="25" {{ selected_radius == 25 ? 'selected' : '' }}>Até 25 km</option>
+                        <option value="50" {{ selected_radius == 50 ? 'selected' : '' }}>Até 50 km</option>
+                        <option value="100" {{ selected_radius == 100 ? 'selected' : '' }}>Até 100 km</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+
+        {# ── Listagem de Oportunidades ── #}
+        <h2 style="font-size:1.3rem; color:#1e293b; margin-bottom:1rem; display:flex; align-items:center; justify-content:space-between;">
+            <span>Oportunidades em Aberto na sua Região ({{ opportunities|length }})</span>
+            <small style="font-size:0.85rem; color:#64748b; font-weight:normal;">Ordenadas por proximidade e data</small>
+        </h2>
 
         {% if opportunities is empty %}
-            <div class="rfq-card" style="text-align:center; padding:3rem 1.5rem;">
-                <div style="font-size:3rem; margin-bottom:1rem;">📍</div>
-                <h3 style="font-size:1.2rem; margin-bottom:0.5rem;">Nenhuma obra aberta no momento no seu raio de atendimento</h3>
-                <p style="color:#64748b;">Assim que clientes publicarem novos projetos próximos a você, eles aparecerão aqui automaticamente.</p>
+            <div class="rfq-card" style="text-align:center; padding:3.5rem 1.5rem;">
+                <div style="font-size:3.5rem; margin-bottom:1rem;">📍</div>
+                <h3 style="font-size:1.25rem; color:#1e293b; margin-bottom:0.5rem;">Nenhuma obra encontrada com os critérios atuais</h3>
+                <p style="color:#64748b; max-width:550px; margin:0 auto 1.5rem auto;">
+                    Não há solicitações de orçamento abertas no raio de <strong>{{ selected_radius }} km</strong>{% if selected_category %} para a categoria <strong>{{ selected_category }}</strong>{% endif %}.
+                </p>
+                <a href="/{{ lang }}/prestador/oportunidades?radius=100" class="rfq-btn rfq-btn-primary">
+                    <span>🔍</span> Expandir Busca para 100 km
+                </a>
             </div>
         {% else %}
             {% for opp in opportunities %}
-                <div class="rfq-card">
+                <div class="rfq-card" id="opportunity-card-{{ opp.id }}">
                     <div class="rfq-card-header">
                         <div>
                             <span class="rfq-badge rfq-badge--{{ opp.is_assigned_to_me ? 'accepted' : 'open' }}">
-                                {{ opp.is_assigned_to_me ? 'Você foi Contratado!' : 'Oportunidade Aberta' }}
+                                {{ opp.is_assigned_to_me ? '✓ Você foi Contratado!' : 'Oportunidade Aberta' }}
                             </span>
-                            <h3 style="font-size:1.25rem; color:#1e293b; margin:0.5rem 0 0.25rem 0;">{{ opp.title }}</h3>
-                            <div style="font-size:0.85rem; color:#64748b;">
+                            <span style="font-size:0.75rem; background:#f1f5f9; color:#475569; padding:3px 8px; border-radius:6px; font-weight:600; text-transform:uppercase; margin-left:6px;">
+                                {{ opp.category }}
+                            </span>
+                            <h3 style="font-size:1.3rem; color:#1e293b; margin:0.6rem 0 0.25rem 0;">{{ opp.title }}</h3>
+                            <div style="font-size:0.875rem; color:#64748b;">
                                 📍 Local: <strong>{{ opp.city }} - {{ opp.state }}</strong> (CEP: {{ opp.cep }})
                                 {% if opp.distance_km is not null %}
-                                    | Distância aprox: <strong style="color:#ff6b00;">{{ opp.distance_km }} km</strong>
+                                    | Distância calculada: <strong style="color:#ff6b00;">{{ opp.distance_km }} km</strong>
                                 {% endif %}
+                                | Prazo pretendido: <strong>{{ opp.deadline_days }} dias</strong>
                             </div>
                         </div>
 
                         {% if opp.budget_expectation > 0 %}
                             <div style="text-align:right;">
-                                <small style="color:#64748b; display:block;">Orçamento do Cliente:</small>
-                                <strong style="color:#059669; font-size:1.2rem;">R$ {{ opp.budget_expectation|number_format(2, ',', '.') }}</strong>
+                                <small style="color:#64748b; display:block;">Orçamento Estimado:</small>
+                                <strong style="color:#059669; font-size:1.3rem;">R$ {{ opp.budget_expectation|number_format(2, ',', '.') }}</strong>
                             </div>
                         {% endif %}
                     </div>
 
-                    <p style="color:#475569; font-size:0.95rem; margin:1rem 0;">{{ opp.description }}</p>
+                    <p style="color:#475569; font-size:0.95rem; margin:1rem 0; line-height:1.5;">{{ opp.description }}</p>
 
                     <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:1rem; padding-top:1rem; border-top:1px solid #f1f5f9;">
                         <div>
                             {% if opp.has_bid %}
-                                <span style="font-size:0.85rem; background:#ecfdf5; color:#065f46; padding:4px 8px; border-radius:6px; font-weight:600;">
-                                    ✓ Sua Proposta: R$ {{ opp.my_bid.price|number_format(2, ',', '.') }} ({{ opp.my_bid.duration }} dias)
+                                <span style="font-size:0.875rem; background:#ecfdf5; color:#065f46; padding:6px 12px; border-radius:8px; font-weight:600; display:inline-flex; align-items:center; gap:0.35rem;">
+                                    <span>✓</span> Sua Proposta: <strong>R$ {{ opp.my_bid.price|number_format(2, ',', '.') }}</strong> ({{ opp.my_bid.duration }} dias)
+                                </span>
+                            {% else %}
+                                <span style="font-size:0.85rem; color:#64748b;">
+                                    ⚡ Aberto para envio de proposta técnica e comercial
                                 </span>
                             {% endif %}
                         </div>
 
-                        <div style="display:flex; gap:0.75rem;">
+                        <div style="display:flex; gap:0.75rem; flex-wrap:wrap;">
                             {% if opp.is_assigned_to_me %}
-                                <a href="{{ opp.takeoff_url }}" class="rfq-btn rfq-btn-success">
-                                    <span>🛠️</span> Ferramenta de Levantamento de Materiais (Takeoff Tool)
+                                <a href="{{ opp.takeoff_url }}" class="rfq-btn rfq-btn-success" id="btn-takeoff-{{ opp.id }}">
+                                    <span>🛠️</span> Montar Lista de Materiais (Takeoff Tool)
                                 </a>
                             {% endif %}
-                            <a href="{{ opp.bid_url }}" class="rfq-btn rfq-btn-primary">
-                                <span>📝</span> {{ opp.has_bid ? 'Editar Proposta' : 'Enviar Orçamento' }}
+                            <a href="{{ opp.bid_url }}" class="rfq-btn rfq-btn-primary" id="btn-bid-{{ opp.id }}">
+                                <span>📝</span> {{ opp.has_bid ? 'Editar Proposta' : 'Submeter Orçamento' }}
                             </a>
                         </div>
                     </div>
@@ -84,4 +206,28 @@
             {% endfor %}
         {% endif %}
     </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const toggleBtn = document.getElementById('btn-toggle-profile-settings');
+            const closeBtn = document.getElementById('btn-close-profile-settings');
+            const profileCard = document.getElementById('provider-profile-card');
+
+            if (toggleBtn && profileCard) {
+                toggleBtn.addEventListener('click', () => {
+                    const isHidden = profileCard.style.display === 'none' || profileCard.style.display === '';
+                    profileCard.style.display = isHidden ? 'block' : 'none';
+                    if (isHidden) {
+                        profileCard.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    }
+                });
+            }
+
+            if (closeBtn && profileCard) {
+                closeBtn.addEventListener('click', () => {
+                    profileCard.style.display = 'none';
+                });
+            }
+        });
+    </script>
 {% endblock %}

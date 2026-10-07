@@ -191,6 +191,9 @@ class AppContainer implements \Psr\Container\ContainerInterface
             } elseif ($typeName && str_contains($typeName, '\\Repositories\\') && class_exists(\Alpha\Model\Domain\Repositories\RepositoryFactory::class)) {
                 // Fallback inteligente: resolve Repositórios não mapeados via RepositoryFactory
                 $args[] = \Alpha\Model\Domain\Repositories\RepositoryFactory::getInstance()->get($typeName);
+            } elseif ($typeName && class_exists($typeName)) {
+                // Auto-instanciação de Services e classes utilitárias
+                $args[] = new $typeName();
             } elseif ($param->isDefaultValueAvailable()) {
                 // Parâmetro opcional: usa o valor padrão declarado na assinatura
                 $args[] = $param->getDefaultValue();

@@ -176,6 +176,10 @@ return function (\Slim\App $app) {
     $app->map(['GET', 'POST'], '/resetar-senha', RedirectToDefaultLanguageAction::class);
 
     $app->map(['GET', 'POST'], '/checkout', RedirectToDefaultLanguageAction::class);
+    $app->map(['GET', 'POST'], '/prestador/oportunidades', RedirectToDefaultLanguageAction::class);
+    $app->map(['GET', 'POST'], '/prestador/projetos/{rfq_id:[0-9]+}/proposta', RedirectToDefaultLanguageAction::class);
+    $app->map(['GET', 'POST'], '/prestador/projetos/{rfq_id:[0-9]+}/takeoff', RedirectToDefaultLanguageAction::class);
+    $app->map(['GET', 'POST'], '/projetos/novo', RedirectToDefaultLanguageAction::class);
 
     $app->group('/account', function ($account) {
         $account->get('', RedirectToDefaultLanguageAction::class);
@@ -320,7 +324,7 @@ return function (\Slim\App $app) {
         $group->get('/api/projetos/meus-projetos', \Alpha\Controller\Actions\Quotation\Customer\GetCustomerProjectsJsonAction::class)->setName('api.projects.my_projects');
 
         // Portal do Prestador de Serviços (Matching, Bids e Takeoff Tool)
-        $group->get('/prestador/oportunidades', \Alpha\Controller\Actions\Quotation\Provider\ListOpportunitiesAction::class)->setName('provider.opportunities');
+        $group->map(['GET', 'POST'], '/prestador/oportunidades', \Alpha\Controller\Actions\Quotation\Provider\ListOpportunitiesAction::class)->setName('provider.opportunities');
         $group->map(['GET', 'POST'], '/prestador/projetos/{rfq_id:[0-9]+}/proposta', \Alpha\Controller\Actions\Quotation\Provider\SubmitBidAction::class)->setName('provider.projects.bid');
         $group->map(['GET', 'POST'], '/prestador/projetos/{rfq_id:[0-9]+}/takeoff', \Alpha\Controller\Actions\Quotation\Provider\MaterialTakeoffAction::class)->setName('provider.projects.takeoff');
         $group->get('/api/produtos/buscar-takeoff', \Alpha\Controller\Actions\Quotation\Provider\SearchCatalogItemsAction::class)->setName('api.takeoff.search_products');

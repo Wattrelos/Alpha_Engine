@@ -26,9 +26,18 @@
 					<li role="none">
 						<a href="{{ login|default(url('login', {}, lang)) }}" class="egen-top-nav__dropdown-item" role="menuitem">{{ Common.header.login|default('Login') }}</a>
 					</li>
+					<li role="none">
+						<a href="/{{ lang }}/prestador/oportunidades" class="egen-top-nav__dropdown-item" role="menuitem">👷 Portal do Prestador</a>
+					</li>
 				{% else %}
 					<li role="none">
 						<a href="{{ account|default(url('account', {}, lang)) }}" class="egen-top-nav__dropdown-item" role="menuitem">{{ Common.header.account|default('Minha Conta') }}</a>
+					</li>
+					<li role="none">
+						<a href="/{{ lang }}/prestador/oportunidades" class="egen-top-nav__dropdown-item" role="menuitem">👷 Portal do Prestador</a>
+					</li>
+					<li role="none">
+						<a href="/{{ lang }}/account/projetos" class="egen-top-nav__dropdown-item" role="menuitem">📋 Meus Projetos (RFQ)</a>
 					</li>
 					<li role="none">
 						<a href="{{ order|default(url('account/orders', {}, lang)) }}" class="egen-top-nav__dropdown-item" role="menuitem">{{ Common.header.order|default('Pedidos') }}</a>

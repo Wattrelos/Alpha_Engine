@@ -225,6 +225,11 @@ class AppBootstrap
 
         $this->container->bind(\Alpha\Events\EventDispatcher::class, $eventDispatcher);
 
+        // Alpha Engine: Serviços de Cotação e Prestador de Serviços (RFQ / BoQ)
+        $geoService = new \Alpha\Services\Quotation\GeoMatchingService();
+        $this->container->bind(\Alpha\Services\Quotation\GeoMatchingService::class, $geoService);
+        $this->container->bind('geoService', $geoService);
+
         // Repositórios de Domínio
         $this->categoryRepository = new CategoryRepository($mapperFactory, $this->container);
         $productRepository = $repositoryFactory->get(ProductRepository::class);
@@ -236,6 +241,13 @@ class AppBootstrap
         $manufacturerRepository = $repositoryFactory->get(ManufacturerRepository::class);
         $customerAddressesRepository = $repositoryFactory->get(CustomerAddressesRepository::class);
         $orderReturnRepository = $repositoryFactory->get(OrderReturnRepository::class);
+        $boqRepository = $repositoryFactory->get(\Alpha\Model\Domain\Repositories\ProjectBoqRepository::class);
+
+        $boqImportService = new \Alpha\Services\Quotation\BoqSpreadsheetImportService($boqRepository, $productRepository);
+        $this->container->bind(\Alpha\Services\Quotation\BoqSpreadsheetImportService::class, $boqImportService);
+
+        $boqToCartService = new \Alpha\Services\Quotation\BoqToCartConverterService($cartRepository, $productRepository, $boqRepository);
+        $this->container->bind(\Alpha\Services\Quotation\BoqToCartConverterService::class, $boqToCartService);
 
         // Bindings no Container de Dependências
         $this->container

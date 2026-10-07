@@ -4,7 +4,10 @@ declare(strict_types=1);
 
 namespace Tests\Validation;
 
+require_once __DIR__ . '/../../backend/config.php';
+
 use PHPUnit\Framework\TestCase;
+use Containers\AppBootstrap;
 use Alpha\Services\Quotation\GeoMatchingService;
 use Alpha\Services\Quotation\BoqToCartConverterService;
 use Alpha\Services\Quotation\BoqSpreadsheetImportService;
@@ -27,6 +30,10 @@ class QuotationAndTakeoffValidationTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
+        if (!defined('APPLICATION')) {
+            define('APPLICATION', 'catalog');
+        }
+        AppBootstrap::boot();
         $this->geoService = new GeoMatchingService();
     }
 
@@ -343,4 +350,55 @@ class QuotationAndTakeoffValidationTest extends TestCase
 
         $this->assertTrue($dto->isValid(), 'OrderDataDTO deve ser válido para cliente autenticado');
     }
+
+    /**
+     * RF033/RF034: Valida persistência e recuperação do perfil do prestador de serviços.
+     */
+    public function testServiceProviderProfilePersistenceAndRetrieval(): void
+    {
+        /** @var \Alpha\Model\Domain\Repositories\ServiceProviderProfileRepository $repo */
+        $repo = \Alpha\Model\Domain\Repositories\RepositoryFactory::getInstance()->get(\Alpha\Model\Domain\Repositories\ServiceProviderProfileRepository::class);
+
+        $provider = $repo->findByCustomerId(16694);
+        $this->assertNotNull($provider, 'Prestador semeado deve existir no banco de dados.');
+        $this->assertEquals(35.0, (float)$provider->getServiceRadiusKm());
+        $this->assertNotEmpty($provider->getSpecialties());
+        $this->assertEquals('São Paulo', $provider->getAddressCity());
+    }
+
+    /**
+     * RF035 / RN-BID-01: Valida contagem de propostas por RFQ e limite máximo.
+     */
+    public function testProjectBidRepositoryCountAndLimit(): void
+    {
+        /** @var \Alpha\Model\Domain\Repositories\ProjectBidRepository $bidRepo */
+        $bidRepo = \Alpha\Model\Domain\Repositories\RepositoryFactory::getInstance()->get(\Alpha\Model\Domain\Repositories\ProjectBidRepository::class);
+
+        $countRfq3 = $bidRepo->countByRfqId(3);
+        $this->assertGreaterThanOrEqual(1, $countRfq3, 'RFQ 3 deve ter ao menos 1 proposta cadastrada.');
+
+        // Valida que countByRfqId retorna int e respeita regra de negócio
+        $this->assertLessThanOrEqual(10, $countRfq3, 'Número de propostas não deve ultrapassar o limite de 10.');
+    }
+
+    /**
+     * RF036: Valida cálculo de itens do BoQ e recálculo do valor total do orçamento técnico.
+     */
+    public function testProjectBoqItemPersistenceAndRecalculation(): void
+    {
+        /** @var \Alpha\Model\Domain\Repositories\ProjectBoqRepository $boqRepo */
+        $boqRepo = \Alpha\Model\Domain\Repositories\RepositoryFactory::getInstance()->get(\Alpha\Model\Domain\Repositories\ProjectBoqRepository::class);
+
+        $boq = $boqRepo->findByRfqId(3);
+        $this->assertNotNull($boq, 'BoQ do RFQ 3 deve existir.');
+
+        $items = $boqRepo->findItemsByBoqId($boq->getId());
+        $this->assertNotEmpty($items, 'BoQ do RFQ 3 deve possuir itens.');
+
+        // Recálculo do total do BoQ
+        $calculatedTotal = $boqRepo->recalculateTotal($boq->getId());
+        $this->assertGreaterThan(0.0, $calculatedTotal);
+        $this->assertEquals($calculatedTotal, $boq->getTotalEstimatedAmount());
+    }
 }
+

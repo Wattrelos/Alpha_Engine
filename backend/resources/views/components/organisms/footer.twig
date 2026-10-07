@@ -25,7 +25,11 @@
 {% if affiliate %}
   {% set extra_links = extra_links|merge([{ href: affiliate|default(url('account/affiliate', {}, lang)), label: Common.footer.affiliate|default('Afiliados') }]) %}
 {% endif %}
-{% set extra_links = extra_links|merge([{ href: special|default(url('product/special', {}, lang)), label: Common.footer.special|default('Ofertas Especiais') }]) %}
+{% set extra_links = extra_links|merge([
+  { href: special|default(url('product/special', {}, lang)), label: Common.footer.special|default('Ofertas Especiais') },
+  { href: '/' ~ lang ~ '/prestador/oportunidades', label: 'Portal do Prestador' },
+  { href: '/' ~ lang ~ '/projetos/novo', label: 'Orçar Projeto de Obra' }
+]) %}
 
 {# 4. Links de Minha Conta #}
 {% set account_links = [

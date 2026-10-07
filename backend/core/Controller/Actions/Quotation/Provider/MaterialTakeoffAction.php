@@ -61,6 +61,12 @@ class MaterialTakeoffAction implements ActionInterface
                 ->withStatus(302);
         }
 
+        // FE01: Valida se o projeto foi atribuído a outro prestador
+        if ($rfq->getSelectedProviderId() !== null && $rfq->getSelectedProviderId() !== $provider->getId()) {
+            $response->getBody()->write('Acesso não autorizado. A ferramenta de levantamento de materiais só é liberada para o profissional contratado pelo cliente.');
+            return $response->withStatus(403);
+        }
+
         // Obtém ou inicializa o BoQ da obra
         $boq = $this->boqRepository->findByRfqId($rfqId);
         if (!$boq) {
@@ -147,6 +153,10 @@ class MaterialTakeoffAction implements ActionInterface
             } elseif ($action === 'finalize_boq') {
                 $boq->setStatus('submitted');
                 $this->boqRepository->save($boq);
+
+                // Atualiza o RFQ para 'boq_ready' para que o cliente possa aprovar (UC_CLI_029)
+                $rfq->setStatus('boq_ready');
+                $this->rfqRepository->save($rfq);
 
                 $response->getBody()->write(json_encode([
                     'success' => true,

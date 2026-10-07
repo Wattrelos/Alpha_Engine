@@ -58,15 +58,72 @@ class ListOpportunitiesAction implements ActionInterface
             $provider->setId((int)$id);
         }
 
+        // Atualização de Perfil/Raio de Atendimento do Prestador (POST)
+        if ($request->getMethod() === 'POST') {
+            $postData = $request->getParsedBody() ?? [];
+            if (($postData['action'] ?? '') === 'update_profile') {
+                $radius = (float)($postData['service_radius_km'] ?? $provider->getServiceRadiusKm());
+                $specialties = trim($postData['specialties'] ?? ($provider->getSpecialties() ?: ''));
+                $cep = trim($postData['address_cep'] ?? ($provider->getAddressCep() ?: ''));
+                $city = trim($postData['address_city'] ?? ($provider->getAddressCity() ?: ''));
+                $state = trim($postData['address_state'] ?? ($provider->getAddressState() ?: ''));
+
+                if ($radius > 0) {
+                    $provider->setServiceRadiusKm($radius);
+                }
+                if (!empty($specialties)) {
+                    $provider->setSpecialties($specialties);
+                }
+                if (!empty($cep)) {
+                    $provider->setAddressCep($cep);
+                }
+                if (!empty($city)) {
+                    $provider->setAddressCity($city);
+                }
+                if (!empty($state)) {
+                    $provider->setAddressState($state);
+                }
+
+                $this->providerRepo->save($provider);
+
+                return $response
+                    ->withHeader('Location', '/' . $lang . '/prestador/oportunidades?profile_saved=1')
+                    ->withStatus(302);
+            }
+        }
+
+        $queryParams = $request->getQueryParams();
+        $selectedRadius = isset($queryParams['radius']) && is_numeric($queryParams['radius'])
+            ? (float)$queryParams['radius']
+            : (float)$provider->getServiceRadiusKm();
+        $selectedCategory = !empty($queryParams['categoria']) ? trim($queryParams['categoria']) : null;
+        $bidSaved = !empty($queryParams['bid_saved']);
+        $profileSaved = !empty($queryParams['profile_saved']);
+
         $routeContext = RouteContext::fromRequest($request);
         $routeParser = $routeContext->getRouteParser();
 
         $openProjects = $this->rfqRepository->findOpenProjects();
         $opportunities = [];
+        $allCategories = [];
+
+        // Perfil temporário para filtro de raio exploratório (FA02 de UC_PRV_001)
+        $evalProvider = clone $provider;
+        $evalProvider->setServiceRadiusKm($selectedRadius);
 
         foreach ($openProjects as $project) {
+            $cat = trim($project->getCategory());
+            if ($cat !== '' && !in_array($cat, $allCategories, true)) {
+                $allCategories[] = $cat;
+            }
+
+            // Filtro por Categoria Técnica (FA01 de UC_PRV_001)
+            if ($selectedCategory !== null && strtolower($project->getCategory()) !== strtolower($selectedCategory)) {
+                continue;
+            }
+
             // Verifica matching de geolocalização e raio
-            if ($this->geoService->isProviderEligibleForProject($provider, $project)) {
+            if ($this->geoService->isProviderEligibleForProject($evalProvider, $project)) {
                 $existingBid = $this->bidRepository->findByRfqAndProvider($project->getId(), $provider->getId());
 
                 $distance = null;
@@ -119,9 +176,17 @@ class ListOpportunitiesAction implements ActionInterface
                 'name' => $provider->getTradeName() ?: $provider->getCompanyName(),
                 'radius_km' => $provider->getServiceRadiusKm(),
                 'specialties' => $provider->getSpecialties(),
-                'rating' => $provider->getRating()
+                'rating' => $provider->getRating(),
+                'cep' => $provider->getAddressCep(),
+                'city' => $provider->getAddressCity(),
+                'state' => $provider->getAddressState()
             ],
             'opportunities' => $opportunities,
+            'categories' => $allCategories,
+            'selected_category' => $selectedCategory,
+            'selected_radius' => $selectedRadius,
+            'bid_saved' => $bidSaved,
+            'profile_saved' => $profileSaved,
             'lang' => $lang
         ]);
 

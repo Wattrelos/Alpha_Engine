@@ -10,6 +10,7 @@ default:
         - CheckoutContext
         - ApiContext
         - AuthContext
+        - ProviderContext
   extensions:
     Behat\MinkExtension:
       base_url: http://localhost/

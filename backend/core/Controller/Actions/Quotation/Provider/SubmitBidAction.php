@@ -69,7 +69,11 @@ class SubmitBidAction implements ActionInterface
             $estimatedDays = (int)($data['estimated_duration_days'] ?? 1);
             $notes = trim($data['proposal_notes'] ?? '');
 
-            if ($laborPrice <= 0 || $estimatedDays <= 0) {
+            if ($rfq->getStatus() !== 'open') {
+                $error = 'Este projeto não está aberto para propostas (Status: ' . $rfq->getStatus() . ').';
+            } elseif ($existingBid === null && $this->bidRepository->countByRfqId($rfqId) >= 10) {
+                $error = 'Esta solicitação de orçamento já atingiu o limite máximo de 10 propostas concorrentes (RN-BID-01).';
+            } elseif ($laborPrice <= 0 || $estimatedDays <= 0) {
                 $error = 'Por favor, informe um valor de mão de obra válido e o prazo estimado em dias.';
             } else {
                 $bid = $existingBid ?? new ProjectBid();
@@ -83,7 +87,7 @@ class SubmitBidAction implements ActionInterface
                 $this->bidRepository->save($bid);
 
                 return $response
-                    ->withHeader('Location', '/' . $lang . '/prestador/oportunidades')
+                    ->withHeader('Location', '/' . $lang . '/prestador/oportunidades?bid_saved=1')
                     ->withStatus(302);
             }
         }

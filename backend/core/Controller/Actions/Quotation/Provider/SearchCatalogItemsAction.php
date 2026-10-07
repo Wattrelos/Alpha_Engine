@@ -29,7 +29,7 @@ class SearchCatalogItemsAction implements ActionInterface
             return $response->withHeader('Content-Type', 'application/json');
         }
 
-        $results = $this->productRepository->searchProducts([
+        $results = $this->productRepository->getProducts([
             'filter_name' => $query,
             'language_id' => $languageId,
             'start' => 0,
