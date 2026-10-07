@@ -40,10 +40,10 @@ Aprovado (2026-10-06)
 
 No comércio eletrônico da **Alpha Engine (AG Sonhos)**, a indisponibilidade imediata de um produto ou de uma variação específica (ex: voltagem 110V/220V em ferramentas, tonalidade de lote de porcelanatos, medidas de colchões ou cores de acabamento) representa um dos maiores pontos de atrito e abandono na jornada de compra do consumidor.
 
-Conforme estabelecido nos casos de uso [UC_CLI_003](file:///var/www/html/agsonhos/docs/business/use-cases/customer/UC_CLI_003_visualizar_detalhes_produto.md) (Fluxo de Exceção FE02) e [UC_CLI_004](file:///var/www/html/agsonhos/docs/business/use-cases/customer/UC_CLI_004_selecionar_variantes_opcoes.md) (Fluxo de Exceção FE01), quando um item atinge saldo zero (`quantity <= 0`), o sistema deve impedir a adição ao carrinho e apresentar a funcionalidade de captura de intenção de compra (*Back-in-stock notification*).
+Conforme estabelecido nos casos de uso [UC_CLI_003](Skanstull Commerce/docs/business/use-cases/customer/UC_CLI_003_visualizar_detalhes_produto.md) (Fluxo de Exceção FE02) e [UC_CLI_004](Skanstull Commerce/docs/business/use-cases/customer/UC_CLI_004_selecionar_variantes_opcoes.md) (Fluxo de Exceção FE01), quando um item atinge saldo zero (`quantity <= 0`), o sistema deve impedir a adição ao carrinho e apresentar a funcionalidade de captura de intenção de compra (*Back-in-stock notification*).
 
 Entretanto, o esboço preliminar desta funcionalidade apresentava deficiências críticas de arquitetura que violavam os padrões do projeto:
-1. **Incompatibilidade com a ADR 0005:** Utilizava o tipo `TIMESTAMP`, estritamente proibido na Alpha Engine devido ao problema do ano 2038 e inconsistências de timezone (a [ADR 0005](file:///var/www/html/agsonhos/docs/architecture/adr/0005-use-datetime-over-timestamp.md) padronizou o uso de `DATETIME` UTC).
+1. **Incompatibilidade com a ADR 0005:** Utilizava o tipo `TIMESTAMP`, estritamente proibido na Alpha Engine devido ao problema do ano 2038 e inconsistências de timezone (a [ADR 0005](Skanstull Commerce/docs/architecture/adr/0005-use-datetime-over-timestamp.md) padronizou o uso de `DATETIME` UTC).
 2. **Desacoplamento e Performance:** Propunha disparos diretos e síncronos no momento da atualização de estoque, o que degrada gravemente rotinas de entrada de notas fiscais, sincronizações via ERP, fechamentos de caixa no PDV físico e retornos de pedidos cancelados.
 3. **Ausência de Governança LGPD:** Não previa termo de consentimento explícito, rastreabilidade de IP, política de retenção/expiração ou link direto de cancelamento de inscrição (*opt-out*).
 4. **O Efeito "Corrida ao Estoque" (*Stampede Problem*):** Disparar alertas simultaneamente para centenas de inscritos quando chegam poucas unidades físicas gera frustração em massa ("o e-mail chegou agora e já acabou de novo"), sobrecarga transitória no servidor e taxa elevada de chamados no SAC.
@@ -93,7 +93,7 @@ A solução estrutura-se nos seguintes pilares fundamentais:
 
 ### 1. Modelagem Física de Dados (`agsc_product_stock_alert`)
 
-A tabela é modelada no banco relacional seguindo a convenção de nomenclatura da Alpha Engine (`agsc_`), chaves primárias e estrangeiras `BIGINT(20) UNSIGNED`, e estrita conformidade com a [ADR 0005](file:///var/www/html/agsonhos/docs/architecture/adr/0005-use-datetime-over-timestamp.md) (`DATETIME` UTC para todas as colunas temporais).
+A tabela é modelada no banco relacional seguindo a convenção de nomenclatura da Alpha Engine (`agsc_`), chaves primárias e estrangeiras `BIGINT(20) UNSIGNED`, e estrita conformidade com a [ADR 0005](Skanstull Commerce/docs/architecture/adr/0005-use-datetime-over-timestamp.md) (`DATETIME` UTC para todas as colunas temporais).
 
 ```sql
 CREATE TABLE `agsc_product_stock_alert` (
@@ -152,7 +152,7 @@ A captura da inscrição é exposta por uma Action dedicada e minimalista basead
 
 ### 3. Adaptação da PDP e Seletor de Variantes (Twig 3 / ShowProductAction)
 
-No código legado de [ShowProductAction.php](file:///var/www/html/agsonhos/backend/core/Controller/Actions/Product/ShowProductAction.php#L237-L240), variações com estoque zerado eram suprimidas da listagem (`continue`), impossibilitando a exibição da opção para o cliente. 
+No código legado de [ShowProductAction.php](Skanstull Commerce/backend/core/Controller/Actions/Product/ShowProductAction.php#L237-L240), variações com estoque zerado eram suprimidas da listagem (`continue`), impossibilitando a exibição da opção para o cliente. 
 
 #### Decisão de Apresentação:
 1. **Preservação de Variantes Esgotadas no Array de Dados:** As variantes sem estoque ativo são mantidas no array `$variants` repassado à view Twig, porém marcadas com a flag `is_out_of_stock = true` e `stock_status_name = 'Esgotado'`.
@@ -219,7 +219,7 @@ Onde $K$ é o **fator de conversão esperado** (padrão $K = 3$, ou seja, 3 noti
 
 ### 6. Conformidade Legal (LGPD) e Governança de Dados
 
-Em alinhamento rigoroso com a [ADR 0007](file:///var/www/html/agsonhos/docs/architecture/adr/0007-audictory.md) (Auditoria e Observabilidade Ativa) e a Lei Federal nº 13.709/2018 (LGPD):
+Em alinhamento rigoroso com a [ADR 0007](Skanstull Commerce/docs/architecture/adr/0007-audictory.md) (Auditoria e Observabilidade Ativa) e a Lei Federal nº 13.709/2018 (LGPD):
 
 1. **Consentimento Explícito (Opt-In):** O formulário exige aceite inequívoco de que o e-mail e/ou WhatsApp serão utilizados estritamente para comunicar a disponibilidade do produto solicitado. A caixa de aceite para marketing secundário é desmarcada por padrão.
 2. **Direito ao Esquecimento e Cancelamento com 1 Clique (Opt-Out):** Todas as comunicações enviadas incluem um link direto de cancelamento:
@@ -293,7 +293,7 @@ sequenceDiagram
 * **Aumento Real de Conversão e Retenção:** Resgata clientes altamente qualificados que abandonariam a loja ao encontrar prateleiras virtuais vazias.
 * **Inteligência de Compras e Demanda:** A agregação de registros na tabela `agsc_product_stock_alert` com status `pending` fornece um indicador valioso para o time de compras e estoque sobre quais SKUs possuem demanda reprimida.
 * **Zero Impacto em Performance Transacional:** Graças ao RabbitMQ (`Alpha\Events\QueueService`), operações pesadas de entrada de estoque no ERP ou PDV não sofrem latência de conexões SMTP externas.
-* **Estrita Conformidade de Padrões:** 100% aderente à [ADR 0005](file:///var/www/html/agsonhos/docs/architecture/adr/0005-use-datetime-over-timestamp.md) (uso exclusivo de `DATETIME`), [ADR 0007](file:///var/www/html/agsonhos/docs/architecture/adr/0007-audictory.md) (sanitização LGPD) e ao padrão de Actions do Slim 4.
+* **Estrita Conformidade de Padrões:** 100% aderente à [ADR 0005](Skanstull Commerce/docs/architecture/adr/0005-use-datetime-over-timestamp.md) (uso exclusivo de `DATETIME`), [ADR 0007](Skanstull Commerce/docs/architecture/adr/0007-audictory.md) (sanitização LGPD) e ao padrão de Actions do Slim 4.
 * **Eliminação de Frustração por Efeito Manada:** O algoritmo de cota e despacho escalonado protege a imagem da marca e otimiza a conversão de cada lote reposto.
 
 ### Negativas e Riscos Mitigados (Contras & Mitigações)
