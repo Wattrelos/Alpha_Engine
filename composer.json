@@ -35,6 +35,8 @@
         "test:behat:cart": "./vendor/bin/behat features/cart/ --no-snippets",
         "test:behat:checkout": "./vendor/bin/behat features/checkout/ --no-snippets",
         "test:behat:api": "./vendor/bin/behat features/api/ --no-snippets",
+        "test:behat:services": "./vendor/bin/behat features/services/ --no-snippets",
+        "test:behat:provider": "./vendor/bin/behat features/use_cases/uc_prv_portal_prestador.feature features/services/cotacao_e_prestadores_rfq.feature --no-snippets",
         "test:phpunit": "cd backend && ./vendor/bin/phpunit",
         "test:e2e": "npx playwright test",
         "test:e2e:chromium": "npx playwright test --project=chromium",

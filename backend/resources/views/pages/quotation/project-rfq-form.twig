@@ -37,13 +37,19 @@
                     <strong>📦 Material Pré-Selecionado:</strong> {{ pre_product.name }} (Qtd: {{ pre_product.qty }})
                     <small style="display:block; color:#2563eb;">Este material será adicionado automaticamente ao levantamento técnico (BoQ) desta obra.</small>
                 </div>
-                <input type="hidden" name="pre_product_id" value="{{ pre_product.id }}">
-                <input type="hidden" name="pre_qty" value="{{ pre_product.qty }}">
             </div>
         {% endif %}
 
         <div class="rfq-card">
             <form method="POST" action="/{{ lang }}/projetos/novo">
+                {% if csrf %}
+                    <input type="hidden" name="{{ csrf.keys.name }}" value="{{ csrf.name }}">
+                    <input type="hidden" name="{{ csrf.keys.value }}" value="{{ csrf.value }}">
+                {% endif %}
+                {% if pre_product %}
+                    <input type="hidden" name="pre_product_id" value="{{ pre_product.id }}">
+                    <input type="hidden" name="pre_qty" value="{{ pre_product.qty }}">
+                {% endif %}
                 <h2 style="font-size:1.3rem; margin-bottom:1.25rem; color:#1e293b;">1. Dados da Obra e Escopo</h2>
                 <div class="rfq-form-grid">
                     <div class="rfq-form-group full-width">
@@ -109,7 +115,7 @@
 
                 <div style="display:flex; justify-content:flex-end; gap:1rem; margin-top:2rem;">
                     <a href="/{{ lang }}/account/projetos" class="rfq-btn rfq-btn-secondary">Cancelar</a>
-                    <button type="submit" class="rfq-btn rfq-btn-primary">
+                    <button type="submit" id="btn-submit-rfq" class="rfq-btn rfq-btn-primary">
                         <span>🚀</span> Publicar Pedido de Orçamento
                     </button>
                 </div>

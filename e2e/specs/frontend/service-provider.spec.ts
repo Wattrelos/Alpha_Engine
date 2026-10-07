@@ -91,4 +91,80 @@ test.describe('Módulo 4: Portal do Prestador de Serviços (Alpha Pro - UC_PRV_0
     await expect(page.locator('#takeoff-total-display')).toContainText('R$');
   });
 
+  test('deve criar e publicar um novo pedido de orçamento (RFQ) sem erro de CSRF', async ({ loginPage, page }) => {
+    // 1. Autentica como cliente
+    await loginPage.open();
+    await loginPage.login('prestador.teste@agsonhos.com.br', 'Teste@123');
+    await page.waitForURL(url => !url.pathname.includes('/login'), { timeout: 10000 });
+
+    // 2. Acessa o formulário de novo projeto
+    await page.goto('/pt-br/projetos/novo');
+    await expect(page.locator('h1.rfq-hero-title')).toContainText('Solicitar Orçamento de Projeto');
+
+    // 3. Preenche os campos obrigatórios
+    await page.fill('#title', 'Reforma Completa de Fachada E2E');
+    await page.selectOption('#category', 'pintura');
+    await page.fill('#budget_expectation', '4500.00');
+    await page.fill('#desired_deadline_days', '20');
+    await page.fill('#description', 'Pintura externa e impermeabilização da fachada com materiais de primeira linha.');
+    await page.fill('#address_cep', '01310-100');
+    await page.fill('#address_city', 'São Paulo');
+    await page.fill('#address_state', 'SP');
+
+    // 4. Submete o formulário clicando em "Publicar Pedido de Orçamento"
+    await page.click('#btn-submit-rfq');
+
+    // 5. Valida que NÃO houve erro 400 de CSRF
+    await expect(page.locator('text=400 - Requisição Rejeitada (CSRF)')).not.toBeVisible();
+    await expect(page.locator('text=Sua sessão expirou')).not.toBeVisible();
+
+    // 6. Confirma redirecionamento para a lista de projetos do cliente
+    await expect(page).toHaveURL(/\/pt-br\/account\/projetos/, { timeout: 10000 });
+  });
+
+  test('deve adicionar produto ao orçamento a partir da página de detalhes do produto', async ({ loginPage, page }) => {
+    page.on('console', msg => console.log('PAGE LOG:', msg.text()));
+    page.on('response', async res => {
+      if (res.url().includes('projetos')) {
+        console.log('RESPONSE:', res.url(), res.status(), await res.text().catch(() => ''));
+      }
+    });
+
+    // 1. Autentica como cliente
+    await loginPage.open();
+    await loginPage.login('prestador.teste@agsonhos.com.br', 'Teste@123');
+    await page.waitForURL(url => !url.pathname.includes('/login'), { timeout: 10000 });
+
+    // 2. Acessa a PDP de um produto com estoque
+    await page.goto('/pt-br/produto/2');
+    const addToQuoteBtn = page.locator('#btn-add-to-quote-pdp');
+    await expect(addToQuoteBtn).toBeVisible();
+
+    // 3. Clica em "Adicionar ao Orçamento"
+    await addToQuoteBtn.click({ force: true });
+
+    // 4. Modal de escolha do projeto deve abrir
+    const modalWrapper = page.locator('#egen-quote-modal-wrapper');
+    await expect(modalWrapper).toBeVisible();
+
+    // 5. Configura listener para capturar o alert de confirmação
+    let dialogMessage = '';
+    page.once('dialog', async dialog => {
+      dialogMessage = dialog.message();
+      console.log('DIALOG MESSAGE:', dialogMessage);
+      await dialog.accept();
+    });
+
+    // 6. Clica no primeiro projeto listado no modal
+    const projectItem = modalWrapper.locator('.egen-quote-project-item').first();
+    await expect(projectItem).toBeVisible();
+    await projectItem.click({ force: true });
+
+    // 7. Valida que o alerta informa sucesso e não erro de comunicação
+    await expect.poll(() => dialogMessage).toContain('adicionado com sucesso');
+    expect(dialogMessage).not.toContain('Erro ao enviar requisição para o orçamento');
+  });
+
 });
+
+

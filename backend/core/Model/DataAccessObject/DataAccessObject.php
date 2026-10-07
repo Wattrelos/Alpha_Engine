@@ -873,7 +873,7 @@ class DataAccessObject
                 $foreignKey = $args['foreignKey'] ?? null;
             }
 
-            if ((!$isOneToMany && !$isManyToMany) || !$targetEntityClass) continue;
+            if ((!$isOneToMany && !$isManyToMany) || !$targetEntityClass || !class_exists($targetEntityClass)) continue;
 
             if ($isOneToMany) {
                 // Cria uma instância da entidade alvo para servir de filtro

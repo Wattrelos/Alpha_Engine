@@ -7,6 +7,31 @@ document.addEventListener('DOMContentLoaded', () => {
     const langMatch = window.location.pathname.match(/^\/(pt-br|en|es)/);
     const currentLang = langMatch ? langMatch[1] : 'pt-br';
 
+    // ── Helper para Injeção Automática de CSRF Tokens ──
+    function appendCsrf(formData) {
+        const metaNameKey = document.querySelector('meta[name="csrf-key-name"]')?.content || 'csrf_name';
+        const metaValueKey = document.querySelector('meta[name="csrf-key-value"]')?.content || 'csrf_value';
+        const metaName = document.querySelector('meta[name="csrf-name"]')?.content;
+        const metaValue = document.querySelector('meta[name="csrf-value"]')?.content;
+
+        if (metaName && metaValue && !formData.has(metaNameKey)) {
+            formData.append(metaNameKey, metaName);
+            formData.append(metaValueKey, metaValue);
+        }
+        return formData;
+    }
+
+    function getCsrfHeaders(extraHeaders = {}) {
+        const metaName = document.querySelector('meta[name="csrf-name"]')?.content;
+        const metaValue = document.querySelector('meta[name="csrf-value"]')?.content;
+        const headers = { 'X-Requested-With': 'XMLHttpRequest', ...extraHeaders };
+        if (metaName && metaValue) {
+            headers['X-CSRF-Name'] = metaName;
+            headers['X-CSRF-Value'] = metaValue;
+        }
+        return headers;
+    }
+
     // ── 1. Autocomplete de SKUs do Catálogo na ferramenta Takeoff ──
     const skuSearchInput = document.getElementById('sku-search-input');
     const skuResultsDropdown = document.getElementById('sku-results-dropdown');
@@ -86,7 +111,7 @@ document.addEventListener('DOMContentLoaded', () => {
             }
 
             const file = spreadsheetFileInput.files[0];
-            const formData = new FormData();
+            const formData = appendCsrf(new FormData());
             formData.append('action', 'import_spreadsheet');
             formData.append('spreadsheet_file', file);
 
@@ -95,7 +120,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
             fetch(window.location.href, {
                 method: 'POST',
-                body: formData
+                body: formData,
+                headers: getCsrfHeaders()
             })
             .then(res => res.json())
             .then(data => {
@@ -146,7 +172,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 return;
             }
 
-            const formData = new FormData();
+            const formData = appendCsrf(new FormData());
             formData.append('action', 'add_item');
             formData.append('item_name', itemName);
             formData.append('unit', unit);
@@ -157,7 +183,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
             fetch(window.location.href, {
                 method: 'POST',
-                body: formData
+                body: formData,
+                headers: getCsrfHeaders()
             })
             .then(res => res.json())
             .then(data => {
@@ -180,13 +207,14 @@ document.addEventListener('DOMContentLoaded', () => {
             const itemId = e.currentTarget.getAttribute('data-item-id');
             if (!confirm('Deseja remover este material da lista?')) return;
 
-            const formData = new FormData();
+            const formData = appendCsrf(new FormData());
             formData.append('action', 'remove_item');
             formData.append('item_id', itemId);
 
             fetch(window.location.href, {
                 method: 'POST',
-                body: formData
+                body: formData,
+                headers: getCsrfHeaders()
             })
             .then(res => res.json())
             .then(data => {
@@ -202,12 +230,13 @@ document.addEventListener('DOMContentLoaded', () => {
         finalizeBoqBtn.addEventListener('click', () => {
             if (!confirm('Deseja finalizar o levantamento de materiais e disponibilizar para aprovação do cliente?')) return;
 
-            const formData = new FormData();
+            const formData = appendCsrf(new FormData());
             formData.append('action', 'finalize_boq');
 
             fetch(window.location.href, {
                 method: 'POST',
-                body: formData
+                body: formData,
+                headers: getCsrfHeaders()
             })
             .then(res => res.json())
             .then(data => {
@@ -320,7 +349,7 @@ document.addEventListener('DOMContentLoaded', () => {
         modalOverlay.querySelectorAll('.egen-quote-project-item').forEach(item => {
             item.addEventListener('click', () => {
                 const projectId = item.getAttribute('data-project-id');
-                const formData = new FormData();
+                const formData = appendCsrf(new FormData());
                 formData.append('product_id', productId);
                 formData.append('quantity', quantity);
                 formData.append('project_id', projectId);
@@ -329,20 +358,36 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 fetch(postUrl, {
                     method: 'POST',
-                    body: formData
+                    body: formData,
+                    headers: getCsrfHeaders()
                 })
                 .then(async (res) => {
+                    const contentType = res.headers.get('content-type') || '';
                     if (!res.ok) {
                         const fallbackPost = await fetch('/api/projetos/adicionar-item', {
                             method: 'POST',
-                            body: formData
+                            body: formData,
+                            headers: getCsrfHeaders()
                         });
-                        return fallbackPost.json();
+                        const fallbackContentType = fallbackPost.headers.get('content-type') || '';
+                        if (fallbackContentType.includes('application/json')) {
+                            return fallbackPost.json();
+                        }
+                        const textErr = await fallbackPost.text();
+                        throw new Error(`Servidor retornou erro ${fallbackPost.status}`);
                     }
-                    return res.json();
+                    if (contentType.includes('application/json')) {
+                        return res.json();
+                    }
+                    throw new Error('Resposta inválida do servidor');
                 })
                 .then(resData => {
                     modalOverlay.remove();
+                    if (resData.require_login) {
+                        alert(resData.message || 'Faça login para adicionar itens ao seu orçamento.');
+                        window.location.href = resData.login_url || `/${currentLang}/login`;
+                        return;
+                    }
                     if (resData.success) {
                         alert(resData.message || 'Produto adicionado ao orçamento com sucesso!');
                     } else {

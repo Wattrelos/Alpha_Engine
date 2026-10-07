@@ -77,9 +77,9 @@ class ProjectRfq extends BaseEntity
     public function getSelectedProviderId(): ?int { return $this->selectedProviderId; }
     public function setSelectedProviderId(?int $selectedProviderId): self { $this->selectedProviderId = $selectedProviderId; return $this; }
 
-    public function getDateAdded(): ?string { return $this->dateAdded; }
+    public function getDateAdded(): string { return $this->dateAdded ?: date('Y-m-d H:i:s'); }
     public function setDateAdded(?string $dateAdded): self { $this->dateAdded = $dateAdded; return $this; }
 
-    public function getDateModified(): ?string { return $this->dateModified; }
+    public function getDateModified(): string { return $this->dateModified ?: date('Y-m-d H:i:s'); }
     public function setDateModified(?string $dateModified): self { $this->dateModified = $dateModified; return $this; }
 }

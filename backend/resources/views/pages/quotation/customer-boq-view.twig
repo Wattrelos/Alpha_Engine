@@ -103,6 +103,10 @@
                 </div>
 
                 <form method="POST" action="/{{ lang }}/account/projetos/{{ rfq.id }}/boq">
+                    {% if csrf %}
+                        <input type="hidden" name="{{ csrf.keys.name }}" value="{{ csrf.name }}">
+                        <input type="hidden" name="{{ csrf.keys.value }}" value="{{ csrf.value }}">
+                    {% endif %}
                     <button type="submit" class="rfq-btn rfq-btn-primary" style="font-size:1.1rem; padding:0.9rem 2rem;">
                         <span>🛒</span> Adicionar Lista para Cotação & Carrinho ("Add to Quote")
                     </button>

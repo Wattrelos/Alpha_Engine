@@ -44,6 +44,6 @@ class ProjectBoqItem extends BaseEntity
     public function getNotes(): ?string { return $this->notes; }
     public function setNotes(?string $notes): self { $this->notes = $notes; return $this; }
 
-    public function getDateAdded(): ?string { return $this->dateAdded; }
+    public function getDateAdded(): string { return $this->dateAdded ?: date('Y-m-d H:i:s'); }
     public function setDateAdded(?string $dateAdded): self { $this->dateAdded = $dateAdded; return $this; }
 }

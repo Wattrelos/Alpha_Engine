@@ -30,10 +30,10 @@ Aceito
 O Portal do Prestador (UC_PRV_001 a UC_PRV_003) precisa listar obras (RFQs) dentro do raio de atendimento do profissional, limitar a concorrência de propostas (`RN-BID-01`) e converter o levantamento de materiais (BoQ) em carrinho de compras para o cliente. Consultar APIs externas de distância a cada listagem adicionaria custo, latência e dependência de terceiros, o que é inadequado para o escopo acadêmico do projeto.
 
 ## Decisão
-1. **Distância:** usar a fórmula de **Haversine** calculada localmente em `GeoMatchingService`, a partir das coordenadas base do prestador e da obra, filtrando pelo raio (`?radius=`) e por especialidade (`?categoria=`).
+1. **Distância:** usar a fórmula de **Haversine** calculada localmente em [`GeoMatchingService`](/backend/core/Services/Quotation/GeoMatchingService.php), a partir das coordenadas base do prestador e da obra, filtrando pelo raio (`?radius=`) e por especialidade (`?categoria=`).
 2. **Concorrência:** limitar a 10 propostas por RFQ, validando também o status `open` da obra (`RN-BID-01`).
-3. **Takeoff → Carrinho:** ao finalizar o levantamento, a RFQ passa a `boq_ready` e o `BoqToCartConverterService` converte o BoQ em itens do carrinho após aprovação do cliente.
-4. **Injeção de dependências:** os serviços são registrados em `AppBootstrap` e resolvidos via PSR-11 (`AppContainer`).
+3. **Takeoff → Carrinho:** ao finalizar o levantamento, a RFQ passa a `boq_ready` e o [`BoqToCartConverterService`](/backend/core/Services/Quotation/BoqToCartConverterService.php) converte o BoQ em itens do carrinho após aprovação do cliente.
+4. **Injeção de dependências:** os serviços são registrados em [`AppBootstrap`](/backend/Containers/AppBootstrap.php) e resolvidos via PSR-11 ([`AppContainer`](/backend/Containers/AppContainer.php)).
 
 ## Consequências
 

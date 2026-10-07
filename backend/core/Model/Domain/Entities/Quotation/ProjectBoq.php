@@ -40,10 +40,10 @@ class ProjectBoq extends BaseEntity
     public function getStatus(): string { return $this->status; }
     public function setStatus(string $status): self { $this->status = $status; return $this; }
 
-    public function getDateAdded(): ?string { return $this->dateAdded; }
+    public function getDateAdded(): string { return $this->dateAdded ?: date('Y-m-d H:i:s'); }
     public function setDateAdded(?string $dateAdded): self { $this->dateAdded = $dateAdded; return $this; }
 
-    public function getDateModified(): ?string { return $this->dateModified; }
+    public function getDateModified(): string { return $this->dateModified ?: date('Y-m-d H:i:s'); }
     public function setDateModified(?string $dateModified): self { $this->dateModified = $dateModified; return $this; }
 
     /**

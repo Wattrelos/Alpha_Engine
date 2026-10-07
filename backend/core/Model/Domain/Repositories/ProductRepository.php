@@ -5,6 +5,8 @@ namespace Alpha\Model\Domain\Repositories;
 use Alpha\Mappers\EntityMappers\ProductMapper;
 use Alpha\Model\Domain\InterfaceEntity;
 use Alpha\Model\DataTransferObject\ViewResponse;
+use Alpha\Model\DataAccessObject\QueryBuilder;
+use Alpha\Model\DataAccessObject\DataAccessObject;
 
 /**
  * ProductRepository - Autoridade de Domínio para Produtos.
@@ -416,6 +418,28 @@ class ProductRepository extends AbstractRepository implements BaseRepositoryInte
     public function find(int $id): ?InterfaceEntity
     {
         return $this->mapperFactory->get(ProductMapper::class)->findById($id);
+    }
+
+    public function getProductDescription(int $productId, ?int $languageId = null): ?array
+    {
+        $langId = $languageId ?: $this->language_id;
+        $qb = (new QueryBuilder())
+            ->from(DB_PREFIX . 'product_description')
+            ->where('product_id = ?', [$productId])
+            ->where('language_id = ?', [$langId]);
+
+        $rows = (new DataAccessObject())->executeQuery($qb);
+        if (!empty($rows)) {
+            return $rows[0];
+        }
+
+        $qbFallback = (new QueryBuilder())
+            ->from(DB_PREFIX . 'product_description')
+            ->where('product_id = ?', [$productId])
+            ->limit(1);
+
+        $fallbackRows = (new DataAccessObject())->executeQuery($qbFallback);
+        return $fallbackRows[0] ?? null;
     }
 
     /**
