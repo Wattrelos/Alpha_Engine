@@ -37,9 +37,7 @@ foreach ($storageDirs as $sDir) {
     if (!is_dir($sDir)) {
         @mkdir($sDir, 0777, true);
     }
-    if (is_dir($sDir) && !is_writable($sDir)) {
-        @chmod($sDir, 0777);
-    }
+    @chmod($sDir, 0777);
     if (!is_dir($sDir) || !is_writable($sDir)) {
         $failedStorageDir = $sDir;
         break;

@@ -20,14 +20,15 @@ use Alpha\Support\LgpdSanitizer;
 // ─────────────────────────────────────────────────────────
 // 0. VERIFICAÇÃO E AUTO-INSTALAÇÃO DE DEPENDÊNCIAS (COMPOSER)
 // ─────────────────────────────────────────────────────────
-$autoloadPath = __DIR__ . '/../backend/vendor/autoload.php';
+$backendDir = dirname(__DIR__) . '/backend';
+$autoloadPath = $backendDir . '/vendor/autoload.php';
 
-if (!file_exists($autoloadPath)) {
+if (!file_exists($autoloadPath) || !file_exists($backendDir . '/vendor/vlucas/phpdotenv')) {
     if (function_exists('exec')) {
-        @exec('composer install --no-interaction --optimize-autoloader 2>&1', $output, $returnCode);
+        @exec('cd ' . escapeshellarg($backendDir) . ' && composer install --no-interaction --optimize-autoloader 2>&1', $output, $returnCode);
     }
 
-    if (!file_exists($autoloadPath)) {
+    if (!file_exists($autoloadPath) || !file_exists($backendDir . '/vendor/vlucas/phpdotenv')) {
         header('Content-Type: text/html; charset=utf-8');
         http_response_code(503);
         echo '<!DOCTYPE html>
@@ -51,8 +52,8 @@ if (!file_exists($autoloadPath)) {
     <div class="card">
         <div class="icon">📦</div>
         <h1>Dependências do Composer Ausentes</h1>
-        <p>A pasta <code>vendor/</code> não foi encontrada. Execute o comando abaixo no terminal da pasta do projeto para carregar os componentes:</p>
-        <div class="code-box">composer install</div>
+        <p>A pasta <code>backend/vendor/</code> não contém os pacotes necessários. Execute o comando abaixo no terminal da pasta do projeto:</p>
+        <div class="code-box">cd backend &amp;&amp; composer install</div>
         <p style="font-size: 0.8rem; color: #6b7280;">Após rodar o comando, recarregue a página para acessar o assistente de instalação.</p>
         <a href="" onclick="window.location.reload(); return false;" class="btn-reload">Recarregar Página</a>
     </div>
