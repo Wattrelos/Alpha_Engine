@@ -2,9 +2,10 @@ name: CI Pipeline (PHPUnit + Behat + Playwright E2E)
 
 on:
   push:
-    branches: [ main, master ]
+    # Passa somente quando o branch for "test" para economizar processamentos no GitHub
+    branches: [ main ]
   pull_request:
-    branches: [ main, master ]
+    branches: [ main ]
 
 jobs:
   test:
