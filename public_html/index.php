@@ -66,7 +66,7 @@ if (!file_exists($autoloadPath) || !file_exists($backendDir . '/vendor/vlucas/ph
 require $autoloadPath;
 
 if (file_exists(__DIR__ . '/../backend/.env')) {
-    $dotenv = Dotenv\Dotenv::createImmutable(__DIR__ . '/../backend/');
+    $dotenv = Dotenv\Dotenv::createUnsafeMutable(__DIR__ . '/../backend/');
     $dotenv->safeLoad();
 }
 
