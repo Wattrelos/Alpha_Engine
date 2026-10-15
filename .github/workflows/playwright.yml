@@ -36,14 +36,26 @@ jobs:
           coverage: none
           tools: composer:v2
 
+      - name: Determine Database Host
+        id: db-host
+        run: |
+          if getent hosts mysql > /dev/null 2>&1; then
+            echo "HOST=mysql" >> "$GITHUB_OUTPUT"
+            echo "Database host detected: mysql (Forgejo / Docker network)"
+          else
+            echo "HOST=127.0.0.1" >> "$GITHUB_OUTPUT"
+            echo "Database host detected: 127.0.0.1 (GitHub Actions VM)"
+          fi
+
       - name: Configure Environment (.env)
         run: |
-          cat << 'EOF' > backend/.env
+          DB_TARGET_HOST="${{ steps.db-host.outputs.HOST }}"
+          cat << EOF > backend/.env
           APP_ENV=development
           APP_DEBUG=true
           APP_INSTALLED=true
           DB_DRIVER=mysqli
-          DB_HOSTNAME=127.0.0.1
+          DB_HOSTNAME=${DB_TARGET_HOST}
           DB_PORT=3306
           DB_USERNAME=root
           DB_PASSWORD=root
@@ -62,13 +74,14 @@ jobs:
 
       - name: Setup Database Schema & Seeds
         run: |
-          sudo apt-get update && sudo apt-get install -y default-mysql-client || true
-          mysql -h 127.0.0.1 -P 3306 --protocol=tcp -u root -proot -e "SET GLOBAL sql_mode = 'STRICT_TRANS_TABLES,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION';"
-          mysql -h 127.0.0.1 -P 3306 --protocol=tcp -u root -proot myDatabase < backend/resources/schema/install.sql
+          DB_TARGET_HOST="${{ steps.db-host.outputs.HOST }}"
+          which mysql || (sudo apt-get update && sudo apt-get install -y default-mysql-client) || (apt-get update && apt-get install -y default-mysql-client) || true
+          mysql -h "${DB_TARGET_HOST}" -P 3306 --protocol=tcp -u root -proot -e "SET GLOBAL sql_mode = 'STRICT_TRANS_TABLES,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION';"
+          mysql -h "${DB_TARGET_HOST}" -P 3306 --protocol=tcp -u root -proot myDatabase < backend/resources/schema/install.sql
           if [ -f backend/resources/schema/rfq_service_provider_tables.sql ]; then
-            mysql -h 127.0.0.1 -P 3306 --protocol=tcp -u root -proot myDatabase < backend/resources/schema/rfq_service_provider_tables.sql || true
+            mysql -h "${DB_TARGET_HOST}" -P 3306 --protocol=tcp -u root -proot myDatabase < backend/resources/schema/rfq_service_provider_tables.sql || true
           fi
-          mysql -h 127.0.0.1 -P 3306 --protocol=tcp -u root -proot myDatabase < backend/resources/schema/seed_ci.sql
+          mysql -h "${DB_TARGET_HOST}" -P 3306 --protocol=tcp -u root -proot myDatabase < backend/resources/schema/seed_ci.sql
 
       - name: Install Composer Dependencies (Root)
         run: composer install --no-interaction --prefer-dist --optimize-autoloader || composer update --no-interaction --prefer-dist --optimize-autoloader
